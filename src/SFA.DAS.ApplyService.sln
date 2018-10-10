@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.ApplyService.Web", "SFA.DAS.ApplyService.Web\SFA.DAS.ApplyService.Web.csproj", "{BC878D49-EE14-408B-B507-0307B961CEF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.ApplyService.InternalApi", "SFA.DAS.ApplyService.InternalApi\SFA.DAS.ApplyService.InternalApi.csproj", "{FAFB4EEB-CC8C-43B9-87D6-22B9894AC5AB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{CB25C537-3812-4629-A142-6B84EF294A9E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{DF43B040-0281-42C2-AD9E-A37F6EA0FEA6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BC878D49-EE14-408B-B507-0307B961CEF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC878D49-EE14-408B-B507-0307B961CEF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC878D49-EE14-408B-B507-0307B961CEF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC878D49-EE14-408B-B507-0307B961CEF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAFB4EEB-CC8C-43B9-87D6-22B9894AC5AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAFB4EEB-CC8C-43B9-87D6-22B9894AC5AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAFB4EEB-CC8C-43B9-87D6-22B9894AC5AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAFB4EEB-CC8C-43B9-87D6-22B9894AC5AB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FAFB4EEB-CC8C-43B9-87D6-22B9894AC5AB} = {CB25C537-3812-4629-A142-6B84EF294A9E}
+		{BC878D49-EE14-408B-B507-0307B961CEF0} = {DF43B040-0281-42C2-AD9E-A37F6EA0FEA6}
+	EndGlobalSection
+EndGlobal

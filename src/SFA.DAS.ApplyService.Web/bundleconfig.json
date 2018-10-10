@@ -1,0 +1,43 @@
+﻿// Configure bundling and minification for the project.
+// More info at https://go.microsoft.com/fwlink/?LinkId=808241
+[
+  {
+    "outputFileName": "wwwroot/css/site.min.css",
+    // An array of relative input file paths. Globbing patterns supported
+    "inputFiles": ["wwwroot/css/site.css"]
+  },
+  {
+    "outputFileName": "wwwroot/js/site.min.js",
+    "inputFiles": [
+      "wwwroot/assets/javascripts/govuk-template.js",
+      "wwwroot/js/details.polyfill.js",
+      "wwwroot/js/shim-links-with-button-role.js",
+      "wwwroot/js/show-hide-content.js",
+      "wwwroot/js/expandable-table.js",
+      "wwwroot/js/site.js"
+    ],
+    // Optionally specify minification options
+    "minify": {
+      "renameLocals": true
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/epao-validation.min.js",
+    "inputFiles": ["wwwroot/js/epao-validation.js"],
+    "minify": {
+      "renameLocals": true
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/postcode-lookup-service.min.js",
+    "inputFiles": [
+      "wwwroot/lib/jquery-ui/dist/jquery-ui.min.js",
+      "wwwroot/js/postcode-lookup-service.js"
+    ],
+    "minify": {
+      "renameLocals": true
+    }
+  }
+]
