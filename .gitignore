@@ -270,5 +270,5 @@ src/Tools/PhantomJS/tools/phantomjs/ChangeLog
 .vscode/
 
 # Minified css and js
-*.min.css
-*.min.js
+src/SFA.DAS.ApplyService.Web/wwwroot/stylesheets/application.min.css
+src/SFA.DAS.ApplyService.Web/wwwroot/javascripts/application.min.js
