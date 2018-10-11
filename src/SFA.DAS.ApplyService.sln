@@ -1,16 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.ApplyService.Web", "SFA.DAS.ApplyService.Web\SFA.DAS.ApplyService.Web.csproj", "{BC878D49-EE14-408B-B507-0307B961CEF0}"
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2041
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.ApplyService.Web", "SFA.DAS.ApplyService.Web\SFA.DAS.ApplyService.Web.csproj", "{BC878D49-EE14-408B-B507-0307B961CEF0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{CB25C537-3812-4629-A142-6B84EF294A9E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{DF43B040-0281-42C2-AD9E-A37F6EA0FEA6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.ApplyService.Domain", "SFA.DAS.ApplyService.Domain\SFA.DAS.ApplyService.Domain.csproj", "{62C55D30-AE24-4230-A7F8-627ECEBEA48E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.ApplyService.Domain", "SFA.DAS.ApplyService.Domain\SFA.DAS.ApplyService.Domain.csproj", "{62C55D30-AE24-4230-A7F8-627ECEBEA48E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.ApplyService.Application", "SFA.DAS.ApplyService.Application\SFA.DAS.ApplyService.Application.csproj", "{C32FBF75-32C0-40D4-A306-B240A13FCF87}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.ApplyService.Application", "SFA.DAS.ApplyService.Application\SFA.DAS.ApplyService.Application.csproj", "{C32FBF75-32C0-40D4-A306-B240A13FCF87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.ApplyService.InternalApi", "SFA.DAS.ApplyService.InternalApi\SFA.DAS.ApplyService.InternalApi.csproj", "{42FEF463-18F2-4A9E-BED0-EB35069DEA40}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.ApplyService.InternalApi", "SFA.DAS.ApplyService.InternalApi\SFA.DAS.ApplyService.InternalApi.csproj", "{42FEF463-18F2-4A9E-BED0-EB35069DEA40}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "SFA.DAS.ApplyService.Database", "SFA.DAS.ApplyService.Database\SFA.DAS.ApplyService.Database.sqlproj", "{ED7A7924-4DBA-42C7-9CC7-B4405A9B0B06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,11 +39,24 @@ Global
 		{42FEF463-18F2-4A9E-BED0-EB35069DEA40}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{42FEF463-18F2-4A9E-BED0-EB35069DEA40}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{42FEF463-18F2-4A9E-BED0-EB35069DEA40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED7A7924-4DBA-42C7-9CC7-B4405A9B0B06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED7A7924-4DBA-42C7-9CC7-B4405A9B0B06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED7A7924-4DBA-42C7-9CC7-B4405A9B0B06}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{ED7A7924-4DBA-42C7-9CC7-B4405A9B0B06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED7A7924-4DBA-42C7-9CC7-B4405A9B0B06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED7A7924-4DBA-42C7-9CC7-B4405A9B0B06}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{BC878D49-EE14-408B-B507-0307B961CEF0} = {DF43B040-0281-42C2-AD9E-A37F6EA0FEA6}
 		{62C55D30-AE24-4230-A7F8-627ECEBEA48E} = {CB25C537-3812-4629-A142-6B84EF294A9E}
 		{C32FBF75-32C0-40D4-A306-B240A13FCF87} = {CB25C537-3812-4629-A142-6B84EF294A9E}
 		{42FEF463-18F2-4A9E-BED0-EB35069DEA40} = {CB25C537-3812-4629-A142-6B84EF294A9E}
+		{ED7A7924-4DBA-42C7-9CC7-B4405A9B0B06} = {CB25C537-3812-4629-A142-6B84EF294A9E}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F9606DF2-1B9C-412A-AA3D-F741341EC9E2}
 	EndGlobalSection
 EndGlobal
