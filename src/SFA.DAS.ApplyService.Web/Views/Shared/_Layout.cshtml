@@ -16,16 +16,19 @@
   <!--[if !IE 8]><!-->
   <link rel="stylesheet" href="/stylesheets/govuk-frontend-2.1.0.min.css">
   <!--<![endif]-->
+  <!--[if IE 8]><link rel="stylesheet" href="/stylesheets/govuk-frontend-ie8-2.1.0.min.css"><![endif]-->
+  <!--[if lt IE 9]><script src="/javascripts/html5shiv.min.js"></script><![endif]-->
 
-  <!--[if IE 8]>
-    <link rel="stylesheet" href="/stylesheets/govuk-frontend-ie8-2.1.0.min.css">
-  <![endif]-->
+  <environment include="Development">
+    <link rel="stylesheet" href="/stylesheets/application.css">
+  </environment>
 
-  <!--[if lt IE 9]>
-    <script src="/javascripts/html5shiv.min.js"></script>
-  <![endif]-->
+  <environment exclude="Development">
+    <link rel="stylesheet" href="/stylesheets/application.min.css">
+  </environment>
 
   <meta property="og:image" content="/assets/images/govuk-opengraph-image.png">
+
 </head>
 
 <body class="govuk-template__body ">
