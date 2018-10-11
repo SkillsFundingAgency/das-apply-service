@@ -26,10 +26,8 @@ namespace SFA.DAS.ApplyService.Web
             
             services.AddMvc()
                 //.AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddJsonOptions(options =>
-                {
-                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-                });
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             
             services.AddDistributedRedisCache(options =>
