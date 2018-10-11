@@ -1,10 +1,67 @@
 @{
-ViewBag.Title = "title";
-Layout = "_Layout";
+    ViewBag.Title = "title";
 }
 
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    <h1 class="govuk-heading-xl">Hello, GOV.UK!</h1>
-  </div>
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">EPAO account: sign in or set up</h1>
+
+        <p class="govuk-body">Use your EPAO account to:</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+            <li>apply to become a registered end-point assessment organisation (EPAO)</li>
+            <li>get accreditation to assess standards</li>
+        </ul>
+
+        <p class="govuk-body">It takes about 5 minutes to set up an account.</p>
+
+
+        <!-- <a href="0-eligibility/setup" role="button" class="govuk-button govuk-button--start govuk-!-margin-top-2 govuk-!-margin-bottom-5">
+            Create an account
+        </a>
+        <p class="govuk-body govuk-!-margin-bottom-7">or <a href="signin" class="govuk-link">sign in</a> if you have an application in progress</p> -->
+        <br>
+        <div class="form-block">
+            <a class="govuk-button" href="@Url.Action("CreateAccount", "Users")">Create an account</a>
+            <div class="button-link">
+                <span class="govuk-body">or <a href="@Url.Action("SignIn", "Users")">sign in</a> if you have an application in progress</span>
+            </div>
+        </div>
+
+        <br>
+
+        <!-- <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half border-right">
+                <h2 class="govuk-heading-m">I want to start a new application</h2>
+                <p class="govuk-body">To submit your application to become an EPAO you first need to set up an online account. You can return to your account as many times as you want to complete your application.</p>
+                <a href="0-eligibility/setup" role="button" class="govuk-button govuk-button--start govuk-!-margin-top-2 govuk-!-margin-bottom-5">
+                    Create an account
+                </a>
+            </div>
+            <div class="govuk-grid-column-one-half">
+                <h2 class="govuk-heading-m">I have an ongoing application</h2>
+                <p class="govuk-body">To submit your application to become an EPAO you first need to set up an online account. You can return to your account as many times as you want to complete your application.</p>
+                <a href="0-eligibility/setup" role="button" class="govuk-button govuk-button--start govuk-!-margin-top-2 govuk-!-margin-bottom-5">
+                    Sign in
+                </a>
+            </div>
+        </div> -->
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h2 class="govuk-heading-m">Before you start</h2>
+                <p class="govuk-body">You must provide:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>your own details to create a login</li>
+
+                </ul>
+
+            </div>
+
+            <div class="govuk-grid-column-one-third">
+
+
+            </div>
+        </div>
+    </div>
 </div>

@@ -1,6 +1,6 @@
 using System;
 
-namespace SFA.DAS.ApplyService.Web.Infrastructure
+namespace SFA.DAS.ApplyService.Configuration
 {
     public class DeveloperEnvironmentException : Exception
     {

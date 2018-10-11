@@ -1,0 +1,41 @@
+@{
+ViewBag.Title = "title";
+}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">Get set up as a user</h1>
+
+        <form id="account-setup" asp-action="CreateAccount" asp-controller="Users" method="post" novalidate="">
+
+          <div class="govuk-form-group">
+            <label class="govuk-label govuk-label--m" for="GivenName">
+              First name
+            </label>
+            <input class="govuk-input govuk-!-width-three-quarters" id="GivenName" name="GivenName" type="text" aria-describedby="first-name-hint">
+          </div>
+
+          <div class="govuk-form-group">
+            <label class="govuk-label govuk-label--m" for="FamilyName">
+              Last name
+            </label>
+            <input class="govuk-input govuk-!-width-three-quarters" id="FamilyName" name="FamilyName" type="text" aria-describedby="last-name-hint"/>
+          </div>
+
+          <div class="govuk-form-group">
+            <label class="govuk-label govuk-label--m" for="Email">
+              Email
+            </label>
+            <span id="email-hint" class="govuk-hint">
+              We'll send you a security code by email
+            </span>
+            <input class="govuk-input govuk-!-width-three-quarters" id="Email" name="Email" type="text" aria-describedby="email-hint">
+          </div>       
+
+          <button type="submit" class="govuk-button">
+            Set me up
+          </button>
+
+        </form>
+      </div>
+</div>

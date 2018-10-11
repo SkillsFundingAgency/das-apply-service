@@ -6,7 +6,7 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
 
-namespace SFA.DAS.ApplyService.Web.Infrastructure
+namespace SFA.DAS.ApplyService.Configuration
 {
     public static class ConfigurationService
     {
@@ -72,7 +72,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             {
                 webConfig = JsonConvert.DeserializeObject<ApplyConfig>(data);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 if (hostingEnvironment.IsDevelopment())
                 {
