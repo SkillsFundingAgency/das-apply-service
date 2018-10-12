@@ -2,7 +2,7 @@ using System;
 
 namespace SFA.DAS.ApplyService.Domain.Entities
 {
-    class Contact : EntityBase
+    public class Contact : EntityBase
     {
         public string Email { get; set; }
         public string GivenNames { get; set; }

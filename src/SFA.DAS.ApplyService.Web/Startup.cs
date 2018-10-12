@@ -32,12 +32,12 @@ namespace SFA.DAS.ApplyService.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
+//            services.Configure<CookiePolicyOptions>(options =>
+//            {
+//                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+//                options.CheckConsentNeeded = context => true;
+//                options.MinimumSameSitePolicy = SameSiteMode.None;
+//            });
             
             _applyConfig = ConfigurationService.GetConfig(_hostingEnvironment, _configuration["EnvironmentName"], _configuration["ConfigurationStorageConnectionString"], "1.0", "SFA.DAS.ApplyService").Result;
             
@@ -66,7 +66,7 @@ namespace SFA.DAS.ApplyService.Web
             }
             
             app.UseStaticFiles();
-            app.UseCookiePolicy();
+            //app.UseCookiePolicy();
             app.UseSession();
 
             app.UseAuthentication();
