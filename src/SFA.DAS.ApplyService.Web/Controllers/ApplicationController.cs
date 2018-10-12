@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
-    [Authorize(AuthenticationSchemes = OpenIdConnectDefaults.AuthenticationScheme)]
+    [Authorize]
     public class ApplicationController : Controller
     {
         public IActionResult Index()

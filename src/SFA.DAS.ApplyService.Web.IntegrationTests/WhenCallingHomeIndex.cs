@@ -1,0 +1,57 @@
+﻿using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
+using NUnit.Framework;
+using SFA.DAS.ApplyService.Configuration;
+using AngleSharp.Parser.Html;
+using FluentAssertions;
+
+namespace SFA.DAS.ApplyService.Web.IntegrationTests
+{
+    [TestFixture]
+    public class WhenCallingHomeIndex
+    {
+        private HttpClient _client;
+
+        [SetUp]
+        public void Setup()
+        {
+            var configurationService = new Mock<IConfigurationService>();
+
+            configurationService.Setup(c => c.GetConfig())
+                .ReturnsAsync(new ApplyConfig() {SessionRedisConnectionString = "HelloDave"});
+            
+            var builder = new WebHostBuilder().UseStartup<Startup>();
+            builder.ConfigureServices(services =>
+            {
+                services.AddSingleton<IConfigurationService>(p => configurationService.Object);
+            });
+
+            var testServer = new TestServer(builder);
+            
+            _client = testServer.CreateClient();
+        }
+        
+        [Test]
+        public async Task ThenSuccessIsReturned()
+        {
+            var response = await _client.GetAsync("/");
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+        
+        [Test]
+        public async Task ThenTheCorrectViewIsReturned()
+        {
+            var response = await _client.GetAsync("/");
+
+            var parser = new HtmlParser();
+            var document = await parser.ParseAsync(await response.Content.ReadAsStringAsync());
+            document.Title.Should().Be("Create an EPAO account");
+        }
+    }
+}

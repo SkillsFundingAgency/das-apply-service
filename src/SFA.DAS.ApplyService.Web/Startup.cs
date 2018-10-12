@@ -13,7 +13,10 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using SFA.DAS.ApplyService.Application;
 using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.DfeSignIn;
+using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 
 namespace SFA.DAS.ApplyService.Web
@@ -32,26 +35,28 @@ namespace SFA.DAS.ApplyService.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-//            services.Configure<CookiePolicyOptions>(options =>
-//            {
-//                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-//                options.CheckConsentNeeded = context => true;
-//                options.MinimumSameSitePolicy = SameSiteMode.None;
-//            });
+            services.AddTransient<ISessionService>(p =>
+                new SessionService(p.GetService<IHttpContextAccessor>(), _configuration["EnvironmentName"]));
+            services.AddSingleton<IConfigurationService>(p => new ConfigurationService(p.GetService<ISessionService>(),
+                p.GetService<IHostingEnvironment>(), _configuration["EnvironmentName"],
+                _configuration["ConfigurationStorageConnectionString"], "1.0", "SFA.DAS.ApplyService"));
+            services.AddTransient<IDfeSignInService, DfeSignInService>();
             
-            _applyConfig = ConfigurationService.GetConfig(_hostingEnvironment, _configuration["EnvironmentName"], _configuration["ConfigurationStorageConnectionString"], "1.0", "SFA.DAS.ApplyService").Result;
-            
-            services.AddDfeSignInAuthorization(_applyConfig);
+            ConfigureAuth(services);
             
             services.AddMvc()
-                //.AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>())
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             
             services.AddDistributedMemoryCache();
         }
-        
+
+        protected virtual void ConfigureAuth(IServiceCollection services)
+        {
+            services.AddDfeSignInAuthorization(_applyConfig);
+        }
+
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
@@ -66,7 +71,6 @@ namespace SFA.DAS.ApplyService.Web
             }
             
             app.UseStaticFiles();
-            //app.UseCookiePolicy();
             app.UseSession();
 
             app.UseAuthentication();

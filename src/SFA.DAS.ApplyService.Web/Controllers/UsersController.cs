@@ -29,6 +29,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public IActionResult SignIn()
         {
+            var a = 1;
             return Challenge(new AuthenticationProperties() {RedirectUri = Url.Action("PostSignIn", "Users")},
                 OpenIdConnectDefaults.AuthenticationScheme);
         }

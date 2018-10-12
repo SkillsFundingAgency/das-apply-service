@@ -13,5 +13,9 @@
       </PackageReference>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\SFA.DAS.ApplyService.Session\SFA.DAS.ApplyService.Session.csproj" />
+    </ItemGroup>
+
 
 </Project>

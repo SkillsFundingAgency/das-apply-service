@@ -16,7 +16,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpPost("/Account/")]
-        public async Task<ActionResult> InviteUser(User request)
+        public async Task<ActionResult> InviteUser([FromBody]User request)
         {
             await _mediator.Send(new CreateAccountRequest(request.Email, request.GivenName, request.FamilyName));
             
