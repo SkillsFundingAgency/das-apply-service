@@ -75,6 +75,9 @@
     <div class="header-user">
         <span class="visuallyhidden">Logged in as </span>@SessionService.Get("LoggedInUser")
     </div>
+    <div>
+        <a href="@Url.Action("SignOut","Users")">Sign Out</a>
+    </div>
 }
 
 <div class="govuk-width-container">

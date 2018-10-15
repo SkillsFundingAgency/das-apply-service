@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -47,6 +48,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public IActionResult SignIn()
         {
             return Challenge(new AuthenticationProperties() {RedirectUri = Url.Action("PostSignIn", "Users")},
+                OpenIdConnectDefaults.AuthenticationScheme);
+        }
+        
+        [HttpGet]
+        public IActionResult SignOut()
+        {
+            //var callbackUrl = Url.Action(nameof(SignedOut), "Account", values: null, protocol: Request.Scheme);
+
+            foreach (var cookie in Request.Cookies.Keys)
+            {
+                Response.Cookies.Delete(cookie);
+            }
+
+            return SignOut(CookieAuthenticationDefaults.AuthenticationScheme,
                 OpenIdConnectDefaults.AuthenticationScheme);
         }
 

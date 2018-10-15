@@ -23,7 +23,7 @@ namespace SFA.DAS.ApplyService.Data
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(@"INSERT INTO Contacts (Email, GivenNames, FamilyName, SignInType, CreatedAt, CreatedBy, Status) 
-                                                     VALUES (@email, @givenName, @familyName, @signInType, @createdAt, @email, 'Live')",
+                                                     VALUES (@email, @givenName, @familyName, @signInType, @createdAt, @email, 'New')",
                     new {email, givenName, familyName, signInType, createdAt = DateTime.UtcNow});
 
                 return await GetContact(email);   
@@ -45,6 +45,16 @@ namespace SFA.DAS.ApplyService.Data
             {
                 return await connection.QuerySingleOrDefaultAsync<Contact>("SELECT * FROM Contacts WHERE SignInId = @signInId",
                     new {signInId});
+            }
+        }
+
+        public async Task UpdateSignInId(Guid contactId, Guid signInId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(
+                    @"UPDATE Contacts SET SignInId = @signInId, UpdatedAt = GETUTCDATE(), UpdatedBy = 'dfeSignIn', Status = 'Live' WHERE Id = @contactId",
+                    new {contactId, signInId});
             }
         }
     }
