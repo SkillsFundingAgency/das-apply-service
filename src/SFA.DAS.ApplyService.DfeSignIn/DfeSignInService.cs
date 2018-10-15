@@ -24,7 +24,7 @@ namespace SFA.DAS.ApplyService.DfeSignIn
         {
             var config = await _configurationService.GetConfig();
            
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.DfeSignIn.ClientId));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.DfeSignIn.ApiClientSecret));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(issuer: config.DfeSignIn.ClientId, audience: "signin.education.gov.uk",
@@ -34,35 +34,24 @@ namespace SFA.DAS.ApplyService.DfeSignIn
             using (var httpClient = new HttpClient())
             {
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
-                httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+                httpClient.DefaultRequestHeaders.Add("Accept", "application/json");  
 
+                var inviteJson = JsonConvert.SerializeObject(new
+                {
+                    sourceId = userId.ToString(),
+                    given_name = givenName,
+                    family_name = familyName,
+                    email = email,
+                    userRedirect = config.DfeSignIn.RedirectUri,
+                    callback = config.DfeSignIn.CallbackUri
+                });
+                
                 var dfeResponse = await httpClient.PostAsync(config.DfeSignIn.ApiUri,
-                    new StringContent(JsonConvert.SerializeObject(new
-                    {
-                        sourceId = userId.ToString(),
-                        given_name = givenName,
-                        family_name = familyName,
-                        email = email,
-                        userRedirect = config.DfeSignIn.RedirectUri,
-                        callback = config.DfeSignIn.CallbackUri
-                    }))
+                    new StringContent(inviteJson, Encoding.UTF8, "application/json")
                 );
+                var status = dfeResponse.StatusCode;
+                var content = await dfeResponse.Content.ReadAsStringAsync(); 
             }
-//            
-//            
-//            
-//            var response = new InvitationResponse()
-//            {
-//                ResponseCode = (int) dfeResponse.StatusCode,
-//            };
-//
-//            if (dfeResponse.IsSuccessStatusCode) return response;
-//            
-//            var content = await dfeResponse.Content.ReadAsStringAsync();
-//            response.IsSuccess = false;
-//            response.ResponseBody = content;
-//
-//            return response;
         }
     }
 }

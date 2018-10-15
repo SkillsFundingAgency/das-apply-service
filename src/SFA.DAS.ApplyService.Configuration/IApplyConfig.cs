@@ -4,5 +4,6 @@ namespace SFA.DAS.ApplyService.Configuration
     {
         string SessionRedisConnectionString { get; set; }
         DfeSignInConfig DfeSignIn { get; set; }
+        string SqlConnectionString { get; set; }
     }
 }

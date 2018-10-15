@@ -32,7 +32,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
         {
             _handler.Handle(new CreateAccountRequest("name@email.com", "James", "Jones"), new CancellationToken());
             
-            _userRepository.Verify(r => r.CreateContact("name@email.com", "James", "Jones"));
+            _userRepository.Verify(r => r.CreateContact("name@email.com", "James", "Jones", "DfESignIn"));
         }
 
         [Test]
@@ -41,7 +41,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
             _userRepository.Setup(r => r.GetContact("name@email.com")).ReturnsAsync(new Contact());
             _handler.Handle(new CreateAccountRequest("name@email.com", "James", "Jones"), new CancellationToken());
             
-            _userRepository.Verify(r => r.CreateContact("name@email.com", "James", "Jones"), Times.Never);
+            _userRepository.Verify(r => r.CreateContact("name@email.com", "James", "Jones", "DfESignIn"), Times.Never);
         }
 
         [Test]
@@ -49,7 +49,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
         {
             var newUserId = Guid.NewGuid();
 
-            _userRepository.Setup(r => r.CreateContact("name@email.com", "James", "Jones"))
+            _userRepository.Setup(r => r.CreateContact("name@email.com", "James", "Jones", "DfESignIn"))
                 .ReturnsAsync(new Contact() {Id = newUserId});
             
             _handler.Handle(new CreateAccountRequest("name@email.com", "James", "Jones"), new CancellationToken());

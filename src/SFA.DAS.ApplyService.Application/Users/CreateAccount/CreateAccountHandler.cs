@@ -23,7 +23,7 @@ namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
             var existingContact = await _contactRepository.GetContact(request.Email);
             if (existingContact == null)
             {
-                var newContact = await _contactRepository.CreateContact(request.Email, request.GivenName, request.FamilyName);
+                var newContact = await _contactRepository.CreateContact(request.Email, request.GivenName, request.FamilyName, "DfESignIn");
                 _dfeSignInService.InviteUser(request.Email, request.GivenName, request.FamilyName, newContact.Id);
             }
             else

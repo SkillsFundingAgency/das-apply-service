@@ -1,33 +1,36 @@
+@using SFA.DAS.ApplyService.Session
+@inject ISessionService SessionService
+
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8" />
-  <title>@ViewBag.Title</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b0c0c" />
+    <meta charset="utf-8"/>
+    <title>@ViewBag.Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0b0c0c"/>
 
-  <link rel="shortcut icon" sizes="16x16 32x32 48x48" href="/assets/images/favicon.ico" type="image/x-icon" />
-  <link rel="mask-icon" href="/assets/images/govuk-mask-icon.svg" color="#0b0c0c">
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/govuk-apple-touch-icon-180x180.png">
-  <link rel="apple-touch-icon" sizes="167x167" href="/assets/images/govuk-apple-touch-icon-167x167.png">
-  <link rel="apple-touch-icon" sizes="152x152" href="/assets/images/govuk-apple-touch-icon-152x152.png">
-  <link rel="apple-touch-icon" href="/assets/images/govuk-apple-touch-icon.png">
+    <link rel="shortcut icon" sizes="16x16 32x32 48x48" href="/assets/images/favicon.ico" type="image/x-icon"/>
+    <link rel="mask-icon" href="/assets/images/govuk-mask-icon.svg" color="#0b0c0c">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/govuk-apple-touch-icon-180x180.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="/assets/images/govuk-apple-touch-icon-167x167.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/assets/images/govuk-apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" href="/assets/images/govuk-apple-touch-icon.png">
 
-  <!--[if !IE 8]><!-->
-  <link rel="stylesheet" href="/stylesheets/govuk-frontend-2.1.0.min.css">
-  <!--<![endif]-->
-  <!--[if IE 8]><link rel="stylesheet" href="/stylesheets/govuk-frontend-ie8-2.1.0.min.css"><![endif]-->
-  <!--[if lt IE 9]><script src="/javascripts/html5shiv.min.js"></script><![endif]-->
+    <!--[if !IE 8]><!-->
+    <link rel="stylesheet" href="/stylesheets/govuk-frontend-2.1.0.min.css">
+    <!--<![endif]-->
+    <!--[if IE 8]><link rel="stylesheet" href="/stylesheets/govuk-frontend-ie8-2.1.0.min.css"><![endif]-->
+    <!--[if lt IE 9]><script src="/javascripts/html5shiv.min.js"></script><![endif]-->
 
-  <environment include="Development">
-    <link rel="stylesheet" href="/stylesheets/application.css">
-  </environment>
+    <environment include="Development">
+        <link rel="stylesheet" href="/stylesheets/application.css">
+    </environment>
 
-  <environment exclude="Development">
-    <link rel="stylesheet" href="/stylesheets/application.min.css">
-  </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="/stylesheets/application.min.css">
+    </environment>
 
-  <meta property="og:image" content="/assets/images/govuk-opengraph-image.png">
+    <meta property="og:image" content="/assets/images/govuk-opengraph-image.png">
 
 </head>
 
@@ -67,6 +70,13 @@
     </div>
 </header>
 
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="header-user">
+        <span class="visuallyhidden">Logged in as </span>@SessionService.Get("LoggedInUser")
+    </div>
+}
+
 <div class="govuk-width-container">
     <main class="govuk-main-wrapper " id="main-content" role="main">
         @RenderBody()
@@ -100,13 +110,13 @@
     </div>
 </footer>
 
-  <script src="/javascripts/govuk-frontend-2.1.0.min.js"></script>
-  <environment include="Development">
+<script src="/javascripts/govuk-frontend-2.1.0.min.js"></script>
+<environment include="Development">
     <script src="/javascripts/application.js"></script>
-  </environment>
-  <environment exclude="Development">
+</environment>
+<environment exclude="Development">
     <script src="/javascripts/application.min.js"></script>
-  </environment>
+</environment>
 </body>
 
 </html>

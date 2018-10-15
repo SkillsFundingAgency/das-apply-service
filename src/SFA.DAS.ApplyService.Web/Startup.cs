@@ -35,9 +35,11 @@ namespace SFA.DAS.ApplyService.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpClient<UsersApiClient>(c => { c.BaseAddress = new Uri("https://localhost:6000"); });
+            
             services.AddTransient<ISessionService>(p =>
                 new SessionService(p.GetService<IHttpContextAccessor>(), _configuration["EnvironmentName"]));
-            services.AddSingleton<IConfigurationService>(p => new ConfigurationService(p.GetService<ISessionService>(),
+            services.AddSingleton<IConfigurationService>(p => new ConfigurationService(
                 p.GetService<IHostingEnvironment>(), _configuration["EnvironmentName"],
                 _configuration["ConfigurationStorageConnectionString"], "1.0", "SFA.DAS.ApplyService"));
             services.AddTransient<IDfeSignInService, DfeSignInService>();

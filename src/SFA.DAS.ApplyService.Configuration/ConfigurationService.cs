@@ -12,17 +12,15 @@ namespace SFA.DAS.ApplyService.Configuration
 {
     public class ConfigurationService : IConfigurationService
     {
-        private readonly ISessionService _sessionService;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly string _environment;
         private readonly string _storageConnectionString;
         private readonly string _version;
         private readonly string _serviceName;
 
-        public ConfigurationService(ISessionService sessionService, IHostingEnvironment hostingEnvironment, string environment,
+        public ConfigurationService(IHostingEnvironment hostingEnvironment, string environment,
             string storageConnectionString, string version, string serviceName)
         {
-            _sessionService = sessionService;
             _hostingEnvironment = hostingEnvironment;
             _environment = environment;
             _storageConnectionString = storageConnectionString;
@@ -30,10 +28,12 @@ namespace SFA.DAS.ApplyService.Configuration
             _serviceName = serviceName;
         }
 
+        private ApplyConfig _applyConfig;
+
         public async Task<IApplyConfig> GetConfig()
         {
-            var applyConfig = _sessionService.Get<ApplyConfig>("ApplyConfig");
-            if (applyConfig != null) return applyConfig;
+            //var applyConfig = _sessionService.Get<ApplyConfig>("ApplyConfig");
+            if (_applyConfig != null) return _applyConfig;
             
             if (_environment == null || _storageConnectionString == null)
             {
@@ -112,7 +112,7 @@ namespace SFA.DAS.ApplyService.Configuration
                 throw;
             }
                 
-            _sessionService.Set("ApplyConfig", webConfig);
+            _applyConfig = webConfig;
 
             return webConfig;
         }

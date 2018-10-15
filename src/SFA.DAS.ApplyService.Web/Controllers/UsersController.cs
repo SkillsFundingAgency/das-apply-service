@@ -1,13 +1,29 @@
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using SFA.DAS.ApplyService.Session;
+using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.ViewModels;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
     public class UsersController : Controller
     {
+        private readonly UsersApiClient _usersApiClient;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ISessionService _sessionService;
+
+        public UsersController(UsersApiClient usersApiClient, IHttpContextAccessor httpContextAccessor, ISessionService sessionService)
+        {
+            _usersApiClient = usersApiClient;
+            _httpContextAccessor = httpContextAccessor;
+            _sessionService = sessionService;
+        }
+        
         [HttpGet]
         public async Task<IActionResult> CreateAccount()
         {
@@ -18,29 +34,34 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAccount(CreateAccountViewModel vm)
         {
-            if (ModelState.IsValid)
-            {
-                // Call API to create account and invite user to dfe SignIn.
-                return RedirectToAction("InviteSent");
-            }
-            return View(vm);
+            if (!ModelState.IsValid) return View(vm);
+            
+            await _usersApiClient.InviteUser(vm);
+
+            TempData["NewAccount"] = JsonConvert.SerializeObject(vm);
+            
+            return RedirectToAction("InviteSent");
         }
 
         [HttpGet]
         public IActionResult SignIn()
         {
-            var a = 1;
             return Challenge(new AuthenticationProperties() {RedirectUri = Url.Action("PostSignIn", "Users")},
                 OpenIdConnectDefaults.AuthenticationScheme);
         }
 
         public IActionResult InviteSent()
         {
-            return View();
+            var email =  JsonConvert.DeserializeObject<CreateAccountViewModel>(TempData["NewAccount"].ToString());
+            return View(email);
         }
 
-        public IActionResult PostSignIn()
+        public async Task<IActionResult> PostSignIn()
         {
+            var user = await _usersApiClient.GetUserBySignInId(_httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
+         
+            _sessionService.Set("LoggedInUser", $"{user.GivenNames} {user.FamilyName}");
+            
             return RedirectToAction("Index", "Application");
         }
     }

@@ -1,19 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
+
     <PropertyGroup>
         <TargetFramework>netcoreapp2.1</TargetFramework>
-        <OutputType>Library</OutputType>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AngleSharp">
-          <Version>0.9.10</Version>
-        </PackageReference>
-        <PackageReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="FluentAssertions">
             <Version>5.4.2</Version>
-        </PackageReference>
-        <PackageReference Include="Microsoft.AspNetCore.TestHost">
-          <Version>2.1.1</Version>
         </PackageReference>
         <PackageReference Include="Microsoft.NET.Test.Sdk">
             <Version>15.9.0</Version>
@@ -27,11 +20,13 @@
         <PackageReference Include="NUnit3TestAdapter">
             <Version>3.10.0</Version>
         </PackageReference>
+
+        <PackageReference Include="Microsoft.AspNetCore.App" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\SFA.DAS.ApplyService.IntegrationTestHelpers\SFA.DAS.ApplyService.IntegrationTestHelpers.csproj" />
-      <ProjectReference Include="..\SFA.DAS.ApplyService.Web\SFA.DAS.ApplyService.Web.csproj" />
+      <ProjectReference Include="..\SFA.DAS.ApplyService.InternalApi\SFA.DAS.ApplyService.InternalApi.csproj" />
     </ItemGroup>
+
     
 </Project>
