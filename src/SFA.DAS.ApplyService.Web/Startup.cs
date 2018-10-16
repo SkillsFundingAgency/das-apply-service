@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
@@ -45,9 +46,10 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IDfeSignInService, DfeSignInService>();
             
             ConfigureAuth(services);
-            
+            services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
             services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
             
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             

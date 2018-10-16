@@ -1,3 +1,4 @@
+@model SFA.DAS.ApplyService.Web.ViewModels.CreateAccountViewModel
 @{
 ViewBag.Title = "title";
 }
@@ -8,28 +9,48 @@ ViewBag.Title = "title";
 
         <form id="account-setup" asp-action="CreateAccount" asp-controller="Users" method="post" novalidate="">
 
-          <div class="govuk-form-group">
+          @if (!ViewData.ModelState.IsValid)
+          {
+            <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+              <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                There's a problem
+              </h2>
+              <ul class="error-summary-list">
+                <li><a sfa-validation-for="GivenName"></a></li>
+                <li><a sfa-validation-for="FamilyName"></a></li>
+                <li><a sfa-validation-for="Email"></a></li>
+              </ul>
+            </div>
+          }
+          
+          <div class="govuk-form-group" sfa-validation-for="GivenName" sfa-validationerror-class="form-group-error">
             <label class="govuk-label govuk-label--m" for="GivenName">
               First name
+              <span class="error-message" asp-validation-for="GivenName"></span>
             </label>
-            <input class="govuk-input govuk-!-width-three-quarters" id="GivenName" name="GivenName" type="text" aria-describedby="first-name-hint">
+            <input class="govuk-input govuk-!-width-three-quarters" id="GivenName" name="GivenName" type="text" asp-for="GivenName"
+                   aria-describedby="first-name-hint" sfa-validation-for="GivenName" sfa-validationerror-class="form-control-error"/>
           </div>
 
-          <div class="govuk-form-group">
+          <div class="govuk-form-group" sfa-validation-for="FamilyName" sfa-validationerror-class="form-group-error">
             <label class="govuk-label govuk-label--m" for="FamilyName">
               Last name
+              <span class="error-message" asp-validation-for="FamilyName"></span>
             </label>
-            <input class="govuk-input govuk-!-width-three-quarters" id="FamilyName" name="FamilyName" type="text" aria-describedby="last-name-hint"/>
+            <input class="govuk-input govuk-!-width-three-quarters" id="FamilyName" name="FamilyName" type="text"  asp-for="FamilyName"
+                   aria-describedby="last-name-hint" sfa-validation-for="FamilyName" sfa-validationerror-class="form-control-error"/>
           </div>
 
-          <div class="govuk-form-group">
+          <div class="govuk-form-group" sfa-validation-for="Email" sfa-validationerror-class="form-group-error">
             <label class="govuk-label govuk-label--m" for="Email">
               Email
+              <span class="error-message" asp-validation-for="Email"></span>
             </label>
             <span id="email-hint" class="govuk-hint">
               We'll send you a security code by email
             </span>
-            <input class="govuk-input govuk-!-width-three-quarters" id="Email" name="Email" type="text" aria-describedby="email-hint">
+            <input class="govuk-input govuk-!-width-three-quarters" id="Email" name="Email" type="text"  asp-for="Email"
+                   aria-describedby="email-hint" sfa-validation-for="FamilyName" sfa-validationerror-class="form-control-error"/>
           </div>       
 
           <button type="submit" class="govuk-button">
