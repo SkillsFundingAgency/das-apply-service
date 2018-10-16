@@ -40,11 +40,19 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return View(vm);
             }
             
-            await _usersApiClient.InviteUser(vm);
+            var inviteSuccess = await _usersApiClient.InviteUser(vm);
 
             TempData["NewAccount"] = JsonConvert.SerializeObject(vm);
+
+            if (inviteSuccess)
+            {
+                return RedirectToAction("InviteSent");    
+            }
+            else
+            {
+                return RedirectToAction("Error", "Home");
+            }
             
-            return RedirectToAction("InviteSent");
         }
 
         [HttpGet]

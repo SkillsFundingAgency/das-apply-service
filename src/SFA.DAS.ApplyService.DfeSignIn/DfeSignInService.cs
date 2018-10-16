@@ -4,6 +4,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application;
@@ -14,13 +16,15 @@ namespace SFA.DAS.ApplyService.DfeSignIn
     public class DfeSignInService : IDfeSignInService
     {
         private readonly IConfigurationService _configurationService;
+        private readonly ILogger<DfeSignInService> _logger;
 
-        public DfeSignInService(IConfigurationService configurationService)
+        public DfeSignInService(IConfigurationService configurationService, ILogger<DfeSignInService> logger)
         {
             _configurationService = configurationService;
+            _logger = logger;
         }
         
-        public async void InviteUser(string email, string givenName, string familyName, Guid userId)
+        public async Task<InviteUserResponse> InviteUser(string email, string givenName, string familyName, Guid userId)
         {
             var config = await _configurationService.GetConfig();
            
@@ -49,8 +53,16 @@ namespace SFA.DAS.ApplyService.DfeSignIn
                 var dfeResponse = await httpClient.PostAsync(config.DfeSignIn.ApiUri,
                     new StringContent(inviteJson, Encoding.UTF8, "application/json")
                 );
-                var status = dfeResponse.StatusCode;
-                var content = await dfeResponse.Content.ReadAsStringAsync(); 
+
+                if (!dfeResponse.IsSuccessStatusCode)
+                {
+                    var content = await dfeResponse.Content.ReadAsStringAsync();
+                    _logger.LogError("Error from DfE Invitation Service. Status Code: {0}. Message: {0}",
+                        (int) dfeResponse.StatusCode, content);
+                    return new InviteUserResponse() {IsSuccess = false};
+                }
+                
+               return new InviteUserResponse();
             }
         }
     }

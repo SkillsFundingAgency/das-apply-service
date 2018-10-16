@@ -14,9 +14,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             _httpClient = httpClient;
         }
 
-        public async Task InviteUser(CreateAccountViewModel vm)
+        public async Task<bool> InviteUser(CreateAccountViewModel vm)
         {
-            await _httpClient.PostAsJsonAsync("/Account/", vm);
+            var result = await _httpClient.PostAsJsonAsync("/Account/", vm);
+            return result.IsSuccessStatusCode;
         }
 
         public async Task<Contact> GetUserBySignInId(string signInId)

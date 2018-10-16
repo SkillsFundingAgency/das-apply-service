@@ -2,7 +2,7 @@ using MediatR;
 
 namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
 {
-    public class CreateAccountRequest : IRequest
+    public class CreateAccountRequest : IRequest<bool>
     {
         public CreateAccountRequest(string email, string givenName, string familyName)
         {

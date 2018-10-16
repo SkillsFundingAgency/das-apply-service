@@ -4,7 +4,7 @@ using MediatR;
 
 namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
 {
-    public class CreateAccountHandler : IRequestHandler<CreateAccountRequest>
+    public class CreateAccountHandler : IRequestHandler<CreateAccountRequest, bool>
     {
         private readonly IContactRepository _contactRepository;
         private readonly IDfeSignInService _dfeSignInService;
@@ -18,13 +18,17 @@ namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
             _emailServiceObject = emailServiceObject;
         }
 
-        public async Task<Unit> Handle(CreateAccountRequest request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(CreateAccountRequest request, CancellationToken cancellationToken)
         {
             var existingContact = await _contactRepository.GetContact(request.Email);
             if (existingContact == null)
             {
                 var newContact = await _contactRepository.CreateContact(request.Email, request.GivenName, request.FamilyName, "DfESignIn");
-                _dfeSignInService.InviteUser(request.Email, request.GivenName, request.FamilyName, newContact.Id);
+                var invitationResult = await _dfeSignInService.InviteUser(request.Email, request.GivenName, request.FamilyName, newContact.Id);
+                if (!invitationResult.IsSuccess)
+                {
+                    return false;
+                }
             }
             else
             {
@@ -32,7 +36,7 @@ namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
                     new {GivenName = existingContact.GivenNames, FamilyName = existingContact.FamilyName});
             }
             
-            return Unit.Value;
+            return true;
         }
     }
 }

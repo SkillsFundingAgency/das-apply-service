@@ -22,7 +22,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             var accountController = new AccountController(mediator.Object);
 
-            var result = await accountController.InviteUser(new User()
+            var result = await accountController.InviteUser(new NewContact()
                 {Email = "email@email.com", FamilyName = "Jones", GivenName = "Fred"});
 
             result.Should().BeOfType<OkResult>();
