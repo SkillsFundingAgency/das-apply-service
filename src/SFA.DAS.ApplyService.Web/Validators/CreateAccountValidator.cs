@@ -10,8 +10,8 @@ namespace SFA.DAS.ApplyService.Web.Validators
         {
             RuleFor(vm => vm.Email).EmailAddress().WithMessage(localizer["Email must be valid"])
                 .NotEmpty().WithMessage(localizer["Email must not be empty"]);
-            RuleFor(vm => vm.FamilyName).NotEmpty().WithMessage(localizer["Last Name must not be empty"]);
-            RuleFor(vm => vm.GivenName).NotEmpty().WithMessage(localizer["First Name must not be empty"]);
+            RuleFor(vm => vm.FamilyName).NotEmpty().WithMessage(localizer["Last name must not be empty"]);
+            RuleFor(vm => vm.GivenName).NotEmpty().WithMessage(localizer["First name must not be empty"]);
         }
     }
 }

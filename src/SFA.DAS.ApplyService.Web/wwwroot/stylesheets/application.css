@@ -1,1 +1,18 @@
 /* Application styles */
+
+/* Remove extra spacing when multiple empty error summary list items */
+/* .govuk-error-summary__list > li > a:empty {
+  margin-top: -5px;
+} */
+
+.esfa-button-link {
+  display: inline-block;
+  padding: 0.526315em 0 0.263157em 0;
+  line-height: 1.25;
+}
+
+@media (min-width: 40.0625em) {
+  .esfa-button-link {
+    padding-left: 0.526315em;
+  }
+}
