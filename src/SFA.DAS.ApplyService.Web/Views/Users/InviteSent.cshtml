@@ -4,20 +4,22 @@
 ViewBag.Title = "title";
 }
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">Confirm your identity</h1>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l">Confirm your identity</h1>
 
-        <p>We've sent an invite to @Model.Email, use the link and code to continue sign up.</p>
-        
-        <h2 class="govuk-heading-s">Not received an email?</h2>
-        <p class="govuk-body">
-        </p>
-        <form asp-method="CreateAccount" asp-controller="Users"  method="post" novalidate="">
-            @Html.HiddenFor(m => m.Email)
-            @Html.HiddenFor(m => m.GivenName)
-            @Html.HiddenFor(m => m.FamilyName)
-            <button type="submit" class="govuk-button govuk-link govuk-button--looks-like-link">Request another email</button>
-        </form>
+            <p>We've sent an invite to @Model.Email, use the link and code to continue sign up.</p>
+            
+            <h2 class="govuk-heading-s">Not received an email?</h2>
+            <p class="govuk-body">
+            </p>
+            <form asp-method="CreateAccount" asp-controller="Users"  method="post" novalidate="">
+                @Html.HiddenFor(m => m.Email)
+                @Html.HiddenFor(m => m.GivenName)
+                @Html.HiddenFor(m => m.FamilyName)
+                <button type="submit" class="govuk-button govuk-link govuk-button--looks-like-link">Request another email</button>
+            </form>
+        </div>
     </div>
-</div>
+</main>

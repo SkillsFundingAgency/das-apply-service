@@ -1,12 +1,12 @@
 using FluentValidation;
 using Microsoft.Extensions.Localization;
-using SFA.DAS.ApplyService.InternalApi.Types;
+using SFA.DAS.ApplyService.Web.ViewModels;
 
-namespace SFA.DAS.ApplyService.InternalApi.Validators.Account
+namespace SFA.DAS.ApplyService.Web.Validators
 {
-    public class NewContactValidator : AbstractValidator<NewContact>
+    public class CreateAccountValidator : AbstractValidator<CreateAccountViewModel>
     {
-        public NewContactValidator(IStringLocalizer<NewContact> localizer)
+        public CreateAccountValidator(IStringLocalizer<CreateAccountViewModel> localizer)
         {
             RuleFor(vm => vm.Email).EmailAddress().WithMessage(localizer["Email must be valid"])
                 .NotEmpty().WithMessage(localizer["Email must not be empty"]);
