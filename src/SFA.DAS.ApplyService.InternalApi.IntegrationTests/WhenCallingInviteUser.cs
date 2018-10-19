@@ -31,6 +31,8 @@ namespace SFA.DAS.ApplyService.InternalApi.IntegrationTests
                 .ReturnsAsync(new Contact() {Id = Guid.NewGuid()});
                 
             var dfeSignInService = new Mock<IDfeSignInService>();
+            dfeSignInService.Setup(s => s.InviteUser("email@email.com", "Fred", "Jones", It.IsAny<Guid>()))
+                .ReturnsAsync(new InviteUserResponse() {IsSuccess = true});
             var emailService = new Mock<IEmailService>();
             
             var factory = new WebApplicationFactory<Startup>();

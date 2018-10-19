@@ -12,7 +12,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     public static class AuthorizationStartupExtensions
     {
-        public static void AddDfeSignInAuthorization(this IServiceCollection services, IApplyConfig applyConfig)
+        public static void AddDfeSignInAuthorization(this IServiceCollection services)
         {
             services.AddAuthentication(options =>
                 {

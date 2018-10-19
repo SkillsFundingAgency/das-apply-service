@@ -1,13 +1,12 @@
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.ApplyService.IntegrationTestHelpers;
 
 namespace SFA.DAS.ApplyService.Web.IntegrationTests.Infrastructure
 {
-    public class BypassAuthenticationStartup : Startup
+    public class FakeStartup : Startup
     {
-        public BypassAuthenticationStartup(IConfiguration configuration) : base(configuration)
+        public FakeStartup(IConfiguration configuration) : base(configuration)
         {
         }
 
@@ -18,6 +17,15 @@ namespace SFA.DAS.ApplyService.Web.IntegrationTests.Infrastructure
                 options.DefaultAuthenticateScheme = "Test Scheme";
                 options.DefaultChallengeScheme = "Test Scheme";
             }).AddTestAuth(o => { });
+        }
+
+        protected override void ConfigureMvc(IServiceCollection services)
+        {
+            services.AddMvc(options =>
+            {
+                options.Filters.Clear();
+                options.Filters.Add<NullValidationFilter>();
+            });
         }
     }
 }

@@ -33,6 +33,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             return Ok();
         }
+        
+        [HttpPost("/Account/Validate")]
+        [PerformValidation]
+        public async Task<ActionResult> InviteUserValidate([FromBody]NewContact newContact)
+        {
+            return Ok();
+        }
 
         [HttpGet("/Account/{signInId:Guid}")]
         public async Task<ActionResult<Contact>> GetBySignInId(Guid signInId)

@@ -1,7 +1,10 @@
+using System.Runtime.InteropServices;
+
 namespace SFA.DAS.ApplyService.Configuration
 {
     public interface IApplyConfig
     {
+        InternalApiConfig InternalApi { get; set; }
         string SignInPage { get; set; }
         string SessionRedisConnectionString { get; set; }
         DfeSignInConfig DfeSignIn { get; set; }
@@ -9,8 +12,8 @@ namespace SFA.DAS.ApplyService.Configuration
         EmailConfig Email { get; set; }
     }
 
-    public class EmailConfig
+    public class InternalApiConfig
     {
-        public string SendGridApiKey { get; set; }
+        public string Uri { get; set; }
     }
 }

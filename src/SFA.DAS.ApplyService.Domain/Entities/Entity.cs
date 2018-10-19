@@ -8,5 +8,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string QnAData { get; set; }
         public DateTime WithdrawnAt { get; set; }
         public string WithdrawnBy { get; set; }
+        public string ApplicationStatus { get; set; }
     }
 }

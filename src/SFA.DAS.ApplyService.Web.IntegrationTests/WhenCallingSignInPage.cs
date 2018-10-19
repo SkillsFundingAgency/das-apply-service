@@ -3,11 +3,13 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Web.IntegrationTests.Infrastructure;
 
 namespace SFA.DAS.ApplyService.Web.IntegrationTests
 {
@@ -24,11 +26,13 @@ namespace SFA.DAS.ApplyService.Web.IntegrationTests
             configurationService.Setup(c => c.GetConfig())
                 .ReturnsAsync(new ApplyConfig() {SessionRedisConnectionString = "HelloDave"});
 
-
-            var builder = new WebHostBuilder().UseStartup<Startup>();
+            var httpContextAccessor = new Mock<IHttpContextAccessor>();
+            
+            var builder = new WebHostBuilder().UseStartup<FakeStartup>();
             builder.ConfigureServices(services =>
             {
-                services.AddSingleton<IConfigurationService>(p => configurationService.Object);
+                services.AddSingleton(p => configurationService.Object);
+                services.AddTransient(p => httpContextAccessor.Object);
             });
 
             var testServer = new TestServer(builder);

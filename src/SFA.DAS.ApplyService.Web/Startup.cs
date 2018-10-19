@@ -18,6 +18,7 @@ using SFA.DAS.ApplyService.Application;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.Session;
+using SFA.DAS.ApplyService.Web.Controllers;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 
 namespace SFA.DAS.ApplyService.Web
@@ -25,13 +26,10 @@ namespace SFA.DAS.ApplyService.Web
     public class Startup
     {
         private readonly IConfiguration _configuration;
-        private readonly IHostingEnvironment _hostingEnvironment;
-        private IApplyConfig _applyConfig;
 
-        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
+        public Startup(IConfiguration configuration)
         {
             _configuration = configuration;
-            _hostingEnvironment = hostingEnvironment;
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -47,18 +45,23 @@ namespace SFA.DAS.ApplyService.Web
             
             ConfigureAuth(services);
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
-            services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
-            
+            ConfigureMvc(services);
+
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             
             services.AddDistributedMemoryCache();
         }
 
+        protected virtual void ConfigureMvc(IServiceCollection services)
+        {
+            services.AddMvc(options => { options.Filters.Add<PerformValidationFilter>(); })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            //.AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
+        }
+
         protected virtual void ConfigureAuth(IServiceCollection services)
         {
-            services.AddDfeSignInAuthorization(_applyConfig);
+            services.AddDfeSignInAuthorization();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

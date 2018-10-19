@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.ApplyService.Application;
+using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Configuration;
@@ -84,12 +85,6 @@ namespace SFA.DAS.ApplyService.InternalApi
 
                 config.For<IHttpContextAccessor>().Use<HttpContextAccessor>();
                 
-//                config.For<ISessionService>().Use<SessionService>().Ctor<string>()
-//                    .Is(_configuration["EnvironmentName"]);
-//                
-//                services.AddSingleton<ISessionService>(p =>
-//                    new SessionService(p.GetService<IHttpContextAccessor>(), _configuration["EnvironmentName"]));
-
                 config.For<IConfigurationService>()
                     .Use<ConfigurationService>().Singleton()
                     .Ctor<string>("environment").Is(_configuration["EnvironmentName"])
@@ -97,11 +92,8 @@ namespace SFA.DAS.ApplyService.InternalApi
                     .Ctor<string>("version").Is("1.0")
                     .Ctor<string>("serviceName").Is("SFA.DAS.ApplyService");
                 
-//                services.AddSingleton<IConfigurationService>(p => new ConfigurationService(p.GetService<ISessionService>(),
-//                    p.GetService<IHostingEnvironment>(), _configuration["EnvironmentName"],
-//                    _configuration["ConfigurationStorageConnectionString"], "1.0", "SFA.DAS.ApplyService"));
-
                 config.For<IContactRepository>().Use<ContactRepository>();
+                config.For<IApplyRepository>().Use<ApplyRepository>();
                 config.For<IDfeSignInService>().Use<DfeSignInService>();
                 config.For<IEmailService>().Use<EmailService.EmailService>();
 

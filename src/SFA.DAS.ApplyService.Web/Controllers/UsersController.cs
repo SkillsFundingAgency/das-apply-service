@@ -26,13 +26,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
         
         [HttpGet]
-        public async Task<IActionResult> CreateAccount()
+        public IActionResult CreateAccount()
         {
             var vm = new CreateAccountViewModel();
             return View(vm);
         }
         
         [HttpPost]
+        [PerformValidation(ValidationEndpoint = "/Account/Validate")] 
         public async Task<IActionResult> CreateAccount(CreateAccountViewModel vm)
         {
             if (!ModelState.IsValid)
@@ -44,14 +45,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             TempData["NewAccount"] = JsonConvert.SerializeObject(vm);
 
-            if (inviteSuccess)
-            {
-                return RedirectToAction("InviteSent");    
-            }
-            else
-            {
-                return RedirectToAction("Error", "Home");
-            }
+            return inviteSuccess ? RedirectToAction("InviteSent") : RedirectToAction("Error", "Home");
             
         }
 
@@ -65,8 +59,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public IActionResult SignOut()
         {
-            //var callbackUrl = Url.Action(nameof(SignedOut), "Account", values: null, protocol: Request.Scheme);
-
             foreach (var cookie in Request.Cookies.Keys)
             {
                 Response.Cookies.Delete(cookie);
@@ -78,8 +70,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public IActionResult InviteSent()
         {
-            var email =  JsonConvert.DeserializeObject<CreateAccountViewModel>(TempData["NewAccount"].ToString());
-            return View(email);
+            CreateAccountViewModel viewModel;
+            if (TempData["NewAccount"] is null)
+            {
+                viewModel = new CreateAccountViewModel() {Email = "[email placeholder]"};
+            }
+            else
+            {
+                viewModel =  JsonConvert.DeserializeObject<CreateAccountViewModel>(TempData["NewAccount"].ToString());    
+            }
+            
+            return View(viewModel);
         }
 
         public async Task<IActionResult> PostSignIn()

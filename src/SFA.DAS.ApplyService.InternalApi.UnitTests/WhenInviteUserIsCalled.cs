@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Types;
 
@@ -18,7 +19,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task ThenOkIsReturned()
         {
             var mediator = new Mock<IMediator>();
-            mediator.Setup(m => m.Send(It.IsAny<IRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Unit.Value);
+            mediator.Setup(m => m.Send(It.IsAny<CreateAccountRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
             var accountController = new AccountController(mediator.Object);
 

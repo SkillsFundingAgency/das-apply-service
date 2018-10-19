@@ -9,6 +9,10 @@ using NUnit.Framework;
 using SFA.DAS.ApplyService.Configuration;
 using AngleSharp.Parser.Html;
 using FluentAssertions;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Configuration;
+using SFA.DAS.ApplyService.Web.Infrastructure;
+using SFA.DAS.ApplyService.Web.IntegrationTests.Infrastructure;
 
 namespace SFA.DAS.ApplyService.Web.IntegrationTests
 {
@@ -25,16 +29,19 @@ namespace SFA.DAS.ApplyService.Web.IntegrationTests
             configurationService.Setup(c => c.GetConfig())
                 .ReturnsAsync(new ApplyConfig() {SessionRedisConnectionString = "HelloDave"});
             
-            var builder = new WebHostBuilder().UseStartup<Startup>();
+            var builder = new WebHostBuilder().UseStartup<FakeStartup>();
             builder.ConfigureServices(services =>
             {
-                services.AddSingleton<IConfigurationService>(p => configurationService.Object);
+                services.AddSingleton(p => configurationService.Object);
             });
 
             var testServer = new TestServer(builder);
             
             _client = testServer.CreateClient();
         }
+        
+        
+        
         
         [Test]
         public async Task ThenSuccessIsReturned()
