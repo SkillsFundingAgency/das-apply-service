@@ -3,7 +3,7 @@
 ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Get set up as a user";
 }
 
-<a href="/" class="govuk-back-link">Back</a>
+<a class="govuk-back-link" asp-controller="Home" asp-action="Index">Back</a>
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
