@@ -25,6 +25,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return View();
         }
 
+        [HttpGet("/Application/{applicationId}/Sequences/{sequenceId}")]
+        public async Task<IActionResult> Sequence(string applicationId, string sequenceId)
+        {
+            var sequence = await _apiClient.GetSequence(Guid.Parse(applicationId), sequenceId,
+                Guid.Parse(User.FindFirstValue("UserId")));
+            
+            
+        }
+
         [HttpGet("/Application/{applicationId}/Pages/{pageId}")]
         public async Task<IActionResult> Page(string applicationId, string pageId)
         {
@@ -61,7 +70,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     }
                     
                     return pageNext.Action == "ReturnToSequence"
-                        ? RedirectToAction("Sequence", "Sequence", new {sequenceId = pageNext.ReturnId})
+                        ? RedirectToAction("Sequence", "Application", new {applicationId, sequenceId = pageNext.ReturnId})
                         : RedirectToAction("Index", "Sequence");
                 }
                 else

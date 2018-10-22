@@ -88,6 +88,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var user = await _usersApiClient.GetUserBySignInId(_httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
          
             _sessionService.Set("LoggedInUser", $"{user.GivenNames} {user.FamilyName}");
+
+            if (user.ApplyOrganisationId == null)
+            {
+                return RedirectToAction("Index", "OrganisationSearch");
+            }
             
             return RedirectToAction("Index", "Application");
         }
