@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.ApplyService.Application;
 using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Configuration;
@@ -79,6 +80,8 @@ namespace SFA.DAS.ApplyService.InternalApi
                     _.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<>)); // Handlers with no response
                     _.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>)); // Handlers with a response
                     _.ConnectImplementationsToTypesClosing(typeof(INotificationHandler<>));
+
+                    _.AddAllTypesOf<IValidator>();
                 });
                 
                 config.For<IMediator>().Use<Mediator>();

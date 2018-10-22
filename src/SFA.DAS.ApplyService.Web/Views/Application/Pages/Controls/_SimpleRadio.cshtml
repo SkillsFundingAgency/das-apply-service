@@ -1,0 +1,18 @@
+@model SFA.DAS.ApplyService.Web.Controllers.QuestionViewModel
+
+<div sfa-anyvalidationerror-class="after-error-summary">
+
+    <div class="form-group" sfa-validation-for-id="@Model.QuestionId" sfa-validationerror-class="form-group-error">
+        <div class="error-message-container" sfa-validation-for-id="@Model.QuestionId">
+            <span class="error-message" sfa-validation-for-id="@Model.QuestionId"></span>
+        </div>
+        @for (int i = 0; i < Model.Options.Count; i++)
+        {
+            var radioChecked = Model.Value == Model.Options[i].ToString() ? "checked" : "";
+            <div class="multiple-choice" data-target="show-option-input">
+                <input type="radio" id="@(Model.QuestionId + "_" + i)" name="@Model.QuestionId" value="@Model.Options[i]" @radioChecked/>
+                <label for="@(Model.QuestionId + "_" + i)">@Model.Options[i]</label>
+            </div>
+        }
+    </div>
+</div>

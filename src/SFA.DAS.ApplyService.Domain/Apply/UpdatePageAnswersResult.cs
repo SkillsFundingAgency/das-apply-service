@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.ApplyService.Domain.Apply
 {
-    public class UpdatePageResult
+    public class UpdatePageAnswersResult
     {
         public Page Page { get; set; }
         public bool ValidationPassed { get; set; }

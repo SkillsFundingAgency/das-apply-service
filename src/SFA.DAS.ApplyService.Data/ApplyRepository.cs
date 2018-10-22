@@ -1,11 +1,13 @@
 using System;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Data
 {
@@ -41,6 +43,34 @@ namespace SFA.DAS.ApplyService.Data
                     @"INSERT INTO Entities (ApplyingOrganisationId, QnAData, ApplicationStatus, CreatedAt, CreatedBy) 
                                                                 VALUES (@ApplyingOrganisationId, @QnAData, 'Active', GETUTCDATE(), @CreatedBy)",
                     new {ApplyingOrganisationId = applyingOrganisationId, QnAData = workflowJson, CreatedBy = username});
+            }
+        }
+
+        public async Task<Entity> GetEntity(Guid applicationId, Guid userId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var application =
+                    await connection.QueryFirstOrDefaultAsync<Entity>($@"SELECT e.* 
+                                        FROM Entities e
+                                            INNER JOIN Contacts c ON c.ApplyOrganisationID = e.ApplyingOrganisationId
+                                        WHERE e.Id = @applicationId AND c.Id = @userId",
+                        new {applicationId, userId});
+
+                return application;
+            }
+        }
+
+        public async Task SaveEntity(Entity entity, Guid applicationId, Guid userId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync("UPDATE Entities SET QnAData = @qnaData, UpdatedAt = GETUTCDATE(), UpdatedBy = @userId WHERE Id = @applicationId",new
+                {
+                    qnaData = entity.QnAData, 
+                    applicationId,
+                    userId
+                });
             }
         }
     }

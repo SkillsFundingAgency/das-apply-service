@@ -1,0 +1,32 @@
+@model SFA.DAS.ApplyService.Web.Controllers.PageViewModel
+
+@{
+    ViewBag.Title = "title";
+}
+
+<h1>@Model.Title</h1>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+            There's a problem
+        </h2>
+
+    </div>
+}
+
+<form method="post" asp-action="SaveAnswers" asp-controller="Application">
+    <ul>
+        @foreach (var question in Model.Questions)
+        {
+            <li>
+                <label>@question.Label</label>
+                <p>@question.Hint</p>
+                @Html.Partial($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
+            </li>
+        }
+    </ul>
+    <button type="submit">Submit</button><br/>
+    <a href="@Url.Action("Sequence", "Sequence", new {Model.SequenceId})">Return to summary</a>
+</form>

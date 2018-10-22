@@ -15,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using SFA.DAS.ApplyService.Application;
+using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.Session;
@@ -34,17 +35,19 @@ namespace SFA.DAS.ApplyService.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHttpClient<UsersApiClient>(c => { c.BaseAddress = new Uri("https://localhost:6000"); });
-            
+            AddApiClients(services);
+
             services.AddTransient<ISessionService>(p =>
                 new SessionService(p.GetService<IHttpContextAccessor>(), _configuration["EnvironmentName"]));
             services.AddSingleton<IConfigurationService>(p => new ConfigurationService(
                 p.GetService<IHostingEnvironment>(), _configuration["EnvironmentName"],
                 _configuration["ConfigurationStorageConnectionString"], "1.0", "SFA.DAS.ApplyService"));
             services.AddTransient<IDfeSignInService, DfeSignInService>();
-            
+
             ConfigureAuth(services);
+            
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
+            
             ConfigureMvc(services);
 
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
@@ -52,6 +55,12 @@ namespace SFA.DAS.ApplyService.Web
             services.AddDistributedMemoryCache();
         }
 
+        private static void AddApiClients(IServiceCollection services)
+        {
+            services.AddHttpClient<UsersApiClient>(c => { c.BaseAddress = new Uri("https://localhost:6000"); });
+            services.AddHttpClient<ApplicationApiClient>(c => { c.BaseAddress = new Uri("https://localhost:6000"); });
+        }
+        
         protected virtual void ConfigureMvc(IServiceCollection services)
         {
             services.AddMvc(options => { options.Filters.Add<PerformValidationFilter>(); })
