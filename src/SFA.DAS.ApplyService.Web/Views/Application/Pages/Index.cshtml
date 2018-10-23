@@ -28,5 +28,5 @@
         }
     </ul>
     <button type="submit">Submit</button><br/>
-    <a href="@Url.Action("Sequence", "Sequence", new {Model.SequenceId})">Return to summary</a>
+    <a href="@Url.Action("Sequence", "Application", new {Model.ApplicationId, Model.SequenceId})">Return to summary</a>
 </form>

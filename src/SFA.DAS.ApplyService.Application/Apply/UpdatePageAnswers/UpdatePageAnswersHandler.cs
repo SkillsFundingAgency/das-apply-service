@@ -26,7 +26,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
             var entity = await _applyRepository.GetEntity(request.ApplicationId, request.UserId);
             var workflow = entity.QnAWorkflow;
 
-            var sequence = workflow.Sequences.Single(w => w.Sections.Any(s => s.Pages.Any(p => p.PageId == request.PageId)));
+            var sequence = workflow.GetSequenceContainingPage(request.PageId);
             var section = sequence.Sections.Single(s => s.Pages.Any(p => p.PageId == request.PageId));
 
             if (!sequence.Active)
@@ -35,15 +35,30 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
             }
 
             var page = section.Pages.Single(p => p.PageId == request.PageId);
-            page.Answers = new List<Answer>();
 
+            PageOfAnswers pageAnswers;
+            if (!page.AllowMultipleAnswers)
+            {
+                page.PageOfAnswers = new List<PageOfAnswers>();// List<Answer>();
+                pageAnswers = new PageOfAnswers(){Answers = new List<Answer>()};
+                page.PageOfAnswers.Add(pageAnswers);
+            }
+            else
+            {
+                if (page.PageOfAnswers == null)
+                {
+                    page.PageOfAnswers = new List<PageOfAnswers>();
+                }
+                pageAnswers = new PageOfAnswers(){Answers = new List<Answer>()};
+                page.PageOfAnswers.Add(pageAnswers);
+            }
 
             var validationPassed = true;
             var validationErrors = new List<KeyValuePair<string, string>>();
 
             foreach (var question in page.Questions)
             {
-                validationPassed = ProcessAnswer(request, question, validationPassed, validationErrors, page);
+                validationPassed = ProcessAnswer(request, question, validationPassed, validationErrors, pageAnswers);
                 // IF Question is type ComplexRadio
                 // Need to get all answers from Input.Options.FurtherQuestions
 
@@ -53,7 +68,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                 {
                     foreach (var option in question.Input.Options)
                     {
-                        if (answer?.Value == option.Label.ToString())
+                        if (answer?.Value == option.Value.ToString())
                         {
                             if (option.FurtherQuestions != null)
                             {
@@ -62,7 +77,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                                     var fq = JsonConvert.DeserializeObject<Question>(furtherQuestion.ToString());
 
                                     validationPassed = ProcessAnswer(request, fq, validationPassed, validationErrors,
-                                        page);
+                                        pageAnswers);
                                 }
                             }
                         }
@@ -104,7 +119,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
         
         private bool ProcessAnswer(UpdatePageAnswersRequest request, Question question, bool validationPassed,
             List<KeyValuePair<string, string>> validationErrors,
-            Page page)
+            PageOfAnswers pageAnswers)
         {
             var answer = request.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
 
@@ -126,7 +141,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                     }
                 }
 
-                page.Answers.Add(answer);
+                pageAnswers.Answers.Add(answer);
             }
 
             return validationPassed;
@@ -143,7 +158,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
             {
                 if (nextSequence.Condition != null)
                 {
-                    var answers = sequence.Sections.SelectMany(s => s.Pages).SelectMany(p => p.Answers).ToList();
+                    var answers = sequence.Sections.SelectMany(s => s.Pages).SelectMany(p => p.PageOfAnswers[0].Answers).ToList();
                     if (answers.Any(a =>
                         a.QuestionId == nextSequence.Condition.QuestionId &&
                         a.Value == nextSequence.Condition.MustEqual))

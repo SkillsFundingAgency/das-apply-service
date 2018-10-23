@@ -1,0 +1,27 @@
+@model List<SFA.DAS.ApplyService.Web.Controllers.SequenceViewModel>
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h1>Application Overview</h1>
+
+<ul>
+
+@foreach (var sequence in Model)
+{
+    <li>
+        @if (sequence.Active)
+        {
+            <h2><a href="@Url.Action("Sequence", "Application", new {sequence.ApplicationId, sequence.SequenceId})">@sequence.LinkTitle</a></h2>   
+        }
+        else
+        {
+            <h2>@sequence.LinkTitle</h2>
+            <button class="btn btn-block" disabled="disabled">Can't start yet</button>
+        }
+        
+    </li>
+}
+</ul>

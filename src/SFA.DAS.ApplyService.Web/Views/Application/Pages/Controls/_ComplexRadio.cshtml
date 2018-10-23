@@ -21,7 +21,7 @@
                     {
                         <div class="form-group-compound">
                             <label class="form-label" for="@Model.Options[i].FurtherQuestions[furtherQuestionIndex].QuestionId">@Model.Options[i].FurtherQuestions[furtherQuestionIndex].Label</label>
-                            @HtmlHelperPartialExtensions.Partial(Html, $"~/Views/Apply/Pages/_{Model.Options[i].FurtherQuestions[furtherQuestionIndex].Input.Type}.cshtml", Model.Options[i].FurtherQuestions[furtherQuestionIndex])
+                            @HtmlHelperPartialExtensions.Partial(Html, $"~/Views/Application/Pages/Controls/_{Model.Options[i].FurtherQuestions[furtherQuestionIndex].Input.Type}.cshtml", Model.Options[i].FurtherQuestions[furtherQuestionIndex])
                         </div>
                     }
                 </div>

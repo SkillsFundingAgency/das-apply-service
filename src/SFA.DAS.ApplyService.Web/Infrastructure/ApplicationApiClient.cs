@@ -16,17 +16,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         {
             _httpClient = httpClient;
         }
-
-//        public async Task<bool> InviteUser(CreateAccountViewModel vm)
-//        {
-//            var result = await _httpClient.PostAsJsonAsync("/Account/", vm);
-//            return result.IsSuccessStatusCode;
-//        }
-
-//        public async Task<Sequence> GetSequence(string signInId)
-//        {
-//            return await (await _httpClient.GetAsync($"/Account/{signInId}")).Content.ReadAsAsync<Contact>();
-//        }
+        
         public async Task<Page> GetPage(Guid applicationId, string pageId, Guid userId)
         {
             return await (await _httpClient.GetAsync($"/Application/{applicationId}/User/{userId}/Pages/{pageId}")).Content
@@ -38,6 +28,18 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await (await _httpClient.PostAsJsonAsync(
                     $"/Application/{applicationId}/User/{userId}/Pages/{pageId}", answers)).Content
                 .ReadAsAsync<UpdatePageAnswersResult>();
+        }
+
+        public async Task<Sequence> GetSequence(Guid applicationId, string sequenceId, Guid userId)
+        {
+            return await (await _httpClient.GetAsync($"/Application/{applicationId}/User/{userId}/Sequences/{sequenceId}")).Content
+                .ReadAsAsync<Sequence>();
+        }
+
+        public async Task<List<Sequence>> GetSequences(Guid applicationId, Guid userId)
+        {
+            return await (await _httpClient.GetAsync($"/Application/{applicationId}/User/{userId}/Sequences")).Content
+                .ReadAsAsync<List<Sequence>>();
         }
     }
 }

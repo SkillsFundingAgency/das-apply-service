@@ -1,0 +1,64 @@
+@model SFA.DAS.ApplyService.Web.Controllers.SequenceViewModel
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<a href="@Url.Action("Sequences", "Application")" class="govuk-back-link">Back to application overview</a>
+
+@if (Model == null)
+{
+    <h1 class="heading-large">Sequence not active</h1>
+}
+else
+{
+    <h1 class="heading-large">@Model.Title</h1>
+
+    foreach (var sect in Model.Sections)
+    {
+        <h2 class="heading-medium">@sect.Title</h2>
+        <br/>
+        <ul>
+            @foreach (var pg in sect.Pages)
+            {
+                <li>
+                    <dt>@pg.LinkTitle</dt>
+                    @if (pg.Complete)
+                    {
+                        <dd>
+                            <ul>
+                                @foreach (var pageanswer in pg.PageOfAnswers)
+                                {
+                                    foreach (var answer in pageanswer.Answers)
+                                    {
+                                        <li>@answer?.Value</li>   
+                                    }
+                                }
+                            </ul>
+                        </dd>
+                        <dd>
+                            <a href="@Url.Action("Page", "Application", new {pageId = pg.PageId, applicationId = Model.ApplicationId})">Change</a>
+                        </dd>
+                    }
+                    else
+                    {
+                        if (pg.Active)
+                        {
+                            <dd>
+                                <a href="@Url.Action("Page", "Application", new {pageId = pg.PageId, applicationId = Model.ApplicationId})">Answer required</a>
+                            </dd>
+                        }
+                        else
+                        {
+                            <dd>
+                                Page not yet active
+                            </dd>                            
+                        }
+                    }
+                </li>
+                <br/>
+            }
+        </ul>
+    }
+}

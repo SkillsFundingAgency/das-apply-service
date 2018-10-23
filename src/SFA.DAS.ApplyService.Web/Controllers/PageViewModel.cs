@@ -1,19 +1,25 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
     public class PageViewModel
     {
-        public PageViewModel(Page page)
+        public Guid ApplicationId { get; }
+
+        public PageViewModel(Page page, Guid applicationId)
         {
+            ApplicationId = applicationId;
             Title = page.Title;
+            LinkTitle = page.LinkTitle;
             PageId = page.PageId;
             SequenceId = page.SequenceId;
 
             var questions = page.Questions;
-            var answers = page.Answers;
+            var answers = page.PageOfAnswers.FirstOrDefault()?.Answers;
 
             Questions = new List<QuestionViewModel>();
 
@@ -40,7 +46,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     }
                 }
             }
-        } 
+        }
+
+        public string LinkTitle { get; set; }
+
         public string PageId { get; set; }
         public string Title { get; set; }
         

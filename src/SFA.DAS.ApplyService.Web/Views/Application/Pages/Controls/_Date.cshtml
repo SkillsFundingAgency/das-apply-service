@@ -1,0 +1,8 @@
+@model dynamic 
+
+<label>Day</label>
+<input sfa-validation-for-id="@Model.QuestionId" sfa-validationerror-class="form-control-error" type="text" id="@Model.QuestionId" name="@Model.QuestionId" value="@Model.Value?.ToString().Split(',')[0]"/>
+<label>Month</label>
+<input sfa-validation-for-id="@Model.QuestionId" sfa-validationerror-class="form-control-error" type="text" id="@Model.QuestionId" name="@Model.QuestionId" value="@Model.Value?.ToString().Split(',')[1]"/>
+<label>Year</label>
+<input sfa-validation-for-id="@Model.QuestionId" sfa-validationerror-class="form-control-error" type="text" id="@Model.QuestionId" name="@Model.QuestionId" value="@Model.Value?.ToString().Split(',')[2]"/>
