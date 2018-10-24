@@ -57,8 +57,8 @@ namespace SFA.DAS.ApplyService.Web
 
         private static void AddApiClients(IServiceCollection services)
         {
-            services.AddHttpClient<UsersApiClient>(c => { c.BaseAddress = new Uri("https://localhost:6000"); });
-            services.AddHttpClient<ApplicationApiClient>(c => { c.BaseAddress = new Uri("https://localhost:6000"); });
+            services.AddHttpClient<UsersApiClient>(c => { c.BaseAddress = new Uri("http://localhost:5999"); });
+            services.AddHttpClient<ApplicationApiClient>(c => { c.BaseAddress = new Uri("http://localhost:5999"); });
         }
         
         protected virtual void ConfigureMvc(IServiceCollection services)
