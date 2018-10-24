@@ -35,8 +35,6 @@ namespace SFA.DAS.ApplyService.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            AddApiClients(services);
-
             services.AddTransient<ISessionService>(p =>
                 new SessionService(p.GetService<IHttpContextAccessor>(), _configuration["EnvironmentName"]));
             services.AddSingleton<IConfigurationService>(p => new ConfigurationService(
@@ -44,6 +42,8 @@ namespace SFA.DAS.ApplyService.Web
                 _configuration["ConfigurationStorageConnectionString"], "1.0", "SFA.DAS.ApplyService"));
             services.AddTransient<IDfeSignInService, DfeSignInService>();
 
+            AddApiClients(services, services.BuildServiceProvider());
+            
             ConfigureAuth(services);
             
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
@@ -55,10 +55,11 @@ namespace SFA.DAS.ApplyService.Web
             services.AddDistributedMemoryCache();
         }
 
-        private static void AddApiClients(IServiceCollection services)
+        private static async void AddApiClients(IServiceCollection services, IServiceProvider serviceProvider)
         {
-            services.AddHttpClient<UsersApiClient>(c => { c.BaseAddress = new Uri("http://localhost:5999"); });
-            services.AddHttpClient<ApplicationApiClient>(c => { c.BaseAddress = new Uri("http://localhost:5999"); });
+            var config = await serviceProvider.GetRequiredService<IConfigurationService>().GetConfig();
+            services.AddHttpClient<UsersApiClient>(c => { c.BaseAddress = new Uri(config.InternalApi.Uri); });
+            services.AddHttpClient<ApplicationApiClient>(c => { c.BaseAddress = new Uri(config.InternalApi.Uri); });
         }
         
         protected virtual void ConfigureMvc(IServiceCollection services)
