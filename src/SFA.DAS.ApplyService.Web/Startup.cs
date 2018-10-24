@@ -51,7 +51,7 @@ namespace SFA.DAS.ApplyService.Web
             _logger.LogInformation("Passed registering services");
             
             
-            AddApiClients(services, services.BuildServiceProvider());
+            AddApiClients(services, services.BuildServiceProvider(), _logger);
             
             _logger.LogInformation("Passed Api Clients");
             
@@ -76,9 +76,19 @@ namespace SFA.DAS.ApplyService.Web
             _logger.LogInformation("Passed Memory Cache");
         }
 
-        private static async void AddApiClients(IServiceCollection services, IServiceProvider serviceProvider)
+        private static async void AddApiClients(IServiceCollection services, IServiceProvider serviceProvider, ILogger logger)
         {
-            var config = await serviceProvider.GetRequiredService<IConfigurationService>().GetConfig();
+            IApplyConfig config;
+            try
+            {
+                config = await serviceProvider.GetRequiredService<IConfigurationService>().GetConfig();
+            }
+            catch (Exception e)
+            {
+                logger.LogInformation($"Error getting config: {e.Message} {e.StackTrace}");
+                throw;
+            }
+            
             services.AddHttpClient<UsersApiClient>(c => { c.BaseAddress = new Uri(config.InternalApi.Uri); });
             services.AddHttpClient<ApplicationApiClient>(c => { c.BaseAddress = new Uri(config.InternalApi.Uri); });
         }
