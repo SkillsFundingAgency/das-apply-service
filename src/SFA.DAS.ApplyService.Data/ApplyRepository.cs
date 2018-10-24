@@ -81,7 +81,7 @@ namespace SFA.DAS.ApplyService.Data
             {
                 return (await connection.QueryAsync<Entity>(@"SELECT e.* FROM Contacts c
                                                     INNER JOIN Entities e ON e.ApplyingOrganisationId = c.ApplyOrganisationID
-                                                    WHERE c.Id = '5280BF71-DC9B-4C99-9044-4EA5550D7FE3'", new {userId})).ToList();
+                                                    WHERE c.Id = @userId", new {userId})).ToList();
             }
         }
     }
