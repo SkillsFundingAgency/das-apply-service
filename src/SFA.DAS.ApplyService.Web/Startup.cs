@@ -97,8 +97,10 @@ namespace SFA.DAS.ApplyService.Web
             services.AddDfeSignInAuthorization();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILogger<Startup> logger)
         {
+            logger.LogInformation("Configure");
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -110,11 +112,13 @@ namespace SFA.DAS.ApplyService.Web
                 app.UseHttpsRedirection();
             }
             
+            logger.LogInformation("Before UseStaticFiles");
             app.UseStaticFiles();
+            logger.LogInformation("Before UseSession");
             app.UseSession();
-
+            logger.LogInformation("Before UseAuthentication");
             app.UseAuthentication();
-            
+            logger.LogInformation("Before UseMvc");
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
