@@ -8,5 +8,9 @@ namespace SFA.DAS.ApplyService.Configuration
         public DfeSignInConfig DfeSignIn { get; set; }
         public string SqlConnectionString { get; set; }
         public EmailConfig Email { get; set; }
+
+        public AssessorServiceApiAuthentication AssessorServiceApiAuthentication { get; set; }
+        public ProviderRegisterApiAuthentication ProviderRegisterApiAuthentication { get; set; }
+        public ReferenceDataApiAuthentication ReferenceDataApiAuthentication { get; set; }
     }
 }

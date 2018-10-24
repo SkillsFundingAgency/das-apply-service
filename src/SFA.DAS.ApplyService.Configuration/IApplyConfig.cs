@@ -10,6 +10,10 @@ namespace SFA.DAS.ApplyService.Configuration
         DfeSignInConfig DfeSignIn { get; set; }
         string SqlConnectionString { get; set; }
         EmailConfig Email { get; set; }
+
+        AssessorServiceApiAuthentication AssessorServiceApiAuthentication { get; set; }
+        ProviderRegisterApiAuthentication ProviderRegisterApiAuthentication { get; set; }
+        ReferenceDataApiAuthentication ReferenceDataApiAuthentication { get; set; }
     }
 
     public class InternalApiConfig
