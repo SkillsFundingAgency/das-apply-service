@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using SFA.DAS.ApplyService.Application;
 using SFA.DAS.ApplyService.Application.Apply.Validation;
@@ -27,14 +28,21 @@ namespace SFA.DAS.ApplyService.Web
     public class Startup
     {
         private readonly IConfiguration _configuration;
+        private readonly ILogger<Startup> _logger;
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, ILogger<Startup> logger)
         {
             _configuration = configuration;
+            _logger = logger;
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
+            
+            _logger.LogInformation("ConfigureServices");
+            _logger.LogInformation(_configuration["EnvironmentName"]);
+            _logger.LogInformation(_configuration["ConfigurationStorageConnectionString"]);
+            
             services.AddTransient<ISessionService>(p =>
                 new SessionService(p.GetService<IHttpContextAccessor>(), _configuration["EnvironmentName"]));
             services.AddSingleton<IConfigurationService>(p => new ConfigurationService(
@@ -42,17 +50,32 @@ namespace SFA.DAS.ApplyService.Web
                 _configuration["ConfigurationStorageConnectionString"], "1.0", "SFA.DAS.ApplyService"));
             services.AddTransient<IDfeSignInService, DfeSignInService>();
 
+            _logger.LogInformation("Passed registering services");
+            
+            
             AddApiClients(services, services.BuildServiceProvider());
+            
+            _logger.LogInformation("Passed Api Clients");
             
             ConfigureAuth(services);
             
+            _logger.LogInformation("Passed Config auth");
+            
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
+            
+            _logger.LogInformation("Passed Localization");
             
             ConfigureMvc(services);
 
+            _logger.LogInformation("Passed Configure Mvc");
+            
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             
+            _logger.LogInformation("Passed Add Session");
+            
             services.AddDistributedMemoryCache();
+            
+            _logger.LogInformation("Passed Memory Cache");
         }
 
         private static async void AddApiClients(IServiceCollection services, IServiceProvider serviceProvider)
