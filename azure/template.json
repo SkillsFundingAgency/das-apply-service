@@ -100,14 +100,6 @@
                     "appServiceAppSettings": {
                         "value": [
                             {
-                                "name": "LoggingRedisConnectionString",
-                                "value": "[parameters('loggingRedisConnectionString')]"
-                            },
-                            {
-                                "name": "LoggingRedisKey",
-                                "value": "[parameters('loggingRedisKey')]"
-                            },
-                            {
                                 "name": "ConfigurationStorageConnectionString",
                                 "value": "[parameters('configurationStorageConnectionString')]"
                             },
@@ -118,6 +110,15 @@
                             {
                                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                                 "value": "[reference('UIAppInsights').outputs.InstrumentationKey.value]"
+                            }
+                        ]
+                    },
+                    "appServiceConnectionStrings": {
+                        "value": [
+                            {
+                                "name": "Redis",
+                                "connectionString": "[parameters('loggingRedisConnectionString')]",
+                                "type": "Custom"
                             }
                         ]
                     },
@@ -156,14 +157,6 @@
                     "appServiceAppSettings": {
                         "value": [
                             {
-                                "name": "LoggingRedisConnectionString",
-                                "value": "[parameters('loggingRedisConnectionString')]"
-                            },
-                            {
-                                "name": "LoggingRedisKey",
-                                "value": "[parameters('loggingRedisKey')]"
-                            },
-                            {
                                 "name": "ConfigurationStorageConnectionString",
                                 "value": "[parameters('configurationStorageConnectionString')]"
                             },
@@ -174,6 +167,15 @@
                             {
                                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                                 "value": "[reference('ApiAppInsights').outputs.InstrumentationKey.value]"
+                            }
+                        ]
+                    },
+                    "appServiceConnectionStrings": {
+                        "value": [
+                            {
+                                "name": "Redis",
+                                "connectionString": "[parameters('loggingRedisConnectionString')]",
+                                "type": "Custom"
                             }
                         ]
                     }
