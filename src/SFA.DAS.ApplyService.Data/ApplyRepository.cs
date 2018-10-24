@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -71,6 +72,16 @@ namespace SFA.DAS.ApplyService.Data
                     applicationId,
                     userId
                 });
+            }
+        }
+
+        public async Task<List<Entity>> GetApplications(Guid userId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<Entity>(@"SELECT e.* FROM Contacts c
+                                                    INNER JOIN Entities e ON e.ApplyingOrganisationId = c.ApplyOrganisationID
+                                                    WHERE c.Id = '5280BF71-DC9B-4C99-9044-4EA5550D7FE3'", new {userId})).ToList();
             }
         }
     }

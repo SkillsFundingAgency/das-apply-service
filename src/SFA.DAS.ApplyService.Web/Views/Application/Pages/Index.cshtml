@@ -6,6 +6,19 @@
 
 <h1>@Model.Title</h1>
 
+@if (Model.HasFeedback)
+{
+    <div class="govuk-inset-text">
+        <h2 class="govuk=heading-l">Feedback:</h2>
+        
+        @foreach (var fb in Model.Feedback)
+        {
+            <span class="govuk-!-font-size-24">@fb.Message</span>
+        }
+    </div>
+}
+
+
 @if (!ViewData.ModelState.IsValid)
 {
     <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
@@ -21,8 +34,8 @@
         @foreach (var question in Model.Questions)
         {
             <li>
-                <label>@question.Label</label>
-                <p>@question.Hint</p>
+                <label>@Html.Raw(question.Label)</label>
+                <p>@Html.Raw(question.Hint)</p>
                 @Html.Partial($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
             </li>
         }

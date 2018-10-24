@@ -1,3 +1,5 @@
+@model List<SFA.DAS.ApplyService.Domain.Entities.Entity>
+
 @{
     ViewBag.Title = "title";
 }
@@ -6,6 +8,14 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">Signed in</h1>
+            
+            <h2>Applications</h2>
+            <ul>
+                @foreach (var application in Model)
+                {
+                    <a href="@Url.Action("Sequences","Application", new {applicationId = application.Id})">@application.Id</a>
+                }
+            </ul>
         </div>
     </div>
 </main>

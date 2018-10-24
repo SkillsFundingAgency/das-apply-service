@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SFA.DAS.ApplyService.Domain.Apply
 {
@@ -16,10 +18,14 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public bool AllowMultipleAnswers { get; set; }
         public int? Order { get; set; }
         public bool Active { get; set; }
+        public List<Feedback> Feedback { get; set; }
+        public bool HasFeedback => Feedback?.Any() ?? false;
     }
 
-    public class PageOfAnswers
+    public class Feedback
     {
-        public List<Answer> Answers { get; set; }
+        public string From { get; set; }
+        public string Message { get; set; }
+        public DateTime Date { get; set; }
     }
 }

@@ -21,9 +21,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _apiClient = apiClient;
         }
         
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var applications = await _apiClient.GetApplicationsFor(Guid.Parse(User.FindFirstValue("UserId")));
+            
+            return View(applications);
         }
 
         [HttpGet("/Application/{applicationId}/Sequences")]

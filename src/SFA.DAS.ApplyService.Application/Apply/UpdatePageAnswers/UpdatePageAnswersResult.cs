@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using SFA.DAS.ApplyService.Domain.Apply;
 
-namespace SFA.DAS.ApplyService.Domain.Apply
+namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
 {
     public class UpdatePageAnswersResult
     {

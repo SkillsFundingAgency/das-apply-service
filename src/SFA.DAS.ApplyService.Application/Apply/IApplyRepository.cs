@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -11,5 +12,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task SetOrganisationApplication(Workflow workflow, Guid applyingOrganisationId, string username);
         Task<Entity> GetEntity(Guid applicationId, Guid userId);
         Task SaveEntity(Entity entity, Guid applicationId, Guid userId);
+        Task<List<Entity>> GetApplications(Guid userId);
     }
 }

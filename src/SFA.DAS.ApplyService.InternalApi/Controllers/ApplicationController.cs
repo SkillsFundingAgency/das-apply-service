@@ -4,10 +4,12 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.GetSequence;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
@@ -28,6 +30,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 request.Username));
         }
 
+        [HttpGet("Applications/{userId}")]
+        public async Task<ActionResult<List<Entity>>> GetApplications(string userId)
+        {
+            return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId)));
+        }
+        
         [HttpGet("Application/{applicationId}/User/{userId}/Sequences")]
         public async Task<ActionResult<List<Sequence>>> GetSequence(string applicationId, string userId)
         {

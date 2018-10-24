@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Web.ViewModels;
@@ -40,6 +41,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         {
             return await (await _httpClient.GetAsync($"/Application/{applicationId}/User/{userId}/Sequences")).Content
                 .ReadAsAsync<List<Sequence>>();
+        }
+
+        public async Task<List<Entity>> GetApplicationsFor(Guid userId)
+        {
+            return await (await _httpClient.GetAsync($"/Applications/{userId}")).Content.ReadAsAsync<List<Entity>>();
         }
     }
 }
