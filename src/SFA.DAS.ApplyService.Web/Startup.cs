@@ -40,9 +40,7 @@ namespace SFA.DAS.ApplyService.Web
         {
             
             _logger.LogInformation("ConfigureServices");
-            _logger.LogInformation(_configuration["EnvironmentName"]);
-            _logger.LogInformation(_configuration["ConfigurationStorageConnectionString"]);
-            
+
             services.AddTransient<ISessionService>(p =>
                 new SessionService(p.GetService<IHttpContextAccessor>(), _configuration["EnvironmentName"]));
             services.AddSingleton<IConfigurationService>(p => new ConfigurationService(
