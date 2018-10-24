@@ -23,9 +23,6 @@
         "loggingRedisConnectionString": {
             "type": "string"
         },
-        "loggingRedisKey": {
-            "type": "string"
-        },
         "uiCustomHostname": {
             "type": "string",
             "defaultValue": ""
