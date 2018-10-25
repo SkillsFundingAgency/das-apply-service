@@ -43,5 +43,5 @@ If you need to use the Sign Up functionality, there's some additional setup requ
 
 - Install [ngrok](https://ngrok.com/)
 - Run `ngrok http 5999` (This will create a secure tunnel to your local Internal API that can be called from the outside world, specifically DfE SignIn)
-- Edit your json config in Azure Storage and set the `DfeSignIn.CallbackUri` value to `{the secure url ngrok gave you}/Account/Callback`. For example, `https://c226e61e.ngrok.io\Account\Callback`.
+- Edit your json config in Azure Storage and set the `DfeSignIn.CallbackUri` value to `{the secure url ngrok gave you}/Account/Callback`. For example, `https://c226e61e.ngrok.io/Account/Callback`.
 - This will enable DfE SignIn to send a message back when Sign Up is complete with the DfE SignIn Id.
