@@ -33,7 +33,7 @@
 ### Running the code
 
 - `dotnet run` the following projects:
-  - SFA.DAS.ApplyService.ExternalApi
+  - SFA.DAS.ApplyService.InternalApi
   - SFA.DAS.ApplyService.Web
 - Navigate to (https://localhost:6016) and you should see the start page.
 
