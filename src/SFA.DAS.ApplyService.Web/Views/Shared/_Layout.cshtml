@@ -70,17 +70,19 @@
     </div>
 </header>
 
-@if (User.Identity.IsAuthenticated)
-{
-    <div class="header-user">
-        <span class="visuallyhidden">Logged in as </span>@SessionService.Get("LoggedInUser")
-    </div>
-    <div>
-        <a href="@Url.Action("SignOut","Users")">Sign Out</a>
-    </div>
-}
-
 <div class="govuk-width-container">
+    @if (User.Identity.IsAuthenticated)
+    {
+    <div class="esfa-user-panel">
+        <div class="esfa-user-panel__content">
+            <span class="esfa-user-panel__item esfa-user-panel__item--grow">Logged in as <text>@SessionService.Get("LoggedInUser")</text></span>
+            <!-- <span class="esfa-user-panel__item govuk-visually-hidden">Logged in as </span>@SessionService.Get("LoggedInUser") -->
+            <span class="esfa-user-panel__item">
+                <a class="govuk-link" href="@Url.Action("SignOut","Users")">Sign Out</a>
+            </span>
+        </div>
+    </div>
+    }
     @RenderBody()
 </div>
 
