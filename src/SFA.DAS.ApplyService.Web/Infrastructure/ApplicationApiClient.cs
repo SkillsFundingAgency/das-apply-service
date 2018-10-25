@@ -3,19 +3,23 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
+using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Web.ViewModels;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    public class ApplicationApiClient 
+    public class ApplicationApiClient : IApplicationApiClient
     {
-        private readonly HttpClient _httpClient;
+        private static readonly HttpClient _httpClient = new HttpClient();
 
-        public ApplicationApiClient(HttpClient httpClient)
+        public ApplicationApiClient(IConfigurationService configurationService)
         {
-            _httpClient = httpClient;
+            if (_httpClient.BaseAddress == null)
+            {
+                _httpClient.BaseAddress = new Uri(configurationService.GetConfig().Result.InternalApi.Uri);
+            }
         }
         
         public async Task<Page> GetPage(Guid applicationId, string pageId, Guid userId)

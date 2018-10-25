@@ -22,6 +22,7 @@ using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Controllers;
 using SFA.DAS.ApplyService.Web.Infrastructure;
+using StructureMap;
 
 namespace SFA.DAS.ApplyService.Web
 {
@@ -36,34 +37,20 @@ namespace SFA.DAS.ApplyService.Web
             _logger = logger;
         }
 
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             
-            _logger.LogInformation("ConfigureServices");
-
-            services.AddTransient<ISessionService>(p =>
-                new SessionService(p.GetService<IHttpContextAccessor>(), _configuration["EnvironmentName"]));
-            services.AddSingleton<IConfigurationService>(p => new ConfigurationService(
-                p.GetService<IHostingEnvironment>(), _configuration["EnvironmentName"],
-                _configuration["ConfigurationStorageConnectionString"], "1.0", "SFA.DAS.ApplyService"));
-            services.AddTransient<IDfeSignInService, DfeSignInService>();
-
-            _logger.LogInformation("Passed registering services");
-            
-            
-            AddApiClients(services, services.BuildServiceProvider(), _logger);
-            
-            _logger.LogInformation("Passed Api Clients");
             
             ConfigureAuth(services);
             
-            _logger.LogInformation("Passed Config auth");
+            
             
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
             
-            _logger.LogInformation("Passed Localization");
+         
             
-            ConfigureMvc(services);
+            services.AddMvc(options => { options.Filters.Add<PerformValidationFilter>(); })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             _logger.LogInformation("Passed Configure Mvc");
             
@@ -74,29 +61,71 @@ namespace SFA.DAS.ApplyService.Web
             services.AddDistributedMemoryCache();
             
             _logger.LogInformation("Passed Memory Cache");
-        }
 
-        private static async void AddApiClients(IServiceCollection services, IServiceProvider serviceProvider, ILogger logger)
-        {
-            IApplyConfig config;
-            try
-            {
-                config = await serviceProvider.GetRequiredService<IConfigurationService>().GetConfig();
-            }
-            catch (Exception e)
-            {
-                logger.LogInformation($"Error getting config: {e.Message} {e.StackTrace}");
-                throw;
-            }
-            
-            services.AddHttpClient<UsersApiClient>(c => { c.BaseAddress = new Uri(config.InternalApi.Uri); });
-            services.AddHttpClient<ApplicationApiClient>(c => { c.BaseAddress = new Uri(config.InternalApi.Uri); });
+            return ConfigureIOC(services).Result;
         }
+        
+        private async Task<IServiceProvider> ConfigureIOC(IServiceCollection services)
+        {
+            var container = new Container();
+
+            container.Configure(config =>
+            {
+                config.Scan(_ =>
+                {
+                    //_.AssemblyContainingType(typeof(Startup));
+                    _.AssembliesFromApplicationBaseDirectory(c => c.FullName.StartsWith("SFA"));
+                    _.WithDefaultConventions();
+
+                    _.AddAllTypesOf<IValidator>();
+                });
+                
+
+                config.For<IHttpContextAccessor>().Use<HttpContextAccessor>();
+                
+                config.For<IConfigurationService>()
+                    .Use<ConfigurationService>().Singleton()
+                    .Ctor<string>("environment").Is(_configuration["EnvironmentName"])
+                    .Ctor<string>("storageConnectionString").Is(_configuration["ConfigurationStorageConnectionString"])
+                    .Ctor<string>("version").Is("1.0")
+                    .Ctor<string>("serviceName").Is("SFA.DAS.ApplyService");
+                
+                config.For<ISessionService>().Use<SessionService>().Ctor<string>("environment")
+                    .Is(_configuration["EnvironmentName"]);
+                config.For<IDfeSignInService>().Use<DfeSignInService>();
+
+                config.For<IUsersApiClient>().Use<UsersApiClient>();
+                
+                config.Populate(services);
+            });
+
+            var applyConfig = await container.GetInstance<IConfigurationService>().GetConfig();
+            
+            //services.AddHttpClient<UsersApiClient>(c => { c.BaseAddress = new Uri(applyConfig.InternalApi.Uri); });
+            //services.AddHttpClient<ApplicationApiClient>(c => { c.BaseAddress = new Uri(applyConfig.InternalApi.Uri); });
+            
+            return container.GetInstance<IServiceProvider>();
+        }
+//
+//        private static async void AddApiClients(IServiceCollection services, IServiceProvider serviceProvider, ILogger logger)
+//        {
+//            IApplyConfig config;
+//            try
+//            {
+//                
+//            }
+//            catch (Exception e)
+//            {
+//                logger.LogInformation($"Error getting config: {e.Message} {e.StackTrace}");
+//                throw;
+//            }
+//            
+//            
+//        }
         
         protected virtual void ConfigureMvc(IServiceCollection services)
         {
-            services.AddMvc(options => { options.Filters.Add<PerformValidationFilter>(); })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            
             //.AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
         }
 

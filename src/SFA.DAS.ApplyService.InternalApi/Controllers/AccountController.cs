@@ -2,6 +2,8 @@ using System;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using NLog;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Application.Users.GetContact;
 using SFA.DAS.ApplyService.Application.Users.UpdateSignInId;
@@ -14,10 +16,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     public class AccountController : Controller
     {
         private readonly IMediator _mediator;
+        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(IMediator mediator)
-        {    
+        public AccountController(IMediator mediator, ILogger<AccountController> logger)
+        {
             _mediator = mediator;
+            _logger = logger;
         }
 
         [HttpPost("/Account/")]
@@ -51,6 +55,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("/Account/Callback")]
         public async Task<ActionResult> Callback([FromBody] DfeSignInCallback callback)
         {
+            _logger.LogInformation($"Received callback from DfE: Sub: {callback.Sub} SourceId: {callback.SourceId}");
             await _mediator.Send(new UpdateSignInIdRequest(Guid.Parse(callback.Sub), Guid.Parse(callback.SourceId)));
             return Ok();
         }

@@ -14,9 +14,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     [Authorize]
     public class ApplicationController : Controller
     {
-        private readonly ApplicationApiClient _apiClient;
+        private readonly IApplicationApiClient _apiClient;
 
-        public ApplicationController(ApplicationApiClient apiClient)
+        public ApplicationController(IApplicationApiClient apiClient)
         {
             _apiClient = apiClient;
         }
