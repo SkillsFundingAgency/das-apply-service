@@ -1,0 +1,29 @@
+@model SFA.DAS.ApplyService.Web.ViewModels.OrganisationSearchViewModel
+
+@{
+    ViewBag.Title = "Organisation search";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <form asp-action="Results" asp-controller="OrganisationSearch" method="get">
+            <div class="form-group">
+                <h1>
+                    <label class="form-label" for="SearchString">
+                        <span class="heading-xlarge">Search</span>
+                        <span class="form-hint">Search by organisation name, UKPRN or EPAO ID</span>
+                    </label>
+                </h1>
+                <p>Search using either the:</p>
+                <ul class="list list-bullet">
+                    <li>Organisation name</li>
+                    <li>UK Provider Reference Number (UKPRN), or</li>
+                    <li>EPAO ID</li>
+                </ul>
+                <input class="form-control" asp-for="SearchString" />
+            </div>
+            <button class="button" type="submit">Search</button>
+        </form>
+    </div>
+</div>

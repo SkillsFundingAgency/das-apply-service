@@ -35,7 +35,8 @@ namespace SFA.DAS.ApplyService.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpClient<UsersApiClient>(c => { c.BaseAddress = new Uri("https://localhost:6000"); });
-            
+            services.AddHttpClient<OrganisationSearchApiClient>(c => { c.BaseAddress = new Uri("https://localhost:6000"); });
+
             services.AddTransient<ISessionService>(p =>
                 new SessionService(p.GetService<IHttpContextAccessor>(), _configuration["EnvironmentName"]));
             services.AddSingleton<IConfigurationService>(p => new ConfigurationService(

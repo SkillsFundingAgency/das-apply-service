@@ -23,20 +23,20 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("OrganisationSearch")]
         public async Task<IEnumerable<Organisation>> Search(string searchTerm)
         {
-            IEnumerable<Organisation> results = null;
+            IEnumerable<Organisation> results;
 
-            // FIRST - Search EPAO Register <-- hit assessor service url
-            var response1 = await _assessorServiceApiClient.SearchOrgansiation(searchTerm);
+            // FIRST - Search EPAO Register
+            results = await _assessorServiceApiClient.SearchOrgansiation(searchTerm);
 
-            if (response1 == null || !response1.Any())
+            if (results == null || !results.Any())
             {
                 // SECOND - Search Provider Register 
-                var response2 = await _providerRegisterApiClient.SearchOrgansiation(searchTerm); 
+                results = await _providerRegisterApiClient.SearchOrgansiation(searchTerm); 
 
-                if (response2 == null || !response2.Any())
+                if (results == null || !results.Any())
                 {
-                    // THIRD use Reference Data API
-                    var response3 = await _referenceDataApiClient.SearchOrgansiation(searchTerm);
+                    // THIRD - Use Reference Data API
+                    results = await _referenceDataApiClient.SearchOrgansiation(searchTerm);
                 }
             }
 

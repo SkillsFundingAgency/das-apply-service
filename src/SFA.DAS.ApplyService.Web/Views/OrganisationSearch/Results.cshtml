@@ -1,0 +1,38 @@
+@model SFA.DAS.ApplyService.Web.ViewModels.OrganisationSearchViewModel
+
+@{
+    ViewBag.Title = "Search results";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-full">
+        <a asp-action="Index" class="link-back">Search Again</a>
+
+        <h1 class="heading-xlarge">
+            Search results
+        </h1>
+
+        @if (@Model.Organisations != null && @Model.Organisations.Any())
+        {
+            <table class="table table-font-xsmall">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>UKPRN</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var result in Model.Organisations)
+                    {
+                        <tr>
+                            <td>@result.Name</td>
+                            <td>@result.Ukprn</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+    </div>
+</div>
