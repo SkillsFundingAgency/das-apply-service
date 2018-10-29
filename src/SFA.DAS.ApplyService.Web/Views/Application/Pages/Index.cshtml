@@ -1,45 +1,81 @@
 @model SFA.DAS.ApplyService.Web.Controllers.PageViewModel
 
 @{
-    ViewBag.Title = "title";
+    ViewBag.Title = "@Model.Title";
 }
 
-<h1>@Model.Title</h1>
+<a href="@Url.Action("Sequence", "Application", new {Model.ApplicationId, Model.SequenceId})" class="govuk-back-link">Back to summary</a>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            
+            <!-- There is no @Model.Title on this page -->
+            <!-- <h1 class="govuk-heading-xl">@Model.Title</h1> -->
 
-@if (Model.HasFeedback)
-{
-    <div class="govuk-inset-text">
-        <h2 class="govuk=heading-l">Feedback:</h2>
-        
-        @foreach (var fb in Model.Feedback)
-        {
-            <span class="govuk-!-font-size-24">@fb.Message</span>
-        }
+            @if (Model.HasFeedback)
+            {
+                <div class="govuk-inset-text">
+                    <h2 class="govuk=heading-l">Feedback:</h2>
+                    
+                    @foreach (var fb in Model.Feedback)
+                    {
+                        <span class="govuk-!-font-size-24">@fb.Message</span>
+                    }
+                </div>
+            }
+
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There's a problem
+                    </h2>
+
+                </div>
+            }
+
+            <form method="post" asp-action="SaveAnswers" asp-controller="Application" novalidate>
+                <ul class="govuk-list">
+                    @if (Model.Questions.Count() == 1)
+                    {
+                        @foreach (var question in Model.Questions)
+                        {
+                            <div class="govuk-form-group">
+                                <fieldset class="govuk-fieldset">
+                                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                                        <h1 class="govuk-fieldset__heading">
+                                            @Html.Raw(question.Label)
+                                        </h1>
+                                    </legend>
+                                    <span id="passport-number-hint" class="govuk-hint">
+                                        @Html.Raw(question.Hint)
+                                    </span>
+                                    @Html.Partial($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
+                                </fieldset>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        @foreach (var question in Model.Questions)
+                        {
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-label--m" for="passport-number">
+                                    @Html.Raw(question.Label)
+                                </label>
+                                <span id="passport-number-hint" class="govuk-hint">
+                                    @Html.Raw(question.Hint)
+                                </span>
+                                @Html.Partial($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
+                            </div>
+                        }
+                    }
+                <button type="submit" class="govuk-button">Submit</button>
+                <div class="esfa-button-link">
+                    <a href="@Url.Action("Sequence", "Application", new {Model.ApplicationId, Model.SequenceId})">Return to summary</a>
+                </div>
+            </form>
+        </div>
     </div>
-}
-
-
-@if (!ViewData.ModelState.IsValid)
-{
-    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-            There's a problem
-        </h2>
-
-    </div>
-}
-
-<form method="post" asp-action="SaveAnswers" asp-controller="Application">
-    <ul>
-        @foreach (var question in Model.Questions)
-        {
-            <li>
-                <label>@Html.Raw(question.Label)</label>
-                <p>@Html.Raw(question.Hint)</p>
-                @Html.Partial($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
-            </li>
-        }
-    </ul>
-    <button type="submit">Submit</button><br/>
-    <a href="@Url.Action("Sequence", "Application", new {Model.ApplicationId, Model.SequenceId})">Return to summary</a>
-</form>
+</main>

@@ -10,10 +10,10 @@
             <h1 class="govuk-heading-xl">Signed in</h1>
             
             <h2>Applications</h2>
-            <ul>
+            <ul class="govuk-list govuk-list--number">
                 @foreach (var application in Model)
                 {
-                    <a href="@Url.Action("Sequences","Application", new {applicationId = application.Id})">@application.Id</a>
+                    <li><a href="@Url.Action("Sequences","Application", new {applicationId = application.Id})">@application.Id</a></li>
                 }
             </ul>
         </div>

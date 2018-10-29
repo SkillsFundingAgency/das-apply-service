@@ -6,26 +6,28 @@
         <div class="error-message-container" sfa-validation-for-id="@Model.QuestionId">
             <span class="error-message" sfa-validation-for-id="@Model.QuestionId"></span>
         </div>
-        @for (int i = 0; i < Model.Options.Count; i++)
-        {
-            var radioChecked = Model.Value == Model.Options[i].Label.ToString() ? "checked" : "";
-            <div class="multiple-choice" data-target="@(Model.QuestionId + "_" + i)-options">
-                <input type="radio" id="@(Model.QuestionId + "_" + i)" name="@Model.QuestionId" value="@Model.Options[i].Label" @radioChecked>
-                <label for="@(Model.QuestionId + "_" + i)">@Model.Options[i].Label</label>
-            </div>
-            if (Model.Options[i].FurtherQuestions != null)
-            {
-                <div class="panel panel-border-narrow js-hidden" id="@(Model.QuestionId + "_" + i)-options">
 
-                    @for (int furtherQuestionIndex = 0; furtherQuestionIndex < Model.Options[i].FurtherQuestions.Count; furtherQuestionIndex++)
-                    {
-                        <div class="form-group-compound">
-                            <label class="form-label" for="@Model.Options[i].FurtherQuestions[furtherQuestionIndex].QuestionId">@Model.Options[i].FurtherQuestions[furtherQuestionIndex].Label</label>
-                            @HtmlHelperPartialExtensions.Partial(Html, $"~/Views/Application/Pages/Controls/_{Model.Options[i].FurtherQuestions[furtherQuestionIndex].Input.Type}.cshtml", Model.Options[i].FurtherQuestions[furtherQuestionIndex])
-                        </div>
-                    }
+        <div class="govuk-radios govuk-radios--conditional" data-module="radios">
+            @for (int i = 0; i < Model.Options.Count; i++)
+            {
+                var radioChecked = Model.Value == Model.Options[i].Label.ToString() ? "checked" : "";
+                <div class="govuk-radios__item">
+                    <input class="govuk-radios__input" type="radio" id="@(Model.QuestionId + "_" + i)" name="@Model.QuestionId" value="@Model.Options[i].Label" data-aria-controls="conditional-@(Model.QuestionId + "_" + i)" @radioChecked>
+                    <label class="govuk-label govuk-radios__label" for="@(Model.QuestionId + "_" + i)">@Model.Options[i].Label</label>
                 </div>
+                if (Model.Options[i].FurtherQuestions != null)
+                {
+                    <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-@(Model.QuestionId + "_" + i)">
+                        @for (int furtherQuestionIndex = 0; furtherQuestionIndex < Model.Options[i].FurtherQuestions.Count; furtherQuestionIndex++)
+                        {
+                            <div class="govuk-form-group">
+                                <label class="govuk-label" for="@Model.Options[i].FurtherQuestions[furtherQuestionIndex].QuestionId">@Model.Options[i].FurtherQuestions[furtherQuestionIndex].Label</label>
+                                @HtmlHelperPartialExtensions.Partial(Html, $"~/Views/Application/Pages/Controls/_{Model.Options[i].FurtherQuestions[furtherQuestionIndex].Input.Type}.cshtml", Model.Options[i].FurtherQuestions[furtherQuestionIndex])
+                            </div>
+                        }
+                    </div>
+                }
             }
-        }
+        </div>
     </div>
 </div>

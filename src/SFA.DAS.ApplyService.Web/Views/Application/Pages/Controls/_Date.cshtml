@@ -1,8 +1,22 @@
 @model dynamic 
 
-<label>Day</label>
-<input sfa-validation-for-id="@Model.QuestionId" sfa-validationerror-class="form-control-error" type="text" id="@Model.QuestionId" name="@Model.QuestionId" value="@Model.Value?.ToString().Split(',')[0]"/>
-<label>Month</label>
-<input sfa-validation-for-id="@Model.QuestionId" sfa-validationerror-class="form-control-error" type="text" id="@Model.QuestionId" name="@Model.QuestionId" value="@Model.Value?.ToString().Split(',')[1]"/>
-<label>Year</label>
-<input sfa-validation-for-id="@Model.QuestionId" sfa-validationerror-class="form-control-error" type="text" id="@Model.QuestionId" name="@Model.QuestionId" value="@Model.Value?.ToString().Split(',')[2]"/>
+<div class="govuk-date-input" id="dob">
+    <div class="govuk-date-input__item">
+        <div class="govuk-form-group">
+            <label class="govuk-label govuk-date-input__label" for="@Model.QuestionId">Day</label>
+            <input class="govuk-input govuk-date-input__input govuk-input--width-2" sfa-validation-for-id="@Model.QuestionId" sfa-validationerror-class="form-control-error" type="text" id="@Model.QuestionId" name="@Model.QuestionId" value="@Model.Value?.ToString().Split(',')[0]"/>
+        </div>
+    </div>
+    <div class="govuk-date-input__item">
+        <div class="govuk-form-group">
+            <label class="govuk-label govuk-date-input__label" for="@Model.QuestionId">Month</label>
+            <input class="govuk-input govuk-date-input__input govuk-input--width-2" sfa-validation-for-id="@Model.QuestionId" sfa-validationerror-class="form-control-error" type="text" id="@Model.QuestionId" name="@Model.QuestionId" value="@Model.Value?.ToString().Split(',')[1]"/>
+        </div>
+    </div>
+    <div class="govuk-date-input__item">
+        <div class="govuk-form-group">
+            <label class="govuk-label govuk-date-input__label" for="@Model.QuestionId">Year</label>
+            <input class="govuk-input govuk-date-input__input govuk-input--width-4" sfa-validation-for-id="@Model.QuestionId" sfa-validationerror-class="form-control-error" type="text" id="@Model.QuestionId" name="@Model.QuestionId" value="@Model.Value?.ToString().Split(',')[2]"/>
+        </div>
+    </div>
+</div>
