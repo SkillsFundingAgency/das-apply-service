@@ -7,7 +7,7 @@
 
 <div class="grid-row">
     <div class="column-full">
-        <a asp-action="Index" class="link-back">Search Again</a>
+        <a asp-action="Index" asp-controller="OrganisationSearch" class="link-back">Search Again</a>
 
         <h1 class="heading-xlarge">
             Search results
@@ -20,19 +20,41 @@
                     <tr>
                         <th>Name</th>
                         <th>UKPRN</th>
+                        <th>Address</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var result in Model.Organisations)
-                    {
-                        <tr>
-                            <td>@result.Name</td>
-                            <td>@result.Ukprn</td>
-                        </tr>
-                    }
+                @foreach (var result in Model.Organisations)
+                {
+                    <tr>
+                        <td>@result.Name</td>
+                        <td>@result.Ukprn</td>
+                        <td>@if (result?.Address?.Postcode == null) { @string.Empty; } else { @string.Join(", ", @result.Address.Address1, @result.Address.City, @result.Address.Postcode); }</td>
+                    </tr>
+                }
                 </tbody>
             </table>
         }
+        else
+        {
+            <h1 class="heading-large">We cannot find your organisation details</h1>
 
+            <p class="heading-medium">Check the:</p>
+            <ul class="list list-bullet">
+                <li>spelling of the name</li>
+                <li><abbr title="UK Provider Reference Number">UKPRN</abbr> is correct</li>
+                <li><abbr title="End Point Assessor Organisation">EPAO ID</abbr> is correct</li>
+            </ul>
+        }
+    </div>
+</div>
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h2 class="heading-medium">What do you want to do next?</h2>
+        <ul class="list list-bullet">
+            <li><a asp-action="Index" asp-controller="OrganisationSearch">Enter your details manually</a></li>
+            <li><a asp-action="Index" asp-controller="OrganisationSearch">Search Again</a></li>
+        </ul>
     </div>
 </div>

@@ -20,12 +20,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _sessionService = sessionService;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
 
-        [HttpGet("results")]
+        [HttpGet]
         public async Task<IActionResult> Results(string searchString)
         {
             var searchResults = await _apiClient.Search(searchString);

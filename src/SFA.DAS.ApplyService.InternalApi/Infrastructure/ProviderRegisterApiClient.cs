@@ -1,13 +1,10 @@
-﻿using Microsoft.IdentityModel.Clients.ActiveDirectory;
+﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.ApplyService.InternalApi.Models.ProviderRegister;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Net.Http.Headers;
-using System;
-using AutoMapper;
-using SFA.DAS.ApplyService.InternalApi.Models.ProviderRegister;
-using SFA.DAS.ApplyService.Configuration;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
@@ -24,8 +21,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
         public async Task<IEnumerable<Types.Organisation>> SearchOrgansiation(string searchTerm)
         {
-            //var ukprn  = await Get<object>($"/providers/{ukprn}");
-
             var apiResponse = await Get<IEnumerable<Provider>>($"/providers/search?keywords={searchTerm}");
 
             return Mapper.Map<IEnumerable<Provider>, IEnumerable<Types.Organisation>>(apiResponse);
