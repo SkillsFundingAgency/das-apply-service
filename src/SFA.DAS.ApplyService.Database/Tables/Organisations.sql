@@ -2,11 +2,15 @@
 CREATE TABLE [dbo].[Organisations](
 	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
    [Name]	[nvarchar](400)	NOT NULL,	-- Name of the Organisation (as result of Search)
-   [OrganisationType]	[nvarchar](100)	NOT NULL,	 -- Type of the Organisation (as result of Search)
-   ApplicationType	[nvarchar](12)	NULL,	 -- Type of Application(s) 'RoEPAO' 'RoATP' 
-   OrganisationDetails	[nvarchar](max)	NULL,	 -- Contact and Address Details (as result of Search) JSON
-   ApplyOrganisationID [uniqueidentifier] NULL, -- When Known organisation for the apply contact
-   Status	[nvarchar](	20)	NOT NULL,	-- 'new' ,'waiting','live','deleted'
+   [OrganisationType]	[nvarchar](100)	NOT NULL,	 -- Type of the Organisation (as result of Search / input)
+   [OrganisationUKPRN] [int] NULL, -- This is an 8 digit number starting with 1
+   [OrganisationDetails]	[nvarchar](max)	NULL,	 -- JSON, includes Contact and Address Details (as result of Search),  
+   -- Financial health check state, good-until-date
+   -- "OrganisationReferenceType":How the Organisation reference was found - "RoEPAO", "RoATP", "EASAPI"
+   -- "OrganisationReferenceId":The Organisation reference, saved after Search - e.g. EPAOrgID, UKPRN, Companies House Number
+   Status	[nvarchar](	20)	NOT NULL,	-- 'initial','new' ,'inprogress','done','deleted'
+   RoEPAOApproved [bit] NOT NULL DEFAULT 0, -- set when this organisation is fully approved,  as RoEPAO  
+   RoATPApproved [bit] NOT NULL DEFAULT 0, -- set when this organisation is fully approved, as RoATP 
    CreatedAt	Datetime2(7)	NOT NULL,	--Date / Time that the record was created
    CreatedBy	[nvarchar](30)	NOT NULL,	--Username (staff or ApplyContact)
    UpdatedAt	Datetime2(7)		NULL,	--Date / Time of the last update
@@ -17,6 +21,6 @@ CREATE TABLE [dbo].[Organisations](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
-CREATE UNIQUE INDEX [IXU_Organisations] ON [Organisations] ([Name],[ApplicationType])
+CREATE UNIQUE INDEX [IXU_Organisations] ON [Organisations] ([Name])
 
 
