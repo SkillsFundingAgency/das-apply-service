@@ -1,7 +1,7 @@
 @model SFA.DAS.ApplyService.Web.Controllers.SequenceViewModel
 
 @{
-ViewBag.Title = "@Model.Title";
+ViewBag.Title = @Model.Title;
 Layout = "_Layout";
 }
 
@@ -11,56 +11,67 @@ Layout = "_Layout";
         <div class="govuk-grid-column-two-thirds">
             @if (Model == null)
             {
-            <h1 class="govuk-heading-xl">Sequence not active</h1>
+                <h1 class="govuk-heading-xl">Sequence not active</h1>
             }
             else
             {
-            <h1 class="govuk-heading-xl">@Model.Title</h1>
+                <h1 class="govuk-heading-xl">@Model.Title</h1>
 
-            foreach (var sect in Model.Sections)
-            {
-            <h2 class="govuk-heading-m">@sect.Title</h2>
-            <dl class="app-check-your-answers app-check-your-answers--short">
-                @foreach (var pg in sect.Pages)
+                foreach (var sect in Model.Sections)
                 {
-                <div class="app-check-your-answers__contents">
-                    <dt class="app-check-your-answers__question">@pg.LinkTitle</dt>
-                    @if (pg.Complete)
-                    {
-                    <dd class="app-check-your-answers__answer">
-                        <ul class="govuk-list">
-                            @foreach (var pageanswer in pg.PageOfAnswers)
-                            {
-                            foreach (var answer in pageanswer.Answers)
-                            {
-                            <li>@answer?.Value</li>
-                            }
-                            }
-                        </ul>
-                    </dd>
-                    <dd class="app-check-your-answers__change">
-                        <a href="@Url.Action("Page", "Application" , new {pageId=pg.PageId, applicationId=Model.ApplicationId})">Change <span class="govuk-visually-hidden"> @pg.LinkTitle</span></a>
-                    </dd>
-                    }
-                    else
-                    {
-                    if (pg.Active)
-                    {
-                    <dd class="app-check-your-answers__change">
-                        <a href="@Url.Action("Page", "Application" , new {pageId=pg.PageId, applicationId=Model.ApplicationId})">Answer required</a>
-                    </dd>
-                    }
-                    else
-                    {
-                    <dd class="app-check-your-answers__change">
-                        Page not yet active
-                    </dd>
-                    }
-                    }
-                </div>
+                    <h2 class="govuk-heading-m">@sect.Title</h2>
+                    <dl class="app-check-your-answers app-check-your-answers--short">
+                        @foreach (var pg in sect.Pages)
+                        {
+                            <div class="app-check-your-answers__contents">
+                                <dt class="app-check-your-answers__question">@pg.LinkTitle</dt>
+                                @if (pg.Complete)
+                                {
+                                    <dd class="app-check-your-answers__answer">
+                                        <ul class="govuk-list">
+                                            @foreach (var pageanswer in pg.PageOfAnswers)
+                                            {
+                                                @if (pageanswer.Answers.Count() <= 1)
+                                                {
+                                                    foreach (var answer in pageanswer.Answers)
+                                                    {
+                                                        <li>@answer?.Value</li>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    foreach (var answer in pageanswer.Answers)
+                                                    {
+                                                        <!-- <li class="govuk-!-font-weight-bold">Question text will go here in some cases... not address for example:</li> -->
+                                                        <li>@answer?.Value</li>
+                                                    }
+                                                }
+                                            }
+                                        </ul>
+                                    </dd>
+                                    <dd class="app-check-your-answers__change">
+                                        <a href="@Url.Action("Page", "Application" , new {pageId=pg.PageId, applicationId=Model.ApplicationId})">Change <span class="govuk-visually-hidden"> @pg.LinkTitle</span></a>
+                                    </dd>
+                                }
+                                else
+                                {
+                                    if (pg.Active)
+                                    {
+                                        <dd class="app-check-your-answers__change">
+                                            <a href="@Url.Action("Page", "Application" , new {pageId=pg.PageId, applicationId=Model.ApplicationId})">Answer required</a>
+                                        </dd>
+                                    }
+                                    else
+                                    {
+                                        <dd class="app-check-your-answers__change">
+                                            Page not yet active
+                                        </dd>
+                                    }
+                                }
+                            </div>
+                        }
+                    </dl>
                 }
-            </dl>
-            }
             }
         </div>
     </div>

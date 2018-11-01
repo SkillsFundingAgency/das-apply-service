@@ -7,7 +7,12 @@
             <span class="error-message" sfa-validation-for-id="@Model.QuestionId"></span>
         </div>
 
-        <div class="govuk-radios">
+        @{
+            <!-- @* Show simple radios inline if 2 or less (Yes/No) questions *@ -->
+            var isInline = Model.Options.Count <= 2 ? "govuk-radios--inline" : "";
+        }
+
+        <div class="govuk-radios @isInline">
             @for (int i = 0; i < Model.Options.Count; i++)
             {
                 var radioChecked = Model.Value == Model.Options[i].Value.ToString() ? "checked" : "";

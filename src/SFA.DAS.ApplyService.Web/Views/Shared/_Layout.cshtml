@@ -2,7 +2,7 @@
 @inject ISessionService SessionService
 
 <!DOCTYPE html>
-<html>
+<html class="govuk-template ">
 <head>
     <meta charset="utf-8"/>
     <title>@ViewBag.Title</title>
@@ -71,12 +71,11 @@
 </header>
 
 <div class="govuk-width-container">
-    @if (User.Identity.IsAuthenticated)
+    @if (@SessionService.Get("LoggedInUser") != null)
     {
     <div class="esfa-user-panel">
         <div class="esfa-user-panel__content">
             <span class="esfa-user-panel__item esfa-user-panel__item--grow">Logged in as <text>@SessionService.Get("LoggedInUser")</text></span>
-            <!-- <span class="esfa-user-panel__item govuk-visually-hidden">Logged in as </span>@SessionService.Get("LoggedInUser") -->
             <span class="esfa-user-panel__item">
                 <a class="govuk-link" href="@Url.Action("SignOut","Users")">Sign Out</a>
             </span>
