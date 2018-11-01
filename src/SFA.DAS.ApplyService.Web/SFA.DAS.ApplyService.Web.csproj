@@ -36,6 +36,12 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Content Update="Views\OrganisationSearch\Done.cshtml">
+        <Pack>$(IncludeRazorContentInPack)</Pack>
+      </Content>
+      <Content Update="Views\OrganisationSearch\Type.cshtml">
+        <Pack>$(IncludeRazorContentInPack)</Pack>
+      </Content>
       <Content Update="Views\OrganisationSearch\Results.cshtml">
         <Pack>$(IncludeRazorContentInPack)</Pack>
       </Content>

@@ -73,5 +73,23 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             return results;
         }
+
+        [HttpGet("OrganisationTypes")]
+        public async Task<IEnumerable<OrganisationType>> GetOrganisationTypes()
+        {
+            IEnumerable<OrganisationType> results = null;
+
+            try
+            {
+                _logger.LogInformation($"Getting Organisation Types from EPAO Register.");
+                results = await _assessorServiceApiClient.GetOrgansiationTypes();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error from EPAO Register. Message: {ex.Message}");
+            }
+
+            return results;
+        }
     }
 }

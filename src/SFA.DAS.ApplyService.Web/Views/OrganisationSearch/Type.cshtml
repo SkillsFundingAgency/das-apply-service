@@ -1,0 +1,50 @@
+@model SFA.DAS.ApplyService.Web.ViewModels.OrganisationSearchViewModel
+
+@{
+    ViewBag.Title = "Select type";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <div class="column-full">
+        <a asp-action="Results" asp-controller="OrganisationSearch" class="link-back">Back</a>
+
+        <h1 class="heading-xlarge">
+            Select Organisation Type
+        </h1>
+
+        @if (@Model.OrganisationTypes != null && @Model.OrganisationTypes.Any())
+        {
+            <table class="table table-font-xsmall">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var result in Model.OrganisationTypes)
+                {
+                    <tr>
+                        <td>@result.Id</td>
+                        <td>@result.Type</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <h1 class="heading-large">We cannot get organisation types at this point in time</h1>
+        }
+    </div>
+</div>
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <h2 class="heading-medium">What do you want to do next?</h2>
+        <ul class="list list-bullet">
+            <li><a asp-action="Index" asp-controller="OrganisationSearch">Search Again</a></li>
+        </ul>
+    </div>
+</div>

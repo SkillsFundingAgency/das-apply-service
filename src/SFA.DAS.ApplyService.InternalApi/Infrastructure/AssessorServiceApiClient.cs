@@ -8,6 +8,7 @@ using System;
 using SFA.DAS.ApplyService.InternalApi.Models.AssessorService;
 using AutoMapper;
 using SFA.DAS.ApplyService.Configuration;
+using System.Linq;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
@@ -29,6 +30,18 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             var apiResponse = await Get<IEnumerable<OrganisationSummary>>($"/api/ao/assessment-organisations/search/{searchTerm}");
 
             return Mapper.Map<IEnumerable<OrganisationSummary>, IEnumerable<Types.Organisation>>(apiResponse);
+        }
+
+        public async Task<IEnumerable<Types.OrganisationType>> GetOrgansiationTypes(bool activeOnly = true)
+        {
+            var apiResponse = await Get<IEnumerable<OrganisationType>>($"/api/ao/organisation-types");
+
+            if(activeOnly)
+            {
+                apiResponse = apiResponse.Where(ot => "Live".Equals(ot.Status, StringComparison.InvariantCultureIgnoreCase));
+            }
+
+            return Mapper.Map<IEnumerable<OrganisationType>, IEnumerable<Types.OrganisationType>>(apiResponse);
         }
 
         private async Task<T> Get<T>(string uri)

@@ -4,7 +4,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Models.ProviderRegister
 {
     public class Provider
     {
-        public int Ukprn { get; set; }
+        public string Ukprn { get; set; }
         public bool IsHigherEducationInstitute { get; set; }
         public bool IsEmployerProvider { get; set; }
         public string ProviderName { get; set; }

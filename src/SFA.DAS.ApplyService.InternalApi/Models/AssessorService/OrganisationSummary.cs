@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace SFA.DAS.ApplyService.InternalApi.Models.AssessorService
+﻿namespace SFA.DAS.ApplyService.InternalApi.Models.AssessorService
 {
     public class OrganisationSummary
     {
@@ -12,5 +7,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Models.AssessorService
         public long? Ukprn { get; set; }
 
         public OrganisationData OrganisationData { get; set; }
+
+        public int? OrganisationTypeId { get; set; }
+        public string OrganisationType { get; set; }
     }
 }
