@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.ViewModels;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
@@ -27,18 +28,19 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return View();
         }
 
-
-
         [HttpGet]
         public async Task<IActionResult> Results(string searchString)
         {
-            if (!string.IsNullOrEmpty(searchString))
+            if (string.IsNullOrEmpty(searchString))
             {
                 ModelState.AddModelError(nameof(searchString), "Enter a search string");
                 return RedirectToAction(nameof(Index));
             }
 
             var searchResults = await _apiClient.Search(searchString);
+
+            searchResults = searchResults.Where(sr => !string.IsNullOrEmpty(sr?.Address?.Postcode)).AsEnumerable();
+
             var searchViewModel = new OrganisationSearchViewModel
             {
                 Organisations = searchResults,
@@ -48,83 +50,63 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return View(searchViewModel);
         }
 
-        [HttpPost]
-        public IActionResult Results(OrganisationSearchViewModel viewModel)
+        [HttpGet]
+        public async Task<IActionResult> Type(string name, int? ukprn, string postcode)
         {
-            if (viewModel?.SelectedOrganisation == null)
+            if (string.IsNullOrEmpty(name))
             {
-                if (!string.IsNullOrEmpty(viewModel?.SearchString))
-                {
-                    ModelState.AddModelError(nameof(viewModel.SelectedOrganisation), "Select an organisation");
-                    return RedirectToAction(nameof(Results), new { searchString = viewModel.SearchString });
-                }
-
+                ModelState.AddModelError(nameof(name), "Enter a search string");
                 return RedirectToAction(nameof(Index));
             }
 
-            // PRG pattern!!
-            _sessionService.Set("OrganisationSearchViewModel", JsonConvert.SerializeObject(viewModel));
+            var organisationTypes = await _apiClient.GetOrganisationTypes();
 
-            if (viewModel.SelectedOrganisation.Type != null)
+            var searchViewModel = new OrganisationSearchViewModel
             {
-                return RedirectToAction(nameof(Type));
-            }
-            else
-            {
-                return RedirectToAction(nameof(Done));
-            }
+                OrganisationTypes = organisationTypes,
+                SearchString = name,
+                Name = name,
+                Ukprn = ukprn,
+                Postcode = postcode
+            };
+
+            return View(searchViewModel);
         }
-
-
 
         [HttpGet]
-        public async Task<IActionResult> Type()
+        public async Task<IActionResult> Done(string name, int? ukprn, string postcode, string organisationType)
         {
-            var viewModel = _sessionService.Get<OrganisationSearchViewModel>("OrganisationSearchViewModel");
-
-            if (viewModel?.SelectedOrganisation == null)
+            if (string.IsNullOrEmpty(name))
             {
+                ModelState.AddModelError(nameof(name), "Enter a search string");
                 return RedirectToAction(nameof(Index));
             }
-
-            viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();
-
-            return View(viewModel);
-        }
-
-        [HttpPost]
-        public IActionResult Type(OrganisationSearchViewModel viewModel)
-        {
-            if (viewModel?.SelectedOrganisation.Type == null)
+            else if (string.IsNullOrEmpty(organisationType))
             {
-                if(viewModel?.SelectedOrganisation != null)
-                {
-                    ModelState.AddModelError(nameof(viewModel.SelectedOrganisation), "Select an organisation type");
-                    return RedirectToAction(nameof(Type));
-                }
-                else if (!string.IsNullOrEmpty(viewModel?.SearchString))
-                {
-                    ModelState.AddModelError(nameof(viewModel.SelectedOrganisation), "Select an organisation");
-                    return RedirectToAction(nameof(Results), new { searchString = viewModel.SearchString });
-                }
-
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError(nameof(organisationType), "Select an organisation type");
+                return RedirectToAction(nameof(Type), new { name, ukprn, postcode});
             }
 
-            // PRG pattern!!
-            _sessionService.Set("OrganisationSearchViewModel", JsonConvert.SerializeObject(viewModel));
+            // make sure we got everything
+            var searchResults = await _apiClient.Search(name);
 
-            return RedirectToAction(nameof(Done));
-        }
+            // filter name
+            searchResults = searchResults.Where(sr => sr.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
 
+            // filter organisation type
+            searchResults = searchResults.Where(sr => sr.Type != null ? sr.Type.Type.Equals(postcode, StringComparison.InvariantCultureIgnoreCase) : true);
 
+            // filter ukprn
+            searchResults = searchResults.Where(sr => ukprn.HasValue ? sr.Ukprn == ukprn : true);
 
+            // filter postcode
+            searchResults = searchResults.Where(sr => !string.IsNullOrEmpty(postcode) ? (sr.Address != null ? sr.Address.Postcode.Equals(postcode, StringComparison.InvariantCultureIgnoreCase) : true) : true);
 
-        [HttpGet]
-        public IActionResult Done()
-        {
-            var viewModel = _sessionService.Get<OrganisationSearchViewModel>("OrganisationSearchViewModel");
-            return View(viewModel);
+            var organisation = searchResults.FirstOrDefault();
+
+            if (organisation.Type == null) organisation.Type = new Models.OrganisationType { Type = organisationType };
+
+            return View();
         }
     }
 }

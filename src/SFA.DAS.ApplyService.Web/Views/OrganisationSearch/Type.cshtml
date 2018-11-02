@@ -15,27 +15,41 @@
 
         @if (@Model.OrganisationTypes != null && @Model.OrganisationTypes.Any())
         {
-            <table class="table table-font-xsmall">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Type</th>
-                    </tr>
-                </thead>
-                <tbody>
-                @foreach (var result in Model.OrganisationTypes)
+        <form method="get" asp-action="Done" asp-controller="OrganisationSearch">
+            @Html.HiddenFor(c => c.Name)
+            @Html.HiddenFor(c => c.Ukprn)
+            @Html.HiddenFor(c => c.Postcode)
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There's a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li>Please select an organisation type</li>
+                    </ul>
+                </div>
+            }
+
+            <div class="form-group" sfa-validation-for="OrganisationType" sfa-validationerror-class="form-group-error">
+                @foreach (var orgType in Model.OrganisationTypes)
                 {
-                    <tr>
-                        <td>@result.Id</td>
-                        <td>@result.Type</td>
-                    </tr>
+                    <div class="multiple-choice">
+                        <input asp-for="OrganisationType" id="@orgType.Type.Replace(" ", "_")" type="radio" value="@orgType.Type" />
+                        <label for="@orgType.Type.Replace(" ", "_")">
+                            @orgType.Type
+                        </label>
+                    </div>
                 }
-                </tbody>
-            </table>
+            </div>
+
+            <button type="submit" class="button">Continue</button>
+        </form>
         }
         else
         {
-            <h1 class="heading-large">We cannot get organisation types at this point in time</h1>
+        <h1 class="heading-large">We cannot get organisation types at this point in time</h1>
         }
     </div>
 </div>

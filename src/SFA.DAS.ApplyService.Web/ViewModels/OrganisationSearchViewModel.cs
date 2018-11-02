@@ -8,7 +8,13 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
     {
         public string SearchString { get; set; }
 
-        public Organisation SelectedOrganisation { get; set; }
+        public string Name { get; set; }
+
+        public int? Ukprn { get; set; }
+
+        public string Postcode { get; set; }
+
+        public string OrganisationType { get; set; }
 
         [JsonIgnore]
         public IEnumerable<Organisation> Organisations { get; set; }

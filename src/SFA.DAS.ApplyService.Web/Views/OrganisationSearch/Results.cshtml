@@ -15,23 +15,52 @@
 
         @if (@Model.Organisations != null && @Model.Organisations.Any())
         {
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                        There's a problem
+                    </h2>
+                    <ul class="error-summary-list">
+                        <li>Please select an organisation</li>
+                    </ul>
+                </div>
+            }
+
+
             <table class="table table-font-xsmall">
                 <thead>
                     <tr>
+                        <th></th>
                         <th>Name</th>
                         <th>UKPRN</th>
                         <th>Address</th>
                     </tr>
                 </thead>
                 <tbody>
-                @foreach (var result in Model.Organisations)
-                {
-                    <tr>
-                        <td>@result.Name</td>
-                        <td>@result.Ukprn</td>
-                        <td>@if (result?.Address?.Postcode == null) { @string.Empty; } else { @string.Join(", ", @result.Address.Address1, @result.Address.City, @result.Address.Postcode); }</td>
-                    </tr>
-                }
+                    @foreach (var result in Model.Organisations)
+                    {
+                        <tr>
+                            <td>
+                                @if (result?.Type?.Type != null)
+                                {
+                                    <a asp-action="Done" asp-controller="OrganisationSearch" asp-route-name="@result.Name" asp-route-ukprn="@result.Ukprn" asp-route-postcode="@result?.Address?.Postcode" asp-route-organisationType="@result.Type.Type">Select</a>
+                                }
+                                else
+                                {
+                                    <a asp-action="Type" asp-controller="OrganisationSearch" asp-route-name="@result.Name" asp-route-ukprn="@result.Ukprn" asp-route-postcode="@result?.Address?.Postcode">Select</a>
+                                }
+                            </td>
+                            <td>@result.Name</td>
+                            <td>@result.Ukprn</td>
+                            <td>@if (result?.Address?.Postcode == null)
+                            {@string.Empty;
+                        }
+                        else
+                        { @string.Join(", ", @result.Address.Address1, @result.Address.City, @result.Address.Postcode);
+                    }</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         }
