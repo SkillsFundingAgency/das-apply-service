@@ -1,64 +1,61 @@
 @model SFA.DAS.ApplyService.Web.ViewModels.OrganisationSearchViewModel
 
 @{
-    ViewBag.Title = "Select type";
+    ViewBag.Title = "Select organisation type";
     Layout = "_Layout";
 }
 
-<div class="grid-row">
-    <div class="column-full">
-        <a asp-action="Results" asp-controller="OrganisationSearch" class="link-back">Back</a>
+<a asp-action="Index" asp-controller="OrganisationSearch" class="govuk-back-link">Back</a> @*<-- make it go to results*@
 
-        <h1 class="heading-xlarge">
-            Select Organisation Type
-        </h1>
+<main class="govuk-main-wrapper " id="main-content" role="main">
 
-        @if (@Model.OrganisationTypes != null && @Model.OrganisationTypes.Any())
-        {
-        <form method="get" asp-action="Done" asp-controller="OrganisationSearch">
-            @Html.HiddenFor(c => c.Name)
-            @Html.HiddenFor(c => c.Ukprn)
-            @Html.HiddenFor(c => c.Postcode)
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="get" asp-action="Done" asp-controller="OrganisationSearch" novalidate>
+                @*should i make this a post as in the prototype?*@
+                @Html.HiddenFor(c => c.Name)
+                @Html.HiddenFor(c => c.Ukprn)
+                @Html.HiddenFor(c => c.Postcode)
 
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                        There's a problem
-                    </h2>
-                    <ul class="error-summary-list">
-                        <li>Please select an organisation type</li>
-                    </ul>
-                </div>
-            }
-
-            <div class="form-group" sfa-validation-for="OrganisationType" sfa-validationerror-class="form-group-error">
-                @foreach (var orgType in Model.OrganisationTypes)
+                @if (!ViewData.ModelState.IsValid)
                 {
-                    <div class="multiple-choice">
-                        <input asp-for="OrganisationType" id="@orgType.Type.Replace(" ", "_")" type="radio" value="@orgType.Type" />
-                        <label for="@orgType.Type.Replace(" ", "_")">
-                            @orgType.Type
-                        </label>
+                    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                            There's a problem
+                        </h2>
+                        <ul class="error-summary-list">
+                            <li>Please select an organisation type</li>
+                        </ul>
                     </div>
                 }
-            </div>
 
-            <button type="submit" class="button">Continue</button>
-        </form>
-        }
-        else
-        {
-        <h1 class="heading-large">We cannot get organisation types at this point in time</h1>
-        }
-    </div>
-</div>
+                <div class="govuk-form-group">
+                    <h1 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--l" for="OrganisationType">
+                            Select Organisation Type
+                        </label>
+                    </h1>
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <h2 class="heading-medium">What do you want to do next?</h2>
-        <ul class="list list-bullet">
-            <li><a asp-action="Index" asp-controller="OrganisationSearch">Search Again</a></li>
-        </ul>
+                    @if (Model.OrganisationTypes != null)
+                    {
+                        <div class="govuk-radios">
+                            @foreach (var orgType in Model.OrganisationTypes)
+                            {
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" asp-for="OrganisationType" id="@orgType.Type.Replace(" ", "_")" type="radio" value="@orgType.Type" />
+                                    <label class="govuk-label govuk-radios__label" asp-for="OrganisationType">@orgType.Type</label>
+                                </div>
+                            }
+                        </div>
+                        <button type="submit" class="govuk-button">Submit</button>
+                    }
+                    else
+                    {
+                        <h1 class="heading-large">We cannot get organisation types at this point in time</h1>
+                    }
+                </div>
+            </form>
+        </div>
     </div>
-</div>
+
+</main>

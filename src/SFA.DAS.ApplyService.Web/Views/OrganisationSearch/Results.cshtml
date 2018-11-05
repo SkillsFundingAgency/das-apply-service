@@ -5,85 +5,154 @@
     Layout = "_Layout";
 }
 
-<div class="grid-row">
-    <div class="column-full">
-        <a asp-action="Index" asp-controller="OrganisationSearch" class="link-back">Search Again</a>
+<a asp-action="Index" asp-controller="OrganisationSearch" class="govuk-back-link">Back</a>
 
-        <h1 class="heading-xlarge">
-            Search results
-        </h1>
+<main class="govuk-main-wrapper " id="main-content" role="main">
 
-        @if (@Model.Organisations != null && @Model.Organisations.Any())
-        {
-            @if (!ViewData.ModelState.IsValid)
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="get" asp-action="Results" asp-controller="OrganisationSearch" novalidate>
+                @*should i make this a post as in the prototype?*@
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                            There's a problem
+                        </h2>
+                        <ul class="error-summary-list">
+                            <li>Please select an organisation</li>
+                        </ul>
+                    </div>
+                }
+
+                <div class="govuk-form-group">
+                    <h1 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--l" for="company-name">
+                            Select your organisation
+                        </label>
+                        <span class="govuk-hint">
+                            Or search again
+                        </span>
+                    </h1>
+                    <input class="govuk-input govuk-input--width-20" asp-for="SearchString" />
+                </div>
+                <button type="submit" class="govuk-button">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row search-results">
+        <div class="govuk-grid-column-one-third">
+            <aside>
+                <h2 class="govuk-heading-m">Filter results</h2>
+                <div class="filter">
+                    <form method="get" asp-action="Results" asp-controller="OrganisationSearch" novalidate>
+                        @Html.HiddenFor(m => m.SearchString)
+                        <fieldset class="govuk-fieldset">
+                            <legend class="govuk-visually-hidden-focusable">Filter by organisation type</legend>
+                            <div class="filter-heading">
+                                <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Organisation type</h3>
+                            </div>
+                            <div class="filter-body">
+                                <div class="govuk-radios">
+                                    <div class="govuk-radios__item">
+                                        <input class="govuk-radios__input" asp-for="OrganisationTypeFilter" id="Show_All" type="radio" value="" checked="@(string.IsNullOrEmpty(Model.OrganisationTypeFilter))" />
+                                        <label class="govuk-label govuk-radios__label" asp-for="OrganisationTypeFilter">Show all</label>
+                                    </div>
+                                    @if (Model.OrganisationTypes != null)
+                                    {
+                                        @foreach (var orgType in Model.OrganisationTypes)
+                                        {
+                                            <div class="govuk-radios__item">
+                                                <input class="govuk-radios__input" asp-for="OrganisationTypeFilter" id="@orgType.Type.Replace(" ", "_")" type="radio" value="@orgType.Type" />
+                                                <label class="govuk-label govuk-radios__label" asp-for="OrganisationTypeFilter">@orgType.Type</label>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="form-group">
+                            <button type="submit" class="govuk-button">Apply filter</button>
+                        </div>
+                    </form>
+                </div>
+            </aside>
+        </div>
+
+        <div class="govuk-grid-column-two-thirds">
+            @if (@Model.Organisations != null && @Model.Organisations.Any())
             {
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                        There's a problem
-                    </h2>
-                    <ul class="error-summary-list">
-                        <li>Please select an organisation</li>
+                <table class="govuk-table">
+                    <tbody class="govuk-table__body">
+                        @foreach (var result in Model.Organisations)
+                        {
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell govuk-!-padding-top-0 govuk-!-padding-bottom-4 govuk-!-padding-left-2">
+                                    <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">
+                                        @if (result.Type?.Type != null)
+                                        {
+                                            <a asp-action="Done" asp-controller="OrganisationSearch" asp-route-name="@result.Name" asp-route-ukprn="@result.Ukprn" asp-route-postcode="@result.Address?.Postcode" asp-route-organisationType="@result.Type.Type">@result.Name</a>
+                                        }
+                                        else
+                                        {
+                                            <a asp-action="Type" asp-controller="OrganisationSearch" asp-route-name="@result.Name" asp-route-ukprn="@result.Ukprn" asp-route-postcode="@result.Address?.Postcode">@result.Name</a>
+                                        }
+                                    </p>
+                                    <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
+                                        <span class="govuk-body govuk-!-font-weight-bold">Address</span>
+                                        @if (result.Address?.Postcode == null)
+                                        {
+                                            @("Unknown");
+                                        }
+                                        else
+                                        {
+                                            @string.Join(", ", @result.Address?.Address1, @result.Address?.City, @result.Address.Postcode);
+                                        }
+                                    </p>
+                                    <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
+                                        <span class="govuk-body govuk-!-font-weight-bold">Type</span>
+                                        @if (result.Type?.Type == null)
+                                        {
+                                            @("Unknown");
+                                        }
+                                        else
+                                        {
+                                            @(result.Type?.Type);
+                                        }
+                                    </p>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <!-- <section class="results-list">
+                <nav>
+                    <ul class="previous-next-navigation">
+                        <li class="next">
+                            <a href="/accounts/organisations/search/results?searchTerm=test&amp;pageNumber=2">
+                                Next page
+                                <span class="detail">Page 2 of 3</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                </section> -->
+            }
+            else
+            {
+                <div class="govuk-form-group">
+                    <h1 class="heading-large">We cannot find your organisation details</h1>
+
+                    <p class="heading-medium">Check the:</p>
+                    <ul class="list list-bullet">
+                        <li>Spelling of the name</li>
+                        <li><abbr title="UK Provider Reference Number">UKPRN</abbr> is correct</li>
+                        <li><abbr title="End Point Assessor Organisation">EPAO ID</abbr> is correct</li>
+                        <li>Organisation type is correct</li>
                     </ul>
                 </div>
             }
-
-
-            <table class="table table-font-xsmall">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Name</th>
-                        <th>UKPRN</th>
-                        <th>Address</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var result in Model.Organisations)
-                    {
-                        <tr>
-                            <td>
-                                @if (result?.Type?.Type != null)
-                                {
-                                    <a asp-action="Done" asp-controller="OrganisationSearch" asp-route-name="@result.Name" asp-route-ukprn="@result.Ukprn" asp-route-postcode="@result?.Address?.Postcode" asp-route-organisationType="@result.Type.Type">Select</a>
-                                }
-                                else
-                                {
-                                    <a asp-action="Type" asp-controller="OrganisationSearch" asp-route-name="@result.Name" asp-route-ukprn="@result.Ukprn" asp-route-postcode="@result?.Address?.Postcode">Select</a>
-                                }
-                            </td>
-                            <td>@result.Name</td>
-                            <td>@result.Ukprn</td>
-                            <td>@if (result?.Address?.Postcode == null)
-                            {@string.Empty;
-                        }
-                        else
-                        { @string.Join(", ", @result.Address.Address1, @result.Address.City, @result.Address.Postcode);
-                    }</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-        else
-        {
-            <h1 class="heading-large">We cannot find your organisation details</h1>
-
-            <p class="heading-medium">Check the:</p>
-            <ul class="list list-bullet">
-                <li>spelling of the name</li>
-                <li><abbr title="UK Provider Reference Number">UKPRN</abbr> is correct</li>
-                <li><abbr title="End Point Assessor Organisation">EPAO ID</abbr> is correct</li>
-            </ul>
-        }
+        </div>
     </div>
-</div>
-
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <h2 class="heading-medium">What do you want to do next?</h2>
-        <ul class="list list-bullet">
-            <li><a asp-action="Index" asp-controller="OrganisationSearch">Enter your details manually</a></li>
-            <li><a asp-action="Index" asp-controller="OrganisationSearch">Search Again</a></li>
-        </ul>
-    </div>
-</div>
+</main>

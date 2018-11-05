@@ -29,7 +29,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Results(string searchString)
+        public async Task<IActionResult> Results(string searchString, string typeFilter = null)
         {
             if (string.IsNullOrEmpty(searchString))
             {
@@ -38,13 +38,19 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             var searchResults = await _apiClient.Search(searchString);
+            var organisationTypes = await _apiClient.GetOrganisationTypes();
 
-            searchResults = searchResults.Where(sr => !string.IsNullOrEmpty(sr?.Address?.Postcode)).AsEnumerable();
+            if (organisationTypes.Any(ot => ot.Type == typeFilter))
+            {
+                searchResults = searchResults.Where(sr => sr.Type?.Type == typeFilter).AsEnumerable();
+            }
 
             var searchViewModel = new OrganisationSearchViewModel
             {
-                Organisations = searchResults,
                 SearchString = searchString,
+                OrganisationTypeFilter = typeFilter,
+                Organisations = searchResults,
+                OrganisationTypes = organisationTypes
             };
 
             return View(searchViewModel);
@@ -94,7 +100,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             searchResults = searchResults.Where(sr => sr.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
 
             // filter organisation type
-            searchResults = searchResults.Where(sr => sr.Type != null ? sr.Type.Type.Equals(postcode, StringComparison.InvariantCultureIgnoreCase) : true);
+            searchResults = searchResults.Where(sr => sr.Type?.Type != null ? sr.Type.Type.Equals(postcode, StringComparison.InvariantCultureIgnoreCase) : true);
 
             // filter ukprn
             searchResults = searchResults.Where(sr => ukprn.HasValue ? sr.Ukprn == ukprn : true);

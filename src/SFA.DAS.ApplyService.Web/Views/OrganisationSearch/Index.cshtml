@@ -5,38 +5,43 @@
     Layout = "_Layout";
 }
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <form method="get" asp-action="Results" asp-controller="OrganisationSearch">
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
-                    <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
-                        There's a problem
-                    </h2>
-                    <ul class="error-summary-list">
-                        <li><a sfa-validation-for="SearchString">Please enter a search string</a></li>
-                    </ul>
-                </div>
-            }
+<main class="govuk-main-wrapper " id="main-content" role="main">
 
-            <div class="form-group">
-                <h1>
-                    <label class="form-label" for="SearchString">
-                        <span class="heading-xlarge">Search for your organisation</span>
-                        <br />
-                        <span class="form-hint">Enter organisation name, UKPRN or EPAO ID</span>
-                    </label>
-                </h1>
-                <p>Search using either the:</p>
-                <ul class="list list-bullet">
-                    <li>Organisation name</li>
-                    <li>UK Provider Reference Number (UKPRN), or</li>
-                    <li>End Point Assessor Organisation (EPAO) ID</li>
-                </ul>
-                <input class="form-control" asp-for="SearchString" />
-            </div>
-            <button class="button" type="submit">Search</button>
-        </form>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="get" asp-action="Results" asp-controller="OrganisationSearch" novalidate> @*should i make this a post as in the prototype?*@
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                            There's a problem
+                        </h2>
+                        <ul class="error-summary-list">
+                            <li><a sfa-validation-for="SearchString">Please enter a search string</a></li>
+                        </ul>
+                    </div>
+                }
+
+                    <div class="govuk-form-group">
+                        <h1 class="govuk-label-wrapper">
+                            <label class="govuk-label govuk-label--l" for="company-name">
+                                Search for your organisation
+                            </label>
+                            <span class="govuk-hint">
+                                Enter organisation name
+                            </span>
+                        </h1>
+                        <p>Search using either the:</p>
+                        <ul class="list list-bullet">
+                            <li>Organisation name</li>
+                            <li>UK Provider Reference Number (UKPRN), or</li>
+                            <li>End Point Assessor Organisation (EPAO) ID</li>
+                        </ul>
+                        <input class="govuk-input govuk-input--width-20" asp-for="SearchString" />
+                    </div>
+                <button type="submit" class="govuk-button">Search</button>
+            </form>
+        </div>
     </div>
-</div>
+
+</main>
