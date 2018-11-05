@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -89,6 +90,14 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                             return Task.CompletedTask;
                         },
 
+                        OnTokenValidated = async context =>
+                        {
+                            var client = context.HttpContext.RequestServices.GetRequiredService<UsersApiClient>();
+                            var user = await client.GetUserBySignInId(context.Principal.FindFirst("sub").Value);
+                            var identity = new ClaimsIdentity(new List<Claim>(){new Claim("UserId", user.Id.ToString())});
+                            context.Principal.AddIdentity(identity);
+                        },
+                        
                         // Sometimes the auth flow fails. The most commonly observed causes for this are
                         // Cookie correlation failures, caused by obscure load balancing stuff.
                         // In these cases, rather than send user to a 500 page, prompt them to re-authenticate.

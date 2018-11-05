@@ -3,7 +3,7 @@ CREATE TABLE [dbo].[QnAs](
 	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
    Description	[nvarchar](200)	NOT NULL,	-- Description of this Question and Answer
    Version	[nvarchar](10)	NOT NULL,	 -- 'Versioning 
-   [Type]	[nvarchar](10)	NOT NULL,	 -- (EPAO or TP)
+   [Type]	[nvarchar](10)	NOT NULL,	 -- ('RoEPAO' or 'RoATP')
    [Data]	[nvarchar](max)	NULL,	-- The QnA data JSON object, containing structure of workflow and questions
    Status	[nvarchar](	20)	NOT NULL,	-- 'draft' is being created or edited (and cannot be used),  'live' is live , 'deleted' is no longer to be used
    CreatedAt	Datetime2(7)	NOT NULL,	--Date / Time that the record was created

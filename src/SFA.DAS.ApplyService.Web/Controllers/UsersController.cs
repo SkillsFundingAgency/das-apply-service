@@ -14,11 +14,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 {
     public class UsersController : Controller
     {
-        private readonly UsersApiClient _usersApiClient;
+        private readonly IUsersApiClient _usersApiClient;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ISessionService _sessionService;
 
-        public UsersController(UsersApiClient usersApiClient, IHttpContextAccessor httpContextAccessor, ISessionService sessionService)
+        public UsersController(IUsersApiClient usersApiClient, IHttpContextAccessor httpContextAccessor, ISessionService sessionService)
         {
             _usersApiClient = usersApiClient;
             _httpContextAccessor = httpContextAccessor;
@@ -88,6 +88,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var user = await _usersApiClient.GetUserBySignInId(_httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
          
             _sessionService.Set("LoggedInUser", $"{user.GivenNames} {user.FamilyName}");
+
+            if (user.ApplyOrganisationId == null)
+            {
+                return RedirectToAction("Index", "OrganisationSearch");
+            }
             
             return RedirectToAction("Index", "Application");
         }

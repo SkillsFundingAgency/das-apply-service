@@ -1,11 +1,40 @@
+@model List<SFA.DAS.ApplyService.Domain.Entities.Entity>
+
 @{
-    ViewBag.Title = "title";
+ViewBag.Title = "Applications";
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl">Signed in</h1>
+            <!-- <h1 class="govuk-heading-xl">Signed in</h1> -->
+            <h1 class="govuk-heading-xl">
+                Select application
+            </h1>
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="col">Application</th>
+                        <!-- <th class="govuk-table__header" scope="col">Application ID</th> -->
+                        <th class="govuk-table__header govuk-table__header--numeric" scope="col">Status</th>
+                        <th class="govuk-table__header govuk-table__header--numeric" scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+
+                    @foreach (var application in Model)
+                    {
+                    <tr>
+                        <th class="govuk-table__header" scope="row">Not yet submitted</th>
+                        <!-- <td class="govuk-table__cell">@application.Id</td> -->
+                        <td class="govuk-table__cell govuk-table__cell--numeric">In progress</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">
+                            <a href="@Url.Action("Sequences","Application", new {applicationId=application.Id})">View</a>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </main>

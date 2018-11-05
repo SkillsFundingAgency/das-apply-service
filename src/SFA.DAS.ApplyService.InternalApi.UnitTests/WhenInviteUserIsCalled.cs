@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
@@ -21,7 +22,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var mediator = new Mock<IMediator>();
             mediator.Setup(m => m.Send(It.IsAny<CreateAccountRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
-            var accountController = new AccountController(mediator.Object);
+            var accountController = new AccountController(mediator.Object, new Mock<ILogger<AccountController>>().Object);
 
             var result = await accountController.InviteUser(new NewContact()
                 {Email = "email@email.com", FamilyName = "Jones", GivenName = "Fred"});

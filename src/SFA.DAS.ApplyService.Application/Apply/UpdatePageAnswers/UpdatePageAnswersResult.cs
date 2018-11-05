@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using SFA.DAS.ApplyService.Domain.Apply;
 
-namespace SFA.DAS.ApplyService.Domain.Apply
+namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
 {
-    public class UpdatePageResult
+    public class UpdatePageAnswersResult
     {
         public Page Page { get; set; }
         public bool ValidationPassed { get; set; }

@@ -1,0 +1,6 @@
+@model SFA.DAS.ApplyService.Web.Controllers.QuestionViewModel
+
+@{
+    var chkd = Model.Value == "Yes" ? "checked" : "";
+}
+<input type="checkbox" id="@Model.QuestionId" name="@Model.QuestionId" @chkd/>

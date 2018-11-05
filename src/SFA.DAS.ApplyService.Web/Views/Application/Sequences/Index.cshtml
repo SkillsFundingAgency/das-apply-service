@@ -1,0 +1,35 @@
+@model List<SFA.DAS.ApplyService.Web.Controllers.SequenceViewModel>
+
+@{
+    ViewBag.Title = "Application overview";
+    Layout = "_Layout";
+}
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">Application overview</h1>
+
+            <ul class="govuk-list">
+                @foreach (var sequence in Model)
+                {
+                    <li>
+                        @if (sequence.Active)
+                        {
+                            <h2 class="gvuk-heading-m">
+                                <a href="@Url.Action("Sequence", "Application", new {sequence.ApplicationId, sequence.SequenceId})">@sequence.LinkTitle</a>
+                                <span class="govuk-caption-m">0 fo 15 questions answered</span>
+                            </h2>
+                        }
+                        else
+                        {
+                            <h2 class="govuk-heading-m">@sequence.LinkTitle</h2>
+                            <button class="btn btn-block" disabled="disabled">Can't start yet</button>
+                        }
+                    </li>
+                    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+                }
+            </ul>
+
+        </div>
+    </div>
+</main>

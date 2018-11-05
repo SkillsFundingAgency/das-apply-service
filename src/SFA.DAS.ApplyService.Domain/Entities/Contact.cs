@@ -7,8 +7,8 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string Email { get; set; }
         public string GivenNames { get; set; }
         public string FamilyName { get; set; }
-        public Guid SigninId { get; set; }
+        public Guid? SigninId { get; set; }
         public string SigninType { get; set; }
-        public Guid ApplyOrganisationId { get; set; }
+        public Guid? ApplyOrganisationId { get; set; }
     }
 }
