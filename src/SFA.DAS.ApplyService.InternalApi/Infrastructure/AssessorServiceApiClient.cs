@@ -32,7 +32,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             return Mapper.Map<IEnumerable<OrganisationSummary>, IEnumerable<Types.Organisation>>(apiResponse);
         }
 
-        public async Task<IEnumerable<Types.OrganisationType>> GetOrgansiationTypes(bool activeOnly = true)
+        public async Task<IEnumerable<string>> GetOrgansiationTypes(bool activeOnly = true)
         {
             var apiResponse = await Get<IEnumerable<OrganisationType>>($"/api/ao/organisation-types");
 
@@ -41,7 +41,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                 apiResponse = apiResponse.Where(ot => "Live".Equals(ot.Status, StringComparison.InvariantCultureIgnoreCase));
             }
 
-            return Mapper.Map<IEnumerable<OrganisationType>, IEnumerable<Types.OrganisationType>>(apiResponse);
+            return apiResponse.Select(ot => ot.Type);
         }
 
         private async Task<T> Get<T>(string uri)

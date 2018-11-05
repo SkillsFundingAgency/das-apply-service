@@ -13,7 +13,6 @@ namespace SFA.DAS.ApplyService.InternalApi
             {
                 cfg.AddProfile<AssessorServiceOrganisationProfile>();
                 cfg.AddProfile<AssessorServiceOrganisationAddressProfile>();
-                cfg.AddProfile<AssessorServiceOrganisationTypeProfile>();
                 cfg.AddProfile<ProviderRegisterOrganisationProfile>();
                 cfg.AddProfile<ProviderRegisterOrganisationAddressProfile>();
                 cfg.AddProfile<ReferenceDataOrganisationProfile>();

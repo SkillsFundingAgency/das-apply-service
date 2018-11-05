@@ -5,7 +5,7 @@
     Layout = "_Layout";
 }
 
-<a asp-action="Index" asp-controller="OrganisationSearch" class="govuk-back-link">Back</a> @*<-- make it go to results*@
+<a asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.Name" class="govuk-back-link">Back to Search Results</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
@@ -42,8 +42,8 @@
                             @foreach (var orgType in Model.OrganisationTypes)
                             {
                                 <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" asp-for="OrganisationType" id="@orgType.Type.Replace(" ", "_")" type="radio" value="@orgType.Type" />
-                                    <label class="govuk-label govuk-radios__label" asp-for="OrganisationType">@orgType.Type</label>
+                                    <input class="govuk-radios__input" asp-for="OrganisationType" id="@orgType.Replace(" ", "_")" type="radio" value="@orgType" />
+                                    <label class="govuk-label govuk-radios__label" asp-for="OrganisationType">@orgType</label>
                                 </div>
                             }
                         </div>

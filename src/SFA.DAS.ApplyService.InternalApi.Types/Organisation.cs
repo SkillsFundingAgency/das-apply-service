@@ -6,7 +6,7 @@
 
         public string Name { get; set; }
         public OrganisationAddress Address { get; set; }
-        public OrganisationType Type { get; set; }
+        public string OrganisationType { get; set; }
     }
 
     public class OrganisationAddress

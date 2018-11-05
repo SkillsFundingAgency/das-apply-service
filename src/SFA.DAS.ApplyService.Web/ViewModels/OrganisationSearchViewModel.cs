@@ -8,7 +8,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
     {
         public string SearchString { get; set; }
 
-        public string OrganisationTypeFilter { get; set; } // <-- rename
+        public string OrganisationTypeFilter { get; set; }
 
         public string Name { get; set; }
 
@@ -22,6 +22,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
         public IEnumerable<Organisation> Organisations { get; set; }
 
         [JsonIgnore]
-        public IEnumerable<OrganisationType> OrganisationTypes { get; set; }
+        public IEnumerable<string> OrganisationTypes { get; set; }
     }
 }

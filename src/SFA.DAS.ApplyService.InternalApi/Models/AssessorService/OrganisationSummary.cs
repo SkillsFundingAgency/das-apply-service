@@ -8,7 +8,6 @@
 
         public OrganisationData OrganisationData { get; set; }
 
-        public int? OrganisationTypeId { get; set; }
         public string OrganisationType { get; set; }
     }
 }

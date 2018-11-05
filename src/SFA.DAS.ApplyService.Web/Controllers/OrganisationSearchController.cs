@@ -40,9 +40,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var searchResults = await _apiClient.Search(searchString);
             var organisationTypes = await _apiClient.GetOrganisationTypes();
 
-            if (organisationTypes.Any(ot => ot.Type == typeFilter))
+            if (organisationTypes != null && organisationTypes.Any(ot => ot.Equals(typeFilter, StringComparison.InvariantCultureIgnoreCase)))
             {
-                searchResults = searchResults.Where(sr => sr.Type?.Type == typeFilter).AsEnumerable();
+                searchResults = searchResults.Where(sr => sr.OrganisationType == typeFilter).AsEnumerable();
             }
 
             var searchViewModel = new OrganisationSearchViewModel
@@ -100,7 +100,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             searchResults = searchResults.Where(sr => sr.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
 
             // filter organisation type
-            searchResults = searchResults.Where(sr => sr.Type?.Type != null ? sr.Type.Type.Equals(postcode, StringComparison.InvariantCultureIgnoreCase) : true);
+            searchResults = searchResults.Where(sr => sr.OrganisationType != null ? sr.OrganisationType.Equals(organisationType, StringComparison.InvariantCultureIgnoreCase) : true);
 
             // filter ukprn
             searchResults = searchResults.Where(sr => ukprn.HasValue ? sr.Ukprn == ukprn : true);
@@ -110,7 +110,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var organisation = searchResults.FirstOrDefault();
 
-            if (organisation.Type == null) organisation.Type = new Models.OrganisationType { Type = organisationType };
+            if (organisation.OrganisationType == null) organisation.OrganisationType = organisationType;
 
             return View();
         }

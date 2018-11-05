@@ -5,7 +5,7 @@
     Layout = "_Layout";
 }
 
-<a asp-action="Index" asp-controller="OrganisationSearch" class="govuk-back-link">Back</a>
+<a asp-action="Index" asp-controller="OrganisationSearch" class="govuk-back-link">Search Again</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
@@ -64,8 +64,8 @@
                                         @foreach (var orgType in Model.OrganisationTypes)
                                         {
                                             <div class="govuk-radios__item">
-                                                <input class="govuk-radios__input" asp-for="OrganisationTypeFilter" id="@orgType.Type.Replace(" ", "_")" type="radio" value="@orgType.Type" />
-                                                <label class="govuk-label govuk-radios__label" asp-for="OrganisationTypeFilter">@orgType.Type</label>
+                                                <input class="govuk-radios__input" asp-for="OrganisationTypeFilter" id="@orgType.Replace(" ", "_")" type="radio" value="@orgType" />
+                                                <label class="govuk-label govuk-radios__label" asp-for="OrganisationTypeFilter">@orgType</label>
                                             </div>
                                         }
                                     }
@@ -90,9 +90,9 @@
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell govuk-!-padding-top-0 govuk-!-padding-bottom-4 govuk-!-padding-left-2">
                                     <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">
-                                        @if (result.Type?.Type != null)
+                                        @if (result.OrganisationType != null)
                                         {
-                                            <a asp-action="Done" asp-controller="OrganisationSearch" asp-route-name="@result.Name" asp-route-ukprn="@result.Ukprn" asp-route-postcode="@result.Address?.Postcode" asp-route-organisationType="@result.Type.Type">@result.Name</a>
+                                            <a asp-action="Done" asp-controller="OrganisationSearch" asp-route-name="@result.Name" asp-route-ukprn="@result.Ukprn" asp-route-postcode="@result.Address?.Postcode" asp-route-organisationType="@result.OrganisationType">@result.Name</a>
                                         }
                                         else
                                         {
@@ -112,13 +112,13 @@
                                     </p>
                                     <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
                                         <span class="govuk-body govuk-!-font-weight-bold">Type</span>
-                                        @if (result.Type?.Type == null)
+                                        @if (result.OrganisationType == null)
                                         {
                                             @("Unknown");
                                         }
                                         else
                                         {
-                                            @(result.Type?.Type);
+                                            @(result.OrganisationType);
                                         }
                                     </p>
                                 </td>

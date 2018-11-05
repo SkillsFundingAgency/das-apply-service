@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace SFA.DAS.ApplyService.Web.Models
+﻿namespace SFA.DAS.ApplyService.Web.Models
 {
     public class Organisation
     {
@@ -13,7 +8,7 @@ namespace SFA.DAS.ApplyService.Web.Models
 
         public OrganisationAddress Address { get; set; }
 
-        public OrganisationType Type { get; set; }
+        public string OrganisationType { get; set; }
     }
 
     public class OrganisationAddress
@@ -23,13 +18,6 @@ namespace SFA.DAS.ApplyService.Web.Models
         public string Address3 { get; set; }
         public string City { get; set; }
         public string Postcode { get; set; }
-    }
-
-    public class OrganisationType
-    {
-        public int Id { get; set; }
-        public string Type { get; set; }
-        //public string Status { get; set; }
     }
 }
 
