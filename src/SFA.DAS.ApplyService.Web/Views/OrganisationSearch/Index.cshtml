@@ -10,7 +10,6 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <form method="get" asp-action="Results" asp-controller="OrganisationSearch" novalidate>
-                @*should i make this a post as in the prototype?*@
                 @if (!ViewData.ModelState.IsValid)
                 {
                     <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">

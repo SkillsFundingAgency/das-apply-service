@@ -5,6 +5,19 @@
     Layout = "_Layout";
 }
 
+@* PLEASE FIX - I'm using this to make a form submit button look like a hyperlink. I assume we have a CSS class for it somewhere *@
+<style>
+    .link-button {
+        background: none;
+        border: none;
+        color: blue;
+        text-decoration: underline;
+        cursor: pointer;
+        font-size: 19px;
+        font-weight: 700;
+        font-family: nta, Arial, sans-serif;
+    }
+</style>
 <a asp-action="Index" asp-controller="OrganisationSearch" class="govuk-back-link">Search Again</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
@@ -89,16 +102,14 @@
                         {
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell govuk-!-padding-top-0 govuk-!-padding-bottom-4 govuk-!-padding-left-2">
-                                    <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">
-                                        @if (result.OrganisationType != null)
-                                        {
-                                            <a asp-action="Done" asp-controller="OrganisationSearch" asp-route-name="@result.Name" asp-route-ukprn="@result.Ukprn" asp-route-postcode="@result.Address?.Postcode" asp-route-organisationType="@result.OrganisationType">@result.Name</a>
-                                        }
-                                        else
-                                        {
-                                            <a asp-action="Type" asp-controller="OrganisationSearch" asp-route-name="@result.Name" asp-route-ukprn="@result.Ukprn" asp-route-postcode="@result.Address?.Postcode">@result.Name</a>
-                                        }
-                                    </p>
+                                    <form method="post" asp-action="@(result.OrganisationType != null ? "Done" : "Type")" asp-controller="OrganisationSearch" novalidate>
+                                        <input asp-for="SearchString" type="hidden" />
+                                        <input asp-for="Name" value="@result.Name" type="hidden" />
+                                        <input asp-for="Ukprn" value="@result.Ukprn" type="hidden" />
+                                        <input asp-for="OrganisationType" value ="@result.OrganisationType" type="hidden" />
+                                        <input asp-for="Postcode" value="@result.Address?.Postcode" type="hidden" />
+                                        <button type="submit" class="link-button">@result.Name</button> @* <------- Please fix CSS *@
+                                    </form>
                                     <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
                                         <span class="govuk-body govuk-!-font-weight-bold">Address</span>
                                         @if (result.Address?.Postcode == null)
@@ -126,7 +137,7 @@
                         }
                     </tbody>
                 </table>
-                <!-- <section class="results-list">
+                @*<section class="results-list">
                 <nav>
                     <ul class="previous-next-navigation">
                         <li class="next">
@@ -137,7 +148,7 @@
                         </li>
                     </ul>
                 </nav>
-                </section> -->
+                </section>*@
             }
             else
             {

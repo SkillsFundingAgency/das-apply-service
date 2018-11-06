@@ -15,9 +15,14 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             _httpClient = httpClient;
         }
 
-        public async Task<IEnumerable<Organisation>> Search(string searchTerm)
+        public async Task<IEnumerable<Organisation>> SearchOrganisation(string searchTerm)
         {
             return await (await _httpClient.GetAsync($"/OrganisationSearch?searchTerm={searchTerm}")).Content.ReadAsAsync<IEnumerable<Organisation>>();
+        }
+
+        public async Task<Organisation> GetOrganisationByEmail(string emailAddress)
+        {
+            return await (await _httpClient.GetAsync($"/GetOrganisationByEmail?emailAddress={emailAddress}")).Content.ReadAsAsync<Organisation>();
         }
 
         public async Task<IEnumerable<string>> GetOrganisationTypes()

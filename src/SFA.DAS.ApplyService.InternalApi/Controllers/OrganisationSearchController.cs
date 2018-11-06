@@ -25,7 +25,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet("OrganisationSearch")]
-        public async Task<IEnumerable<Organisation>> Search(string searchTerm)
+        public async Task<IEnumerable<Organisation>> OrganisationSearch(string searchTerm)
         {
             IEnumerable<Organisation> results = null;
 
@@ -72,6 +72,24 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             }
 
             return results;
+        }
+
+        [HttpGet("OrganisationByEmail")]
+        public async Task<Organisation> GetOrganisationByEmail(string emailAddress)
+        {
+            Organisation result = null;
+
+            try
+            {
+                _logger.LogInformation($"Searching EPAO Register for. Email: {emailAddress}");
+                result = await _assessorServiceApiClient.GetOrganisationByEmail(emailAddress);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error from EPAO Register. Message: {ex.Message}");
+            }
+
+            return result;
         }
 
         [HttpGet("OrganisationTypes")]

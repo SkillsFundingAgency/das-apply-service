@@ -8,7 +8,8 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
         {
             CreateMap<Models.ReferenceData.Organisation, Types.Organisation>()
                 .BeforeMap((source, dest) => dest.Ukprn = null)
-                //.ForMember(dest => dest.Ukprn, opt => opt.ResolveUsing(source => { if (long.TryParse(source.Code, out var ukprn)) { return ukprn as long?; } else { return null; } })) <-- this is charity # / companies house #
+                .BeforeMap((source, dest) => dest.OrganisationReferenceType = "EASAPI")
+                //.ForMember(dest => dest.Ukprn, opt => opt.ResolveUsing(source => { if (int.TryParse(source.Code, out var ukprn)) { return ukprn as int?; } else { return null; } })) <-- this is charity # / companies house #
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(source => Mapper.Map<Models.ReferenceData.Address, Types.OrganisationAddress>(source.Address)))
                 .ForAllOtherMembers(dest => dest.Ignore());

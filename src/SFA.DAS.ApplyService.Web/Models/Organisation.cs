@@ -2,13 +2,15 @@
 {
     public class Organisation
     {
-        public long? Ukprn { get; set; }
+        public int? Ukprn { get; set; }
 
         public string Name { get; set; }
 
         public OrganisationAddress Address { get; set; }
 
         public string OrganisationType { get; set; }
+
+        public string OrganisationReferenceType { get; set; }
     }
 
     public class OrganisationAddress

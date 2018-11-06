@@ -5,17 +5,17 @@
     Layout = "_Layout";
 }
 
-<a asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.Name" class="govuk-back-link">Back to Search Results</a>
+<a asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString" class="govuk-back-link">Back to Search Results</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form method="get" asp-action="Done" asp-controller="OrganisationSearch" novalidate>
-                @*should i make this a post as in the prototype?*@
-                @Html.HiddenFor(c => c.Name)
-                @Html.HiddenFor(c => c.Ukprn)
-                @Html.HiddenFor(c => c.Postcode)
+            <form method="post" asp-action="Done" asp-controller="OrganisationSearch" novalidate>
+                <input asp-for="SearchString" type="hidden" />
+                <input asp-for="Name" type="hidden" />
+                <input asp-for="Ukprn" type="hidden" />
+                <input asp-for="Postcode" type="hidden" />
 
                 @if (!ViewData.ModelState.IsValid)
                 {

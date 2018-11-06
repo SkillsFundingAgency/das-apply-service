@@ -4,7 +4,7 @@
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public long? Ukprn { get; set; }
+        public int? Ukprn { get; set; }
 
         public OrganisationData OrganisationData { get; set; }
 

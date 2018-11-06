@@ -32,6 +32,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             return Mapper.Map<IEnumerable<OrganisationSummary>, IEnumerable<Types.Organisation>>(apiResponse);
         }
 
+        public async Task<Types.Organisation> GetOrganisationByEmail(string emailAddress)
+        {
+            // TODO - Real endpoint
+            var apiResponse = await Get<OrganisationSummary>($"/api/ao/assessment-organisations/email/{emailAddress}");
+
+            return Mapper.Map<OrganisationSummary, Types.Organisation>(apiResponse);
+        }
+
         public async Task<IEnumerable<string>> GetOrgansiationTypes(bool activeOnly = true)
         {
             var apiResponse = await Get<IEnumerable<OrganisationType>>($"/api/ao/organisation-types");

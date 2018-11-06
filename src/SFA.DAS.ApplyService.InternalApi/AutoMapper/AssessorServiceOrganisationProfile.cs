@@ -7,6 +7,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
         public AssessorServiceOrganisationProfile()
         {
             CreateMap<Models.AssessorService.OrganisationSummary, Types.Organisation>()
+                .BeforeMap((source, dest) => dest.OrganisationReferenceType = "RoEPAO")
                 .ForMember(dest => dest.Ukprn, opt => opt.MapFrom(source => source.Ukprn))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
                 .ForMember(dest => dest.OrganisationType, opt => opt.MapFrom(source => source.OrganisationType))
