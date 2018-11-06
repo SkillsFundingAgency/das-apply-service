@@ -4,10 +4,12 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.Application.Apply.Download;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.GetSequence;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
+using SFA.DAS.ApplyService.Application.Apply.Upload;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types;
@@ -72,6 +74,20 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             var updatedPage = await _mediator.Send(new UpdatePageAnswersRequest(Guid.Parse(applicationId), Guid.Parse(userId), pageId, answers));
             return updatedPage;
+        }
+        
+        [HttpPost("Application/{applicationId}/User/{userId}/Page/{pageId}/Upload")]
+        public async Task<ActionResult<UploadResult>> Upload(string applicationId, string userId, string pageId)
+        {
+            var uploadResult = await _mediator.Send(new UploadRequest(Guid.Parse(applicationId), Guid.Parse(userId), pageId, HttpContext.Request.Form.Files));
+            return uploadResult;
+        }
+        
+        [HttpGet("Application/{applicationId}/User/{userId}/Page/{pageId}/Question/{questionId}/{filename}/Download")]
+        public async Task<IActionResult> Download(string applicationId, string userId, string pageId, string questionId, string filename)
+        {
+            var downloadResponse = await _mediator.Send(new DownloadRequest(Guid.Parse(applicationId), Guid.Parse(userId), pageId, questionId, filename));
+            return File(downloadResponse.FileStream, "image/png", downloadResponse.Filename);
         }
     }
 }

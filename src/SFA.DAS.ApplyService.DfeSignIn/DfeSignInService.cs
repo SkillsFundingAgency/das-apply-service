@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application;
+using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Configuration;
 
 namespace SFA.DAS.ApplyService.DfeSignIn

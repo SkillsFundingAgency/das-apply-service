@@ -47,7 +47,7 @@
                 </div>
             }
 
-            <form method="post" asp-action="SaveAnswers" asp-controller="Application" novalidate>
+            <form method="post" asp-action="SaveAnswers" asp-controller="Application" novalidate enctype="multipart/form-data">
                 <ul class="govuk-list">
                     @if (Model.Questions.Count() == 1)
                     {

@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using SFA.DAS.ApplyService.Application;
 using SFA.DAS.ApplyService.Application.Apply.Validation;
+using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.Session;

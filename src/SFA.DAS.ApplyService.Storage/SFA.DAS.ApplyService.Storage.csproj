@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\SFA.DAS.ApplyService.Application\SFA.DAS.ApplyService.Application.csproj" />
+      <ProjectReference Include="..\SFA.DAS.ApplyService.Configuration\SFA.DAS.ApplyService.Configuration.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="WindowsAzure.Storage">
+        <Version>9.3.2</Version>
+      </PackageReference>
+    </ItemGroup>
+
+</Project>

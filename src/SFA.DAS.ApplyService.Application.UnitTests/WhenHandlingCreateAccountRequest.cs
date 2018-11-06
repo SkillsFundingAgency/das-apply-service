@@ -3,6 +3,7 @@ using System.Net.Security;
 using System.Threading;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Domain.Entities;

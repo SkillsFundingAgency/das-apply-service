@@ -31,11 +31,19 @@ Layout = "_Layout";
                                         <ul class="govuk-list">
                                             @foreach (var pageanswer in pg.PageOfAnswers)
                                             {
-                                                @if (pageanswer.Answers.Count() <= 1)
+                                                if (pageanswer.Answers.Count() <= 1)
                                                 {
                                                     foreach (var answer in pageanswer.Answers)
                                                     {
-                                                        <li>@answer?.Value</li>
+                                                        var question = pg.Questions.Single(q => q.QuestionId == answer.QuestionId);
+                                                        if (question.Input.Type == "FileUpload")
+                                                        {
+                                                            <a href="@Url.Action("Download", "Application", new {applicationId = Model.ApplicationId, pageId = pg.PageId, questionId = question.QuestionId, filename = answer.Value})">@answer?.Value</a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <li>@answer?.Value</li>   
+                                                        }
                                                     }
                                                 }
                                                 else
@@ -43,6 +51,7 @@ Layout = "_Layout";
                                                     foreach (var answer in pageanswer.Answers)
                                                     {
                                                         <!-- <li class="govuk-!-font-weight-bold">Question text will go here in some cases... not address for example:</li> -->
+                                                        
                                                         <li>@answer?.Value</li>
                                                     }
                                                 }
