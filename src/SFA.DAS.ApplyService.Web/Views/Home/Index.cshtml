@@ -26,12 +26,11 @@ ViewBag.Title = "EPAO account: sign in or set up";
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">        
             <div class="govuk-!-margin-top-2 govuk-!-margin-bottom-8">
-                <a href="@Url.Action("CreateAccount", "Users" )" role="button" draggable="false" class="govuk-button govuk-!-margin-bottom-2">
-                    Create an account
+                <a href="@Url.Action("SignIn", "Users" )" role="button" draggable="false" class="govuk-button govuk-!-margin-bottom-2">
+                    Sign in
                 </a>
                 <div class="esfa-button-link">
-                    <span class="govuk-body">or <a href="@Url.Action("SignIn", "Users" )">sign in</a> if you have an
-                        application in progress</span>
+                    <span class="govuk-body">or <a href="@Url.Action("CreateAccount", "Users" )">create an account</a></span>
                 </div>
             </div>
         </div>
