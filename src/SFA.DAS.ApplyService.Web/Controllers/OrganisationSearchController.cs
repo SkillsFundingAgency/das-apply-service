@@ -44,6 +44,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                     if(org != null)
                     {
+                        // org found
                         var viewModel = new OrganisationSearchViewModel
                         {
                             SearchString = org.Name,
@@ -53,8 +54,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                             Postcode = org.Address?.Postcode
                         };
 
-                        // org is found
-                        return RedirectToAction(nameof(Done), new { name = org.Name, ukprn = org.Ukprn, postcode = org.Address?.Postcode, organisationtype = org.OrganisationType });
+                        if(org.OrganisationType is null)
+                        {
+                            // but doesn't have Organisation Type
+                            viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();
+                            return View(nameof(Type), viewModel);
+                        }
+
+                        return View(nameof(Done), viewModel);
                     }
                 }
             }
@@ -144,7 +151,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (organisation.OrganisationType == null) organisation.OrganisationType = viewModel.OrganisationType;
 
-            return View();
+            return View(organisation);
         }
     }
 }

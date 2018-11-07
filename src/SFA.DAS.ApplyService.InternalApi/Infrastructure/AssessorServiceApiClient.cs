@@ -34,7 +34,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
         public async Task<Types.Organisation> GetOrganisationByEmail(string emailAddress)
         {
-            // TODO - Real endpoint
             var apiResponse = await Get<OrganisationSummary>($"/api/ao/assessment-organisations/email/{emailAddress}");
 
             return Mapper.Map<OrganisationSummary, Types.Organisation>(apiResponse);

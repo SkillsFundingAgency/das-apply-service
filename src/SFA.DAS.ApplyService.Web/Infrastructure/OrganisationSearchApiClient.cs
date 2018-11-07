@@ -22,7 +22,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<Organisation> GetOrganisationByEmail(string emailAddress)
         {
-            return await (await _httpClient.GetAsync($"/GetOrganisationByEmail?emailAddress={emailAddress}")).Content.ReadAsAsync<Organisation>();
+            return await (await _httpClient.GetAsync($"/OrganisationByEmail?emailAddress={emailAddress}")).Content.ReadAsAsync<Organisation>();
         }
 
         public async Task<IEnumerable<string>> GetOrganisationTypes()
