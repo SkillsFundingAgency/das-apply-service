@@ -17,6 +17,10 @@
   }
 }
 
+.esfa-no-wrap {
+  white-space: nowrap;
+}
+
 .app-check-your-answers {
   font-family: "nta", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
