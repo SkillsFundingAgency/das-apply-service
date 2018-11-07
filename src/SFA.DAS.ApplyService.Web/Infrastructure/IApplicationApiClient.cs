@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
+using SFA.DAS.ApplyService.Application.Apply.Upload;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 
@@ -19,5 +23,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<List<Sequence>> GetSequences(Guid applicationId, Guid userId);
 
         Task<List<Entity>> GetApplicationsFor(Guid userId);
+
+        Task<UploadResult> Upload(string applicationId, string userId, string pageId, IFormFileCollection files);
+        
+        Task<byte[]> Download(Guid applicationId, Guid userId, string pageId, string questionId, string filename);
     }
 }

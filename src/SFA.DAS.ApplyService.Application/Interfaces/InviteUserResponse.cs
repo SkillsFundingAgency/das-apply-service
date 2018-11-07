@@ -1,4 +1,4 @@
-namespace SFA.DAS.ApplyService.Application
+namespace SFA.DAS.ApplyService.Application.Interfaces
 {
     public class InviteUserResponse
     {
