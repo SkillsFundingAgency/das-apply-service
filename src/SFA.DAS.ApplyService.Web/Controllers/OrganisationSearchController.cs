@@ -37,6 +37,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     // User and Org known
                     return Ok();
                 }
+                else if(Math.Min(1, 2) < Math.Min(3, 4))
+                {
+                    // TODO: look in local contacts table first & then get org from table first!
+
+                }
                 else
                 {
                     // var ukprn = get from security claim <-- this doesn't exist right now!

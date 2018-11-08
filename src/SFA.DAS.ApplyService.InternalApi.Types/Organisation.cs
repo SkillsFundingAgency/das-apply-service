@@ -2,6 +2,7 @@
 {
     public class Organisation
     {
+        public string Id { get; set; }
         public int? Ukprn { get; set; }
 
         public string Name { get; set; }

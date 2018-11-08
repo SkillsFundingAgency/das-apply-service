@@ -27,51 +27,61 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("OrganisationSearch")]
         public async Task<IEnumerable<Organisation>> OrganisationSearch(string searchTerm)
         {
-            IEnumerable<Organisation> results = null;
+            List<Organisation> results = new List<Organisation>();
 
-            // FIRST - Search EPAO Register
-            if (results == null || !results.Any())
+            // EPAO Register
+            try
             {
-                try
-                {
-                    _logger.LogInformation($"Searching EPAO Register for. Search Term: {searchTerm}");
-                    results = await _assessorServiceApiClient.SearchOrgansiation(searchTerm);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Error from EPAO Register. Message: {ex.Message}");
-                }
+                var epaoResults = await _assessorServiceApiClient.SearchOrgansiation(searchTerm);
+                if (epaoResults != null) results.AddRange(epaoResults);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error from EPAO Register. Message: {ex.Message}");
             }
 
-            // SECOND - Search Provider Register 
-            if (results == null || !results.Any())
+            // Provider Register
+            try
             {
-                try
-                {
-                    _logger.LogInformation($"Searching Provider Register. Search Term: {searchTerm}");
-                    results = await _providerRegisterApiClient.SearchOrgansiation(searchTerm);
-                }
-                catch(Exception ex)
-                {
-                    _logger.LogError($"Error from Provider Register. Message: {ex.Message}");
-                }
+                var providerResults = await _providerRegisterApiClient.SearchOrgansiation(searchTerm);
+                if (providerResults != null) results.AddRange(providerResults);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error from Provider Register. Message: {ex.Message}");
             }
 
-            // THIRD - Use Reference Data API
-            if (results == null || !results.Any())
+            // Reference Data API
+            try
             {
-                try
-                {
-                    _logger.LogInformation($"Searching Reference Data API. Search Term: {searchTerm}");
-                    results = await _referenceDataApiClient.SearchOrgansiation(searchTerm);
-                }
-                catch(Exception ex)
-                {
-                    _logger.LogError($"Error from Reference Data API. Message: {ex.Message}");
-                }
+                var referenceResults = await _referenceDataApiClient.SearchOrgansiation(searchTerm);
+                if (referenceResults != null) results.AddRange(referenceResults);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error from Reference Data API. Message: {ex.Message}");
             }
 
-            return results;
+            // de-dupe
+            return Dedupe(results);
+        }
+
+        private IEnumerable<Organisation> Dedupe(IEnumerable<Organisation> organisations)
+        {
+            var query = organisations.GroupBy(org => org.Name.ToUpperInvariant())
+                .Select(group => 
+                    new Organisation
+                    {
+                        Id = group.Select(g => g.Id).FirstOrDefault(Id => !string.IsNullOrWhiteSpace(Id)),
+                        Ukprn = group.Select(g => g.Ukprn).FirstOrDefault(Ukprn => Ukprn.HasValue),
+                        Name = group.Select(g => g.Name).FirstOrDefault(Name => !string.IsNullOrWhiteSpace(Name)),
+                        Address = group.Select(g => g.Address).FirstOrDefault(Address => Address != null),
+                        OrganisationType = group.Select(g => g.OrganisationType).FirstOrDefault(OrganisationType => !string.IsNullOrWhiteSpace(OrganisationType)),
+                        OrganisationReferenceType = string.Join(", ", group.Select(g => g.Id).Where(Id => !string.IsNullOrWhiteSpace(Id))),
+                    }
+                );
+
+            return query.OrderBy(org => org.Name).AsEnumerable();
         }
 
         [HttpGet("OrganisationByEmail")]
@@ -81,7 +91,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             try
             {
-                _logger.LogInformation($"Searching EPAO Register for. Email: {emailAddress}");
                 result = await _assessorServiceApiClient.GetOrganisationByEmail(emailAddress);
             }
             catch (Exception ex)
@@ -99,7 +108,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             try
             {
-                _logger.LogInformation($"Getting Organisation Types from EPAO Register.");
                 results = await _assessorServiceApiClient.GetOrgansiationTypes();
             }
             catch (Exception ex)

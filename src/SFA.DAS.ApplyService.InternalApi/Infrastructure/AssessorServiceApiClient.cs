@@ -27,6 +27,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
         public async Task<IEnumerable<Types.Organisation>> SearchOrgansiation(string searchTerm)
         {
+            _logger.LogInformation($"Searching EPAO Register. Search Term: {searchTerm}");
             var apiResponse = await Get<IEnumerable<OrganisationSummary>>($"/api/ao/assessment-organisations/search/{searchTerm}");
 
             return Mapper.Map<IEnumerable<OrganisationSummary>, IEnumerable<Types.Organisation>>(apiResponse);
@@ -34,6 +35,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
         public async Task<Types.Organisation> GetOrganisationByEmail(string emailAddress)
         {
+            _logger.LogInformation($"Searching EPAO Register for. Email: {emailAddress}");
             var apiResponse = await Get<OrganisationSummary>($"/api/ao/assessment-organisations/email/{emailAddress}");
 
             return Mapper.Map<OrganisationSummary, Types.Organisation>(apiResponse);
@@ -41,6 +43,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
         public async Task<IEnumerable<string>> GetOrgansiationTypes(bool activeOnly = true)
         {
+            _logger.LogInformation($"Getting Organisation Types from EPAO Register.");
             var apiResponse = await Get<IEnumerable<OrganisationType>>($"/api/ao/organisation-types");
 
             if(activeOnly)
