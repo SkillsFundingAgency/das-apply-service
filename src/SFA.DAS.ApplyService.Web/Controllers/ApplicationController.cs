@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Internal;
 using SFA.DAS.ApplyService.Application.Apply.Upload;
+using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 
@@ -101,6 +102,21 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     return pageNext.Action == "ReturnToSequence"
                         ? RedirectToAction("Sequence", "Application", new {applicationId, sequenceId = pageNext.ReturnId})
                         : RedirectToAction("Sequences", "Application", new {applicationId});
+                }
+                else
+                {
+                    var nextConditionMet = nextActions.FirstOrDefault(na => na.ConditionMet);
+                    if (nextConditionMet != null)
+                    {
+                        if (nextConditionMet.Action == "NextPage")
+                        {
+                            return RedirectToAction("Page", new {applicationId, pageId = nextConditionMet.ReturnId});
+                        }   
+                        
+                        return nextConditionMet.Action == "ReturnToSequence"
+                            ? RedirectToAction("Sequence", "Application", new {applicationId, sequenceId = nextConditionMet.ReturnId})
+                            : RedirectToAction("Sequences", "Application", new {applicationId});
+                    }
                 }
 
                 foreach (var nextAction in nextActions)

@@ -52,7 +52,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet("Application/{applicationId}/User/{userId}/Pages/{pageId}")]
-        public async Task<ActionResult<Page>> GetPage(string applicationId, string userId, string pageId)
+        public async Task<ActionResult<Page>> GetPage(string applicationId, string userId,string pageId)
         {
             try
             {

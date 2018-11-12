@@ -13,5 +13,6 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public List<NextSequence> NextSequences { get; set; }
         public string Actor { get; set; }
         public int? Order { get; set; }
+        public string DisplayType { get; set; }
     }
 }

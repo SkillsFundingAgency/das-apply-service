@@ -85,7 +85,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                 }
             }
 
-            if (validationPassed)
+            if (validationPassed) 
             {
                 page.Complete = true;
 
@@ -100,6 +100,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                                 .Single(a => a.QuestionId == nextAction.Condition.QuestionId).Value)
                         {
                             section.Pages.Single(p => p.PageId == nextAction.ReturnId).Active = true;
+                            section.Pages.Single(p => p.PageId == nextAction.ReturnId).Visible = true;
+                            nextAction.ConditionMet = true;
                         }
                     }
                 }
