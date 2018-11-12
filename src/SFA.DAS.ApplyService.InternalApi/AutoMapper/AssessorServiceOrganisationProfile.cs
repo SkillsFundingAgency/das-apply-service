@@ -6,11 +6,12 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
     {
         public AssessorServiceOrganisationProfile()
         {
-            CreateMap<Models.AssessorService.OrganisationSummary, Types.Organisation>()
+            CreateMap<Models.AssessorService.OrganisationSummary, Types.OrganisationSearchResult>()
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "RoEPAO")
                 .ForMember(dest => dest.Ukprn, opt => opt.MapFrom(source => source.Ukprn))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(source => source.Email))
                 .ForMember(dest => dest.OrganisationType, opt => opt.MapFrom(source => source.OrganisationType))
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(source => Mapper.Map<Models.AssessorService.OrganisationData, Types.OrganisationAddress>(source.OrganisationData)))
                 .ForAllOtherMembers(dest => dest.Ignore());

@@ -13,13 +13,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     public class OrganisationSearchController : Controller
     {
         private readonly IUsersApiClient _usersApiClient;
+        private readonly OrganisationApiClient _organisationApiClient;
         private readonly OrganisationSearchApiClient _apiClient;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ISessionService _sessionService;
 
-        public OrganisationSearchController(IUsersApiClient usersApiClient, OrganisationSearchApiClient apiClient, IHttpContextAccessor httpContextAccessor, ISessionService sessionService)
+        public OrganisationSearchController(IUsersApiClient usersApiClient, OrganisationApiClient organisationApiClient, OrganisationSearchApiClient apiClient, IHttpContextAccessor httpContextAccessor, ISessionService sessionService)
         {
             _usersApiClient = usersApiClient;
+            _organisationApiClient = organisationApiClient;
             _apiClient = apiClient;
             _httpContextAccessor = httpContextAccessor;
             _sessionService = sessionService;
@@ -32,41 +34,35 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if(user != null)
             {
-                if (user.ApplyOrganisationId.HasValue)
-                {
-                    // User and Org known
-                    return Ok();
-                }
-                else if(Math.Min(1, 2) < Math.Min(3, 4))
-                {
-                    // TODO: look in local contacts table first & then get org from table first!
+                // var ukprn = get from security claim <-- this doesn't exist right now!
+                var org = await _organisationApiClient.GetByContactEmail(user.Email);
 
-                }
-                else
+                if (org != null)
                 {
-                    // var ukprn = get from security claim <-- this doesn't exist right now!
-                    var org = await _apiClient.GetOrganisationByEmail(user.Email);
-
-                    if(org != null)
+                    if (org.OrganisationType is null)
                     {
-                        // org found
+                        // org found but doesn't have Organisation Type
                         var viewModel = new OrganisationSearchViewModel
                         {
                             SearchString = org.Name,
                             Name = org.Name,
-                            Ukprn = org.Ukprn,
+                            Ukprn = org.OrganisationUkprn,
                             OrganisationType = org.OrganisationType,
-                            Postcode = org.Address?.Postcode
+                            Postcode = org.OrganisationDetails?.Postcode,
+                            OrganisationTypes = await _apiClient.GetOrganisationTypes()
                         };
 
-                        if(org.OrganisationType is null)
+                        return View(nameof(Type), viewModel);
+                    }
+                    else
+                    {
+                        // Got everything, set user to approved
+                        if (!user.IsApproved)
                         {
-                            // but doesn't have Organisation Type
-                            viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();
-                            return View(nameof(Type), viewModel);
+                            await _usersApiClient.ApproveUser(user.Id);
                         }
 
-                        return View(nameof(Done), viewModel);
+                        return Ok();
                     }
                 }
             }
@@ -156,7 +152,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (organisation.OrganisationType == null) organisation.OrganisationType = viewModel.OrganisationType;
 
-            return View(organisation);
+            // TODO: save (with appropriate object) and consider refactoring the above if it makes sense to
+            var orgThatWasCreated = await _organisationApiClient.Create(null);
+
+            // TODO: Notify Primary contact of activity
+
+            return View(orgThatWasCreated);
         }
     }
 }

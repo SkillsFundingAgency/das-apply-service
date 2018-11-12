@@ -1,4 +1,6 @@
-﻿using SFA.DAS.ApplyService.Web.Models;
+﻿using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.InternalApi.Types;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -8,21 +10,19 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     public class OrganisationSearchApiClient
     {
-        private readonly HttpClient _httpClient;
+        private static readonly HttpClient _httpClient = new HttpClient();
 
-        public OrganisationSearchApiClient(HttpClient httpClient)
+        public OrganisationSearchApiClient(IConfigurationService configurationService)
         {
-            _httpClient = httpClient;
+            if (_httpClient.BaseAddress == null)
+            {
+                _httpClient.BaseAddress = new Uri(configurationService.GetConfig().Result.InternalApi.Uri);
+            }
         }
 
-        public async Task<IEnumerable<Organisation>> SearchOrganisation(string searchTerm)
+        public async Task<IEnumerable<OrganisationSearchResult>> SearchOrganisation(string searchTerm)
         {
-            return await (await _httpClient.GetAsync($"/OrganisationSearch?searchTerm={searchTerm}")).Content.ReadAsAsync<IEnumerable<Organisation>>();
-        }
-
-        public async Task<Organisation> GetOrganisationByEmail(string emailAddress)
-        {
-            return await (await _httpClient.GetAsync($"/OrganisationByEmail?emailAddress={emailAddress}")).Content.ReadAsAsync<Organisation>();
+            return await (await _httpClient.GetAsync($"/OrganisationSearch?searchTerm={searchTerm}")).Content.ReadAsAsync<IEnumerable<OrganisationSearchResult>>();
         }
 
         public async Task<IEnumerable<string>> GetOrganisationTypes()

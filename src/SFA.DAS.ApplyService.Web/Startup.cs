@@ -95,15 +95,20 @@ namespace SFA.DAS.ApplyService.Web
                 config.For<IDfeSignInService>().Use<DfeSignInService>();
 
                 config.For<IUsersApiClient>().Use<UsersApiClient>();
-                
+                config.For<IApplicationApiClient>().Use<ApplicationApiClient>();
+                config.For<OrganisationApiClient>().Use<OrganisationApiClient>();
+                config.For<OrganisationSearchApiClient>().Use<OrganisationSearchApiClient>();
+
                 config.Populate(services);
             });
 
             var applyConfig = await container.GetInstance<IConfigurationService>().GetConfig();
-            
+
             //services.AddHttpClient<UsersApiClient>(c => { c.BaseAddress = new Uri(applyConfig.InternalApi.Uri); });
             //services.AddHttpClient<ApplicationApiClient>(c => { c.BaseAddress = new Uri(applyConfig.InternalApi.Uri); });
-            
+            //services.AddHttpClient<OrganisationSearchApiClient>(c => { c.BaseAddress = new Uri(applyConfig.InternalApi.Uri); });
+            //services.AddHttpClient<OrganisationApiClient>(c => { c.BaseAddress = new Uri(applyConfig.InternalApi.Uri); });
+
             return container.GetInstance<IServiceProvider>();
         }
 //

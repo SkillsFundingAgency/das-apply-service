@@ -25,9 +25,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet("OrganisationSearch")]
-        public async Task<IEnumerable<Organisation>> OrganisationSearch(string searchTerm)
+        public async Task<IEnumerable<OrganisationSearchResult>> OrganisationSearch(string searchTerm)
         {
-            List<Organisation> results = new List<Organisation>();
+            List<OrganisationSearchResult> results = new List<OrganisationSearchResult>();
 
             // EPAO Register
             try
@@ -66,39 +66,23 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return Dedupe(results);
         }
 
-        private IEnumerable<Organisation> Dedupe(IEnumerable<Organisation> organisations)
+        private IEnumerable<OrganisationSearchResult> Dedupe(IEnumerable<OrganisationSearchResult> organisations)
         {
             var query = organisations.GroupBy(org => org.Name.ToUpperInvariant())
                 .Select(group => 
-                    new Organisation
+                    new OrganisationSearchResult
                     {
                         Id = group.Select(g => g.Id).FirstOrDefault(Id => !string.IsNullOrWhiteSpace(Id)),
                         Ukprn = group.Select(g => g.Ukprn).FirstOrDefault(Ukprn => Ukprn.HasValue),
                         Name = group.Select(g => g.Name).FirstOrDefault(Name => !string.IsNullOrWhiteSpace(Name)),
                         Address = group.Select(g => g.Address).FirstOrDefault(Address => Address != null),
                         OrganisationType = group.Select(g => g.OrganisationType).FirstOrDefault(OrganisationType => !string.IsNullOrWhiteSpace(OrganisationType)),
-                        OrganisationReferenceType = string.Join(", ", group.Select(g => g.Id).Where(Id => !string.IsNullOrWhiteSpace(Id))),
+                        OrganisationReferenceType = group.Select(g => g.OrganisationReferenceType).FirstOrDefault(OrganisationReferenceType => !string.IsNullOrWhiteSpace(OrganisationReferenceType)),
+                        OrganisationReferenceId = string.Join(",", group.Select(g => g.Id).Where(Id => !string.IsNullOrWhiteSpace(Id)))
                     }
                 );
 
             return query.OrderBy(org => org.Name).AsEnumerable();
-        }
-
-        [HttpGet("OrganisationByEmail")]
-        public async Task<Organisation> GetOrganisationByEmail(string emailAddress)
-        {
-            Organisation result = null;
-
-            try
-            {
-                result = await _assessorServiceApiClient.GetOrganisationByEmail(emailAddress);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error from EPAO Register. Message: {ex.Message}");
-            }
-
-            return result;
         }
 
         [HttpGet("OrganisationTypes")]

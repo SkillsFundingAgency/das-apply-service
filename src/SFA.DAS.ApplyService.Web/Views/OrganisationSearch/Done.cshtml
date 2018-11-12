@@ -1,4 +1,4 @@
-@model SFA.DAS.ApplyService.Web.Models.Organisation
+@model SFA.DAS.ApplyService.Domain.Entities.Organisation
 
 @{
     ViewBag.Title = "Done";
@@ -42,13 +42,13 @@
                         </p>
                         <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
                             <span class="govuk-body govuk-!-font-weight-bold">Address</span>
-                            @if (Model.Address == null)
+                            @if (Model.OrganisationDetails == null)
                             {
                                 @("Unknown");
                             }
                             else
                             {
-                                @string.Join(", ", @Model.Address?.Address1, @Model.Address?.City, @Model.Address.Postcode);
+                                @string.Join(", ", @Model.OrganisationDetails?.Address1, @Model.OrganisationDetails?.City, @Model.OrganisationDetails?.Postcode);
                             }
                         </p>
                         <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">

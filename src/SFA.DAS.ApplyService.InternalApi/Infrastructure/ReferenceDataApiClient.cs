@@ -24,12 +24,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             _config = configurationService.GetConfig().Result;
         }
 
-        public async Task<IEnumerable<Types.Organisation>> SearchOrgansiation(string searchTerm)
+        public async Task<IEnumerable<Types.OrganisationSearchResult>> SearchOrgansiation(string searchTerm)
         {
             _logger.LogInformation($"Searching Reference Data API. Search Term: {searchTerm}");
             var apiResponse = await Get<IEnumerable<Organisation>>($"/api/organisations?searchTerm={searchTerm}");
 
-            return Mapper.Map<IEnumerable<Organisation>, IEnumerable<Types.Organisation>>(apiResponse);
+            return Mapper.Map<IEnumerable<Organisation>, IEnumerable<Types.OrganisationSearchResult>>(apiResponse);
         }
 
         private async Task<T> Get<T>(string uri)

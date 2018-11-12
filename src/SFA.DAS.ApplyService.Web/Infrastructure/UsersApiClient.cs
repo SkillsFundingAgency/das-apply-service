@@ -12,6 +12,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<bool> InviteUser(CreateAccountViewModel vm);
 
         Task<Contact> GetUserBySignInId(string signInId);
+
+        Task<bool> ApproveUser(Guid userId);
     }
 
     public class UsersApiClient : IUsersApiClient
@@ -35,6 +37,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task<Contact> GetUserBySignInId(string signInId)
         {
             return await (await HttpClient.GetAsync($"/Account/{signInId}")).Content.ReadAsAsync<Contact>();
+        }
+
+        public async Task<bool> ApproveUser(Guid contactId)
+        {
+            var result = await HttpClient.PostAsJsonAsync("/Account/{contactId}/approve", string.Empty);
+            return result.IsSuccessStatusCode;
         }
     }
 }

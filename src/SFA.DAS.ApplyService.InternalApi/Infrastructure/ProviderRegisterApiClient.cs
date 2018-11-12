@@ -20,9 +20,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             _logger = logger;
         }
 
-        public async Task<IEnumerable<Types.Organisation>> SearchOrgansiation(string searchTerm)
+        public async Task<IEnumerable<Types.OrganisationSearchResult>> SearchOrgansiation(string searchTerm)
         {
-            List<Types.Organisation> organisations = new List<Types.Organisation>();
+            List<Types.OrganisationSearchResult> organisations = new List<Types.OrganisationSearchResult>();
 
             if (searchTerm.StartsWith("EPA", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -43,28 +43,28 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             return organisations;
         }
 
-        private async Task<IEnumerable<Types.Organisation>> SearchOrgansiationByKeyword(string keyword)
+        private async Task<IEnumerable<Types.OrganisationSearchResult>> SearchOrgansiationByKeyword(string keyword)
         {
             _logger.LogInformation($"Searching Provider Register. Keyword: {keyword}");
             var apiResponse = await Get<IEnumerable<Provider>>($"/providers/search?keywords={keyword}");
 
-            return Mapper.Map<IEnumerable<Provider>, IEnumerable<Types.Organisation>>(apiResponse);
+            return Mapper.Map<IEnumerable<Provider>, IEnumerable<Types.OrganisationSearchResult>>(apiResponse);
         }
 
-        private async Task<Types.Organisation> SearchOrgansiationByUkprn(int ukprn)
+        private async Task<Types.OrganisationSearchResult> SearchOrgansiationByUkprn(int ukprn)
         {
             _logger.LogInformation($"Searching Provider Register. Ukprn: {ukprn}");
             var apiResponse = await Get<Provider>($"/providers/{ukprn}");
 
-            return Mapper.Map<Provider, Types.Organisation>(apiResponse);
+            return Mapper.Map<Provider, Types.OrganisationSearchResult>(apiResponse);
         }
 
-        private async Task<Types.Organisation> SearchOrgansiationByEpao(string epao)
+        private async Task<Types.OrganisationSearchResult> SearchOrgansiationByEpao(string epao)
         {
             _logger.LogInformation($"Searching Provider Register. EPAO: {epao}");
             var apiResponse = await Get<Organisation>($"/assessment-organisations/{epao}");
 
-            return Mapper.Map<Organisation, Types.Organisation>(apiResponse);
+            return Mapper.Map<Organisation, Types.OrganisationSearchResult>(apiResponse);
         }
 
         private async Task<T> Get<T>(string uri)

@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Validation;
+using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Configuration;
@@ -134,6 +135,7 @@ namespace SFA.DAS.ApplyService.InternalApi
 
                 config.For<IContactRepository>().Use<ContactRepository>();
                 config.For<IApplyRepository>().Use<ApplyRepository>();
+                config.For<IOrganisationRepository>().Use<OrganisationRepository>();
                 config.For<IDfeSignInService>().Use<DfeSignInService>();
                 config.For<IEmailService>().Use<EmailService.EmailService>();
 

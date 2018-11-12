@@ -6,9 +6,10 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
     {
         public ReferenceDataOrganisationProfile()
         {
-            CreateMap<Models.ReferenceData.Organisation, Types.Organisation>()
+            CreateMap<Models.ReferenceData.Organisation, Types.OrganisationSearchResult>()
                 .BeforeMap((source, dest) => dest.Ukprn = null)
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "EASAPI")
+                .BeforeMap((source, dest) => dest.Email = null)
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Code))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(source => Mapper.Map<Models.ReferenceData.Address, Types.OrganisationAddress>(source.Address)))

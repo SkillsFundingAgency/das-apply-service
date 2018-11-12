@@ -25,20 +25,20 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             _config = configurationService.GetConfig().Result;
         }
 
-        public async Task<IEnumerable<Types.Organisation>> SearchOrgansiation(string searchTerm)
+        public async Task<IEnumerable<Types.OrganisationSearchResult>> SearchOrgansiation(string searchTerm)
         {
             _logger.LogInformation($"Searching EPAO Register. Search Term: {searchTerm}");
             var apiResponse = await Get<IEnumerable<OrganisationSummary>>($"/api/ao/assessment-organisations/search/{searchTerm}");
 
-            return Mapper.Map<IEnumerable<OrganisationSummary>, IEnumerable<Types.Organisation>>(apiResponse);
+            return Mapper.Map<IEnumerable<OrganisationSummary>, IEnumerable<Types.OrganisationSearchResult>>(apiResponse);
         }
 
-        public async Task<Types.Organisation> GetOrganisationByEmail(string emailAddress)
+        public async Task<Types.OrganisationSearchResult> GetOrganisationByEmail(string emailAddress)
         {
             _logger.LogInformation($"Searching EPAO Register for. Email: {emailAddress}");
             var apiResponse = await Get<OrganisationSummary>($"/api/ao/assessment-organisations/email/{emailAddress}");
 
-            return Mapper.Map<OrganisationSummary, Types.Organisation>(apiResponse);
+            return Mapper.Map<OrganisationSummary, Types.OrganisationSearchResult>(apiResponse);
         }
 
         public async Task<IEnumerable<string>> GetOrgansiationTypes(bool activeOnly = true)

@@ -7,15 +7,16 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
     {
         public ProviderRegisterOrganisationProfile()
         {
-            CreateMap<Models.ProviderRegister.Provider, Types.Organisation>()
+            CreateMap<Models.ProviderRegister.Provider, Types.OrganisationSearchResult>()
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "RoATP")
                 .ForMember(dest => dest.Ukprn, opt => opt.MapFrom(source => source.Ukprn))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Ukprn))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.ProviderName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(source => source.Email))
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(source => Mapper.Map<Models.ProviderRegister.Address, Types.OrganisationAddress>(source.Addresses.FirstOrDefault())))
                 .ForAllOtherMembers(dest => dest.Ignore());
 
-            CreateMap<Models.ProviderRegister.Organisation, Types.Organisation>()
+            CreateMap<Models.ProviderRegister.Organisation, Types.OrganisationSearchResult>()
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "RoATP")
                 .BeforeMap((source, dest) => dest.Ukprn = null)
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))

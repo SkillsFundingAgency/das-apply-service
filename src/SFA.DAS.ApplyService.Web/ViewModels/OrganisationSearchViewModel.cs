@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using SFA.DAS.ApplyService.Web.Models;
+using SFA.DAS.ApplyService.InternalApi.Types;
 using System.Collections.Generic;
 
 namespace SFA.DAS.ApplyService.Web.ViewModels
@@ -19,7 +19,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
         public string OrganisationType { get; set; }
 
         [JsonIgnore]
-        public IEnumerable<Organisation> Organisations { get; set; }
+        public IEnumerable<OrganisationSearchResult> Organisations { get; set; }
 
         [JsonIgnore]
         public IEnumerable<string> OrganisationTypes { get; set; }

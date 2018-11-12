@@ -10,5 +10,7 @@ namespace SFA.DAS.ApplyService.Application.Users
         Task<Contact> GetContact(string email);
         Task<Contact> GetContactBySignInId(Guid signInId);
         Task UpdateSignInId(Guid contactId, Guid signInId);
+        Task UpdateApplyOrganisationId(Guid contactId, Guid applyOrganisationId);
+        Task<bool> UpdateIsApproved(Guid contactId, bool isApproved);
     }
 }
