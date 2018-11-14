@@ -69,7 +69,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             }
         }
         
-        [HttpPost("Application/{applicationId}/User/{userId}/Pages/{pageId}")]
+        [HttpPost("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
         public async Task<ActionResult<UpdatePageAnswersResult>> Page(string applicationId, string userId, string pageId, [FromBody] List<Answer> answers)
         {
             var updatedPage = await _mediator.Send(new UpdatePageAnswersRequest(Guid.Parse(applicationId), Guid.Parse(userId), pageId, answers));

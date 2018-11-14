@@ -29,7 +29,7 @@ ViewBag.Title = "Applications";
                         <!-- <td class="govuk-table__cell">@application.Id</td> -->
                         <td class="govuk-table__cell govuk-table__cell--numeric">In progress</td>
                         <td class="govuk-table__cell govuk-table__cell--numeric">
-                            <a href="@Url.Action("Sequences","Application", new {applicationId=application.Id, sequenceId = 1})">View</a>
+                            <a href="@Url.Action("Sections","Application", new {applicationId=application.Id})">View</a>
                         </td>
                     </tr>
                     }

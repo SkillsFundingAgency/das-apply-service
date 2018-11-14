@@ -24,45 +24,41 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _apiClient = apiClient;
         }
         
-        public async Task<IActionResult> Index()
+        [HttpGet("/Applications")]
+        public async Task<IActionResult> Applications()
         {
             var applications = await _apiClient.GetApplicationsFor(Guid.Parse(User.FindFirstValue("UserId")));
             
             return View(applications);
         }
-
-//        [HttpGet("/Application/{applicationId}/Sequence/{sequenceId}/Sections")]
-//        public async Task<IActionResult> Sections(string applicationId, int sequenceId)
-//        {
-//            var sections = await _apiClient.GetSections(Guid.Parse(applicationId), sequenceId, Guid.Parse(User.FindFirstValue("UserId")));
-//
-//            var sequencesViewModel = sections.Select(s => new SequenceViewModel(s, Guid.Parse(applicationId))).ToList();
-//            
-//            return View("~/Views/Application/Sequences/Index.cshtml", sequencesViewModel);
-//        }
-//        
-//        [HttpGet("/Application/{applicationId}/Sequences/{sequenceId}")]
-//        public async Task<IActionResult> Sequence(string applicationId, string sequenceId)
-//        {
-//            var sequence = await _apiClient.GetSequence(Guid.Parse(applicationId), sequenceId,
-//                Guid.Parse(User.FindFirstValue("UserId")));
-//
-//            var sequenceViewModel = new SequenceViewModel(sequence, Guid.Parse(applicationId));
-//            
-//            return View("~/Views/Application/Sequences/Sequence.cshtml", sequenceViewModel);
-//        }
-
-        [HttpGet("/Application/{applicationId}/Pages/{pageId}")]
-        public async Task<IActionResult> Page(string applicationId, string pageId)
+        
+        [HttpGet("/Applications/{applicationId}")]
+        public async Task<IActionResult> Sections(Guid applicationId)
         {
-            var page = await _apiClient.GetPage(Guid.Parse(applicationId), pageId, Guid.Parse(User.FindFirstValue("UserId")));
+            var sections = await _apiClient.GetSections(applicationId, sequenceId: 1, userId: Guid.Parse(User.FindFirstValue("UserId")));
+            
+            return View(sections);
+        }
+        
+        [HttpGet("/Applications/{applicationId}/Sections/{sectionId}")]
+        public async Task<IActionResult> Section(Guid applicationId, int sectionId)
+        {
+            var sections = await _apiClient.GetSection(applicationId, sequenceId: 1, sectionId: sectionId, userId: Guid.Parse(User.FindFirstValue("UserId")));
+            
+            return View(sections);
+        }
+        
+        [HttpGet("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
+        public async Task<IActionResult> Page(string applicationId, int sequenceId, int sectionId, string pageId)
+        {
+            var page = await _apiClient.GetPage(Guid.Parse(applicationId), sequenceId,sectionId, pageId, Guid.Parse(User.FindFirstValue("UserId")));
             var pageVm = new PageViewModel(page, Guid.Parse(applicationId));   
             
             return View("~/Views/Application/Pages/Index.cshtml", pageVm);
         }
         
-        [HttpPost("/Application/{applicationId}/Pages/{pageId}")]
-        public async Task<IActionResult> SaveAnswers(string applicationId, string pageId)
+        [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
+        public async Task<IActionResult> SaveAnswers(string applicationId, int sequenceId, int sectionId, string pageId)
         {
             var userId = Guid.Parse(User.FindFirstValue("UserId"));
             
@@ -85,7 +81,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             
-            var updatePageResult = await _apiClient.UpdatePageAnswers(Guid.Parse(applicationId), userId, pageId, answers);
+            var updatePageResult = await _apiClient.UpdatePageAnswers(Guid.Parse(applicationId), userId, sequenceId, sectionId, pageId, answers);
 
             if (updatePageResult.ValidationPassed)
             {

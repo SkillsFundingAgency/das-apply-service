@@ -13,10 +13,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     public interface IApplicationApiClient
     {
-        Task<Page> GetPage(Guid applicationId, string pageId, Guid userId);
+        //Task<Page> GetPage(Guid applicationId, string pageId, Guid userId);
 
-        Task<UpdatePageAnswersResult> UpdatePageAnswers(Guid applicationId, Guid userId, string pageId,
-            List<Answer> answers);
+//        Task<UpdatePageAnswersResult> UpdatePageAnswers(Guid applicationId, Guid userId, string pageId,
+//            List<Answer> answers);
 
         //Task<Sequence> GetSequence(Guid applicationId, string sequenceId, Guid userId);
 
@@ -27,5 +27,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<UploadResult> Upload(string applicationId, string userId, string pageId, IFormFileCollection files);
         
         Task<byte[]> Download(Guid applicationId, Guid userId, string pageId, string questionId, string filename);
+        Task<List<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid userId);
+        Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId, int sectionId, Guid userId);
+        
+        Task<Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid userId);
+
+        Task<UpdatePageAnswersResult> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId, int sectionId,
+            string pageId, List<Answer> answers);
     }
 }

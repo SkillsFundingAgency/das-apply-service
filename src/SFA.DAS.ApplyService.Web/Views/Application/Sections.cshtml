@@ -1,0 +1,29 @@
+@model List<SFA.DAS.ApplyService.Domain.Entities.ApplicationSection>
+
+@{
+    ViewBag.Title = "Application overview";
+    Layout = "_Layout";
+}
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">Application overview</h1>
+
+            <ul class="govuk-list">
+                @foreach (var applicationSection in Model)
+                {
+                    <li>
+                        <h2 class="gvuk-heading-m">
+                            <a href="@Url.Action("Section", "Application", new {applicationSection.ApplicationId, applicationSection.SectionId})">
+                                @applicationSection.LinkTitle
+                            </a>
+                            <span class="govuk-caption-m">0 of 15 questions answered</span>
+                        </h2>
+                    </li>
+                    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+                }
+            </ul>
+
+        </div>
+    </div>
+</main>

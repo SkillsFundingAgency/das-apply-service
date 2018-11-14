@@ -85,8 +85,8 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                return (await connection.QueryAsync<Domain.Entities.Application>(@"SELECT e.* FROM Contacts c
-                                                    INNER JOIN Entities e ON e.ApplyingOrganisationId = c.ApplyOrganisationID
+                return (await connection.QueryAsync<Domain.Entities.Application>(@"SELECT a.* FROM Contacts c
+                                                    INNER JOIN Applications a ON a.ApplyingOrganisationId = c.ApplyOrganisationID
                                                     WHERE c.Id = @userId", new {userId})).ToList();
             }
         }
@@ -163,9 +163,9 @@ namespace SFA.DAS.ApplyService.Data
                                     (ApplicationId, SequenceId, SectionId, QnAData, Title, LinkTitle, Status, DisplayType)
                                 SELECT        @applicationId AS ApplicationId, SequenceId, SectionId, QnAData, Title, LinkTitle, Status, DisplayType
                                 FROM            WorkflowSections
-                                WHERE        (WorkflowId = @workflowId AND (DisallowedOrgTypes IS NULL OR DisallowedOrgTypes NOT LIKE '%|@organisationType|%'));
+                                WHERE        (WorkflowId = @workflowId AND (DisallowedOrgTypes IS NULL OR DisallowedOrgTypes NOT LIKE @organisationType));
 
-                                SELECT * FROM ApplicationSections WHERE ApplicationId = @applicationId;", new {applicationId, workflowId, organisationType})).ToList();
+                                SELECT * FROM ApplicationSections WHERE ApplicationId = @applicationId;", new {applicationId, workflowId, organisationType = $"%|{organisationType}|%"})).ToList();
             }
         }
 
