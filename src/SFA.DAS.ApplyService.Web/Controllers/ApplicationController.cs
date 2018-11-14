@@ -31,26 +31,26 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return View(applications);
         }
 
-        [HttpGet("/Application/{applicationId}/Sequences")]
-        public async Task<IActionResult> Sequences(string applicationId)
-        {
-            var sequences = await _apiClient.GetSequences(Guid.Parse(applicationId), Guid.Parse(User.FindFirstValue("UserId")));
-
-            var sequencesViewModel = sequences.Select(s => new SequenceViewModel(s, Guid.Parse(applicationId))).ToList();
-            
-            return View("~/Views/Application/Sequences/Index.cshtml", sequencesViewModel);
-        }
-        
-        [HttpGet("/Application/{applicationId}/Sequences/{sequenceId}")]
-        public async Task<IActionResult> Sequence(string applicationId, string sequenceId)
-        {
-            var sequence = await _apiClient.GetSequence(Guid.Parse(applicationId), sequenceId,
-                Guid.Parse(User.FindFirstValue("UserId")));
-
-            var sequenceViewModel = new SequenceViewModel(sequence, Guid.Parse(applicationId));
-            
-            return View("~/Views/Application/Sequences/Sequence.cshtml", sequenceViewModel);
-        }
+//        [HttpGet("/Application/{applicationId}/Sequence/{sequenceId}/Sections")]
+//        public async Task<IActionResult> Sections(string applicationId, int sequenceId)
+//        {
+//            var sections = await _apiClient.GetSections(Guid.Parse(applicationId), sequenceId, Guid.Parse(User.FindFirstValue("UserId")));
+//
+//            var sequencesViewModel = sections.Select(s => new SequenceViewModel(s, Guid.Parse(applicationId))).ToList();
+//            
+//            return View("~/Views/Application/Sequences/Index.cshtml", sequencesViewModel);
+//        }
+//        
+//        [HttpGet("/Application/{applicationId}/Sequences/{sequenceId}")]
+//        public async Task<IActionResult> Sequence(string applicationId, string sequenceId)
+//        {
+//            var sequence = await _apiClient.GetSequence(Guid.Parse(applicationId), sequenceId,
+//                Guid.Parse(User.FindFirstValue("UserId")));
+//
+//            var sequenceViewModel = new SequenceViewModel(sequence, Guid.Parse(applicationId));
+//            
+//            return View("~/Views/Application/Sequences/Sequence.cshtml", sequenceViewModel);
+//        }
 
         [HttpGet("/Application/{applicationId}/Pages/{pageId}")]
         public async Task<IActionResult> Page(string applicationId, string pageId)
@@ -94,7 +94,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 if (nextActions.Count == 1)
                 {
                     var pageNext = nextActions[0];
-                    if (pageNext.Action == "NextPage")
+                    if (pageNext.Action == "NextPage" && pageNext.ConditionMet)
                     {
                         return RedirectToAction("Page", new {applicationId, pageId = pageNext.ReturnId});
                     }

@@ -7,7 +7,7 @@ using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Download;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
-using SFA.DAS.ApplyService.Application.Apply.GetSequence;
+using SFA.DAS.ApplyService.Application.Apply.GetSection;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 using SFA.DAS.ApplyService.Application.Apply.Upload;
 using SFA.DAS.ApplyService.Domain.Apply;
@@ -29,34 +29,34 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task Start([FromBody] StartApplyRequest request)
         {
             await _mediator.Send(new StartApplicationRequest(request.ApplicationType, request.ApplyingOrganisationId,
-                request.Username));
+                request.UserId, request.OrganisationType));
         }
 
         [HttpGet("Applications/{userId}")]
-        public async Task<ActionResult<List<Entity>>> GetApplications(string userId)
+        public async Task<ActionResult<List<Domain.Entities.Application>>> GetApplications(string userId)
         {
             return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId)));
         }
         
-        [HttpGet("Application/{applicationId}/User/{userId}/Sequences")]
-        public async Task<ActionResult<List<Sequence>>> GetSequence(string applicationId, string userId)
+        [HttpGet("Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections")]
+        public async Task<ActionResult<List<ApplicationSection>>> GetSections(string applicationId, string userId, int sequenceId)
         {
-            return await _mediator.Send(new GetSequencesRequest(Guid.Parse(applicationId), Guid.Parse(userId)));
+            return await _mediator.Send(new GetSectionsRequest(Guid.Parse(applicationId), sequenceId, Guid.Parse(userId)));
         }
         
-        [HttpGet("Application/{applicationId}/User/{userId}/Sequences/{sequenceId}")]
-        public async Task<ActionResult<Sequence>> GetSequence(string applicationId, string userId, string sequenceId)
+        [HttpGet("Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections/{sectionId}")]
+        public async Task<ActionResult<ApplicationSection>> GetSection(string applicationId, string userId, int sequenceId, int sectionId)
         {
-            return await _mediator.Send(new GetSequenceRequest(Guid.Parse(applicationId), Guid.Parse(userId),
-                sequenceId));
+            return await _mediator.Send(new GetSectionRequest(Guid.Parse(applicationId), Guid.Parse(userId),
+                sequenceId, sectionId));
         }
 
-        [HttpGet("Application/{applicationId}/User/{userId}/Pages/{pageId}")]
-        public async Task<ActionResult<Page>> GetPage(string applicationId, string userId,string pageId)
+        [HttpGet("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
+        public async Task<ActionResult<Page>> GetPage(string applicationId, string userId, int sequenceId, int sectionId, string pageId)
         {
             try
             {
-                return await _mediator.Send(new GetPageRequest(Guid.Parse(applicationId), pageId, Guid.Parse(userId)));
+                return await _mediator.Send(new GetPageRequest(Guid.Parse(applicationId), sequenceId, sectionId, pageId, Guid.Parse(userId)));
             }
             catch (Exception e)
             {

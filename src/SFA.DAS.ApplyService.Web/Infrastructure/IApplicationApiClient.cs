@@ -18,11 +18,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<UpdatePageAnswersResult> UpdatePageAnswers(Guid applicationId, Guid userId, string pageId,
             List<Answer> answers);
 
-        Task<Sequence> GetSequence(Guid applicationId, string sequenceId, Guid userId);
+        //Task<Sequence> GetSequence(Guid applicationId, string sequenceId, Guid userId);
 
-        Task<List<Sequence>> GetSequences(Guid applicationId, Guid userId);
+        //Task<List<Section>> GetSections(Guid applicationId, Guid userId);
 
-        Task<List<Entity>> GetApplicationsFor(Guid userId);
+        Task<List<Domain.Entities.Application>> GetApplicationsFor(Guid userId);
 
         Task<UploadResult> Upload(string applicationId, string userId, string pageId, IFormFileCollection files);
         

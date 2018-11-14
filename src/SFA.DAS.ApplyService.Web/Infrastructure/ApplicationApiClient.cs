@@ -40,21 +40,21 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .ReadAsAsync<UpdatePageAnswersResult>();
         }
 
-        public async Task<Sequence> GetSequence(Guid applicationId, string sequenceId, Guid userId)
-        {
-            return await (await _httpClient.GetAsync($"/Application/{applicationId}/User/{userId}/Sequences/{sequenceId}")).Content
-                .ReadAsAsync<Sequence>();
-        }
+//        public async Task<ApplicationSection> GetSection(Guid applicationId, string userId, int sequenceId, int sectionId)
+//        {
+//            return await (await _httpClient.GetAsync($"/Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections/{sectionId}")).Content
+//                .ReadAsAsync<ApplicationSection>();
+//        }
+//
+//        public async Task<List<Sequence>> GetSections(Guid applicationId, Guid userId)
+//        {
+//            return await (await _httpClient.GetAsync($"/Application/{applicationId}/User/{userId}/Sequences")).Content
+//                .ReadAsAsync<List<Sequence>>();
+//        }
 
-        public async Task<List<Sequence>> GetSequences(Guid applicationId, Guid userId)
+        public async Task<List<Domain.Entities.Application>> GetApplicationsFor(Guid userId)
         {
-            return await (await _httpClient.GetAsync($"/Application/{applicationId}/User/{userId}/Sequences")).Content
-                .ReadAsAsync<List<Sequence>>();
-        }
-
-        public async Task<List<Entity>> GetApplicationsFor(Guid userId)
-        {
-            return await (await _httpClient.GetAsync($"/Applications/{userId}")).Content.ReadAsAsync<List<Entity>>();
+            return await (await _httpClient.GetAsync($"/Applications/{userId}")).Content.ReadAsAsync<List<Domain.Entities.Application>>();
         }
 
         public async Task<UploadResult> Upload(string applicationId, string userId, string pageId, IFormFileCollection files)

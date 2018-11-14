@@ -31,37 +31,27 @@ namespace SFA.DAS.ApplyService.Web
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger<Startup> _logger;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
-        public Startup(IConfiguration configuration, ILogger<Startup> logger)
+        public Startup(IConfiguration configuration, ILogger<Startup> logger, IHostingEnvironment hostingEnvironment)
         {
             _configuration = configuration;
             _logger = logger;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            
-            
             ConfigureAuth(services);
-            
-            
             
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
             
-         
-            
             services.AddMvc(options => { options.Filters.Add<PerformValidationFilter>(); })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
-            _logger.LogInformation("Passed Configure Mvc");
             
             services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
             
-            _logger.LogInformation("Passed Add Session");
-            
             services.AddDistributedMemoryCache();
-            
-            _logger.LogInformation("Passed Memory Cache");
 
             return ConfigureIOC(services).Result;
         }
@@ -99,40 +89,17 @@ namespace SFA.DAS.ApplyService.Web
                 
                 config.Populate(services);
             });
-
-            var applyConfig = await container.GetInstance<IConfigurationService>().GetConfig();
-            
-            //services.AddHttpClient<UsersApiClient>(c => { c.BaseAddress = new Uri(applyConfig.InternalApi.Uri); });
-            //services.AddHttpClient<ApplicationApiClient>(c => { c.BaseAddress = new Uri(applyConfig.InternalApi.Uri); });
             
             return container.GetInstance<IServiceProvider>();
-        }
-//
-//        private static async void AddApiClients(IServiceCollection services, IServiceProvider serviceProvider, ILogger logger)
-//        {
-//            IApplyConfig config;
-//            try
-//            {
-//                
-//            }
-//            catch (Exception e)
-//            {
-//                logger.LogInformation($"Error getting config: {e.Message} {e.StackTrace}");
-//                throw;
-//            }
-//            
-//            
-//        }
-        
-        protected virtual void ConfigureMvc(IServiceCollection services)
-        {
-            
-            //.AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)
         {
-            services.AddDfeSignInAuthorization();
+
+            var configService = new ConfigurationService(_hostingEnvironment, _configuration["EnvironmentName"],
+                _configuration["ConfigurationStorageConnectionString"], "1.0", "SFA.DAS.ApplyService");
+            
+            services.AddDfeSignInAuthorization(configService.GetConfig().Result);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILogger<Startup> logger)
