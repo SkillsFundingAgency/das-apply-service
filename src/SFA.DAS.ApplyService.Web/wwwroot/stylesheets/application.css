@@ -248,6 +248,10 @@
   .app-task-list__items {
     padding-left: 30px;
   }
+
+  .app-task-list__items--no-number {
+    padding-left: 0;
+  }
 }
 
 .app-task-list__item {

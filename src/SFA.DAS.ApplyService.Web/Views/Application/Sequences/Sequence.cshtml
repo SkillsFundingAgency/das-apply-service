@@ -16,27 +16,33 @@ Layout = "_Layout";
             else
             {
                 <h1 class="govuk-heading-xl">@Model.Title</h1>
+                <ol class="app-task-list">
 
-                foreach (var sect in Model.Sections)
-                {
-                    <h2 class="govuk-heading-m">@sect.Title</h2>
-                    <dl class="app-check-your-answers app-check-your-answers--short">
-                        @foreach (var pg in sect.Pages.Where(p => p.Active))
-                        {
-                            <div class="app-check-your-answers__contents">
-                                <dt class="app-check-your-answers__question">
-                                    <a href="@Url.Action("Page", "Application" , new {pageId=pg.PageId, applicationId=Model.ApplicationId})">
-                                        @pg.LinkTitle
-                                    </a>
-                                    @if (pg.Complete)
-                                    {
-                                        <strong class="govuk-tag app-task-list__task-completed" id="completed">Completed</strong>
-                                    }
-                                </dt>
-                            </div>
-                        }
-                    </dl>
-                }
+                    @foreach (var sect in Model.Sections)
+                    {
+                        <li>
+                            <h2 class="app-task-list__section">
+                                @sect.Title
+                            </h2>
+                            <ul class="app-task-list__items app-task-list__items--no-number">
+                                @foreach (var pg in sect.Pages.Where(p => p.Active))
+                                {
+                                    <li class="app-task-list__item">
+                                        <a class="app-task-list__task-name" href="@Url.Action("Page", "Application" , new {pageId=pg.PageId, applicationId=Model.ApplicationId})" aria-describedby="eligibility-completed">
+                                            @pg.LinkTitle
+                                        </a>
+                                        @if (pg.Complete)
+                                        {
+                                            <strong class="govuk-tag app-task-list__task-completed" id="page-@pg.PageId-completed">Completed</strong>
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        </li>
+                    }
+
+                </ol>
+
                 <a href="@Url.Action("Sequences", "Application")" class="govuk-button">Return to application overview</a>
             }
         </div>
