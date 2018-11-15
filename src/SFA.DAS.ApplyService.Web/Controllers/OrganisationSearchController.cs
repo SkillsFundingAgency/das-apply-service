@@ -80,9 +80,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Results(string searchString, string organisationTypeFilter = null)
         {
-            if (string.IsNullOrEmpty(searchString))
+            if (string.IsNullOrEmpty(searchString) || searchString.Length < 2)
             {
-                ModelState.AddModelError(nameof(searchString), "Enter a search string");
+                ModelState.AddModelError(nameof(searchString), "Enter a valid search string");
                 return RedirectToAction(nameof(Index));
             }
 
@@ -108,9 +108,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Type(OrganisationSearchViewModel viewModel)
         {
-            if (string.IsNullOrEmpty(viewModel.Name))
+            if (string.IsNullOrEmpty(viewModel.Name) || viewModel.SearchString.Length < 2)
             {
-                ModelState.AddModelError(nameof(viewModel.Name), "Enter a search string");
+                ModelState.AddModelError(nameof(viewModel.Name), "Enter a valid search string");
                 return RedirectToAction(nameof(Index));
             }
 
@@ -121,9 +121,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Done(OrganisationSearchViewModel viewModel)
         {
-            if (string.IsNullOrEmpty(viewModel.Name))
+            if (string.IsNullOrEmpty(viewModel.Name) || viewModel.SearchString.Length < 2)
             {
-                ModelState.AddModelError(nameof(viewModel.Name), "Enter a search string");
+                ModelState.AddModelError(nameof(viewModel.Name), "Enter a valid search string");
                 return RedirectToAction(nameof(Index));
             }
             else if (string.IsNullOrEmpty(viewModel.OrganisationType))

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using OrganisationDetails = SFA.DAS.ApplyService.InternalApi.Types.OrganisationDetails;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
@@ -35,12 +36,22 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .ReadAsAsync<Organisation>();
         }
 
-        public async Task<Organisation> Create(OrganisationSearchResult organisation1, string createdBy)
+        public async Task<Organisation> Create(OrganisationSearchResult organisation, string createdBy)
         {
-            // TODO: Consider request object. This is what the Internal Controller posts
-            //new CreateOrganisationRequest { Name = request.Name, OrganisationType = request.OrganisationType, OrganisationUkprn = request.OrganisationUkprn, OrganisationDetails = request.OrganisationDetails, CreatedBy = request.CreatedBy, PrimaryContactEmail = request.Email };
+            var orgDetails = new OrganisationDetails
+            {
+                OrganisationReferenceType = organisation.OrganisationReferenceType,
+                OrganisationReferenceId = organisation.OrganisationReferenceId,
+                Address1 = organisation.Address?.Address1,
+                Address2 = organisation.Address?.Address2,
+                Address3 = organisation.Address?.Address3,
+                City = organisation.Address?.City,
+                Postcode = organisation.Address?.Postcode
+            };
 
-            return await (await _httpClient.PostAsJsonAsync($"/Organisations", string.Empty)).Content
+            var request = new CreateOrganisationRequest { Name = organisation.Name, OrganisationType = organisation.OrganisationType, OrganisationUkprn = organisation.Ukprn, OrganisationDetails = orgDetails, CreatedBy = createdBy, PrimaryContactEmail = organisation.Email };
+
+            return await (await _httpClient.PostAsJsonAsync($"/Organisations", request)).Content
                 .ReadAsAsync<Organisation>();
         }
 
