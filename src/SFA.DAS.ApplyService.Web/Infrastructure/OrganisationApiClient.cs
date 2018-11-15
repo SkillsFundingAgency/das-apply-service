@@ -23,13 +23,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
         }
 
-        public async Task<Organisation> GetByName(string name)
-        {
-            // TODO - is this even required?
-            return await (await _httpClient.GetAsync($"/Organisations/name/{name}")).Content
-                .ReadAsAsync<Organisation>();
-        }
-
         public async Task<Organisation> GetByContactEmail(string email)
         {
             return await (await _httpClient.GetAsync($"/Organisations/email/{email}")).Content
@@ -52,14 +45,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             var request = new CreateOrganisationRequest { Name = organisation.Name, OrganisationType = organisation.OrganisationType, OrganisationUkprn = organisation.Ukprn, OrganisationDetails = orgDetails, CreatedBy = createdBy, PrimaryContactEmail = organisation.Email };
 
             return await (await _httpClient.PostAsJsonAsync($"/Organisations", request)).Content
-                .ReadAsAsync<Organisation>();
-        }
-
-        public async Task<Organisation> Update(Organisation organisation)
-        {
-            // TODO: Consider request object
-            // TODO - is this even required?
-            return await (await _httpClient.PutAsJsonAsync($"/Organisations", organisation)).Content
                 .ReadAsAsync<Organisation>();
         }
     }

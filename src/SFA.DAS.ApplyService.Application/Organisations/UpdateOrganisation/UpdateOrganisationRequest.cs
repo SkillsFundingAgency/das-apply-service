@@ -15,5 +15,6 @@
         public bool RoATPApproved { get; set; }
 
         public string UpdatedBy { get; set; }
+        public string PrimaryContactEmail { get; set; }
     }
 }
