@@ -1,5 +1,7 @@
-﻿using SFA.DAS.ApplyService.Configuration;
+﻿using Newtonsoft.Json;
+using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.InternalApi.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,10 +35,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .ReadAsAsync<Organisation>();
         }
 
-        public async Task<Organisation> Create(Organisation organisation)
+        public async Task<Organisation> Create(OrganisationSearchResult organisation1, string createdBy)
         {
-            // TODO: Consider request object
-            return await (await _httpClient.PostAsJsonAsync($"/Organisations", organisation)).Content
+            // TODO: Consider request object. This is what the Internal Controller posts
+            //new CreateOrganisationRequest { Name = request.Name, OrganisationType = request.OrganisationType, OrganisationUkprn = request.OrganisationUkprn, OrganisationDetails = request.OrganisationDetails, CreatedBy = request.CreatedBy, PrimaryContactEmail = request.Email };
+
+            return await (await _httpClient.PostAsJsonAsync($"/Organisations", string.Empty)).Content
                 .ReadAsAsync<Organisation>();
         }
 

@@ -37,7 +37,7 @@
                             <li>UK Provider Reference Number (UKPRN), or</li>
                             <li>End Point Assessor Organisation (EPAO) ID</li>
                         </ul>
-                        <input class="govuk-input govuk-input--width-20" asp-for="SearchString" />
+                        <input class="govuk-input govuk-input--width-20" asp-for="SearchString" minlength="2" required />
                     </div>
                 <button type="submit" class="govuk-button">Search</button>
             </form>

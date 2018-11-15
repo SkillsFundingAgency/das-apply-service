@@ -9,10 +9,12 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
     public class CreateOrganisationHandler : IRequestHandler<CreateOrganisationRequest, Organisation>
     {
         private readonly IOrganisationRepository _organisationRepository;
+        private readonly IEmailService _emailService;
 
-        public CreateOrganisationHandler(IOrganisationRepository organisationRepository)
+        public CreateOrganisationHandler(IOrganisationRepository organisationRepository, IEmailService emailService)
         {
             _organisationRepository = organisationRepository;
+            _emailService = emailService;
         }
 
         public async Task<Organisation> Handle(CreateOrganisationRequest request, CancellationToken cancellationToken)
@@ -25,7 +27,14 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
             var organisation = new Organisation { CreatedBy = request.CreatedBy, Name = request.Name, OrganisationDetails = request.OrganisationDetails, OrganisationType = request.OrganisationType, OrganisationUkprn = request.OrganisationUkprn };
             organisation.Status = "New";
 
-            return await _organisationRepository.CreateOrganisation(organisation);
+            var result = await _organisationRepository.CreateOrganisation(organisation);
+
+            if (result != null)
+            {
+                await _emailService.SendPreAmbleEmail(request.PrimaryContactEmail, 2, new { OrganisationName = request.Name });
+            }
+
+            return result;
         }
 
         private async Task<Organisation> UpdateOrganisationIfExists(CreateOrganisationRequest request)

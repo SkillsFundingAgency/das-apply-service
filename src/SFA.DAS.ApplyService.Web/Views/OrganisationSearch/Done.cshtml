@@ -31,7 +31,7 @@
                     <td class="govuk-table__cell govuk-!-padding-top-0 govuk-!-padding-bottom-4 govuk-!-padding-left-2">
                         <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
                             <span class="govuk-body govuk-!-font-weight-bold">Name</span>
-                            @if (Model.Name == null)
+                            @if (Model?.Name == null)
                             {
                                 @("Unknown");
                             }
@@ -42,7 +42,7 @@
                         </p>
                         <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
                             <span class="govuk-body govuk-!-font-weight-bold">Address</span>
-                            @if (Model.OrganisationDetails == null)
+                            @if (Model?.OrganisationDetails == null)
                             {
                                 @("Unknown");
                             }
@@ -53,7 +53,7 @@
                         </p>
                         <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
                             <span class="govuk-body govuk-!-font-weight-bold">Type</span>
-                            @if (Model.OrganisationType == null)
+                            @if (Model?.OrganisationType == null)
                             {
                                 @("Unknown");
                             }

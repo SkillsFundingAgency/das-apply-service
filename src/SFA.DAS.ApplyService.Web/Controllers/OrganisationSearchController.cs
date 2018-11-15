@@ -148,16 +148,18 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             // filter postcode
             searchResults = searchResults.Where(sr => !string.IsNullOrEmpty(viewModel.Postcode) ? (sr.Address != null ? sr.Address.Postcode.Equals(viewModel.Postcode, StringComparison.InvariantCultureIgnoreCase) : true) : true);
 
-            var organisation = searchResults.FirstOrDefault();
+            var organisationSearchResult = searchResults.FirstOrDefault();
 
-            if (organisation.OrganisationType == null) organisation.OrganisationType = viewModel.OrganisationType;
+            if (organisationSearchResult != null)
+            {
+                if (organisationSearchResult.OrganisationType == null) organisationSearchResult.OrganisationType = viewModel.OrganisationType;
 
-            // TODO: save (with appropriate object) and consider refactoring the above if it makes sense to
-            var orgThatWasCreated = await _organisationApiClient.Create(null);
+                var orgThatWasCreated = await _organisationApiClient.Create(organisationSearchResult, "TODO: SYSTEM"); // TODO: Get User?
 
-            // TODO: Notify Primary contact of activity
+                return View(orgThatWasCreated);
+            }
 
-            return View(orgThatWasCreated);
+            return View();
         }
     }
 }

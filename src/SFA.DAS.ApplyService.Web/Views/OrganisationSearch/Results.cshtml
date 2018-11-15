@@ -47,7 +47,7 @@
                             Or search again
                         </span>
                     </h1>
-                    <input class="govuk-input govuk-input--width-20" asp-for="SearchString" />
+                    <input class="govuk-input govuk-input--width-20" asp-for="SearchString" minlength="2" required />
                 </div>
                 <button type="submit" class="govuk-button">Search</button>
             </form>
@@ -57,6 +57,7 @@
     <div class="govuk-grid-row search-results">
         <div class="govuk-grid-column-one-third">
             <aside>
+                @* PLEASE FIX - it doesn't have a nice box with a shaded title area around it at it does within the prototype *@
                 <h2 class="govuk-heading-m">Filter results</h2>
                 <div class="filter">
                     <form method="get" asp-action="Results" asp-controller="OrganisationSearch" novalidate>

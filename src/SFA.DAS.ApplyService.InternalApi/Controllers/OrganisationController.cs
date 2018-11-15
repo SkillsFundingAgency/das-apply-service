@@ -24,10 +24,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
         [HttpPost()]
         [PerformValidation]
-        public async Task<ActionResult<Organisation>> CreateOrganisation([FromBody]Organisation organisation)
+        public async Task<ActionResult<Organisation>> CreateOrganisation([FromBody]CreateOrganisationRequest request)
         {
-            var request = new CreateOrganisationRequest { CreatedBy = organisation.CreatedBy, Name = organisation.Name, OrganisationDetails = organisation.OrganisationDetails, OrganisationType = organisation.OrganisationType, OrganisationUkprn = organisation.OrganisationUkprn };
-
             var org = await _mediator.Send(request);
 
             if (org is null)
@@ -40,10 +38,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
         [HttpPut()]
         [PerformValidation]
-        public async Task<ActionResult<Organisation>> UpdateOrganisation([FromBody]Organisation organisation)
+        public async Task<ActionResult<Organisation>> UpdateOrganisation([FromBody]UpdateOrganisationRequest request)
         {
-            var request = new UpdateOrganisationRequest { UpdatedBy = organisation.UpdatedBy, Name = organisation.Name, OrganisationDetails = organisation.OrganisationDetails, OrganisationType = organisation.OrganisationType, OrganisationUkprn = organisation.OrganisationUkprn };
-
             var org = await _mediator.Send(request);
 
             if (org is null)
