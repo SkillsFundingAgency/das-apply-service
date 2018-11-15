@@ -154,7 +154,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 if (organisationSearchResult.OrganisationType == null) organisationSearchResult.OrganisationType = viewModel.OrganisationType;
 
-                var orgThatWasCreated = await _organisationApiClient.Create(organisationSearchResult, "TODO: SYSTEM"); // TODO: Get User?
+                var orgThatWasCreated = await _organisationApiClient.Create(organisationSearchResult);
 
                 return View(orgThatWasCreated);
             }

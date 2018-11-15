@@ -29,7 +29,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .ReadAsAsync<Organisation>();
         }
 
-        public async Task<Organisation> Create(OrganisationSearchResult organisation, string createdBy)
+        public async Task<Organisation> Create(OrganisationSearchResult organisation, string createdBy = "System")
         {
             var orgDetails = new OrganisationDetails
             {
