@@ -24,45 +24,41 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _apiClient = apiClient;
         }
         
-        public async Task<IActionResult> Index()
+        [HttpGet("/Applications")]
+        public async Task<IActionResult> Applications()
         {
             var applications = await _apiClient.GetApplicationsFor(Guid.Parse(User.FindFirstValue("UserId")));
             
             return View(applications);
         }
-
-        [HttpGet("/Application/{applicationId}/Sequences")]
-        public async Task<IActionResult> Sequences(string applicationId)
+        
+        [HttpGet("/Applications/{applicationId}")]
+        public async Task<IActionResult> Sections(Guid applicationId)
         {
-            var sequences = await _apiClient.GetSequences(Guid.Parse(applicationId), Guid.Parse(User.FindFirstValue("UserId")));
-
-            var sequencesViewModel = sequences.Select(s => new SequenceViewModel(s, Guid.Parse(applicationId))).ToList();
+            var sections = await _apiClient.GetSections(applicationId, sequenceId: 1, userId: Guid.Parse(User.FindFirstValue("UserId")));
             
-            return View("~/Views/Application/Sequences/Index.cshtml", sequencesViewModel);
+            return View(sections);
         }
         
-        [HttpGet("/Application/{applicationId}/Sequences/{sequenceId}")]
-        public async Task<IActionResult> Sequence(string applicationId, string sequenceId)
+        [HttpGet("/Applications/{applicationId}/Sections/{sectionId}")]
+        public async Task<IActionResult> Section(Guid applicationId, int sectionId)
         {
-            var sequence = await _apiClient.GetSequence(Guid.Parse(applicationId), sequenceId,
-                Guid.Parse(User.FindFirstValue("UserId")));
-
-            var sequenceViewModel = new SequenceViewModel(sequence, Guid.Parse(applicationId));
+            var sections = await _apiClient.GetSection(applicationId, sequenceId: 1, sectionId: sectionId, userId: Guid.Parse(User.FindFirstValue("UserId")));
             
-            return View("~/Views/Application/Sequences/Sequence.cshtml", sequenceViewModel);
+            return View(sections);
         }
-
-        [HttpGet("/Application/{applicationId}/Pages/{pageId}")]
-        public async Task<IActionResult> Page(string applicationId, string pageId)
+        
+        [HttpGet("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
+        public async Task<IActionResult> Page(string applicationId, int sequenceId, int sectionId, string pageId)
         {
-            var page = await _apiClient.GetPage(Guid.Parse(applicationId), pageId, Guid.Parse(User.FindFirstValue("UserId")));
+            var page = await _apiClient.GetPage(Guid.Parse(applicationId), sequenceId,sectionId, pageId, Guid.Parse(User.FindFirstValue("UserId")));
             var pageVm = new PageViewModel(page, Guid.Parse(applicationId));   
             
             return View("~/Views/Application/Pages/Index.cshtml", pageVm);
         }
         
-        [HttpPost("/Application/{applicationId}/Pages/{pageId}")]
-        public async Task<IActionResult> SaveAnswers(string applicationId, string pageId)
+        [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
+        public async Task<IActionResult> SaveAnswers(string applicationId, int sequenceId, int sectionId, string pageId)
         {
             var userId = Guid.Parse(User.FindFirstValue("UserId"));
             
@@ -85,7 +81,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             
-            var updatePageResult = await _apiClient.UpdatePageAnswers(Guid.Parse(applicationId), userId, pageId, answers);
+            var updatePageResult = await _apiClient.UpdatePageAnswers(Guid.Parse(applicationId), userId, sequenceId, sectionId, pageId, answers);
 
             if (updatePageResult.ValidationPassed)
             {
@@ -94,7 +90,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 if (nextActions.Count == 1)
                 {
                     var pageNext = nextActions[0];
-                    if (pageNext.Action == "NextPage")
+                    if (pageNext.Action == "NextPage" && pageNext.ConditionMet)
                     {
                         return RedirectToAction("Page", new {applicationId, pageId = pageNext.ReturnId});
                     }

@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -15,10 +16,30 @@ namespace SFA.DAS.ApplyService.Application.Apply
         
         public async Task<Unit> Handle(StartApplicationRequest request, CancellationToken cancellationToken)
         {
-            var workflow = await _applyRepository.GetCurrentWorkflow(request.ApplicationType, request.ApplyingOrganisationId);
+            var assets = await _applyRepository.GetAssets();
+            try
+            {
+                var workflowId = await _applyRepository.GetLatestWorkflow(request.ApplicationType);
+                var applicationId =
+                    await _applyRepository.CreateApplication(request.ApplicationType, request.ApplyingOrganisationId,
+                        request.UserId, workflowId);
 
-            await _applyRepository.SetOrganisationApplication(workflow, request.ApplyingOrganisationId, request.Username);
-            
+                var sections = await _applyRepository.CopyWorkflowToApplication(applicationId, workflowId, request.OrganisationType);
+
+                foreach (var applicationSection in sections)
+                {
+                    foreach (var asset in assets)
+                    {
+                        applicationSection.QnAData = applicationSection.QnAData.Replace(asset.Reference, asset.Text);
+                    }
+                }
+
+                await _applyRepository.UpdateSections(sections);
+            }
+            catch (Exception e)
+            {
+                var a = e;
+            }
             return Unit.Value;
         }
     }
