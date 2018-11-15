@@ -58,7 +58,7 @@ namespace SFA.DAS.ApplyService.EmailService
             }
 
             var client = new SendGridClient(config.Email.SendGridApiKey);
-            var from = new EmailAddress("martin.hornsby@digital.education.gov.uk", "Apply Service");
+            var from = new EmailAddress(toAddress, "Apply Service");
             var subject = "Pre-Amble Notification";
             var to = new EmailAddress(toAddress);
             var htmlContent = $@"<p>Dear [OrganisationName],</p>
