@@ -1,10 +1,7 @@
-﻿using Newtonsoft.Json;
-using SFA.DAS.ApplyService.Configuration;
+﻿using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using OrganisationDetails = SFA.DAS.ApplyService.InternalApi.Types.OrganisationDetails;
@@ -23,13 +20,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
         }
 
-        public async Task<Organisation> GetByContactEmail(string email)
-        {
-            return await (await _httpClient.GetAsync($"/Organisations/email/{email}")).Content
-                .ReadAsAsync<Organisation>();
-        }
-
-        public async Task<Organisation> Create(OrganisationSearchResult organisation, string createdBy = "System")
+        public async Task<Organisation> Create(OrganisationSearchResult organisation, Guid createdByUserId, string createdBy = "System")
         {
             var orgDetails = new OrganisationDetails
             {
@@ -42,7 +33,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 Postcode = organisation.Address?.Postcode
             };
 
-            var request = new CreateOrganisationRequest { Name = organisation.Name, OrganisationType = organisation.OrganisationType, OrganisationUkprn = organisation.Ukprn, OrganisationDetails = orgDetails, CreatedBy = createdBy, PrimaryContactEmail = organisation.Email };
+            var request = new CreateOrganisationRequest { Name = organisation.Name, OrganisationType = organisation.OrganisationType, OrganisationUkprn = organisation.Ukprn, OrganisationDetails = orgDetails, CreatedByUserId = createdByUserId, CreatedBy = createdBy, PrimaryContactEmail = organisation.Email };
 
             return await (await _httpClient.PostAsJsonAsync($"/Organisations", request)).Content
                 .ReadAsAsync<Organisation>();

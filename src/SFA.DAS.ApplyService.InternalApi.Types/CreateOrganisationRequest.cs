@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.ApplyService.InternalApi.Types
+﻿using System;
+
+namespace SFA.DAS.ApplyService.InternalApi.Types
 {
     public class CreateOrganisationRequest
     {
@@ -8,6 +10,7 @@
 
         public OrganisationDetails OrganisationDetails { get; set; }
 
+        public Guid CreatedByUserId { get; set; }
         public string CreatedBy { get; set; }
         public string PrimaryContactEmail { get; set; }
     }

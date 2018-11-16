@@ -22,7 +22,7 @@ namespace SFA.DAS.ApplyService.Data
             SqlMapper.AddTypeHandler(typeof(OrganisationDetails), new OrganisationDetailsHandler());
         }
 
-        public async Task<Organisation> CreateOrganisation(Organisation organisation)
+        public async Task<Organisation> CreateOrganisation(Organisation organisation, Guid userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
@@ -39,7 +39,18 @@ namespace SFA.DAS.ApplyService.Data
                     "VALUES (NEWID(), @Name, @OrganisationType, @OrganisationUkprn, @orgData, 'New', GETUTCDATE(), @CreatedBy, @roEPAOApproved, @roATPApproved)",
                     new { organisation.Name, organisation.OrganisationType, organisation.OrganisationUkprn, orgData, organisation.CreatedBy, roEPAOApproved, roATPApproved });
 
-                return await GetOrganisationByName(organisation.Name);
+                var org = await GetOrganisationByName(organisation.Name);
+
+                if (org != null)
+                {
+                    connection.Execute(
+                                "UPDATE [Contacts] " +
+                                "SET ApplyOrganisationID = @Id" +
+                                "WHERE Id = @userId",
+                                new { org.Id, userId });
+                }
+
+                return org;
             }
         }
 

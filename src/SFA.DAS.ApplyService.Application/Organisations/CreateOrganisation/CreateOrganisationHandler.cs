@@ -27,7 +27,7 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
             var organisation = new Organisation { CreatedBy = request.CreatedBy, Name = request.Name, OrganisationDetails = request.OrganisationDetails, OrganisationType = request.OrganisationType, OrganisationUkprn = request.OrganisationUkprn };
             organisation.Status = "New";
 
-            var result = await _organisationRepository.CreateOrganisation(organisation);
+            var result = await _organisationRepository.CreateOrganisation(organisation, request.CreatedByUserId);
 
             if (result != null && !string.IsNullOrEmpty(request.PrimaryContactEmail))
             {

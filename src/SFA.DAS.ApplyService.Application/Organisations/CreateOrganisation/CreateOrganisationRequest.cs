@@ -2,6 +2,7 @@
 {
     using MediatR;
     using SFA.DAS.ApplyService.Domain.Entities;
+    using System;
 
     public class CreateOrganisationRequest : IRequest<Organisation>
     {
@@ -11,6 +12,7 @@
 
         public OrganisationDetails OrganisationDetails { get; set; }
 
+        public Guid CreatedByUserId { get; set; }
         public string CreatedBy { get; set; }
         public string PrimaryContactEmail { get; set; }
     }

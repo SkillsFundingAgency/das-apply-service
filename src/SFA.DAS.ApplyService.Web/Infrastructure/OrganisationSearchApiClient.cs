@@ -25,6 +25,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await (await _httpClient.GetAsync($"/OrganisationSearch?searchTerm={searchTerm}")).Content.ReadAsAsync<IEnumerable<OrganisationSearchResult>>();
         }
 
+        public async Task<OrganisationSearchResult> GetOrganisationByEmail(string email)
+        {
+            return await (await _httpClient.GetAsync($"/OrganisationSearch/email/{email}")).Content
+                .ReadAsAsync<OrganisationSearchResult>();
+        }
+
         public async Task<IEnumerable<string>> GetOrganisationTypes()
         {
             return await (await _httpClient.GetAsync($"/OrganisationTypes")).Content.ReadAsAsync<IEnumerable<string>>();

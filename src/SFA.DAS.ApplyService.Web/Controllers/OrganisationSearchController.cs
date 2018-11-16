@@ -34,8 +34,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if(user != null)
             {
-                // var ukprn = get from security claim <-- this doesn't exist right now!
-                var org = await _organisationApiClient.GetByContactEmail(user.Email);
+                // First - Do they have a org id already?
+                if (user.ApplyOrganisationId != null) return Ok();
+
+                // Second - Can get from UkPrn?
+                // var ukprn = user.Ukprn; <-- this doesn't exist right now!
+
+                // Third - Can get from Email?
+                var org = await _apiClient.GetOrganisationByEmail(user.Email);
 
                 if (org != null)
                 {
@@ -46,9 +52,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         {
                             SearchString = org.Name,
                             Name = org.Name,
-                            Ukprn = org.OrganisationUkprn,
+                            Ukprn = org.Ukprn,
                             OrganisationType = org.OrganisationType,
-                            Postcode = org.OrganisationDetails?.Postcode,
+                            Postcode = org.Address?.Postcode,
                             OrganisationTypes = await _apiClient.GetOrganisationTypes()
                         };
 
@@ -57,6 +63,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     else
                     {
                         // Got everything, set user to approved
+                        await _organisationApiClient.Create(org, user.Id);
+
                         if (!user.IsApproved)
                         {
                             await _usersApiClient.ApproveUser(user.Id);
@@ -146,12 +154,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             searchResults = searchResults.Where(sr => !string.IsNullOrEmpty(viewModel.Postcode) ? (sr.Address != null ? sr.Address.Postcode.Equals(viewModel.Postcode, StringComparison.InvariantCultureIgnoreCase) : true) : true);
 
             var organisationSearchResult = searchResults.FirstOrDefault();
+            var user = await _usersApiClient.GetUserBySignInId(_httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
 
-            if (organisationSearchResult != null)
+            if (organisationSearchResult != null && user != null)
             {
                 if (organisationSearchResult.OrganisationType == null) organisationSearchResult.OrganisationType = viewModel.OrganisationType;
 
-                var orgThatWasCreated = await _organisationApiClient.Create(organisationSearchResult);
+                var orgThatWasCreated = await _organisationApiClient.Create(organisationSearchResult, user.Id);
 
                 return View(orgThatWasCreated);
             }
