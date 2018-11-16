@@ -45,7 +45,7 @@ namespace SFA.DAS.ApplyService.Data
                 {
                     connection.Execute(
                                 "UPDATE [Contacts] " +
-                                "SET ApplyOrganisationID = @Id" +
+                                "SET ApplyOrganisationID = @Id " +
                                 "WHERE Id = @userId",
                                 new { org.Id, userId });
                 }
