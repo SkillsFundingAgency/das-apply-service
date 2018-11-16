@@ -179,5 +179,71 @@ namespace SFA.DAS.ApplyService.Data
                 }
             }
         }
+
+        public async Task SaveSection(ApplicationSection section, Guid userId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata WHERE Id = @Id", section);       
+            }
+        }
+
+        public async Task<Guid> CreateNewWorkflow(string workflowType)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return await connection.QuerySingleAsync<Guid>(@"
+                                                    UPDATE Workflows SET Status = 'Deleted' WHERE Type = @workflowType;
+
+                                                    INSERT INTO Workflows 
+                                                            (Description, Version, Type, Status, CreatedAt, CreatedBy) 
+                                                    OUTPUT INSERTED.[Id]
+                                                    VALUES  ('EPAO Workflow','1.0',@workflowType, 'Live', GETUTCDATE(), 'SpreadsheetImport'); ",
+                    new {workflowType});
+            }
+        }
+
+        public async Task CreateSequence(Guid workflowId, double sequenceId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(
+                    "INSERT INTO WorkflowSequences (WorkflowId, SequenceId, Status) VALUES (@workflowId, @sequenceId, 'Draft')",
+                    new {workflowId, sequenceId});
+            }
+        }
+
+        public async Task CreateSection(WorkflowSection section)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(
+                    @"INSERT INTO WorkflowSections (WorkflowId, SequenceId, SectionId, QnAData, Title, LinkTitle, Status, DisplayType) 
+                                                            VALUES (@workflowId, @SequenceId, @SectionId, @QnAData, @Title, @LinkTitle, @Status, @DisplayType)",
+                    section);
+            }
+        }
+
+        public async Task AddAssets(Dictionary<string, string> assets)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                foreach (var asset in assets)
+                {
+                    var cleanText = asset.Value?.Replace("\n", "<br/>");
+                    try
+                    {
+                        await connection.ExecuteAsync(
+                            "INSERT INTO Assets (Reference, Type, Text, Format, Status, CreatedAt, CreatedBy) VALUES (@reference, '', @text, '', 'Live', GETUTCDATE(), 'SpreadsheetImport')"
+                            , new {reference = asset.Key, text = cleanText});   
+                    }
+                    catch (Exception e)
+                    {
+                        throw;
+                    }
+                    
+                }
+            }
+        }
     }
 }

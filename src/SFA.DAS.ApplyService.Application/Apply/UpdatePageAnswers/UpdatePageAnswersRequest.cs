@@ -9,13 +9,17 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
     {
         public Guid ApplicationId { get; }
         public Guid UserId { get; }
+        public int SequenceId { get; }
+        public int SectionId { get; }
         public string PageId { get; }
         public List<Answer> Answers { get; }
 
-        public UpdatePageAnswersRequest(Guid applicationId, Guid userId, string pageId, List<Answer> answers)
+        public UpdatePageAnswersRequest(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, List<Answer> answers)
         {
             ApplicationId = applicationId;
             UserId = userId;
+            SequenceId = sequenceId;
+            SectionId = sectionId;
             PageId = pageId;
             Answers = answers;
         }

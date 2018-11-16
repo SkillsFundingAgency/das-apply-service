@@ -64,13 +64,11 @@
     <Build Include="Tables\Entities.sql" />
     <Build Include="Tables\Organisations.sql" />
     <Build Include="Tables\QnAs.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Tables\Applications.sql" />
-    <Content Include="Tables\ApplicationSections.sql" />
-    <Content Include="Tables\ApplicationSequences.sql" />
-    <Content Include="Tables\Workflows.sql" />
-    <Content Include="Tables\WorkflowSections.sql" />
-    <Content Include="Tables\WorkflowSequences.sql" />
+    <Build Include="Tables\Applications.sql" />
+    <Build Include="Tables\ApplicationSections.sql" />
+    <Build Include="Tables\ApplicationSequences.sql" />
+    <Build Include="Tables\Workflows.sql" />
+    <Build Include="Tables\WorkflowSections.sql" />
+    <Build Include="Tables\WorkflowSequences.sql" />
   </ItemGroup>
 </Project>

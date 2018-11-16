@@ -12,6 +12,8 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public int SequenceId { get; set; }
         public string QnAData { get; set; }
         
+        //TODO: Fix. broke.
+        
         public List<Page> Pages
         {
             get => JsonConvert.DeserializeObject<List<Page>>(QnAData);

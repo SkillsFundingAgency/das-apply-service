@@ -19,7 +19,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
         {
             var validators = new List<IValidator>();
 
-            if (question.Input.Validations != null)
+            if (question.Input.Validations != null && question.Input.Validations.Any())
             {
                 foreach (var inputValidation in question.Input.Validations)
                 {

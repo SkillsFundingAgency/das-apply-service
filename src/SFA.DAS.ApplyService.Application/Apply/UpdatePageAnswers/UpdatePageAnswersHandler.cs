@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
 {
@@ -24,7 +25,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
         
         public async Task<UpdatePageAnswersResult> Handle(UpdatePageAnswersRequest request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var section = await _applyRepository.GetSection(request.ApplicationId, request.SequenceId, request.SectionId,
+                request.UserId);
             
 //            var entity = await _applyRepository.GetEntity(request.ApplicationId, request.UserId);
 //            var workflow = entity.QnAWorkflow;
@@ -37,89 +39,106 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
 //                throw new BadRequestException("Sequence not active");
 //            }
 //
-//            var page = section.Pages.Single(p => p.PageId == request.PageId);
-//
-//            PageOfAnswers pageAnswers;
-//            if (!page.AllowMultipleAnswers)
-//            {
-//                page.PageOfAnswers = new List<PageOfAnswers>();// List<Answer>();
-//                pageAnswers = new PageOfAnswers(){Answers = new List<Answer>()};
-//                page.PageOfAnswers.Add(pageAnswers);
-//            }
-//            else
-//            {
-//                if (page.PageOfAnswers == null)
-//                {
-//                    page.PageOfAnswers = new List<PageOfAnswers>();
-//                }
-//                pageAnswers = new PageOfAnswers(){Answers = new List<Answer>()};
-//                page.PageOfAnswers.Add(pageAnswers);
-//            }
-//
-//            var validationPassed = true;
-//            var validationErrors = new List<KeyValuePair<string, string>>();
-//
-//            foreach (var question in page.Questions)
-//            {
-//                validationPassed = ProcessAnswer(request, question, validationPassed, validationErrors, pageAnswers);
-//                // IF Question is type ComplexRadio
-//                // Need to get all answers from Input.Options.FurtherQuestions
-//
-//                var answer = request.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
-//
-//                if (question.Input.Options != null)
-//                {
-//                    foreach (var option in question.Input.Options)
-//                    {
-//                        if (answer?.Value == option.Value.ToString())
-//                        {
-//                            if (option.FurtherQuestions != null)
-//                            {
-//                                foreach (var furtherQuestion in option.FurtherQuestions)
-//                                {
-//                                    var fq = JsonConvert.DeserializeObject<Question>(furtherQuestion.ToString());
-//
-//                                    validationPassed = ProcessAnswer(request, fq, validationPassed, validationErrors,
-//                                        pageAnswers);
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//
-//            if (validationPassed) 
-//            {
-//                page.Complete = true;
-//
-//                MarkSequenceAsCompleteIfAllPagesComplete(sequence, workflow.Sequences);
-//
-//                if (page.Next.Count() > 1)
-//                {
-//                    // Activate next page if necessary
-//                    foreach (var nextAction in page.Next)
-//                    {
-//                        if (nextAction.Condition.MustEqual == request.Answers
-//                                .Single(a => a.QuestionId == nextAction.Condition.QuestionId).Value)
-//                        {
-//                            section.Pages.Single(p => p.PageId == nextAction.ReturnId).Active = true;
-//                            section.Pages.Single(p => p.PageId == nextAction.ReturnId).Visible = true;
-//                            nextAction.ConditionMet = true;
-//                        }
-//                    }
-//                }
-//
-//                entity.QnAWorkflow = workflow;
-//
-//                await _applyRepository.SaveEntity(entity, request.ApplicationId, request.UserId);
-//                
-//                return new UpdatePageAnswersResult {Page = page, ValidationPassed = validationPassed};
-//            }
-//            else
-//            {
-//                return new UpdatePageAnswersResult
-//                    {Page = page, ValidationPassed = validationPassed, ValidationErrors = validationErrors};
-//            }
+            var page = section.Pages.Single(p => p.PageId == request.PageId);
+
+            var pages = section.Pages;
+            
+            PageOfAnswers pageAnswers;
+            if (!page.AllowMultipleAnswers)
+            {
+                page.PageOfAnswers = new List<PageOfAnswers>();
+                pageAnswers = new PageOfAnswers(){Answers = new List<Answer>()};
+                page.PageOfAnswers.Add(pageAnswers);
+            }
+            else
+            {
+                if (page.PageOfAnswers == null)
+                {
+                    page.PageOfAnswers = new List<PageOfAnswers>();
+                }
+                pageAnswers = new PageOfAnswers(){Answers = new List<Answer>()};
+                page.PageOfAnswers.Add(pageAnswers);
+            }
+
+            var validationPassed = true;
+            var validationErrors = new List<KeyValuePair<string, string>>();
+
+            foreach (var question in page.Questions)
+            {
+                validationPassed = ProcessAnswer(request, question, validationPassed, validationErrors, pageAnswers);
+                // IF Question is type ComplexRadio
+                // Need to get all answers from Input.Options.FurtherQuestions
+
+                var answer = request.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
+
+                if (question.Input.Options != null)
+                {
+                    foreach (var option in question.Input.Options)
+                    {
+                        if (answer?.Value == option.Value.ToString())
+                        {
+                            if (option.FurtherQuestions != null)
+                            {
+                                foreach (var furtherQuestion in option.FurtherQuestions)
+                                {
+                                    var fq = JsonConvert.DeserializeObject<Question>(furtherQuestion.ToString());
+
+                                    validationPassed = ProcessAnswer(request, fq, validationPassed, validationErrors,
+                                        pageAnswers);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (validationPassed) 
+            {
+                page.Complete = true;
+
+                //MarkSequenceAsCompleteIfAllPagesComplete(sequence, workflow.Sequences);
+
+                if (page.Next.Count() > 1)
+                {
+                    // Activate next page if necessary
+                    foreach (var nextAction in page.Next)
+                    {
+                        if (nextAction.Condition.MustEqual == request.Answers
+                                .Single(a => a.QuestionId == nextAction.Condition.QuestionId).Value)
+                        {
+                            pages.Single(p => p.PageId == nextAction.ReturnId).Active = true;
+                            pages.Single(p => p.PageId == nextAction.ReturnId).Visible = true;
+                            nextAction.ConditionMet = true;
+                        }
+                    }
+                }
+                else
+                {
+                    page.Next.First().ConditionMet = true;
+                }
+
+//                section.QnAData = workflow;
+
+                pages.ForEach(p =>
+                {
+                    if (p.PageId == request.PageId)
+                    {
+                        p.Complete = page.Complete;
+                        p.PageOfAnswers = page.PageOfAnswers;
+                    }
+                });
+
+                section.Pages = pages;
+                
+                await _applyRepository.SaveSection(section, request.UserId);
+                
+                return new UpdatePageAnswersResult {Page = page, ValidationPassed = validationPassed};
+            }
+            else
+            {
+                return new UpdatePageAnswersResult
+                    {Page = page, ValidationPassed = validationPassed, ValidationErrors = validationErrors};
+            }
         }
         
         private bool ProcessAnswer(UpdatePageAnswersRequest request, Question question, bool validationPassed,
@@ -152,7 +171,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
             return validationPassed;
         }
 
-//        private static void MarkSequenceAsCompleteIfAllPagesComplete(Sequence sequence, List<Sequence> workflow)
+//        private static void MarkSequenceAsCompleteIfAllPagesComplete(ApplicationSequence sequence, List<Sequence> workflow)
 //        {
 //            sequence.Complete = sequence.Sections.SelectMany(s => s.Pages).All(p => p.Complete);
 //
