@@ -71,7 +71,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
         {
             using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
             {
-                return await response.Content.ReadAsAsync<T>();
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadAsAsync<T>();
+                }
+
+                return default(T);
             }
         }
 

@@ -134,16 +134,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             // make sure we got everything
-            var searchResults = await _apiClient.SearchOrganisation(viewModel.Name);
+            var searchResults = await _apiClient.SearchOrganisation(viewModel.Ukprn.HasValue ? viewModel.Ukprn.Value.ToString() : viewModel.Name); // Favour UKPRN over Name!
 
             // filter name
-            searchResults = searchResults.Where(sr => sr.Name.Equals(viewModel.Name, StringComparison.InvariantCultureIgnoreCase));
+            searchResults = searchResults.Where(sr => sr.Name.Equals(viewModel.Name, StringComparison.InvariantCultureIgnoreCase)); // Name has to be identical match
 
             // filter organisation type
             searchResults = searchResults.Where(sr => sr.OrganisationType != null ? sr.OrganisationType.Equals(viewModel.OrganisationType, StringComparison.InvariantCultureIgnoreCase) : true);
-
-            // filter ukprn
-            searchResults = searchResults.Where(sr => viewModel.Ukprn.HasValue ? sr.Ukprn == viewModel.Ukprn : true);
 
             // filter postcode
             searchResults = searchResults.Where(sr => !string.IsNullOrEmpty(viewModel.Postcode) ? (sr.Address != null ? sr.Address.Postcode.Equals(viewModel.Postcode, StringComparison.InvariantCultureIgnoreCase) : true) : true);
