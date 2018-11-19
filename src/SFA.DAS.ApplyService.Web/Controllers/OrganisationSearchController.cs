@@ -120,7 +120,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Done(OrganisationSearchViewModel viewModel)
+        public async Task<IActionResult> Create(OrganisationSearchViewModel viewModel)
         {
             if (string.IsNullOrEmpty(viewModel.Name) || viewModel.SearchString.Length < 2)
             {
