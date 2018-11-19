@@ -55,9 +55,13 @@ namespace SFA.DAS.ApplyService.DfeSignIn
                     new StringContent(inviteJson, Encoding.UTF8, "application/json")
                 );
 
+                var content = await dfeResponse.Content.ReadAsStringAsync();
+                
+                _logger.LogInformation("Returned from DfE Invitation Service. Status Code: {0}. Message: {0}",
+                    (int) dfeResponse.StatusCode, content);
+                
                 if (!dfeResponse.IsSuccessStatusCode)
                 {
-                    var content = await dfeResponse.Content.ReadAsStringAsync();
                     _logger.LogError("Error from DfE Invitation Service. Status Code: {0}. Message: {0}",
                         (int) dfeResponse.StatusCode, content);
                     return new InviteUserResponse() {IsSuccess = false};
