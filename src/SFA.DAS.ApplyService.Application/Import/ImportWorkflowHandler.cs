@@ -22,7 +22,7 @@ namespace SFA.DAS.ApplyService.Application.Import
         {
             _applyRepository = applyRepository;
         }
-        
+
         public async Task<Unit> Handle(ImportWorkflowRequest request, CancellationToken cancellationToken)
         {
             var workflowId = await _applyRepository.CreateNewWorkflow("EPAO");
@@ -31,17 +31,19 @@ namespace SFA.DAS.ApplyService.Application.Import
                 LoadSpreadsheetRows(request.ImportFile.OpenReadStream(),
                     "Technical Q&A format Developmen");
 
-            
+
             AddAssets(spreadsheetRows);
-            
+
             var sequences = spreadsheetRows.Select(sr => sr.SequenceId).Distinct().ToList();
 
             foreach (var sequenceId in sequences)
             {
                 await _applyRepository.CreateSequence(workflowId, sequenceId);
 
-                var sections = spreadsheetRows
-                    .Where(sr => sr.SequenceId == sequenceId && sr.Reference.Contains("SECTIONHEADER"))
+                var questionRows = spreadsheetRows
+                    .Where(sr => sr.SequenceId == sequenceId && sr.Reference.Contains("SECTIONHEADER")).ToList();
+                
+                var sections = questionRows
                     .Select(sr => new WorkflowSection()
                     {
                         DisplayType = sr.SectionDisplayType,
@@ -66,14 +68,14 @@ namespace SFA.DAS.ApplyService.Application.Import
                     }
 
                     section.QnAData = JsonConvert.SerializeObject(pages);
-                    
+
                     await _applyRepository.CreateSection(section);
                 }
             }
 
             return new Unit();
         }
-        
+
         private Question ProcessQuestion(QuestionRow spreadsheetQuestion, List<QuestionRow> page)
         {
             var question = new Question();
@@ -123,13 +125,13 @@ namespace SFA.DAS.ApplyService.Application.Import
 
             return question;
         }
-        
+
         private List<Question> ListOfQuestionsForPage(List<QuestionRow> spreadsheetRows, Page page, int sectionId)
         {
             var spreadsheetQuestions = spreadsheetRows
                 .Where(r => r.PageNumber.ToString() == page.PageId &&
                             r.SectionId == sectionId &&
-                            r.SequenceId.ToString() == page.SequenceId 
+                            r.SequenceId.ToString() == page.SequenceId
                             && !string.IsNullOrWhiteSpace(r.QuestionType))
                 .ToList();
 
@@ -144,7 +146,7 @@ namespace SFA.DAS.ApplyService.Application.Import
 
             return questions;
         }
-        
+
         private List<Page> ListOfPagesForSection(List<QuestionRow> spreadsheetRows, WorkflowSection section)
         {
             var pages = spreadsheetRows
@@ -160,7 +162,8 @@ namespace SFA.DAS.ApplyService.Application.Import
                     Active = !r.HiddenByDefault,
                     PageOfAnswers = new List<PageOfAnswers>(),
                     AllowMultipleAnswers = r.AllowMultipleAnswers,
-                    SequenceId = r.SequenceId.ToString()
+                    SequenceId = r.SequenceId.ToString(),
+                    SectionId = r.SectionId.ToString()
                 })
                 .Distinct().ToList();
 
@@ -177,13 +180,14 @@ namespace SFA.DAS.ApplyService.Application.Import
 
                     if (!string.IsNullOrWhiteSpace(spreadsheetRow.Activate))
                     {
-                        var conditions = spreadsheetRow.Activate.Split(new[]{"|"}, StringSplitOptions.RemoveEmptyEntries);
+                        var conditions =
+                            spreadsheetRow.Activate.Split(new[] {"|"}, StringSplitOptions.RemoveEmptyEntries);
 
                         foreach (var condition in conditions)
                         {
-                            var questionId = condition.Split(new[]{","}, StringSplitOptions.RemoveEmptyEntries)[0];
-                            var answerValue = condition.Split(new[]{","}, StringSplitOptions.RemoveEmptyEntries)[1];
-                            var pageId = condition.Split(new[]{","}, StringSplitOptions.RemoveEmptyEntries)[2];
+                            var questionId = condition.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries)[0];
+                            var answerValue = condition.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries)[1];
+                            var pageId = condition.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries)[2];
 
                             page.Next.Add(new Next()
                             {
@@ -199,36 +203,35 @@ namespace SFA.DAS.ApplyService.Application.Import
                 }
                 else
                 {
-                    page.Next.Add(new Next() {Action = "ReturnToSequence", ReturnId = page.SequenceId});
+                    page.Next.Add(new Next() {Action = "ReturnToSection", ReturnId = page.SectionId});
                 }
             }
 
             return pages;
         }
-        
-        
-        
+
+
         private void AddAssets(List<QuestionRow> spreadsheetRows)
         {
             var assets = new Dictionary<string, string>();
-            
+
             foreach (var spreadsheetRow in spreadsheetRows)
             {
-                AddAsset(assets,spreadsheetRow.PageLinkRef, spreadsheetRow.PageLinkTitle);
-                AddAsset(assets,spreadsheetRow.PageHeaderRef, spreadsheetRow.PageHeader);
-                AddAsset(assets,spreadsheetRow.QuestionTextRef, spreadsheetRow.QuestionText);
-                AddAsset(assets,spreadsheetRow.ShortQuestionTextRef, spreadsheetRow.ShortQuestionText);
-                AddAsset(assets,spreadsheetRow.BodyTextRef, spreadsheetRow.BodyText);
+                AddAsset(assets, spreadsheetRow.PageLinkRef, spreadsheetRow.PageLinkTitle);
+                AddAsset(assets, spreadsheetRow.PageHeaderRef, spreadsheetRow.PageHeader);
+                AddAsset(assets, spreadsheetRow.QuestionTextRef, spreadsheetRow.QuestionText);
+                AddAsset(assets, spreadsheetRow.ShortQuestionTextRef, spreadsheetRow.ShortQuestionText);
+                AddAsset(assets, spreadsheetRow.BodyTextRef, spreadsheetRow.BodyText);
             }
-            
+
             _applyRepository.AddAssets(assets);
         }
 
-        private void AddAsset(Dictionary<string,string> assets, string reference, string text)
+        private void AddAsset(Dictionary<string, string> assets, string reference, string text)
         {
             if (!String.IsNullOrWhiteSpace(reference))
             {
-                assets.Add(reference,text);
+                assets.Add(reference, text);
             }
         }
 
@@ -244,11 +247,14 @@ namespace SFA.DAS.ApplyService.Application.Import
             for (int i = 1; i < sheet.LastRowNum; i++)
             {
                 IRow row = sheet.GetRow(i);
+                if (row == null) continue;
+                
                 var questionRow = ReadQuestionRow(row);
 
                 if (string.IsNullOrWhiteSpace(questionRow.SectionTitle)) continue;
 
                 spreadsheetRows.Add(questionRow);
+
             }
 
             return spreadsheetRows;
@@ -256,39 +262,48 @@ namespace SFA.DAS.ApplyService.Application.Import
 
         private QuestionRow ReadQuestionRow(IRow row)
         {
-            var questionRow = new QuestionRow
+            var questionRow = new QuestionRow();
+            try
             {
-                SequenceId = row.GetCell(0).NumericCellValue,
-                SectionId = row.GetCell(1).NumericCellValue,
-                SectionTitle = row.GetCell(2).StringCellValue,
-                PageNumber = row.GetCell(3).NumericCellValue,
-                Reference = row.GetCell(4)?.StringCellValue,
-                PageLinkTitle = row.GetCell(5)?.StringCellValue,
-                PageLinkRef = row.GetCell(6)?.StringCellValue,
-                PageHeader = row.GetCell(7)?.StringCellValue,
-                PageHeaderRef = row.GetCell(8)?.StringCellValue,
-                ShortQuestionText = row.GetCell(9)?.StringCellValue,
-                ShortQuestionTextRef = row.GetCell(10)?.StringCellValue,
-                QuestionText = row.GetCell(11)?.StringCellValue.Trim(),
-                QuestionTextRef = row.GetCell(12)?.StringCellValue,
-                ErrorMessage = row.GetCell(13)?.StringCellValue,
-                ErrorMessageOption = row.GetCell(14)?.StringCellValue,
-                BodyText = row.GetCell(15)?.StringCellValue,
-                BodyTextRef = row.GetCell(16)?.StringCellValue,
-                HiddenByDefault = row.GetCell(17)?.StringCellValue == "Yes",
-                Activate = row.GetCell(18)?.StringCellValue,
-                AllowMultipleAnswers = row.GetCell(19)?.StringCellValue == "Yes",
-                QuestionType = row.GetCell(20)?.StringCellValue,
-                RadioOptions = row.GetCell(21)?.StringCellValue.Split(new[]{","}, StringSplitOptions.RemoveEmptyEntries),
-                Choice = row.GetCell(22)?.StringCellValue,
-                Validations = row.GetCell(23)?.StringCellValue.Split(new[]{","}, StringSplitOptions.RemoveEmptyEntries),
-                Guidance = row.GetCell(24)?.StringCellValue,
-                PromptReference = row.GetCell(25)?.StringCellValue,
-                PromptText = row.GetCell(26)?.StringCellValue,
-                PromptType = row.GetCell(27)?.StringCellValue,
-                ExcludeOrgTypes = row.GetCell(28)?.StringCellValue.Split(new[]{","}, StringSplitOptions.RemoveEmptyEntries),
-                SectionDisplayType = row.GetCell(29)?.StringCellValue
-            };
+                questionRow.SequenceId = row.GetCell(0).NumericCellValue;
+                questionRow.SectionId = row.GetCell(1).NumericCellValue;
+                questionRow.SectionTitle = row.GetCell(2).StringCellValue;
+                questionRow.PageNumber = row.GetCell(3).NumericCellValue;
+                questionRow.Reference = row.GetCell(4)?.StringCellValue;
+                questionRow.PageLinkTitle = row.GetCell(5)?.StringCellValue;
+                questionRow.PageLinkRef = row.GetCell(6)?.StringCellValue;
+                questionRow.PageHeader = row.GetCell(7)?.StringCellValue;
+                questionRow.PageHeaderRef = row.GetCell(8)?.StringCellValue;
+                questionRow.ShortQuestionText = row.GetCell(9)?.StringCellValue;
+                questionRow.ShortQuestionTextRef = row.GetCell(10)?.StringCellValue;
+                questionRow.QuestionText = row.GetCell(11)?.StringCellValue.Trim();
+                questionRow.QuestionTextRef = row.GetCell(12)?.StringCellValue;
+                questionRow.ErrorMessage = row.GetCell(13)?.StringCellValue;
+                questionRow.ErrorMessageOption = row.GetCell(14)?.StringCellValue;
+                questionRow.BodyText = row.GetCell(15)?.StringCellValue;
+                questionRow.BodyTextRef = row.GetCell(16)?.StringCellValue;
+                questionRow.HiddenByDefault = row.GetCell(17)?.StringCellValue == "Yes";
+                questionRow.Activate = row.GetCell(18)?.StringCellValue;
+                questionRow.AllowMultipleAnswers = row.GetCell(19)?.StringCellValue == "Yes";
+                questionRow.QuestionType = row.GetCell(20)?.StringCellValue;
+                questionRow.RadioOptions = row.GetCell(21)?.StringCellValue
+                    .Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries);
+                questionRow.Choice = row.GetCell(22)?.StringCellValue;
+                questionRow.Validations = row.GetCell(23)?.StringCellValue
+                    .Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries);
+                questionRow.Guidance = row.GetCell(24)?.StringCellValue;
+                questionRow.PromptReference = row.GetCell(25)?.StringCellValue;
+                questionRow.PromptText = row.GetCell(26)?.StringCellValue;
+                questionRow.PromptType = row.GetCell(27)?.StringCellValue;
+                questionRow.ExcludeOrgTypes = row.GetCell(28)?.StringCellValue
+                    .Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries);
+                questionRow.SectionDisplayType = row.GetCell(29)?.StringCellValue;
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+
 
             return questionRow;
         }

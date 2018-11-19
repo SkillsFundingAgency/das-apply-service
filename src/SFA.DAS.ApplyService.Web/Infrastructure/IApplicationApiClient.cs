@@ -34,5 +34,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         Task<UpdatePageAnswersResult> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId, int sectionId,
             string pageId, List<Answer> answers);
+
+        Task StartApplication(Guid userId);
     }
 }

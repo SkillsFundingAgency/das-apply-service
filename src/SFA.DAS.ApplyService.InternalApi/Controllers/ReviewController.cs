@@ -1,5 +1,8 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.ApplyService.Application.Apply.Review;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -11,7 +14,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             _mediator = mediator;
         }
-        
-        //public IActionResult 
+
+        [HttpGet("Review")]
+        public async Task<ActionResult> Review()
+        {
+            var applications = await _mediator.Send(new ReviewRequest());
+            return Ok(applications);
+        }
     }
+
 }

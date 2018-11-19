@@ -59,5 +59,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         
         public List<QuestionViewModel> Questions { get; set; }
         public string SequenceId { get; set; }
+        public int SectionId { get; set; }
     }
 }

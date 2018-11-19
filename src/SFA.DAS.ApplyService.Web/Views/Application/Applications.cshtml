@@ -1,7 +1,7 @@
 @model List<SFA.DAS.ApplyService.Domain.Entities.Application>
 
 @{
-ViewBag.Title = "Applications";
+    ViewBag.Title = "Applications";
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
@@ -13,28 +13,31 @@ ViewBag.Title = "Applications";
             </h1>
             <table class="govuk-table">
                 <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th class="govuk-table__header" scope="col">Application</th>
-                        <!-- <th class="govuk-table__header" scope="col">Application ID</th> -->
-                        <th class="govuk-table__header govuk-table__header--numeric" scope="col">Status</th>
-                        <th class="govuk-table__header govuk-table__header--numeric" scope="col">Action</th>
-                    </tr>
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header" scope="col">Application</th>
+                    <!-- <th class="govuk-table__header" scope="col">Application ID</th> -->
+                    <th class="govuk-table__header govuk-table__header--numeric" scope="col">Status</th>
+                    <th class="govuk-table__header govuk-table__header--numeric" scope="col">Action</th>
+                </tr>
                 </thead>
                 <tbody class="govuk-table__body">
 
-                    @foreach (var application in Model)
-                    {
+                @foreach (var application in Model)
+                {
                     <tr>
                         <th class="govuk-table__header" scope="row">Not yet submitted</th>
                         <!-- <td class="govuk-table__cell">@application.Id</td> -->
                         <td class="govuk-table__cell govuk-table__cell--numeric">In progress</td>
                         <td class="govuk-table__cell govuk-table__cell--numeric">
-                            <a href="@Url.Action("Sections","Application", new {applicationId=application.Id})">View</a>
+                            <a href="@Url.Action("Sections", "Application", new {applicationId = application.Id})">View</a>
                         </td>
                     </tr>
-                    }
+                }
                 </tbody>
             </table>
         </div>
     </div>
+    <form asp-action="StartApplication" asp-controller="Application" method="post">
+        <button type="submit">Start Application</button>
+    </form>
 </main>

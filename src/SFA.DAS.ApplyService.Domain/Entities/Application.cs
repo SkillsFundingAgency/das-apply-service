@@ -6,6 +6,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
 {
     public class Application : EntityBase
     {
+        public Organisation ApplyingOrganisation { get; set; }
         public Guid ApplyingOrganisationId { get; set; }
         public DateTime WithdrawnAt { get; set; }
         public string WithdrawnBy { get; set; }

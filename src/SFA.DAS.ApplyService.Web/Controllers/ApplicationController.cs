@@ -32,6 +32,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return View(applications);
         }
         
+        [HttpPost("/Applications")]
+        public async Task<IActionResult> StartApplication()
+        {
+            await _apiClient.StartApplication(Guid.Parse(User.FindFirstValue("UserId")));
+
+            return RedirectToAction("Applications");
+        }
+        
+        
+        
+        
         [HttpGet("/Applications/{applicationId}")]
         public async Task<IActionResult> Sections(Guid applicationId)
         {
@@ -52,7 +63,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> Page(string applicationId, int sequenceId, int sectionId, string pageId)
         {
             var page = await _apiClient.GetPage(Guid.Parse(applicationId), sequenceId,sectionId, pageId, Guid.Parse(User.FindFirstValue("UserId")));
-            var pageVm = new PageViewModel(page, Guid.Parse(applicationId));   
+            var pageVm = new PageViewModel(page, Guid.Parse(applicationId));
+
+            pageVm.SectionId = sectionId;
             
             return View("~/Views/Application/Pages/Index.cshtml", pageVm);
         }
@@ -95,8 +108,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         return RedirectToAction("Page", new {applicationId, pageId = pageNext.ReturnId});
                     }
                     
-                    return pageNext.Action == "ReturnToSequence"
-                        ? RedirectToAction("Sequence", "Application", new {applicationId, sequenceId = pageNext.ReturnId})
+                    return pageNext.Action == "ReturnToSection"
+                        ? RedirectToAction("Section", "Application", new {applicationId, sectionId = pageNext.ReturnId})
                         : RedirectToAction("Sequences", "Application", new {applicationId});
                 }
                 else

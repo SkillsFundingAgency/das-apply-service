@@ -6,7 +6,6 @@
 
     <ItemGroup>
         <Folder Include="TagHelpers" />
-        <Folder Include="Views\Application\Sequences" />
         <Folder Include="wwwroot\" />
     </ItemGroup>
 

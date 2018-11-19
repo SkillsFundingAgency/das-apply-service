@@ -25,5 +25,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task CreateSequence(Guid workflowId, double sequenceId);
         Task CreateSection(WorkflowSection section);
         Task AddAssets(Dictionary<string,string> assets);
+        Task<List<Domain.Entities.Application>> GetApplicationsToReview();
     }
 }

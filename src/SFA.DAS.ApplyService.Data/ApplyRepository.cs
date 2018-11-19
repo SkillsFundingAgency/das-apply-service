@@ -245,5 +245,21 @@ namespace SFA.DAS.ApplyService.Data
                 }
             }
         }
+
+        public async Task<List<Domain.Entities.Application>> GetApplicationsToReview()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection
+                    .QueryAsync<Domain.Entities.Application, Organisation, Domain.Entities.Application>(
+                        @"SELECT * FROM Applications a
+                INNER JOIN Organisations o ON o.Id = a.ApplyingOrganisationId",
+                        (application, organisation) =>
+                        {
+                            application.ApplyingOrganisation = organisation;
+                            return application;
+                        })).ToList();
+            }
+        }
     }
 }
