@@ -8,14 +8,14 @@ CREATE TABLE [dbo].[Contacts](
    [SigninType] [nvarchar](20)  NULL, -- when Known 'DfESignin','ProvideridAMS'
    ApplyOrganisationID [uniqueidentifier] NULL, -- When Known organisation for the apply contact
    ContactDetails [nvarchar](max)	 NULL, --  Contact Details 
-   Status	[nvarchar](	20)	NOT NULL,	-- 'new', 'inprogress' – signup awaiting callback from DFE Signin, 'live' is live , 'deleted' is no longer to be used
+   Status	[nvarchar](	20)	NOT NULL,	-- 'new', 'inprogress' ï¿½ signup awaiting callback from DFE Signin, 'live' is live , 'deleted' is no longer to be used
    IsApproved [bit] NOT NULL DEFAULT 0, -- set when this user is approved to represent the Organisation
    CreatedAt	Datetime2(7)	NOT NULL,	--Date / Time that the record was created
-   CreatedBy	[nvarchar](30)	NOT NULL,	--Username (staff or ApplyContact)
+   CreatedBy	[nvarchar](120)	NOT NULL,	--Username (staff or ApplyContact)
    UpdatedAt	Datetime2(7)		NULL,	--Date / Time of the last update
-   UpdatedBy	[nvarchar](30)	NULL,	--Username (staff or ApplyContact)
+   UpdatedBy	[nvarchar](120)	NULL,	--Username (staff or ApplyContact)
    DeletedAt	Datetime2(7)		NULL,	--Date / Time of the soft delete
-   DeletedBy	[nvarchar](30)	NULL	--Username (staff or ApplyContact)
+   DeletedBy	[nvarchar](120)	NULL	--Username (staff or ApplyContact)
     CONSTRAINT [PK_Contact] PRIMARY KEY ([Id]),
 ) 
 GO

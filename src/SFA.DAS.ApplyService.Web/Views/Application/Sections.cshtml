@@ -27,6 +27,12 @@
                 }
             </ul>
 
+            @if (Model.Sum(m => m.PagesComplete) == Model.Sum(m => m.PagesActive))
+            {
+                <div>
+                    
+                </div>
+            }
         </div>
     </div>
 </main>

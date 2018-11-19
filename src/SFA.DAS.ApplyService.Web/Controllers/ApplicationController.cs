@@ -66,8 +66,37 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var pageVm = new PageViewModel(page, Guid.Parse(applicationId));
 
             pageVm.SectionId = sectionId;
-            
+
+            if (page.AllowMultipleAnswers)
+            {
+                return View("~/Views/Application/Pages/MultipleAnswers.cshtml", pageVm);
+            }
             return View("~/Views/Application/Pages/Index.cshtml", pageVm);
+        }
+
+
+        [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/NextPage")]
+        public async Task<IActionResult> NextPage(Guid applicationId, int sequenceId, int sectionId, string pageId)
+        {
+            var thisPage = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId,Guid.Parse(User.FindFirstValue("UserId")));
+            if (thisPage.PageOfAnswers.Any())
+            {
+                var next = thisPage.Next.FirstOrDefault();
+                if (next == null)
+                {
+                    RedirectToAction("Section", "Application", new {applicationId, sectionId = thisPage.SectionId});
+                }
+                
+                if (next.Action == "NextPage")
+                {
+                    return RedirectToAction("Page", new {applicationId, sequenceId = thisPage.SequenceId, sectionId = thisPage.SectionId, pageId = next.ReturnId});
+                }
+                    
+                return next.Action == "ReturnToSection"
+                    ? RedirectToAction("Section", "Application", new {applicationId, sectionId = next.ReturnId})
+                    : RedirectToAction("Sections", "Application", new {applicationId});
+            }
+            return RedirectToAction("Page", new {applicationId, pageId = thisPage.PageId});
         }
         
         [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
@@ -98,6 +127,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (updatePageResult.ValidationPassed)
             {
+                if (updatePageResult.Page.AllowMultipleAnswers)
+                {
+                    return RedirectToAction("Page",
+                        new
+                        {
+                            applicationId, sequenceId = updatePageResult.Page.SequenceId,
+                            sectionId = updatePageResult.Page.SectionId, pageId = updatePageResult.Page.PageId
+                        });
+                }
+                
                 var nextActions = updatePageResult.Page.Next;
 
                 if (nextActions.Count == 1)

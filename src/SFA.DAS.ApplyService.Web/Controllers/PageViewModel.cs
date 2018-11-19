@@ -17,6 +17,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             LinkTitle = page.LinkTitle;
             PageId = page.PageId;
             SequenceId = page.SequenceId;
+            PageOfAnswers = page.PageOfAnswers;
             
             var questions = page.Questions;
             var answers = page.PageOfAnswers.FirstOrDefault()?.Answers;
@@ -30,9 +31,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 Type = q.Input.Type,
                 Hint = q.Hint,
                 Options = q.Input.Options,
-                Value = answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value
+                Value = page.AllowMultipleAnswers ? null : answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value
             }));
 
+            
+            
             foreach (var question in Questions)
             {
                 if (question.Options == null) continue;
@@ -60,5 +63,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public List<QuestionViewModel> Questions { get; set; }
         public string SequenceId { get; set; }
         public int SectionId { get; set; }
+
+        public List<PageOfAnswers> PageOfAnswers { get; set; }
     }
 }
