@@ -110,7 +110,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     
                     return pageNext.Action == "ReturnToSection"
                         ? RedirectToAction("Section", "Application", new {applicationId, sectionId = pageNext.ReturnId})
-                        : RedirectToAction("Sequences", "Application", new {applicationId});
+                        : RedirectToAction("Sections", "Application", new {applicationId});
                 }
                 else
                 {
@@ -123,8 +123,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         }   
                         
                         return nextConditionMet.Action == "ReturnToSequence"
-                            ? RedirectToAction("Sequence", "Application", new {applicationId, sequenceId = nextConditionMet.ReturnId})
-                            : RedirectToAction("Sequences", "Application", new {applicationId});
+                            ? RedirectToAction("Section", "Application", new {applicationId, sectionId = nextConditionMet.ReturnId})
+                            : RedirectToAction("Sections", "Application", new {applicationId});
                     }
                 }
 
@@ -135,7 +135,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         return RedirectToAction("Index", new {pageId = nextAction.ReturnId});
                     }
                 }
-                return RedirectToAction("Sequences", "Application", new {applicationId});
+                return RedirectToAction("Sections", "Application", new {applicationId});
             }
 
             foreach (var error in updatePageResult.ValidationErrors)

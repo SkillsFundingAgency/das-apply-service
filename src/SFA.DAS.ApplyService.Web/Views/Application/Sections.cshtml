@@ -14,11 +14,14 @@
                 {
                     <li>
                         <h2 class="gvuk-heading-m">
-                            <a href="@Url.Action("Section", "Application", new {applicationSection.ApplicationId, applicationSection.SectionId})">
-                                @applicationSection.LinkTitle
-                            </a>
-                            <span class="govuk-caption-m">0 of 15 questions answered</span>
+                            @applicationSection.LinkTitle
                         </h2>
+                        <span id="company-details-hint" class="govuk-hint apply-hint">
+                            @applicationSection.PagesComplete of @applicationSection.PagesActive questions completed
+                        </span>
+                        <a href="@Url.Action("Section", "Application", new {applicationSection.ApplicationId, applicationSection.SectionId})">
+                            Go to @applicationSection.LinkTitle.ToLower()
+                        </a>
                     </li>
                     <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
                 }
