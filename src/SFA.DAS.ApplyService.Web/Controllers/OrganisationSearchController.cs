@@ -18,7 +18,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ISessionService _sessionService;
 
-        public OrganisationSearchController(IUsersApiClient usersApiClient, OrganisationApiClient organisationApiClient, OrganisationSearchApiClient apiClient, IHttpContextAccessor httpContextAccessor, ISessionService sessionService)
+        public OrganisationSearchController(IUsersApiClient usersApiClient, OrganisationApiClient organisationApiClient,
+            OrganisationSearchApiClient apiClient, IHttpContextAccessor httpContextAccessor,
+            ISessionService sessionService)
         {
             _usersApiClient = usersApiClient;
             _organisationApiClient = organisationApiClient;
@@ -26,62 +28,59 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _httpContextAccessor = httpContextAccessor;
             _sessionService = sessionService;
         }
+//
+//        [HttpGet]
+//        public async Task<IActionResult> Test()
+//        {
+//            
+//        }
 
         [HttpGet]
-        public async Task<IActionResult> Test()
+        public async Task<IActionResult> Index()
         {
-            var user = await _usersApiClient.GetUserBySignInId(_httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
+            var user = await _usersApiClient.GetUserBySignInId(
+                _httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
 
-            if(user != null)
+
+            // Second - Can get from UkPrn?
+            // var ukprn = user.Ukprn; <-- this doesn't exist right now!
+
+            // Third - Can get from Email?
+            var org = await _apiClient.GetOrganisationByEmail(user.Email);
+
+            if (org != null)
             {
-                // First - Do they have a org id already?
-                if (user.ApplyOrganisationId != null) return Ok();
-
-                // Second - Can get from UkPrn?
-                // var ukprn = user.Ukprn; <-- this doesn't exist right now!
-
-                // Third - Can get from Email?
-                var org = await _apiClient.GetOrganisationByEmail(user.Email);
-
-                if (org != null)
+                if (org.OrganisationType is null)
                 {
-                    if (org.OrganisationType is null)
+                    // org found but doesn't have Organisation Type
+                    var viewModel = new OrganisationSearchViewModel
                     {
-                        // org found but doesn't have Organisation Type
-                        var viewModel = new OrganisationSearchViewModel
-                        {
-                            SearchString = org.Name,
-                            Name = org.Name,
-                            Ukprn = org.Ukprn,
-                            OrganisationType = org.OrganisationType,
-                            Postcode = org.Address?.Postcode,
-                            OrganisationTypes = await _apiClient.GetOrganisationTypes()
-                        };
+                        SearchString = org.Name,
+                        Name = org.Name,
+                        Ukprn = org.Ukprn,
+                        OrganisationType = org.OrganisationType,
+                        Postcode = org.Address?.Postcode,
+                        OrganisationTypes = await _apiClient.GetOrganisationTypes()
+                    };
 
-                        return View(nameof(Type), viewModel);
-                    }
-                    else
+                    return View(nameof(Type), viewModel);
+                }
+                else
+                {
+                    // Got everything, set user to approved
+                    await _organisationApiClient.Create(org, user.Id);
+
+                    if (!user.IsApproved)
                     {
-                        // Got everything, set user to approved
-                        await _organisationApiClient.Create(org, user.Id);
-
-                        if (!user.IsApproved)
-                        {
-                            await _usersApiClient.ApproveUser(user.Id);
-                        }
-
-                        return Ok();
+                        await _usersApiClient.ApproveUser(user.Id);
                     }
+
+                    return RedirectToAction("Index", "Application");
                 }
             }
 
             // Nothing found, go to search
-            return RedirectToAction(nameof(Index));
-        }
-
-        [HttpGet]
-        public IActionResult Index()
-        {
+            //return RedirectToAction(nameof(Index));
             return View();
         }
 
@@ -97,7 +96,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var searchResults = await _apiClient.SearchOrganisation(searchString);
             var organisationTypes = await _apiClient.GetOrganisationTypes();
 
-            if (organisationTypes != null && organisationTypes.Any(ot => ot.Equals(organisationTypeFilter, StringComparison.InvariantCultureIgnoreCase)))
+            if (organisationTypes != null && organisationTypes.Any(ot =>
+                    ot.Equals(organisationTypeFilter, StringComparison.InvariantCultureIgnoreCase)))
             {
                 searchResults = searchResults.Where(sr => sr.OrganisationType == organisationTypeFilter).AsEnumerable();
             }
@@ -142,23 +142,39 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             // make sure we got everything
-            var searchResults = await _apiClient.SearchOrganisation(viewModel.Ukprn.HasValue ? viewModel.Ukprn.Value.ToString() : viewModel.Name); // Favour UKPRN over Name!
+            var searchResults =
+                await _apiClient.SearchOrganisation(viewModel.Ukprn.HasValue
+                    ? viewModel.Ukprn.Value.ToString()
+                    : viewModel.Name); // Favour UKPRN over Name!
 
             // filter name
-            searchResults = searchResults.Where(sr => sr.Name.Equals(viewModel.Name, StringComparison.InvariantCultureIgnoreCase)); // Name has to be identical match
+            searchResults = searchResults.Where(sr =>
+                sr.Name.Equals(viewModel.Name,
+                    StringComparison.InvariantCultureIgnoreCase)); // Name has to be identical match
 
             // filter organisation type
-            searchResults = searchResults.Where(sr => sr.OrganisationType != null ? sr.OrganisationType.Equals(viewModel.OrganisationType, StringComparison.InvariantCultureIgnoreCase) : true);
+            searchResults = searchResults.Where(sr =>
+                sr.OrganisationType != null
+                    ? sr.OrganisationType.Equals(viewModel.OrganisationType,
+                        StringComparison.InvariantCultureIgnoreCase)
+                    : true);
 
             // filter postcode
-            searchResults = searchResults.Where(sr => !string.IsNullOrEmpty(viewModel.Postcode) ? (sr.Address != null ? sr.Address.Postcode.Equals(viewModel.Postcode, StringComparison.InvariantCultureIgnoreCase) : true) : true);
+            searchResults = searchResults.Where(sr =>
+                !string.IsNullOrEmpty(viewModel.Postcode)
+                    ? (sr.Address != null
+                        ? sr.Address.Postcode.Equals(viewModel.Postcode, StringComparison.InvariantCultureIgnoreCase)
+                        : true)
+                    : true);
 
             var organisationSearchResult = searchResults.FirstOrDefault();
-            var user = await _usersApiClient.GetUserBySignInId(_httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
+            var user = await _usersApiClient.GetUserBySignInId(
+                _httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
 
             if (organisationSearchResult != null && user != null)
             {
-                if (organisationSearchResult.OrganisationType == null) organisationSearchResult.OrganisationType = viewModel.OrganisationType;
+                if (organisationSearchResult.OrganisationType == null)
+                    organisationSearchResult.OrganisationType = viewModel.OrganisationType;
 
                 var orgThatWasCreated = await _organisationApiClient.Create(organisationSearchResult, user.Id);
 
