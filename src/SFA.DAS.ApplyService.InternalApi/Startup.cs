@@ -15,13 +15,16 @@ using SFA.DAS.ApplyService.Application;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Application.Organisations;
+using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
+using SFA.DAS.ApplyService.Encryption;
 using SFA.DAS.ApplyService.Session;
+using SFA.DAS.ApplyService.Storage;
 using StructureMap;
 
 namespace SFA.DAS.ApplyService.InternalApi
@@ -139,6 +142,10 @@ namespace SFA.DAS.ApplyService.InternalApi
                 config.For<IDfeSignInService>().Use<DfeSignInService>();
                 config.For<IEmailService>().Use<EmailService.EmailService>();
 
+
+                config.For<IKeyProvider>().Use<PlaceholderKeyProvider>();
+                config.For<IStorageService>().Use<StorageService>();
+                
                 services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
                 
                 config.Populate(services);

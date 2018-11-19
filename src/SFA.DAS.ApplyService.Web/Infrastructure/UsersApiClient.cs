@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Web.ViewModels;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
@@ -14,6 +15,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<Contact> GetUserBySignInId(string signInId);
 
         Task<bool> ApproveUser(Guid userId);
+        Task Callback(DfeSignInCallback callback);
     }
 
     public class UsersApiClient : IUsersApiClient
@@ -43,6 +45,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         {
             var result = await HttpClient.PostAsJsonAsync("/Account/{contactId}/approve", string.Empty);
             return result.IsSuccessStatusCode;
+        }
+
+        public async Task Callback(DfeSignInCallback callback)
+        {
+            await HttpClient.PostAsJsonAsync($"/Account/Callback", callback);
         }
     }
 }

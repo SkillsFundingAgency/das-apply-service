@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace SFA.DAS.ApplyService.Application
+namespace SFA.DAS.ApplyService.Application.Interfaces
 {
     public interface IEmailService
     {

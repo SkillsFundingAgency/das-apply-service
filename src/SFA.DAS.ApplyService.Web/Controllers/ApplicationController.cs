@@ -6,6 +6,9 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Internal;
+using SFA.DAS.ApplyService.Application.Apply.Upload;
+using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 
@@ -21,56 +24,77 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _apiClient = apiClient;
         }
         
-        public async Task<IActionResult> Index()
+        [HttpGet("/Applications")]
+        public async Task<IActionResult> Applications()
         {
             var applications = await _apiClient.GetApplicationsFor(Guid.Parse(User.FindFirstValue("UserId")));
             
             return View(applications);
         }
-
-        [HttpGet("/Application/{applicationId}/Sequences")]
-        public async Task<IActionResult> Sequences(string applicationId)
+        
+        [HttpPost("/Applications")]
+        public async Task<IActionResult> StartApplication()
         {
-            var sequences = await _apiClient.GetSequences(Guid.Parse(applicationId), Guid.Parse(User.FindFirstValue("UserId")));
+            await _apiClient.StartApplication(Guid.Parse(User.FindFirstValue("UserId")));
 
-            var sequencesViewModel = sequences.Select(s => new SequenceViewModel(s, Guid.Parse(applicationId))).ToList();
-            
-            return View("~/Views/Application/Sequences/Index.cshtml", sequencesViewModel);
+            return RedirectToAction("Applications");
         }
         
-        [HttpGet("/Application/{applicationId}/Sequences/{sequenceId}")]
-        public async Task<IActionResult> Sequence(string applicationId, string sequenceId)
+        
+        
+        
+        [HttpGet("/Applications/{applicationId}")]
+        public async Task<IActionResult> Sections(Guid applicationId)
         {
-            var sequence = await _apiClient.GetSequence(Guid.Parse(applicationId), sequenceId,
-                Guid.Parse(User.FindFirstValue("UserId")));
-
-            var sequenceViewModel = new SequenceViewModel(sequence, Guid.Parse(applicationId));
+            var sections = await _apiClient.GetSections(applicationId, sequenceId: 1, userId: Guid.Parse(User.FindFirstValue("UserId")));
             
-            return View("~/Views/Application/Sequences/Sequence.cshtml", sequenceViewModel);
+            return View(sections);
         }
-
-        [HttpGet("/Application/{applicationId}/Pages/{pageId}")]
-        public async Task<IActionResult> Page(string applicationId, string pageId)
+        
+        [HttpGet("/Applications/{applicationId}/Sections/{sectionId}")]
+        public async Task<IActionResult> Section(Guid applicationId, int sectionId)
         {
-            var page = await _apiClient.GetPage(Guid.Parse(applicationId), pageId, Guid.Parse(User.FindFirstValue("UserId")));
-            var pageVm = new PageViewModel(page, Guid.Parse(applicationId));   
+            var sections = await _apiClient.GetSection(applicationId, sequenceId: 1, sectionId: sectionId, userId: Guid.Parse(User.FindFirstValue("UserId")));
+            
+            return View(sections);
+        }
+        
+        [HttpGet("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
+        public async Task<IActionResult> Page(string applicationId, int sequenceId, int sectionId, string pageId)
+        {
+            var page = await _apiClient.GetPage(Guid.Parse(applicationId), sequenceId,sectionId, pageId, Guid.Parse(User.FindFirstValue("UserId")));
+            var pageVm = new PageViewModel(page, Guid.Parse(applicationId));
+
+            pageVm.SectionId = sectionId;
             
             return View("~/Views/Application/Pages/Index.cshtml", pageVm);
         }
         
-        [HttpPost("/Application/{applicationId}/Pages/{pageId}")]
-        public async Task<IActionResult> SaveAnswers(string applicationId, string pageId)
+        [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
+        public async Task<IActionResult> SaveAnswers(string applicationId, int sequenceId, int sectionId, string pageId)
         {
-            var userId = "1";
-
+            var userId = Guid.Parse(User.FindFirstValue("UserId"));
+            
             var answers = new List<Answer>();
 
+            if (HttpContext.Request.Form.Files.Any())
+            {
+                var uploadedFile = await _apiClient.Upload(applicationId, userId.ToString(), pageId,
+                    HttpContext.Request.Form.Files);
+
+                foreach (var file in uploadedFile.Files)
+                {
+                    answers.Add(new Answer() {QuestionId = file.QuestionId, Value = file.UploadedFileName});   
+                }
+            }
+            
             foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__")))
             {
                 answers.Add(new Answer() {QuestionId = keyValuePair.Key, Value = keyValuePair.Value});
             }
 
-            var updatePageResult = await _apiClient.UpdatePageAnswers(Guid.Parse(applicationId), Guid.Parse(User.FindFirstValue("UserId")), pageId, answers);
+            
+            var updatePageResult = await _apiClient.UpdatePageAnswers(Guid.Parse(applicationId), userId, sequenceId, sectionId, pageId, answers);
 
             if (updatePageResult.ValidationPassed)
             {
@@ -79,37 +103,58 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 if (nextActions.Count == 1)
                 {
                     var pageNext = nextActions[0];
-                    if (pageNext.Action == "NextPage")
+                    if (pageNext.Action == "NextPage" && pageNext.ConditionMet)
                     {
                         return RedirectToAction("Page", new {applicationId, pageId = pageNext.ReturnId});
                     }
                     
-                    return pageNext.Action == "ReturnToSequence"
-                        ? RedirectToAction("Sequence", "Application", new {applicationId, sequenceId = pageNext.ReturnId})
+                    return pageNext.Action == "ReturnToSection"
+                        ? RedirectToAction("Section", "Application", new {applicationId, sectionId = pageNext.ReturnId})
                         : RedirectToAction("Sequences", "Application", new {applicationId});
                 }
                 else
                 {
-                    foreach (var nextAction in nextActions)
+                    var nextConditionMet = nextActions.FirstOrDefault(na => na.ConditionMet);
+                    if (nextConditionMet != null)
                     {
-                        if (nextAction.Condition.MustEqual == answers.Single(a => a.QuestionId == nextAction.Condition.QuestionId).Value)
+                        if (nextConditionMet.Action == "NextPage")
                         {
-                            return RedirectToAction("Index", new {pageId = nextAction.ReturnId});
-                        }
+                            return RedirectToAction("Page", new {applicationId, pageId = nextConditionMet.ReturnId});
+                        }   
+                        
+                        return nextConditionMet.Action == "ReturnToSequence"
+                            ? RedirectToAction("Sequence", "Application", new {applicationId, sequenceId = nextConditionMet.ReturnId})
+                            : RedirectToAction("Sequences", "Application", new {applicationId});
                     }
-                    return RedirectToAction("Sequences", "Application", new {applicationId});
                 }
-            }
-            else
-            {
-                foreach (var error in updatePageResult.ValidationErrors)
+
+                foreach (var nextAction in nextActions)
                 {
-                    ModelState.AddModelError(error.Key, error.Value);
+                    if (nextAction.Condition.MustEqual == answers.Single(a => a.QuestionId == nextAction.Condition.QuestionId).Value)
+                    {
+                        return RedirectToAction("Index", new {pageId = nextAction.ReturnId});
+                    }
                 }
+                return RedirectToAction("Sequences", "Application", new {applicationId});
             }
-            
+
+            foreach (var error in updatePageResult.ValidationErrors)
+            {
+                ModelState.AddModelError(error.Key, error.Value);
+            }
+
             var pageVm = new PageViewModel(updatePageResult.Page, Guid.Parse(applicationId));
             return View("~/Views/Application/Pages/Index.cshtml", pageVm);
+        }
+
+        [HttpGet("/Application/{applicationId}/Page/{pageId}/Question/{questionId}/File/{filename}/Download")]
+        public async Task<IActionResult> Download(Guid applicationId, string pageId, string questionId, string filename)
+        {
+            var userId = Guid.Parse(User.FindFirstValue("UserId"));
+
+            var file = await _apiClient.Download(applicationId, userId, pageId, questionId, filename);
+
+            return File(file, "file/file", filename);
         }
     }
 }

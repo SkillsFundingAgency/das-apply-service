@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -7,6 +8,7 @@ using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
 {
@@ -23,23 +25,28 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
         
         public async Task<UpdatePageAnswersResult> Handle(UpdatePageAnswersRequest request, CancellationToken cancellationToken)
         {
-            var entity = await _applyRepository.GetEntity(request.ApplicationId, request.UserId);
-            var workflow = entity.QnAWorkflow;
-
-            var sequence = workflow.GetSequenceContainingPage(request.PageId);
-            var section = sequence.Sections.Single(s => s.Pages.Any(p => p.PageId == request.PageId));
-
-            if (!sequence.Active)
-            {
-                throw new BadRequestException("Sequence not active");
-            }
-
+            var section = await _applyRepository.GetSection(request.ApplicationId, request.SequenceId, request.SectionId,
+                request.UserId);
+            
+//            var entity = await _applyRepository.GetEntity(request.ApplicationId, request.UserId);
+//            var workflow = entity.QnAWorkflow;
+//
+//            var sequence = workflow.GetSequenceContainingPage(request.PageId);
+//            var section = sequence.Sections.Single(s => s.Pages.Any(p => p.PageId == request.PageId));
+//
+//            if (!sequence.Active)
+//            {
+//                throw new BadRequestException("Sequence not active");
+//            }
+//
             var page = section.Pages.Single(p => p.PageId == request.PageId);
 
+            var pages = section.Pages;
+            
             PageOfAnswers pageAnswers;
             if (!page.AllowMultipleAnswers)
             {
-                page.PageOfAnswers = new List<PageOfAnswers>();// List<Answer>();
+                page.PageOfAnswers = new List<PageOfAnswers>();
                 pageAnswers = new PageOfAnswers(){Answers = new List<Answer>()};
                 page.PageOfAnswers.Add(pageAnswers);
             }
@@ -85,11 +92,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                 }
             }
 
-            if (validationPassed)
+            if (validationPassed) 
             {
                 page.Complete = true;
 
-                MarkSequenceAsCompleteIfAllPagesComplete(sequence, workflow.Sequences);
+                //MarkSequenceAsCompleteIfAllPagesComplete(sequence, workflow.Sequences);
 
                 if (page.Next.Count() > 1)
                 {
@@ -99,14 +106,31 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                         if (nextAction.Condition.MustEqual == request.Answers
                                 .Single(a => a.QuestionId == nextAction.Condition.QuestionId).Value)
                         {
-                            section.Pages.Single(p => p.PageId == nextAction.ReturnId).Active = true;
+                            pages.Single(p => p.PageId == nextAction.ReturnId).Active = true;
+                            pages.Single(p => p.PageId == nextAction.ReturnId).Visible = true;
+                            nextAction.ConditionMet = true;
                         }
                     }
                 }
+                else
+                {
+                    page.Next.First().ConditionMet = true;
+                }
 
-                entity.QnAWorkflow = workflow;
+//                section.QnAData = workflow;
 
-                await _applyRepository.SaveEntity(entity, request.ApplicationId, request.UserId);
+                pages.ForEach(p =>
+                {
+                    if (p.PageId == request.PageId)
+                    {
+                        p.Complete = page.Complete;
+                        p.PageOfAnswers = page.PageOfAnswers;
+                    }
+                });
+
+                section.Pages = pages;
+                
+                await _applyRepository.SaveSection(section, request.UserId);
                 
                 return new UpdatePageAnswersResult {Page = page, ValidationPassed = validationPassed};
             }
@@ -147,30 +171,30 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
             return validationPassed;
         }
 
-        private static void MarkSequenceAsCompleteIfAllPagesComplete(Sequence sequence, List<Sequence> workflow)
-        {
-            sequence.Complete = sequence.Sections.SelectMany(s => s.Pages).All(p => p.Complete);
-
-            if (!sequence.Complete) return;
-
-            var nextSequences = sequence.NextSequences;
-            foreach (var nextSequence in nextSequences)
-            {
-                if (nextSequence.Condition != null)
-                {
-                    var answers = sequence.Sections.SelectMany(s => s.Pages).SelectMany(p => p.PageOfAnswers[0].Answers).ToList();
-                    if (answers.Any(a =>
-                        a.QuestionId == nextSequence.Condition.QuestionId &&
-                        a.Value == nextSequence.Condition.MustEqual))
-                    {
-                        workflow.Single(w => w.SequenceId == nextSequence.NextSequenceId).Active = true;
-                    }
-                }
-                else
-                {
-                    workflow.Single(w => w.SequenceId == nextSequence.NextSequenceId).Active = true;
-                }
-            }
-        }
+//        private static void MarkSequenceAsCompleteIfAllPagesComplete(ApplicationSequence sequence, List<Sequence> workflow)
+//        {
+//            sequence.Complete = sequence.Sections.SelectMany(s => s.Pages).All(p => p.Complete);
+//
+//            if (!sequence.Complete) return;
+//
+//            var nextSequences = sequence.NextSequences;
+//            foreach (var nextSequence in nextSequences)
+//            {
+//                if (nextSequence.Condition != null)
+//                {
+//                    var answers = sequence.Sections.SelectMany(s => s.Pages).SelectMany(p => p.PageOfAnswers[0].Answers).ToList();
+//                    if (answers.Any(a =>
+//                        a.QuestionId == nextSequence.Condition.QuestionId &&
+//                        a.Value == nextSequence.Condition.MustEqual))
+//                    {
+//                        workflow.Single(w => w.SequenceId == nextSequence.NextSequenceId).Active = true;
+//                    }
+//                }
+//                else
+//                {
+//                    workflow.Single(w => w.SequenceId == nextSequence.NextSequenceId).Active = true;
+//                }
+//            }
+//        }
     }
 }

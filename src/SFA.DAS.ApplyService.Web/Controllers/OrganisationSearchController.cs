@@ -75,7 +75,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         await _usersApiClient.ApproveUser(user.Id);
                     }
 
-                    return RedirectToAction("Index", "Application");
+                    return RedirectToAction("Applications", "Application");
                 }
             }
 

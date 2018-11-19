@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using SFA.DAS.ApplyService.Application;
 using SFA.DAS.ApplyService.Application.Apply.Validation;
+using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.Session;
@@ -30,11 +31,13 @@ namespace SFA.DAS.ApplyService.Web
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger<Startup> _logger;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
-        public Startup(IConfiguration configuration, ILogger<Startup> logger)
+        public Startup(IConfiguration configuration, ILogger<Startup> logger, IHostingEnvironment hostingEnvironment)
         {
             _configuration = configuration;
             _logger = logger;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
@@ -59,8 +62,6 @@ namespace SFA.DAS.ApplyService.Web
             _logger.LogInformation("Passed Add Session");
             
             services.AddDistributedMemoryCache();
-            
-            _logger.LogInformation("Passed Memory Cache");
 
             return ConfigureIOC(services).Result;
         }
@@ -111,32 +112,14 @@ namespace SFA.DAS.ApplyService.Web
 
             return container.GetInstance<IServiceProvider>();
         }
-//
-//        private static async void AddApiClients(IServiceCollection services, IServiceProvider serviceProvider, ILogger logger)
-//        {
-//            IApplyConfig config;
-//            try
-//            {
-//                
-//            }
-//            catch (Exception e)
-//            {
-//                logger.LogInformation($"Error getting config: {e.Message} {e.StackTrace}");
-//                throw;
-//            }
-//            
-//            
-//        }
-        
-        protected virtual void ConfigureMvc(IServiceCollection services)
-        {
-            
-            //.AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
-        }
 
         protected virtual void ConfigureAuth(IServiceCollection services)
         {
-            services.AddDfeSignInAuthorization();
+
+            var configService = new ConfigurationService(_hostingEnvironment, _configuration["EnvironmentName"],
+                _configuration["ConfigurationStorageConnectionString"], "1.0", "SFA.DAS.ApplyService");
+            
+            services.AddDfeSignInAuthorization(configService.GetConfig().Result);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILogger<Startup> logger)

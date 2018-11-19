@@ -1,6 +1,6 @@
 namespace SFA.DAS.ApplyService.Domain.Entities
 {
-    class Asset : EntityBase
+    public class Asset : EntityBase
     {
         public string Reference { get; set; }
         public string Type { get; set; }

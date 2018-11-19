@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using SFA.DAS.ApplyService.Application;
+using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Configuration;
 
 namespace SFA.DAS.ApplyService.EmailService

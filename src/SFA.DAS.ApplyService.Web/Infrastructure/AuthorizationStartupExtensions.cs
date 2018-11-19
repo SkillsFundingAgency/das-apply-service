@@ -13,7 +13,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     public static class AuthorizationStartupExtensions
     {
-        public static void AddDfeSignInAuthorization(this IServiceCollection services)
+        public static void AddDfeSignInAuthorization(this IServiceCollection services, IApplyConfig applyConfig)
         {
             services.AddAuthentication(options =>
                 {
@@ -24,24 +24,15 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .AddOpenIdConnect(options =>
                 {
                     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    options.MetadataAddress = "https://signin-test-oidc-as.azurewebsites.net/.well-known/openid-configuration";
+                    options.MetadataAddress = applyConfig.DfeSignIn.MetadataAddress;
 
-                    options.ClientId = "DasAssessorServivce";
-                    const string envKeyClientSecret = "tussock-sentient-onshore";
-                    var clientSecret = "tussock-sentient-onshore";
-                    if (string.IsNullOrWhiteSpace(clientSecret))
-                    {
-                        throw new Exception("Missing environment variable " + envKeyClientSecret +
-                                            " - get this from the DfE Sign-in team.");
-                    }
-
-                    options.ClientSecret = clientSecret;
+                    options.ClientId = applyConfig.DfeSignIn.ClientId;
+                    
+                    options.ClientSecret = applyConfig.DfeSignIn.ClientSecret;
                     options.ResponseType = OpenIdConnectResponseType.Code;
                     options.GetClaimsFromUserInfoEndpoint = true;
 
-                    // using this property would align the expiration of the cookie
-                    // with the expiration of the identity token
-                    // UseTokenLifetime = true;
+                    options.UseTokenLifetime = true;
 
                     options.Scope.Clear();
                     options.Scope.Add("openid");

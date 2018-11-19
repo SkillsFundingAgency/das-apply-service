@@ -17,8 +17,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             LinkTitle = page.LinkTitle;
             PageId = page.PageId;
             SequenceId = page.SequenceId;
-            Feedback = page.Feedback;
-            HasFeedback = page.HasFeedback;
             
             var questions = page.Questions;
             var answers = page.PageOfAnswers.FirstOrDefault()?.Answers;
@@ -61,5 +59,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         
         public List<QuestionViewModel> Questions { get; set; }
         public string SequenceId { get; set; }
+        public int SectionId { get; set; }
     }
 }

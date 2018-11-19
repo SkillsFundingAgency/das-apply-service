@@ -5,15 +5,11 @@ namespace SFA.DAS.ApplyService.Application.Apply
 {
     public class StartApplicationRequest : IRequest
     {
-        public string ApplicationType { get; }
-        public Guid ApplyingOrganisationId { get; }
-        public string Username { get; set; }
+        public Guid UserId { get; set; }
 
-        public StartApplicationRequest(string applicationType, Guid applyingOrganisationId, string username)
-        {
-            ApplicationType = applicationType;
-            ApplyingOrganisationId = applyingOrganisationId;
-            Username = username;
+        public StartApplicationRequest(Guid userId)
+        {     
+            UserId = userId;
         }
     }
 }

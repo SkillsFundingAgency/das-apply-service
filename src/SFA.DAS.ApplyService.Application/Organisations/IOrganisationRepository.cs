@@ -10,5 +10,6 @@ namespace SFA.DAS.ApplyService.Application.Organisations
         Task<Organisation> GetOrganisationByContactEmail(string email);
         Task<Organisation> GetOrganisationByName(string name);
         Task<Organisation> UpdateOrganisation(Organisation organisation);
+        Task<Organisation> GetUserOrganisation(Guid userId);
     }
 }

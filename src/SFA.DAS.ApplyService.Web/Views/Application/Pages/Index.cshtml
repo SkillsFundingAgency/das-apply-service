@@ -4,13 +4,17 @@
     ViewBag.Title = @Model.Title;
 }
 
-<a href="@Url.Action("Sequence", "Application", new {Model.ApplicationId, Model.SequenceId})" class="govuk-back-link">Back to summary</a>
+<a href="@Url.Action("Section", "Application", new {Model.ApplicationId, Model.SectionId})" class="govuk-back-link">Back to summary</a>
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            @if(!string.IsNullOrEmpty(@Model.Title))
+            @if (!string.IsNullOrEmpty(@Model.Title) && Model.Questions.Count() > 1)
             {
-                <h1 class="govuk-heading-xl">@Model.Title</h1>
+                <h1 class="govuk-heading-xl">
+                    @*<span class="govuk-hint">&lt;page.Title&gt;</span>*@
+                        @Model.Title
+                    @*<span class="govuk-hint">&lt;/page.Title&gt;</span>*@
+                </h1>
             }
 
             @if (Model.HasFeedback)
@@ -47,45 +51,60 @@
                 </div>
             }
 
-            <form method="post" asp-action="SaveAnswers" asp-controller="Application" novalidate>
-                <ul class="govuk-list">
-                    @if (Model.Questions.Count() == 1)
+            <form method="post" asp-action="SaveAnswers" asp-controller="Application" novalidate enctype="multipart/form-data">
+                @if (Model.Questions.Count() == 1)
+                {
+                    @foreach (var question in Model.Questions)
                     {
-                        @foreach (var question in Model.Questions)
-                        {
-                            <div class="govuk-form-group">
-                                <fieldset class="govuk-fieldset">
+                        <div class="govuk-form-group">
+                            <fieldset class="govuk-fieldset">
+                                @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio") {
                                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
                                         <h1 class="govuk-fieldset__heading">
-                                            @Html.Raw(question.Label)
+                                            @*<span class="govuk-hint">&lt;question.Label&gt; (radio or checkbox)</span>*@
+                                                @Html.Raw(question.Label)
+                                            @*<span class="govuk-hint">&lt;/question.Label&gt; (radio or checkbox)</span>*@
                                         </h1>
                                     </legend>
-                                    <span class="govuk-hint">
-                                        @Html.Raw(question.Hint)
-                                    </span>
-                                    @Html.Partial($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
-                                </fieldset>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        @foreach (var question in Model.Questions)
-                        {
-                            <div class="govuk-form-group">
-                                <label class="govuk-label govuk-label--s">
-                                    @Html.Raw(question.Label)
-                                </label>
+                                }
+                                else
+                                {
+                                    <h2 class="govuk-label-wrapper">
+                                        <label class="govuk-label govuk-label--xl" for="@question.QuestionId">
+                                            	@*<span class="govuk-hint">&lt;question.Label&gt; (single/)</span>*@
+                                                    @Html.Raw(question.Label)
+                                                @*<span class="govuk-hint">&lt;/question.Label&gt; (single)</span>*@
+                                        </label>
+                                    </h2>
+                                }
                                 <span class="govuk-hint">
                                     @Html.Raw(question.Hint)
                                 </span>
                                 @Html.Partial($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
-                            </div>
-                        }
+                            </fieldset>
+                        </div>
                     }
-                <button type="submit" class="govuk-button">Submit</button>
-                <div class="esfa-button-link">
-                    <a href="@Url.Action("Sequence", "Application", new {Model.ApplicationId, Model.SequenceId})">Return to summary</a>
+                }
+                else
+                {
+                    @foreach (var question in Model.Questions)
+                    {
+                        <div class="govuk-form-group">
+                            <label class="govuk-label" for="@question.QuestionId">
+                                @*<span class="govuk-hint">&lt;question.Label (multiple questions)&gt;</span>*@
+                                    @Html.Raw(question.Label)
+                                @*<span class="govuk-hint">&lt;/question.Label (multiple questions)&gt;</span>*@
+                            </label>
+                            <span class="govuk-hint">
+                                @Html.Raw(question.Hint)
+                            </span>
+                            @Html.Partial($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
+                        </div>
+                    }
+                }
+                <button type="submit" class="govuk-button">Save and continue</button>
+                <div>
+                    <a class="govuk-body govuk-link" href="@Url.Action("Section", "Application", new {Model.ApplicationId, Model.SectionId})">Return to summary</a>
                 </div>
             </form>
         </div>

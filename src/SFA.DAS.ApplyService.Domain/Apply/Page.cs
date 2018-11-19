@@ -8,6 +8,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
     {
         public string PageId { get; set; }
         public string SequenceId { get; set; }
+        public string SectionId { get; set; }
         public string Title { get; set; }
         public string LinkTitle { get; set; }
         public string InfoText { get; set; }
@@ -17,15 +18,8 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public bool Complete { get; set; }
         public bool AllowMultipleAnswers { get; set; }
         public int? Order { get; set; }
-        public bool Active { get; set; }
-        public List<Feedback> Feedback { get; set; }
-        public bool HasFeedback => Feedback?.Any() ?? false;
+        public bool Active { get; set; }        
+        public bool Visible { get; set; }
     }
 
-    public class Feedback
-    {
-        public string From { get; set; }
-        public string Message { get; set; }
-        public DateTime Date { get; set; }
-    }
 }

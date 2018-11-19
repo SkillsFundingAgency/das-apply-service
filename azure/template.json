@@ -29,6 +29,9 @@
         },
         "uiCertificateName": {
             "type": "string"
+        },
+        "storageAccountName": {
+            "type": "string"
         }
     },
     "variables": {},
@@ -164,6 +167,10 @@
                             {
                                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                                 "value": "[reference('ApiAppInsights').outputs.InstrumentationKey.value]"
+                            },
+                            {
+                                "name": "FileStorage:StorageConnectionString",
+                                "value": "[reference('StorageAccount').outputs.storageConnectionString.value]"
                             }
                         ]
                     },
@@ -181,6 +188,23 @@
             "dependsOn": [
                 "ApiAppInsights"
             ]
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "StorageAccount",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/SkillsFundingAgency/das-platform-building-blocks/master/templates/storage-account-arm.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "storageAccountName": {
+                        "value": "[parameters('storageAccountName')]"
+                    }
+                }
+            }
         }
     ],
     "outputs": {}
