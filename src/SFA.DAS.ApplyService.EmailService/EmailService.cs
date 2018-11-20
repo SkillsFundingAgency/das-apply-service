@@ -46,5 +46,33 @@ namespace SFA.DAS.ApplyService.EmailService
             var msg = MailHelper.CreateSingleEmail(from, to, subject, "", htmlContent);
             var response = await client.SendEmailAsync(msg);
         }
+
+        public async Task SendPreAmbleEmail(string toAddress, int emailId, dynamic replacements)
+        {
+            // TODO: Merge this with above at some point!
+            var config = await _configurationService.GetConfig();
+
+            _logger.LogInformation($"Sending email to {toAddress} with replacements :");
+            foreach (var property in replacements.GetType().GetProperties())
+            {
+                _logger.LogInformation($"Property: {property.Name}, Value: {property.GetValue(replacements)}");
+            }
+
+            var client = new SendGridClient(config.Email.SendGridApiKey);
+            var from = new EmailAddress(toAddress, "Apply Service");
+            var subject = "Pre-Amble Notification";
+            var to = new EmailAddress(toAddress);
+            var htmlContent = $@"<p>Dear [OrganisationName],</p>
+                                <p>There has been activity on your account.</p>
+                                <p><a href='{config.SignInPage}'>Click here to view more</a></p>";
+
+            foreach (var property in replacements.GetType().GetProperties())
+            {
+                htmlContent = htmlContent.Replace($"[{property.Name}]", $"{property.GetValue(replacements)}");
+            }
+
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, "", htmlContent);
+            var response = await client.SendEmailAsync(msg);
+        }
     }
 }

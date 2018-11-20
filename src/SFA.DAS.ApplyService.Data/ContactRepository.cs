@@ -22,8 +22,8 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"INSERT INTO Contacts (Email, GivenNames, FamilyName, SignInType, CreatedAt, CreatedBy, Status) 
-                                                     VALUES (@email, @givenName, @familyName, @signInType, @createdAt, @email, 'New')",
+                await connection.ExecuteAsync(@"INSERT INTO Contacts (Email, GivenNames, FamilyName, SignInType, CreatedAt, CreatedBy, Status, IsApproved) 
+                                                     VALUES (@email, @givenName, @familyName, @signInType, @createdAt, @email, 'New', 0)",
                     new {email, givenName, familyName, signInType, createdAt = DateTime.UtcNow});
 
                 return await GetContact(email);   
@@ -55,6 +55,28 @@ namespace SFA.DAS.ApplyService.Data
                 await connection.ExecuteAsync(
                     @"UPDATE Contacts SET SignInId = @signInId, UpdatedAt = GETUTCDATE(), UpdatedBy = 'dfeSignIn', Status = 'Live' WHERE Id = @contactId",
                     new {contactId, signInId});
+            }
+        }
+
+        public async Task UpdateApplyOrganisationId(Guid contactId, Guid applyOrganisationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(
+                    @"UPDATE Contacts SET ApplyOrganisationId = @applyOrganisationId, UpdatedAt = GETUTCDATE(), UpdatedBy = 'System' WHERE Id = @contactId",
+                    new { contactId, applyOrganisationId });
+            }
+        }
+
+        public async Task<bool> UpdateIsApproved(Guid contactId, bool isApproved)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                int rowsAffected = await connection.ExecuteAsync(
+                    @"UPDATE Contacts SET IsApproved = @isApproved, UpdatedAt = GETUTCDATE(), UpdatedBy = 'System' WHERE Id = @contactId",
+                    new { contactId, isApproved });
+
+                return rowsAffected > 0;
             }
         }
     }

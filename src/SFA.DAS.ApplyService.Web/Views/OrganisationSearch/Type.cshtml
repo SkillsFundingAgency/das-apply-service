@@ -1,0 +1,61 @@
+@model SFA.DAS.ApplyService.Web.ViewModels.OrganisationSearchViewModel
+
+@{
+    ViewBag.Title = "Select organisation type";
+    Layout = "_Layout";
+}
+
+<a asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString" class="govuk-back-link">Back to Search Results</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="post" asp-action="Create" asp-controller="OrganisationSearch" novalidate>
+                <input asp-for="SearchString" type="hidden" />
+                <input asp-for="Name" type="hidden" />
+                <input asp-for="Ukprn" type="hidden" />
+                <input asp-for="Postcode" type="hidden" />
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                            There's a problem
+                        </h2>
+                        <ul class="error-summary-list">
+                            <li>Please select an organisation type</li>
+                        </ul>
+                    </div>
+                }
+
+                <div class="govuk-form-group">
+                    <h1 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--l" for="OrganisationType">
+                            Select Organisation Type
+                        </label>
+                    </h1>
+
+                    @if (Model.OrganisationTypes != null)
+                    {
+                        <div class="govuk-radios">
+                            @foreach (var orgType in Model.OrganisationTypes)
+                            {
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" asp-for="OrganisationType" id="@orgType.Replace(" ", "_")" type="radio" value="@orgType" required />
+                                    <label class="govuk-label govuk-radios__label" asp-for="OrganisationType">@orgType</label>
+                                </div>
+                            }
+                        </div>
+                        <button type="submit" class="govuk-button">Submit</button>
+                    }
+                    else
+                    {
+                        <h1 class="heading-large">We cannot get organisation types at this point in time</h1>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+
+</main>

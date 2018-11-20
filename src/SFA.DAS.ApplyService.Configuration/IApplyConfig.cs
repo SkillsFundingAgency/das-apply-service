@@ -10,18 +10,11 @@ namespace SFA.DAS.ApplyService.Configuration
         DfeSignInConfig DfeSignIn { get; set; }
         string SqlConnectionString { get; set; }
         FileStorageConfig FileStorage { get; set; }
-        EmailConfig Email { get; set; }
-    }
+        
+        NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
 
-    public class FileStorageConfig
-    {
-        public string FileEncryptionKey { get; set; }
-        public string StorageConnectionString { get; set; }
-        public string ContainerName { get; set; }
-    }
-
-    public class InternalApiConfig
-    {
-        public string Uri { get; set; }
+        AssessorServiceApiAuthentication AssessorServiceApiAuthentication { get; set; }
+        ProviderRegisterApiAuthentication ProviderRegisterApiAuthentication { get; set; }
+        ReferenceDataApiAuthentication ReferenceDataApiAuthentication { get; set; }
     }
 }

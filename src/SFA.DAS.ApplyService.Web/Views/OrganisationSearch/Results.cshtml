@@ -1,0 +1,170 @@
+@model SFA.DAS.ApplyService.Web.ViewModels.OrganisationSearchViewModel
+
+@{
+    ViewBag.Title = "Search results";
+    Layout = "_Layout";
+}
+
+@* PLEASE FIX - I'm using this to make a form submit button look like a hyperlink. I assume we have a CSS class for it somewhere *@
+<style>
+    .link-button {
+        background: none;
+        border: none;
+        color: blue;
+        text-decoration: underline;
+        cursor: pointer;
+        font-size: 19px;
+        font-weight: 700;
+        font-family: nta, Arial, sans-serif;
+    }
+</style>
+<a asp-action="Index" asp-controller="OrganisationSearch" class="govuk-back-link">Search Again</a>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="get" asp-action="Results" asp-controller="OrganisationSearch" novalidate>
+                @*should i make this a post as in the prototype?*@
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="error-summary" role="alert" aria-labelledby="error-summary-heading" tabindex="-1">
+                        <h2 class="heading-medium error-summary-heading" id="error-summary-heading">
+                            There's a problem
+                        </h2>
+                        <ul class="error-summary-list">
+                            <li>Please select an organisation</li>
+                        </ul>
+                    </div>
+                }
+
+                <div class="govuk-form-group">
+                    <h1 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--l" for="company-name">
+                            Select your organisation
+                        </label>
+                        <span class="govuk-hint">
+                            Or search again
+                        </span>
+                    </h1>
+                    <input class="govuk-input govuk-input--width-20" asp-for="SearchString" minlength="2" required />
+                </div>
+                <button type="submit" class="govuk-button">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row search-results">
+        <div class="govuk-grid-column-one-third">
+            <aside>
+                @* PLEASE FIX - it doesn't have a nice box with a shaded title area around it at it does within the prototype *@
+                <h2 class="govuk-heading-m">Filter results</h2>
+                <div class="filter">
+                    <form method="get" asp-action="Results" asp-controller="OrganisationSearch" novalidate>
+                        @Html.HiddenFor(m => m.SearchString)
+                        <fieldset class="govuk-fieldset">
+                            <legend class="govuk-visually-hidden-focusable">Filter by organisation type</legend>
+                            <div class="filter-heading">
+                                <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Organisation type</h3>
+                            </div>
+                            <div class="filter-body">
+                                <div class="govuk-radios">
+                                    <div class="govuk-radios__item">
+                                        <input class="govuk-radios__input" asp-for="OrganisationTypeFilter" id="Show_All" type="radio" value="" checked="@(string.IsNullOrEmpty(Model.OrganisationTypeFilter))" />
+                                        <label class="govuk-label govuk-radios__label" asp-for="OrganisationTypeFilter">Show all</label>
+                                    </div>
+                                    @if (Model.OrganisationTypes != null)
+                                    {
+                                        @foreach (var orgType in Model.OrganisationTypes)
+                                        {
+                                            <div class="govuk-radios__item">
+                                                <input class="govuk-radios__input" asp-for="OrganisationTypeFilter" id="@orgType.Replace(" ", "_")" type="radio" value="@orgType" />
+                                                <label class="govuk-label govuk-radios__label" asp-for="OrganisationTypeFilter">@orgType</label>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="form-group">
+                            <button type="submit" class="govuk-button">Apply filter</button>
+                        </div>
+                    </form>
+                </div>
+            </aside>
+        </div>
+
+        <div class="govuk-grid-column-two-thirds">
+            @if (@Model.Organisations != null && @Model.Organisations.Any())
+            {
+                <table class="govuk-table">
+                    <tbody class="govuk-table__body">
+                        @foreach (var result in Model.Organisations)
+                        {
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell govuk-!-padding-top-0 govuk-!-padding-bottom-4 govuk-!-padding-left-2">
+                                    <form method="post" asp-action="@(result.OrganisationType != null ? "Create" : "Type")" asp-controller="OrganisationSearch" novalidate>
+                                        <input asp-for="SearchString" type="hidden" />
+                                        <input asp-for="Name" value="@result.Name" type="hidden" />
+                                        <input asp-for="Ukprn" value="@result.Ukprn" type="hidden" />
+                                        <input asp-for="OrganisationType" value ="@result.OrganisationType" type="hidden" />
+                                        <input asp-for="Postcode" value="@result.Address?.Postcode" type="hidden" />
+                                        <button type="submit" class="link-button">@result.Name</button> @* <------- Please fix CSS *@
+                                    </form>
+                                    <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
+                                        <span class="govuk-body govuk-!-font-weight-bold">Address</span>
+                                        @if (result.Address?.Postcode == null)
+                                        {
+                                            @("Unknown");
+                                        }
+                                        else
+                                        {
+                                            @string.Join(", ", @result.Address?.Address1, @result.Address?.City, @result.Address.Postcode);
+                                        }
+                                    </p>
+                                    <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
+                                        <span class="govuk-body govuk-!-font-weight-bold">Type</span>
+                                        @if (result.OrganisationType == null)
+                                        {
+                                            @("Unknown");
+                                        }
+                                        else
+                                        {
+                                            @(result.OrganisationType);
+                                        }
+                                    </p>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @*<section class="results-list">
+                <nav>
+                    <ul class="previous-next-navigation">
+                        <li class="next">
+                            <a href="/accounts/organisations/search/results?searchTerm=test&amp;pageNumber=2">
+                                Next page
+                                <span class="detail">Page 2 of 3</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                </section>*@
+            }
+            else
+            {
+                <div class="govuk-form-group">
+                    <h1 class="heading-large">We cannot find your organisation details</h1>
+
+                    <p class="heading-medium">Check the:</p>
+                    <ul class="list list-bullet">
+                        <li>Spelling of the name</li>
+                        <li><abbr title="UK Provider Reference Number">UKPRN</abbr> is correct</li>
+                        <li><abbr title="End Point Assessor Organisation">EPAO ID</abbr> is correct</li>
+                        <li>Organisation type is correct</li>
+                    </ul>
+                </div>
+            }
+        </div>
+    </div>
+</main>

@@ -5,5 +5,7 @@ namespace SFA.DAS.ApplyService.Application.Interfaces
     public interface IEmailService
     {
         Task SendEmail(string ToAddress, int emailId, object replacements);
+
+        Task SendPreAmbleEmail(string toAddress, int emailId, object replacements);
     }
 }
