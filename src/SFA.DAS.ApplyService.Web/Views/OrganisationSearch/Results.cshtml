@@ -103,7 +103,7 @@
                         {
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell govuk-!-padding-top-0 govuk-!-padding-bottom-4 govuk-!-padding-left-2">
-                                    <form method="post" asp-action="@(result.OrganisationType != null ? "Done" : "Type")" asp-controller="OrganisationSearch" novalidate>
+                                    <form method="post" asp-action="@(result.OrganisationType != null ? "Create" : "Type")" asp-controller="OrganisationSearch" novalidate>
                                         <input asp-for="SearchString" type="hidden" />
                                         <input asp-for="Name" value="@result.Name" type="hidden" />
                                         <input asp-for="Ukprn" value="@result.Ukprn" type="hidden" />

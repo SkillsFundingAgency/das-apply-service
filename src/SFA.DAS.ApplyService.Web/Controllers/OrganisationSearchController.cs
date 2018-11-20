@@ -28,12 +28,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _httpContextAccessor = httpContextAccessor;
             _sessionService = sessionService;
         }
-//
-//        [HttpGet]
-//        public async Task<IActionResult> Test()
-//        {
-//            
-//        }
 
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -42,17 +36,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 _httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
 
 
-            // Second - Can get from UkPrn?
-            // var ukprn = user.Ukprn; <-- this doesn't exist right now!
+            // Can get details from UkPrn?
+            // var ukprn = await _apiClient.GetOrganisationByUkprn(user.Ukprn); <-- this doesn't exist right now!
 
-            // Third - Can get from Email?
+            // Can get details from Email?
             var org = await _apiClient.GetOrganisationByEmail(user.Email);
 
             if (org != null)
             {
                 if (org.OrganisationType is null)
                 {
-                    // org found but doesn't have Organisation Type
+                    // org found but need to ask for Organisation Type
                     var viewModel = new OrganisationSearchViewModel
                     {
                         SearchString = org.Name,
@@ -80,7 +74,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             // Nothing found, go to search
-            //return RedirectToAction(nameof(Index));
             return View();
         }
 
@@ -127,7 +120,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Done(OrganisationSearchViewModel viewModel)
+        public async Task<IActionResult> Create(OrganisationSearchViewModel viewModel)
         {
             if (string.IsNullOrEmpty(viewModel.Name) || viewModel.SearchString.Length < 2)
             {
@@ -141,11 +134,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return View(nameof(Type), viewModel);
             }
 
-            // make sure we got everything
+            // make sure we got everything before trying to create organisation
             var searchResults =
-                await _apiClient.SearchOrganisation(viewModel.Ukprn.HasValue
-                    ? viewModel.Ukprn.Value.ToString()
-                    : viewModel.Name); // Favour UKPRN over Name!
+                await _apiClient.SearchOrganisation(viewModel.SearchString);
+
+            // filter ukprn
+            searchResults = searchResults.Where(sr =>
+                sr.Ukprn.HasValue && viewModel.Ukprn.HasValue
+                    ? sr.Ukprn == viewModel.Ukprn
+                    : true);
 
             // filter name
             searchResults = searchResults.Where(sr =>
@@ -168,20 +165,24 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     : true);
 
             var organisationSearchResult = searchResults.FirstOrDefault();
-            var user = await _usersApiClient.GetUserBySignInId(
-                _httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
-
-            if (organisationSearchResult != null && user != null)
+            
+            if (organisationSearchResult != null)
             {
                 if (organisationSearchResult.OrganisationType == null)
                     organisationSearchResult.OrganisationType = viewModel.OrganisationType;
 
+                var user = await _usersApiClient.GetUserBySignInId(_httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
+
                 var orgThatWasCreated = await _organisationApiClient.Create(organisationSearchResult, user.Id);
 
-                return View(orgThatWasCreated);
+                return RedirectToAction("Applications", "Application");
             }
-
-            return View();
+            else
+            {
+                // Should never get here but needed to do something as we don't have an error page!!
+                viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();
+                return View(nameof(Type), viewModel);
+            }
         }
     }
 }
