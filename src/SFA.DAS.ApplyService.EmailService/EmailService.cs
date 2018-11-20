@@ -25,26 +25,29 @@ namespace SFA.DAS.ApplyService.EmailService
             var config = await _configurationService.GetConfig();
             
             _logger.LogInformation($"Sending email to {toAddress} with replacements :");
-            foreach (var property in replacements.GetType().GetProperties())
-            {
-                _logger.LogInformation($"Property: {property.Name}, Value: {property.GetValue(replacements)}");
-            }
             
-            var client = new SendGridClient(config.Email.SendGridApiKey);
-            var from = new EmailAddress("david.gouge@digital.education.gov.uk", "Apply Service");
-            var subject = "Your Sign In Account";
-            var to = new EmailAddress(toAddress);
-            var htmlContent = $@"<p>Hi, [GivenName] [FamilyName]</p>
-                                <p>You've already got an account with us.</p>
-                                <p><a href='{config.SignInPage}'>Click here to to Sign In</a></p>";
-
-            foreach (var property in replacements.GetType().GetProperties())
-            {
-                htmlContent = htmlContent.Replace($"[{property.Name}]", $"{property.GetValue(replacements)}");
-            }
+            // TODO: This all requires replacing with Notifications API calls.
             
-            var msg = MailHelper.CreateSingleEmail(from, to, subject, "", htmlContent);
-            var response = await client.SendEmailAsync(msg);
+//            foreach (var property in replacements.GetType().GetProperties())
+//            {
+//                _logger.LogInformation($"Property: {property.Name}, Value: {property.GetValue(replacements)}");
+//            }
+//            
+//            var client = new SendGridClient(config.Email.SendGridApiKey);
+//            var from = new EmailAddress("david.gouge@digital.education.gov.uk", "Apply Service");
+//            var subject = "Your Sign In Account";
+//            var to = new EmailAddress(toAddress);
+//            var htmlContent = $@"<p>Hi, [GivenName] [FamilyName]</p>
+//                                <p>You've already got an account with us.</p>
+//                                <p><a href='{config.SignInPage}'>Click here to to Sign In</a></p>";
+//
+//            foreach (var property in replacements.GetType().GetProperties())
+//            {
+//                htmlContent = htmlContent.Replace($"[{property.Name}]", $"{property.GetValue(replacements)}");
+//            }
+//            
+//            var msg = MailHelper.CreateSingleEmail(from, to, subject, "", htmlContent);
+//            var response = await client.SendEmailAsync(msg);
         }
 
         public async Task SendPreAmbleEmail(string toAddress, int emailId, dynamic replacements)
@@ -53,26 +56,29 @@ namespace SFA.DAS.ApplyService.EmailService
             var config = await _configurationService.GetConfig();
 
             _logger.LogInformation($"Sending email to {toAddress} with replacements :");
-            foreach (var property in replacements.GetType().GetProperties())
-            {
-                _logger.LogInformation($"Property: {property.Name}, Value: {property.GetValue(replacements)}");
-            }
-
-            var client = new SendGridClient(config.Email.SendGridApiKey);
-            var from = new EmailAddress(toAddress, "Apply Service");
-            var subject = "Pre-Amble Notification";
-            var to = new EmailAddress(toAddress);
-            var htmlContent = $@"<p>Dear [OrganisationName],</p>
-                                <p>There has been activity on your account.</p>
-                                <p><a href='{config.SignInPage}'>Click here to view more</a></p>";
-
-            foreach (var property in replacements.GetType().GetProperties())
-            {
-                htmlContent = htmlContent.Replace($"[{property.Name}]", $"{property.GetValue(replacements)}");
-            }
-
-            var msg = MailHelper.CreateSingleEmail(from, to, subject, "", htmlContent);
-            var response = await client.SendEmailAsync(msg);
+            
+            // TODO: This all requires replacing with Notifications API calls.
+            
+//            foreach (var property in replacements.GetType().GetProperties())
+//            {
+//                _logger.LogInformation($"Property: {property.Name}, Value: {property.GetValue(replacements)}");
+//            }
+//
+//            var client = new SendGridClient(config.Email.SendGridApiKey);
+//            var from = new EmailAddress(toAddress, "Apply Service");
+//            var subject = "Pre-Amble Notification";
+//            var to = new EmailAddress(toAddress);
+//            var htmlContent = $@"<p>Dear [OrganisationName],</p>
+//                                <p>There has been activity on your account.</p>
+//                                <p><a href='{config.SignInPage}'>Click here to view more</a></p>";
+//
+//            foreach (var property in replacements.GetType().GetProperties())
+//            {
+//                htmlContent = htmlContent.Replace($"[{property.Name}]", $"{property.GetValue(replacements)}");
+//            }
+//
+//            var msg = MailHelper.CreateSingleEmail(from, to, subject, "", htmlContent);
+//            var response = await client.SendEmailAsync(msg);
         }
     }
 }
