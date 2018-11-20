@@ -7,24 +7,24 @@ using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply.GetSection
 {
-    public class GetSectionsHandler : IRequestHandler<GetSectionsRequest, List<ApplicationSection>>
+    public class GetActiveSequenceHandler : IRequestHandler<GetActiveSequenceRequest, ApplicationSequence>
     {
         private readonly IApplyRepository _applyRepository;
 
-        public GetSectionsHandler(IApplyRepository applyRepository)
+        public GetActiveSequenceHandler(IApplyRepository applyRepository)
         {
             _applyRepository = applyRepository;
         }
         
-        public async Task<List<ApplicationSection>> Handle(GetSectionsRequest request, CancellationToken cancellationToken)
+        public async Task<ApplicationSequence> Handle(GetActiveSequenceRequest forActiveSequenceRequest, CancellationToken cancellationToken)
         {
-            var sections = await _applyRepository.GetSections(request.ApplicationId, request.SequenceId, request.UserId);
-            if (sections == null)
+            var sequence = await _applyRepository.GetActiveSequence(forActiveSequenceRequest.ApplicationId, forActiveSequenceRequest.UserId);
+            if (sequence == null)
             {
                 throw new BadRequestException("Application not found");
             }
 
-            return sections;
+            return sequence;
         }
     }
 }

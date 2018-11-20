@@ -2,7 +2,8 @@ CREATE TABLE [dbo].[WorkflowSequences](
 	[Id] [uniqueidentifier] NOT NULL,
 	[WorkflowId] [uniqueidentifier] NOT NULL,
 	[SequenceId] [int] NOT NULL,
-	[Status] [nvarchar](50) NOT NULL
+	[Status] [nvarchar](50) NOT NULL,
+	[IsActive] [bit] NOT NULL DEFAULT 0
 ) ON [PRIMARY]
 GO
 

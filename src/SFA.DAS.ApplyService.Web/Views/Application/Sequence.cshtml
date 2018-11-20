@@ -1,0 +1,53 @@
+@using SFA.DAS.ApplyService.Domain.Entities
+@model SFA.DAS.ApplyService.Domain.Entities.ApplicationSequence
+
+@{
+    ViewBag.Title = "Application overview";
+    Layout = "_Layout";
+}
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">Application overview</h1>
+
+            <ul class="govuk-list">
+                @foreach (var applicationSection in Model.Sections)
+                {
+                    <li>
+                        <h2 class="gvuk-heading-m">
+                            @applicationSection.LinkTitle
+                        </h2>
+                        <span id="company-details-hint" class="govuk-hint apply-hint">
+                            @applicationSection.PagesComplete of @applicationSection.PagesActive questions completed
+                        </span>
+                        @if (Model.Status != ApplicationSequenceStatus.Submitted)
+                        {
+                            <a href="@Url.Action("Section", "Application", new {applicationSection.ApplicationId, applicationSection.SectionId})">
+                                Go to @applicationSection.LinkTitle.ToLower()
+                            </a>
+                        }
+                    </li>
+                    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+                }
+            </ul>
+
+            @if (Model.Sections.Sum(m => m.PagesComplete) == Model.Sections.Sum(m => m.PagesActive) && Model.Status != ApplicationSequenceStatus.Submitted)
+            {
+                <div>
+                    <form asp-action="Submit" asp-controller="Application">
+                        <input type="hidden" id="applicationId" name="applicationId" value="@Model.ApplicationId"/>
+                        <input type="hidden" id="sequenceId" name="sequenceId" value="@Model.SequenceId"/>
+                        <button class="govuk-button">Continue</button>
+                    </form>
+                </div>
+            }
+            
+            @if (Model.Status == ApplicationSequenceStatus.Submitted)
+            {
+                <div>
+                    Your application has been submitted.
+                </div>
+            }
+        </div>
+    </div>
+</main>

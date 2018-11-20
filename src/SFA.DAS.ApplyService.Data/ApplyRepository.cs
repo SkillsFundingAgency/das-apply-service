@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -21,66 +22,6 @@ namespace SFA.DAS.ApplyService.Data
         {
             _config = configurationService.GetConfig().Result;
         }
-
-//        public async Task<Workflow> GetCurrentWorkflow(string requestApplicationType, Guid requestApplyingOrganisationId)
-//        {
-//            using (var connection = new SqlConnection(_config.SqlConnectionString))
-//            {
-//                var dataJson = await connection.QuerySingleAsync<string>(
-//                    "SELECT TOP(1) Data FROM QnAs WHERE Type = @ApplicationType AND Status = 'Live'", new {ApplicationType = requestApplicationType});
-//
-//                var workflow = JsonConvert.DeserializeObject<Workflow>(dataJson);
-//                
-//                return workflow;
-//            }
-//        }
-//
-//        public async Task SetOrganisationApplication(Workflow workflow, Guid applyingOrganisationId, string username)
-//        {
-//            using (var connection = new SqlConnection(_config.SqlConnectionString))
-//            {
-//                var workflowJson = JsonConvert.SerializeObject(workflow);
-//                
-//                await connection.ExecuteAsync(
-//                    @"INSERT INTO Entities (ApplyingOrganisationId, QnAData, ApplicationStatus, CreatedAt, CreatedBy) 
-//                                                                VALUES (@ApplyingOrganisationId, @QnAData, 'Active', GETUTCDATE(), @CreatedBy)",
-//                    new {ApplyingOrganisationId = applyingOrganisationId, QnAData = workflowJson, CreatedBy = username});
-//            }
-//        }
-
-        public Task<Domain.Entities.Application> GetEntity(Guid applicationId, Guid userId)
-        {
-            throw new NotImplementedException();
-        }
-
-//        public async Task<BitVector32.Section> GetSection(Guid applicationId, Guid userId, int sectionId)
-//        {
-//            using (var connection = new SqlConnection(_config.SqlConnectionString))
-//            {
-//                var application =
-//                    await connection.QueryFirstOrDefaultAsync<Domain.Entities.Application>($@"SELECT e.* 
-//                                        FROM Entities e
-//                                            INNER JOIN Contacts c ON c.ApplyOrganisationID = e.ApplyingOrganisationId
-//                                        WHERE e.Id = @applicationId AND c.Id = @userId",
-//                        new {applicationId, userId});
-//
-//                return application;
-//            }
-//        }
-
-        public async Task SaveEntity(Domain.Entities.Application application, Guid applicationId, Guid userId)
-        {
-//            using (var connection = new SqlConnection(_config.SqlConnectionString))
-//            {
-//                await connection.ExecuteAsync("UPDATE Entities SET QnAData = @qnaData, UpdatedAt = GETUTCDATE(), UpdatedBy = @userId WHERE Id = @applicationId",new
-//                {
-//                    qnaData = application.QnAData, 
-//                    applicationId,
-//                    userId
-//                });
-//            }
-        }
-
         public async Task<List<Domain.Entities.Application>> GetApplications(Guid userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -104,16 +45,26 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid userId)
+        public async Task<ApplicationSequence> GetActiveSequence(Guid applicationId, Guid userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                return (await connection.QueryAsync<ApplicationSection>(@"SELECT asec.* 
-                                                                FROM ApplicationSections asec
-                                                                INNER JOIN Applications a ON a.Id = asec.ApplicationId
-                                                                INNER JOIN Contacts c ON c.ApplyOrganisationID = a.ApplyingOrganisationId
-                                                                WHERE asec.ApplicationId = @applicationId AND asec.SequenceId =@sequenceId AND c.Id = @userId",
-                    new {applicationId, sequenceId, userId})).ToList();
+                var sequence = await connection.QueryFirstAsync<ApplicationSequence>(@"SELECT seq.* 
+                            FROM ApplicationSequences seq
+                            INNER JOIN Applications a ON a.Id = seq.ApplicationId
+                            INNER JOIN Contacts c ON c.ApplyOrganisationID = a.ApplyingOrganisationId
+                            WHERE seq.ApplicationId = @applicationId 
+                            AND c.Id = @userId
+                            AND seq.IsActive = 1", new {applicationId, userId});
+                
+                var sections = (await connection.QueryAsync<ApplicationSection>(@"SELECT * FROM ApplicationSections 
+                            WHERE ApplicationId = @ApplicationId 
+                            AND SequenceId = @SequenceId",
+                    sequence)).ToList();
+
+                sequence.Sections = sections;
+                
+                return sequence;
             }
         }
 
@@ -148,7 +99,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<ApplicationSection>> CopyWorkflowToApplication(Guid applicationId, Guid workflowId, int organisationType)
+        public async Task<List<ApplicationSection>> CopyWorkflowToApplication(Guid applicationId, Guid workflowId, string organisationType)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
@@ -203,13 +154,13 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task CreateSequence(Guid workflowId, double sequenceId)
+        public async Task CreateSequence(Guid workflowId, double sequenceId, bool isActive)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(
-                    "INSERT INTO WorkflowSequences (WorkflowId, SequenceId, Status) VALUES (@workflowId, @sequenceId, 'Draft')",
-                    new {workflowId, sequenceId});
+                    "INSERT INTO WorkflowSequences (WorkflowId, SequenceId, Status, IsActive) VALUES (@workflowId, @sequenceId, 'Draft', @isActive)",
+                    new {workflowId, sequenceId, isActive});
             }
         }
 
@@ -260,6 +211,21 @@ namespace SFA.DAS.ApplyService.Data
                             return application;
                         })).ToList();
             }
+        }
+
+        public async Task SubmitApplicationSequence(ApplicationSubmitRequest request)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE       ApplicationSequences
+SET                Status = 'Submitted'
+FROM            ApplicationSequences INNER JOIN
+                         Applications ON ApplicationSequences.ApplicationId = Applications.Id INNER JOIN
+                         Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
+WHERE        (ApplicationSequences.ApplicationId = @ApplicationId) AND (ApplicationSequences.SequenceId = @SequenceId) AND Contacts.Id = @UserId",
+                    request);
+            }
+            
         }
     }
 }

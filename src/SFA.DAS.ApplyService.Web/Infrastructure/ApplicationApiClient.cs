@@ -54,9 +54,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return stream;
         }
 
-        public async Task<List<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid userId)
+        public async Task<ApplicationSequence> GetSequence(Guid applicationId, Guid userId)
         {
-            return await (await _httpClient.GetAsync($"Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections")).Content.ReadAsAsync<List<ApplicationSection>>();
+            return await (await _httpClient.GetAsync($"Application/{applicationId}/User/{userId}/Sections")).Content.ReadAsAsync<ApplicationSequence>();
         }
 
         public async Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId, int sectionId, Guid userId)
@@ -82,6 +82,17 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task StartApplication(Guid userId)
         {
             await _httpClient.PostAsJsonAsync("/Application/Start", new {userId});
+        }
+
+        public async Task Submit(Guid applicationId, int sequenceId, Guid userId)
+        {
+            await _httpClient.PostAsJsonAsync("/Applications/Submit", new {applicationId, sequenceId, userId});
+        }
+
+        public async Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, Guid userId)
+        {
+            await _httpClient.PostAsJsonAsync(
+                $"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/DeleteAnswer/{answerId}", new{});
         }
     }
 }

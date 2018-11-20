@@ -27,7 +27,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<UploadResult> Upload(string applicationId, string userId, string pageId, IFormFileCollection files);
         
         Task<byte[]> Download(Guid applicationId, Guid userId, string pageId, string questionId, string filename);
-        Task<List<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid userId);
+        Task<ApplicationSequence> GetSequence(Guid applicationId, Guid userId);
         Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId, int sectionId, Guid userId);
         
         Task<Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid userId);
@@ -36,5 +36,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             string pageId, List<Answer> answers);
 
         Task StartApplication(Guid userId);
+        Task Submit(Guid applicationId, int sequenceId, Guid userId);
+        Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, Guid userId);
     }
 }
