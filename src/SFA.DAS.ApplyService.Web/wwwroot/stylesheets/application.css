@@ -5,19 +5,37 @@
   margin-top: -5px;
 } */
 
-.esfa-button-link {
+.das-inline-button-link {
   display: inline-block;
   padding: 0.526315em 0 0.263157em 0;
   line-height: 1.25;
 }
 
 @media (min-width: 40.0625em) {
-  .esfa-button-link {
+  .das-inline-button-link {
     padding-left: 0.526315em;
   }
 }
 
-.esfa-no-wrap {
+.govuk-button--looks-like-link {
+  display: block;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  text-decoration: underline;
+  background: none;
+  box-shadow: none;
+  text-align: left;
+  color: #005ea5;
+}
+
+.govuk-button--looks-like-link:hover {
+  background: none;
+  color: #2b8cc4;
+  text-decoration: underline;
+}
+
+.das-no-wrap {
   white-space: nowrap;
 }
 
@@ -295,13 +313,13 @@
   }
 }
 
-.esfa-user-panel {
+.das-user-panel {
   padding-top: 10px;
   padding-bottom: 10px;
   border-bottom: 1px solid #bfc1c3;
 }
 
-.esfa-user-panel__content {
+.das-user-panel__content {
   font-family: nta, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -329,13 +347,13 @@
 }
 
 @media print {
-  .esfa-user-panel__content {
+  .das-user-panel__content {
     font-family: sans-serif;
   }
 }
 
 @media (min-width: 40.0625em) {
-  .esfa-user-panel__content {
+  .das-user-panel__content {
     font-size: 16px;
     font-size: 1rem;
     line-height: 1.25;
@@ -343,31 +361,60 @@
 }
 
 @media print {
-  .esfa-user-panel__content {
+  .das-user-panel__content {
     font-size: 14pt;
     line-height: 1.2;
     color: #000;
   }
 }
 
-.esfa-user-panel__content__tag {
+.das-user-panel__content__tag {
   margin-right: 10px;
 }
 
-.esfa-user-panel__item {
+.das-user-panel__item {
   margin-right: 15px;
   margin-left: 15px;
 }
 
-.esfa-user-panel__item--grow {
+.das-user-panel__item--grow {
   -webkit-box-flex: 1;
   -ms-flex: 1;
   flex: 1;
 }
 
 @media (max-width: 40.0525em) {
-  .esfa-user-panel__item--grow {
+  .das-user-panel__item--grow {
     -ms-flex-preferred-size: 320px;
     flex-basis: 320px;
   }
+}
+
+.das-filter {
+  border: 1px solid #bfc1c3;
+}
+
+.das-filter-body {
+  padding: 1em;
+}
+
+.das-filter-heading {
+  padding: 0.5em 1em;
+  background-color: #dee0e2;
+}
+
+.govuk-table__row--no-top-padding-on-first-child td {
+  padding-top: 20px;
+}
+
+.govuk-table__row--no-top-padding-on-first-child:first-child td {
+  padding-top: 0;
+}
+
+.govuk-error-message {
+  display: none;
+}
+
+.govuk-error-message.field-validation-error {
+  display: block;
 }

@@ -13,43 +13,42 @@ ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Get set up as
 
                 @if (!ViewData.ModelState.IsValid)
                 {
-                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1"
-                    data-module="error-summary">
-                    <h2 class="govuk-error-summary__title" id="error-summary-title">
-                        There is a problem
-                    </h2>
-                    <div class="govuk-error-summary__body">
-                        <ul class="govuk-list govuk-error-summary__list">
-                            <li><a sfa-validation-for="GivenName"></a></li>
-                            <li><a sfa-validation-for="FamilyName"></a></li>
-                            <li><a sfa-validation-for="Email"></a></li>
-                        </ul>
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            There is a problem
+                        </h2>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                                <li><a sfa-validation-for="GivenName"></a></li>
+                                <li><a sfa-validation-for="FamilyName"></a></li>
+                                <li><a sfa-validation-for="Email"></a></li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
                 }
 
                 <div class="govuk-form-group" sfa-validation-for="GivenName" sfa-validationerror-class="govuk-form-group--error">
-                    <label class="govuk-label govuk-label--m" for="GivenName">
+                    <label class="govuk-label" for="GivenName">
                         First name
                     </label>
                     <span class="govuk-error-message" asp-validation-for="GivenName"></span>
                     <input class="govuk-input govuk-input--width-20" id="GivenName" name="GivenName" type="text"
                         asp-for="GivenName" aria-describedby="first-name-hint" sfa-validation-for="GivenName"
-                        sfa-validationerror-class="form-control-error" />
+                        sfa-validationerror-class="govuk-input--error" />
                 </div>
 
                 <div class="govuk-form-group" sfa-validation-for="FamilyName" sfa-validationerror-class="govuk-form-group--error">
-                    <label class="govuk-label govuk-label--m" for="FamilyName">
+                    <label class="govuk-label" for="FamilyName">
                         Last name
                     </label>
                     <span class="govuk-error-message" asp-validation-for="FamilyName"></span>
                     <input class="govuk-input govuk-input--width-20" id="FamilyName" name="FamilyName" type="text"
                         asp-for="FamilyName" aria-describedby="last-name-hint" sfa-validation-for="FamilyName"
-                        sfa-validationerror-class="form-control-error" />
+                        sfa-validationerror-class="govuk-input--error" />
                 </div>
 
                 <div class="govuk-form-group" sfa-validation-for="Email" sfa-validationerror-class="govuk-form-group--error">
-                    <label class="govuk-label govuk-label--m" for="Email">
+                    <label class="govuk-label" for="Email">
                         Email
                     </label>
                     <span id="email-hint" class="govuk-hint">
@@ -57,7 +56,7 @@ ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Get set up as
                     </span>
                     <span class="govuk-error-message" asp-validation-for="Email"></span>
                     <input class="govuk-input govuk-input--width-20" id="Email" name="Email" type="text" asp-for="Email"
-                        aria-describedby="email-hint" sfa-validation-for="FamilyName" sfa-validationerror-class="form-control-error" />
+                        aria-describedby="email-hint" sfa-validation-for="FamilyName" sfa-validationerror-class="govuk-input--error" />
                 </div>
 
                 <button type="submit" class="govuk-button">
