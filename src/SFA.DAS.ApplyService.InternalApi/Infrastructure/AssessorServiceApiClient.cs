@@ -41,7 +41,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             return Mapper.Map<OrganisationSummary, Types.OrganisationSearchResult>(apiResponse);
         }
 
-        public async Task<IEnumerable<string>> GetOrgansiationTypes(bool activeOnly = true)
+        public async Task<IEnumerable<Types.OrganisationType>> GetOrgansiationTypes(bool activeOnly = true)
         {
             _logger.LogInformation($"Getting Organisation Types from EPAO Register.");
             var apiResponse = await Get<IEnumerable<OrganisationType>>($"/api/ao/organisation-types");
@@ -51,7 +51,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                 apiResponse = apiResponse.Where(ot => "Live".Equals(ot.Status, StringComparison.InvariantCultureIgnoreCase));
             }
 
-            return apiResponse.Select(ot => ot.Type);
+            return Mapper.Map<IEnumerable<OrganisationType>, IEnumerable<Types.OrganisationType>>(apiResponse);
         }
 
         private async Task<T> Get<T>(string uri)

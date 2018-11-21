@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
@@ -17,12 +18,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IUsersApiClient _usersApiClient;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ISessionService _sessionService;
+        private readonly ILogger<UsersController> _logger;
 
-        public UsersController(IUsersApiClient usersApiClient, IHttpContextAccessor httpContextAccessor, ISessionService sessionService)
+        public UsersController(IUsersApiClient usersApiClient, IHttpContextAccessor httpContextAccessor, ISessionService sessionService, ILogger<UsersController> logger)
         {
             _usersApiClient = usersApiClient;
             _httpContextAccessor = httpContextAccessor;
             _sessionService = sessionService;
+            _logger = logger;
         }
         
         [HttpGet]
@@ -85,7 +88,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public async Task<IActionResult> PostSignIn()
         {
-            var user = await _usersApiClient.GetUserBySignInId(_httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
+            var signInId = _httpContextAccessor.HttpContext.User.FindFirstValue("sub");
+            
+            var user = await _usersApiClient.GetUserBySignInId(signInId);
          
             _sessionService.Set("LoggedInUser", $"{user.GivenNames} {user.FamilyName}");
 

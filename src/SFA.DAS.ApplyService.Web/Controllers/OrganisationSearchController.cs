@@ -90,7 +90,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var organisationTypes = await _apiClient.GetOrganisationTypes();
 
             if (organisationTypes != null && organisationTypes.Any(ot =>
-                    ot.Equals(organisationTypeFilter, StringComparison.InvariantCultureIgnoreCase)))
+                    ot.Type.Equals(organisationTypeFilter, StringComparison.InvariantCultureIgnoreCase)))
             {
                 searchResults = searchResults.Where(sr => sr.OrganisationType == organisationTypeFilter).AsEnumerable();
             }

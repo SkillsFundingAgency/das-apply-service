@@ -106,9 +106,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet("OrganisationTypes")]
-        public async Task<IEnumerable<string>> GetOrganisationTypes()
+        public async Task<IEnumerable<OrganisationType>> GetOrganisationTypes()
         {
-            IEnumerable<string> results = null;
+            IEnumerable<OrganisationType> results = null;
 
             try
             {

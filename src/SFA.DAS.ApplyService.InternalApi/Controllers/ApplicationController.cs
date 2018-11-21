@@ -4,10 +4,12 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.Application.Apply.DeleteAnswer;
 using SFA.DAS.ApplyService.Application.Apply.Download;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.GetSection;
+using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 using SFA.DAS.ApplyService.Application.Apply.Upload;
 using SFA.DAS.ApplyService.Domain.Apply;
@@ -37,10 +39,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId)));
         }
         
-        [HttpGet("Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections")]
-        public async Task<ActionResult<List<ApplicationSection>>> GetSections(string applicationId, string userId, int sequenceId)
+        [HttpGet("Application/{applicationId}/User/{userId}/Sections")]
+        public async Task<ActionResult<ApplicationSequence>> GetSequence(string applicationId, string userId)
         {
-            return await _mediator.Send(new GetSectionsRequest(Guid.Parse(applicationId), sequenceId, Guid.Parse(userId)));
+            return await _mediator.Send(new GetActiveSequenceRequest(Guid.Parse(applicationId), Guid.Parse(userId)));
         }
         
         [HttpGet("Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections/{sectionId}")]
@@ -87,6 +89,20 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             var downloadResponse = await _mediator.Send(new DownloadRequest(Guid.Parse(applicationId), Guid.Parse(userId), pageId, questionId, filename));
             return File(downloadResponse.FileStream, "image/png", downloadResponse.Filename);
+        }
+
+        [HttpPost("/Applications/Submit")]
+        public async Task<ActionResult> Submit([FromBody] ApplicationSubmitRequest request)
+        {
+            await _mediator.Send(request);
+            return Ok();
+        }
+        
+        [HttpPost("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/DeleteAnswer/{answerId}")]
+        public async Task<IActionResult> DeleteAnswer(string applicationId, string userId, int sequenceId, int sectionId, string pageId, Guid answerId)
+        {
+            await _mediator.Send(new DeletePageAnswerRequest(Guid.Parse(applicationId), Guid.Parse(userId),sequenceId,sectionId, pageId, answerId));
+            return Ok();
         }
     }
 }

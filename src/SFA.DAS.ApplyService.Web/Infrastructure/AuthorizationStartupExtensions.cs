@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using SFA.DAS.ApplyService.Configuration;
 
@@ -13,7 +14,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     public static class AuthorizationStartupExtensions
     {
-        public static void AddDfeSignInAuthorization(this IServiceCollection services, IApplyConfig applyConfig)
+        public static void AddDfeSignInAuthorization(this IServiceCollection services, IApplyConfig applyConfig, ILogger logger)
         {
             services.AddAuthentication(options =>
                 {
@@ -84,7 +85,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                         OnTokenValidated = async context =>
                         {
                             var client = context.HttpContext.RequestServices.GetRequiredService<UsersApiClient>();
-                            var user = await client.GetUserBySignInId(context.Principal.FindFirst("sub").Value);
+                            var signInId = context.Principal.FindFirst("sub").Value;
+                            
+                            logger.LogInformation($"Signed in with Dfe Id {signInId}");
+                            
+                            var user = await client.GetUserBySignInId(signInId);
                             var identity = new ClaimsIdentity(new List<Claim>(){new Claim("UserId", user.Id.ToString())});
                             context.Principal.AddIdentity(identity);
                         },

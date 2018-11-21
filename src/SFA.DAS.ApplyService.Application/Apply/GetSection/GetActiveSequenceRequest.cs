@@ -5,17 +5,15 @@ using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply.GetSection
 {
-    public class GetSectionsRequest : IRequest<List<ApplicationSection>>
+    public class GetActiveSequenceRequest : IRequest<ApplicationSequence>
     {
-        public GetSectionsRequest(Guid applicationId, int sequenceId, Guid userId)
+        public GetActiveSequenceRequest(Guid applicationId, Guid userId)
         {
             UserId = userId;
             ApplicationId = applicationId;
-            SequenceId = sequenceId;
         }
         
         public Guid UserId { get; set; }
         public Guid ApplicationId { get; set; }
-        public int SequenceId { get; }
     }
 }

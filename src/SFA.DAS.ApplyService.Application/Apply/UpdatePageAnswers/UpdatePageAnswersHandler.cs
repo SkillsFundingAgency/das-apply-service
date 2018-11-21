@@ -56,7 +56,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                 {
                     page.PageOfAnswers = new List<PageOfAnswers>();
                 }
-                pageAnswers = new PageOfAnswers(){Answers = new List<Answer>()};
+                pageAnswers = new PageOfAnswers(){Answers = new List<Answer>(), Id = Guid.NewGuid()};
                 page.PageOfAnswers.Add(pageAnswers);
             }
 

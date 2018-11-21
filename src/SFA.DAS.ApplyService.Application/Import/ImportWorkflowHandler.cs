@@ -36,13 +36,15 @@ namespace SFA.DAS.ApplyService.Application.Import
 
             var sequences = spreadsheetRows.Select(sr => sr.SequenceId).Distinct().ToList();
 
-            foreach (var sequenceId in sequences)
+            for (var sequenceIndex = 0; sequenceIndex < sequences.Count; sequenceIndex++)
             {
-                await _applyRepository.CreateSequence(workflowId, sequenceId);
+                var sequenceId = sequences[sequenceIndex];
+                
+                await _applyRepository.CreateSequence(workflowId, sequenceId, isActive: sequenceIndex == 0);
 
                 var questionRows = spreadsheetRows
                     .Where(sr => sr.SequenceId == sequenceId && sr.Reference.Contains("SECTIONHEADER")).ToList();
-                
+
                 var sections = questionRows
                     .Select(sr => new WorkflowSection()
                     {

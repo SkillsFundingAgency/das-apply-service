@@ -17,34 +17,29 @@ namespace SFA.DAS.ApplyService.Application.Apply
             _applyRepository = applyRepository;
             _organisationRepository = organisationRepository;
         }
-        
+
         public async Task<Unit> Handle(StartApplicationRequest request, CancellationToken cancellationToken)
         {
             var assets = await _applyRepository.GetAssets();
-            try
+
+            var org = await _organisationRepository.GetUserOrganisation(request.UserId);
+
+            var workflowId = await _applyRepository.GetLatestWorkflow("EPAO");
+            var applicationId =
+                await _applyRepository.CreateApplication("EPAO", org.Id, request.UserId, workflowId);
+
+            var sections =
+                await _applyRepository.CopyWorkflowToApplication(applicationId, workflowId, org.OrganisationType);
+
+            foreach (var applicationSection in sections)
             {
-                var org = await _organisationRepository.GetUserOrganisation(request.UserId); 
-                
-                var workflowId = await _applyRepository.GetLatestWorkflow("EPAO");
-                var applicationId =
-                    await _applyRepository.CreateApplication("EPAO", org.Id, request.UserId, workflowId);
-
-                var sections = await _applyRepository.CopyWorkflowToApplication(applicationId, workflowId, int.Parse(org.OrganisationType));
-
-                foreach (var applicationSection in sections)
+                foreach (var asset in assets)
                 {
-                    foreach (var asset in assets)
-                    {
-                        applicationSection.QnAData = applicationSection.QnAData.Replace(asset.Reference, asset.Text);
-                    }
+                    applicationSection.QnAData = applicationSection.QnAData.Replace(asset.Reference, asset.Text);
                 }
+            }
 
-                await _applyRepository.UpdateSections(sections);
-            }
-            catch (Exception e)
-            {
-                var a = e;
-            }
+            await _applyRepository.UpdateSections(sections);
             return Unit.Value;
         }
     }

@@ -31,36 +31,34 @@
                     </div>
                 }
 
-
                 <h1 class="govuk-label-wrapper">
                     <label class="govuk-label govuk-label--xl" for="OrganisationType">
                         Select organisation type
                     </label>
                 </h1>
 
-                    @if (Model.OrganisationTypes != null)
-                    {
-                        <div class="govuk-form-group" sfa-validation-for="OrganisationType" sfa-validationerror-class="govuk-form-group--error">
-                            <div class="govuk-radios">
-                                <span class="govuk-error-message" asp-validation-for="OrganisationType"></span>
-                                @foreach (var orgType in Model.OrganisationTypes)
-                                {
-                                    <div class="govuk-radios__item">
-                                        <input class="govuk-radios__input" asp-for="OrganisationType" id="@orgType.Replace(" ", "_")" type="radio" value="@orgType" required />
-                                        <label class="govuk-label govuk-radios__label" for="@orgType.Replace(" ", "_")">@orgType</label>
-                                    </div>
-                                }
+                @if (Model.OrganisationTypes != null)
+                {
+                    <div class="govuk-form-group" sfa-validation-for="OrganisationType" sfa-validationerror-class="govuk-form-group--error">
+                        <div class="govuk-radios">
+                            <span class="govuk-error-message" asp-validation-for="OrganisationType"></span>
+
+                            @foreach (var orgType in Model.OrganisationTypes)
+                            {
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" asp-for="OrganisationType" id="@orgType.Type" type="radio" value="@orgType.Type" required />
+                                <label class="govuk-label govuk-radios__label" asp-for="OrganisationType">@orgType.TypeDescription</label>
                             </div>
+                            }
                         </div>
-                        <button type="submit" class="govuk-button">Submit</button>
-                    }
-                    else
-                    {
-                        <p class="govuk-body">We cannot get organisation types at this point in time</p>
-                    }
-                </div>
+                    </div>
+                    <button type="submit" class="govuk-button">Submit</button>
+                }
+                else
+                {
+                    <p class="govuk-body">We cannot get organisation types at this point in time</p>
+                }
             </form>
         </div>
     </div>
-
 </main>
