@@ -90,8 +90,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var signInId = _httpContextAccessor.HttpContext.User.FindFirstValue("sub");
             
-            _logger.LogInformation($"Signed in with Dfe Id {signInId}");
-            
             var user = await _usersApiClient.GetUserBySignInId(signInId);
          
             _sessionService.Set("LoggedInUser", $"{user.GivenNames} {user.FamilyName}");
