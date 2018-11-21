@@ -41,10 +41,10 @@
                         <div class="govuk-radios">
                             @foreach (var orgType in Model.OrganisationTypes)
                             {
-                                <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" asp-for="OrganisationType" id="@orgType.Type" type="radio" value="@orgType.Type" required />
-                                    <label class="govuk-label govuk-radios__label" asp-for="OrganisationType">@orgType.Type</label>
-                                </div>
+                            <div class="govuk-radios__item">
+                                <input class="govuk-radios__input" asp-for="OrganisationType" id="@orgType.Type" type="radio" value="@orgType.Type" required />
+                                <label class="govuk-label govuk-radios__label" asp-for="OrganisationType">@orgType.TypeDescription</label>
+                            </div>
                             }
                         </div>
                         <button type="submit" class="govuk-button">Submit</button>
