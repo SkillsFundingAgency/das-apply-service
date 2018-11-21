@@ -31,4 +31,15 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
                 .ForAllOtherMembers(dest => dest.Ignore());
         }
     }
+
+    public class AssessorServiceOrganisationTypeProfile : Profile
+    {
+        public AssessorServiceOrganisationTypeProfile()
+        {
+            CreateMap<Models.AssessorService.OrganisationType, Types.OrganisationType>()
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(source => source.Type))
+                .ForMember(dest => dest.TypeDescription, opt => opt.MapFrom(source => source.TypeDescription))
+                .ForAllOtherMembers(dest => dest.Ignore());
+        }
+    }
 }
