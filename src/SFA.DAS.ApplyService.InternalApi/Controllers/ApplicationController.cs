@@ -61,9 +61,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
         public async Task<ActionResult<Page>> GetPage(string applicationId, string userId, int sequenceId, int sectionId, string pageId)
         {
+            var uid = new Guid?();
+            var goodUserId = Guid.TryParse(userId, out var parsedUserId);
+            if (goodUserId)
+            {
+                uid = parsedUserId;
+            }
+            
             try
             {
-                return await _mediator.Send(new GetPageRequest(Guid.Parse(applicationId), sequenceId, sectionId, pageId, Guid.Parse(userId)));
+                return await _mediator.Send(new GetPageRequest(Guid.Parse(applicationId), sequenceId, sectionId, pageId, uid));
             }
             catch (Exception e)
             {

@@ -1,24 +1,23 @@
 using System;
 using MediatR;
-using SFA.DAS.ApplyService.Domain.Apply;
 
-namespace SFA.DAS.ApplyService.Application.Apply.GetPage
+namespace SFA.DAS.ApplyService.Application.Apply.Review.Feedback
 {
-    public class GetPageRequest : IRequest<Page>
+    public class AddFeedbackRequest : IRequest
     {
         public Guid ApplicationId { get; }
         public int SequenceId { get; }
         public int SectionId { get; }
         public string PageId { get; }
-        public Guid? UserId { get; }
+        public Domain.Apply.Feedback Feedback { get; }
 
-        public GetPageRequest(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid? userId)
+        public AddFeedbackRequest(Guid applicationId, int sequenceId, int sectionId, string pageId, Domain.Apply.Feedback feedback)
         {
             ApplicationId = applicationId;
             SequenceId = sequenceId;
             SectionId = sectionId;
             PageId = pageId;
-            UserId = userId;
+            Feedback = feedback;
         }
     }
 }

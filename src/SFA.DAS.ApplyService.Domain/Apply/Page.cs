@@ -20,6 +20,8 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public int? Order { get; set; }
         public bool Active { get; set; }        
         public bool Visible { get; set; }
+        public List<Feedback> Feedback { get; set; }
+        public bool HasFeedback => Feedback?.Any() ?? false;
     }
 
 }
