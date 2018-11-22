@@ -47,7 +47,7 @@
         <div class="govuk-grid-column-one-third">
             <aside>
                 <h2 class="govuk-heading-m">Filter results</h2>
-                <div class="das-filter">
+                <div class="das-filter govuk-!-margin-bottom-6">
                     <form method="get" asp-action="Results" asp-controller="OrganisationSearch" novalidate>
                         @Html.HiddenFor(m => m.SearchString)
                         <fieldset class="govuk-fieldset">
@@ -60,14 +60,17 @@
                                     <div class="govuk-radios">
                                         <div class="govuk-radios__item">
                                             <input class="govuk-radios__input" asp-for="OrganisationTypeFilter" id="Show_All" type="radio" value="" checked="@(string.IsNullOrEmpty(Model.OrganisationTypeFilter))" />
-                                            <label class="govuk-label govuk-radios__label" asp-for="OrganisationTypeFilter">Show all</label>
+                                            <label class="govuk-label govuk-radios__label" for="Show_All">Show all</label>
                                         </div>
                                         @if (Model.OrganisationTypes != null)
                                         {
-                                            <div class="govuk-radios__item">
-                                                <input class="govuk-radios__input" asp-for="OrganisationTypeFilter" id="@orgType.Type" type="radio" value="@orgType.Type" />
-                                                <label class="govuk-label govuk-radios__label" for="@orgType.Type">@orgType.Type</label>
-                                            </div>
+                                            @foreach (var orgType in Model.OrganisationTypes)
+                                            {
+                                                <div class="govuk-radios__item">
+                                                    <input class="govuk-radios__input" asp-for="OrganisationTypeFilter" id="@orgType.Replace(" ", "_")" type="radio" value="@orgType" />
+                                                    <label class="govuk-label govuk-radios__label" for="@orgType.Replace(" ", "_")">@orgType</label>
+                                                </div>
+                                            }
                                         }
                                     </div>
                                 </div>
