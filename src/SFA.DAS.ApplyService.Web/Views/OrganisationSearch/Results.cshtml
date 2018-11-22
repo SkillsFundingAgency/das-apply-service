@@ -75,7 +75,7 @@
                                     </div>
                                     @if (Model.OrganisationTypes != null)
                                     {
-                                        @foreach (var orgType in Model.OrganisationTypes)
+                                        foreach (var orgType in Model.OrganisationTypes)
                                         {
                                             <div class="govuk-radios__item">
                                                 <input class="govuk-radios__input" asp-for="OrganisationTypeFilter" id="@orgType.Replace(" ", "_")" type="radio" value="@orgType" />

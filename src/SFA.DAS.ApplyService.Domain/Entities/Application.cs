@@ -12,4 +12,10 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string WithdrawnBy { get; set; }
         public string ApplicationStatus { get; set; }
     }
+    
+    public class ApplicationStatus
+    {
+        public const string InProgress = "In Progress";
+        public const string Submitted = "Submitted";
+    }
 }

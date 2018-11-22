@@ -25,9 +25,9 @@
                 @foreach (var application in Model)
                 {
                     <tr>
-                        <th class="govuk-table__header" scope="row">Not yet submitted</th>
+                        <th class="govuk-table__header" scope="row">@application.CreatedAt.ToLongDateString()</th>
                         <!-- <td class="govuk-table__cell">@application.Id</td> -->
-                        <td class="govuk-table__cell govuk-table__cell--numeric">In progress</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@application.ApplicationStatus</td>
                         <td class="govuk-table__cell govuk-table__cell--numeric">
                             <a href="@Url.Action("Sequence", "Application", new {applicationId = application.Id})">View</a>
                         </td>

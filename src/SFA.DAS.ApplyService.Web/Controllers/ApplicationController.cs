@@ -168,13 +168,13 @@ using System;
                      }
                  }
  
-                 foreach (var nextAction in nextActions)
-                 {
-                     if (nextAction.Condition.MustEqual == answers.Single(a => a.QuestionId == nextAction.Condition.QuestionId).Value)
-                     {
-                         return RedirectToAction("Index", new {pageId = nextAction.ReturnId});
-                     }
-                 }
+//                 foreach (var nextAction in nextActions)
+//                 {
+//                     if (nextAction.Condition.MustEqual == answers.Single(a => a.QuestionId == nextAction.Condition.QuestionId).Value)
+//                     {
+//                         return RedirectToAction("Index", new {pageId = nextAction.ReturnId});
+//                     }
+//                 }
                  return RedirectToAction("Sequence", "Application", new {applicationId});
              }
  

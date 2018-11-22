@@ -42,14 +42,20 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("Application/{applicationId}/User/{userId}/Sections")]
         public async Task<ActionResult<ApplicationSequence>> GetSequence(string applicationId, string userId)
         {
-            return await _mediator.Send(new GetActiveSequenceRequest(Guid.Parse(applicationId), Guid.Parse(userId)));
+            return await _mediator.Send(new GetActiveSequenceRequest(Guid.Parse(applicationId)));
         }
         
         [HttpGet("Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections/{sectionId}")]
         public async Task<ActionResult<ApplicationSection>> GetSection(string applicationId, string userId, int sequenceId, int sectionId)
         {
-            return await _mediator.Send(new GetSectionRequest(Guid.Parse(applicationId), Guid.Parse(userId),
-                sequenceId, sectionId));
+            var uid = new Guid?();
+            var goodUserId = Guid.TryParse(userId, out var parsedUserId);
+            if (goodUserId)
+            {
+                uid = parsedUserId;
+            }
+            
+            return await _mediator.Send(new GetSectionRequest(Guid.Parse(applicationId), uid, sequenceId, sectionId));
         }
 
         [HttpGet("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
