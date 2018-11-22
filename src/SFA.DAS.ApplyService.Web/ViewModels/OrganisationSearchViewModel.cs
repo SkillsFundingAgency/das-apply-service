@@ -22,6 +22,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
         public IEnumerable<OrganisationSearchResult> Organisations { get; set; }
 
         [JsonIgnore]
-        public IEnumerable<string> OrganisationTypes { get; set; }
+        public IEnumerable<OrganisationType> OrganisationTypes { get; set; }
     }
 }

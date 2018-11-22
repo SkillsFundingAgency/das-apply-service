@@ -41,7 +41,7 @@ namespace SFA.DAS.ApplyService.Data
                 connection.Execute(
                     "INSERT INTO [Organisations] ([Id],[Name],[OrganisationType],[OrganisationUKPRN], " +
                     "[OrganisationDetails],[Status],[CreatedAt],[CreatedBy],[RoEPAOApproved],[RoATPApproved]) " +
-                    "VALUES (NEWID(), @Name, @OrganisationType, @OrganisationUkprn, @orgData, 'New', GETUTCDATE(), @CreatedBy, @roEPAOApproved, @roATPApproved)",
+                    "VALUES (NEWID(), @Name, REPLACE(@OrganisationType, ' ', ''), @OrganisationUkprn, @orgData, 'New', GETUTCDATE(), @CreatedBy, @roEPAOApproved, @roATPApproved)",
                     new { organisation.Name, organisation.OrganisationType, organisation.OrganisationUkprn, orgData, organisation.CreatedBy, roEPAOApproved, roATPApproved });
 
                 var org = await GetOrganisationByName(organisation.Name);

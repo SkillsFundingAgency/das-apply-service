@@ -73,10 +73,10 @@
 <div class="govuk-width-container">
     @if (@SessionService.Get("LoggedInUser") != null)
     {
-    <div class="esfa-user-panel">
-        <div class="esfa-user-panel__content">
-            <span class="esfa-user-panel__item esfa-user-panel__item--grow">Signed in as <text>@SessionService.Get("LoggedInUser")</text></span>
-            <span class="esfa-user-panel__item">
+    <div class="das-user-panel">
+        <div class="das-user-panel__content">
+            <span class="das-user-panel__item das-user-panel__item--grow">Signed in as <text>@SessionService.Get("LoggedInUser")</text></span>
+            <span class="das-user-panel__item">
                 <a class="govuk-link" href="@Url.Action("SignOut","Users")">Sign Out</a>
             </span>
         </div>
