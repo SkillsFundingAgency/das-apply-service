@@ -108,21 +108,35 @@
 
             @foreach (var answerPage in Model.PageOfAnswers)
             {
-                <div>
-                    @foreach (var answer in answerPage.Answers)
-                    {
-                        <span>@Model.Questions.Single(q => q.QuestionId == answer.QuestionId).Label: </span>
-                        <span>@answer.Value</span>
-                    }
-                    <form asp-action="DeleteAnswer" asp-controller="Application">
-                        <input type="hidden" id="AnswerId" name="AnswerId" value="@answerPage.Id"/>
-                        <input type="hidden" id="ApplicationId" name="ApplicationId" value="@Model.ApplicationId"/>
-                        <input type="hidden" id="SectionId" name="SectionId" value="@Model.SectionId"/>
-                        <input type="hidden" id="SequenceId" name="SequenceId" value="@Model.SequenceId"/>
-                        <input type="hidden" id="PageId" name="PageId" value="@Model.PageId"/>
-                        <button type="submit">Delete</button>
-                    </form>
-                </div>
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            @foreach (var answer in answerPage.Answers)
+                            {
+                                <th class="govuk-table__header" scope="col">@Model.Questions.Single(q => q.QuestionId == answer.QuestionId).Label</th>
+                            }
+                            <th class="govuk-table__header"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row">
+                            @foreach (var answer in answerPage.Answers)
+                            {
+                                <td class="govuk-table__cell">@answer.Value</td>
+                            }
+                            <td class="govuk-table__cell">
+                                <form asp-action="DeleteAnswer" asp-controller="Application">
+                                    <input type="hidden" id="AnswerId" name="AnswerId" value="@answerPage.Id"/>
+                                    <input type="hidden" id="ApplicationId" name="ApplicationId" value="@Model.ApplicationId"/>
+                                    <input type="hidden" id="SectionId" name="SectionId" value="@Model.SectionId"/>
+                                    <input type="hidden" id="SequenceId" name="SequenceId" value="@Model.SequenceId"/>
+                                    <input type="hidden" id="PageId" name="PageId" value="@Model.PageId"/>
+                                    <button class="govuk-button govuk-button--looks-like-link" type="submit">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             }
 
             <form method="post" asp-action="NextPage" asp-controller="Application" novalidate enctype="multipart/form-data">
