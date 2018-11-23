@@ -7,13 +7,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.GetSection
 {
     public class GetActiveSequenceRequest : IRequest<ApplicationSequence>
     {
-        public GetActiveSequenceRequest(Guid applicationId, Guid userId)
+        public GetActiveSequenceRequest(Guid applicationId)
         {
-            UserId = userId;
             ApplicationId = applicationId;
         }
         
-        public Guid UserId { get; set; }
         public Guid ApplicationId { get; set; }
     }
 }

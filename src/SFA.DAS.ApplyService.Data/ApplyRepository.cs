@@ -32,10 +32,19 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId, int sectionId, Guid userId)
+        public async Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId, int sectionId, Guid? userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
+                if (userId == null)
+                {
+                    return (await connection.QuerySingleAsync<ApplicationSection>(@"SELECT asec.* 
+                                                                FROM ApplicationSections asec
+                                                                INNER JOIN Applications a ON a.Id = asec.ApplicationId
+                                                                WHERE asec.ApplicationId = @applicationId AND asec.SectionId =@sectionId AND asec.SequenceId = @sequenceId",
+                        new {applicationId, sequenceId, sectionId}));   
+                }
+
                 return (await connection.QuerySingleAsync<ApplicationSection>(@"SELECT asec.* 
                                                                 FROM ApplicationSections asec
                                                                 INNER JOIN Applications a ON a.Id = asec.ApplicationId
@@ -45,17 +54,15 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<ApplicationSequence> GetActiveSequence(Guid applicationId, Guid userId)
+        public async Task<ApplicationSequence> GetActiveSequence(Guid applicationId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 var sequence = await connection.QueryFirstAsync<ApplicationSequence>(@"SELECT seq.* 
                             FROM ApplicationSequences seq
                             INNER JOIN Applications a ON a.Id = seq.ApplicationId
-                            INNER JOIN Contacts c ON c.ApplyOrganisationID = a.ApplyingOrganisationId
                             WHERE seq.ApplicationId = @applicationId 
-                            AND c.Id = @userId
-                            AND seq.IsActive = 1", new {applicationId, userId});
+                            AND seq.IsActive = 1", new {applicationId});
                 
                 var sections = (await connection.QueryAsync<ApplicationSection>(@"SELECT * FROM ApplicationSections 
                             WHERE ApplicationId = @ApplicationId 
@@ -84,8 +91,8 @@ namespace SFA.DAS.ApplyService.Data
                 return await connection.QuerySingleAsync<Guid>(
                     @"INSERT INTO Applications (ApplyingOrganisationId, ApplicationStatus, CreatedAt, CreatedBy, CreatedFromWorkflowId)
                                         OUTPUT INSERTED.[Id] 
-                                        VALUES (@ApplyingOrganisationId, 'Draft', GETUTCDATE(), @userId, @workflowId)",
-                    new {applyingOrganisationId, userId, workflowId});
+                                        VALUES (@ApplyingOrganisationId, @applicationStatus, GETUTCDATE(), @userId, @workflowId)",
+                    new {applyingOrganisationId, userId, workflowId, applicationStatus = ApplicationStatus.InProgress});
             }
         }
 
@@ -204,12 +211,13 @@ namespace SFA.DAS.ApplyService.Data
                 return (await connection
                     .QueryAsync<Domain.Entities.Application, Organisation, Domain.Entities.Application>(
                         @"SELECT * FROM Applications a
-                INNER JOIN Organisations o ON o.Id = a.ApplyingOrganisationId",
+                            INNER JOIN Organisations o ON o.Id = a.ApplyingOrganisationId
+                            WHERE a.ApplicationStatus = @applicationStatus",
                         (application, organisation) =>
                         {
                             application.ApplyingOrganisation = organisation;
                             return application;
-                        })).ToList();
+                        }, new {applicationStatus = ApplicationStatus.Submitted})).ToList();
             }
         }
 
@@ -217,12 +225,18 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"UPDATE       ApplicationSequences
-SET                Status = 'Submitted'
-FROM            ApplicationSequences INNER JOIN
-                         Applications ON ApplicationSequences.ApplicationId = Applications.Id INNER JOIN
-                         Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
-WHERE        (ApplicationSequences.ApplicationId = @ApplicationId) AND (ApplicationSequences.SequenceId = @SequenceId) AND Contacts.Id = @UserId",
+                await connection.ExecuteAsync(@"UPDATE ApplicationSequences
+                                                SET    Status = 'Submitted'
+                                                FROM   ApplicationSequences INNER JOIN
+                                                         Applications ON ApplicationSequences.ApplicationId = Applications.Id INNER JOIN
+                                                         Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
+                                                WHERE  (ApplicationSequences.ApplicationId = @ApplicationId) AND (ApplicationSequences.SequenceId = @SequenceId) AND Contacts.Id = @UserId;
+                            
+                                                UPDATE       Applications
+                                                SET                ApplicationStatus = 'Submitted'
+                                                FROM            Applications INNER JOIN
+                                                                Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
+                                                WHERE  (Applications.Id = @ApplicationId) AND Contacts.Id = @UserId	",
                     request);
             }
             

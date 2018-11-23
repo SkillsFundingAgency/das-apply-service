@@ -54,7 +54,7 @@
             <form method="post" asp-action="SaveAnswers" asp-controller="Application" novalidate enctype="multipart/form-data">
                 @if (Model.Questions.Count() == 1)
                 {
-                    @foreach (var question in Model.Questions)
+                    foreach (var question in Model.Questions)
                     {
                         <div class="govuk-form-group">
                             <fieldset class="govuk-fieldset">
@@ -90,7 +90,7 @@
                 }
                 else
                 {
-                    @foreach (var question in Model.Questions)
+                    foreach (var question in Model.Questions)
                     {
                         <div class="govuk-form-group">
                             <label class="govuk-label" for="@question.QuestionId">
