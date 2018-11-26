@@ -29,9 +29,25 @@ namespace SFA.DAS.ApplyService.Domain.Entities
             get { return Pages.Count(p => p.Active); }
         }
 
-
         public string Title { get; set; }
         public string LinkTitle { get; set; }
         public string DisplayType { get; set; }
+
+        public Page GetPage(string pageId)
+        {
+            return Pages.SingleOrDefault(p => p.PageId == pageId);
+        }
+
+        public void UpdatePage(Page page)
+        {
+            var currentPages = JsonConvert.DeserializeObject<List<Page>>(QnAData);
+
+            var currentPageIndex = currentPages.IndexOf(currentPages.Single(p => p.PageId == page.PageId));
+            
+            currentPages.RemoveAt(currentPageIndex);
+            currentPages.Insert(currentPageIndex, page);
+
+            Pages = currentPages;
+        }
     }
 }

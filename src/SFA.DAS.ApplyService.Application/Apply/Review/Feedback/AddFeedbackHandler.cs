@@ -18,13 +18,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Feedback
         
         public async Task<Unit> Handle(AddFeedbackRequest request, CancellationToken cancellationToken)
         {
+            var section = await _applyRepository.GetSection(request.ApplicationId, request.SequenceId, request.SectionId, null);
 
-            var section =
-                await _applyRepository.GetSection(request.ApplicationId, request.SequenceId, request.SectionId, null);
-
-            var pages = section.Pages;
-            
-            var page = pages.Single(p => p.PageId == request.PageId);
+            var page = section.GetPage(request.PageId);
 
             if (page.Feedback == null)
             {
@@ -33,8 +29,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Feedback
             
             page.Feedback.Add(request.Feedback);
 
-            section.Pages = pages;
-
+            section.UpdatePage(page);
+            
             await _applyRepository.UpdateSections(new List<ApplicationSection> {section});
             
             return Unit.Value;

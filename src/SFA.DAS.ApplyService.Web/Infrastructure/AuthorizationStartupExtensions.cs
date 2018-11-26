@@ -55,9 +55,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                     {
                         RequireSub = true,
                         RequireStateValidation = false,
-                        NonceLifetime = TimeSpan.FromMinutes(15)
+                        NonceLifetime = TimeSpan.FromMinutes(15),
+                        RequireNonce = false
                     };
-
+                    
                     options.DisableTelemetry = true;
                     options.Events = new OpenIdConnectEvents
                     {
