@@ -36,7 +36,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
         
         [HttpPost]
-        [PerformValidation(ValidationEndpoint = "/Account/Validate")] 
         public async Task<IActionResult> CreateAccount(CreateAccountViewModel vm)
         {
             if (!ModelState.IsValid)

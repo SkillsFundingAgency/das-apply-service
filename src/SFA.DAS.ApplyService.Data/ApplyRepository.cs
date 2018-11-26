@@ -241,5 +241,62 @@ namespace SFA.DAS.ApplyService.Data
             }
             
         }
+
+        public async Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string status)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE ApplicationSequences
+                                                SET    Status = @status
+                                                FROM   ApplicationSequences INNER JOIN
+                                                         Applications ON ApplicationSequences.ApplicationId = Applications.Id INNER JOIN
+                                                         Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
+                                                WHERE  (ApplicationSequences.ApplicationId = @ApplicationId) AND (ApplicationSequences.SequenceId = @SequenceId);
+                            
+                                                UPDATE       Applications
+                                                SET                ApplicationStatus = @status
+                                                FROM            Applications INNER JOIN
+                                                                Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
+                                                WHERE  (Applications.Id = @ApplicationId)",
+                    new {applicationId, sequenceId, status});
+            }
+        }
+
+        public async Task CloseSequence(Guid applicationId, int sequenceId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE ApplicationSequences
+                                                SET    IsActive = 0
+                                                FROM   ApplicationSequences INNER JOIN
+                                                         Applications ON ApplicationSequences.ApplicationId = Applications.Id INNER JOIN
+                                                         Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
+                                                WHERE  (ApplicationSequences.ApplicationId = @ApplicationId) AND (ApplicationSequences.SequenceId = @SequenceId);",
+                    new {applicationId, sequenceId});
+            }
+        }
+
+        public async Task<List<ApplicationSequence>> GetSequences(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+               return (await connection.QueryAsync<ApplicationSequence>(@"SELECT * FROM ApplicationSequences WHERE ApplicationId = @applicationId",
+                    new {applicationId})).ToList();
+            }
+        }
+
+        public async Task OpenSequence(Guid applicationId, int nextSequenceId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE ApplicationSequences
+                                                SET    IsActive = 1
+                                                FROM   ApplicationSequences INNER JOIN
+                                                         Applications ON ApplicationSequences.ApplicationId = Applications.Id INNER JOIN
+                                                         Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
+                                                WHERE  (ApplicationSequences.ApplicationId = @ApplicationId) AND (ApplicationSequences.SequenceId = @nextSequenceId);",
+                    new {applicationId, nextSequenceId});
+            }
+        }
     }
 }

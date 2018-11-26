@@ -67,7 +67,7 @@
                                             foreach (var orgType in Model.OrganisationTypes)
                                             {
                                                 <div class="govuk-radios__item">
-                                                    <input class="govuk-radios__input" asp-for="OrganisationTypeFilter" id="@orgType.Type.Replace(" ", "_")" type="radio" value="@orgType" />
+                                                    <input class="govuk-radios__input" asp-for="OrganisationTypeFilter" id="@orgType.Type.Replace(" ", "_")" type="radio" value="@orgType.Type" />
                                                     <label class="govuk-label govuk-radios__label" for="@orgType.Type.Replace(" ", "_")">@orgType.Type</label>
                                                 </div>
                                             }
@@ -113,17 +113,13 @@
                                             @string.Join(", ", @result.Address?.Address1, @result.Address?.City, @result.Address.Postcode);
                                         }
                                     </p>
+                                @if (result.OrganisationType != null)
+                                {
                                     <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
                                         <span class="govuk-body govuk-!-font-weight-bold">Type</span>
-                                        @if (result.OrganisationType == null)
-                                        {
-                                            @("Unknown");
-                                        }
-                                        else
-                                        {
-                                            @(result.OrganisationType);
-                                        }
+                                        @result.OrganisationType
                                     </p>
+                                }
                                 </td>
                             </tr>
                         }
