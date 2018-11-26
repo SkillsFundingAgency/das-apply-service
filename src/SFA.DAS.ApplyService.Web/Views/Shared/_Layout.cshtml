@@ -42,8 +42,7 @@
 <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
 
 <header class="govuk-header " role="banner" data-module="header">
-    <div class="govuk-header__container govuk-width-container">
-
+    <div class="govuk-header__container govuk-width-container govuk-header__container--das-epao">
         <div class="govuk-header__logo">
             <a href="https://www.gov.uk" class="govuk-header__link govuk-header__link--homepage">
                 <span class="govuk-header__logotype">
@@ -61,27 +60,50 @@
             </a>
         </div>
         <div class="govuk-header__content">
-
             <a href="/" class="govuk-header__link govuk-header__link--service-name">
                 EPAO Apply
             </a>
-
         </div>
     </div>
 </header>
 
-<div class="govuk-width-container">
-    @if (@SessionService.Get("LoggedInUser") != null)
-    {
-    <div class="das-user-panel">
-        <div class="das-user-panel__content">
-            <span class="das-user-panel__item das-user-panel__item--grow">Signed in as <text>@SessionService.Get("LoggedInUser")</text></span>
-            <span class="das-user-panel__item">
-                <a class="govuk-link" href="@Url.Action("SignOut","Users")">Sign Out</a>
-            </span>
+@if (@SessionService.Get("LoggedInUser") != null)
+{
+        <div class="das-user-panel">
+            <div class="govuk-width-container">
+                <div class="das-user-panel__content">
+                    <span class="govuk-body-s das-user-panel__item das-user-panel__item--grow">
+                        @*
+                        If we have access to the applying org. include it here
+                        <span class="govuk-!-font-weight-bold">Applying organisation</span>
+                        <span class="govuk-visually-hidden">Signed in as </span>
+                        *@
+                        <span>Signed in as </span>
+                        <span>@SessionService.Get("LoggedInUser")</span>
+                    </span>
+                    <span class="govuk-body-s das-user-panel__item">
+                        <a class="govuk-link govuk-link--white" href="@Url.Action("SignOut","Users")">Sign out</a>
+                    </span>
+                </div>
+            </div>
         </div>
+}
+
+<div class="govuk-width-container">
+    <div class="govuk-phase-banner">
+        <p class="govuk-phase-banner__content">
+            <strong class="govuk-tag govuk-phase-banner__content__tag ">
+                beta
+            </strong>
+            <span class="govuk-phase-banner__text">
+                This is a new service – your
+                <a class="govuk-link" href="https://www.smartsurvey.co.uk/s/apply-banner/">feedback</a> will help us to improve it.
+            </span>
+        </p>
     </div>
-    }
+</div>
+
+<div class="govuk-width-container">
     @RenderBody()
 </div>
 

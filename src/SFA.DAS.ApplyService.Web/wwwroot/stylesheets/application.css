@@ -314,54 +314,25 @@
 }
 
 .das-user-panel {
-  padding-top: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #bfc1c3;
+  margin-top: -10px;
+  padding: 25px 0 15px;
+  background-color: #005ea5;
 }
 
 .das-user-panel__content {
-  font-family: nta, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-weight: 400;
-  font-size: 14px;
-  font-size: 0.875rem;
-  line-height: 1.14286;
-  color: #0b0c0c;
-  /* display: table; */
-  margin: 0;
-
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  margin-right: -15px;
-  margin-left: -15px;
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
   -webkit-box-align: end;
   -ms-flex-align: end;
   align-items: flex-end;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
 }
 
 @media print {
   .das-user-panel__content {
     font-family: sans-serif;
-  }
-}
-
-@media (min-width: 40.0625em) {
-  .das-user-panel__content {
-    font-size: 16px;
-    font-size: 1rem;
-    line-height: 1.25;
-  }
-}
-
-@media print {
-  .das-user-panel__content {
     font-size: 14pt;
     line-height: 1.2;
     color: #000;
@@ -373,8 +344,18 @@
 }
 
 .das-user-panel__item {
-  margin-right: 15px;
-  margin-left: 15px;
+  color: #fff;
+  margin: 0;
+}
+
+.govuk-link--white:link,
+.govuk-link--white:visited {
+  color: #fff;
+}
+
+.govuk-link--white:link:hover,
+.govuk-link--white:visited:hover {
+  color: #ddeef8;
 }
 
 .das-user-panel__item--grow {
@@ -417,4 +398,8 @@
 
 .govuk-error-message.field-validation-error {
   display: block;
+}
+
+.govuk-header__container--das-epao {
+  border-bottom: 10px solid #004274;
 }
