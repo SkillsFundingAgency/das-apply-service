@@ -26,5 +26,9 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task AddAssets(Dictionary<string,string> assets);
         Task<List<Domain.Entities.Application>> GetApplicationsToReview();
         Task SubmitApplicationSequence(ApplicationSubmitRequest request);
+        Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string status);
+        Task CloseSequence(Guid applicationId, int sequenceId);
+        Task<List<ApplicationSequence>> GetSequences(Guid applicationId);
+        Task OpenSequence(Guid applicationId, int nextSequenceId);
     }
 }
