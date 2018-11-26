@@ -46,7 +46,7 @@
                             @foreach (var orgType in Model.OrganisationTypes)
                             {
                                 <div class="govuk-radios__item">
-                                    <input class="govuk-radios__input" asp-for="OrganisationType" id="@orgType.Type.Replace(" ", "_")" type="radio" value="@orgType" required />
+                                    <input class="govuk-radios__input" asp-for="OrganisationType" id="@orgType.Type.Replace(" ", "_")" type="radio" value="@orgType.Type" required />
                                     <label class="govuk-label govuk-radios__label" for="@orgType.Type.Replace(" ", "_")">@orgType.Type</label>
                                 </div>
                             }

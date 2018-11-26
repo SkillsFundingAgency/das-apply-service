@@ -113,17 +113,13 @@
                                             @string.Join(", ", @result.Address?.Address1, @result.Address?.City, @result.Address.Postcode);
                                         }
                                     </p>
+                                @if (result.OrganisationType != null)
+                                {
                                     <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
                                         <span class="govuk-body govuk-!-font-weight-bold">Type</span>
-                                        @if (result.OrganisationType == null)
-                                        {
-                                            @("Unknown");
-                                        }
-                                        else
-                                        {
-                                            @(result.OrganisationType);
-                                        }
+                                        @result.OrganisationType
                                     </p>
+                                }
                                 </td>
                             </tr>
                         }
