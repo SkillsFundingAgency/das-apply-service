@@ -5,6 +5,8 @@
     ViewBag.Title = "Application overview";
     Layout = "_Layout";
 }
+
+<a asp-action="Applications" asp-controller="Application" class="govuk-back-link">Back to application select</a>
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -14,10 +16,10 @@
                 @foreach (var applicationSection in Model.Sections)
                 {
                     <li>
-                        <h2 class="gvuk-heading-m">
+                        <h2 class="gvuk-heading-m govuk-!-margin-bottom-2">
                             @applicationSection.LinkTitle
                         </h2>
-                        <span id="company-details-hint" class="govuk-hint apply-hint">
+                        <span id="company-details-hint" class="govuk-hint">
                             @applicationSection.PagesComplete of @applicationSection.PagesActive questions completed
                         </span>
                         @if (Model.Status != ApplicationSequenceStatus.Submitted)

@@ -77,9 +77,12 @@
                                         </label>
                                     </h2>
                                 }
-                                <span class="govuk-hint">
-                                    @Html.Raw(question.Hint)
-                                </span>
+                                @if (question.Hint != null)
+                                {
+                                    <span class="govuk-hint">
+                                        @Html.Raw(question.Hint)
+                                    </span>
+                                }
                                 @Html.Partial($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
                             </fieldset>
                         </div>
@@ -95,9 +98,12 @@
                                     @Html.Raw(question.Label)
                                 @*<span class="govuk-hint">&lt;/question.Label (multiple questions)&gt;</span>*@
                             </label>
-                            <span class="govuk-hint">
-                                @Html.Raw(question.Hint)
-                            </span>
+                            @if (question.Hint != null)
+                            {
+                                <span class="govuk-hint">
+                                    @Html.Raw(question.Hint)
+                                </span>
+                            }
                             @Html.Partial($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
                         </div>
                     }
