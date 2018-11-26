@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.GetSection;
 using SFA.DAS.ApplyService.Application.Apply.Review;
 using SFA.DAS.ApplyService.Application.Apply.Review.Feedback;
+using SFA.DAS.ApplyService.Application.Apply.Review.Return;
 using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
@@ -39,5 +40,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             await _mediator.Send(new AddFeedbackRequest(applicationId, sequenceId, sectionId, pageId, feedback));
         }
+        
+        [HttpPost("Review/Applications/{applicationId}/Sequences/{sequenceId}/Return")]
+        public async Task Return(Guid applicationId, int sequenceId, [FromBody] ReturnApplicationRequest request)
+        {
+            await _mediator.Send(new ReturnRequest(applicationId, sequenceId, request.ReturnType));
+        }
+    }
+
+    public class ReturnApplicationRequest
+    {
+        public string ReturnType { get; set; }
     }
 }
