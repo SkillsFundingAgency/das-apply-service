@@ -33,7 +33,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _usersApiClient.GetUserBySignInId(
-                _httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
+                _httpContextAccessor.HttpContext.User.FindFirstValue("UserId"));
 
 
             // Can get details from UkPrn?
