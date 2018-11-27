@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 using SFA.DAS.ApplyService.Application.Apply.Upload;
 using SFA.DAS.ApplyService.Configuration;
@@ -17,10 +18,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     public class ApplicationApiClient : IApplicationApiClient
     {
+        private readonly ILogger<ApplicationApiClient> _logger;
         private static readonly HttpClient _httpClient = new HttpClient();
 
-        public ApplicationApiClient(IConfigurationService configurationService)
+        public ApplicationApiClient(IConfigurationService configurationService, ILogger<ApplicationApiClient> logger)
         {
+            _logger = logger;
             if (_httpClient.BaseAddress == null)
             {
                 _httpClient.BaseAddress = new Uri(configurationService.GetConfig().Result.InternalApi.Uri);
@@ -93,6 +96,21 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         {
             await _httpClient.PostAsJsonAsync(
                 $"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/DeleteAnswer/{answerId}", new{});
+        }
+
+        public async Task ImportWorkflow(IFormFile file)
+        {
+            var formDataContent = new MultipartFormDataContent();
+
+            var fileContent = new StreamContent(file.OpenReadStream())
+                {Headers = {ContentLength = file.Length, ContentType = new MediaTypeHeaderValue(file.ContentType)}};
+            formDataContent.Add(fileContent, file.Name, file.FileName);
+
+            _logger.LogInformation($"API ImportWorkflow > Added content {file.FileName}");
+            
+            await _httpClient.PostAsync($"/Import/Workflow", formDataContent);
+            
+            _logger.LogInformation($"API ImportWorkflow > After post to Internal API");
         }
     }
 }

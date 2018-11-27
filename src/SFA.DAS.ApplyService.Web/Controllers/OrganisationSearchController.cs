@@ -32,9 +32,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var user = await _usersApiClient.GetUserBySignInId(
-                _httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
-
+            var user = await _usersApiClient.GetUserBySignInId(_httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
 
             // Can get details from UkPrn?
             // var ukprn = await _apiClient.GetOrganisationByUkprn(user.Ukprn); <-- this doesn't exist right now!
