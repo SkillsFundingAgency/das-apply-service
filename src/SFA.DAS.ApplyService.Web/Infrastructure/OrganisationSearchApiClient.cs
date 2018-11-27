@@ -31,6 +31,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<OrganisationSearchResult> GetOrganisationByEmail(string email)
         {
+            _logger.LogInformation($"Calling OrganisationSearch/email from: {_httpClient.BaseAddress}/OrganisationSearch/email/{email}");
+            
             var httpResponseMessage = await _httpClient.GetAsync($"/OrganisationSearch/email/{email}");
 
             var responseAsString = await httpResponseMessage.Content.ReadAsStringAsync();
