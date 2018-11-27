@@ -6,30 +6,38 @@
     ViewData["Title"] = "Error";
 }
 
+<main class="govuk-main-wrapper govuk-main-wrapper--l" id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @if (HostingEnvironment.IsDevelopment())
+            {
+                <h1 class="govuk-heading-xl">Error</h1>
+                <h2 class="govuk-heading-l">An error occurred while processing your request.</h2>
 
-@if (HostingEnvironment.IsDevelopment())
-{
-    
-    <h1 class="text-danger">Error.</h1>
-    <h2 class="text-danger">An error occurred while processing your request.</h2>
- if (Model.ShowRequestId)
- {
-     <p>
-         <strong>Request ID:</strong> <code>@Model.RequestId</code>
-     </p>
- }
+                if (Model.ShowRequestId)
+                {
+                    <p class="govuk-body">
+                        <strong>Request ID:</strong> <code>@Model.RequestId</code>
+                    </p>
+                }
 
-    <h3>Development Mode</h3>
-    <p>
-        Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
-    </p>
-    <p>
-        <strong>Development environment should not be enabled in deployed applications</strong>, as it can result in sensitive information from exceptions being displayed to end users. For local debugging, development environment can be enabled by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>, and restarting the application.
-    </p>
-}
-else
-{
-    
-    <h1 class="text-danger">Something went wrong.</h1>
-
-}
+                <h3 class="govuk-heading-m">Development Mode</h3>
+                <p class="govuk-body">
+                    Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.
+                </p>
+                <p class="govuk-body">
+                    <strong>Development environment should not be enabled in deployed applications</strong>, as it can result in sensitive information from exceptions being displayed to end users. For local debugging, development environment can be enabled by setting the <strong>ASPNETCORE_ENVIRONMENT</strong> environment variable to <strong>Development</strong>, and restarting the application.
+                </p>
+            }
+            else
+            {
+                <h1 class="govuk-heading-xl">Sorry, there is a problem with the service</h1>
+                <p class="govuk-body">Try again later.</p>
+                <p class="govuk-body">We saved your answers.</p>
+                <p class="govuk-body">
+                    <a class="govuk-link" asp-controller="Home" asp-action="ContactUs">Contact the manage apprenticeships service helpdesk</a> to get help.
+                </p>
+            }
+        </div>
+    </div>
+</main>
