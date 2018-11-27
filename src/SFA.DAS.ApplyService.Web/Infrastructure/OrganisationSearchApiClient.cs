@@ -37,7 +37,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             
             _logger.LogInformation($"Content received from OrganisationSearch/email: {responseAsString}");
 
-
             return JsonConvert.DeserializeObject<OrganisationSearchResult>(responseAsString);
             
 //            return await httpResponseMessage.Content
