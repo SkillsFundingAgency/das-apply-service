@@ -94,5 +94,16 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             await _httpClient.PostAsJsonAsync(
                 $"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/DeleteAnswer/{answerId}", new{});
         }
+
+        public async Task ImportWorkflow(IFormFile file)
+        {
+            var formDataContent = new MultipartFormDataContent();
+
+            var fileContent = new StreamContent(file.OpenReadStream())
+                {Headers = {ContentLength = file.Length, ContentType = new MediaTypeHeaderValue(file.ContentType)}};
+            formDataContent.Add(fileContent, file.Name, file.FileName);
+
+            await _httpClient.PostAsync($"/Import/Workflow", formDataContent);
+        }
     }
 }

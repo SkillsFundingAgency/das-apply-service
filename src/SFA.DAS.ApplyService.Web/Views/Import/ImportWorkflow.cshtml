@@ -1,0 +1,14 @@
+
+@{
+    ViewBag.Title = "Import Workflow";
+    Layout = "_Layout";
+}
+
+<h2>Import Workflow</h2>
+
+
+<form asp-action="UploadWorkflowFile" asp-controller="Import" enctype="multipart/form-data">
+    <label for="workflowFile">Upload workflow spreadsheet</label>
+    <input type="file" id="workflowFile" name="workflowFile"/>
+    <button type="submit">Upload</button>
+</form>
