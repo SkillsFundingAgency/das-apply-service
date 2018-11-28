@@ -17,17 +17,17 @@
                 </h1>
             }
 
+
             @if (Model.HasFeedback)
             {
                 <div class="govuk-inset-text">
-                    <h2 class="govuk-heading-l">Feedback:</h2>
-
                     @foreach (var fb in Model.Feedback)
                     {
-                        <span>@fb.Message</span>
+                        <p class="govuk-body">@fb.Message</p>
                     }
                 </div>
             }
+
 
 
             @if (!ViewData.ModelState.IsValid)
@@ -106,19 +106,21 @@
                 <button type="submit" class="govuk-button">Add</button>
             </form>
 
-            @foreach (var answerPage in Model.PageOfAnswers)
+            @if (Model.PageOfAnswers.Any())
             {
                 <table class="govuk-table">
                     <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            @foreach (var answer in answerPage.Answers)
-                            {
-                                <th class="govuk-table__header" scope="col">@Model.Questions.Single(q => q.QuestionId == answer.QuestionId).Label</th>
-                            }
-                            <th class="govuk-table__header"></th>
-                        </tr>
+                    <tr class="govuk-table__row">
+                        @foreach (var answer in Model.PageOfAnswers.First().Answers)
+                        {
+                            <th class="govuk-table__header" scope="col">@Model.Questions.Single(q => q.QuestionId == answer.QuestionId).Label</th>
+                        }
+                    </tr>
                     </thead>
                     <tbody class="govuk-table__body">
+                    
+                    @foreach (var answerPage in Model.PageOfAnswers)
+                    {
                         <tr class="govuk-table__row">
                             @foreach (var answer in answerPage.Answers)
                             {
@@ -135,14 +137,16 @@
                                 </form>
                             </td>
                         </tr>
+                    }
                     </tbody>
                 </table>
             }
 
+
             <form method="post" asp-action="NextPage" asp-controller="Application" novalidate enctype="multipart/form-data">
                 <button type="submit" class="govuk-button">Save and continue</button>
             </form>
-            
+
             <div>
                 <a class="govuk-body govuk-link" href="@Url.Action("Section", "Application", new {Model.ApplicationId, Model.SectionId})">Return to summary</a>
             </div>

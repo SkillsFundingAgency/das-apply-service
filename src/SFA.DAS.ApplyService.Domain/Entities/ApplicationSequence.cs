@@ -7,7 +7,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     {
         public Guid Id { get; set; }
         public Guid ApplicationId { get; set; }
-        public int SequenceId { get; set; }
+        public SequenceId SequenceId { get; set; }
         public string Status { get; set; }
         public bool IsActive { get; set; }
         public List<ApplicationSection> Sections { get; set; }
@@ -20,5 +20,11 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string FeedbackAdded = "FeedbackAdded";
         public const string Rejected = "Rejected";
         public const string Approved = "Approved";
+    }
+
+    public enum SequenceId
+    {
+        Stage1 = 1,
+        Stage2 = 2
     }
 }

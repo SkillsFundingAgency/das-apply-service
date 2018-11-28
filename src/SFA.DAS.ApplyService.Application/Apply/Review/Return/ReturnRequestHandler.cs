@@ -24,29 +24,33 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
             if (request.RequestReturnType == "ReturnWithFeedback")
             {
                 await _applyRepository.UpdateSequenceStatus(request.ApplicationId, request.SequenceId,
-                    ApplicationSequenceStatus.FeedbackAdded);
+                    ApplicationSequenceStatus.FeedbackAdded, ApplicationStatus.FeedbackAdded);
             }
             else if (request.RequestReturnType == "Approve")
             {
                 await _applyRepository.UpdateSequenceStatus(request.ApplicationId, request.SequenceId,
-                    ApplicationSequenceStatus.Approved);
+                    ApplicationSequenceStatus.Approved, ApplicationStatus.InProgress);
 
                 await _applyRepository.CloseSequence(request.ApplicationId, request.SequenceId);
 
                 var nextSequence =
                     (await _applyRepository.GetSequences(request.ApplicationId))
-                    .FirstOrDefault(seq => seq.SequenceId != request.SequenceId);
-
+                    .FirstOrDefault(seq => (int)seq.SequenceId == request.SequenceId + 1);
 
                 if (nextSequence != null)
                 {
-                    await _applyRepository.OpenSequence(request.ApplicationId, nextSequence.SequenceId);
+                    await _applyRepository.OpenSequence(request.ApplicationId, (int)nextSequence.SequenceId);
+                }
+                else
+                {
+                    // this is the last sequence, so approve the whole application
+                    await _applyRepository.UpdateApplicationStatus(request.ApplicationId, ApplicationStatus.Approved);
                 }
             }
             else
             {
                 await _applyRepository.UpdateSequenceStatus(request.ApplicationId, request.SequenceId,
-                    ApplicationSequenceStatus.Rejected);
+                    ApplicationSequenceStatus.Rejected, ApplicationStatus.Rejected);
             }
                 
             return Unit.Value;

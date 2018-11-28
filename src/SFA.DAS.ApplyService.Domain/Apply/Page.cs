@@ -22,6 +22,18 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public bool Visible { get; set; }
         public List<Feedback> Feedback { get; set; }
         public bool HasFeedback => Feedback?.Any() ?? false;
+        public string BodyText { get; set; }
+
+        public bool IsQuestionAnswered(string questionId)
+        {
+            var allAnswers = PageOfAnswers.SelectMany(poa => poa.Answers).ToList();
+            return allAnswers.Any(a => a.QuestionId == questionId);
+        }
+
+        public bool HasNewFeedback()
+        {
+            return Feedback.Any(f => !f.IsRead);
+        }
     }
 
 }

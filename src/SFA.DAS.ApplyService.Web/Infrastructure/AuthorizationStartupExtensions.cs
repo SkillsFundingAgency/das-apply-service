@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -44,7 +45,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
                     options.SaveTokens = true;
                     //options.CallbackPath = new PathString(Configuration["auth:oidc:callbackPath"]);
-                    //options.SignedOutCallbackPath = new PathString(Configuration["auth:oidc:signedOutCallbackPath"]);
+                    options.SignedOutCallbackPath = new PathString("/Signedout"); 
+                    
                     options.SecurityTokenValidator = new JwtSecurityTokenHandler
                     {
                         InboundClaimTypeMap = new Dictionary<string, string>(),

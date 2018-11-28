@@ -165,7 +165,8 @@ namespace SFA.DAS.ApplyService.Application.Import
                     PageOfAnswers = new List<PageOfAnswers>(),
                     AllowMultipleAnswers = r.AllowMultipleAnswers,
                     SequenceId = r.SequenceId.ToString(),
-                    SectionId = r.SectionId.ToString()
+                    SectionId = r.SectionId.ToString(),
+                    BodyText = r.BodyTextRef
                 })
                 .Distinct().ToList();
 

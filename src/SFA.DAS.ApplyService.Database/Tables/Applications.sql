@@ -2,6 +2,7 @@ CREATE TABLE [dbo].[Applications](
 	[Id] [uniqueidentifier] NOT NULL,
 	[ApplyingOrganisationId] [uniqueidentifier] NOT NULL,
 	[ApplicationStatus] [nvarchar](20) NOT NULL,
+	[ApplicationData] [nvarchar(max)] NULL,
 	[CreatedAt] [datetime2](7) NOT NULL,
 	[CreatedBy] [nvarchar](120) NOT NULL,
 	[UpdatedAt] [datetime2](7) NULL,

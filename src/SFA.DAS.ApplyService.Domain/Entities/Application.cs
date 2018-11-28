@@ -11,11 +11,20 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public DateTime WithdrawnAt { get; set; }
         public string WithdrawnBy { get; set; }
         public string ApplicationStatus { get; set; }
+        public string ApplicationData { get; set; }
+    }
+
+    public class StandardApplicationData
+    {
+        public string StandardName { get; set; }
     }
     
     public class ApplicationStatus
     {
         public const string InProgress = "In Progress";
         public const string Submitted = "Submitted";
+        public const string FeedbackAdded = "FeedbackAdded";
+        public const string Rejected = "Rejected";
+        public const string Approved = "Approved";
     }
 }

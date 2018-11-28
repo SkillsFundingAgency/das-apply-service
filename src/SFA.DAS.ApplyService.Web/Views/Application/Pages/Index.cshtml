@@ -16,15 +16,22 @@
                     @*<span class="govuk-hint">&lt;/page.Title&gt;</span>*@
                 </h1>
             }
-
+            
+            
+            @if (!string.IsNullOrWhiteSpace(@Model.BodyText))
+            {
+                <div>
+                    @Html.Raw(Model.BodyText);
+                </div>
+            }
+            
+            
             @if (Model.HasFeedback)
             {
                 <div class="govuk-inset-text">
-                    <h2 class="govuk-heading-l">Feedback:</h2>
-                    
                     @foreach (var fb in Model.Feedback)
                     {
-                        <span>@fb.Message</span>
+                        <p class="govuk-body">@fb.Message</p>
                     }
                 </div>
             }
@@ -108,7 +115,7 @@
                         </div>
                     }
                 }
-                <button type="submit" class="govuk-button">Save and continue</button>
+                <button type="submit" class="govuk-button" >Save and continue</button>
                 <div>
                     <a class="govuk-body govuk-link" href="@Url.Action("Section", "Application", new {Model.ApplicationId, Model.SectionId})">Return to summary</a>
                 </div>

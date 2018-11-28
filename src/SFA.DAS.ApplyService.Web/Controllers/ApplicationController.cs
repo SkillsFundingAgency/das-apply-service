@@ -7,10 +7,13 @@ using System;
  using Microsoft.AspNetCore.Authorization;
  using Microsoft.AspNetCore.Mvc;
  using Microsoft.EntityFrameworkCore.Internal;
- using SFA.DAS.ApplyService.Application.Apply.Upload;
+using Newtonsoft.Json;
+using SFA.DAS.ApplyService.Application.Apply.GetPage;
+using SFA.DAS.ApplyService.Application.Apply.Upload;
  using SFA.DAS.ApplyService.Application.Interfaces;
  using SFA.DAS.ApplyService.Domain.Apply;
- using SFA.DAS.ApplyService.Web.Infrastructure;
+using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Web.Infrastructure;
  
  namespace SFA.DAS.ApplyService.Web.Controllers
  {
@@ -28,12 +31,33 @@ using System;
          public async Task<IActionResult> Applications()
          {
              var applications = await _apiClient.GetApplicationsFor(Guid.Parse(User.FindFirstValue("UserId")));
- 
-             if (applications.Any()) return View(applications);
+
+             if (!applications.Any())
+             {
+                 await _apiClient.StartApplication(Guid.Parse(User.FindFirstValue("UserId")));
+                 applications = await _apiClient.GetApplicationsFor(Guid.Parse(User.FindFirstValue("UserId")));
+                 return RedirectToAction("SequenceSignPost", new {applicationId = applications.First().Id});   
+             }
              
-             await _apiClient.StartApplication(Guid.Parse(User.FindFirstValue("UserId")));
-             applications = await _apiClient.GetApplicationsFor(Guid.Parse(User.FindFirstValue("UserId")));
-             return RedirectToAction("Sequence", new {applicationId = applications.First().Id});
+             if (applications.Count() > 1)
+             {
+                 return View(applications);
+             }
+             else
+             {
+                 var application = applications.First();
+
+                 if (application.ApplicationStatus == ApplicationStatus.FeedbackAdded)
+                 {
+                     return View("~/Views/Application/FeedbackIntro.cshtml", application.Id );
+                 }
+                 else if (application.ApplicationStatus == ApplicationStatus.Rejected)
+                 {
+                     return View("~/Views/Application/Rejected.cshtml", application.Id );
+                 }
+                 
+                 return RedirectToAction("SequenceSignPost", new {applicationId = application.Id});     
+             }
          }
          
          [HttpPost("/Applications")]
@@ -44,30 +68,74 @@ using System;
              return RedirectToAction("Applications");
          }
          
-         [HttpGet("/Applications/{applicationId}")]
+         [HttpGet("/Applications/{applicationId}/Sequence")]
          public async Task<IActionResult> Sequence(Guid applicationId)
          {
+             // Break this out into a "Signpost" action.
              var sequence = await _apiClient.GetSequence(applicationId, userId: Guid.Parse(User.FindFirstValue("UserId")));
-             
-             return View(sequence);
+
+                return View(sequence);
          }
          
-         [HttpGet("/Applications/{applicationId}/Sections/{sectionId}")]
-         public async Task<IActionResult> Section(Guid applicationId, int sectionId)
+         [HttpGet("/Applications/{applicationId}")]
+         public async Task<IActionResult> SequenceSignPost(Guid applicationId)
          {
-             var sections = await _apiClient.GetSection(applicationId, sequenceId: 1, sectionId: sectionId, userId: Guid.Parse(User.FindFirstValue("UserId")));
+             // Break this out into a "Signpost" action.
+             var sequence = await _apiClient.GetSequence(applicationId, userId: Guid.Parse(User.FindFirstValue("UserId")));
+
+             var application = await _apiClient.GetApplication(applicationId);
+
+             StandardApplicationData applicationData = null;
+
+             if (application.ApplicationData != null)
+             {
+                 applicationData = JsonConvert.DeserializeObject<StandardApplicationData>(application.ApplicationData);
+             }
              
-             return View(sections);
+             // Only go to search if application hasn't got a selected standard?
+             if (sequence.SequenceId == SequenceId.Stage1)
+             {
+                 return RedirectToAction("Sequence", new {applicationId});
+                 //return View("", sequence);
+             }
+             else if (sequence.SequenceId == SequenceId.Stage2 && string.IsNullOrWhiteSpace(applicationData?.StandardName))
+             {
+                 return RedirectToAction("Search", "Standard", new {applicationId});
+             }
+             else if (sequence.SequenceId == SequenceId.Stage2)
+             {
+                 return RedirectToAction("Sequence", new {applicationId});
+             }
+             
+             throw new BadRequestException("Section does not have a valid DisplayType");
          }
          
-         [HttpGet("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
-         public async Task<IActionResult> Page(string applicationId, int sequenceId, int sectionId, string pageId)
+         [HttpGet("/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}")]
+         public async Task<IActionResult> Section(Guid applicationId, int sequenceId, int sectionId)
+         {
+             var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, userId: Guid.Parse(User.FindFirstValue("UserId")));
+
+             if (section.DisplayType == SectionDisplayType.Pages)
+             {
+                 return View("~/Views/Application/Section.cshtml", section);                 
+             }
+             else if (section.DisplayType == SectionDisplayType.Questions)
+             {
+                 return View("~/Views/Application/SectionQuestions.cshtml", section);
+             }
+             throw new BadRequestException("Section does not have a valid DisplayType");
+         }
+         
+         [HttpGet("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/{redirectAction}")]
+         public async Task<IActionResult> Page(string applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
          {
              var page = await _apiClient.GetPage(Guid.Parse(applicationId), sequenceId,sectionId, pageId, Guid.Parse(User.FindFirstValue("UserId")));
              var pageVm = new PageViewModel(page, Guid.Parse(applicationId));
  
              pageVm.SectionId = sectionId;
- 
+
+             pageVm.RedirectAction = redirectAction;
+             
              if (page.AllowMultipleAnswers)
              {
                  return View("~/Views/Application/Pages/MultipleAnswers.cshtml", pageVm);
@@ -100,8 +168,8 @@ using System;
              return RedirectToAction("Page", new {applicationId, pageId = thisPage.PageId});
          }
          
-         [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
-         public async Task<IActionResult> SaveAnswers(string applicationId, int sequenceId, int sectionId, string pageId)
+         [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/{redirectAction}")]
+         public async Task<IActionResult> SaveAnswers(string applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
          {
              var userId = Guid.Parse(User.FindFirstValue("UserId"));
              
@@ -136,6 +204,11 @@ using System;
                              applicationId, sequenceId = updatePageResult.Page.SequenceId,
                              sectionId = updatePageResult.Page.SectionId, pageId = updatePageResult.Page.PageId
                          });
+                 }
+
+                 if (redirectAction == "Feedback")
+                 {
+                     return RedirectToAction("Feedback", new {applicationId});
                  }
                  
                  var nextActions = updatePageResult.Page.Next;
@@ -202,7 +275,7 @@ using System;
          public async Task<IActionResult> Submit(Guid applicationId, int sequenceId)
          {
              await _apiClient.Submit(applicationId, sequenceId, Guid.Parse(User.FindFirstValue("UserId")));
-             return RedirectToAction("Sequence", new {applicationId});
+             return RedirectToAction("Submitted");
          }
  
          [HttpPost("/Application/DeleteAnswer")]
@@ -212,6 +285,20 @@ using System;
                  Guid.Parse(User.FindFirstValue("UserId")));
 
              return RedirectToAction("Page", new {applicationId, sequenceId, sectionId, pageId});
+         }
+
+         [HttpGet("/Application/{applicationId}/Feedback")]
+         public async Task<IActionResult> Feedback(Guid applicationId)
+         {
+             var sequence = await _apiClient.GetSequence(applicationId, userId: Guid.Parse(User.FindFirstValue("UserId")));
+
+             return View("~/Views/Application/Feedback.cshtml", sequence);
+         }
+
+         [HttpGet("/Application/Submitted")]
+         public async Task<IActionResult> Submitted()
+         {
+             return View("~/Views/Application/Submitted.cshtml");
          }
      }
  }

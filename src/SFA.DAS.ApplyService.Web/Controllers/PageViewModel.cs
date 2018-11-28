@@ -34,7 +34,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 Value = page.AllowMultipleAnswers ? null : answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value
             }));
 
-            
+            Feedback = page.Feedback;
+            HasFeedback = page.HasFeedback;
+            BodyText = page.BodyText;
             
             foreach (var question in Questions)
             {
@@ -65,5 +67,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public int SectionId { get; set; }
 
         public List<PageOfAnswers> PageOfAnswers { get; set; }
+        public string BodyText { get; set; }
+        public string RedirectAction { get; set; }
     }
 }

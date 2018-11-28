@@ -1,0 +1,23 @@
+@model Guid
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l">
+                Application feedback
+            </h1>
+
+            <p class="govuk-body">After reviewing your application to join the register of end-point assessment organisations, we need more information.</p>
+
+            <p class="govuk-body">Read the comments on the answers that need more information.</p>
+
+            <a href="@Url.Action("Feedback", "Application", new {applicationId = Model})" class="govuk-button">
+                Go to feedback
+            </a>
+        </div>
+    </div>
+</main>

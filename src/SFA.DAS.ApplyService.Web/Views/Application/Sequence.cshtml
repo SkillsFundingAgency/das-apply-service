@@ -13,7 +13,7 @@
             <h1 class="govuk-heading-xl">Application overview</h1>
 
             <ul class="govuk-list">
-                @foreach (var applicationSection in Model.Sections)
+                @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionId))
                 {
                     <li>
                         <h2 class="gvuk-heading-m govuk-!-margin-bottom-2">
@@ -24,7 +24,7 @@
                         </span>
                         @if (Model.Status != ApplicationSequenceStatus.Submitted)
                         {
-                            <a href="@Url.Action("Section", "Application", new {applicationSection.ApplicationId, applicationSection.SectionId})">
+                            <a href="@Url.Action("Section", "Application", new {applicationSection.ApplicationId, applicationSection.SequenceId, applicationSection.SectionId})">
                                 Go to @applicationSection.LinkTitle.ToLower()
                             </a>
                         }

@@ -242,7 +242,7 @@ namespace SFA.DAS.ApplyService.Data
             
         }
 
-        public async Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string status)
+        public async Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string status, string applicationStatus)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
@@ -254,11 +254,11 @@ namespace SFA.DAS.ApplyService.Data
                                                 WHERE  (ApplicationSequences.ApplicationId = @ApplicationId) AND (ApplicationSequences.SequenceId = @SequenceId);
                             
                                                 UPDATE       Applications
-                                                SET                ApplicationStatus = @status
+                                                SET                ApplicationStatus = @applicationStatus
                                                 FROM            Applications INNER JOIN
                                                                 Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
                                                 WHERE  (Applications.Id = @ApplicationId)",
-                    new {applicationId, sequenceId, status});
+                    new {applicationId, sequenceId, status, applicationStatus});
             }
         }
 
@@ -296,6 +296,37 @@ namespace SFA.DAS.ApplyService.Data
                                                          Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
                                                 WHERE  (ApplicationSequences.ApplicationId = @ApplicationId) AND (ApplicationSequences.SequenceId = @nextSequenceId);",
                     new {applicationId, nextSequenceId});
+            }
+        }
+
+        public async Task UpdateApplicationData(Guid applicationId, string serialisedData)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE Applications
+                                                SET    ApplicationData = @serialisedData
+                                                WHERE  Applications.Id = @applicationId",
+                    new {applicationId, serialisedData});
+            }
+        }
+
+        public async Task<Domain.Entities.Application> GetApplication(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return await connection.QuerySingleAsync<Domain.Entities.Application>(@"SELECT * FROM Applications WHERE Id = @applicationId", new {applicationId});
+            }
+        }
+
+        public async Task UpdateApplicationStatus(Guid applicationId, string status)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE       Applications
+                                                SET                ApplicationStatus = @status
+                                                FROM            Applications INNER JOIN
+                                                Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
+                                                WHERE  (Applications.Id = @ApplicationId)", new {applicationId, status});
             }
         }
     }

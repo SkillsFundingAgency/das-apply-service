@@ -1,0 +1,42 @@
+@model Guid
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+          
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form asp-action="Search" asp-controller="Standard" asp-route-applicationId="@Model">
+                <div class="govuk-form-group">
+                    <h1 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--l" for="standard-name">
+                            What standard are you applying for?
+                        </label>
+                    </h1>
+                    <span id="standard-hint" class="govuk-hint">
+                        For example, financial adviser
+                    </span>
+                    <input class="govuk-input govuk-input--width-20 ui-autocomplete-input" id="standard-name" name="StandardToFind" type="text" value="" autocomplete="off">
+                </div>
+                <h2 class="govuk-heading-m js-no-results" style="display: none;">No results found</h2>
+                <p class="govuk-body js-no-results" style="display: none;">Details about standards can be found on the <a href="#" class="govuk-link">Institute for Apprenticeships (IFA)</a> website.</p>
+                <div class="js-prerequisites govuk-form-group" style="display: none;">
+                    <h2 class="govuk-heading-m">Prerequisites for <span class="js-standard-name">the standard</span></h2>
+                    <ul class="js-requirements govuk-list govuk-list--bullet">
+                    </ul>
+                </div>
+                <button type="submit" class="govuk-button js-choose-standard-button">
+                    Continue
+                </button>
+            </form>
+        </div>
+    </div>
+
+    
+    @* Greg, here is the url to call to search.  I've put it in an anchor just to generate it! :) *@
+    <a href="@Url.Action("Search", "Standard", new {search = "test"})"></a>
+
+</main>

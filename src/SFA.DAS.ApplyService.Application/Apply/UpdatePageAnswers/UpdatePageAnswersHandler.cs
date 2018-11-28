@@ -59,7 +59,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                 pageAnswers = new PageOfAnswers(){Answers = new List<Answer>(), Id = Guid.NewGuid()};
                 page.PageOfAnswers.Add(pageAnswers);
             }
-
+            
             var validationPassed = true;
             var validationErrors = new List<KeyValuePair<string, string>>();
 
@@ -94,6 +94,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
 
             if (validationPassed) 
             {
+                if (page.HasFeedback)
+                {
+                    page.Feedback.ForEach(f => f.IsRead = true);
+                }
                 page.Complete = true;
 
                 //MarkSequenceAsCompleteIfAllPagesComplete(sequence, workflow.Sequences);
@@ -125,6 +129,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                     {
                         p.Complete = page.Complete;
                         p.PageOfAnswers = page.PageOfAnswers;
+                        p.Feedback = page.Feedback;
                     }
                 });
 

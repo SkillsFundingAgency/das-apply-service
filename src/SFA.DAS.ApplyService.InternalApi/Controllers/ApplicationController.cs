@@ -10,6 +10,7 @@ using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.GetSection;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
+using SFA.DAS.ApplyService.Application.Apply.UpdateApplicationData;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 using SFA.DAS.ApplyService.Application.Apply.Upload;
 using SFA.DAS.ApplyService.Domain.Apply;
@@ -33,6 +34,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             await _mediator.Send(new StartApplicationRequest(request.UserId));
         }
 
+        [HttpGet("Application/{applicationId}")]
+        public async Task<ActionResult<Domain.Entities.Application>> GetApplication(Guid applicationId)
+        {
+            return await _mediator.Send(new GetApplicationRequest(applicationId));
+        }
+        
         [HttpGet("Applications/{userId}")]
         public async Task<ActionResult<List<Domain.Entities.Application>>> GetApplications(string userId)
         {
@@ -115,6 +122,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<IActionResult> DeleteAnswer(string applicationId, string userId, int sequenceId, int sectionId, string pageId, Guid answerId)
         {
             await _mediator.Send(new DeletePageAnswerRequest(Guid.Parse(applicationId), Guid.Parse(userId),sequenceId,sectionId, pageId, answerId));
+            return Ok();
+        }
+
+        [HttpPost("/Application/{applicationId}/UpdateApplicationData")]
+        public async Task<ActionResult> UpdateApplicationData(Guid applicationId, [FromBody] object applicationData)
+        {
+            await _mediator.Send(new UpdateApplicationDataRequest(applicationId, applicationData));
             return Ok();
         }
     }
