@@ -343,11 +343,6 @@
   margin-right: 10px;
 }
 
-.das-user-panel__item {
-  color: #fff;
-  margin: 0;
-}
-
 .govuk-link--white:link,
 .govuk-link--white:visited {
   color: #fff;
@@ -356,6 +351,12 @@
 .govuk-link--white:link:hover,
 .govuk-link--white:visited:hover {
   color: #ddeef8;
+}
+
+.das-user-panel__item {
+  color: #fff;
+  margin-right: 15px;
+  margin-bottom: 0;
 }
 
 .das-user-panel__item--grow {

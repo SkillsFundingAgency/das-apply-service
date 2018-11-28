@@ -11,6 +11,21 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             return View();
         }
+
+        public IActionResult ContactUs()
+        {
+            return View();
+        }
+
+        public IActionResult Cookies()
+        {
+            return View();
+        }
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
         
         public IActionResult Error()
         {
