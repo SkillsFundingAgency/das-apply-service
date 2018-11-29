@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Domain.Entities;
 
@@ -25,7 +26,7 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
 
         private async Task<Organisation> CreateNewOrganisation(CreateOrganisationRequest request)
         {
-            var organisation = new Organisation { CreatedBy = request.CreatedBy, Name = request.Name, OrganisationDetails = request.OrganisationDetails, OrganisationType = request.OrganisationType, OrganisationUkprn = request.OrganisationUkprn };
+            var organisation = new Organisation { CreatedBy = request.CreatedBy, Name = request.Name, OrganisationDetails = JsonConvert.SerializeObject(request.OrganisationDetails), OrganisationType = request.OrganisationType, OrganisationUkprn = request.OrganisationUkprn };
             organisation.Status = "New";
 
             var result = await _organisationRepository.CreateOrganisation(organisation, request.CreatedByUserId);
@@ -47,7 +48,7 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
                 bool roEPAOApproved = "RoEPAO".Equals(request.OrganisationDetails?.OrganisationReferenceType, StringComparison.InvariantCultureIgnoreCase);
                 bool roATPApproved = "RoATP".Equals(request.OrganisationDetails?.OrganisationReferenceType, StringComparison.InvariantCultureIgnoreCase);
 
-                existingOrganisation.OrganisationDetails = request.OrganisationDetails;
+                existingOrganisation.OrganisationDetails = JsonConvert.SerializeObject(request.OrganisationDetails);
                 existingOrganisation.OrganisationType = request.OrganisationType;
                 existingOrganisation.OrganisationUkprn = request.OrganisationUkprn;
                 existingOrganisation.UpdatedBy = request.CreatedBy;
