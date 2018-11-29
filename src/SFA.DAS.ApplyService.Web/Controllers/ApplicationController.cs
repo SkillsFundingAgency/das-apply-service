@@ -53,7 +53,11 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
                  }
                  else if (application.ApplicationStatus == ApplicationStatus.Rejected)
                  {
-                     return View("~/Views/Application/Rejected.cshtml", application.Id );
+                     return View(applications);
+                 }
+                 else if (application.ApplicationStatus == ApplicationStatus.Approved)
+                 {
+                     return View(applications);
                  }
                  
                  return RedirectToAction("SequenceSignPost", new {applicationId = application.Id});     
@@ -80,10 +84,18 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
          [HttpGet("/Applications/{applicationId}")]
          public async Task<IActionResult> SequenceSignPost(Guid applicationId)
          {
-             // Break this out into a "Signpost" action.
-             var sequence = await _apiClient.GetSequence(applicationId, userId: Guid.Parse(User.FindFirstValue("UserId")));
-
              var application = await _apiClient.GetApplication(applicationId);
+             if (application.ApplicationStatus == ApplicationStatus.Approved)
+             {
+                 return View("~/Views/Application/Approved.cshtml", application);
+             }
+             
+             if (application.ApplicationStatus == ApplicationStatus.Rejected)
+             {
+                 return View("~/Views/Application/Rejected.cshtml", application);
+             }
+             
+             var sequence = await _apiClient.GetSequence(applicationId, userId: Guid.Parse(User.FindFirstValue("UserId")));
 
              StandardApplicationData applicationData = null;
 

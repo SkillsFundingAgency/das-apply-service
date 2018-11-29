@@ -26,6 +26,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Feedback
             {
                 page.Feedback = new List<Domain.Apply.Feedback>();
             }
+
+            request.Feedback.IsNew = true;
             
             page.Feedback.Add(request.Feedback);
 

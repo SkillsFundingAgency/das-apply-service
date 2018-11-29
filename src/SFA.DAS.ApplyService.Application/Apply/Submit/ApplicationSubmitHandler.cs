@@ -15,6 +15,28 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
         
         public async Task<Unit> Handle(ApplicationSubmitRequest request, CancellationToken cancellationToken)
         {
+            // Update all feedback.IsNew  = false;
+
+            var sections = await _applyRepository.GetSections(request.ApplicationId);
+
+            foreach (var section in sections)
+            {
+                var pages = section.Pages;
+                foreach (var page in pages)
+                {
+                    if (!page.HasFeedback) continue;
+                    
+                    foreach (var feedback in page.Feedback)
+                    {
+                        feedback.IsNew = false;
+                    }
+                }
+
+                section.Pages = pages;
+            }
+
+            await _applyRepository.UpdateSections(sections);
+            
             await _applyRepository.SubmitApplicationSequence(request);
             return Unit.Value;
         }

@@ -32,7 +32,12 @@ namespace SFA.DAS.ApplyService.Domain.Apply
 
         public bool HasNewFeedback()
         {
-            return Feedback.Any(f => !f.IsRead);
+            return HasFeedback && Feedback.Any(f => f.IsNew);
+        }
+        
+        public bool HasCompletedFeedback()
+        {
+            return HasFeedback && Feedback.Any(f => f.IsCompleted);
         }
     }
 

@@ -329,5 +329,14 @@ namespace SFA.DAS.ApplyService.Data
                                                 WHERE  (Applications.Id = @ApplicationId)", new {applicationId, status});
             }
         }
+
+        public async Task<List<ApplicationSection>> GetSections(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<ApplicationSection>(@"SELECT * FROM ApplicationSections WHERE ApplicationId = @applicationId",
+                    new {applicationId})).ToList();
+            }
+        }
     }
 }

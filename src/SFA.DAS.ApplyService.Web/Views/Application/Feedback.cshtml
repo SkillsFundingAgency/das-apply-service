@@ -20,7 +20,7 @@
                 {
                     <li>
                         @sec.LinkTitle
-                        @if (sec.HasFeedback)
+                        @if (sec.HasNewFeedback())
                         {
                             <ul class="app-task-list__items">
                                 @foreach (var pg in sec.Pages.OrderBy(p => p.PageId).Where(p => p.HasFeedback))
@@ -28,7 +28,7 @@
                                     <li class="app-task-list__item">
                                         <a aria-describedby="eligibility-completed" class="app-task-list__task-name" 
                                            href="@Url.Action("Page", "Application", new {applicationId = Model.ApplicationId, sequenceId = (int)Model.SequenceId, sectionId = sec.SectionId, pageId = pg.PageId, redirectAction="Feedback"})">@pg.LinkTitle</a>
-                                        @if (!pg.HasNewFeedback())
+                                        @if (pg.HasCompletedFeedback())
                                         {
                                             <strong class="govuk-tag app-task-list__task-completed" id="completed">Completed</strong>
                                         }

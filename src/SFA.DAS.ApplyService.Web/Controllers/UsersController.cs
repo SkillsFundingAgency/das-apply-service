@@ -98,6 +98,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("Index", "OrganisationSearch");
             }
             
+            
+            
+            
+            
+            
             return RedirectToAction("Applications", "Application");
         }
     }
