@@ -9,18 +9,20 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
         {
             CreateMap<Models.ProviderRegister.Provider, Types.OrganisationSearchResult>()
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "RoATP")
+                .BeforeMap((source, dest) => dest.OrganisationReferenceType = "Training Provider")
                 .ForMember(dest => dest.Ukprn, opt => opt.MapFrom(source => source.Ukprn))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Ukprn))
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.ProviderName))
+                .ForMember(dest => dest.ProviderName, opt => opt.MapFrom(source => source.ProviderName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(source => source.Email))
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(source => Mapper.Map<Models.ProviderRegister.Address, Types.OrganisationAddress>(source.Addresses.FirstOrDefault())))
                 .ForAllOtherMembers(dest => dest.Ignore());
 
             CreateMap<Models.ProviderRegister.Organisation, Types.OrganisationSearchResult>()
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "RoATP")
+                .BeforeMap((source, dest) => dest.OrganisationReferenceType = "Assessment Organisations")
                 .BeforeMap((source, dest) => dest.Ukprn = null)
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.Name))
+                .ForMember(dest => dest.ProviderName, opt => opt.MapFrom(source => source.Name))
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(source => Mapper.Map<Models.ProviderRegister.Address, Types.OrganisationAddress>(source.Address)))
                 .ForAllOtherMembers(dest => dest.Ignore());
         }
