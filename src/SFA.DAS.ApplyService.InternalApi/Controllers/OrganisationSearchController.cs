@@ -282,8 +282,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                     }
                 );
 
-            var nameList = nameMerge.ToList();
-
             var ukprnMerge = nameMerge.GroupBy(org => new { filter = org.Ukprn.HasValue ? org.Ukprn.ToString() : org.Name.ToUpperInvariant()})
                 .Select(group =>
                     new OrganisationSearchResult
@@ -299,8 +297,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                         OrganisationReferenceId = string.Join(",", group.Select(g => g.Id).Where(Id => !string.IsNullOrWhiteSpace(Id)))
                     }
                 );
-
-            var ukprnList = ukprnMerge.ToList();
 
             return ukprnMerge.OrderByDescending(org => org.Ukprn).ToList();
         }
