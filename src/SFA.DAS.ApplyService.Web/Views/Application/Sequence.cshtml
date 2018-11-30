@@ -12,6 +12,18 @@
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">Application overview</h1>
 
+            @if (Model.Status == ApplicationSequenceStatus.Submitted)
+            {
+                <div class="govuk-panel govuk-panel--confirmation">
+                    <h1 class="govuk-panel__title">
+                        Your application has been submitted
+                    </h1>
+                    <div class="govuk-panel__body">
+                        Once your application has been reviewed you'll hear from us by email.
+                    </div>
+                </div>
+            }
+
             <ul class="govuk-list">
                 @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionId))
                 {
@@ -43,13 +55,7 @@
                     </form>
                 </div>
             }
-            
-            @if (Model.Status == ApplicationSequenceStatus.Submitted)
-            {
-                <div>
-                    Your application has been submitted.
-                </div>
-            }
+        
         </div>
     </div>
 </main>
