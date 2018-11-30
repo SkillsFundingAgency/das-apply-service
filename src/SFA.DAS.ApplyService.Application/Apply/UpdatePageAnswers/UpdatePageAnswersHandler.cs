@@ -96,7 +96,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
             {
                 if (page.HasFeedback)
                 {
-                    page.Feedback.ForEach(f => f.IsRead = true);
+                    page.Feedback.ForEach(f => f.IsCompleted = true);
                 }
                 page.Complete = true;
 

@@ -34,15 +34,16 @@ namespace SFA.DAS.ApplyService.Data
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
-                var orgData = JsonConvert.SerializeObject(organisation.OrganisationDetails);
-                bool roEPAOApproved = "RoEPAO".Equals(organisation.OrganisationDetails?.OrganisationReferenceType, StringComparison.InvariantCultureIgnoreCase);
-                bool roATPApproved = "RoATP".Equals(organisation.OrganisationDetails?.OrganisationReferenceType, StringComparison.InvariantCultureIgnoreCase);
+                var orgDetails = JsonConvert.DeserializeObject<OrganisationDetails>(organisation.OrganisationDetails);
+                
+                bool roEPAOApproved = "RoEPAO".Equals(orgDetails?.OrganisationReferenceType, StringComparison.InvariantCultureIgnoreCase);
+                bool roATPApproved = "RoATP".Equals(orgDetails?.OrganisationReferenceType, StringComparison.InvariantCultureIgnoreCase);
 
                 connection.Execute(
                     "INSERT INTO [Organisations] ([Id],[Name],[OrganisationType],[OrganisationUKPRN], " +
                     "[OrganisationDetails],[Status],[CreatedAt],[CreatedBy],[RoEPAOApproved],[RoATPApproved]) " +
                     "VALUES (NEWID(), @Name, REPLACE(@OrganisationType, ' ', ''), @OrganisationUkprn, @orgData, 'New', GETUTCDATE(), @CreatedBy, @roEPAOApproved, @roATPApproved)",
-                    new { organisation.Name, organisation.OrganisationType, organisation.OrganisationUkprn, orgData, organisation.CreatedBy, roEPAOApproved, roATPApproved });
+                    new { organisation.Name, organisation.OrganisationType, organisation.OrganisationUkprn, organisation.OrganisationDetails, organisation.CreatedBy, roEPAOApproved, roATPApproved });
 
                 var org = await GetOrganisationByName(organisation.Name);
 

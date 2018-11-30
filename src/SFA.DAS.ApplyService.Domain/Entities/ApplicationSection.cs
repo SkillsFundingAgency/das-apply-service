@@ -50,11 +50,10 @@ namespace SFA.DAS.ApplyService.Domain.Entities
             Pages = currentPages;
         }
         
-        public bool HasFeedback
+        public bool HasNewFeedback()
         {
-            get
             {
-                return Pages.Any(p => p.HasFeedback);
+                return Pages.Any(p => p.HasNewFeedback());
             }
         }
     }

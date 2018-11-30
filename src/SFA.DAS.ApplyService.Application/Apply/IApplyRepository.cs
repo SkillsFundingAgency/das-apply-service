@@ -33,5 +33,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task UpdateApplicationData(Guid requestApplicationId, string serialisedData);
         Task<Domain.Entities.Application> GetApplication(Guid requestApplicationId);
         Task UpdateApplicationStatus(Guid applicationId, string status);
+        Task<List<ApplicationSection>> GetSections(Guid applicationId);
     }
 }
