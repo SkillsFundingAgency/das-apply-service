@@ -5,7 +5,7 @@
         public string Id { get; set; }
         public int? Ukprn { get; set; }
 
-        public string Name { get; set; }
+        public string Name => LegalName ?? TradingName ?? ProviderName;
         public string Email { get; set; }
 
         public OrganisationAddress Address { get; set; }
@@ -13,6 +13,11 @@
 
         public string OrganisationReferenceType { get; set; }
         public string OrganisationReferenceId { get; set; }
+
+
+        public string TradingName { get; set; }
+        public string LegalName { get; set; }
+        public string ProviderName { get; set; }
     }
 
     public class OrganisationAddress

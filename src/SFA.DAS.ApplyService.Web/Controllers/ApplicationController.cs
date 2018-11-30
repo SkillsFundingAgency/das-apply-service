@@ -112,7 +112,8 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
              }
              else if (sequence.SequenceId == SequenceId.Stage2 && string.IsNullOrWhiteSpace(applicationData?.StandardName))
              {
-                 return RedirectToAction("Search", "Standard", new {applicationId});
+                 //return RedirectToAction("Search", "Standard", new {applicationId});
+                 return View("~/Views/Application/Stage2Intro.cshtml", applicationId);
              }
              else if (sequence.SequenceId == SequenceId.Stage2)
              {
@@ -156,9 +157,14 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
          }
  
  
-         [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/NextPage")]
-         public async Task<IActionResult> NextPage(Guid applicationId, int sequenceId, int sectionId, string pageId)
+         [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/NextPage/{redirectAction}")]
+         public async Task<IActionResult> NextPage(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
          {
+             if (redirectAction == "Feedback")
+             {
+                 return RedirectToAction("Feedback", new {applicationId});
+             }
+             
              var thisPage = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId,Guid.Parse(User.FindFirstValue("UserId")));
              if (thisPage.PageOfAnswers.Any())
              {
@@ -170,14 +176,14 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
                  
                  if (next.Action == "NextPage")
                  {
-                     return RedirectToAction("Page", new {applicationId, sequenceId = thisPage.SequenceId, sectionId = thisPage.SectionId, pageId = next.ReturnId});
+                     return RedirectToAction("Page", new {applicationId, sequenceId = thisPage.SequenceId, sectionId = thisPage.SectionId, pageId = next.ReturnId, redirectAction});
                  }
                      
                  return next.Action == "ReturnToSection"
                      ? RedirectToAction("Section", "Application", new {applicationId, sectionId = next.ReturnId})
                      : RedirectToAction("Sequence", "Application", new {applicationId});
              }
-             return RedirectToAction("Page", new {applicationId, pageId = thisPage.PageId});
+             return RedirectToAction("Page", new {applicationId, sequenceId = thisPage.SequenceId, sectionId = thisPage.SectionId, pageId = thisPage.PageId, redirectAction});
          }
          
          [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/{redirectAction}")]
@@ -214,7 +220,7 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
                          new
                          {
                              applicationId, sequenceId = updatePageResult.Page.SequenceId,
-                             sectionId = updatePageResult.Page.SectionId, pageId = updatePageResult.Page.PageId
+                             sectionId = updatePageResult.Page.SectionId, pageId = updatePageResult.Page.PageId, redirectAction = redirectAction
                          });
                  }
 
@@ -230,7 +236,7 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
                      var pageNext = nextActions[0];
                      if (pageNext.Action == "NextPage" && pageNext.ConditionMet)
                      {
-                         return RedirectToAction("Page", new {applicationId, pageId = pageNext.ReturnId});
+                         return RedirectToAction("Page", new {applicationId, pageId = pageNext.ReturnId, redirectAction = redirectAction});
                      }
                      
                      return pageNext.Action == "ReturnToSection"
@@ -244,7 +250,7 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
                      {
                          if (nextConditionMet.Action == "NextPage")
                          {
-                             return RedirectToAction("Page", new {applicationId, pageId = nextConditionMet.ReturnId});
+                             return RedirectToAction("Page", new {applicationId, pageId = nextConditionMet.ReturnId, redirectAction = redirectAction});
                          }   
                          
                          return nextConditionMet.Action == "ReturnToSequence"

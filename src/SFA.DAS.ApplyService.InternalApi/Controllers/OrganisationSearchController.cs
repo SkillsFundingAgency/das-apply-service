@@ -27,54 +27,254 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("OrganisationSearch")]
         public async Task<IEnumerable<OrganisationSearchResult>> OrganisationSearch(string searchTerm)
         {
-            List<OrganisationSearchResult> results = new List<OrganisationSearchResult>();
+            if(string.IsNullOrWhiteSpace(searchTerm))
+            {
+                return new List<OrganisationSearchResult>();
+            }
+            else if (searchTerm.StartsWith("EPA", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return await OrganisationSearchByEpao(searchTerm);
+            }
+            else if (int.TryParse(searchTerm, out var ukprn))
+            {
+                return await OrganisationSearchByUkprn(ukprn);
+            }
+            else
+            {
+                return await OrganisationSearchByName(searchTerm);
+            }
+        }
+
+        private async Task<IEnumerable<OrganisationSearchResult>> OrganisationSearchByUkprn(int ukprn)
+        {
+            IEnumerable<OrganisationSearchResult> epaoResults = null;
+            OrganisationSearchResult providerResult = null;
+            IEnumerable<OrganisationSearchResult> referenceResults = null;
 
             // EPAO Register
             try
             {
-                var epaoResults = await _assessorServiceApiClient.SearchOrgansiation(searchTerm);
-                if (epaoResults != null) results.AddRange(epaoResults);
+                epaoResults = await _assessorServiceApiClient.SearchOrgansiation(ukprn.ToString());
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error from EPAO Register. Message: {ex.Message}");
+                _logger.LogError($"Error from EPAO Register. UKPRN: {ukprn} , Message: {ex.Message}");
             }
 
             // Provider Register
             try
             {
-                var providerResults = await _providerRegisterApiClient.SearchOrgansiation(searchTerm);
-                if (providerResults != null) results.AddRange(providerResults);
+                providerResult = await _providerRegisterApiClient.SearchOrgansiationByUkprn(ukprn);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error from Provider Register. Message: {ex.Message}");
+                _logger.LogError($"Error from Provider Register. UKPRN: {ukprn} , Message: {ex.Message}");
             }
 
             // Reference Data API
             try
             {
-                var referenceResults = await _referenceDataApiClient.SearchOrgansiation(searchTerm);
-                if (referenceResults != null) results.AddRange(referenceResults);
+                string searchTerm = null;
+
+                // This API has issues with Ltd & Limited and double spaces in some records
+                // If you try to search by UKPRN it interprets this as Company Name so must use actual name instead
+                if (epaoResults?.Count() == 1)
+                {
+                    searchTerm = epaoResults.First().Name;
+                }
+                else if (providerResult != null)
+                {
+                    searchTerm = providerResult.Name;
+                }
+
+                if (!string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    referenceResults = await _referenceDataApiClient.SearchOrgansiation(searchTerm, true);
+
+                    if (referenceResults?.Count() > 0)
+                    {
+                        foreach (var result in referenceResults)
+                        {
+                            result.Ukprn = ukprn;
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error from Reference Data API. Message: {ex.Message}");
+                _logger.LogError($"Error from Reference Data API. UKPRN: {ukprn} , Message: {ex.Message}");
             }
 
-            // de-dupe
+            var results = new List<OrganisationSearchResult>();
+
+            if (epaoResults != null) results.AddRange(epaoResults);
+            if (providerResult != null) results.Add(providerResult);
+            if (referenceResults != null) results.AddRange(referenceResults);
+
             return Dedupe(results);
         }
 
+        private async Task<IEnumerable<OrganisationSearchResult>> OrganisationSearchByEpao(string epao)
+        {
+            IEnumerable<OrganisationSearchResult> epaoResults = null;
+            OrganisationSearchResult providerResult = null;
+            IEnumerable<OrganisationSearchResult> referenceResults = null;
+
+            // EPAO Register
+            try
+            {
+                epaoResults = await _assessorServiceApiClient.SearchOrgansiation(epao);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error from EPAO Register. EPAO: {epao} , Message: {ex.Message}");
+            }
+
+            // Provider Register
+            try
+            {
+                // If the EPAO ID is not on this register then you can't search by UKPRN as there is no EPAO UKPRN search
+                providerResult = await _providerRegisterApiClient.SearchOrgansiationByEpao(epao);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error from Provider Register. EPAO: {epao} , Message: {ex.Message}");
+            }
+
+            // Reference Data API
+            try
+            {
+                int? ukprn = null;
+                string searchTerm = null;
+
+                // This API has issues with Ltd & Limited and double spaces in some records
+                // If you try to search by EPAO ID it interprets this as Company Name so must use actual name instead
+                if (epaoResults?.Count() == 1)
+                {
+                    searchTerm = epaoResults.First().Name;
+                    ukprn = epaoResults.First().Ukprn;
+                }
+                else if (providerResult != null)
+                {
+                    searchTerm = providerResult.Name;
+                    ukprn = providerResult.Ukprn;
+                }
+
+                if (!string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    referenceResults = await _referenceDataApiClient.SearchOrgansiation(searchTerm, true);
+
+                    if (referenceResults?.Count() > 0)
+                    {
+                        foreach (var result in referenceResults)
+                        {
+                            result.Ukprn = ukprn;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error from Reference Data API. EPAO: {epao} , Message: {ex.Message}");
+            }
+
+            var results = new List<OrganisationSearchResult>();
+
+            if (epaoResults != null) results.AddRange(epaoResults);
+            if (providerResult != null) results.Add(providerResult);
+            if (referenceResults != null) results.AddRange(referenceResults);
+
+            return Dedupe(results);
+        }
+
+        private async Task<IEnumerable<OrganisationSearchResult>> OrganisationSearchByName(string name)
+        {
+            IEnumerable<OrganisationSearchResult> epaoResults = null;
+            IEnumerable<OrganisationSearchResult> providerResults = null;
+            IEnumerable<OrganisationSearchResult> referenceResults = null;
+
+            // EPAO Register
+            try
+            {
+                epaoResults = await _assessorServiceApiClient.SearchOrgansiation(name);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error from EPAO Register. Name: {name} , Message: {ex.Message}");
+            }
+
+            // Provider Register
+            try
+            {
+                // If we have an exact result from EPAO Register and it has a UKPRN then search by UKPRN
+                if (epaoResults?.Count() == 1 && epaoResults.First().Ukprn.HasValue)
+                {
+                    var providerUkprnResult = await _providerRegisterApiClient.SearchOrgansiationByUkprn(epaoResults.First().Ukprn.Value);
+
+                    // Remember there is only Provider UKPRN search so if it is an EPAO UKPRN then you won't find it
+                    if (providerUkprnResult != null)
+                    {
+                        providerResults = new List<OrganisationSearchResult> { providerUkprnResult };
+                    }
+                }
+
+                // If not an exact result from EPAO Register OR... no results returned from UKPRN search, then carry on with searching by name
+                if (providerResults is null)
+                {
+                    providerResults = await _providerRegisterApiClient.SearchOrgansiationByName(name);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error from Provider Register. Name: {name} , Message: {ex.Message}");
+            }
+
+            // Reference Data API
+            try
+            {
+                bool mustBeExactMatch = false;
+
+                // This API has issues with Ltd & Limited and double spaces in some records
+                // Note that these two results could bring back different names
+                if (epaoResults?.Count() == 1 && string.Equals(epaoResults.First().Name.Trim(), name, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    name = epaoResults.First().Name.Trim();
+                    mustBeExactMatch = true;
+                }
+                else if (epaoResults?.Count() <= 1 & providerResults?.Count() == 1 && string.Equals(providerResults.First().Name.Trim(), name, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    name = providerResults.First().Name.Trim();
+                    mustBeExactMatch = true;
+                }
+
+                referenceResults = await _referenceDataApiClient.SearchOrgansiation(name, mustBeExactMatch);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error from Reference Data API. Name: {name} , Message: {ex.Message}");
+            }
+
+            var results = new List<OrganisationSearchResult>();
+
+            if (epaoResults != null) results.AddRange(epaoResults);
+            if (providerResults != null) results.AddRange(providerResults);
+            if (referenceResults != null) results.AddRange(referenceResults);
+
+            return Dedupe(results);
+        }
+
+
         private IEnumerable<OrganisationSearchResult> Dedupe(IEnumerable<OrganisationSearchResult> organisations)
         {
-            var query = organisations.GroupBy(org => org.Name.ToUpperInvariant())
+            var nameMerge = organisations.GroupBy(org => org.Name.ToUpperInvariant())
                 .Select(group => 
                     new OrganisationSearchResult
                     {
                         Id = group.Select(g => g.Id).FirstOrDefault(Id => !string.IsNullOrWhiteSpace(Id)),
                         Ukprn = group.Select(g => g.Ukprn).FirstOrDefault(Ukprn => Ukprn.HasValue),
-                        Name = group.Select(g => g.Name).FirstOrDefault(Name => !string.IsNullOrWhiteSpace(Name)),
+                        LegalName = group.Select(g => g.LegalName).FirstOrDefault(LegalName => !string.IsNullOrWhiteSpace(LegalName)),
+                        TradingName = group.Select(g => g.TradingName).FirstOrDefault(TradingName => !string.IsNullOrWhiteSpace(TradingName)),
+                        ProviderName = group.Select(g => g.ProviderName).FirstOrDefault(ProviderName => !string.IsNullOrWhiteSpace(ProviderName)),
                         Address = group.Select(g => g.Address).FirstOrDefault(Address => Address != null),
                         OrganisationType = group.Select(g => g.OrganisationType).FirstOrDefault(OrganisationType => !string.IsNullOrWhiteSpace(OrganisationType)),
                         OrganisationReferenceType = group.Select(g => g.OrganisationReferenceType).FirstOrDefault(OrganisationReferenceType => !string.IsNullOrWhiteSpace(OrganisationReferenceType)),
@@ -82,7 +282,23 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                     }
                 );
 
-            return query.OrderBy(org => org.Name).AsEnumerable();
+            var ukprnMerge = nameMerge.GroupBy(org => new { filter = org.Ukprn.HasValue ? org.Ukprn.ToString() : org.Name.ToUpperInvariant()})
+                .Select(group =>
+                    new OrganisationSearchResult
+                    {
+                        Id = group.Select(g => g.Id).FirstOrDefault(Id => !string.IsNullOrWhiteSpace(Id)),
+                        Ukprn = group.Select(g => g.Ukprn).FirstOrDefault(Ukprn => Ukprn.HasValue),
+                        LegalName = group.Select(g => g.LegalName).FirstOrDefault(LegalName => !string.IsNullOrWhiteSpace(LegalName)),
+                        TradingName = group.Select(g => g.TradingName).FirstOrDefault(TradingName => !string.IsNullOrWhiteSpace(TradingName)),
+                        ProviderName = group.Select(g => g.ProviderName).FirstOrDefault(ProviderName => !string.IsNullOrWhiteSpace(ProviderName)),
+                        Address = group.Select(g => g.Address).FirstOrDefault(Address => Address != null),
+                        OrganisationType = group.Select(g => g.OrganisationType).FirstOrDefault(OrganisationType => !string.IsNullOrWhiteSpace(OrganisationType)),
+                        OrganisationReferenceType = group.Select(g => g.OrganisationReferenceType).FirstOrDefault(OrganisationReferenceType => !string.IsNullOrWhiteSpace(OrganisationReferenceType)),
+                        OrganisationReferenceId = string.Join(",", group.Select(g => g.Id).Where(Id => !string.IsNullOrWhiteSpace(Id)))
+                    }
+                );
+
+            return ukprnMerge.OrderByDescending(org => org.Ukprn).ToList();
         }
 
         [HttpGet("OrganisationSearch/email/{email}")]

@@ -20,38 +20,15 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             _logger = logger;
         }
 
-        public async Task<IEnumerable<Types.OrganisationSearchResult>> SearchOrgansiation(string searchTerm)
+        public async Task<IEnumerable<Types.OrganisationSearchResult>> SearchOrgansiationByName(string name)
         {
-            List<Types.OrganisationSearchResult> organisations = new List<Types.OrganisationSearchResult>();
-
-            if (searchTerm.StartsWith("EPA", StringComparison.InvariantCultureIgnoreCase))
-            {
-                var organisation = await SearchOrgansiationByEpao(searchTerm);
-                if(organisation != null) organisations.Add(organisation);
-            }
-            else if (int.TryParse(searchTerm, out var ukprn))
-            {
-                var organisation = await SearchOrgansiationByUkprn(ukprn);
-                if (organisation != null) organisations.Add(organisation);
-            }
-            else
-            {
-                var orgs = await SearchOrgansiationByKeyword(searchTerm);
-                if (orgs != null) organisations.AddRange(orgs);
-            }
-
-            return organisations;
-        }
-
-        private async Task<IEnumerable<Types.OrganisationSearchResult>> SearchOrgansiationByKeyword(string keyword)
-        {
-            _logger.LogInformation($"Searching Provider Register. Keyword: {keyword}");
-            var apiResponse = await Get<IEnumerable<Provider>>($"/providers/search?keywords={keyword}");
+            _logger.LogInformation($"Searching Provider Register. Name: {name}");
+            var apiResponse = await Get<IEnumerable<Provider>>($"/providers/search?keywords={name}");
 
             return Mapper.Map<IEnumerable<Provider>, IEnumerable<Types.OrganisationSearchResult>>(apiResponse);
         }
 
-        private async Task<Types.OrganisationSearchResult> SearchOrgansiationByUkprn(int ukprn)
+        public async Task<Types.OrganisationSearchResult> SearchOrgansiationByUkprn(int ukprn)
         {
             _logger.LogInformation($"Searching Provider Register. Ukprn: {ukprn}");
             var apiResponse = await Get<Provider>($"/providers/{ukprn}");
@@ -59,7 +36,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             return Mapper.Map<Provider, Types.OrganisationSearchResult>(apiResponse);
         }
 
-        private async Task<Types.OrganisationSearchResult> SearchOrgansiationByEpao(string epao)
+        public async Task<Types.OrganisationSearchResult> SearchOrgansiationByEpao(string epao)
         {
             _logger.LogInformation($"Searching Provider Register. EPAO: {epao}");
             var apiResponse = await Get<Organisation>($"/assessment-organisations/{epao}");
