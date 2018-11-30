@@ -42,7 +42,7 @@ namespace SFA.DAS.ApplyService.Data
                 connection.Execute(
                     "INSERT INTO [Organisations] ([Id],[Name],[OrganisationType],[OrganisationUKPRN], " +
                     "[OrganisationDetails],[Status],[CreatedAt],[CreatedBy],[RoEPAOApproved],[RoATPApproved]) " +
-                    "VALUES (NEWID(), @Name, REPLACE(@OrganisationType, ' ', ''), @OrganisationUkprn, @orgData, 'New', GETUTCDATE(), @CreatedBy, @roEPAOApproved, @roATPApproved)",
+                    "VALUES (NEWID(), @Name, REPLACE(@OrganisationType, ' ', ''), @OrganisationUkprn, @OrganisationDetails, 'New', GETUTCDATE(), @CreatedBy, @roEPAOApproved, @roATPApproved)",
                     new { organisation.Name, organisation.OrganisationType, organisation.OrganisationUkprn, organisation.OrganisationDetails, organisation.CreatedBy, roEPAOApproved, roATPApproved });
 
                 var org = await GetOrganisationByName(organisation.Name);
@@ -67,15 +67,13 @@ namespace SFA.DAS.ApplyService.Data
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
-                var orgData = JsonConvert.SerializeObject(organisation.OrganisationDetails);
-
                 connection.Execute(
                     "UPDATE [Organisations] " +
                     "SET [UpdatedAt] = GETUTCDATE(), [UpdatedBy] = @UpdatedBy, [Name] = @Name, " +
                     "[OrganisationType] = @OrganisationType, [OrganisationUKPRN] = @OrganisationUkprn, " +
-                    "[OrganisationDetails] = @orgData, [RoEPAOApproved] = @RoEPAOApproved, [RoATPApproved] = @RoATPApproved " +
+                    "[OrganisationDetails] = @OrganisationDetails, [RoEPAOApproved] = @RoEPAOApproved, [RoATPApproved] = @RoATPApproved " +
                     "WHERE [Id] = @Id",
-                    new { organisation.Id, organisation.Name, organisation.OrganisationType, organisation.OrganisationUkprn, orgData, organisation.UpdatedBy, organisation.RoEPAOApproved, organisation.RoATPApproved });
+                    new { organisation.Id, organisation.Name, organisation.OrganisationType, organisation.OrganisationUkprn, organisation.OrganisationDetails, organisation.UpdatedBy, organisation.RoEPAOApproved, organisation.RoATPApproved });
 
                 return await GetOrganisationByName(organisation.Name);
             }
