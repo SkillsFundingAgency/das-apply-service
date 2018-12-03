@@ -26,6 +26,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             {
                 OrganisationReferenceType = organisation.OrganisationReferenceType,
                 OrganisationReferenceId = organisation.OrganisationReferenceId,
+                CompanyNumber = organisation.CompanyNumber,
+                CharityNumber = organisation.CharityNumber,
                 Address1 = organisation.Address?.Address1,
                 Address2 = organisation.Address?.Address2,
                 Address3 = organisation.Address?.Address3,
@@ -33,7 +35,18 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 Postcode = organisation.Address?.Postcode
             };
 
-            var request = new CreateOrganisationRequest { Name = organisation.Name, OrganisationType = organisation.OrganisationType, OrganisationUkprn = organisation.Ukprn, OrganisationDetails = orgDetails, CreatedByUserId = createdByUserId, CreatedBy = createdBy, PrimaryContactEmail = organisation.Email };
+            var request = new CreateOrganisationRequest
+            {
+                Name = organisation.Name,
+                OrganisationType = organisation.OrganisationType,
+                OrganisationUkprn = organisation.Ukprn,
+                RoEPAOApproved = organisation.RoEPAOApproved,
+                RoATPApproved = organisation.RoATPApproved,
+                OrganisationDetails = orgDetails,
+                CreatedByUserId = createdByUserId,
+                CreatedBy = createdBy,
+                PrimaryContactEmail = organisation.Email
+            };
 
             return await (await _httpClient.PostAsJsonAsync($"/Organisations", request)).Content
                 .ReadAsAsync<Organisation>();

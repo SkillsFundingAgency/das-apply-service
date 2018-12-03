@@ -21,15 +21,7 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
 
         public async Task<Organisation> Handle(CreateOrganisationRequest request, CancellationToken cancellationToken)
         {
-            return await UpdateOrganisationIfExists(request) ?? await CreateNewOrganisation(request);
-        }
-
-        private async Task<Organisation> CreateNewOrganisation(CreateOrganisationRequest request)
-        {
-            var organisation = new Organisation { CreatedBy = request.CreatedBy, Name = request.Name, OrganisationDetails = JsonConvert.SerializeObject(request.OrganisationDetails), OrganisationType = request.OrganisationType, OrganisationUkprn = request.OrganisationUkprn };
-            organisation.Status = "New";
-
-            var result = await _organisationRepository.CreateOrganisation(organisation, request.CreatedByUserId);
+            var result = await UpdateOrganisationIfExists(request) ?? await CreateNewOrganisation(request);
 
             if (result != null && !string.IsNullOrEmpty(request.PrimaryContactEmail))
             {
@@ -39,22 +31,36 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
             return result;
         }
 
+        private async Task<Organisation> CreateNewOrganisation(CreateOrganisationRequest request)
+        {
+            var organisation = new Organisation
+            {
+                Status = "New",
+                CreatedBy = request.CreatedBy,
+                Name = request.Name,
+                OrganisationDetails = JsonConvert.SerializeObject(request.OrganisationDetails),
+                OrganisationType = request.OrganisationType,
+                OrganisationUkprn = request.OrganisationUkprn,
+                RoEPAOApproved = request.RoEPAOApproved,
+                RoATPApproved = request.RoATPApproved
+            };
+
+            return await _organisationRepository.CreateOrganisation(organisation, request.CreatedByUserId);
+        }
+
         private async Task<Organisation> UpdateOrganisationIfExists(CreateOrganisationRequest request)
         {
             var existingOrganisation = await _organisationRepository.GetOrganisationByName(request.Name);
 
             if (existingOrganisation != null)
             {
-                bool roEPAOApproved = "RoEPAO".Equals(request.OrganisationDetails?.OrganisationReferenceType, StringComparison.InvariantCultureIgnoreCase);
-                bool roATPApproved = "RoATP".Equals(request.OrganisationDetails?.OrganisationReferenceType, StringComparison.InvariantCultureIgnoreCase);
-
                 existingOrganisation.OrganisationDetails = JsonConvert.SerializeObject(request.OrganisationDetails);
                 existingOrganisation.OrganisationType = request.OrganisationType;
                 existingOrganisation.OrganisationUkprn = request.OrganisationUkprn;
                 existingOrganisation.UpdatedBy = request.CreatedBy;
 
-                existingOrganisation.RoEPAOApproved = roEPAOApproved ? roEPAOApproved : existingOrganisation.RoEPAOApproved;
-                existingOrganisation.RoATPApproved = roATPApproved ? roATPApproved : existingOrganisation.RoATPApproved;
+                if (!existingOrganisation.RoEPAOApproved) existingOrganisation.RoEPAOApproved = request.RoEPAOApproved;
+                if (!existingOrganisation.RoATPApproved) existingOrganisation.RoATPApproved = request.RoATPApproved;
 
                 return await _organisationRepository.UpdateOrganisation(existingOrganisation);
             }
