@@ -9,5 +9,6 @@ namespace SFA.DAS.ApplyService.Configuration
         public string ApiUri { get; set; }
         public string RedirectUri { get; set; }
         public string CallbackUri { get; set; }
+        public string SignOutRedirectUri { get; set; }
     }
 }
