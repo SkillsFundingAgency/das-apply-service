@@ -62,7 +62,7 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
                 if (!existingOrganisation.RoEPAOApproved) existingOrganisation.RoEPAOApproved = request.RoEPAOApproved;
                 if (!existingOrganisation.RoATPApproved) existingOrganisation.RoATPApproved = request.RoATPApproved;
 
-                return await _organisationRepository.UpdateOrganisation(existingOrganisation);
+                return await _organisationRepository.UpdateOrganisation(existingOrganisation, request.CreatedByUserId);
             }
 
             return null;
