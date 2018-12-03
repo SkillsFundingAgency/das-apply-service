@@ -47,12 +47,27 @@
                             {
                                 <div class="govuk-radios__item">
                                     <input class="govuk-radios__input" asp-for="OrganisationType" id="@orgType.Type.Replace(" ", "_")" type="radio" value="@orgType.Type" required />
-                                    <label class="govuk-label govuk-radios__label" for="@orgType.Type.Replace(" ", "_")">@orgType.Type</label>
+                                    <label class="govuk-label govuk-radios__label" for="@orgType.Type.Replace(" ", "_")">@orgType.TypeDescription</label>
                                 </div>
                             }
                         </div>
                     </div>
-                    <button type="submit" class="govuk-button">Submit</button>
+
+                    @* Greg... can you style this as per ON-1017 *@
+                    <div>
+                        <details>
+                            <summary><span class="summary">Incorporated as public sector bodies</span></summary>
+                            <div class="text panel panel-border-narrow" id="incorporated-as-public-sector-bodies">
+                                <ul class="list list-bullet">
+                                    <li>Local authority including LEA schools</li>
+                                    <li>Central Government Department, Executive Agency or Non-departmental public body</li>
+                                    <li>NHS Trust, Fire Authority, Police Constabulary or Police Crime Commissioner</li>
+                                </ul>
+                            </div>
+                        </details>
+                    </div>
+
+                    <button type="submit" class="govuk-button">Continue</button>
                 }
                 else
                 {
