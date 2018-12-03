@@ -404,3 +404,8 @@
 .govuk-header__container--das-epao {
   border-bottom: 10px solid #004274;
 }
+
+.das-apply-notification-summary {
+  border: 4px solid #005ea5;
+  padding: 20px 15px;
+}
