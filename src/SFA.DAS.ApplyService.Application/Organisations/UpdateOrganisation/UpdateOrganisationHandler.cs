@@ -1,8 +1,7 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
-using Newtonsoft.Json;
+﻿using MediatR;
 using SFA.DAS.ApplyService.Domain.Entities;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.Organisations.UpdateOrganisation
 {
@@ -26,7 +25,7 @@ namespace SFA.DAS.ApplyService.Application.Organisations.UpdateOrganisation
 
             if (existingOrganisation != null)
             {
-                existingOrganisation.OrganisationDetails = JsonConvert.SerializeObject(request.OrganisationDetails);
+                existingOrganisation.OrganisationDetails = request.OrganisationDetails;
                 existingOrganisation.OrganisationType = request.OrganisationType;
                 existingOrganisation.OrganisationUkprn = request.OrganisationUkprn;
                 existingOrganisation.UpdatedBy = request.UpdatedBy;
