@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using SFA.DAS.ApplyService.InternalApi.Models.ReferenceData;
 
 namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
 {
@@ -6,13 +7,15 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
     {
         public ReferenceDataOrganisationProfile()
         {
-            CreateMap<Models.ReferenceData.Organisation, Types.OrganisationSearchResult>()
+            CreateMap<Organisation, Types.OrganisationSearchResult>()
                 .BeforeMap((source, dest) => dest.Ukprn = null)
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "EASAPI")
                 .BeforeMap((source, dest) => dest.Email = null)
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Code))
                 .ForMember(dest => dest.LegalName, opt => opt.MapFrom(source => source.Name))
-                .ForMember(dest => dest.Address, opt => opt.MapFrom(source => Mapper.Map<Models.ReferenceData.Address, Types.OrganisationAddress>(source.Address)))
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(source => Mapper.Map<Address, Types.OrganisationAddress>(source.Address)))
+                .ForMember(dest => dest.CompanyNumber, opt => opt.ResolveUsing(source => source.Type == OrganisationType.Company ? source.Code : null))
+                .ForMember(dest => dest.CharityNumber, opt => opt.ResolveUsing(source => source.Type == OrganisationType.Charity ? source.Code : null))
                 .ForAllOtherMembers(dest => dest.Ignore());
         }
     }
@@ -21,7 +24,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
     {
         public ReferenceDataOrganisationAddressProfile()
         {
-            CreateMap<Models.ReferenceData.Address, Types.OrganisationAddress>()
+            CreateMap<Address, Types.OrganisationAddress>()
                 .ForMember(dest => dest.Address1, opt => opt.MapFrom(source => source.Line1))
                 .ForMember(dest => dest.Address2, opt => opt.MapFrom(source => source.Line2))
                 .ForMember(dest => dest.Address3, opt => opt.MapFrom(source => source.Line3))

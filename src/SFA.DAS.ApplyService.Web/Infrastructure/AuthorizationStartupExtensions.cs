@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -45,7 +46,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
                     options.SaveTokens = true;
                     //options.CallbackPath = new PathString(Configuration["auth:oidc:callbackPath"]);
-                    options.SignedOutCallbackPath = new PathString("/Signedout"); 
+                    options.SignedOutCallbackPath = new PathString("/SignedOut");
+                    options.SignedOutRedirectUri = applyConfig.DfeSignIn.SignOutRedirectUri;// "https://localhost:6016/Users/LoggedOut";
                     
                     options.SecurityTokenValidator = new JwtSecurityTokenHandler
                     {

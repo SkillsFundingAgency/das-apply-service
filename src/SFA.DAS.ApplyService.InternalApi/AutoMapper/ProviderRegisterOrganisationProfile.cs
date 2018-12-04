@@ -10,6 +10,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
             CreateMap<Models.ProviderRegister.Provider, Types.OrganisationSearchResult>()
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "RoATP")
                 .BeforeMap((source, dest) => dest.OrganisationType = "Training Provider")
+                .BeforeMap((source, dest) => dest.RoATPApproved = true)
                 .ForMember(dest => dest.Ukprn, opt => opt.MapFrom(source => source.Ukprn))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Ukprn))
                 .ForMember(dest => dest.ProviderName, opt => opt.MapFrom(source => source.ProviderName))
