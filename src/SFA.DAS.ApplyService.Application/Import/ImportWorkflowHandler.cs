@@ -249,21 +249,22 @@ namespace SFA.DAS.ApplyService.Application.Import
 
             for (int i = 1; i < sheet.LastRowNum; i++)
             {
+
                 IRow row = sheet.GetRow(i);
+
                 if (row == null) continue;
                 
-                var questionRow = ReadQuestionRow(row);
+                var questionRow = ReadQuestionRow(row, i+1);
 
                 if (string.IsNullOrWhiteSpace(questionRow.SectionTitle)) continue;
 
                 spreadsheetRows.Add(questionRow);
-
             }
 
             return spreadsheetRows;
         }
 
-        private QuestionRow ReadQuestionRow(IRow row)
+        private QuestionRow ReadQuestionRow(IRow row, int rowNumber)
         {
             var questionRow = new QuestionRow();
             try
@@ -304,7 +305,7 @@ namespace SFA.DAS.ApplyService.Application.Import
             }
             catch (Exception e)
             {
-                throw;
+                Console.Write($"Error dealing with row [{rowNumber}]: Message: {e.Message}");
             }
 
 
