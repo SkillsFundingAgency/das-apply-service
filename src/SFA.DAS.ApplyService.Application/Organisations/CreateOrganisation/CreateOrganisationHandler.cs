@@ -1,10 +1,8 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
-using Newtonsoft.Json;
+﻿using MediatR;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Domain.Entities;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
 {
@@ -38,7 +36,7 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
                 Status = "New",
                 CreatedBy = request.CreatedBy,
                 Name = request.Name,
-                OrganisationDetails = JsonConvert.SerializeObject(request.OrganisationDetails),
+                OrganisationDetails = request.OrganisationDetails,
                 OrganisationType = request.OrganisationType,
                 OrganisationUkprn = request.OrganisationUkprn,
                 RoEPAOApproved = request.RoEPAOApproved,
@@ -54,7 +52,7 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
 
             if (existingOrganisation != null)
             {
-                existingOrganisation.OrganisationDetails = JsonConvert.SerializeObject(request.OrganisationDetails);
+                existingOrganisation.OrganisationDetails = request.OrganisationDetails;
                 existingOrganisation.OrganisationType = request.OrganisationType;
                 existingOrganisation.OrganisationUkprn = request.OrganisationUkprn;
                 existingOrganisation.UpdatedBy = request.CreatedBy;

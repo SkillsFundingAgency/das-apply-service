@@ -1,19 +1,13 @@
-﻿using System;
-using System.Data.SqlClient;
-using System.Threading.Tasks;
-using Dapper;
-using SFA.DAS.ApplyService.Application.Users;
-using SFA.DAS.ApplyService.Configuration;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
-using Dapper;
-using Newtonsoft.Json;
+﻿using Dapper;
 using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data.DapperTypeHandlers;
 using SFA.DAS.ApplyService.Domain.Entities;
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Data
 {
@@ -33,8 +27,6 @@ namespace SFA.DAS.ApplyService.Data
             {
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
-
-                var orgDetails = JsonConvert.DeserializeObject<OrganisationDetails>(organisation.OrganisationDetails);
 
                 connection.Execute(
                     "INSERT INTO [Organisations] ([Id],[Name],[OrganisationType],[OrganisationUKPRN], " +
