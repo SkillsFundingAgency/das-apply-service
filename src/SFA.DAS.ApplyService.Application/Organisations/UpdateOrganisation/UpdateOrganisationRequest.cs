@@ -2,6 +2,7 @@
 {
     using MediatR;
     using SFA.DAS.ApplyService.Domain.Entities;
+    using System;
 
     public class UpdateOrganisationRequest : IRequest<Organisation>
     {
@@ -14,6 +15,7 @@
         public bool RoEPAOApproved { get; set; }
         public bool RoATPApproved { get; set; }
 
+        public Guid UpdatedByUserId { get; set; }
         public string UpdatedBy { get; set; }
         public string PrimaryContactEmail { get; set; }
     }
