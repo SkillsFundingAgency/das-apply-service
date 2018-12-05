@@ -249,9 +249,7 @@ namespace SFA.DAS.ApplyService.Application.Import
 
             for (int i = 1; i < sheet.LastRowNum; i++)
             {
-
                 IRow row = sheet.GetRow(i);
-
                 if (row == null) continue;
                 
                 var questionRow = ReadQuestionRow(row, i+1);
@@ -260,7 +258,6 @@ namespace SFA.DAS.ApplyService.Application.Import
 
                 spreadsheetRows.Add(questionRow);
             }
-
             return spreadsheetRows;
         }
 
@@ -306,6 +303,7 @@ namespace SFA.DAS.ApplyService.Application.Import
             catch (Exception e)
             {
                 Console.Write($"Error dealing with row [{rowNumber}]: Message: {e.Message}");
+                throw;
             }
 
 
