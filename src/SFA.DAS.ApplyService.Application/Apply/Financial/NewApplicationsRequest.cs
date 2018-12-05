@@ -13,7 +13,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
     {
         public string ApplyingOrganisationName { get; set; }
         public string Status { get; set; }
-        public string LinkText { get; set; }
         public Guid ApplicationId { get; set; }
     }
 }

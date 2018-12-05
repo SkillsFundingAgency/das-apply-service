@@ -34,5 +34,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<Domain.Entities.Application> GetApplication(Guid requestApplicationId);
         Task UpdateApplicationStatus(Guid applicationId, string status);
         Task<List<ApplicationSection>> GetSections(Guid applicationId);
+        Task<List<dynamic>> GetNewFinancialApplications();
     }
 }

@@ -338,5 +338,25 @@ namespace SFA.DAS.ApplyService.Data
                     new {applicationId})).ToList();
             }
         }
+
+        public async Task<List<dynamic>> GetNewFinancialApplications()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync(@"SELECT org.Name, sec.Status, appl.Id
+                                FROM Applications appl
+                            INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
+                            INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id
+                            WHERE appl.ApplicationStatus = @applicationStatusSubmitted 
+                            AND sec.SectionId = 3 
+                            AND (sec.Status = @financialStatusInProgress OR sec.Status = @financialStatusSubmitted)",
+                    new
+                    {
+                        applicationStatusSubmitted = ApplicationStatus.Submitted, 
+                        financialStatusInProgress = SectionStatus.InProgress, 
+                        financialStatusSubmitted = SectionStatus.Submitted
+                    })).ToList();
+            }
+        }
     }
 }

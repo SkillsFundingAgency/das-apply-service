@@ -18,8 +18,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<ActionResult> NewApplications()
         {
             return Ok(await _mediator.Send(new NewApplicationsRequest()));
-        }
-           
-            
+        } 
     }
 }
