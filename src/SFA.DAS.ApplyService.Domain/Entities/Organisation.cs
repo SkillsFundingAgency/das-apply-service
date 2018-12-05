@@ -16,6 +16,10 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string OrganisationReferenceType { get; set; } // "RoEPAO", "RoATP" or "EASAPI"
         public string OrganisationReferenceId { get; set; } // CSV list of known id's
 
+        public string LegalName { get; set; }
+        public string TradingName { get; set; }
+        public string ProviderName { get; set; }
+
         public string CompanyNumber { get; set; }
         public string CharityNumber { get; set; }
 

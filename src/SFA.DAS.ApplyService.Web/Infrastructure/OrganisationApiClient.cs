@@ -26,6 +26,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             {
                 OrganisationReferenceType = organisation.OrganisationReferenceType,
                 OrganisationReferenceId = organisation.OrganisationReferenceId,
+                LegalName = organisation.LegalName,
+                TradingName = organisation.TradingName,
+                ProviderName = organisation.ProviderName,
                 CompanyNumber = organisation.CompanyNumber,
                 CharityNumber = organisation.CharityNumber,
                 Address1 = organisation.Address?.Address1,
