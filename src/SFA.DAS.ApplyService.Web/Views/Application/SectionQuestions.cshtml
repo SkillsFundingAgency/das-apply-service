@@ -16,17 +16,17 @@
             else
             {
                 <h1 class="govuk-heading-xl">@Model.Title</h1>
-                <ul class="app-task-list">
+                <ul class="govuk-list">
                     <li>
-                        <ul class="app-task-list__items app-task-list__items--no-number">
+                        <ul class="app-task-list">
                             @foreach (var pg in Model.Pages.Where(p => p.Active))
                             {
-                                <li class="app-task-list__item">
-                                    @pg.Title
-                                    <ul>
+                                <li>
+                                    <h2 class="govuk-heading-m">@pg.Title</h2>
+                                    <ul class="app-task-list__items app-task-list__items--no-number">
                                         @foreach (var question in pg.Questions)
                                         {
-                                            <li>
+                                            <li class="app-task-list__item">
                                                 <a class="app-task-list__task-name" href="@Url.Action("Page", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pg.PageId, redirectAction="Section"})">
                                                     @question.Label
                                                 </a>

@@ -5,11 +5,11 @@
     ViewBag.Title = "title";
     Layout = "_Layout";
 }
-<main class="govuk-main-wrapper " id="main-content" role="main">
 
+<main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-l">
+            <h1 class="govuk-heading-xl">
                 Application feedback
             </h1>
 
@@ -19,10 +19,10 @@
                 @foreach (var sec in Model.Sections.OrderBy(s => s.SectionId))
                 {
                     <li>
-                        @sec.LinkTitle
+                        <h2 class="govuk-heading-l">@sec.LinkTitle</h2>
                         @if (sec.HasNewFeedback())
                         {
-                            <ul class="app-task-list__items">
+                            <ul class="app-task-list__items app-task-list__items--no-number">
                                 @foreach (var pg in sec.Pages.OrderBy(p => p.PageId).Where(p => p.HasFeedback))
                                 {
                                     <li class="app-task-list__item">
