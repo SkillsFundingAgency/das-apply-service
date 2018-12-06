@@ -34,6 +34,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var user = await _usersApiClient.GetUserBySignInId(_httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
 
+            if(user.ApplyOrganisationId != null)
+            {
+                return RedirectToAction("Applications", "Application");
+            }
+
             // Can get details from UkPrn?
             // var ukprn = await _apiClient.GetOrganisationByUkprn(user.Ukprn); <-- this doesn't exist right now!
 
@@ -78,7 +83,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Results(string searchString, string organisationTypeFilter = null)
         {
-            if (string.IsNullOrEmpty(searchString) || searchString.Length < 2)
+            var user = await _usersApiClient.GetUserBySignInId(_httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
+
+            if (user.ApplyOrganisationId != null)
+            {
+                return RedirectToAction("Applications", "Application");
+            }
+            else if (string.IsNullOrEmpty(searchString) || searchString.Length < 2)
             {
                 ModelState.AddModelError(nameof(searchString), "Enter a valid search string");
                 return RedirectToAction(nameof(Index));
@@ -120,7 +131,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(OrganisationSearchViewModel viewModel)
         {
-            if (string.IsNullOrEmpty(viewModel.Name) || viewModel.SearchString.Length < 2)
+            var user = await _usersApiClient.GetUserBySignInId(_httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
+
+            if (user.ApplyOrganisationId != null)
+            {
+                return RedirectToAction("Applications", "Application");
+            }
+            else if (string.IsNullOrEmpty(viewModel.Name) || viewModel.SearchString.Length < 2)
             {
                 ModelState.AddModelError(nameof(viewModel.Name), "Enter a valid search string");
                 return RedirectToAction(nameof(Index));
@@ -168,8 +185,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 if (organisationSearchResult.OrganisationType == null)
                     organisationSearchResult.OrganisationType = viewModel.OrganisationType;
-
-                var user = await _usersApiClient.GetUserBySignInId(_httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
 
                 var orgThatWasCreated = await _organisationApiClient.Create(organisationSearchResult, user.Id);
 
