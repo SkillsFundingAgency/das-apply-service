@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.InternalApi.Models.AssessorService;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -27,7 +28,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("OrganisationSearch")]
         public async Task<IEnumerable<OrganisationSearchResult>> OrganisationSearch(string searchTerm)
         {
-            if(string.IsNullOrWhiteSpace(searchTerm))
+            if (string.IsNullOrWhiteSpace(searchTerm))
             {
                 return new List<OrganisationSearchResult>();
             }
@@ -322,9 +323,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet("OrganisationTypes")]
-        public async Task<IEnumerable<OrganisationType>> GetOrganisationTypes()
+        public async Task<IEnumerable<Types.OrganisationType>> GetOrganisationTypes()
         {
-            IEnumerable<OrganisationType> results = null;
+            IEnumerable<Types.OrganisationType> results = null;
 
             try
             {
