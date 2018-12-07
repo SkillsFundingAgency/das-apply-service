@@ -18,11 +18,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Download
         
         public async Task<DownloadResponse> Handle(DownloadRequest request, CancellationToken cancellationToken)
         {
-            var encryptedResult = await _storageService.Retrieve(request.ApplicationId.ToString(), request.PageId, request.QuestionId, request.Filename);
+            var encryptedResult = await _storageService.Retrieve(request.ApplicationId.ToString(), request.SequenceId, request.SectionId, request.PageId, request.QuestionId, request.Filename);
 
             var decrypted = await _encryptionService.Decrypt(encryptedResult.Item2);
 
-            return new DownloadResponse() {Filename = encryptedResult.Item1, FileStream = decrypted};
+            return new DownloadResponse() {Filename = encryptedResult.Item1, FileStream = decrypted, ContentType = encryptedResult.Item3};
 
         }
     }

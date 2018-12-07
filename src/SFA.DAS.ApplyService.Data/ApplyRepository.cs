@@ -133,16 +133,16 @@ namespace SFA.DAS.ApplyService.Data
             {
                 foreach (var applicationSection in sections)
                 {
-                    await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata WHERE Id = @Id", applicationSection);    
+                    await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata, Status = @Status WHERE Id = @Id", applicationSection);    
                 }
             }
         }
 
-        public async Task SaveSection(ApplicationSection section, Guid userId)
+        public async Task SaveSection(ApplicationSection section, Guid? userId = null)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata WHERE Id = @Id", section);       
+                await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata, Status = @Status WHERE Id = @Id", section);       
             }
         }
 
@@ -232,6 +232,13 @@ namespace SFA.DAS.ApplyService.Data
                                                          Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
                                                 WHERE  (ApplicationSequences.ApplicationId = @ApplicationId) AND (ApplicationSequences.SequenceId = @SequenceId) AND Contacts.Id = @UserId;
                             
+                                                UPDATE ApplicationSections
+                                                SET    Status = 'Submitted'
+                                                FROM   ApplicationSections INNER JOIN
+                                                            Applications ON ApplicationSections.ApplicationId = Applications.Id INNER JOIN
+                                                            Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
+                                                WHERE  (ApplicationSections.ApplicationId = @ApplicationId) AND (ApplicationSections.SectionId = 3) AND Contacts.Id = @UserId;
+
                                                 UPDATE       Applications
                                                 SET                ApplicationStatus = 'Submitted'
                                                 FROM            Applications INNER JOIN
@@ -356,6 +363,28 @@ namespace SFA.DAS.ApplyService.Data
                         financialStatusInProgress = SectionStatus.InProgress, 
                         financialStatusSubmitted = SectionStatus.Submitted
                     })).ToList();
+            }
+        }
+
+        public async Task UpdateFinancialGrade(Guid applicationId, FinancialApplicationGrade updatedGrade)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE Applications
+                                                SET    ApplicationData = @serialisedData
+                                                WHERE  Applications.Id = @applicationId",
+                    new {applicationId, updatedGrade});
+            }
+        }
+
+        public async Task StartFinancialReview(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE ApplicationSections 
+                                                SET Status = 'In Progress'
+                                                WHERE ApplicationId = @applicationId AND SectionId = 3 AND SequenceId = 1",
+                    new {applicationId});
             }
         }
     }

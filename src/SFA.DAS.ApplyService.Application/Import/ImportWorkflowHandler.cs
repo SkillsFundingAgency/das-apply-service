@@ -69,7 +69,9 @@ namespace SFA.DAS.ApplyService.Application.Import
                         page.Questions = questions.Where(q => !q.QuestionId.Contains(".")).ToList();
                     }
 
-                    section.QnAData = JsonConvert.SerializeObject(pages);
+                    var qnaDataObject = new QnAData {Pages = pages};
+
+                    section.QnAData = JsonConvert.SerializeObject(qnaDataObject);
 
                     await _applyRepository.CreateSection(section);
                 }

@@ -23,7 +23,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Upload
             {
                 var encryptedFileStream = await _encryptionService.Encrypt(file.OpenReadStream());
                 
-                var storedFileName = await _storageService.Store(request.ApplicationId.ToString(), request.PageId, file.Name, file.FileName, encryptedFileStream);
+                var storedFileName = await _storageService.Store(request.ApplicationId.ToString(), request.SequenceId, request.SectionId, request.PageId, file.Name, file.FileName, encryptedFileStream, file.ContentType);
 
                 if (storedFileName != null)
                 {

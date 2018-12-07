@@ -23,7 +23,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.GetPage
                 throw new BadRequestException("Application Section not found");
             }
 
-            var page = section.Pages.Single(p => p.PageId == request.PageId);
+            var page = section.QnADataObject.Pages.Single(p => p.PageId == request.PageId);
 
             return page;
         }

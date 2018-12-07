@@ -21,7 +21,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.DeleteAnswer
             var section = await _applyRepository.GetSection(request.ApplicationId, request.SequenceId, request.SectionId,
                 request.UserId);
 
-            var pages = section.Pages;
+            var pages = section.QnADataObject.Pages;
 
             var page = pages.Single(p => p.PageId == request.PageId);
 
@@ -29,7 +29,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.DeleteAnswer
 
             page.PageOfAnswers.Remove(answerPage);
 
-            section.Pages = pages;
+            section.QnADataObject.Pages = pages;
 
             await _applyRepository.UpdateSections(new List<ApplicationSection> {section});
             

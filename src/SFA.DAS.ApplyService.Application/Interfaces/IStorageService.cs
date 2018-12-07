@@ -6,8 +6,8 @@ namespace SFA.DAS.ApplyService.Application.Interfaces
 {
     public interface IStorageService
     {
-        Task<string> Store(string applicationId, string pageId, string questionId, string fileName, Stream fileStream);
-        Task<Tuple<string, Stream>> Retrieve(string applicationId, string pageId, string questionId,
+        Task<string> Store(string applicationId, int sequenceId, int sectionId, string pageId, string questionId, string fileName, Stream fileStream, string fileContentType);
+        Task<Tuple<string, Stream, string>> Retrieve(string applicationId, int sequenceId, int sectionId, string pageId, string questionId,
             string filename);
     }
 }
