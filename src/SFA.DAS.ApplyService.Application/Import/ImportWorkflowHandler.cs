@@ -31,6 +31,7 @@ namespace SFA.DAS.ApplyService.Application.Import
                 LoadSpreadsheetRows(request.ImportFile.OpenReadStream(),
                     "Technical Q&A format Developmen");
 
+            await _applyRepository.ClearAssets();
 
             AddAssets(spreadsheetRows);
 
