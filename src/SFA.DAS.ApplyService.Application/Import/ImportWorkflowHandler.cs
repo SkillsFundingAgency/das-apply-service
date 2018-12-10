@@ -31,6 +31,7 @@ namespace SFA.DAS.ApplyService.Application.Import
                 LoadSpreadsheetRows(request.ImportFile.OpenReadStream(),
                     "Technical Q&A format Developmen");
 
+            await _applyRepository.ClearAssets();
 
             AddAssets(spreadsheetRows);
 
@@ -252,18 +253,16 @@ namespace SFA.DAS.ApplyService.Application.Import
                 IRow row = sheet.GetRow(i);
                 if (row == null) continue;
                 
-                var questionRow = ReadQuestionRow(row);
+                var questionRow = ReadQuestionRow(row, i+1);
 
                 if (string.IsNullOrWhiteSpace(questionRow.SectionTitle)) continue;
 
                 spreadsheetRows.Add(questionRow);
-
             }
-
             return spreadsheetRows;
         }
 
-        private QuestionRow ReadQuestionRow(IRow row)
+        private QuestionRow ReadQuestionRow(IRow row, int rowNumber)
         {
             var questionRow = new QuestionRow();
             try
@@ -304,6 +303,7 @@ namespace SFA.DAS.ApplyService.Application.Import
             }
             catch (Exception e)
             {
+                Console.Write($"Error dealing with row [{rowNumber}]: Message: {e.Message}");
                 throw;
             }
 
