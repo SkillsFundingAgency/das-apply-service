@@ -2,6 +2,7 @@
 using SFA.DAS.ApplyService.InternalApi.Types;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -47,7 +48,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<IEnumerable<OrganisationType>> GetOrganisationTypes()
         {
-            return await (await _httpClient.GetAsync($"/OrganisationTypes")).Content.ReadAsAsync<IEnumerable<OrganisationType>>();
+            var types = await (await _httpClient.GetAsync($"/OrganisationTypes")).Content.ReadAsAsync<IEnumerable<OrganisationType>>();
+
+            return types.OrderBy(t => t.Type.Equals("Public Sector", StringComparison.InvariantCultureIgnoreCase)).AsEnumerable();
         }
     }
 }
