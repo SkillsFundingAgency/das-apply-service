@@ -9,6 +9,8 @@ using SFA.DAS.ApplyService.InternalApi.Models.AssessorService;
 using AutoMapper;
 using SFA.DAS.ApplyService.Configuration;
 using System.Linq;
+using MediatR;
+using Newtonsoft.Json;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
@@ -54,6 +56,22 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             return Mapper.Map<IEnumerable<OrganisationType>, IEnumerable<Types.OrganisationType>>(apiResponse);
         }
 
+        public async Task<IEnumerable<DeliveryArea>> GetDeliveryAreas()
+        {
+            _logger.LogInformation($"Getting Delivery Areas from EPAO Register.");
+            var apiResponse = await Get<IEnumerable<DeliveryArea>>($"/api/ao/delivery-areas");
+
+            return Mapper.Map<IEnumerable<DeliveryArea>, IEnumerable<DeliveryArea>>(apiResponse);
+        }
+
+        public async Task<IEnumerable<StandardCollation>> GetStandards()
+        {
+            _logger.LogInformation($"Gathering Standards from EPAO Register.");
+            await Post($"/api/ao/update-standards", new GatherStandardsRequest());
+            var apiResponse = await Get<IEnumerable<StandardCollation>>($"/api/ao/assessment-organisations/collated-standards");
+            return apiResponse;
+        }
+
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GetToken());
@@ -62,6 +80,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             {
                 return await response.Content.ReadAsAsync<T>();
             }
+        }
+
+        private async Task Post<T>(string uri, T model)
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", GetToken());
+            var serializeObject = JsonConvert.SerializeObject(model);
+
+            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative),
+                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"))) ;
         }
 
         private string GetToken()
@@ -78,5 +106,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
             return result.AccessToken;
         }
+    }
+
+    public class GatherStandardsRequest : IRequest<string>
+    {
     }
 }
