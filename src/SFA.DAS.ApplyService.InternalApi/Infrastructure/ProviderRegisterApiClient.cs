@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.InternalApi.Models.ProviderRegister;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -34,14 +33,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             var apiResponse = await Get<Provider>($"/providers/{ukprn}");
 
             return Mapper.Map<Provider, Types.OrganisationSearchResult>(apiResponse);
-        }
-
-        public async Task<Types.OrganisationSearchResult> SearchOrgansiationByEpao(string epao)
-        {
-            _logger.LogInformation($"Searching Provider Register. EPAO: {epao}");
-            var apiResponse = await Get<Organisation>($"/assessment-organisations/{epao}");
-
-            return Mapper.Map<Organisation, Types.OrganisationSearchResult>(apiResponse);
         }
 
         private async Task<T> Get<T>(string uri)

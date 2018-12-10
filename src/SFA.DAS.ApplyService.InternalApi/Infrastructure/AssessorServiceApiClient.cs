@@ -1,14 +1,14 @@
-﻿using Microsoft.IdentityModel.Clients.ActiveDirectory;
+﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Net.Http.Headers;
-using System;
-using SFA.DAS.ApplyService.InternalApi.Models.AssessorService;
-using AutoMapper;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.InternalApi.Models.AssessorService;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
