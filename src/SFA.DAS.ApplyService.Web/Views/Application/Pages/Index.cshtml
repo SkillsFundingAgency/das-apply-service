@@ -29,6 +29,7 @@
             @if (Model.HasFeedback)
             {
                 <div class="govuk-inset-text">
+                    <h2 class="govuk-heading-l">Feedback</h2>
                     @foreach (var fb in Model.Feedback)
                     {
                         <p class="govuk-body">@fb.Message</p>

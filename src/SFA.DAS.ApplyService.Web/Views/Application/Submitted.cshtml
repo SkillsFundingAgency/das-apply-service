@@ -1,32 +1,32 @@
 @{
-    ViewBag.Title = "title";
+    ViewBag.Title = "Application submitted";
     Layout = "_Layout";
 }
 
 <main class="govuk-main-wrapper govuk-main-wrapper--l" id="main-content" role="main">
-
-
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
             <div class="govuk-panel govuk-panel--confirmation">
                 <h1 class="govuk-panel__title">Application submitted</h1>
-                <p class="das-user-panel__content">Reference number xxxxxx</p>
+                <div class="govuk-panel__body">
+                    Reference number
+                    <br /><strong>xxxxxx</strong>
+                </div>
             </div>
+            
+            <p class="govuk-body">We have sent you a confirmation email.</p>
 
-
-            <h2 class="govuk-heading-m">What happens next?</h2>
+            <h3 class="govuk-heading-m">What happens next</h3>
 
             <p class="govuk-body">We will review your application and let you know the outcome within the next [XX] weeks.</p>
 
-
-            <p><a href="#">What did you think of this service?</a> (takes 30 seconds)</p>
-            <p>
-                <a href="../index">Return to scenario overview</a>
+            <p class="govuk-body">
+                <a href="https://www.smartsurvey.co.uk/s/apply-banner/">What did you think of this service?</a>
             </p>
-            
+            <p class="govuk-body">
+                <a asp-action="Applications" asp-controller="Application">Return to application overview</a>
+            </p>
         </div>
-        
     </div>
-    
 </main>

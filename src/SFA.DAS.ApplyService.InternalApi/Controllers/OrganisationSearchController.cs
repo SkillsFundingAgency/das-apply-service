@@ -5,6 +5,7 @@ using SFA.DAS.ApplyService.InternalApi.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.InternalApi.Models.AssessorService;
 
@@ -32,11 +33,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             {
                 return new List<OrganisationSearchResult>();
             }
-            else if (searchTerm.StartsWith("EPA", StringComparison.InvariantCultureIgnoreCase))
+            else if (IsValidEpaOrganisationId(searchTerm))
             {
                 return await OrganisationSearchByEpao(searchTerm);
             }
-            else if (int.TryParse(searchTerm, out var ukprn))
+            else if (IsValidUkprn(searchTerm, out var ukprn))
             {
                 return await OrganisationSearchByUkprn(ukprn);
             }
@@ -44,6 +45,22 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             {
                 return await OrganisationSearchByName(searchTerm);
             }
+        }
+
+        private bool IsValidEpaOrganisationId(string organisationIdToCheck)
+        {
+            var regex = new Regex(@"[eE][pP][aA][0-9]{4,9}$");
+            return regex.Match(organisationIdToCheck).Success;
+        }
+
+        private bool IsValidUkprn(string stringToCheck, out int ukprn)
+        {
+            if (!int.TryParse(stringToCheck, out ukprn))
+            {
+                return false;
+            }
+
+            return ukprn >= 10000000 && ukprn <= 99999999;
         }
 
         private async Task<IEnumerable<OrganisationSearchResult>> OrganisationSearchByUkprn(int ukprn)
@@ -267,23 +284,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
         private IEnumerable<OrganisationSearchResult> Dedupe(IEnumerable<OrganisationSearchResult> organisations)
         {
+            // TODO: Numbers & Approved
             var nameMerge = organisations.GroupBy(org => org.Name.ToUpperInvariant())
-                .Select(group => 
-                    new OrganisationSearchResult
-                    {
-                        Id = group.Select(g => g.Id).FirstOrDefault(Id => !string.IsNullOrWhiteSpace(Id)),
-                        Ukprn = group.Select(g => g.Ukprn).FirstOrDefault(Ukprn => Ukprn.HasValue),
-                        LegalName = group.Select(g => g.LegalName).FirstOrDefault(LegalName => !string.IsNullOrWhiteSpace(LegalName)),
-                        TradingName = group.Select(g => g.TradingName).FirstOrDefault(TradingName => !string.IsNullOrWhiteSpace(TradingName)),
-                        ProviderName = group.Select(g => g.ProviderName).FirstOrDefault(ProviderName => !string.IsNullOrWhiteSpace(ProviderName)),
-                        Address = group.Select(g => g.Address).FirstOrDefault(Address => Address != null),
-                        OrganisationType = group.Select(g => g.OrganisationType).FirstOrDefault(OrganisationType => !string.IsNullOrWhiteSpace(OrganisationType)),
-                        OrganisationReferenceType = group.Select(g => g.OrganisationReferenceType).FirstOrDefault(OrganisationReferenceType => !string.IsNullOrWhiteSpace(OrganisationReferenceType)),
-                        OrganisationReferenceId = string.Join(",", group.Select(g => g.Id).Where(Id => !string.IsNullOrWhiteSpace(Id)))
-                    }
-                );
-
-            var ukprnMerge = nameMerge.GroupBy(org => new { filter = org.Ukprn.HasValue ? org.Ukprn.ToString() : org.Name.ToUpperInvariant()})
                 .Select(group =>
                     new OrganisationSearchResult
                     {
@@ -295,7 +297,31 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                         Address = group.Select(g => g.Address).FirstOrDefault(Address => Address != null),
                         OrganisationType = group.Select(g => g.OrganisationType).FirstOrDefault(OrganisationType => !string.IsNullOrWhiteSpace(OrganisationType)),
                         OrganisationReferenceType = group.Select(g => g.OrganisationReferenceType).FirstOrDefault(OrganisationReferenceType => !string.IsNullOrWhiteSpace(OrganisationReferenceType)),
-                        OrganisationReferenceId = string.Join(",", group.Select(g => g.Id).Where(Id => !string.IsNullOrWhiteSpace(Id)))
+                        OrganisationReferenceId = string.Join(",", group.Select(g => g.Id).Where(Id => !string.IsNullOrWhiteSpace(Id))),
+                        RoEPAOApproved = group.Select(g => g.RoEPAOApproved).FirstOrDefault(RoEPAOApproved => RoEPAOApproved != false),
+                        RoATPApproved = group.Select(g => g.RoATPApproved).FirstOrDefault(RoATPApproved => RoATPApproved != false),
+                        CompanyNumber = group.Select(g => g.CompanyNumber).FirstOrDefault(CompanyNumber => !string.IsNullOrWhiteSpace(CompanyNumber)),
+                        CharityNumber = group.Select(g => g.CharityNumber).FirstOrDefault(CharityNumber => !string.IsNullOrWhiteSpace(CharityNumber))
+                    }
+                );
+
+            var ukprnMerge = nameMerge.GroupBy(org => new { filter = org.Ukprn.HasValue ? org.Ukprn.ToString() : org.Name.ToUpperInvariant() })
+                .Select(group =>
+                    new OrganisationSearchResult
+                    {
+                        Id = group.Select(g => g.Id).FirstOrDefault(Id => !string.IsNullOrWhiteSpace(Id)),
+                        Ukprn = group.Select(g => g.Ukprn).FirstOrDefault(Ukprn => Ukprn.HasValue),
+                        LegalName = group.Select(g => g.LegalName).FirstOrDefault(LegalName => !string.IsNullOrWhiteSpace(LegalName)),
+                        TradingName = group.Select(g => g.TradingName).FirstOrDefault(TradingName => !string.IsNullOrWhiteSpace(TradingName)),
+                        ProviderName = group.Select(g => g.ProviderName).FirstOrDefault(ProviderName => !string.IsNullOrWhiteSpace(ProviderName)),
+                        Address = group.Select(g => g.Address).FirstOrDefault(Address => Address != null),
+                        OrganisationType = group.Select(g => g.OrganisationType).FirstOrDefault(OrganisationType => !string.IsNullOrWhiteSpace(OrganisationType)),
+                        OrganisationReferenceType = group.Select(g => g.OrganisationReferenceType).FirstOrDefault(OrganisationReferenceType => !string.IsNullOrWhiteSpace(OrganisationReferenceType)),
+                        OrganisationReferenceId = string.Join(",", group.Select(g => g.Id).Where(Id => !string.IsNullOrWhiteSpace(Id))),
+                        CompanyNumber = group.Select(g => g.CompanyNumber).FirstOrDefault(CompanyNumber => !string.IsNullOrWhiteSpace(CompanyNumber)),
+                        CharityNumber = group.Select(g => g.CharityNumber).FirstOrDefault(CharityNumber => !string.IsNullOrWhiteSpace(CharityNumber)),
+                        RoEPAOApproved = group.Select(g => g.RoEPAOApproved).FirstOrDefault(RoEPAOApproved => RoEPAOApproved != false),
+                        RoATPApproved = group.Select(g => g.RoATPApproved).FirstOrDefault(RoATPApproved => RoATPApproved != false)
                     }
                 );
 

@@ -1,19 +1,13 @@
-﻿using System;
-using System.Data.SqlClient;
-using System.Threading.Tasks;
-using Dapper;
-using SFA.DAS.ApplyService.Application.Users;
-using SFA.DAS.ApplyService.Configuration;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
-using Dapper;
-using Newtonsoft.Json;
+﻿using Dapper;
 using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data.DapperTypeHandlers;
 using SFA.DAS.ApplyService.Domain.Entities;
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Data
 {
@@ -34,16 +28,11 @@ namespace SFA.DAS.ApplyService.Data
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
-                var orgDetails = JsonConvert.DeserializeObject<OrganisationDetails>(organisation.OrganisationDetails);
-                
-                bool roEPAOApproved = "RoEPAO".Equals(orgDetails?.OrganisationReferenceType, StringComparison.InvariantCultureIgnoreCase);
-                bool roATPApproved = "RoATP".Equals(orgDetails?.OrganisationReferenceType, StringComparison.InvariantCultureIgnoreCase);
-
                 connection.Execute(
                     "INSERT INTO [Organisations] ([Id],[Name],[OrganisationType],[OrganisationUKPRN], " +
                     "[OrganisationDetails],[Status],[CreatedAt],[CreatedBy],[RoEPAOApproved],[RoATPApproved]) " +
-                    "VALUES (NEWID(), @Name, REPLACE(@OrganisationType, ' ', ''), @OrganisationUkprn, @OrganisationDetails, 'New', GETUTCDATE(), @CreatedBy, @roEPAOApproved, @roATPApproved)",
-                    new { organisation.Name, organisation.OrganisationType, organisation.OrganisationUkprn, organisation.OrganisationDetails, organisation.CreatedBy, roEPAOApproved, roATPApproved });
+                    "VALUES (NEWID(), @Name, REPLACE(@OrganisationType, ' ', ''), @OrganisationUkprn, @OrganisationDetails, 'New', GETUTCDATE(), @CreatedBy, @RoEPAOApproved, @RoATPApproved)",
+                    new { organisation.Name, organisation.OrganisationType, organisation.OrganisationUkprn, organisation.OrganisationDetails, organisation.CreatedBy, organisation.RoEPAOApproved, organisation.RoATPApproved });
 
                 var org = await GetOrganisationByName(organisation.Name);
 
@@ -60,7 +49,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<Organisation> UpdateOrganisation(Organisation organisation)
+        public async Task<Organisation> UpdateOrganisation(Organisation organisation, Guid userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
@@ -75,7 +64,18 @@ namespace SFA.DAS.ApplyService.Data
                     "WHERE [Id] = @Id",
                     new { organisation.Id, organisation.Name, organisation.OrganisationType, organisation.OrganisationUkprn, organisation.OrganisationDetails, organisation.UpdatedBy, organisation.RoEPAOApproved, organisation.RoATPApproved });
 
-                return await GetOrganisationByName(organisation.Name);
+                var org = await GetOrganisationByName(organisation.Name);
+
+                if (org != null)
+                {
+                    connection.Execute(
+                                "UPDATE [Contacts] " +
+                                "SET ApplyOrganisationID = @Id " +
+                                "WHERE Id = @userId",
+                                new { org.Id, userId });
+                }
+
+                return org;
             }
         }
 

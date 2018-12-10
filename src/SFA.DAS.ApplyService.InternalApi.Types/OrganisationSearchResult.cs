@@ -18,6 +18,12 @@
         public string TradingName { get; set; }
         public string LegalName { get; set; }
         public string ProviderName { get; set; }
+
+        public string CompanyNumber { get; set; }
+        public string CharityNumber { get; set; }
+
+        public bool RoEPAOApproved { get; set; }
+        public bool RoATPApproved { get; set; }
     }
 
     public class OrganisationAddress
