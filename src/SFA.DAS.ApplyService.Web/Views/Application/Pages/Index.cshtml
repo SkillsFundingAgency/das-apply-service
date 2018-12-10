@@ -12,7 +12,7 @@
             {
                 <h1 class="govuk-heading-xl">
                     @*<span class="govuk-hint">&lt;page.Title&gt;</span>*@
-                        @Model.Title
+                        @Html.Raw(Model.Title)
                     @*<span class="govuk-hint">&lt;/page.Title&gt;</span>*@
                 </h1>
             }
@@ -21,7 +21,7 @@
             @if (!string.IsNullOrWhiteSpace(@Model.BodyText))
             {
                 <div>
-                    @Html.Raw(Model.BodyText);
+                    @Html.Raw(Model.BodyText)
                 </div>
             }
             

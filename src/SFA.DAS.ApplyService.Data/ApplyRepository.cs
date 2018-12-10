@@ -422,5 +422,13 @@ namespace SFA.DAS.ApplyService.Data
                     })).ToList();
             }
         }
+
+        public async Task ClearAssets()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"DELETE FROM Assets");
+            }
+        }
     }
 }

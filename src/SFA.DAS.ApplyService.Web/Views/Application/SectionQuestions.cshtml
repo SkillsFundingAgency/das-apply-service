@@ -22,7 +22,7 @@
                             @foreach (var pg in Model.QnADataObject.Pages.Where(p => p.Active))
                             {
                                 <li>
-                                    <h2 class="govuk-heading-m">@pg.Title</h2>
+                                    <h2 class="govuk-heading-m">@Html.Raw(pg.Title)</h2>
                                     <ul class="app-task-list__items app-task-list__items--no-number">
                                         @foreach (var question in pg.Questions)
                                         {
