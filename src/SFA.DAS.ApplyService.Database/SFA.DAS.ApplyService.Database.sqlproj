@@ -71,5 +71,6 @@
     <Build Include="Tables\Workflows.sql" />
     <Build Include="Tables\WorkflowSections.sql" />
     <Build Include="Tables\WorkflowSequences.sql" />
+    <Build Include="Tables\EmailTemplates.sql" />
   </ItemGroup>
 </Project>

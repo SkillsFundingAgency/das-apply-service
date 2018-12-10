@@ -21,9 +21,10 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
         {
             var result = await UpdateOrganisationIfExists(request) ?? await CreateNewOrganisation(request);
 
-            if (result != null && !string.IsNullOrEmpty(request.PrimaryContactEmail))
+            if (result != null)
             {
-                await _emailService.SendPreAmbleEmail(request.PrimaryContactEmail, 2, new { OrganisationName = request.Name });
+                await _emailService.SendEmail("ApplyEPAOUpdate", request.PrimaryContactEmail, 
+                    new { contactname = request.Name, servicename = "Apply Service", serviceteam = "Apply Service Team" });
             }
 
             return result;

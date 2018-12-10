@@ -46,9 +46,9 @@ namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
                         return false;
                     }
                 }
-                
-                await _emailServiceObject.SendEmail(request.Email, 1,
-                    new {GivenName = existingContact.GivenNames, FamilyName = existingContact.FamilyName});
+
+                await _emailServiceObject.SendEmail("ApplyEPAOUpdate", request.Email, 
+                    new { contactname = $"{existingContact.GivenNames} {existingContact.FamilyName}", servicename = "Apply Service", serviceteam = "Apply Service Team" });
             }
             
             return true;
