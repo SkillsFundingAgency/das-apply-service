@@ -111,8 +111,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                         if (nextAction.Condition.MustEqual == request.Answers
                                 .Single(a => a.QuestionId == nextAction.Condition.QuestionId).Value)
                         {
-                            qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Active = true;
-                            qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Visible = true;
+                            if (nextAction.Action == "NextPage")
+                            {
+                                qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Active = true;
+                                qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Visible = true;   
+                            }
                             nextAction.ConditionMet = true;
                         }
                     }

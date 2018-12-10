@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Data.DapperTypeHandlers;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 
@@ -21,6 +22,7 @@ namespace SFA.DAS.ApplyService.Data
         public ApplyRepository(IConfigurationService configurationService)
         {
             _config = configurationService.GetConfig().Result;
+            SqlMapper.AddTypeHandler(typeof(OrganisationDetails), new OrganisationDetailsHandler());
         }
         public async Task<List<Domain.Entities.Application>> GetApplications(Guid userId)
         {
@@ -365,17 +367,17 @@ namespace SFA.DAS.ApplyService.Data
                     })).ToList();
             }
         }
-
-        public async Task UpdateFinancialGrade(Guid applicationId, FinancialApplicationGrade updatedGrade)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(@"UPDATE Applications
-                                                SET    ApplicationData = @serialisedData
-                                                WHERE  Applications.Id = @applicationId",
-                    new {applicationId, updatedGrade});
-            }
-        }
+//
+//        public async Task UpdateFinancialGrade(Guid applicationId, FinancialApplicationGrade updatedGrade)
+//        {
+//            using (var connection = new SqlConnection(_config.SqlConnectionString))
+//            {
+//                await connection.ExecuteAsync(@"UPDATE Applications
+//                                                SET    ApplicationData = @serialisedData
+//                                                WHERE  Applications.Id = @applicationId",
+//                    new {applicationId, updatedGrade});
+//            }
+//        }
 
         public async Task StartFinancialReview(Guid applicationId)
         {
@@ -385,6 +387,39 @@ namespace SFA.DAS.ApplyService.Data
                                                 SET Status = 'In Progress'
                                                 WHERE ApplicationId = @applicationId AND SectionId = 3 AND SequenceId = 1",
                     new {applicationId});
+            }
+        }
+
+        public async Task<Organisation> GetOrganisationForApplication(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return await connection.QuerySingleAsync<Organisation>(@"SELECT org.* FROM Organisations org 
+                                                                        INNER JOIN Applications appl ON appl.ApplyingOrganisationId = org.Id
+                                                                        WHERE appl.Id = @ApplicationId",
+                    new {applicationId});
+            }
+        }
+
+        public async Task<List<dynamic>> GetPreviousFinancialApplications()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync(@"SELECT org.Name, sec.Status, appl.Id, 
+                                                JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.GradedBy') AS GradedBy, 
+	                                            JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.GradedDateTime') AS GradedDateTime,
+                                                JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.SelectedGrade') AS Grade
+                                FROM Applications appl
+                            INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
+                            INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id
+                            WHERE appl.ApplicationStatus = @applicationStatusSubmitted
+                            AND sec.SectionId = 3 
+                            AND (sec.Status = @financialStatusGraded)",
+                    new
+                    {
+                        applicationStatusSubmitted = ApplicationStatus.Submitted, 
+                        financialStatusGraded = SectionStatus.Graded
+                    })).ToList();
             }
         }
     }

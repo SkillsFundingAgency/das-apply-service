@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,7 +27,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
             var qnADataObject = section.QnADataObject;
 
             qnADataObject.FinancialApplicationGrade = request.UpdatedGrade;
-
+            qnADataObject.FinancialApplicationGrade.GradedDateTime = DateTime.UtcNow;            
+            
             section.QnADataObject = qnADataObject;
             section.Status = SectionStatus.Graded;
             

@@ -24,7 +24,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         Task<List<Domain.Entities.Application>> GetApplicationsFor(Guid userId);
 
-        Task<UploadResult> Upload(string applicationId, string userId, string pageId, IFormFileCollection files);
+        Task<UploadResult> Upload(string applicationId, string userId, int sequenceId, int sectionId, string pageId, IFormFileCollection files);
         
         Task<byte[]> Download(Guid applicationId, Guid userId, string pageId, string questionId, string filename);
         Task<ApplicationSequence> GetSequence(Guid applicationId, Guid userId);

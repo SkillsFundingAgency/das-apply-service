@@ -21,6 +21,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             return Ok(await _mediator.Send(new NewApplicationsRequest()));
         }
+        
+        [HttpGet("/Financial/Previous")]
+        public async Task<ActionResult> PreviousApplications()
+        {
+            return Ok(await _mediator.Send(new PreviousApplicationsRequest()));
+        }
 
         [HttpPost("/Financial/{applicationId}/UpdateGrade")]
         public async Task<ActionResult> UpdateGrade(Guid applicationId, [FromBody] FinancialApplicationGrade updatedGrade)

@@ -195,7 +195,7 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
  
              if (HttpContext.Request.Form.Files.Any())
              {
-                 var uploadedFile = await _apiClient.Upload(applicationId, userId.ToString(), pageId,
+                 var uploadedFile = await _apiClient.Upload(applicationId, userId.ToString(), sequenceId, sectionId, pageId,
                      HttpContext.Request.Form.Files);
  
                  foreach (var file in uploadedFile.Files)

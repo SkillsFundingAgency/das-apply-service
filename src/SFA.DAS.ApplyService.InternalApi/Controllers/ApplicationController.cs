@@ -7,6 +7,7 @@ using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.DeleteAnswer;
 using SFA.DAS.ApplyService.Application.Apply.Download;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
+using SFA.DAS.ApplyService.Application.Apply.GetOrganisationForApplication;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.GetSection;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
@@ -131,6 +132,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             await _mediator.Send(new UpdateApplicationDataRequest(applicationId, applicationData));
             return Ok();
+        }
+
+        [HttpGet("/Application/{applicationId}/Organisation")]
+        public async Task<Organisation> GetOrganisationForApplication(Guid applicationId)
+        {
+            return await _mediator.Send(new GetOrganisationForApplicationRequest(applicationId));
         }
     }
 }
