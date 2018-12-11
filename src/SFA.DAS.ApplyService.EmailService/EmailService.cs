@@ -31,7 +31,7 @@ namespace SFA.DAS.ApplyService.EmailService
             _notificationsApi = SetupNotificationApi(); // Consider injecting this in constructor ??? 
         }
 
-        public async Task SendEmail(string templateName, string toAddress, dynamic replacements)
+        public async Task SendEmail(string templateName, string toAddress, dynamic tokens)
         {
             var emailTemplate = await _emailTemplateRepository.GetEmailTemplate(templateName);
 
@@ -51,9 +51,9 @@ namespace SFA.DAS.ApplyService.EmailService
 
                 var personalisationTokens = new Dictionary<string, string>();
 
-                foreach (var property in replacements.GetType().GetProperties())
+                foreach (var property in tokens.GetType().GetProperties())
                 {
-                    personalisationTokens[property.Name] = property.GetValue(replacements);
+                    personalisationTokens[property.Name] = property.GetValue(tokens);
                 }
 
                 foreach (var recipient in recipients)

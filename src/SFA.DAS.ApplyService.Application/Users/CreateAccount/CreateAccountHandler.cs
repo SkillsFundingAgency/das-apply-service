@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using SFA.DAS.ApplyService.Application.Email.Consts;
 using SFA.DAS.ApplyService.Application.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
@@ -47,8 +48,8 @@ namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
                     }
                 }
 
-                await _emailServiceObject.SendEmail("ApplyEPAOUpdate", request.Email, 
-                    new { contactname = $"{existingContact.GivenNames} {existingContact.FamilyName}", servicename = "Apply Service", serviceteam = "Apply Service Team" });
+                await _emailServiceObject.SendEmail(EmailTemplateName.APPLY_EPAO_UPDATE, request.Email, 
+                    new { contactname = $"{existingContact.GivenNames} {existingContact.FamilyName}" });
             }
             
             return true;
