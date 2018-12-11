@@ -107,15 +107,40 @@
                 {
                     foreach (var question in Model.Questions)
                     {
-                        <div class="govuk-form-group">
+                        var questionHasError = false;
+                        @if (Model.ErrorMessages != null)
+                        {
+                            @foreach (var error in Model.ErrorMessages)
+                            {
+                                @if (error.Field == question.QuestionId)
+                                {
+                                    questionHasError = true;
+                                }
+                            }
+                        }
+                        <div class="govuk-form-group @(questionHasError ? "govuk-form-group--error" : "")">
                             <label class="govuk-label" for="@question.QuestionId">
                                 @Html.Raw(question.Label)
+                                @Html.Raw(question.QuestionId)
                             </label>
                             @if (question.Hint != null)
                             {
                                 <span class="govuk-hint">
                                     @Html.Raw(question.Hint)
                                 </span>
+                            }
+
+                            @if (Model.ErrorMessages != null)
+                            {
+                                @foreach (var error in Model.ErrorMessages)
+                                {
+                                    @if (error.Field == question.QuestionId)
+                                    {
+                                        <span id="@error.Field-error" class="govuk-error-message">
+                                            @Html.Raw(error.ErrorMessage)
+                                        </span>
+                                    }
+                                }
                             }
                             @Html.Partial($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
                         </div>
