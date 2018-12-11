@@ -2,10 +2,8 @@
 
 <div sfa-anyvalidationerror-class="after-error-summary">
 
-    <div class="form-group" sfa-validation-for-id="@Model.QuestionId" sfa-validationerror-class="form-group-error">
-        <div class="error-message-container" sfa-validation-for-id="@Model.QuestionId">
-            <span class="error-message" sfa-validation-for-id="@Model.QuestionId"></span>
-        </div>
+    <div class="govuk-form-group" sfa-validation-for-id="@Model.QuestionId" sfa-validationerror-class="govuk-form-group--error">
+        <span class="govuk-error-message" sfa-validation-for-id="@Model.QuestionId"></span>
 
         @{
             <!-- @* Show simple radios inline if 2 or less (Yes/No) questions *@ -->
