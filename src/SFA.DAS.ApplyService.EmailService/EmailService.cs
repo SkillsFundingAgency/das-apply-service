@@ -5,6 +5,7 @@ using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.Http;
 using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace SFA.DAS.ApplyService.EmailService
             _logger = logger;
             _configurationService = configurationService;
             _emailTemplateRepository = emailTemplateRepository;
-            _notificationsApi = SetupNotificationApi(); // Consider injecting this in constructor ??? 
+            _notificationsApi = SetupNotificationApi(); 
         }
 
         public async Task SendEmail(string templateName, string toAddress, dynamic tokens)
@@ -81,7 +82,7 @@ namespace SFA.DAS.ApplyService.EmailService
             {
                 await _notificationsApi.SendEmail(email);
             }
-            catch(System.Exception ex)
+            catch(Exception ex)
             {
                 _logger.LogError(ex, $"Error sending email template {templateId} to {toAddress}");
             }
@@ -89,6 +90,8 @@ namespace SFA.DAS.ApplyService.EmailService
 
         private INotificationsApi SetupNotificationApi()
         {
+            // Note: This is placed here as the types used pollute the DI setup.
+            // Also there wasn't any nice way to create this as an StructureMap Registry
             var config = _configurationService.GetConfig().GetAwaiter().GetResult();
 
             var apiConfiguration = new NotificationsApiClientConfiguration
