@@ -1,4 +1,5 @@
 @model SFA.DAS.ApplyService.Web.ViewModels.OrganisationSearchViewModel
+@inject Microsoft.Extensions.Configuration.IConfiguration configuration
 
 @{
     ViewBag.Title = "Search results";
@@ -95,7 +96,7 @@
                                         <input asp-for="SearchString" type="hidden" />
                                         <input asp-for="Name" value="@result.Name" type="hidden" />
                                         <input asp-for="Ukprn" value="@result.Ukprn" type="hidden" />
-                                        <input asp-for="OrganisationType" value ="@result.OrganisationType" type="hidden" />
+                                        <input asp-for="OrganisationType" value="@result.OrganisationType" type="hidden" />
                                         <input asp-for="Postcode" value="@result.Address?.Postcode" type="hidden" />
 
                                         <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">
@@ -118,6 +119,25 @@
                                     <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
                                         <span class="govuk-body govuk-!-font-weight-bold">Type</span>
                                         @result.OrganisationType
+                                    </p>
+                                }
+                                @if (!string.Equals(configuration["EnvironmentName"], "PROD", StringComparison.InvariantCultureIgnoreCase))
+                                {
+                                    @* ON-1205 - request to show flags of what results were found in non-PROD environments *@
+                                    <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
+                                        <span class="govuk-body govuk-!-font-weight-bold">Found On</span>
+                                        @if (result.RoEPAOApproved)
+                                        {
+                                            <span>&#9872; RoEPAO</span>
+                                        }
+                                        @if (result.RoATPApproved)
+                                        {
+                                            <span>&#9873; RoATP</span>
+                                        }
+                                        @if (!result.RoEPAOApproved && !result.RoATPApproved)
+                                        {
+                                            <span>&#9874; EASAPI ONLY</span>
+                                        }
                                     </p>
                                 }
                                 </td>
