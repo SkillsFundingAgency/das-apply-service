@@ -1,14 +1,9 @@
 @model SFA.DAS.ApplyService.Web.Controllers.QuestionViewModel
 
-<div sfa-anyvalidationerror-class="after-error-summary">
 
     <div class="govuk-form-group" sfa-validation-for-id="@Model.QuestionId" sfa-validationerror-class="govuk-form-group--error">
-        <span class="govuk-error-message" sfa-validation-for-id="@Model.QuestionId"></span>
 
-        @{
-            <!-- @* Show simple radios inline if 2 or less (Yes/No) questions *@ -->
-            var isInline = Model.Options.Count <= 2 ? "govuk-radios--inline" : "";
-        }
+        @{ var isInline = Model.Options.Count <= 2 ? "govuk-radios--inline" : ""; }
 
         <div class="govuk-radios @isInline">
             @for (int i = 0; i < Model.Options.Count; i++)
@@ -20,5 +15,5 @@
                 </div>
             }
         </div>
+
     </div>
-</div>
