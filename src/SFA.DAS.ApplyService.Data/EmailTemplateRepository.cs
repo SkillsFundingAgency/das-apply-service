@@ -1,10 +1,7 @@
 ﻿using Dapper;
 using SFA.DAS.ApplyService.Application.Email;
-using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Configuration;
-using SFA.DAS.ApplyService.Data.DapperTypeHandlers;
 using SFA.DAS.ApplyService.Domain.Entities;
-using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -31,7 +28,8 @@ namespace SFA.DAS.ApplyService.Data
                 var sql =
                     "SELECT * " +
                     "FROM [EmailTemplates] " +
-                    "WHERE TemplateName LIKE @templateName";
+                    "WHERE TemplateName LIKE @templateName " + 
+                    "AND Status = 'Live'";
 
                 var emailTemplates = await connection.QueryAsync<EmailTemplate>(sql, new { templateName });
                 return emailTemplates.FirstOrDefault();

@@ -73,4 +73,7 @@
     <Build Include="Tables\WorkflowSequences.sql" />
     <Build Include="Tables\EmailTemplates.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Script.PostDeployment1.sql" />
+  </ItemGroup>
 </Project>
