@@ -47,12 +47,31 @@
                             {
                                 <div class="govuk-radios__item">
                                     <input class="govuk-radios__input" asp-for="OrganisationType" id="@orgType.Type.Replace(" ", "_")" type="radio" value="@orgType.Type" required />
-                                    <label class="govuk-label govuk-radios__label" for="@orgType.Type.Replace(" ", "_")">@orgType.Type</label>
+                                    <label class="govuk-label govuk-radios__label" for="@orgType.Type.Replace(" ", "_")">@orgType.TypeDescription</label>
                                 </div>
                             }
                         </div>
                     </div>
-                    <button type="submit" class="govuk-button">Submit</button>
+
+                    <details class="govuk-details">
+                        <summary class="govuk-details__summary">
+                            <span class="govuk-details__summary-text">
+                                Which organisation types are 'incorporated as a public sector body'?
+                            </span>
+                        </summary>
+                        <div class="govuk-details__text">
+                            <ul class="govuk-list govuk-list--bullet">
+                                <li>Local authorities including LEA schools</li>
+                                <li>Central government departments</li>
+                                <li>Executive agencies or non-departmental public bodies</li>
+                                <li>NHS trusts</li>
+                                <li>Fire authorities</li>
+                                <li>Police constabularies or police crime commissioners</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <button type="submit" class="govuk-button">Save and continue</button>
                 }
                 else
                 {

@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Data.DapperTypeHandlers;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 
@@ -21,6 +22,7 @@ namespace SFA.DAS.ApplyService.Data
         public ApplyRepository(IConfigurationService configurationService)
         {
             _config = configurationService.GetConfig().Result;
+            SqlMapper.AddTypeHandler(typeof(OrganisationDetails), new OrganisationDetailsHandler());
         }
         public async Task<List<Domain.Entities.Application>> GetApplications(Guid userId)
         {
@@ -133,16 +135,16 @@ namespace SFA.DAS.ApplyService.Data
             {
                 foreach (var applicationSection in sections)
                 {
-                    await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata WHERE Id = @Id", applicationSection);    
+                    await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata, Status = @Status WHERE Id = @Id", applicationSection);    
                 }
             }
         }
 
-        public async Task SaveSection(ApplicationSection section, Guid userId)
+        public async Task SaveSection(ApplicationSection section, Guid? userId = null)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata WHERE Id = @Id", section);       
+                await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata, Status = @Status WHERE Id = @Id", section);       
             }
         }
 
@@ -232,6 +234,13 @@ namespace SFA.DAS.ApplyService.Data
                                                          Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
                                                 WHERE  (ApplicationSequences.ApplicationId = @ApplicationId) AND (ApplicationSequences.SequenceId = @SequenceId) AND Contacts.Id = @UserId;
                             
+                                                UPDATE ApplicationSections
+                                                SET    Status = 'Submitted'
+                                                FROM   ApplicationSections INNER JOIN
+                                                            Applications ON ApplicationSections.ApplicationId = Applications.Id INNER JOIN
+                                                            Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
+                                                WHERE  (ApplicationSections.ApplicationId = @ApplicationId) AND (ApplicationSections.SectionId = 3) AND Contacts.Id = @UserId;
+
                                                 UPDATE       Applications
                                                 SET                ApplicationStatus = 'Submitted'
                                                 FROM            Applications INNER JOIN
@@ -336,6 +345,81 @@ namespace SFA.DAS.ApplyService.Data
             {
                 return (await connection.QueryAsync<ApplicationSection>(@"SELECT * FROM ApplicationSections WHERE ApplicationId = @applicationId",
                     new {applicationId})).ToList();
+            }
+        }
+
+        public async Task<List<dynamic>> GetNewFinancialApplications()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync(@"SELECT org.Name, sec.Status, appl.Id
+                                FROM Applications appl
+                            INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
+                            INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id
+                            WHERE appl.ApplicationStatus = @applicationStatusSubmitted 
+                            AND sec.SectionId = 3 
+                            AND (sec.Status = @financialStatusInProgress OR sec.Status = @financialStatusSubmitted)",
+                    new
+                    {
+                        applicationStatusSubmitted = ApplicationStatus.Submitted, 
+                        financialStatusInProgress = SectionStatus.InProgress, 
+                        financialStatusSubmitted = SectionStatus.Submitted
+                    })).ToList();
+            }
+        }
+//
+//        public async Task UpdateFinancialGrade(Guid applicationId, FinancialApplicationGrade updatedGrade)
+//        {
+//            using (var connection = new SqlConnection(_config.SqlConnectionString))
+//            {
+//                await connection.ExecuteAsync(@"UPDATE Applications
+//                                                SET    ApplicationData = @serialisedData
+//                                                WHERE  Applications.Id = @applicationId",
+//                    new {applicationId, updatedGrade});
+//            }
+//        }
+
+        public async Task StartFinancialReview(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE ApplicationSections 
+                                                SET Status = 'In Progress'
+                                                WHERE ApplicationId = @applicationId AND SectionId = 3 AND SequenceId = 1",
+                    new {applicationId});
+            }
+        }
+
+        public async Task<Organisation> GetOrganisationForApplication(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return await connection.QuerySingleAsync<Organisation>(@"SELECT org.* FROM Organisations org 
+                                                                        INNER JOIN Applications appl ON appl.ApplyingOrganisationId = org.Id
+                                                                        WHERE appl.Id = @ApplicationId",
+                    new {applicationId});
+            }
+        }
+
+        public async Task<List<dynamic>> GetPreviousFinancialApplications()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync(@"SELECT org.Name, sec.Status, appl.Id, 
+                                                JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.GradedBy') AS GradedBy, 
+	                                            JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.GradedDateTime') AS GradedDateTime,
+                                                JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.SelectedGrade') AS Grade
+                                FROM Applications appl
+                            INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
+                            INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id
+                            WHERE appl.ApplicationStatus = @applicationStatusSubmitted
+                            AND sec.SectionId = 3 
+                            AND (sec.Status = @financialStatusGraded)",
+                    new
+                    {
+                        applicationStatusSubmitted = ApplicationStatus.Submitted, 
+                        financialStatusGraded = SectionStatus.Graded
+                    })).ToList();
             }
         }
 

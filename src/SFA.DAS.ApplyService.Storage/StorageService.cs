@@ -18,28 +18,36 @@ namespace SFA.DAS.ApplyService.Storage
             _configurationService = configurationService;
         }
         
-        public async Task<string> Store(string applicationId, string pageId, string questionId, string fileName, Stream fileStream)
+        public async Task<string> Store(string applicationId, int sequenceId, int sectionId, string pageId, string questionId, string fileName, Stream fileStream, string fileContentType)
         {
-            var config = await _configurationService.GetConfig();
+            var container = await GetContainer();
 
-            var account = CloudStorageAccount.Parse(config.FileStorage.StorageConnectionString);
-            var client = account.CreateCloudBlobClient();
-            var container = client.GetContainerReference(config.FileStorage.ContainerName);
-            await container.CreateIfNotExistsAsync();
-
-            var applicationFolder = container.GetDirectoryReference(applicationId);
-            var pageFolder = applicationFolder.GetDirectoryReference(pageId.ToLower());
-            var questionFolder = pageFolder.GetDirectoryReference(questionId.ToLower());
+            var questionFolder = GetDirectory(applicationId, sequenceId, sectionId, pageId, questionId, container);
             
             var blob = questionFolder.GetBlockBlobReference(fileName);
-
+            blob.Properties.ContentType = fileContentType;
             await blob.UploadFromStreamAsync(fileStream);
 
             return fileName;
         }
 
-        public async Task<Tuple<string, Stream>> Retrieve(string applicationId, string pageId, string questionId,
+        public async Task<Tuple<string, Stream, string>> Retrieve(string applicationId, int sequenceId, int sectionId, string pageId, string questionId,
             string filename)
+        {
+            var container = await GetContainer();
+
+            var questionFolder = GetDirectory(applicationId, sequenceId, sectionId, pageId, questionId, container);
+
+            var blob = questionFolder.GetBlobReference(filename);
+            
+            var ms = new MemoryStream();
+
+            await blob.DownloadToStreamAsync(ms,null,new BlobRequestOptions(){DisableContentMD5Validation = true},null);
+            ms.Position = 0;
+            return new Tuple<string, Stream, string>(filename, ms, blob.Properties.ContentType);
+        }
+        
+        private async Task<CloudBlobContainer> GetContainer()
         {
             var config = await _configurationService.GetConfig();
 
@@ -47,19 +55,17 @@ namespace SFA.DAS.ApplyService.Storage
             var client = account.CreateCloudBlobClient();
             var container = client.GetContainerReference(config.FileStorage.ContainerName);
             await container.CreateIfNotExistsAsync();
-
+            return container;
+        }
+        
+        private static CloudBlobDirectory GetDirectory(string applicationId, int sequenceId, int sectionId, string pageId, string questionId, CloudBlobContainer container)
+        {
             var applicationFolder = container.GetDirectoryReference(applicationId);
-            var pageFolder = applicationFolder.GetDirectoryReference(pageId.ToLower());
+            var sequenceFolder = applicationFolder.GetDirectoryReference(sequenceId.ToString());
+            var sectionFolder = sequenceFolder.GetDirectoryReference(sectionId.ToString());
+            var pageFolder = sectionFolder.GetDirectoryReference(pageId.ToLower());
             var questionFolder = pageFolder.GetDirectoryReference(questionId.ToLower());
-
-            var blob = questionFolder.GetBlobReference(filename);
-            
-            
-            var ms = new MemoryStream();
-
-            await blob.DownloadToStreamAsync(ms);
-            ms.Position = 0;
-            return new Tuple<string, Stream>(filename, ms);
+            return questionFolder;
         }
     }
 }

@@ -39,9 +39,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
 //                throw new BadRequestException("Sequence not active");
 //            }
 //
-            var page = section.Pages.Single(p => p.PageId == request.PageId);
+            var page = section.QnADataObject.Pages.Single(p => p.PageId == request.PageId);
 
-            var pages = section.Pages;
+            //var pages = section.Pages;
+            var qnADataObject = section.QnADataObject;
             
             PageOfAnswers pageAnswers;
             if (!page.AllowMultipleAnswers)
@@ -110,8 +111,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                         if (nextAction.Condition.MustEqual == request.Answers
                                 .Single(a => a.QuestionId == nextAction.Condition.QuestionId).Value)
                         {
-                            pages.Single(p => p.PageId == nextAction.ReturnId).Active = true;
-                            pages.Single(p => p.PageId == nextAction.ReturnId).Visible = true;
+                            if (nextAction.Action == "NextPage")
+                            {
+                                qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Active = true;
+                                qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Visible = true;   
+                            }
                             nextAction.ConditionMet = true;
                         }
                     }
@@ -123,7 +127,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
 
 //                section.QnAData = workflow;
 
-                pages.ForEach(p =>
+                qnADataObject.Pages.ForEach(p =>
                 {
                     if (p.PageId == request.PageId)
                     {
@@ -133,7 +137,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                     }
                 });
 
-                section.Pages = pages;
+                section.QnADataObject = qnADataObject;
                 
                 await _applyRepository.SaveSection(section, request.UserId);
                 

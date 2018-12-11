@@ -35,7 +35,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await (await _httpClient.GetAsync($"/Applications/{userId}")).Content.ReadAsAsync<List<Domain.Entities.Application>>();
         }
 
-        public async Task<UploadResult> Upload(string applicationId, string userId, string pageId, IFormFileCollection files)
+        public async Task<UploadResult> Upload(string applicationId, string userId, int sequenceId, int sectionId, string pageId, IFormFileCollection files)
         {
             var formDataContent = new MultipartFormDataContent();
             foreach (var file in files)
@@ -46,7 +46,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
 
             return await (await _httpClient.PostAsync(
-                    $"/Application/{applicationId}/User/{userId}/Page/{pageId}/Upload", formDataContent)).Content
+                    $"/Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Upload", formDataContent)).Content
                 .ReadAsAsync<UploadResult>();
         }
 

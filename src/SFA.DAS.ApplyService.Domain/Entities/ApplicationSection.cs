@@ -6,27 +6,39 @@ using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.Domain.Entities
 {
+    public class QnAData
+    {
+        public List<Page> Pages { get; set; }
+        public FinancialApplicationGrade FinancialApplicationGrade { get; set; }
+    }
+    
     public class ApplicationSection : EntityBase
     {
         public Guid ApplicationId { get; set; }
         public int SectionId { get; set; }
         public int SequenceId { get; set; }
         public string QnAData { get; set; }
-        
-        public List<Page> Pages
+
+        public QnAData QnADataObject
         {
-            get => JsonConvert.DeserializeObject<List<Page>>(QnAData);
+            get => JsonConvert.DeserializeObject<QnAData>(QnAData);
             set => QnAData = JsonConvert.SerializeObject(value);
         }
+        
+//        public List<Page> Pages
+//        {
+//            get => JsonConvert.DeserializeObject<List<Page>>(QnAData);
+//            set => QnAData = JsonConvert.SerializeObject(value);
+//        }
 
         public int PagesComplete
         {
-            get { return Pages.Count(p => p.Active && p.Complete); }
+            get { return QnADataObject.Pages.Count(p => p.Active && p.Complete); }
         }
         
         public int PagesActive
         {
-            get { return Pages.Count(p => p.Active); }
+            get { return QnADataObject.Pages.Count(p => p.Active); }
         }
 
         public string Title { get; set; }
@@ -35,7 +47,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
 
         public Page GetPage(string pageId)
         {
-            return Pages.SingleOrDefault(p => p.PageId == pageId);
+            return QnADataObject.Pages.SingleOrDefault(p => p.PageId == pageId);
         }
 
         public void UpdatePage(Page page)
@@ -47,13 +59,13 @@ namespace SFA.DAS.ApplyService.Domain.Entities
             currentPages.RemoveAt(currentPageIndex);
             currentPages.Insert(currentPageIndex, page);
 
-            Pages = currentPages;
+            QnADataObject.Pages = currentPages;
         }
         
         public bool HasNewFeedback()
         {
             {
-                return Pages.Any(p => p.HasNewFeedback());
+                return QnADataObject.Pages.Any(p => p.HasNewFeedback());
             }
         }
     }

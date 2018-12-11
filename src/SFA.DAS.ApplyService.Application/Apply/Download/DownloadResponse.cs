@@ -6,5 +6,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Download
     {
         public Stream FileStream { get; set; }
         public string Filename { get; set; }
+        public string ContentType { get; set; }
     }
 }

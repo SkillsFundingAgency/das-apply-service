@@ -186,7 +186,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 if (organisationSearchResult.OrganisationType == null)
                     organisationSearchResult.OrganisationType = viewModel.OrganisationType;
 
-                var orgThatWasCreated = await _organisationApiClient.Create(organisationSearchResult, user.Id);
+                var orgThatWasCreated = await _organisationApiClient.Create(organisationSearchResult, user.Id, user.Email);
 
                 return RedirectToAction("Applications", "Application");
             }

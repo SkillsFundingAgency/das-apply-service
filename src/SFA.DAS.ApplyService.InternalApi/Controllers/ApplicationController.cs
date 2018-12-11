@@ -7,6 +7,7 @@ using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.DeleteAnswer;
 using SFA.DAS.ApplyService.Application.Apply.Download;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
+using SFA.DAS.ApplyService.Application.Apply.GetOrganisationForApplication;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.GetSection;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
@@ -97,18 +98,19 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return updatedPage;
         }
         
-        [HttpPost("Application/{applicationId}/User/{userId}/Page/{pageId}/Upload")]
-        public async Task<ActionResult<UploadResult>> Upload(string applicationId, string userId, string pageId)
+        [HttpPost("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Upload")]
+        public async Task<ActionResult<UploadResult>> Upload(string applicationId, string userId, int sequenceId, int sectionId, string pageId)
         {
-            var uploadResult = await _mediator.Send(new UploadRequest(Guid.Parse(applicationId), Guid.Parse(userId), pageId, HttpContext.Request.Form.Files));
+            var uploadResult = await _mediator.Send(new UploadRequest(Guid.Parse(applicationId), sequenceId, sectionId, Guid.Parse(userId), pageId, HttpContext.Request.Form.Files));
             return uploadResult;
         }
         
-        [HttpGet("Application/{applicationId}/User/{userId}/Page/{pageId}/Question/{questionId}/{filename}/Download")]
-        public async Task<IActionResult> Download(string applicationId, string userId, string pageId, string questionId, string filename)
+        [HttpGet("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}/Download")]
+        public async Task<ActionResult<DownloadResponse>> Download(string applicationId, string userId, int sequenceId, int sectionId, string pageId, string questionId, string filename)
         {
-            var downloadResponse = await _mediator.Send(new DownloadRequest(Guid.Parse(applicationId), Guid.Parse(userId), pageId, questionId, filename));
-            return File(downloadResponse.FileStream, "image/png", downloadResponse.Filename);
+            var downloadResponse = await _mediator.Send(new DownloadRequest(Guid.Parse(applicationId), Guid.Parse(userId), pageId, sequenceId, sectionId, questionId, filename));
+            //return downloadResponse;
+            return File(downloadResponse.FileStream, downloadResponse.ContentType, downloadResponse.Filename);
         }
 
         [HttpPost("/Applications/Submit")]
@@ -130,6 +132,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             await _mediator.Send(new UpdateApplicationDataRequest(applicationId, applicationData));
             return Ok();
+        }
+
+        [HttpGet("/Application/{applicationId}/Organisation")]
+        public async Task<Organisation> GetOrganisationForApplication(Guid applicationId)
+        {
+            return await _mediator.Send(new GetOrganisationForApplicationRequest(applicationId));
         }
     }
 }

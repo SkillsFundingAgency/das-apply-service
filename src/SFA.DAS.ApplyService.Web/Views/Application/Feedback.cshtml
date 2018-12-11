@@ -23,7 +23,7 @@
                         @if (sec.HasNewFeedback())
                         {
                             <ul class="app-task-list__items app-task-list__items--no-number">
-                                @foreach (var pg in sec.Pages.OrderBy(p => p.PageId).Where(p => p.HasFeedback))
+                                @foreach (var pg in sec.QnADataObject.Pages.OrderBy(p => p.PageId).Where(p => p.HasFeedback))
                                 {
                                     <li class="app-task-list__item">
                                         <a aria-describedby="eligibility-completed" class="app-task-list__task-name" 
