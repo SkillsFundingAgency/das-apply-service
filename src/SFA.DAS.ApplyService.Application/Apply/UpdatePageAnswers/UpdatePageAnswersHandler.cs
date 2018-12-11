@@ -108,7 +108,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                     foreach (var nextAction in page.Next)
                     {
                         if (nextAction.Condition.MustEqual == request.Answers
-                                .SingleOrDefault(a => a.QuestionId == nextAction.Condition.QuestionId).Value)
+                                .Single(a => a.QuestionId == nextAction.Condition.QuestionId).Value)
                         {
                             pages.Single(p => p.PageId == nextAction.ReturnId).Active = true;
                             pages.Single(p => p.PageId == nextAction.ReturnId).Visible = true;
