@@ -121,7 +121,6 @@
                         <div class="govuk-form-group @(questionHasError ? "govuk-form-group--error" : "")">
                             <label class="govuk-label" for="@question.QuestionId">
                                 @Html.Raw(question.Label)
-                                @Html.Raw(question.QuestionId)
                             </label>
                             @if (question.Hint != null)
                             {
