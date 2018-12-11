@@ -104,7 +104,7 @@
                                         </p>
                                     </form>
                                     <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
-                                        <span class="govuk-body govuk-!-font-weight-bold">Address</span>
+                                        <span class="govuk-body govuk-!-font-weight-bold">Address:</span>
                                         @if (result.Address?.Postcode == null)
                                         {
                                             @("Unknown");
@@ -117,7 +117,7 @@
                                 @if (result.OrganisationType != null)
                                 {
                                     <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
-                                        <span class="govuk-body govuk-!-font-weight-bold">Type</span>
+                                        <span class="govuk-body govuk-!-font-weight-bold">Type:</span>
                                         @result.OrganisationType
                                     </p>
                                 }
@@ -125,7 +125,7 @@
                                 {
                                     @* ON-1205 - request to show flags of what results were found in non-PROD environments *@
                                     <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
-                                        <span class="govuk-body govuk-!-font-weight-bold">Found On</span>
+                                        <span class="govuk-body govuk-!-font-weight-bold">Found On:</span>
                                         @if (result.RoEPAOApproved)
                                         {
                                             <span>&#9872; RoEPAO</span>
@@ -136,7 +136,7 @@
                                         }
                                         @if (!result.RoEPAOApproved && !result.RoATPApproved)
                                         {
-                                            <span>&#9874; EASAPI ONLY</span>
+                                            <span>&#9874; Companies House and/or Charity Commission</span>
                                         }
                                     </p>
                                 }
@@ -167,7 +167,8 @@
                         <li>spelling of the name</li>
                         <li><abbr title="UK provider reference number">UKPRN</abbr> is correct</li>
                         <li><abbr title="End-point assessor organisation">EPAO ID</abbr> is correct</li>
-                        <li>organisation type is correct</li>
+                        <li>company number</li>
+                        <li>charity number</li>
                     </ul>
                 </div>
             }
