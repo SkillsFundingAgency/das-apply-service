@@ -20,4 +20,11 @@ CREATE TABLE [dbo].[Contacts](
 ) 
 GO
 
+ALTER TABLE [dbo].[Contacts] WITH NOCHECK ADD CONSTRAINT [FK_Contacts_Organisations] FOREIGN KEY([ApplyOrganisationID])
+REFERENCES [dbo].[Organisations] ([Id])
+GO
+
+ALTER TABLE [dbo].[Contacts] CHECK CONSTRAINT [FK_Contacts_Organisations]
+GO
+
 CREATE UNIQUE INDEX [IXU_Contacts] ON [Contacts] ([Email])
