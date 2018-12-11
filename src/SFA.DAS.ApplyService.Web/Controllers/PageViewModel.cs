@@ -49,6 +49,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             LinkTitle = page.LinkTitle;
             PageId = page.PageId;
             SequenceId = page.SequenceId;
+            PageOfAnswers = page.PageOfAnswers;
             SectionId = int.Parse((string) page.SectionId);
 
             var questions = page.Questions;
