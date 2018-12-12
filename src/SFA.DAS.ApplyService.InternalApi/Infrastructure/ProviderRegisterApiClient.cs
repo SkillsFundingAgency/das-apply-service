@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.InternalApi.Models.ProviderRegister;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -19,10 +20,15 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             _logger = logger;
         }
 
-        public async Task<IEnumerable<Types.OrganisationSearchResult>> SearchOrgansiationByName(string name)
+        public async Task<IEnumerable<Types.OrganisationSearchResult>> SearchOrgansiationByName(string name, bool exactMatch)
         {
             _logger.LogInformation($"Searching Provider Register. Name: {name}");
             var apiResponse = await Get<IEnumerable<Provider>>($"/providers/search?keywords={name}");
+
+            if (exactMatch)
+            {
+                apiResponse = apiResponse?.Where(r => r.ProviderName.Equals(name, StringComparison.InvariantCultureIgnoreCase)).AsEnumerable();
+            }
 
             return Mapper.Map<IEnumerable<Provider>, IEnumerable<Types.OrganisationSearchResult>>(apiResponse);
         }

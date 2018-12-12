@@ -184,7 +184,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             {
                 try
                 {
-                    var response = await _providerRegisterApiClient.SearchOrgansiationByName(name);
+                    var response = await _providerRegisterApiClient.SearchOrgansiationByName(name, false);
                     if (response != null) results.AddRange(response);
                 }
                 catch (Exception ex)
@@ -199,7 +199,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 {
                     try
                     {
-                        var response = await _providerRegisterApiClient.SearchOrgansiationByName(exactName);
+                        var response = await _providerRegisterApiClient.SearchOrgansiationByName(exactName, true);
                         if (response != null) results.AddRange(response);
                     }
                     catch (Exception ex)
