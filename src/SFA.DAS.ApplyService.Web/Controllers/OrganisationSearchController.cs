@@ -81,7 +81,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Results(string searchString, string organisationTypeFilter = null)
+        public async Task<IActionResult> Results(OrganisationSearchViewModel viewModel)
         {
             var user = await _usersApiClient.GetUserBySignInId(_httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
 
@@ -89,28 +89,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return RedirectToAction("Applications", "Application");
             }
-            else if (string.IsNullOrEmpty(searchString) || searchString.Length < 2)
+            else if (string.IsNullOrEmpty(viewModel.SearchString) || viewModel.SearchString.Length < 2)
             {
-                ModelState.AddModelError(nameof(searchString), "Enter a valid search string");
+                ModelState.AddModelError(nameof(viewModel.SearchString), "Enter a valid search string");
+                TempData["ShowErrors"] = true;
                 return RedirectToAction(nameof(Index));
             }
 
-            var searchResults = await _apiClient.SearchOrganisation(searchString);
-            var organisationTypes = await _apiClient.GetOrganisationTypes();
-
-            if (organisationTypes != null && organisationTypes.Any(ot =>
-                    ot.Type.Equals(organisationTypeFilter, StringComparison.InvariantCultureIgnoreCase)))
-            {
-                searchResults = searchResults.Where(sr => sr.OrganisationType == organisationTypeFilter).AsEnumerable();
-            }
-
-            var viewModel = new OrganisationSearchViewModel
-            {
-                SearchString = searchString,
-                OrganisationTypeFilter = organisationTypeFilter,
-                Organisations = searchResults,
-                OrganisationTypes = organisationTypes
-            };
+            viewModel.Organisations = await _apiClient.SearchOrganisation(viewModel.SearchString);
 
             return View(viewModel);
         }
@@ -121,6 +107,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             if (string.IsNullOrEmpty(viewModel.Name) || viewModel.SearchString.Length < 2)
             {
                 ModelState.AddModelError(nameof(viewModel.Name), "Enter a valid search string");
+                TempData["ShowErrors"] = true;
                 return RedirectToAction(nameof(Index));
             }
 
@@ -140,12 +127,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             else if (string.IsNullOrEmpty(viewModel.Name) || viewModel.SearchString.Length < 2)
             {
                 ModelState.AddModelError(nameof(viewModel.Name), "Enter a valid search string");
+                TempData["ShowErrors"] = true;
                 return RedirectToAction(nameof(Index));
             }
             else if (string.IsNullOrEmpty(viewModel.OrganisationType))
             {
                 ModelState.AddModelError(nameof(viewModel.OrganisationType), "Select an organisation type");
                 viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();
+                TempData["ShowErrors"] = true;
                 return View(nameof(Type), viewModel);
             }
 

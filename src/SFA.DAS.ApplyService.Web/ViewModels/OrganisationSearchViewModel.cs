@@ -8,8 +8,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
     {
         public string SearchString { get; set; }
 
-        public string OrganisationTypeFilter { get; set; }
-
         public string Name { get; set; }
 
         public int? Ukprn { get; set; }
