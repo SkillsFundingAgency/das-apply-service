@@ -28,7 +28,7 @@
                                         {
                                             <li class="app-task-list__item">
                                                 <a class="app-task-list__task-name" href="@Url.Action("Page", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pg.PageId, redirectAction="Section"})">
-                                                    @question.Label
+                                                    @question.ShortLabel
                                                 </a>
                                                 @if (pg.IsQuestionAnswered(question.QuestionId))
                                                 {

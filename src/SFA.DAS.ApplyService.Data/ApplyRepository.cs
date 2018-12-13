@@ -430,5 +430,30 @@ namespace SFA.DAS.ApplyService.Data
                 await connection.ExecuteAsync(@"DELETE FROM Assets");
             }
         }
+
+        public async Task<List<ApplicationSection>> GetApplicationSections()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var applicationSections = (await connection.QueryAsync<ApplicationSection>(@"SELECT * FROM ApplicationSections WHERE DisplayType != 'Backup'")).ToList();
+
+                if (applicationSections.Count() != 4)
+                {
+                    throw new Exception("Expecting only four Application Sections");
+                }
+                
+                return applicationSections;
+            }
+        }
+
+        public async Task<List<WorkflowSection>> GetWorkflowSections()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var applicationSections = (await connection.QueryAsync<WorkflowSection>(@"SELECT * FROM WorkflowSections")).ToList();
+                
+                return applicationSections;
+            }
+        }
     }
 }

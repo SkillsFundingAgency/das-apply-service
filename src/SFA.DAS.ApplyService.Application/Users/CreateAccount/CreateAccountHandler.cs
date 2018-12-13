@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using SFA.DAS.ApplyService.Application.Email.Consts;
 using SFA.DAS.ApplyService.Application.Interfaces;
 
 namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
@@ -33,7 +34,7 @@ namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
             }
             else
             {
-                if (existingContact.ApplyOrganisationId == null)
+                if (existingContact.SigninId == null)
                 {
                     // They have signed up in Apply, but we have yet to receive a DfE Sign In id from DfE.
                     // This is either because they haven't followed the link and signed up in DfE yet, or
@@ -46,9 +47,9 @@ namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
                         return false;
                     }
                 }
-                
-                await _emailServiceObject.SendEmail(request.Email, 1,
-                    new {GivenName = existingContact.GivenNames, FamilyName = existingContact.FamilyName});
+                // otherwise advise they already have an account (by Email)
+                await _emailServiceObject.SendEmail(EmailTemplateName.APPLY_SIGNUP_ERROR, request.Email, 
+                    new { contactname = $"{existingContact.GivenNames} {existingContact.FamilyName}" });
             }
             
             return true;

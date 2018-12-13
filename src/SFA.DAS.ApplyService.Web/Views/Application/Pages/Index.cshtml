@@ -79,6 +79,12 @@
                                         </label>
                                     </h2>
                                 }
+
+                                @if (question.QuestionBodyText != null)
+                                {
+                                    @Html.Raw(question.QuestionBodyText)
+                                }
+
                                 @if (question.Hint != null)
                                 {
                                     <span class="govuk-hint">
@@ -122,6 +128,12 @@
                             <label class="govuk-label" for="@question.QuestionId">
                                 @Html.Raw(question.Label)
                             </label>
+
+                            @if (question.QuestionBodyText != null)
+                            {
+                                @Html.Raw(question.QuestionBodyText)
+                            }
+                            
                             @if (question.Hint != null)
                             {
                                 <span class="govuk-hint">
@@ -141,6 +153,7 @@
                                     }
                                 }
                             }
+
                             @Html.Partial($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
                         </div>
                     }

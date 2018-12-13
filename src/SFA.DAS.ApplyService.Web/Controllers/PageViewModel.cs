@@ -60,6 +60,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             Questions.AddRange(questions.Select(q => new QuestionViewModel()
             {
                 Label = q.Label,
+                ShortLabel = q.ShortLabel,
+                QuestionBodyText = q.QuestionBodyText,
                 QuestionId = q.QuestionId,
                 Type = q.Input.Type,
                 Hint = q.Hint,

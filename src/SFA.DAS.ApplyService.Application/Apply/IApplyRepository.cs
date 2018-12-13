@@ -40,5 +40,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<dynamic>> GetPreviousFinancialApplications();
 
         Task ClearAssets();
+        Task<List<ApplicationSection>> GetApplicationSections();
+        Task<List<WorkflowSection>> GetWorkflowSections();
     }
 }
