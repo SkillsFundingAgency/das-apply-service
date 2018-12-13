@@ -91,6 +91,12 @@
                                         @Html.Raw(question.Hint)
                                     </span>
                                 }
+                                
+                                @if (question.QuestionBodyText != null)
+                                {
+                                    <p>@Html.Raw(question.QuestionBodyText)</p>
+                                }
+                                
                                 @Html.Partial($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
                             </fieldset>
                         </div>
@@ -112,6 +118,12 @@
                                     @Html.Raw(question.Hint)
                                 </span>
                             }
+                            
+                            @if (question.QuestionBodyText != null)
+                            {
+                                <p>@Html.Raw(question.QuestionBodyText)</p>
+                            }
+                            
                             @Html.Partial($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
                         </div>
                     }

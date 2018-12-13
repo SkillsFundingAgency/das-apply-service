@@ -46,6 +46,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             return Ok();
         }
+
+        [HttpPost("/Import/ExtractAssetsAndWorkflow")]
+        public async Task<ActionResult> ExtractAssetsAndWorkflow()
+        {
+            await _mediator.Send(new ExtractAssetsAndWorkflowRequest());
+
+            return Ok();
+        }
     }
 
     
