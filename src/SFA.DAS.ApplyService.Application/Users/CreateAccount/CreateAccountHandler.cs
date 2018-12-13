@@ -34,7 +34,7 @@ namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
             }
             else
             {
-                if (existingContact.ApplyOrganisationId == null)
+                if (existingContact.SigninId == null)
                 {
                     // They have signed up in Apply, but we have yet to receive a DfE Sign In id from DfE.
                     // This is either because they haven't followed the link and signed up in DfE yet, or
