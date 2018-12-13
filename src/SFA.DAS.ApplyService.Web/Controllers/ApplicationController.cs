@@ -10,7 +10,8 @@ using System;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.Upload;
- using SFA.DAS.ApplyService.Application.Interfaces;
+using SFA.DAS.ApplyService.Application.Apply.Validation;
+using SFA.DAS.ApplyService.Application.Interfaces;
  using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Web.Infrastructure;
@@ -268,13 +269,15 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
 //                 }
                  return RedirectToAction("Sequence", "Application", new {applicationId});
              }
- 
+
+             var errorMessages = new List<ValidationErrorDetail>();
+
              foreach (var error in updatePageResult.ValidationErrors)
              {
                  ModelState.AddModelError(error.Key, error.Value);
+                errorMessages.Add(new ValidationErrorDetail(error.Key, error.Value));
              }
- 
-             var pageVm = new PageViewModel(updatePageResult.Page, Guid.Parse(applicationId));
+            var pageVm = new PageViewModel(updatePageResult.Page, Guid.Parse(applicationId), errorMessages);
              return View("~/Views/Application/Pages/Index.cshtml", pageVm);
          }
  

@@ -20,10 +20,15 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             _logger = logger;
         }
 
-        public async Task<IEnumerable<Types.OrganisationSearchResult>> SearchOrgansiationByName(string name)
+        public async Task<IEnumerable<Types.OrganisationSearchResult>> SearchOrgansiationByName(string name, bool exactMatch)
         {
             _logger.LogInformation($"Searching Provider Register. Name: {name}");
             var apiResponse = await Get<IEnumerable<Provider>>($"/providers/search?keywords={name}");
+
+            if (exactMatch)
+            {
+                apiResponse = apiResponse?.Where(r => r.ProviderName.Equals(name, StringComparison.InvariantCultureIgnoreCase)).AsEnumerable();
+            }
 
             return Mapper.Map<IEnumerable<Provider>, IEnumerable<Types.OrganisationSearchResult>>(apiResponse);
         }
@@ -34,14 +39,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             var apiResponse = await Get<Provider>($"/providers/{ukprn}");
 
             return Mapper.Map<Provider, Types.OrganisationSearchResult>(apiResponse);
-        }
-
-        public async Task<Types.OrganisationSearchResult> SearchOrgansiationByEpao(string epao)
-        {
-            _logger.LogInformation($"Searching Provider Register. EPAO: {epao}");
-            var apiResponse = await Get<Organisation>($"/assessment-organisations/{epao}");
-
-            return Mapper.Map<Organisation, Types.OrganisationSearchResult>(apiResponse);
         }
 
         private async Task<T> Get<T>(string uri)

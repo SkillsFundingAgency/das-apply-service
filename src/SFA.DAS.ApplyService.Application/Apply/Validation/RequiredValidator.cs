@@ -8,11 +8,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
         public ValidationDefinition ValidationDefinition { get; set; }
         public List<KeyValuePair<string, string>> Validate(Question question, Answer answer)
         {
-            if (string.IsNullOrWhiteSpace(answer.Value))
+            if (string.IsNullOrWhiteSpace(answer?.Value))
             {
                 return new List<KeyValuePair<string, string>>
                 {
-                    new KeyValuePair<string, string>(answer.QuestionId,
+                    new KeyValuePair<string, string>(question.QuestionId,
                         ValidationDefinition.ErrorMessage)
                 };
             }

@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using SFA.DAS.ApplyService.Application.Email.Consts;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Domain.Entities;
 using System.Threading;
@@ -21,9 +22,10 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
         {
             var result = await UpdateOrganisationIfExists(request) ?? await CreateNewOrganisation(request);
 
-            if (result != null && !string.IsNullOrEmpty(request.PrimaryContactEmail))
+            if (result != null)
             {
-                await _emailService.SendPreAmbleEmail(request.PrimaryContactEmail, 2, new { OrganisationName = request.Name });
+                await _emailService.SendEmail(EmailTemplateName.APPLY_EPAO_UPDATE, request.PrimaryContactEmail, 
+                    new { contactname = request.Name });
             }
 
             return result;

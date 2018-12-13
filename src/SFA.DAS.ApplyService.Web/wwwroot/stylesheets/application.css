@@ -393,13 +393,13 @@
   padding-top: 0;
 }
 
-.govuk-error-message {
+/* .govuk-error-message {
   display: none;
-}
+} */
 
-.govuk-error-message.field-validation-error {
+/* .govuk-error-message.field-validation-error {
   display: block;
-}
+} */
 
 .govuk-header__container--das-epao {
   border-bottom: 10px solid #004274;

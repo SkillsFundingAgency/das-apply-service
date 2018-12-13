@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json.Linq;
+using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
@@ -13,12 +14,44 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public PageViewModel(Page page, Guid applicationId)
         {
             ApplicationId = applicationId;
+            SetupPage(page);
+        }
+
+        public PageViewModel(Page page, Guid applicationId, List< ValidationErrorDetail> errorMessages)
+        {
+            ApplicationId = applicationId;
+            SetupPage(page);
+            ErrorMessages = errorMessages;
+        }
+
+        public bool HasFeedback { get; set; }
+
+        public List<Feedback> Feedback { get; set; }      
+        
+        public string LinkTitle { get; set; }
+
+        public string PageId { get; set; }
+        public string Title { get; set; }
+        
+        public List<QuestionViewModel> Questions { get; set; }
+        public string SequenceId { get; set; }
+        public int SectionId { get; set; }
+
+        public List<PageOfAnswers> PageOfAnswers { get; set; }
+        public string BodyText { get; set; }
+        public string RedirectAction { get; set; }
+
+        public List<ValidationErrorDetail> ErrorMessages { get; set; }
+
+        private void SetupPage(Page page)
+        {
             Title = page.Title;
             LinkTitle = page.LinkTitle;
             PageId = page.PageId;
             SequenceId = page.SequenceId;
             PageOfAnswers = page.PageOfAnswers;
-            
+            SectionId = int.Parse((string) page.SectionId);
+
             var questions = page.Questions;
             var answers = page.PageOfAnswers.FirstOrDefault()?.Answers;
 
@@ -39,7 +72,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             Feedback = page.Feedback;
             HasFeedback = page.HasFeedback;
             BodyText = page.BodyText;
-            
+
             foreach (var question in Questions)
             {
                 if (question.Options == null) continue;
@@ -54,22 +87,5 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
             }
         }
-
-        public bool HasFeedback { get; set; }
-
-        public List<Feedback> Feedback { get; set; }      
-        
-        public string LinkTitle { get; set; }
-
-        public string PageId { get; set; }
-        public string Title { get; set; }
-        
-        public List<QuestionViewModel> Questions { get; set; }
-        public string SequenceId { get; set; }
-        public int SectionId { get; set; }
-
-        public List<PageOfAnswers> PageOfAnswers { get; set; }
-        public string BodyText { get; set; }
-        public string RedirectAction { get; set; }
     }
 }
