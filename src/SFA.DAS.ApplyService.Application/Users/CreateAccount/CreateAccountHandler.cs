@@ -47,8 +47,8 @@ namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
                         return false;
                     }
                 }
-
-                await _emailServiceObject.SendEmail(EmailTemplateName.APPLY_EPAO_UPDATE, request.Email, 
+                // otherwise advise they already have an account (by Email)
+                await _emailServiceObject.SendEmail(EmailTemplateName.APPLY_SIGNUP_ERROR, request.Email, 
                     new { contactname = $"{existingContact.GivenNames} {existingContact.FamilyName}" });
             }
             

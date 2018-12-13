@@ -5,6 +5,11 @@
         /// <summary>
         /// Requires tokens: { contactname }
         /// </summary>
+        public const string APPLY_SIGNUP_ERROR = "ApplySignupError";
+
+        /// <summary>
+        /// Requires tokens: { contactname }
+        /// </summary>
         public const string APPLY_EPAO_UPDATE = "ApplyEPAOUpdate";
 
         /// <summary>
