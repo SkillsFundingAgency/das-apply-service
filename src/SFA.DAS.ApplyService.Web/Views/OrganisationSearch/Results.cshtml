@@ -46,7 +46,7 @@
     </div>
 
     <div class="govuk-grid-row search-results">
-        <div class="govuk-grid-column-full">
+        <div class="govuk-grid-column-two-thirds">
             @if (@Model.Organisations != null && @Model.Organisations.Any())
             {
                 <table class="govuk-table">
@@ -54,7 +54,7 @@
                         @foreach (var result in Model.Organisations)
                         {
                             <tr class="govuk-table__row govuk-table__row--no-top-padding-on-first-child">
-                                <td class="govuk-table__cell govuk-!-padding-bottom-4 govuk-!-padding-left-2">
+                                <td class="govuk-table__cell govuk-!-padding-bottom-4">
                                     <form method="post" asp-action="@(result.OrganisationType != null ? "Create" : "Type")" asp-controller="OrganisationSearch" novalidate>
                                         <input asp-for="SearchString" type="hidden" />
                                         <input asp-for="Name" value="@result.Name" type="hidden" />
@@ -62,11 +62,11 @@
                                         <input asp-for="OrganisationType" value="@result.OrganisationType" type="hidden" />
                                         <input asp-for="Postcode" value="@result.Address?.Postcode" type="hidden" />
 
-                                        <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">
+                                        <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-2">
                                             <button type="submit" class="govuk-button govuk-button--looks-like-link govuk-!-font-weight-bold">@result.Name</button>
                                         </p>
                                     </form>
-                                    <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
+                                    <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-1">
                                         <span class="govuk-body govuk-!-font-weight-bold">Address:</span>
                                         @if (result.Address?.Postcode == null)
                                         {
@@ -88,18 +88,22 @@
                                 {
                                     @* ON-1205 - request to show flags of what results were found in non-PROD environments *@
                                     <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
-                                        <span class="govuk-body govuk-!-font-weight-bold">Found On:</span>
+                                        <span class="govuk-body govuk-!-font-weight-bold">Found on:</span>
                                         @if (result.RoEPAOApproved)
                                         {
-                                            <span>&#9872; RoEPAO</span>
+                                            <span>RoEPAO</span>
+                                        }
+                                        @if (result.RoEPAOApproved && result.RoATPApproved)
+                                        {
+                                            <span> and </span>
                                         }
                                         @if (result.RoATPApproved)
                                         {
-                                            <span>&#9873; RoATP</span>
+                                            <span>RoATP</span>
                                         }
                                         @if (!result.RoEPAOApproved && !result.RoATPApproved)
                                         {
-                                            <span>&#9874; Companies House and/or Charity Commission</span>
+                                            <span>Companies House and/or Charity Commission</span>
                                         }
                                     </p>
                                 }
