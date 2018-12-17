@@ -106,7 +106,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return RedirectToAction("Applications", "Application");
         }
 
-        [HttpGet("/Users/LoggedOut")]
+        [HttpGet("/Users/SignedOut")]
         public IActionResult SignedOut()
         {
             return View();
