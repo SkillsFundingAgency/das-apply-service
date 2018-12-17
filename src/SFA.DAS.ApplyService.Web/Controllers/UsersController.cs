@@ -91,6 +91,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             
             var user = await _usersApiClient.GetUserBySignInId(signInId);
          
+            _logger.LogInformation($"Setting LoggedInUser in Session: {user.GivenNames} {user.FamilyName}");
+            
             _sessionService.Set("LoggedInUser", $"{user.GivenNames} {user.FamilyName}");
 
             if (user.ApplyOrganisationId == null)
