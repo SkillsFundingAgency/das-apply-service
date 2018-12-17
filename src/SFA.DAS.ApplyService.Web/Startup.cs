@@ -57,7 +57,11 @@ namespace SFA.DAS.ApplyService.Web
 
             _logger.LogInformation("Passed Configure Mvc");
             
-            services.AddSession(opt => { opt.IdleTimeout = TimeSpan.FromHours(1); });
+            services.AddSession(opt =>
+            {
+                opt.IdleTimeout = TimeSpan.FromHours(1);
+                opt.Cookie = new CookieBuilder() {Name = ".Apply.Session", HttpOnly = true};
+            });
             
             _logger.LogInformation("Passed Add Session");
             

@@ -206,20 +206,23 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<Domain.Entities.Application>> GetApplicationsToReview()
+        public async Task<List<dynamic>> GetNewApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection
-                    .QueryAsync<Domain.Entities.Application, Organisation, Domain.Entities.Application>(
-                        @"SELECT * FROM Applications a
-                            INNER JOIN Organisations o ON o.Id = a.ApplyingOrganisationId
-                            WHERE a.ApplicationStatus = @applicationStatus",
-                        (application, organisation) =>
-                        {
-                            application.ApplyingOrganisation = organisation;
-                            return application;
-                        }, new {applicationStatus = ApplicationStatus.Submitted})).ToList();
+                    .QueryAsync(
+                        @"SELECT org.Name, sec.ApplicationId, sec.SectionId, new.[Status] AS SequenceStatus, sec.[Status] AS FinanceStatus
+                            FROM ApplicationSections sec
+                            INNER JOIN (SELECT appl.Id, appl.ApplyingOrganisationId, seq.Status
+                            FROM Applications appl
+                            INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
+                            WHERE appl.ApplicationStatus = 'Submitted' 
+                            AND (seq.Status = 'Submitted' OR seq.Status = 'In Progress')
+                            AND seq.SequenceId = 1
+                            ) AS new ON new.Id = sec.ApplicationId
+                            INNER JOIN Organisations org ON org.Id = new.ApplyingOrganisationId
+                            WHERE SectionId = 3", new {applicationStatus = ApplicationStatus.Submitted})).ToList();
             }
         }
 
