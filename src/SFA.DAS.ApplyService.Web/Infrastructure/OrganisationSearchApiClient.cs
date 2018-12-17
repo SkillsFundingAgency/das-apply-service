@@ -3,6 +3,7 @@ using SFA.DAS.ApplyService.InternalApi.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -34,7 +35,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         {
             _logger.LogInformation($"Calling OrganisationSearch/email from: {_httpClient.BaseAddress}/OrganisationSearch/email/{email}");
             
-            var httpResponseMessage = await _httpClient.GetAsync($"/OrganisationSearch/email/{email}");
+            var httpResponseMessage = await _httpClient.GetAsync($"/OrganisationSearch/email/{WebUtility.UrlEncode(email)}");
 
             var responseAsString = await httpResponseMessage.Content.ReadAsStringAsync();
             
