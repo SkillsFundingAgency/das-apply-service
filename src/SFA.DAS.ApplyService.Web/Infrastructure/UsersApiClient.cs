@@ -1,6 +1,8 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types;
@@ -20,10 +22,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
     public class UsersApiClient : IUsersApiClient
     {
+        private readonly ILogger<UsersApiClient> _logger;
         private static readonly HttpClient HttpClient = new HttpClient();
 
-        public UsersApiClient(IConfigurationService configService)
+        public UsersApiClient(IConfigurationService configService, ILogger<UsersApiClient> logger)
         {
+            _logger = logger;
             if (HttpClient.BaseAddress == null)
             {
                 HttpClient.BaseAddress = new Uri(configService.GetConfig().Result.InternalApi.Uri);
@@ -38,7 +42,15 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<Contact> GetUserBySignInId(string signInId)
         {
-            return await (await HttpClient.GetAsync($"/Account/{signInId}")).Content.ReadAsAsync<Contact>();
+            var httpResponseMessage = await HttpClient.GetAsync($"/Account/{signInId}");
+
+            var contactJson = await httpResponseMessage.Content.ReadAsStringAsync();
+
+            _logger.LogInformation($"GetUserBySignInId result: {contactJson}");
+            
+            return JsonConvert.DeserializeObject<Contact>(contactJson);
+
+            //return await httpResponseMessage.Content.ReadAsAsync<Contact>();
         }
 
         public async Task<bool> ApproveUser(Guid contactId)
