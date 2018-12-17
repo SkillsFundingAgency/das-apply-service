@@ -37,14 +37,6 @@
             }
             
             
-            @if (!string.IsNullOrWhiteSpace(@Model.BodyText))
-            {
-                <div>
-                    @Html.Raw(Model.BodyText)
-                </div>
-            }
-            
-            
             @if (Model.HasFeedback)
             {
                 <div class="govuk-inset-text">
@@ -70,9 +62,19 @@
                                             @* @Html.Raw(question.QuestionId) *@
                                         </h1>
                                     </legend>
+                                    @if (!string.IsNullOrWhiteSpace(@Model.BodyText))
+                                    {
+                                        @Html.Raw(Model.BodyText)
+                                    }
                                 }
                                 else
                                 {
+                                    @if (!string.IsNullOrWhiteSpace(@Model.BodyText))
+                                    {
+                                        <div>
+                                            @Html.Raw(Model.BodyText)
+                                        </div>
+                                    }
                                     <h2 class="govuk-label-wrapper">
                                         <label class="govuk-label govuk-label--xl" for="@question.QuestionId">
                                                 @Html.Raw(question.Label)
@@ -98,7 +100,7 @@
                                     {
                                         @if (error.Field == question.QuestionId)
                                         {
-                                            <span id="dob-error" class="govuk-error-message">
+                                            <span id="@error.Field-error" class="govuk-error-message">
                                                 @Html.Raw(error.ErrorMessage)
                                             </span>
                                         }
@@ -124,8 +126,8 @@
                                 }
                             }
                         }
-                        <div class="govuk-form-group @(questionHasError ? "govuk-form-group--error" : "")">
-                            <label class="govuk-label" for="@question.QuestionId">
+                        <div class="govuk-form-group govuk-!-margin-bottom-8 @(questionHasError ? "govuk-form-group--error" : "")">
+                            <label class="govuk-label govuk-label--m" for="@question.QuestionId">
                                 @Html.Raw(question.Label)
                             </label>
 
@@ -134,7 +136,7 @@
                                 @Html.Raw(question.QuestionBodyText)
                             }
                             
-                            @if (question.Hint != null)
+                            @if (question.Hint != "")
                             {
                                 <span class="govuk-hint">
                                     @Html.Raw(question.Hint)
