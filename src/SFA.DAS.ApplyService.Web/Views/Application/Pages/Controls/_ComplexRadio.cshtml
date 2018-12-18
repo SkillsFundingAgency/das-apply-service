@@ -1,12 +1,19 @@
 @model SFA.DAS.ApplyService.Web.Controllers.QuestionViewModel
 
-<div class="govuk-form-group" sfa-validation-for-id="@Model.QuestionId" sfa-validationerror-class="govuk-form-group--error">
-    <span class="govuk-error-message" sfa-validation-for-id="@Model.QuestionId"></span>
+<div class="govuk-form-group" sfa-validation-for-id="@Model.QuestionId">
+
+    @{
+        var radioChecked = Model.Value == Model.Options[0].Value.ToString() ? "checked" : "";
+    }
 
     <div class="govuk-radios govuk-radios--conditional" data-module="radios">
-        @for (int i = 0; i < Model.Options.Count; i++)
+        <div class="govuk-radios__item">
+            <input class="govuk-radios__input " type="radio" id="@(Model.QuestionId)" name="@Model.QuestionId" value="@Model.Options[0].Value" @radioChecked />
+            <label class="govuk-label govuk-radios__label" for="@(Model.QuestionId)">@Model.Options[0].Label</label>
+        </div>
+        @for (int i = 1; i < Model.Options.Count; i++)
         {
-            var radioChecked = Model.Value == Model.Options[i].Label.ToString() ? "checked" : "";
+            radioChecked = Model.Value == Model.Options[i].Label.ToString() ? "checked" : "";
             <div class="govuk-radios__item">
                 <input class="govuk-radios__input" type="radio" id="@(Model.QuestionId + "_" + i)" name="@Model.QuestionId" value="@Model.Options[i].Label" data-aria-controls="conditional-@(Model.QuestionId + "_" + i)" @radioChecked>
                 <label class="govuk-label govuk-radios__label" for="@(Model.QuestionId + "_" + i)">@Model.Options[i].Label</label>

@@ -1,7 +1,7 @@
 @model SFA.DAS.ApplyService.Web.Controllers.QuestionViewModel
 
 
-<div class="govuk-form-group" sfa-validation-for-id="@Model.QuestionId" sfa-validationerror-class="govuk-form-group--error">
+<div class="govuk-form-group" sfa-validation-for-id="@Model.QuestionId">
 
     @{ 
         var isInline = Model.Options.Count <= 2 ? "govuk-radios--inline" : "";
@@ -17,7 +17,7 @@
         {
             radioChecked = Model.Value == Model.Options[i].Value.ToString() ? "checked" : "";
             <div class="govuk-radios__item">
-                <input class="govuk-radios__input " type="radio" id="@(Model.QuestionId + "_" + i)" name="@Model.QuestionId" value="@Model.Options[i].Value" @radioChecked />
+                <input class="govuk-radios__input" type="radio" id="@(Model.QuestionId + "_" + i)" name="@Model.QuestionId" value="@Model.Options[i].Value" @radioChecked />
                 <label class="govuk-label govuk-radios__label" for="@(Model.QuestionId + "_" + i)">@Model.Options[i].Label</label>
             </div>
         }
