@@ -62,14 +62,14 @@
                                             @* @Html.Raw(question.QuestionId) *@
                                         </h1>
                                     </legend>
-                                    @if (!string.IsNullOrWhiteSpace(@Model.BodyText))
+                                    if (!string.IsNullOrWhiteSpace(@Model.BodyText))
                                     {
                                         @Html.Raw(Model.BodyText)
                                     }
                                 }
                                 else
                                 {
-                                    @if (!string.IsNullOrWhiteSpace(@Model.BodyText))
+                                    if (!string.IsNullOrWhiteSpace(@Model.BodyText))
                                     {
                                         <div>
                                             @Html.Raw(Model.BodyText)
@@ -96,9 +96,9 @@
 
                                 @if (Model.ErrorMessages != null)
                                 {
-                                    @foreach (var error in Model.ErrorMessages)
+                                    foreach (var error in Model.ErrorMessages)
                                     {
-                                        @if (error.Field == question.QuestionId)
+                                        if (error.Field == question.QuestionId)
                                         {
                                             <span id="@error.Field-error" class="govuk-error-message">
                                                 @Html.Raw(error.ErrorMessage)
@@ -116,11 +116,11 @@
                     foreach (var question in Model.Questions)
                     {
                         var questionHasError = false;
-                        @if (Model.ErrorMessages != null)
+                        if (Model.ErrorMessages != null)
                         {
-                            @foreach (var error in Model.ErrorMessages)
+                            foreach (var error in Model.ErrorMessages)
                             {
-                                @if (error.Field == question.QuestionId)
+                                if (error.Field == question.QuestionId)
                                 {
                                     questionHasError = true;
                                 }
@@ -145,9 +145,9 @@
 
                             @if (Model.ErrorMessages != null)
                             {
-                                @foreach (var error in Model.ErrorMessages)
+                                foreach (var error in Model.ErrorMessages)
                                 {
-                                    @if (error.Field == question.QuestionId)
+                                    if (error.Field == question.QuestionId)
                                     {
                                         <span id="@error.Field-error" class="govuk-error-message">
                                             @Html.Raw(error.ErrorMessage)

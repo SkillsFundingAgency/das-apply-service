@@ -12,5 +12,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public string Hint { get; set; }
         public Input Input { get; set; }
         public int? Order { get; set; }
+        public string Value { get; set; }
+        public IEnumerable<dynamic> ErrorMessages { get; set; }
     }
 }
