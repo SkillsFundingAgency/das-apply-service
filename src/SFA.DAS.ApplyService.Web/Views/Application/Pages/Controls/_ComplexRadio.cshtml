@@ -15,8 +15,8 @@
         {
             radioChecked = Model.Value == Model.Options[i].Label.ToString() ? "checked" : "";
              <div class="govuk-radios__item">
-                 <input class="govuk-radios__input" type="radio" id="@(Model.QuestionId + "_" + i)" name="@Model.QuestionId" value="@Model.Options[i].Label" data-aria-controls="conditional-@(Model.QuestionId + "_" + i)" @radioChecked>
-                 <label class="govuk-label govuk-radios__label" for="@(Model.QuestionId + "_" + i)">@Model.Options[i].Label</label>
+                 <input class="govuk-radios__input" type="radio" id="@(Model.QuestionId + (i == 0 ? "" :  "_" + i))" name="@Model.QuestionId" value="@Model.Options[i].Label" data-aria-controls="conditional-@(Model.QuestionId + "_" + i)" @radioChecked>
+                 <label class="govuk-label govuk-radios__label" for="@(Model.QuestionId + (i == 0 ? "" :  "_" + i))">@Model.Options[i].Label</label>
              </div>
             if (Model.Options[i].FurtherQuestions != null)
             {
