@@ -29,22 +29,32 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("OrganisationSearch")]
         public async Task<IEnumerable<OrganisationSearchResult>> OrganisationSearch(string searchTerm)
         {
-            if (string.IsNullOrWhiteSpace(searchTerm))
+            _logger.LogInformation("Handling Organisation Search Request");
+            if (string.IsNullOrWhiteSpace(searchTerm) || searchTerm.Length < 2)
             {
                 return new List<OrganisationSearchResult>();
             }
-            else if (IsValidEpaOrganisationId(searchTerm))
+
+            if (IsValidEpaOrganisationId(searchTerm))
             {
+                _logger.LogInformation($@"Searching Organisations based on EPAO ID: [{searchTerm}]");
                 return await OrganisationSearchByEpao(searchTerm);
             }
-            else if (IsValidUkprn(searchTerm, out var ukprn))
+
+            // NOTE: This is required because there are occasions where charity or company number can be interpreted as a ukprn
+            var results = new List<OrganisationSearchResult>();
+            if (IsValidUkprn(searchTerm, out var ukprn))
             {
-                return await OrganisationSearchByUkprn(ukprn);
+                _logger.LogInformation($@"Searching Organisations based on UKPRN: [{searchTerm}]");
+                var resultFromUkprn = await OrganisationSearchByUkprn(ukprn);
+                if (resultFromUkprn != null) results.AddRange(resultFromUkprn);
             }
-            else
-            {
-                return await OrganisationSearchByName(searchTerm);
-            }
+
+            _logger.LogInformation($@"Searching Organisations based on name or charity number or company number wildcard: [{searchTerm}]");
+            var resultFromName = await OrganisationSearchByNameOrCharityNumberOrCompanyNumber(searchTerm);
+            if (resultFromName != null) results.AddRange(resultFromName);
+
+            return Dedupe(results);
         }
 
         private bool IsValidEpaOrganisationId(string organisationIdToCheck)
@@ -125,7 +135,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return Dedupe(results);
         }
 
-        private async Task<IEnumerable<OrganisationSearchResult>> OrganisationSearchByName(string name)
+        private async Task<IEnumerable<OrganisationSearchResult>> OrganisationSearchByNameOrCharityNumberOrCompanyNumber(string name)
         {
             IEnumerable<OrganisationSearchResult> epaoResults = await GetEpaoRegisterResults(name);
             IEnumerable<OrganisationSearchResult> providerResults = null;
@@ -294,7 +304,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                         Address = group.Select(g => g.Address).FirstOrDefault(Address => Address != null),
                         OrganisationType = group.Select(g => g.OrganisationType).FirstOrDefault(OrganisationType => !string.IsNullOrWhiteSpace(OrganisationType)),
                         OrganisationReferenceType = group.Select(g => g.OrganisationReferenceType).FirstOrDefault(OrganisationReferenceType => !string.IsNullOrWhiteSpace(OrganisationReferenceType)),
-                        OrganisationReferenceId = string.Join(",", group.Select(g => g.Id).Where(Id => !string.IsNullOrWhiteSpace(Id))),
+                        OrganisationReferenceId = string.Join(",", group.Select(g => g.Id).Where(Id => !string.IsNullOrWhiteSpace(Id)).Distinct()),
                         RoEPAOApproved = group.Select(g => g.RoEPAOApproved).FirstOrDefault(RoEPAOApproved => RoEPAOApproved != false),
                         RoATPApproved = group.Select(g => g.RoATPApproved).FirstOrDefault(RoATPApproved => RoATPApproved != false),
                         CompanyNumber = group.Select(g => g.CompanyNumber).FirstOrDefault(CompanyNumber => !string.IsNullOrWhiteSpace(CompanyNumber)),
@@ -314,7 +324,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                         Address = group.Select(g => g.Address).FirstOrDefault(Address => Address != null),
                         OrganisationType = group.Select(g => g.OrganisationType).FirstOrDefault(OrganisationType => !string.IsNullOrWhiteSpace(OrganisationType)),
                         OrganisationReferenceType = group.Select(g => g.OrganisationReferenceType).FirstOrDefault(OrganisationReferenceType => !string.IsNullOrWhiteSpace(OrganisationReferenceType)),
-                        OrganisationReferenceId = string.Join(",", group.Select(g => g.OrganisationReferenceId).Where(Id => !string.IsNullOrWhiteSpace(Id))),
+                        OrganisationReferenceId = string.Join(",", group.Select(g => g.OrganisationReferenceId).Where(Id => !string.IsNullOrWhiteSpace(Id)).Distinct()),
                         RoEPAOApproved = group.Select(g => g.RoEPAOApproved).FirstOrDefault(RoEPAOApproved => RoEPAOApproved != false),
                         RoATPApproved = group.Select(g => g.RoATPApproved).FirstOrDefault(RoATPApproved => RoATPApproved != false),
                         CompanyNumber = group.Select(g => g.CompanyNumber).FirstOrDefault(CompanyNumber => !string.IsNullOrWhiteSpace(CompanyNumber)),
@@ -334,7 +344,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                         Address = group.Select(g => g.Address).FirstOrDefault(Address => Address != null),
                         OrganisationType = group.Select(g => g.OrganisationType).FirstOrDefault(OrganisationType => !string.IsNullOrWhiteSpace(OrganisationType)),
                         OrganisationReferenceType = group.Select(g => g.OrganisationReferenceType).FirstOrDefault(OrganisationReferenceType => !string.IsNullOrWhiteSpace(OrganisationReferenceType)),
-                        OrganisationReferenceId = string.Join(",", group.Select(g => g.OrganisationReferenceId).Where(Id => !string.IsNullOrWhiteSpace(Id))),
+                        OrganisationReferenceId = string.Join(",", group.Select(g => g.OrganisationReferenceId).Where(Id => !string.IsNullOrWhiteSpace(Id)).Distinct()),
                         RoEPAOApproved = group.Select(g => g.RoEPAOApproved).FirstOrDefault(RoEPAOApproved => RoEPAOApproved != false),
                         RoATPApproved = group.Select(g => g.RoATPApproved).FirstOrDefault(RoATPApproved => RoATPApproved != false),
                         CompanyNumber = group.Select(g => g.CompanyNumber).FirstOrDefault(CompanyNumber => !string.IsNullOrWhiteSpace(CompanyNumber)),
@@ -354,7 +364,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                         Address = group.Select(g => g.Address).FirstOrDefault(Address => Address != null),
                         OrganisationType = group.Select(g => g.OrganisationType).FirstOrDefault(OrganisationType => !string.IsNullOrWhiteSpace(OrganisationType)),
                         OrganisationReferenceType = group.Select(g => g.OrganisationReferenceType).FirstOrDefault(OrganisationReferenceType => !string.IsNullOrWhiteSpace(OrganisationReferenceType)),
-                        OrganisationReferenceId = string.Join(",", group.Select(g => g.OrganisationReferenceId).Where(Id => !string.IsNullOrWhiteSpace(Id))),
+                        OrganisationReferenceId = string.Join(",", group.Select(g => g.OrganisationReferenceId).Where(Id => !string.IsNullOrWhiteSpace(Id)).Distinct()),
                         RoEPAOApproved = group.Select(g => g.RoEPAOApproved).FirstOrDefault(RoEPAOApproved => RoEPAOApproved != false),
                         RoATPApproved = group.Select(g => g.RoATPApproved).FirstOrDefault(RoATPApproved => RoATPApproved != false),
                         CompanyNumber = group.Select(g => g.CompanyNumber).FirstOrDefault(CompanyNumber => !string.IsNullOrWhiteSpace(CompanyNumber)),
