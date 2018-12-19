@@ -23,84 +23,41 @@
                     <input asp-for="OrganisationType" type="hidden" />
                     <input asp-for="Postcode" type="hidden" />
 
-                    @if (!ViewData.ModelState.IsValid || showErrors)
-                    {
-                        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-                            <h2 class="govuk-error-summary__title" id="error-summary-title">
-                                There is a problem
-                            </h2>
-                            <div class="govuk-error-summary__body">
-                                <ul class="govuk-list govuk-error-summary__list">
-                                    @*<li><a class="govuk-link" href="" sfa-validation-for=""></a></li>*@
-                                </ul>
-                            </div>
-                        </div>
-                    }
 
-                        <div class="govuk-form-group">
-                            <h1 class="govuk-label-wrapper">
-                                <label class="govuk-label govuk-label--l" for="Organisation">
-                                    Confirm organisation
-                                </label>
-                            </h1>
+                    <div class="govuk-form-group">
+                        <h1 class="govuk-heading-xl">Confirm organisation</h1>
 
-                            <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-1">
-                                <span class="govuk-body govuk-!-font-weight-bold">@organisation.Name</span>
-                            </p>
+                        <h2 class="govuk-heading-m">@organisation.Name</h2>
 
-                            <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
-                                <span class="govuk-body govuk-!-font-weight-bold">Address:</span>
-                                <span class="govuk-hint">
-                                    @if (organisation.Address?.Postcode == null)
-                                    {
-                                        @("Unknown")
-                                    }
-                                    else
-                                    {
-                                        @string.Join(", ", organisation.Address?.Address1, organisation.Address?.City, organisation.Address.Postcode)
-                                    }
-                                </span>
-                            </p>
+                        @if (organisation.Address?.Postcode != null)
+                        {
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">Address</p>
+                            <p class="govuk-body">@string.Join(", ", organisation.Address?.Address1, organisation.Address?.City, organisation.Address.Postcode)</p>
+                        }
 
-                            <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
-                                <span class="govuk-body govuk-!-font-weight-bold">Trading Name:</span>
-                                <span class="govuk-hint">
-                                    @(organisation.TradingName ?? organisation.ProviderName)
-                                </span>
-                            </p>
+                        @if (organisation.TradingName != null || organisation.ProviderName != null)
+                        {
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">Trading name</p>
+                            <p class="govuk-body">@(organisation.TradingName ?? organisation.ProviderName)</p>
+                        }
 
-                            <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
-                                <span class="govuk-body govuk-!-font-weight-bold">Type:</span>
-                                <span class="govuk-hint">
-                                    @if (organisationType?.TypeDescription == null)
-                                    {
-                                        @(Model.OrganisationType ?? "Unknown")
-                                    }
-                                    else
-                                    {
-                                        @organisationType.TypeDescription
-                                    }
-                                </span>
-                            </p>
+                        @if (organisationType?.TypeDescription != null)
+                        {
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">Type</p>
+                            <p class="govuk-body">@organisationType.TypeDescription</p>
+                        }
 
-                            <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
-                                <span class="govuk-body govuk-!-font-weight-bold">UKPRN:</span>
-                                <span class="govuk-hint">
-                                    @if (organisation.Ukprn == null)
-                                    {
-                                        @("Unknown");
-                                    }
-                                    else
-                                    {
-                                        @organisation.Ukprn
-                                    }
-                                </span>
-                            </p>
-                        </div>
+                        @if (organisation.Ukprn != null)
+                        {
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">UKPRN</p>
+                            <p class="govuk-body">@organisation.Ukprn</p>
+                        }
+
+                    </div>
                     <button type="submit" class="govuk-button">Confirm</button>
                 </form>
 
-                <a asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString">Choose a different organisation</a>
+                <a class="govuk-body govuk-link" asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString">Choose a different organisation</a>
             </div>
         }
         else
@@ -118,7 +75,7 @@
                     </ul>
                 </div>
 
-                <a asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString">Back to search results</a>
+                <a class="govuk-body govuk-link" asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString">Back to search results</a>
             </div>
         }
     </div>
