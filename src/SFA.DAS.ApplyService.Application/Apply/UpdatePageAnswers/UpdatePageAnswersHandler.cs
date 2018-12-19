@@ -82,9 +82,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                             {
                                 foreach (var furtherQuestion in option.FurtherQuestions)
                                 {
-                                    var fq = JsonConvert.DeserializeObject<Question>(furtherQuestion.ToString());
+                                    //var fq = JsonConvert.DeserializeObject<Question>(furtherQuestion.ToString());
 
-                                    validationPassed = ProcessAnswer(request, fq, validationPassed, validationErrors,
+                                    validationPassed = ProcessAnswer(request, furtherQuestion, validationPassed, validationErrors,
                                         pageAnswers);
                                 }
                             }

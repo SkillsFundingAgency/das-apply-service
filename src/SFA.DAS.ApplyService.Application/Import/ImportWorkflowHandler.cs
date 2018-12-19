@@ -95,7 +95,7 @@ namespace SFA.DAS.ApplyService.Application.Import
 
             if (spreadsheetQuestion.QuestionType.Contains("Radio"))
             {
-                var options = new List<dynamic>();
+                var options = new List<Option>();
 
                 foreach (var radioOption in spreadsheetQuestion.RadioOptions)
                 {
@@ -115,17 +115,17 @@ namespace SFA.DAS.ApplyService.Application.Import
                         }
                     }
 
-                    var option = new
+                    var option = new Option
                     {
                         Label = radioOption.Trim(),
                         Value = radioOption.Trim(),
-                        FurtherQuestions = fq.Any() ? fq.ToArray() : null
+                        FurtherQuestions = fq.Any() ? fq : null
                     };
 
                     options.Add(option);
                 }
 
-                question.Input.Options = options.ToArray();
+                question.Input.Options = options;
             }
 
             return question;

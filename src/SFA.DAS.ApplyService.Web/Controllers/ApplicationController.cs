@@ -7,6 +7,7 @@ using System;
  using Microsoft.AspNetCore.Authorization;
  using Microsoft.AspNetCore.Mvc;
  using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.Upload;
@@ -14,6 +15,7 @@ using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Application.Interfaces;
  using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
  
  namespace SFA.DAS.ApplyService.Web.Controllers
@@ -22,15 +24,22 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
      public class ApplicationController : Controller
      {
          private readonly IApplicationApiClient _apiClient;
- 
-         public ApplicationController(IApplicationApiClient apiClient)
+         private readonly ILogger<ApplicationController> _logger;
+         private readonly ISessionService _sessionService;
+
+         public ApplicationController(IApplicationApiClient apiClient, ILogger<ApplicationController> logger, ISessionService sessionService)
          {
              _apiClient = apiClient;
+             _logger = logger;
+             _sessionService = sessionService;
          }
          
          [HttpGet("/Applications")]
          public async Task<IActionResult> Applications()
          {
+             var user = _sessionService.Get("LoggedInUser");
+             _logger.LogInformation($"Got LoggedInUser from Session: {user}");
+             
              var applications = await _apiClient.GetApplicationsFor(Guid.Parse(User.FindFirstValue("UserId")));
 
              if (!applications.Any())

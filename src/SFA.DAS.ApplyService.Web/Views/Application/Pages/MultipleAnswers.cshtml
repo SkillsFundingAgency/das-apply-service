@@ -11,9 +11,7 @@
             @if (!string.IsNullOrEmpty(@Model.Title) && Model.Questions.Count() > 1)
             {
                 <h1 class="govuk-heading-xl">
-                    @*<span class="govuk-hint">&lt;page.Title&gt;</span>*@
                     @Model.Title
-                    @*<span class="govuk-hint">&lt;/page.Title&gt;</span>*@
                 </h1>
             }
 
@@ -62,9 +60,7 @@
                                 {
                                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
                                         <h1 class="govuk-fieldset__heading">
-                                            @*<span class="govuk-hint">&lt;question.Label&gt; (radio or checkbox)</span>*@
                                             @Html.Raw(question.Label)
-                                            @*<span class="govuk-hint">&lt;/question.Label&gt; (radio or checkbox)</span>*@
                                         </h1>
                                     </legend>
                                 }
@@ -72,9 +68,7 @@
                                 {
                                     <h2 class="govuk-label-wrapper">
                                         <label class="govuk-label govuk-label--xl" for="@question.QuestionId">
-                                            @*<span class="govuk-hint">&lt;question.Label&gt; (single/)</span>*@
                                             @Html.Raw(question.Label)
-                                            @*<span class="govuk-hint">&lt;/question.Label&gt; (single)</span>*@
                                         </label>
                                     </h2>
                                 }
@@ -92,9 +86,7 @@
                     {
                         <div class="govuk-form-group">
                             <label class="govuk-label" for="@question.QuestionId">
-                                @*<span class="govuk-hint">&lt;question.Label (multiple questions)&gt;</span>*@
                                 @Html.Raw(question.Label)
-                                @*<span class="govuk-hint">&lt;/question.Label (multiple questions)&gt;</span>*@
                             </label>
                             <span class="govuk-hint">
                                 @Html.Raw(question.Hint)

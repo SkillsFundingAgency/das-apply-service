@@ -1,24 +1,26 @@
 @model SFA.DAS.ApplyService.Web.Controllers.QuestionViewModel
 
-<div sfa-anyvalidationerror-class="after-error-summary">
 
-    <div class="govuk-form-group" sfa-validation-for-id="@Model.QuestionId" sfa-validationerror-class="govuk-form-group--error">
-        <span class="govuk-error-message" sfa-validation-for-id="@Model.QuestionId"></span>
+<div class="govuk-form-group" sfa-validation-for-id="@Model.QuestionId">
 
-        @{
-            <!-- @* Show simple radios inline if 2 or less (Yes/No) questions *@ -->
-            var isInline = Model.Options.Count <= 2 ? "govuk-radios--inline" : "";
-        }
+    @{ 
+        var isInline = Model.Options.Count <= 2 ? "govuk-radios--inline" : "";
+        var radioChecked = Model.Value == Model.Options[0].Value.ToString() ? "checked" : "";
+    }
 
-        <div class="govuk-radios @isInline">
-            @for (int i = 0; i < Model.Options.Count; i++)
-            {
-                var radioChecked = Model.Value == Model.Options[i].Value.ToString() ? "checked" : "";
-                <div class="govuk-radios__item">
-                    <input class="govuk-radios__input" type="radio" id="@(Model.QuestionId + "_" + i)" name="@Model.QuestionId" value="@Model.Options[i].Value" @radioChecked/>
-                    <label class="govuk-label govuk-radios__label" for="@(Model.QuestionId + "_" + i)">@Model.Options[i].Label</label>
-                </div>
-            }
+    <div class="govuk-radios @isInline">
+        <div class="govuk-radios__item">
+            <input class="govuk-radios__input " type="radio" id="@(Model.QuestionId)" name="@Model.QuestionId" value="@Model.Options[0].Value" @radioChecked />
+            <label class="govuk-label govuk-radios__label" for="@(Model.QuestionId)">@Model.Options[0].Label</label>
         </div>
+        @for (int i = 1; i < Model.Options.Count; i++)
+        {
+            radioChecked = Model.Value == Model.Options[i].Value.ToString() ? "checked" : "";
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" type="radio" id="@(Model.QuestionId + "_" + i)" name="@Model.QuestionId" value="@Model.Options[i].Value" @radioChecked />
+                <label class="govuk-label govuk-radios__label" for="@(Model.QuestionId + "_" + i)">@Model.Options[i].Label</label>
+            </div>
+        }
     </div>
+
 </div>

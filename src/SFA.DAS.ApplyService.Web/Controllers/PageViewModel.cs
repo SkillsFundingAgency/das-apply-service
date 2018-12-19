@@ -14,13 +14,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public PageViewModel(Page page, Guid applicationId)
         {
             ApplicationId = applicationId;
-            SetupPage(page);
+            SetupPage(page, null);
         }
 
         public PageViewModel(Page page, Guid applicationId, List< ValidationErrorDetail> errorMessages)
         {
             ApplicationId = applicationId;
-            SetupPage(page);
+            SetupPage(page, errorMessages);
             ErrorMessages = errorMessages;
         }
 
@@ -43,7 +43,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
 
-        private void SetupPage(Page page)
+        private void SetupPage(Page page, List<ValidationErrorDetail> errorMessages)
         {
             Title = page.Title;
             LinkTitle = page.LinkTitle;
@@ -66,7 +66,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 Type = q.Input.Type,
                 Hint = q.Hint,
                 Options = q.Input.Options,
-                Value = page.AllowMultipleAnswers ? null : answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value
+                Value = page.AllowMultipleAnswers ? null : answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value,
+                ErrorMessages = errorMessages?.Where(f=>f.Field == q.QuestionId).ToList()
             }));
 
             Feedback = page.Feedback;

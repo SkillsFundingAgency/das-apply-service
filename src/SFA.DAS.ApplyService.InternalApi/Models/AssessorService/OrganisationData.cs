@@ -7,6 +7,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Models.AssessorService
 {
     public class OrganisationData
     {
+        public string CompanyNumber { get; set; }
+        public string CharityNumber { get; set; }
         public string LegalName { get; set; }
         public string WebsiteLink { get; set; }
         public string Address1 { get; set; }

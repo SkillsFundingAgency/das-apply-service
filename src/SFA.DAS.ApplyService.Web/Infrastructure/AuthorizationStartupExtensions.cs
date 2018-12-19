@@ -23,9 +23,20 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
                 })
-                .AddCookie()
+                .AddCookie(options => { 
+                    options.Cookie.Name = ".Apply.Cookies";
+                    options.Cookie.HttpOnly = true;
+                })
                 .AddOpenIdConnect(options =>
                 {
+                    options.CorrelationCookie = new CookieBuilder()
+                    {
+                        Name = ".Apply.Correlation.", 
+                        HttpOnly = true,
+                        SameSite = SameSiteMode.None,
+                        SecurePolicy = CookieSecurePolicy.SameAsRequest
+                    };
+                    
                     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     options.MetadataAddress = applyConfig.DfeSignIn.MetadataAddress;
 
