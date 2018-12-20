@@ -118,6 +118,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                             }
                             nextAction.ConditionMet = true;
                         }
+                        else
+                        {
+                            if (nextAction.Action == "NextPage")
+                            {
+                                qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Active = false;
+                                qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Visible = false;   
+                            }
+                        }
                     }
                 }
                 else
