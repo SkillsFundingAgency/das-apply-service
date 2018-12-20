@@ -378,6 +378,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("OrganisationSearch/email/{email}")]
         public async Task<OrganisationSearchResult> GetOrganisationByEmail(string email)
         {
+            
+            _logger.LogInformation($"GetOrganisationByEmail({email})");
+            
             OrganisationSearchResult result;
 
             // EPAO Register
@@ -391,6 +394,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 _logger.LogError($"Error from EPAO Register. Message: {ex.Message}");
             }
 
+            if (result == null)
+            {
+                _logger.LogInformation($"GetOrganisationByEmail({email}) result : null");
+            }
+            else
+            {
+                _logger.LogInformation($"GetOrganisationByEmail({email}) result : {result.Name}");
+            }
+            
+            
             // de-dupe
             return result;
         }
