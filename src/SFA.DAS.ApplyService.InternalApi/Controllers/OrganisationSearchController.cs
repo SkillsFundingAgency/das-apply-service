@@ -375,7 +375,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return charityNumberMerge.OrderByDescending(org => org.Ukprn).ToList();
         }
 
-        [HttpGet("OrganisationSearch/email")]
+        [HttpGet("OrganisationSearch/email/{email}")]
         public async Task<OrganisationSearchResult> GetOrganisationByEmail(string email)
         {
             
