@@ -291,6 +291,7 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
              var page = await _apiClient.GetPage(Guid.Parse(applicationId), sequenceId,sectionId, pageId, Guid.Parse(User.FindFirstValue("UserId")));
              if (page.AllowMultipleAnswers)
              {
+                 
                  return View("~/Views/Application/Pages/MultipleAnswers.cshtml", pageVm);
              }
              return View("~/Views/Application/Pages/Index.cshtml", pageVm);

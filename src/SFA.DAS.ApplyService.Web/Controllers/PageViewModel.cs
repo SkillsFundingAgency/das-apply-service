@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore.Internal;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Domain.Apply;
@@ -49,7 +50,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             LinkTitle = page.LinkTitle;
             PageId = page.PageId;
             SequenceId = page.SequenceId;
-            PageOfAnswers = page.PageOfAnswers;
+            if (errorMessages != null && errorMessages.Any())
+            {
+                PageOfAnswers = page.PageOfAnswers.Take(page.PageOfAnswers.Count - 1).ToList();
+            }
+            else
+            {
+                PageOfAnswers = page.PageOfAnswers;
+            }
+            
             SectionId = int.Parse((string) page.SectionId);
 
             var questions = page.Questions;
@@ -66,7 +75,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 Type = q.Input.Type,
                 Hint = q.Hint,
                 Options = q.Input.Options,
-                Value = page.AllowMultipleAnswers ? null : answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value,
+                Value = page.AllowMultipleAnswers ? GetMultipleValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value,
                 ErrorMessages = errorMessages?.Where(f=>f.Field == q.QuestionId).ToList()
             }));
 
@@ -87,6 +96,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     }
                 }
             }
+        }
+
+        private string GetMultipleValue(List<Answer> answers, Question question, List<ValidationErrorDetail> errorMessages)
+        {
+            if (errorMessages != null &&errorMessages.Any())
+            {
+                return answers?.LastOrDefault(a => a?.QuestionId == question.QuestionId)?.Value;
+            }
+
+            return null;
         }
     }
 }
