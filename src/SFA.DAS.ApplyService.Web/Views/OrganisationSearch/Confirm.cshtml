@@ -1,3 +1,5 @@
+@using System.Text.RegularExpressions;
+
 @model SFA.DAS.ApplyService.Web.ViewModels.OrganisationSearchViewModel
 
 @{
@@ -6,7 +8,10 @@
 
     bool showErrors = TempData["ShowErrors"] as bool? ?? false;
     var organisation = Model.Organisations?.FirstOrDefault();
-    var organisationType = Model.OrganisationTypes?.Where(ot => ot.Type == organisation?.OrganisationType).FirstOrDefault();
+    var organisationType = Model.OrganisationTypes?.FirstOrDefault(ot => ot.Type == organisation?.OrganisationType);
+
+    var epaoRegex = new Regex(@"[eE][pP][aA][0-9]{4,9}$");
+    var epaoId = organisation?.Id.Split(',').FirstOrDefault(id => epaoRegex.Match(id).Success);
 }
 
 <a asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString" class="govuk-back-link">Back to search results</a>
@@ -53,6 +58,23 @@
                             <p class="govuk-body">@organisation.Ukprn</p>
                         }
 
+                        @if (epaoId != null)
+                        {
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">EPAO ID</p>
+                            <p class="govuk-body">@epaoId</p>
+                        }
+
+                        @if (organisation.CompanyNumber != null)
+                        {
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">Company number</p>
+                            <p class="govuk-body">@organisation.CompanyNumber</p>
+                        }
+
+                        @if (organisation.CharityNumber != null)
+                        {
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">Charity number</p>
+                            <p class="govuk-body">@organisation.CharityNumber</p>
+                        }
                     </div>
                     <button type="submit" class="govuk-button">Confirm</button>
                 </form>
