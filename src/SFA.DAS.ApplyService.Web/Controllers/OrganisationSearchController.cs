@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
@@ -100,6 +101,25 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             viewModel.Organisations = await _apiClient.SearchOrganisation(viewModel.SearchString);
 
+            if(viewModel.Organisations?.Count() == 1)
+            {
+                var org = viewModel.Organisations.First();
+
+                if (org.OrganisationType != null)
+                {
+                    viewModel.Name = org.Name;
+                    viewModel.Ukprn = org.Ukprn;
+                    viewModel.OrganisationType = org.OrganisationType;
+                    viewModel.Postcode = org.Address?.Postcode;
+                    viewModel.Organisations = null;
+
+                    // Assigning to TempData so we don't expose everything in the URL
+                    TempData["ConfirmRedirectData"] = JsonConvert.SerializeObject(viewModel);
+
+                    return RedirectToAction(nameof(Confirm));
+                }
+            }
+
             return View(viewModel);
         }
 
@@ -117,9 +137,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return View(viewModel);
         }
 
+        [HttpGet]
         [HttpPost]
         public async Task<IActionResult> Confirm(OrganisationSearchViewModel viewModel)
         {
+            if(TempData["ConfirmRedirectData"] != null)
+            {
+                viewModel = JsonConvert.DeserializeObject<OrganisationSearchViewModel>(TempData["ConfirmRedirectData"].ToString());
+            }
+
             var user = await _usersApiClient.GetUserBySignInId(_httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
 
             if (user.ApplyOrganisationId != null)
