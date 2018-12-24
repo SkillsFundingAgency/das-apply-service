@@ -29,10 +29,20 @@
   color: #005ea5;
 }
 
-.govuk-button--looks-like-link:hover {
+.govuk-button--looks-like-link:hover,
+.govuk-button--looks-like-link:active {
+  top: 0;
   background: none;
   color: #2b8cc4;
   text-decoration: underline;
+}
+
+.govuk-button--looks-like-link:focus {
+  background: #ffbf47;
+}
+
+.govuk-button--looks-like-link:visited {
+  color: #4c2c92;
 }
 
 .das-no-wrap {

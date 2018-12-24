@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -34,7 +36,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var user = await _usersApiClient.GetUserBySignInId(_httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
 
-            if(user.ApplyOrganisationId != null)
+            if (user.ApplyOrganisationId != null)
             {
                 return RedirectToAction("Applications", "Application");
             }
@@ -116,6 +118,40 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> Confirm(OrganisationSearchViewModel viewModel)
+        {
+            var user = await _usersApiClient.GetUserBySignInId(_httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
+
+            if (user.ApplyOrganisationId != null)
+            {
+                return RedirectToAction("Applications", "Application");
+            }
+            else if (string.IsNullOrEmpty(viewModel.Name) || viewModel.SearchString.Length < 2)
+            {
+                ModelState.AddModelError(nameof(viewModel.Name), "Enter a valid search string");
+                TempData["ShowErrors"] = true;
+                return RedirectToAction(nameof(Index));
+            }
+            else if (string.IsNullOrEmpty(viewModel.OrganisationType))
+            {
+                ModelState.AddModelError(nameof(viewModel.OrganisationType), "Select an organisation type");
+                viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();
+                TempData["ShowErrors"] = true;
+                return View(nameof(Type), viewModel);
+            }
+
+            var organisationSearchResult = await GetOrganisation(viewModel.SearchString, viewModel.Name, viewModel.Ukprn, viewModel.OrganisationType, viewModel.Postcode);
+
+            if (organisationSearchResult != null)
+            {
+                viewModel.Organisations = new List<OrganisationSearchResult> { organisationSearchResult };
+                viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();
+            }
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
         public async Task<IActionResult> Create(OrganisationSearchViewModel viewModel)
         {
             var user = await _usersApiClient.GetUserBySignInId(_httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
@@ -138,43 +174,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return View(nameof(Type), viewModel);
             }
 
-            // make sure we got everything before trying to create organisation
-            var searchResults =
-                await _apiClient.SearchOrganisation(viewModel.SearchString);
+            var organisationSearchResult = await GetOrganisation(viewModel.SearchString, viewModel.Name, viewModel.Ukprn, viewModel.OrganisationType, viewModel.Postcode);
 
-            // filter ukprn
-            searchResults = searchResults.Where(sr =>
-                sr.Ukprn.HasValue && viewModel.Ukprn.HasValue
-                    ? sr.Ukprn == viewModel.Ukprn
-                    : true);
-
-            // filter name
-            searchResults = searchResults.Where(sr =>
-                sr.Name.Equals(viewModel.Name,
-                    StringComparison.InvariantCultureIgnoreCase)); // Name has to be identical match
-
-            // filter organisation type
-            searchResults = searchResults.Where(sr =>
-                sr.OrganisationType != null
-                    ? sr.OrganisationType.Equals(viewModel.OrganisationType,
-                        StringComparison.InvariantCultureIgnoreCase)
-                    : true);
-
-            // filter postcode
-            searchResults = searchResults.Where(sr =>
-                !string.IsNullOrEmpty(viewModel.Postcode)
-                    ? (sr.Address != null
-                        ? sr.Address.Postcode.Equals(viewModel.Postcode, StringComparison.InvariantCultureIgnoreCase)
-                        : true)
-                    : true);
-
-            var organisationSearchResult = searchResults.FirstOrDefault();
-            
             if (organisationSearchResult != null)
             {
-                if (organisationSearchResult.OrganisationType == null)
-                    organisationSearchResult.OrganisationType = viewModel.OrganisationType;
-
                 var orgThatWasCreated = await _organisationApiClient.Create(organisationSearchResult, user.Id, user.Email);
 
                 return RedirectToAction("Applications", "Application");
@@ -182,9 +185,48 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             else
             {
                 // Should never get here but needed to do something as we don't have an error page!!
-                viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();
-                return View(nameof(Type), viewModel);
+                return View(nameof(Results), viewModel);
             }
+        }
+
+
+        private async Task<OrganisationSearchResult> GetOrganisation(string searchString, string name, int? ukprn, string organisationType, string postcode)
+        {
+            var searchResults = await _apiClient.SearchOrganisation(searchString);
+
+            // filter ukprn
+            searchResults = searchResults.Where(sr =>
+                sr.Ukprn.HasValue && ukprn.HasValue
+                    ? sr.Ukprn == ukprn
+                    : true);
+
+            // filter name (identical match)
+            searchResults = searchResults.Where(sr =>
+                sr.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+
+            // filter organisation type
+            searchResults = searchResults.Where(sr =>
+                sr.OrganisationType != null
+                    ? sr.OrganisationType.Equals(organisationType, StringComparison.InvariantCultureIgnoreCase)
+                    : true);
+
+            // filter postcode
+            searchResults = searchResults.Where(sr =>
+                !string.IsNullOrEmpty(postcode)
+                    ? (sr.Address != null
+                        ? sr.Address.Postcode.Equals(postcode, StringComparison.InvariantCultureIgnoreCase)
+                        : true)
+                    : true);
+
+            var organisationSearchResult = searchResults.FirstOrDefault();
+
+            if (organisationSearchResult != null)
+            {
+                if (organisationSearchResult.OrganisationType == null)
+                    organisationSearchResult.OrganisationType = organisationType;
+            }
+
+            return organisationSearchResult;
         }
     }
 }
