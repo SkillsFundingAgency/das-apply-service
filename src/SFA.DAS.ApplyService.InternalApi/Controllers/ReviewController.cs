@@ -47,10 +47,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             await _mediator.Send(new ReturnRequest(applicationId, sequenceId, request.ReturnType));
         }
 
-        [HttpPost("Review/Sequence/{sequenceId}/StartReview")]
-        public async Task StartReview(Guid sequenceId)
+        [HttpPost("Review/Applications/{applicationId}/Sequences/{sequenceId}/StartReview")]
+        public async Task StartReview(Guid applicationId, int sequenceId)
         {
-            await _mediator.Send(new StartApplicationReviewRequest(sequenceId));
+            await _mediator.Send(new StartApplicationReviewRequest(applicationId, sequenceId));
         }
     }
 

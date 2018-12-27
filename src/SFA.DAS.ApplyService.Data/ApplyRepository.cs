@@ -370,17 +370,28 @@ namespace SFA.DAS.ApplyService.Data
                     })).ToList();
             }
         }
-//
-//        public async Task UpdateFinancialGrade(Guid applicationId, FinancialApplicationGrade updatedGrade)
-//        {
-//            using (var connection = new SqlConnection(_config.SqlConnectionString))
-//            {
-//                await connection.ExecuteAsync(@"UPDATE Applications
-//                                                SET    ApplicationData = @serialisedData
-//                                                WHERE  Applications.Id = @applicationId",
-//                    new {applicationId, updatedGrade});
-//            }
-//        }
+        //
+        //        public async Task UpdateFinancialGrade(Guid applicationId, FinancialApplicationGrade updatedGrade)
+        //        {
+        //            using (var connection = new SqlConnection(_config.SqlConnectionString))
+        //            {
+        //                await connection.ExecuteAsync(@"UPDATE Applications
+        //                                                SET    ApplicationData = @serialisedData
+        //                                                WHERE  Applications.Id = @applicationId",
+        //                    new {applicationId, updatedGrade});
+        //            }
+        //        }
+
+        public async Task StartApplicationReview(Guid applicationId, int sectionId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE ApplicationSections 
+                                                SET Status = 'In Progress'
+                                                WHERE ApplicationId = @applicationId AND SectionId = @sectionId  AND SequenceId = 1",
+                    new { applicationId, sectionId });
+            }
+        }
 
         public async Task StartFinancialReview(Guid applicationId)
         {

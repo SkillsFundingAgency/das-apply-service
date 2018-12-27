@@ -5,9 +5,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review
 {
     public class StartApplicationReviewRequest : IRequest
     {
-        public StartApplicationReviewRequest(Guid sequenceId)
+        public Guid ApplicationId { get; }
+        public int SequenceId { get; }
+
+        public StartApplicationReviewRequest(Guid applicationId, int sequenceId)
         {
-            throw new System.NotImplementedException();
+            ApplicationId = applicationId;
+            SequenceId = sequenceId;
         }
     }
 }
