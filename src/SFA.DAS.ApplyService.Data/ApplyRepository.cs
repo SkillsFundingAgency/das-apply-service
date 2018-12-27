@@ -242,7 +242,7 @@ namespace SFA.DAS.ApplyService.Data
                                                 FROM   ApplicationSections INNER JOIN
                                                             Applications ON ApplicationSections.ApplicationId = Applications.Id INNER JOIN
                                                             Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
-                                                WHERE  (ApplicationSections.ApplicationId = @ApplicationId) AND (ApplicationSections.SectionId = 3) AND Contacts.Id = @UserId;
+                                                WHERE  (ApplicationSections.ApplicationId = @ApplicationId) AND Contacts.Id = @UserId;
 
                                                 UPDATE       Applications
                                                 SET                ApplicationStatus = 'Submitted'
