@@ -5,16 +5,16 @@ using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Financial
 {
-    public class StartReviewHandler : IRequestHandler<StartReviewRequest>
+    public class StartFinancialReviewHandler : IRequestHandler<StartFinancialReviewRequest>
     {
         private readonly IApplyRepository _applyRepository;
 
-        public StartReviewHandler(IApplyRepository applyRepository)
+        public StartFinancialReviewHandler(IApplyRepository applyRepository)
         {
             _applyRepository = applyRepository;
         }
         
-        public async Task<Unit> Handle(StartReviewRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(StartFinancialReviewRequest request, CancellationToken cancellationToken)
         {
             var section = await _applyRepository.GetSection(request.ApplicationId, 1, 3, null);
 
