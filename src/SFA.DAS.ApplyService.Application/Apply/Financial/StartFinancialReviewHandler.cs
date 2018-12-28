@@ -18,7 +18,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
         {
             var section = await _applyRepository.GetSection(request.ApplicationId, 1, 3, null);
 
-            if (section.Status == SectionStatus.Submitted)
+            if (section.Status == ApplicationSectionStatus.Submitted)
             {
                 await _applyRepository.StartFinancialReview(request.ApplicationId);   
             }

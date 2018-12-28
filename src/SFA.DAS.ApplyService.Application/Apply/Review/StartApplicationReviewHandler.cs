@@ -27,7 +27,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review
 
                 foreach (var section in sequenceSections)
                 {
-                    if (section.Status == SectionStatus.Submitted)
+                    if (section.Status == ApplicationSectionStatus.Submitted)
                     {
                         await _applyRepository.StartApplicationReview(request.ApplicationId, section.SectionId);
                     }

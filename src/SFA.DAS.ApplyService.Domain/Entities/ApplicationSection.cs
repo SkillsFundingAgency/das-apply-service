@@ -69,4 +69,11 @@ namespace SFA.DAS.ApplyService.Domain.Entities
             }
         }
     }
+
+    public class ApplicationSectionStatus
+    {
+        public const string InProgress = "In Progress";
+        public const string Submitted = "Submitted";
+        public const string Graded = "Graded";
+    }
 }

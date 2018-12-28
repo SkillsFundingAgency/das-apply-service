@@ -365,8 +365,8 @@ namespace SFA.DAS.ApplyService.Data
                     new
                     {
                         applicationStatusSubmitted = ApplicationStatus.Submitted, 
-                        financialStatusInProgress = SectionStatus.InProgress, 
-                        financialStatusSubmitted = SectionStatus.Submitted
+                        financialStatusInProgress = ApplicationSectionStatus.InProgress, 
+                        financialStatusSubmitted = ApplicationSectionStatus.Submitted
                     })).ToList();
             }
         }
@@ -432,7 +432,7 @@ namespace SFA.DAS.ApplyService.Data
                     new
                     {
                         applicationStatusSubmitted = ApplicationStatus.Submitted, 
-                        financialStatusGraded = SectionStatus.Graded
+                        financialStatusGraded = ApplicationSectionStatus.Graded
                     })).ToList();
             }
         }

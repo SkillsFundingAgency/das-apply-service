@@ -30,7 +30,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
             qnADataObject.FinancialApplicationGrade.GradedDateTime = DateTime.UtcNow;            
             
             section.QnADataObject = qnADataObject;
-            section.Status = SectionStatus.Graded;
+            section.Status = ApplicationSectionStatus.Graded;
             
             await _applyRepository.SaveSection(section);
 
