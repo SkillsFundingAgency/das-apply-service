@@ -129,6 +129,14 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task GradeSection(ApplicationSection section)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE ApplicationSections SET FeedbackComment = @feedbackComment, Status = @Status WHERE Id = @Id", section);
+            }
+        }
+
         public async Task UpdateSections(List<ApplicationSection> sections)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))

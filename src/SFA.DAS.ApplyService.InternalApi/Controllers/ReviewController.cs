@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.GetSection;
 using SFA.DAS.ApplyService.Application.Apply.Review;
 using SFA.DAS.ApplyService.Application.Apply.Review.Feedback;
+using SFA.DAS.ApplyService.Application.Apply.Review.Grade;
 using SFA.DAS.ApplyService.Application.Apply.Review.Return;
 using SFA.DAS.ApplyService.Domain.Apply;
 
@@ -40,7 +41,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             await _mediator.Send(new AddFeedbackRequest(applicationId, sequenceId, sectionId, pageId, feedback));
         }
-        
+
+        [HttpPost("Review/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Grade")]
+        public async Task GradeSection(Guid applicationId, int sequenceId, int sectionId, [FromBody] GradeSectionRequest request)
+        {
+            await _mediator.Send(new GradeRequest(applicationId, sequenceId, sectionId, request.FeedbackComment, request.IsSectionComplete));
+        }
+
         [HttpPost("Review/Applications/{applicationId}/Sequences/{sequenceId}/Return")]
         public async Task Return(Guid applicationId, int sequenceId, [FromBody] ReturnApplicationRequest request)
         {
@@ -57,5 +64,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     public class ReturnApplicationRequest
     {
         public string ReturnType { get; set; }
+    }
+
+    public class GradeSectionRequest
+    {
+        public string FeedbackComment { get; set; }
+        public bool IsSectionComplete { get; set; }
     }
 }
