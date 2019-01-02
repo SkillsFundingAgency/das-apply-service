@@ -129,6 +129,14 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task GradeSection(ApplicationSection section)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE ApplicationSections SET FeedbackComment = @feedbackComment, Status = @Status WHERE Id = @Id", section);
+            }
+        }
+
         public async Task UpdateSections(List<ApplicationSection> sections)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -242,7 +250,7 @@ namespace SFA.DAS.ApplyService.Data
                                                 FROM   ApplicationSections INNER JOIN
                                                             Applications ON ApplicationSections.ApplicationId = Applications.Id INNER JOIN
                                                             Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
-                                                WHERE  (ApplicationSections.ApplicationId = @ApplicationId) AND (ApplicationSections.SectionId = 3) AND Contacts.Id = @UserId;
+                                                WHERE  (ApplicationSections.ApplicationId = @ApplicationId) AND Contacts.Id = @UserId;
 
                                                 UPDATE       Applications
                                                 SET                ApplicationStatus = 'Submitted'
@@ -365,22 +373,33 @@ namespace SFA.DAS.ApplyService.Data
                     new
                     {
                         applicationStatusSubmitted = ApplicationStatus.Submitted, 
-                        financialStatusInProgress = SectionStatus.InProgress, 
-                        financialStatusSubmitted = SectionStatus.Submitted
+                        financialStatusInProgress = ApplicationSectionStatus.InProgress, 
+                        financialStatusSubmitted = ApplicationSectionStatus.Submitted
                     })).ToList();
             }
         }
-//
-//        public async Task UpdateFinancialGrade(Guid applicationId, FinancialApplicationGrade updatedGrade)
-//        {
-//            using (var connection = new SqlConnection(_config.SqlConnectionString))
-//            {
-//                await connection.ExecuteAsync(@"UPDATE Applications
-//                                                SET    ApplicationData = @serialisedData
-//                                                WHERE  Applications.Id = @applicationId",
-//                    new {applicationId, updatedGrade});
-//            }
-//        }
+        //
+        //        public async Task UpdateFinancialGrade(Guid applicationId, FinancialApplicationGrade updatedGrade)
+        //        {
+        //            using (var connection = new SqlConnection(_config.SqlConnectionString))
+        //            {
+        //                await connection.ExecuteAsync(@"UPDATE Applications
+        //                                                SET    ApplicationData = @serialisedData
+        //                                                WHERE  Applications.Id = @applicationId",
+        //                    new {applicationId, updatedGrade});
+        //            }
+        //        }
+
+        public async Task StartApplicationReview(Guid applicationId, int sectionId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE ApplicationSections 
+                                                SET Status = 'In Progress'
+                                                WHERE ApplicationId = @applicationId AND SectionId = @sectionId  AND SequenceId = 1",
+                    new { applicationId, sectionId });
+            }
+        }
 
         public async Task StartFinancialReview(Guid applicationId)
         {
@@ -421,7 +440,7 @@ namespace SFA.DAS.ApplyService.Data
                     new
                     {
                         applicationStatusSubmitted = ApplicationStatus.Submitted, 
-                        financialStatusGraded = SectionStatus.Graded
+                        financialStatusGraded = ApplicationSectionStatus.Graded
                     })).ToList();
             }
         }

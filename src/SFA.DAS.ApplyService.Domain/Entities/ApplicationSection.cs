@@ -17,6 +17,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public Guid ApplicationId { get; set; }
         public int SectionId { get; set; }
         public int SequenceId { get; set; }
+        public string FeedbackComment { get; set; }
         public string QnAData { get; set; }
 
         public QnAData QnADataObject
@@ -68,5 +69,12 @@ namespace SFA.DAS.ApplyService.Domain.Entities
                 return QnADataObject.Pages.Any(p => p.HasNewFeedback());
             }
         }
+    }
+
+    public class ApplicationSectionStatus
+    {
+        public const string InProgress = "In Progress";
+        public const string Submitted = "Submitted";
+        public const string Graded = "Graded";
     }
 }
