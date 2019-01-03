@@ -30,24 +30,24 @@ if not exists(select * from assets where reference ='SQ-2-SE-4-PG-24-CC-07-SL-1'
 	VALUES (N'3cac84ae-a24a-4298-8bca-9588c524f809', N'SQ-2-SE-4-PG-24-CC-07-SL-1', N'', N'Proof of insurance', N'', N'Live', getutcdate(), N'Scripted', NULL, NULL, NULL, NULL)
 GO
 
-if not exists(select * from assets where reference ='SQ-2-SE4-PG-24-CC-03-QB-1')
+if not exists(select * from assets where reference ='SQ-2-SE-4-PG-24-CC-03-QB-1')
 	INSERT [dbo].[Assets] ([Id], [Reference], [Type], [Text], [Format], [Status], [CreatedAt], [CreatedBy], [UpdatedAt], [UpdatedBy], [DeletedAt], [DeletedBy]) 
-	VALUES (N'c0ad0e34-2f98-486f-a2c3-116c324b4336', N'SQ-2-SE4-PG-24-CC-03-QB-1', N'', N'', N'', N'Live', getutcdate(), N'Scripted', NULL, NULL, NULL, NULL)
+	VALUES (N'c0ad0e34-2f98-486f-a2c3-116c324b4336', N'SQ-2-SE-4-PG-24-CC-03-QB-1', N'', N'', N'', N'Live', getutcdate(), N'Scripted', NULL, NULL, NULL, NULL)
 GO
 
-if not exists(select * from assets where reference ='SQ-2-SE4-PG-24-CC-03-H-1')
+if not exists(select * from assets where reference ='SQ-2-SE-4-PG-24-CC-03-H-1')
 	INSERT [dbo].[Assets] ([Id], [Reference], [Type], [Text], [Format], [Status], [CreatedAt], [CreatedBy], [UpdatedAt], [UpdatedBy], [DeletedAt], [DeletedBy]) 
-	VALUES (N'ba8b0f1b-f662-47e9-a574-1f99337f4538', N'SQ-2-SE4-PG-24-CC-03-H-1', N'', N'', N'', N'Live', getutcdate(), N'Scripted', NULL, NULL, NULL, NULL)
+	VALUES (N'ba8b0f1b-f662-47e9-a574-1f99337f4538', N'SQ-2-SE-4-PG-24-CC-03-H-1', N'', N'', N'', N'Live', getutcdate(), N'Scripted', NULL, NULL, NULL, NULL)
 GO
 
-if not exists(select * from assets where reference ='SQ-2-SE4-PG-24-CC-07-QB-1')
+if not exists(select * from assets where reference ='SQ-2-SE-4-PG-24-CC-07-QB-1')
 	INSERT [dbo].[Assets] ([Id], [Reference], [Type], [Text], [Format], [Status], [CreatedAt], [CreatedBy], [UpdatedAt], [UpdatedBy], [DeletedAt], [DeletedBy]) 
-	VALUES (N'1b6cb5ee-4ef2-4105-b9d2-9291911d0427', N'SQ-2-SE4-PG-24-CC-07-QB-1', N'', N'', N'', N'Live', getutcdate(), N'Scripted', NULL, NULL, NULL, NULL)
+	VALUES (N'1b6cb5ee-4ef2-4105-b9d2-9291911d0427', N'SQ-2-SE-4-PG-24-CC-07-QB-1', N'', N'', N'', N'Live', getutcdate(), N'Scripted', NULL, NULL, NULL, NULL)
 GO
 
-if not exists(select * from assets where reference ='SQ-2-SE4-PG-24-CC-07-H-1')
+if not exists(select * from assets where reference ='SQ-2-SE-4-PG-24-CC-07-H-1')
 	INSERT [dbo].[Assets] ([Id], [Reference], [Type], [Text], [Format], [Status], [CreatedAt], [CreatedBy], [UpdatedAt], [UpdatedBy], [DeletedAt], [DeletedBy]) 
-	VALUES (N'3e0d0016-99ae-40a6-9c38-000f1f1d06c5', N'SQ-2-SE4-PG-24-CC-07-H-1', N'', N'', N'', N'Live', getutcdate(), N'Scripted', NULL, NULL, NULL, NULL)
+	VALUES (N'3e0d0016-99ae-40a6-9c38-000f1f1d06c5', N'SQ-2-SE-4-PG-24-CC-07-H-1', N'', N'', N'', N'Live', getutcdate(), N'Scripted', NULL, NULL, NULL, NULL)
 GO
 
 if not exists (select * from workflowsections where id = 'b4951ead-ee4a-49f2-a31e-3a658605e32a')
@@ -67,8 +67,8 @@ VALUES (N'b4951ead-ee4a-49f2-a31e-3a658605e32a', N'83b35024-8aef-440d-8f59-8c1cc
             "QuestionId": "CC-03",
             "Label": "SQ-2-SE-4-PG-24-CC-03-L-1",
             "ShortLabel": "SQ-2-SE-4-PG-24-CC-03-SL-1",
-            "QuestionBodyText": "SQ-2-SE4-PG-24-CC-03-QB-1",
-            "Hint": "SQ-2-SE4-PG-24-CC-03-H-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-03-QB-1",
+            "Hint": "SQ-2-SE-4-PG-24-CC-03-H-1",
             "Input": {
               "Type": "FileUpload",
               "Options": null,
@@ -86,8 +86,8 @@ VALUES (N'b4951ead-ee4a-49f2-a31e-3a658605e32a', N'83b35024-8aef-440d-8f59-8c1cc
             "QuestionId": "CC-07",
             "Label": "SQ-2-SE-4-PG-24-CC-07-L-1",
             "ShortLabel": "SQ-2-SE-4-PG-24-CC-07-SL-1",
-            "QuestionBodyText": "SQ-2-SE4-PG-24-CC-07-QB-1",
-            "Hint": "SQ-2-SE4-PG-24-CC-07-H-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-07-QB-1",
+            "Hint": "SQ-2-SE-4-PG-24-CC-07-H-1",
             "Input": {
               "Type": "FileUpload",
               "Options": null,
