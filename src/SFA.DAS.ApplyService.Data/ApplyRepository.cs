@@ -129,7 +129,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task GradeSection(ApplicationSection section)
+        public async Task CompleteSection(ApplicationSection section)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
@@ -230,7 +230,7 @@ namespace SFA.DAS.ApplyService.Data
                             AND seq.SequenceId = 1
                             ) AS new ON new.Id = sec.ApplicationId
                             INNER JOIN Organisations org ON org.Id = new.ApplyingOrganisationId
-                            WHERE SectionId = 3", new {applicationStatus = ApplicationStatus.Submitted})).ToList();
+                            WHERE SectionId = 3", new { applicationStatus = ApplicationStatus.Submitted })).ToList();
             }
         }
 
