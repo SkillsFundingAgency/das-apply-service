@@ -339,27 +339,35 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<dynamic>> GetNewApplications()
+        public async Task<List<dynamic>> GetNewApplications(int sequenceId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection
                     .QueryAsync(
-                        @"SELECT org.Name, sec1.ApplicationId, sec1.SectionId, sec3.Status AS FinanceStatus, 
-	                        CASE WHEN sec1.Status = sec2.Status THEN sec1.Status
-		                         ELSE 'In Progress' 
+                        @"SELECT OrganisationName, ApplicationId, SequenceId, sec3Status AS FinanceStatus,  
+	                        CASE WHEN (SequenceId = 1 AND (sec1Status = 'Completed' AND sec2Status = 'Completed')) OR (SequenceId = 2 AND sec4Status = 'Completed') THEN 'Completed'
+		                         WHEN (SequenceId = 1 AND (sec1Status = 'Submitted' AND sec2Status = 'Submitted')) OR (SequenceId = 2 AND sec4Status = 'Submitted') THEN 'Submitted'
+		                         ELSE 'In Progress'
 	                        END As SequenceStatus
-                        FROM Applications appl
-                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id AND seq.SequenceId = 1
-                        INNER JOIN ApplicationSections sec1 ON sec1.ApplicationId = appl.Id AND sec1.SectionId = 1
-                        INNER JOIN ApplicationSections sec2 ON sec2.ApplicationId = appl.Id AND sec2.SectionId = 2
-                        INNER JOIN ApplicationSections sec3 ON sec3.ApplicationId = appl.Id AND sec3.SectionId = 3
-                        INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-                        WHERE appl.ApplicationStatus = @applicationStatusSubmitted 
-                        AND (seq.Status = @sequenceStatusInProgress OR seq.Status = @sequenceStatusSubmitted)",
+                        FROM (
+	                        SELECT seq.SequenceId,
+	                        MAX(CASE WHEN SectionId = 1 THEN sec1.[Status] ELSE NULL END) Sec1Status,
+	                        MAX(CASE WHEN SectionId = 2 THEN sec1.[Status] ELSE NULL END) Sec2Status,
+	                        MAX(CASE WHEN SectionId = 3 THEN sec1.[Status] ELSE NULL END) Sec3Status,
+	                        MAX(CASE WHEN SectionId = 4 THEN sec1.[Status] ELSE NULL END) Sec4Status,
+	                        appl.ApplyingOrganisationId, appl.id ApplicationId, org.Name OrganisationName
+	                        FROM Applications appl
+	                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id AND seq.SequenceId = @sequenceId
+	                        INNER JOIN ApplicationSections sec1 ON sec1.ApplicationId = appl.Id 
+	                        INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
+	                        WHERE appl.ApplicationStatus = @applicationStatusSubmitted AND (seq.Status = @sequenceStatusSubmitted OR seq.Status = @sequenceStatusInProgress)
+	                        GROUP BY seq.SequenceId, appl.ApplyingOrganisationId, appl.id, org.Name
+                        ) ab",
                         new
                         {
-                            applicationStatus = ApplicationStatus.Submitted,
+                            sequenceId, // 1 for new applications, until accepted; 2 when reviewing Capacity & Capability
+                            applicationStatusSubmitted = ApplicationStatus.Submitted,
                             sequenceStatusInProgress = ApplicationSectionStatus.InProgress,
                             sequenceStatusSubmitted = ApplicationSectionStatus.Submitted
                         })).ToList();
