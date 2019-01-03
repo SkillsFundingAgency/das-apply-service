@@ -214,26 +214,6 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<dynamic>> GetNewApplications()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection
-                    .QueryAsync(
-                        @"SELECT org.Name, sec.ApplicationId, sec.SectionId, new.[Status] AS SequenceStatus, sec.[Status] AS FinanceStatus
-                            FROM ApplicationSections sec
-                            INNER JOIN (SELECT appl.Id, appl.ApplyingOrganisationId, seq.Status
-                            FROM Applications appl
-                            INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
-                            WHERE appl.ApplicationStatus = 'Submitted' 
-                            AND (seq.Status = 'Submitted' OR seq.Status = 'In Progress')
-                            AND seq.SequenceId = 1
-                            ) AS new ON new.Id = sec.ApplicationId
-                            INNER JOIN Organisations org ON org.Id = new.ApplyingOrganisationId
-                            WHERE SectionId = 3", new { applicationStatus = ApplicationStatus.Submitted })).ToList();
-            }
-        }
-
         public async Task SubmitApplicationSequence(ApplicationSubmitRequest request)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -356,6 +336,33 @@ namespace SFA.DAS.ApplyService.Data
             {
                 return (await connection.QueryAsync<ApplicationSection>(@"SELECT * FROM ApplicationSections WHERE ApplicationId = @applicationId",
                     new {applicationId})).ToList();
+            }
+        }
+
+        public async Task<List<dynamic>> GetNewApplications()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection
+                    .QueryAsync(
+                        @"SELECT org.Name, sec1.ApplicationId, sec1.SectionId, sec3.Status AS FinanceStatus, 
+	                        CASE WHEN sec1.Status = sec2.Status THEN sec1.Status
+		                         ELSE 'In Progress' 
+	                        END As SequenceStatus
+                        FROM Applications appl
+                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id AND seq.SequenceId = 1
+                        INNER JOIN ApplicationSections sec1 ON sec1.ApplicationId = appl.Id AND sec1.SectionId = 1
+                        INNER JOIN ApplicationSections sec2 ON sec2.ApplicationId = appl.Id AND sec2.SectionId = 2
+                        INNER JOIN ApplicationSections sec3 ON sec3.ApplicationId = appl.Id AND sec3.SectionId = 3
+                        INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
+                        WHERE appl.ApplicationStatus = @applicationStatusSubmitted 
+                        AND (seq.Status = @sequenceStatusInProgress OR seq.Status = @sequenceStatusSubmitted)",
+                        new
+                        {
+                            applicationStatus = ApplicationStatus.Submitted,
+                            sequenceStatusInProgress = ApplicationSectionStatus.InProgress,
+                            sequenceStatusSubmitted = ApplicationSectionStatus.Submitted
+                        })).ToList();
             }
         }
 
