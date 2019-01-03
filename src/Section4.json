@@ -1,0 +1,70 @@
+{
+    "Pages": [
+      {
+        "PageId": "24",
+        "SequenceId": "2",
+        "SectionId": "4",
+        "Title": "SQ-2-SE-4-PG-24-T-1",
+        "LinkTitle": "SQ-2-SE-4-PG-24-LT-1",
+        "InfoText": "SQ-2-SE-4-PG-24-IT-1",
+        "Questions": [
+          {
+            "QuestionId": "CC-03",
+            "Label": "SQ-2-SE-4-PG-24-CC-03-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-24-CC-03-SL-1",
+            "QuestionBodyText": "SQ-2-SE4-PG-24-CC-03-QB-1",
+            "Hint": "SQ-2-SE4-PG-24-CC-03-H-1",
+            "Input": {
+              "Type": "FileUpload",
+              "Options": null,
+              "Validations": [
+                {
+                  "Name": "Required",
+                  "Value": null,
+                  "ErrorMessage": "Upload a file"
+                }
+              ]
+            },
+            "Order": null
+          },
+          {
+            "QuestionId": "CC-07",
+            "Label": "SQ-2-SE-4-PG-24-CC-07-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-24-CC-07-SL-1",
+            "QuestionBodyText": "SQ-2-SE4-PG-24-CC-07-QB-1",
+            "Hint": "SQ-2-SE4-PG-24-CC-07-H-1",
+            "Input": {
+              "Type": "FileUpload",
+              "Options": null,
+              "Validations": [
+                {
+                  "Name": "Required",
+                  "Value": null,
+                  "ErrorMessage": "Upload a file"
+                }
+              ]
+            },
+            "Order": null
+          }
+        ],
+        "PageOfAnswers": [],
+        "Next": [
+          {
+            "Action": "ReturnToSection",
+            "ReturnId": "4",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+        "Complete": false,
+        "AllowMultipleAnswers": false,
+        "Order": null,
+        "Active": true,
+        "Visible": true,
+        "Feedback": null,
+        "HasFeedback": false,
+        "BodyText": "NP"
+      }
+    ],
+    "FinancialApplicationGrade": null
+  }  
