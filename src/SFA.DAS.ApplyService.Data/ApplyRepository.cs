@@ -129,7 +129,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task GradeSection(ApplicationSection section)
+        public async Task CompleteSection(ApplicationSection section)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
@@ -211,26 +211,6 @@ namespace SFA.DAS.ApplyService.Data
                     }
                     
                 }
-            }
-        }
-
-        public async Task<List<dynamic>> GetNewApplications()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection
-                    .QueryAsync(
-                        @"SELECT org.Name, sec.ApplicationId, sec.SectionId, new.[Status] AS SequenceStatus, sec.[Status] AS FinanceStatus
-                            FROM ApplicationSections sec
-                            INNER JOIN (SELECT appl.Id, appl.ApplyingOrganisationId, seq.Status
-                            FROM Applications appl
-                            INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
-                            WHERE appl.ApplicationStatus = 'Submitted' 
-                            AND (seq.Status = 'Submitted' OR seq.Status = 'In Progress')
-                            AND seq.SequenceId = 1
-                            ) AS new ON new.Id = sec.ApplicationId
-                            INNER JOIN Organisations org ON org.Id = new.ApplyingOrganisationId
-                            WHERE SectionId = 3", new {applicationStatus = ApplicationStatus.Submitted})).ToList();
             }
         }
 
@@ -356,6 +336,41 @@ namespace SFA.DAS.ApplyService.Data
             {
                 return (await connection.QueryAsync<ApplicationSection>(@"SELECT * FROM ApplicationSections WHERE ApplicationId = @applicationId",
                     new {applicationId})).ToList();
+            }
+        }
+
+        public async Task<List<dynamic>> GetNewApplications(int sequenceId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection
+                    .QueryAsync(
+                        @"SELECT OrganisationName, ApplicationId, SequenceId, sec3Status AS FinanceStatus,  
+	                        CASE WHEN (SequenceId = 1 AND (sec1Status = 'Completed' AND sec2Status = 'Completed')) OR (SequenceId = 2 AND sec4Status = 'Completed') THEN 'Completed'
+		                         WHEN (SequenceId = 1 AND (sec1Status = 'Submitted' AND sec2Status = 'Submitted')) OR (SequenceId = 2 AND sec4Status = 'Submitted') THEN 'Submitted'
+		                         ELSE 'In Progress'
+	                        END As SequenceStatus
+                        FROM (
+	                        SELECT seq.SequenceId,
+	                        MAX(CASE WHEN SectionId = 1 THEN sec1.[Status] ELSE NULL END) Sec1Status,
+	                        MAX(CASE WHEN SectionId = 2 THEN sec1.[Status] ELSE NULL END) Sec2Status,
+	                        MAX(CASE WHEN SectionId = 3 THEN sec1.[Status] ELSE NULL END) Sec3Status,
+	                        MAX(CASE WHEN SectionId = 4 THEN sec1.[Status] ELSE NULL END) Sec4Status,
+	                        appl.ApplyingOrganisationId, appl.id ApplicationId, org.Name OrganisationName
+	                        FROM Applications appl
+	                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id AND seq.SequenceId = @sequenceId
+	                        INNER JOIN ApplicationSections sec1 ON sec1.ApplicationId = appl.Id 
+	                        INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
+	                        WHERE appl.ApplicationStatus = @applicationStatusSubmitted AND (seq.Status = @sequenceStatusSubmitted OR seq.Status = @sequenceStatusInProgress)
+	                        GROUP BY seq.SequenceId, appl.ApplyingOrganisationId, appl.id, org.Name
+                        ) ab",
+                        new
+                        {
+                            sequenceId, // 1 for new applications, until accepted; 2 when reviewing Capacity & Capability
+                            applicationStatusSubmitted = ApplicationStatus.Submitted,
+                            sequenceStatusInProgress = ApplicationSectionStatus.InProgress,
+                            sequenceStatusSubmitted = ApplicationSectionStatus.Submitted
+                        })).ToList();
             }
         }
 

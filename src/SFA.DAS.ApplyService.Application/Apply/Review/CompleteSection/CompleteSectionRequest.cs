@@ -1,9 +1,9 @@
 ﻿using System;
 using MediatR;
 
-namespace SFA.DAS.ApplyService.Application.Apply.Review.Grade
+namespace SFA.DAS.ApplyService.Application.Apply.Review.CompleteSection
 {
-    public class GradeRequest : IRequest
+    public class CompleteSectionRequest : IRequest
     {
         public Guid ApplicationId { get; }
         public int SequenceId { get; }
@@ -11,7 +11,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Grade
         public string FeedbackComment { get; }
         public bool IsSectionComplete { get; }
 
-        public GradeRequest(Guid applicationId, int sequenceId, int sectionId, string message, bool isSectionComplete)
+        public CompleteSectionRequest(Guid applicationId, int sequenceId, int sectionId, string message, bool isSectionComplete)
         {
             ApplicationId = applicationId;
             SequenceId = sequenceId;

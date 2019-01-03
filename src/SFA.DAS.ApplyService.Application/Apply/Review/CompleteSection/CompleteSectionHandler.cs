@@ -3,22 +3,26 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.ApplyService.Application.Apply.Review.Grade
+namespace SFA.DAS.ApplyService.Application.Apply.Review.CompleteSection
 {
-    public class GradeHandler : IRequestHandler<GradeRequest>
+    public class CompleteSectionHandler : IRequestHandler<CompleteSectionRequest>
     {
         private readonly IApplyRepository _applyRepository;
 
-        public GradeHandler(IApplyRepository applyRepository)
+        public CompleteSectionHandler(IApplyRepository applyRepository)
         {
             _applyRepository = applyRepository;
         }
 
-        public async Task<Unit> Handle(GradeRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CompleteSectionRequest request, CancellationToken cancellationToken)
         {
             var section = await _applyRepository.GetSection(request.ApplicationId, request.SequenceId, request.SectionId, null);
 
-            if(request.IsSectionComplete)
+            if (request.IsSectionComplete)
+            {
+                section.Status = ApplicationSectionStatus.Completed;
+            }
+            else if (request.SequenceId == 1 && request.SectionId == 3)
             {
                 section.Status = ApplicationSectionStatus.Graded;
             }
@@ -29,7 +33,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Grade
 
             section.FeedbackComment = request.FeedbackComment;
 
-            await _applyRepository.GradeSection(section);
+            await _applyRepository.CompleteSection(section);
 
             return Unit.Value;
         }

@@ -22,15 +22,17 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review
 
             if (request.SequenceId == 1)
             {
-                var appSections = await _applyRepository.GetSections(request.ApplicationId);
-                var sequenceSections = appSections.Where(sec => sec.SequenceId == request.SequenceId);
+                var section1 = await _applyRepository.GetSection(request.ApplicationId, 1, 1, null);
+                var section2 = await _applyRepository.GetSection(request.ApplicationId, 1, 2, null);
 
-                foreach (var section in sequenceSections)
+                if (section1.Status == ApplicationSectionStatus.Submitted)
                 {
-                    if (section.Status == ApplicationSectionStatus.Submitted)
-                    {
-                        await _applyRepository.StartApplicationReview(request.ApplicationId, section.SectionId);
-                    }
+                    await _applyRepository.StartApplicationReview(request.ApplicationId, section1.SectionId);
+                }
+
+                if (section2.Status == ApplicationSectionStatus.Submitted)
+                {
+                    await _applyRepository.StartApplicationReview(request.ApplicationId, section2.SectionId);
                 }
             }
 
