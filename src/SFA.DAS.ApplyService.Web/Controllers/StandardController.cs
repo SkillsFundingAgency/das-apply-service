@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
@@ -11,15 +13,19 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     public class StandardController : Controller
     {
         private readonly IApplicationApiClient _apiClient;
+        private readonly AssessorServiceApiClient _assessorServiceApiClient;
 
-        public StandardController(IApplicationApiClient apiClient)
+        public StandardController(IApplicationApiClient apiClient, AssessorServiceApiClient assessorServiceApiClient)
         {
             _apiClient = apiClient;
+            _assessorServiceApiClient = assessorServiceApiClient;
         }
 
         [HttpGet("Standard/{applicationId}")]
         public async Task<IActionResult> Index(Guid applicationId)
         {
+            var results = await _assessorServiceApiClient.GetStandards();
+
             return View("~/Views/Application/Standard/FindStandard.cshtml", applicationId);
         }
 

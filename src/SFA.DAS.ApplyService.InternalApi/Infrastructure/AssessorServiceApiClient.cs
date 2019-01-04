@@ -11,6 +11,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.IdentityModel.Protocols.WsFederation;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {

@@ -20,6 +20,7 @@ using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.DfeSignIn;
+using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Controllers;
 using SFA.DAS.ApplyService.Web.Infrastructure;
@@ -32,12 +33,19 @@ namespace SFA.DAS.ApplyService.Web
         private readonly IConfiguration _configuration;
         private readonly ILogger<Startup> _logger;
         private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IApplyConfig _applyConfig;
+        private readonly IHostingEnvironment _env;
+        private const string _serviceName = "SFA.DAS.ApplyService";
+        private const string _version = "1.0";
 
-        public Startup(IConfiguration configuration, ILogger<Startup> logger, IHostingEnvironment hostingEnvironment)
+        public Startup(IConfiguration configuration, ILogger<Startup> logger, IHostingEnvironment hostingEnvironment, IHostingEnvironment env)
         {
             _configuration = configuration;
             _logger = logger;
             _hostingEnvironment = hostingEnvironment;
+            _env = env;
+            _applyConfig = new ConfigurationService(_env, _configuration["EnvironmentName"], _configuration["ConfigurationStorageConnectionString"], _version, _serviceName).GetConfig().GetAwaiter().GetResult();
+
         }
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
@@ -49,9 +57,14 @@ namespace SFA.DAS.ApplyService.Web
             
             
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
-            
-         
-            
+
+            services.AddHttpClient<AssessorServiceApiClient>("AssessorServiceApiClient", config =>
+                {
+                    config.BaseAddress = new Uri(_applyConfig.AssessorServiceApiAuthentication.ApiBaseAddress); //  "http://localhost:59022"
+                    config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                })
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+
             services.AddMvc(options => { options.Filters.Add<PerformValidationFilter>(); })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -103,6 +116,7 @@ namespace SFA.DAS.ApplyService.Web
                 config.For<IApplicationApiClient>().Use<ApplicationApiClient>();
                 config.For<OrganisationApiClient>().Use<OrganisationApiClient>();
                 config.For<OrganisationSearchApiClient>().Use<OrganisationSearchApiClient>();
+                config.For<AssessorServiceApiClient>().Use<AssessorServiceApiClient>();
 
                 config.Populate(services);
             });
