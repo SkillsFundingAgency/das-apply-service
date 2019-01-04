@@ -1,5 +1,6 @@
 ﻿using System;
-namespace SFA.DAS.ApplyService.InternalApi.Types
+
+namespace SFA.DAS.ApplyService.InternalApi.Models.AssessorService
 {
     public class StandardData
     {

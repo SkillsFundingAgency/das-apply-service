@@ -1,4 +1,5 @@
-@model Guid
+@using SFA.DAS.ApplyService.Web.ViewModels
+@model SFA.DAS.ApplyService.Web.ViewModels.StandardViewModel
 
 @{
     ViewBag.Title = "title";
@@ -9,7 +10,7 @@
           
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form asp-action="Search" asp-controller="Standard" asp-route-applicationId="@Model">
+            <form asp-action="Search" asp-controller="Standard" asp-route-applicationId="@Model.ApplicationId">
                 <div class="govuk-form-group">
                     <h1 class="govuk-label-wrapper">
                         <label class="govuk-label govuk-label--l" for="standard-name">
@@ -19,7 +20,7 @@
                     <span id="standard-hint" class="govuk-hint">
                         For example, financial adviser
                     </span>
-                    <input class="govuk-input govuk-input--width-20 ui-autocomplete-input" id="standard-name" name="StandardToFind" type="text" value="" autocomplete="off">
+                    <input class="govuk-input govuk-input--width-20 ui-autocomplete-input" id="standard-name" name="StandardToFind" type="text" value="@Model.StandardName" autocomplete="off">
                 </div>
                 <h2 class="govuk-heading-m js-no-results" style="display: none;">No results found</h2>
                 <p class="govuk-body js-no-results" style="display: none;">Details about standards can be found on the <a href="#" class="govuk-link">Institute for Apprenticeships (IFA)</a> website.</p>

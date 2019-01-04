@@ -7,30 +7,28 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure;
+using SFA.DAS.ApplyService.Web.ViewModels;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
     public class StandardController : Controller
     {
         private readonly IApplicationApiClient _apiClient;
-        private readonly AssessorServiceApiClient _assessorServiceApiClient;
 
-        public StandardController(IApplicationApiClient apiClient, AssessorServiceApiClient assessorServiceApiClient)
+        public StandardController(IApplicationApiClient apiClient)
         {
             _apiClient = apiClient;
-            _assessorServiceApiClient = assessorServiceApiClient;
         }
 
         [HttpGet("Standard/{applicationId}")]
         public async Task<IActionResult> Index(Guid applicationId)
         {
-            var results = await _assessorServiceApiClient.GetStandards();
-
-            return View("~/Views/Application/Standard/FindStandard.cshtml", applicationId);
+            var standardViewModel = new StandardViewModel {ApplicationId = applicationId};
+            return View("~/Views/Application/Standard/FindStandard.cshtml", standardViewModel);
         }
 
         [HttpPost("Standard/{applicationId}")]
-        public async Task<IActionResult> Search(Guid applicationId, string standardToFind)
+        public async Task<IActionResult> Search(Guid applicationId, string standardToFind, StandardViewModel model)
         {
             // TODO: Check standard is valid.
 
