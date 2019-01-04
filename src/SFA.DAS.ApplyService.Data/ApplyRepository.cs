@@ -346,9 +346,9 @@ namespace SFA.DAS.ApplyService.Data
                 return (await connection
                     .QueryAsync(
                         @"SELECT OrganisationName, ApplicationId, SequenceId, sec3Status AS FinanceStatus,  
-	                        CASE WHEN (SequenceId = 1 AND (sec1Status = 'Completed' AND sec2Status = 'Completed')) OR (SequenceId = 2 AND sec4Status = 'Completed') THEN 'Completed'
-		                         WHEN (SequenceId = 1 AND (sec1Status = 'Submitted' AND sec2Status = 'Submitted')) OR (SequenceId = 2 AND sec4Status = 'Submitted') THEN 'Submitted'
-		                         ELSE 'In Progress'
+	                        CASE WHEN (SequenceId = 1 AND (sec1Status = 'Evaluated' AND sec2Status = 'Evaluated')) OR (SequenceId = 2 AND sec4Status = 'Evaluated') THEN @sectionStatusEvaluated
+		                         WHEN (SequenceId = 1 AND (sec1Status = 'Submitted' AND sec2Status = 'Submitted')) OR (SequenceId = 2 AND sec4Status = 'Submitted') THEN @sectionStatusSubmitted
+		                         ELSE @sectionStatusInProgress
 	                        END As SequenceStatus
                         FROM (
 	                        SELECT seq.SequenceId,
@@ -369,7 +369,10 @@ namespace SFA.DAS.ApplyService.Data
                             sequenceId, // 1 for new applications, until accepted; 2 when reviewing Capacity & Capability
                             applicationStatusSubmitted = ApplicationStatus.Submitted,
                             sequenceStatusInProgress = ApplicationSectionStatus.InProgress,
-                            sequenceStatusSubmitted = ApplicationSectionStatus.Submitted
+                            sequenceStatusSubmitted = ApplicationSectionStatus.Submitted,
+                            sectionStatusEvaluated = ApplicationSectionStatus.Evaluated,
+                            sectionStatusSubmitted = ApplicationSectionStatus.Submitted,
+                            sectionStatusInProgress = ApplicationSectionStatus.InProgress
                         })).ToList();
             }
         }

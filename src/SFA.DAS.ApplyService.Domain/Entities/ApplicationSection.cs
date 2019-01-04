@@ -10,6 +10,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     {
         public List<Page> Pages { get; set; }
         public FinancialApplicationGrade FinancialApplicationGrade { get; set; }
+        //public List<Feedback> Feedback { get; set; } <-- This will be section level feedback which needs to go back & forth to EPAO and Staff
     }
     
     public class ApplicationSection : EntityBase
@@ -76,6 +77,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Submitted = "Submitted";
         public const string InProgress = "In Progress";
         public const string Graded = "Graded";
-        public const string Completed = "Completed";
+        public const string Evaluated = "Evaluated";
     }
 }
