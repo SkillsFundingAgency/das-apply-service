@@ -3,24 +3,24 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.ApplyService.Application.Apply.Review.CompleteSection
+namespace SFA.DAS.ApplyService.Application.Apply.Review.Evaluate
 {
-    public class CompleteSectionHandler : IRequestHandler<CompleteSectionRequest>
+    public class EvaluateHandler : IRequestHandler<EvaluateRequest>
     {
         private readonly IApplyRepository _applyRepository;
 
-        public CompleteSectionHandler(IApplyRepository applyRepository)
+        public EvaluateHandler(IApplyRepository applyRepository)
         {
             _applyRepository = applyRepository;
         }
 
-        public async Task<Unit> Handle(CompleteSectionRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(EvaluateRequest request, CancellationToken cancellationToken)
         {
             var section = await _applyRepository.GetSection(request.ApplicationId, request.SequenceId, request.SectionId, null);
 
             if (request.IsSectionComplete)
             {
-                section.Status = ApplicationSectionStatus.Completed;
+                section.Status = ApplicationSectionStatus.Evaluated;
             }
             else if (request.SequenceId == 1 && request.SectionId == 3)
             {

@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.GetSection;
 using SFA.DAS.ApplyService.Application.Apply.Review;
+using SFA.DAS.ApplyService.Application.Apply.Review.Evaluate;
 using SFA.DAS.ApplyService.Application.Apply.Review.Feedback;
 using SFA.DAS.ApplyService.Application.Apply.Review.Return;
 using SFA.DAS.ApplyService.Domain.Apply;
@@ -41,10 +42,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             await _mediator.Send(new AddFeedbackRequest(applicationId, sequenceId, sectionId, pageId, feedback));
         }
 
-        [HttpPost("Review/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Complete")]
-        public async Task CompleteSection(Guid applicationId, int sequenceId, int sectionId, [FromBody] CompleteSectionRequest request)
+        [HttpPost("Review/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Evaluate")]
+        public async Task EvaluateSection(Guid applicationId, int sequenceId, int sectionId, [FromBody] EvaluateSectionRequest request)
         {
-            await _mediator.Send(new Application.Apply.Review.CompleteSection.CompleteSectionRequest(applicationId, sequenceId, sectionId, request.FeedbackComment, request.IsSectionComplete));
+            await _mediator.Send(new EvaluateRequest(applicationId, sequenceId, sectionId, request.FeedbackComment, request.IsSectionComplete));
         }
 
         [HttpPost("Review/Applications/{applicationId}/Sequences/{sequenceId}/Return")]
@@ -65,7 +66,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public string ReturnType { get; set; }
     }
 
-    public class CompleteSectionRequest
+    public class EvaluateSectionRequest
     {
         public string FeedbackComment { get; set; }
         public bool IsSectionComplete { get; set; }
