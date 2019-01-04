@@ -361,7 +361,7 @@ namespace SFA.DAS.ApplyService.Data
 	                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id AND seq.SequenceId = @sequenceId
 	                        INNER JOIN ApplicationSections sec1 ON sec1.ApplicationId = appl.Id 
 	                        INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-	                        WHERE appl.ApplicationStatus = @applicationStatusSubmitted AND (seq.Status = @sequenceStatusSubmitted OR seq.Status = @sequenceStatusInProgress)
+	                        WHERE appl.ApplicationStatus = @applicationStatusSubmitted AND seq.Status = @sequenceStatusSubmitted
 	                        GROUP BY seq.SequenceId, appl.ApplyingOrganisationId, appl.id, org.Name
                         ) ab",
                         new
