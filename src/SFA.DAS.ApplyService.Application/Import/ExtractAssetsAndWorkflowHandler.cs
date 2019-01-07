@@ -41,7 +41,7 @@
 ////            
 ////            foreach (var applicationSection in applicationSections)
 ////            {
-////                var qnaDataObject = applicationSection.QnADataObject;
+////                var qnaDataObject = applicationSection.QnAData;
 ////                
 ////                foreach (var page in qnaDataObject.Pages)
 ////                {
@@ -117,7 +117,7 @@
 ////                    }
 ////                }
 ////
-////                applicationSection.QnADataObject = qnaDataObject;
+////                applicationSection.QnAData = qnaDataObject;
 ////            }
 //
 ////            await _applyRepository.UpdateSections(applicationSections);

@@ -12,6 +12,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string LinkTitle { get; set; }
         public string Status { get; set; }
         public string DisplayType { get; set; }
-        public string QnAData { get; set; }
+        public QnAData QnAData { get; set; }
     }
 }

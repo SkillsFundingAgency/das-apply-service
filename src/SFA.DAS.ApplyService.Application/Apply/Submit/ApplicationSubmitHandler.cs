@@ -21,9 +21,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
 
             foreach (var section in sections)
             {
-                var qnADataObject = section.QnADataObject;
-                //var pages = section.QnADataObject.Pages;
-                foreach (var page in qnADataObject.Pages)
+                foreach (var page in section.QnAData.Pages)
                 {
                     if (!page.HasFeedback) continue;
                     
@@ -32,9 +30,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
                         feedback.IsNew = false;
                     }
                 }
-
-                section.QnADataObject = qnADataObject;
-                //section.QnADataObject.Pages = pages;
             }
 
             await _applyRepository.UpdateSections(sections);

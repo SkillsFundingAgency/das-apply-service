@@ -19,7 +19,7 @@
                 <ul class="govuk-list">
                     <li>
                         <ul class="app-task-list">
-                            @foreach (var pg in Model.QnADataObject.Pages.Where(p => p.Active))
+                            @foreach (var pg in Model.QnAData.Pages.Where(p => p.Active))
                             {
                                 <li>
                                     <h2 class="govuk-heading-m">@Html.Raw(pg.Title)</h2>

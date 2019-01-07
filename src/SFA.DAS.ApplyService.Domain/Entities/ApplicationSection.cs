@@ -10,37 +10,25 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     {
         public List<Page> Pages { get; set; }
         public FinancialApplicationGrade FinancialApplicationGrade { get; set; }
-        //public List<Feedback> Feedback { get; set; } <-- This will be section level feedback which needs to go back & forth to EPAO and Staff
+        //public List<Feedback> Feedback { get; set; } <-- This will be section level feedback which needs to go back & forth to EPAO and Staff (ON-1261)
     }
-    
+
     public class ApplicationSection : EntityBase
     {
         public Guid ApplicationId { get; set; }
         public int SectionId { get; set; }
         public int SequenceId { get; set; }
         public string FeedbackComment { get; set; }
-        public string QnAData { get; set; }
-
-        public QnAData QnADataObject
-        {
-            get => JsonConvert.DeserializeObject<QnAData>(QnAData);
-            set => QnAData = JsonConvert.SerializeObject(value);
-        }
-        
-//        public List<Page> Pages
-//        {
-//            get => JsonConvert.DeserializeObject<List<Page>>(QnAData);
-//            set => QnAData = JsonConvert.SerializeObject(value);
-//        }
+        public QnAData QnAData { get; set; }
 
         public int PagesComplete
         {
-            get { return QnADataObject.Pages.Count(p => p.Active && p.Complete); }
+            get { return QnAData.Pages.Count(p => p.Active && p.Complete); }
         }
         
         public int PagesActive
         {
-            get { return QnADataObject.Pages.Count(p => p.Active); }
+            get { return QnAData.Pages.Count(p => p.Active); }
         }
 
         public string Title { get; set; }
@@ -49,25 +37,25 @@ namespace SFA.DAS.ApplyService.Domain.Entities
 
         public Page GetPage(string pageId)
         {
-            return QnADataObject.Pages.SingleOrDefault(p => p.PageId == pageId);
+            return QnAData.Pages.SingleOrDefault(p => p.PageId == pageId);
         }
 
         public void UpdatePage(Page page)
         {
-            var currentPages = JsonConvert.DeserializeObject<List<Page>>(QnAData);
+            var currentPages = QnAData.Pages;
 
             var currentPageIndex = currentPages.IndexOf(currentPages.Single(p => p.PageId == page.PageId));
             
             currentPages.RemoveAt(currentPageIndex);
             currentPages.Insert(currentPageIndex, page);
 
-            QnADataObject.Pages = currentPages;
+            QnAData.Pages = currentPages;
         }
         
         public bool HasNewFeedback()
         {
             {
-                return QnADataObject.Pages.Any(p => p.HasNewFeedback());
+                return QnAData.Pages.Any(p => p.HasNewFeedback());
             }
         }
     }

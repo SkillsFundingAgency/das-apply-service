@@ -23,6 +23,7 @@ namespace SFA.DAS.ApplyService.Data
         {
             _config = configurationService.GetConfig().Result;
             SqlMapper.AddTypeHandler(typeof(OrganisationDetails), new OrganisationDetailsHandler());
+            SqlMapper.AddTypeHandler(typeof(QnAData), new QnADataHandler());
         }
         public async Task<List<Domain.Entities.Application>> GetApplications(Guid userId)
         {

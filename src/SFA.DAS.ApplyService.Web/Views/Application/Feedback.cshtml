@@ -20,10 +20,10 @@
                 {
                     <li>
                         <h2 class="govuk-heading-l">@sec.LinkTitle</h2>
-                        @if (sec.HasNewFeedback())
+                        @if (sec.HasNewFeedback()) // Need to do stuff here on section level???
                         {
                             <ul class="app-task-list__items app-task-list__items--no-number">
-                                @foreach (var pg in sec.QnADataObject.Pages.OrderBy(p => p.PageId).Where(p => p.HasFeedback))
+                                @foreach (var pg in sec.QnAData.Pages.OrderBy(p => p.PageId).Where(p => p.HasFeedback))
                                 {
                                     <li class="app-task-list__item">
                                         <a aria-describedby="eligibility-completed" class="app-task-list__task-name" 

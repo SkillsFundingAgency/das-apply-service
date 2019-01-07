@@ -3,8 +3,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using MediatR;
+using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Application.Users;
+using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply
 {
@@ -34,10 +36,13 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
             foreach (var applicationSection in sections)
             {
+                string QnADataJson = JsonConvert.SerializeObject(applicationSection.QnAData);
                 foreach (var asset in assets)
                 {
-                    applicationSection.QnAData = applicationSection.QnAData.Replace(asset.Reference, HttpUtility.JavaScriptStringEncode(asset.Text));
+                    QnADataJson = QnADataJson.Replace(asset.Reference, HttpUtility.JavaScriptStringEncode(asset.Text));
                 }
+
+                applicationSection.QnAData = JsonConvert.DeserializeObject<QnAData>(QnADataJson);
             }
 
             await _applyRepository.UpdateSections(sections);
