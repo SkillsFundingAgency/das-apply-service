@@ -13,6 +13,9 @@
             <span>Confirm you want @Model.SelectedStandard?.Title </span>
             <span class="heading-secondary">Standard Code: @Model.SelectedStandard?.StandardId</span>
         </h1>
+        
+        <div>Effective From:  @Model.SelectedStandard?.StandardData?.EffectiveFrom</div>
+            <div>Effective To: @Model.SelectedStandard?.StandardData?.EffectiveTo</div>
     </div>
 </div>
 
