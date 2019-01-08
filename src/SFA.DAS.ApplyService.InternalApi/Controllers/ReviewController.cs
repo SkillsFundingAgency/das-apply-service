@@ -12,6 +12,7 @@ using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
+    //[Authorize(Roles = "ApplyServiceInternalAPI")]
     public class ReviewController : Controller
     {
         private readonly IMediator _mediator;
