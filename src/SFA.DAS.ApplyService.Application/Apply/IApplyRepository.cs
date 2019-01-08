@@ -39,6 +39,8 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task StartApplicationReview(Guid applicationId, int sectionId);
         Task StartFinancialReview(Guid applicationId);
         Task<Organisation> GetOrganisationForApplication(Guid applicationId);
+
+        Task<string> CheckOrganisationStandardStatus(Guid applicationId, int standardId);
         Task<List<dynamic>> GetPreviousFinancialApplications();
 
         Task ClearAssets();

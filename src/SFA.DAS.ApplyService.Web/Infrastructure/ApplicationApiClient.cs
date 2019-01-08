@@ -126,9 +126,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<string> GetApplicationStatus(Guid applicationId, int standardCode)
         {
-            //return "Approved";
-            //return "Submitted";
-           return "";
+            return await( await _httpClient.GetAsync(
+                $"Application/{applicationId}/standard/{standardCode}/check-status")).Content.ReadAsStringAsync();
         }
     }
 }

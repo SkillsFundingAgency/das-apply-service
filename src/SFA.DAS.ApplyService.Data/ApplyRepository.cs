@@ -438,6 +438,21 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<string> CheckOrganisationStandardStatus(Guid applicationId, int standardId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+               var applicationStatuses= await connection.QueryAsync<string>(@"select top 1 A.applicationStatus from Applications A
+                                                                    where JSON_VALUE(ApplicationData,'$.StandardCode')= @standardId
+                                                                    and ApplyingOrganisationId in 
+                                                                        (select ApplyingOrganisationId from Applications where Id = @applicationId)
+",
+                    new { applicationId, standardId });
+
+                return !applicationStatuses.Any() ? string.Empty : applicationStatuses.FirstOrDefault();
+            }
+        }
+
         public async Task<List<dynamic>> GetPreviousFinancialApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))

@@ -41,8 +41,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task ImportWorkflow(IFormFile file);
         Task UpdateApplicationData<T>(T applicationData, Guid applicationId);
         Task<Domain.Entities.Application> GetApplication(Guid applicationId);
-        
-        //MFCMFC
+       
         Task<string> GetApplicationStatus(Guid applicationId, int standardCode);
     }
 }
