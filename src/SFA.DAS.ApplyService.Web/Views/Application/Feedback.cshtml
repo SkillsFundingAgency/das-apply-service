@@ -64,7 +64,7 @@
             <div>
                 <form asp-action="Submit" asp-controller="Application">
                     <input type="hidden" id="applicationId" name="applicationId" value="@Model.ApplicationId"/>
-                    <input type="hidden" id="sequenceId" name="sequenceId" value="@Model.SequenceId"/>
+                    <input type="hidden" id="sequenceId" name="sequenceId" value="@((int)Model.SequenceId)"/>
                     <button class="govuk-button">Submit application</button>
                 </form>
             </div>
