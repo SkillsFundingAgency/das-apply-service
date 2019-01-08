@@ -38,7 +38,7 @@
                                     <td class="govuk-table__cell" data-label="Name">@result.Title</td>
                                     <td class="govuk-table__cell" data-label="ID">@result.StandardId</td>
                                     <td class="govuk-table__cell govuk-table__cell--numeric">
-                                        <a href="/standard/confirm-standard/@Model.ApplicationId/standard/@result.StandardId">Apply for standard</a>
+                                        <a href="/standard/@Model.ApplicationId/confirm-standard/@result.StandardId">Apply for standard</a>
                                     </td>
                                 </tr>
                             }
@@ -53,7 +53,7 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <div class="govuk-form-group">
-                    There are no matching results
+                    <p class="govuk-body">There are no matching results.</p>
                 </div>
             </div>
         </div>

@@ -15,5 +15,9 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
         public List<StandardCollation> Results { get; set; }
 
         public StandardCollation SelectedStandard { get; set; }
+    
+        public bool IsConfirmed { get; set; }
+
+        public string ApplicationStatus { get; set; }
     }
 }

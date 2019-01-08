@@ -113,6 +113,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             _logger.LogInformation($"API ImportWorkflow > After post to Internal API");
         }
 
+        //MFCMFC
         public async Task UpdateApplicationData<T>(T applicationData, Guid applicationId)
         {
             await _httpClient.PostAsJsonAsync($"/Application/{applicationId}/UpdateApplicationData", applicationData);
@@ -121,6 +122,13 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task<Domain.Entities.Application> GetApplication(Guid applicationId)
         {
             return await (await _httpClient.GetAsync($"Application/{applicationId}")).Content.ReadAsAsync<Domain.Entities.Application>();
+        }
+
+        public async Task<string> GetApplicationStatus(Guid applicationId, int standardCode)
+        {
+            //return "Approved";
+            //return "Submitted";
+           return "";
         }
     }
 }

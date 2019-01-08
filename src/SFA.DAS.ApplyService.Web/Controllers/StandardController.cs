@@ -29,31 +29,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return View("~/Views/Application/Standard/FindStandard.cshtml", standardViewModel);
         }
 
-        //[HttpPost("Standard/{applicationId}")]
-        //public async Task<IActionResult> Search(Guid applicationId, string standardToFind, StandardViewModel model)
-        //{
-        //    // TODO: Check standard is valid.
-
-        //    var standardApplicationData = new StandardApplicationData {StandardName = standardToFind};
-
-        //    //await _apiClient.UpdateApplicationData(standardApplicationData, applicationId);
-
-        //    ////var sequence = _apiClient.GetSequence(applicationId, Guid.Parse(User.FindFirstValue("UserId")));
-
-        //    //return RedirectToAction("Sequence", "Application", new {applicationId});
-
-        //    return View("~/Views/Application/Standard/FindStandard.cshtml", applicationId);
-        //}
-
         [HttpPost("Standard/{applicationId}")]
         public async Task<IActionResult> Search(StandardViewModel model)
         {
-            //            var results = new[]
-            //            {
-            //                new {StandardName = "Able Seafarer", PreRequesites = "<b>Some pre-reqs</b><ul><li>Must do this...</li></ul>"},
-            //                new {StandardName = "Lion tamer", PreRequesites = "<b>Different pre-reqs</b><ul><li>Maybe this...</li><li>And this...</li></ul>"},
-            //            };
-
         if (string.IsNullOrEmpty(model.StandardToFind) || model.StandardToFind.Length < 2)
             {
                 ModelState.AddModelError(nameof(model.StandardToFind), "Enter a valid search string (more than 2 characters)");
@@ -66,19 +44,50 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             model.Results = results.Where(r => r.Title.ToLower().Contains(model.StandardToFind.ToLower())).ToList();
 
             return View("~/Views/Application/Standard/FindStandardResults.cshtml", model);
-
-
         }
 
-
-        [HttpGet("Standard/confirm-standard/{applicationId}/standard/{standardCode}")]
-        public async Task<IActionResult> Index(Guid applicationId, int standardCode)
+        [HttpGet("standard/{applicationId}/confirm-standard/{standardCode}")]
+        public async Task<IActionResult> StandardConfirm(Guid applicationId, int standardCode)
         {
             var standardViewModel = new StandardViewModel { ApplicationId = applicationId, StandardCode = standardCode};
             var results = await _assessorServiceApiClient.GetStandards();
             standardViewModel.SelectedStandard = results.FirstOrDefault(r => r.StandardId == standardCode);
-
+            standardViewModel.ApplicationStatus = await _apiClient.GetApplicationStatus(applicationId, standardCode);
             return View("~/Views/Application/Standard/ConfirmStandard.cshtml", standardViewModel);
+        }
+
+        [HttpPost("standard/{applicationId}/confirm-standard/{standardCode}")]
+        public async Task<IActionResult> StandardConfirm(StandardViewModel model, Guid applicationId, int standardCode)
+        {
+            var results = await _assessorServiceApiClient.GetStandards();
+            model.SelectedStandard = results.FirstOrDefault(r => r.StandardId == standardCode);
+
+            model.ApplicationStatus = await _apiClient.GetApplicationStatus(applicationId, standardCode);
+
+            if (!model.IsConfirmed)
+            {
+                ModelState.AddModelError(nameof(model.IsConfirmed), "Please tick to confirm");
+                TempData["ShowErrors"] = true;
+                return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
+            }
+
+            if (!string.IsNullOrEmpty(model.ApplicationStatus))
+            {
+                return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
+            }
+
+            var applicationData =
+                new StandardApplicationData
+                {
+                    StandardName = model.SelectedStandard?.Title,
+                    StandardCode = standardCode
+                };
+
+            await _apiClient.UpdateApplicationData(applicationData, model.ApplicationId);
+
+            return View("/Applications", model.ApplicationId);
+
+
         }
     }
 }
