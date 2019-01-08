@@ -10,4 +10,13 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public string GradedBy { get; set; }
         public DateTime GradedDateTime { get; set; }
     }
+
+    public class FinancialApplicationSelectedGrade
+    {
+        public const string Excellent = "Excellent";
+        public const string Good = "Good";
+        public const string Satisfactory = "Satisfactory";
+        public const string Inadequate = "Inadequate";
+        public const string Exempt = "Exempt";
+    }
 }
