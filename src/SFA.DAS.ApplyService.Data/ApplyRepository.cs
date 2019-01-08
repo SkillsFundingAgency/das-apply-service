@@ -23,6 +23,7 @@ namespace SFA.DAS.ApplyService.Data
         {
             _config = configurationService.GetConfig().Result;
             SqlMapper.AddTypeHandler(typeof(OrganisationDetails), new OrganisationDetailsHandler());
+            SqlMapper.AddTypeHandler(typeof(QnAData), new QnADataHandler());
         }
         public async Task<List<Domain.Entities.Application>> GetApplications(Guid userId)
         {
@@ -129,14 +130,6 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task CompleteSection(ApplicationSection section)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(@"UPDATE ApplicationSections SET FeedbackComment = @feedbackComment, Status = @Status WHERE Id = @Id", section);
-            }
-        }
-
         public async Task UpdateSections(List<ApplicationSection> sections)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -216,6 +209,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task SubmitApplicationSequence(ApplicationSubmitRequest request)
         {
+            // Note: if resubmitting and Section 3 passed then it needs to go back to Graded (if too difficult to change, then do as a new ticket)
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(@"UPDATE ApplicationSequences
@@ -346,9 +340,9 @@ namespace SFA.DAS.ApplyService.Data
                 return (await connection
                     .QueryAsync(
                         @"SELECT OrganisationName, ApplicationId, SequenceId, sec3Status AS FinanceStatus,  
-	                        CASE WHEN (SequenceId = 1 AND (sec1Status = 'Completed' AND sec2Status = 'Completed')) OR (SequenceId = 2 AND sec4Status = 'Completed') THEN 'Completed'
-		                         WHEN (SequenceId = 1 AND (sec1Status = 'Submitted' AND sec2Status = 'Submitted')) OR (SequenceId = 2 AND sec4Status = 'Submitted') THEN 'Submitted'
-		                         ELSE 'In Progress'
+	                        CASE WHEN (SequenceId = 1 AND (sec1Status = 'Evaluated' AND sec2Status = 'Evaluated')) OR (SequenceId = 2 AND sec4Status = 'Evaluated') THEN @sectionStatusEvaluated
+		                         WHEN (SequenceId = 1 AND (sec1Status = 'Submitted' AND sec2Status = 'Submitted')) OR (SequenceId = 2 AND sec4Status = 'Submitted') THEN @sectionStatusSubmitted
+		                         ELSE @sectionStatusInProgress
 	                        END As SequenceStatus
                         FROM (
 	                        SELECT seq.SequenceId,
@@ -361,7 +355,7 @@ namespace SFA.DAS.ApplyService.Data
 	                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id AND seq.SequenceId = @sequenceId
 	                        INNER JOIN ApplicationSections sec1 ON sec1.ApplicationId = appl.Id 
 	                        INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-	                        WHERE appl.ApplicationStatus = @applicationStatusSubmitted AND (seq.Status = @sequenceStatusSubmitted OR seq.Status = @sequenceStatusInProgress)
+	                        WHERE appl.ApplicationStatus = @applicationStatusSubmitted AND seq.Status = @sequenceStatusSubmitted
 	                        GROUP BY seq.SequenceId, appl.ApplyingOrganisationId, appl.id, org.Name
                         ) ab",
                         new
@@ -369,7 +363,10 @@ namespace SFA.DAS.ApplyService.Data
                             sequenceId, // 1 for new applications, until accepted; 2 when reviewing Capacity & Capability
                             applicationStatusSubmitted = ApplicationStatus.Submitted,
                             sequenceStatusInProgress = ApplicationSectionStatus.InProgress,
-                            sequenceStatusSubmitted = ApplicationSectionStatus.Submitted
+                            sequenceStatusSubmitted = ApplicationSectionStatus.Submitted,
+                            sectionStatusEvaluated = ApplicationSectionStatus.Evaluated,
+                            sectionStatusSubmitted = ApplicationSectionStatus.Submitted,
+                            sectionStatusInProgress = ApplicationSectionStatus.InProgress
                         })).ToList();
             }
         }

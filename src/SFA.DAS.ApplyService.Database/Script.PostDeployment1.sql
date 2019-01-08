@@ -44,3 +44,14 @@ BEGIN
 END
 GO
 
+IF EXISTS 
+(
+    SELECT * 
+    FROM INFORMATION_SCHEMA.COLUMNS 
+    WHERE table_name = 'ApplicationSections'
+    AND column_name = 'FeedbackComment'
+)
+BEGIN
+    ALTER TABLE [ApplicationSections] DROP COLUMN [FeedbackComment];
+END
+GO

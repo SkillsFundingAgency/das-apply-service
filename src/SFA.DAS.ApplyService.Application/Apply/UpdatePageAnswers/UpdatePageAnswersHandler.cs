@@ -39,10 +39,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
 //                throw new BadRequestException("Sequence not active");
 //            }
 //
-            var page = section.QnADataObject.Pages.Single(p => p.PageId == request.PageId);
+            var page = section.QnAData.Pages.Single(p => p.PageId == request.PageId);
 
             //var pages = section.Pages;
-            var qnADataObject = section.QnADataObject;
+            var qnADataObject = section.QnAData;
             
             PageOfAnswers pageAnswers;
             if (!page.AllowMultipleAnswers)
@@ -145,7 +145,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                     }
                 });
 
-                section.QnADataObject = qnADataObject;
+                section.QnAData = qnADataObject;
                 
                 await _applyRepository.SaveSection(section, request.UserId);
                 

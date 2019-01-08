@@ -18,8 +18,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review
 
         public async Task<Unit> Handle(StartApplicationReviewRequest request, CancellationToken cancellationToken)
         {
-            await _applyRepository.UpdateSequenceStatus(request.ApplicationId, request.SequenceId, ApplicationSequenceStatus.InProgress, ApplicationStatus.Submitted);
-
             if (request.SequenceId == 1)
             {
                 var section1 = await _applyRepository.GetSection(request.ApplicationId, 1, 1, null);

@@ -1,22 +1,22 @@
 ﻿using System;
 using MediatR;
 
-namespace SFA.DAS.ApplyService.Application.Apply.Review.CompleteSection
+namespace SFA.DAS.ApplyService.Application.Apply.Review.Evaluate
 {
-    public class CompleteSectionRequest : IRequest
+    public class EvaluateRequest : IRequest
     {
         public Guid ApplicationId { get; }
         public int SequenceId { get; }
         public int SectionId { get; }
-        public string FeedbackComment { get; }
+        public Domain.Apply.Feedback Feedback { get; }
         public bool IsSectionComplete { get; }
 
-        public CompleteSectionRequest(Guid applicationId, int sequenceId, int sectionId, string message, bool isSectionComplete)
+        public EvaluateRequest(Guid applicationId, int sequenceId, int sectionId, Domain.Apply.Feedback feedback, bool isSectionComplete)
         {
             ApplicationId = applicationId;
             SequenceId = sequenceId;
             SectionId = sectionId;
-            FeedbackComment = message;
+            Feedback = feedback;
             IsSectionComplete = isSectionComplete;
         }
     }

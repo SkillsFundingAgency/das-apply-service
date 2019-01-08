@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,8 +21,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public int? Order { get; set; }
         public bool Active { get; set; }        
         public bool Visible { get; set; }
-        public List<Feedback> Feedback { get; set; }
-        public bool HasFeedback => Feedback?.Any() ?? false;
+        
         public string BodyText { get; set; }
 
         public bool IsQuestionAnswered(string questionId)
@@ -30,15 +30,16 @@ namespace SFA.DAS.ApplyService.Domain.Apply
             return allAnswers.Any(a => a.QuestionId == questionId);
         }
 
-        public bool HasNewFeedback()
-        {
-            return HasFeedback && Feedback.Any(f => f.IsNew);
-        }
-        
-        public bool HasCompletedFeedback()
-        {
-            return HasFeedback && Feedback.Any(f => f.IsCompleted);
-        }
+        public List<Feedback> Feedback { get; set; }
+
+        [JsonIgnore]
+        public bool HasFeedback => Feedback?.Any() ?? false;
+
+        [JsonIgnore]
+        public bool HasNewFeedback => HasFeedback && Feedback.Any(f => f.IsNew || !f.IsCompleted);
+
+        [JsonIgnore]
+        public bool HasCompletedFeedback => HasFeedback && Feedback.Any(f => f.IsCompleted);
     }
 
 }
