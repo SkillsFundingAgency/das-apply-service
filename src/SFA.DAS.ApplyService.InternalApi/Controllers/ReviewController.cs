@@ -45,7 +45,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("Review/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Evaluate")]
         public async Task EvaluateSection(Guid applicationId, int sequenceId, int sectionId, [FromBody] EvaluateSectionRequest request)
         {
-            await _mediator.Send(new EvaluateRequest(applicationId, sequenceId, sectionId, request.FeedbackComment, request.IsSectionComplete));
+            await _mediator.Send(new EvaluateRequest(applicationId, sequenceId, sectionId, request.Feedback, request.IsSectionComplete));
         }
 
         [HttpPost("Review/Applications/{applicationId}/Sequences/{sequenceId}/Return")]
@@ -68,7 +68,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
     public class EvaluateSectionRequest
     {
-        public string FeedbackComment { get; set; }
+        public Feedback Feedback { get; set; }
         public bool IsSectionComplete { get; set; }
     }
 }

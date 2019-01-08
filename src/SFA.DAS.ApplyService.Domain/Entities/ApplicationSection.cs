@@ -10,7 +10,17 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     {
         public List<Page> Pages { get; set; }
         public FinancialApplicationGrade FinancialApplicationGrade { get; set; }
-        //public List<Feedback> Feedback { get; set; } <-- This will be section level feedback which needs to go back & forth to EPAO and Staff (ON-1261)
+
+        public List<Feedback> Feedback { get; set; } // Section level feedback
+
+        [JsonIgnore]
+        public bool HasFeedback => Feedback?.Any() ?? false;
+
+        [JsonIgnore]
+        public bool HasNewFeedback => HasFeedback && Feedback.Any(f => f.IsNew || !f.IsCompleted);
+
+        [JsonIgnore]
+        public bool HasCompletedFeedback => HasFeedback && Feedback.Any(f => f.IsCompleted);
     }
 
     public class ApplicationSection : EntityBase
@@ -18,7 +28,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public Guid ApplicationId { get; set; }
         public int SectionId { get; set; }
         public int SequenceId { get; set; }
-        public string FeedbackComment { get; set; }
+
         public QnAData QnAData { get; set; }
 
         public int PagesComplete
@@ -52,12 +62,11 @@ namespace SFA.DAS.ApplyService.Domain.Entities
             QnAData.Pages = currentPages;
         }
         
-        public bool HasNewFeedback()
-        {
-            {
-                return QnAData.Pages.Any(p => p.HasNewFeedback());
-            }
-        }
+        [JsonIgnore]
+        public bool HasNewPageFeedback => QnAData.Pages.Any(p => p.HasNewFeedback);
+
+        [JsonIgnore]
+        public bool HasNewSectionFeedback => QnAData.HasNewFeedback;
     }
 
     public class ApplicationSectionStatus

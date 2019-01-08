@@ -130,14 +130,6 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task CompleteSection(ApplicationSection section)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(@"UPDATE ApplicationSections SET FeedbackComment = @feedbackComment, Status = @Status WHERE Id = @Id", section);
-            }
-        }
-
         public async Task UpdateSections(List<ApplicationSection> sections)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -217,6 +209,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task SubmitApplicationSequence(ApplicationSubmitRequest request)
         {
+            // Note: if resubmitting and Section 3 passed then it needs to go back to Graded (if too difficult to change, then do as a new ticket)
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(@"UPDATE ApplicationSequences

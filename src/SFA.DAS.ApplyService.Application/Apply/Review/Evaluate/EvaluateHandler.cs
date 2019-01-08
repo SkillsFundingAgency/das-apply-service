@@ -1,5 +1,7 @@
 ﻿using MediatR;
 using SFA.DAS.ApplyService.Domain.Entities;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -31,9 +33,21 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Evaluate
                 section.Status = ApplicationSectionStatus.InProgress;
             }
 
-            section.FeedbackComment = request.FeedbackComment;
+            if(section.QnAData.Feedback == null)
+            {
+                section.QnAData.Feedback = new List<Domain.Apply.Feedback>();
+            }
 
-            await _applyRepository.CompleteSection(section);
+            // Remove any new comments
+            section.QnAData.Feedback = section.QnAData.Feedback.Where(f => !f.IsNew).ToList();
+            
+            if(request.Feedback != null)
+            {
+                request.Feedback.IsNew = true;
+                section.QnAData.Feedback.Add(request.Feedback);
+            }
+
+            await _applyRepository.UpdateSections(new List<ApplicationSection> { section });
 
             return Unit.Value;
         }

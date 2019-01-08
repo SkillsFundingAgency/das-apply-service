@@ -15,19 +15,27 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
         
         public async Task<Unit> Handle(ApplicationSubmitRequest request, CancellationToken cancellationToken)
         {
-            // Update all feedback.IsNew  = false;
-
             var sections = await _applyRepository.GetSections(request.ApplicationId);
 
             foreach (var section in sections)
             {
-                foreach (var page in section.QnAData.Pages)
+                if (section.QnAData.HasFeedback)
                 {
-                    if (!page.HasFeedback) continue;
-                    
-                    foreach (var feedback in page.Feedback)
+                    foreach (var feedback in section.QnAData.Feedback)
                     {
                         feedback.IsNew = false;
+                        feedback.IsCompleted = true;
+                    }
+                }
+
+                foreach (var page in section.QnAData.Pages)
+                {
+                    if (page.HasFeedback)
+                    {
+                        foreach (var feedback in page.Feedback)
+                        {
+                            feedback.IsNew = false;
+                        }
                     }
                 }
             }
