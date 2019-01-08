@@ -8,7 +8,6 @@ CREATE TABLE [dbo].[ApplicationSections](
 	[Title] [nvarchar](50) NOT NULL,
 	[LinkTitle] [nvarchar](50) NOT NULL,
 	[DisplayType] [nvarchar](50) NOT NULL, 
-    [FeedbackComment] [nvarchar](max) NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
