@@ -209,7 +209,6 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task SubmitApplicationSequence(ApplicationSubmitRequest request)
         {
-            // Note: if resubmitting and Section 3 passed then it needs to go back to Graded (if too difficult to change, then do as a new ticket)
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(@"UPDATE ApplicationSequences
@@ -220,7 +219,7 @@ namespace SFA.DAS.ApplyService.Data
                                                 WHERE  (ApplicationSequences.ApplicationId = @ApplicationId) AND (ApplicationSequences.SequenceId = @SequenceId) AND Contacts.Id = @UserId;
                             
                                                 UPDATE ApplicationSections
-                                                SET    Status = 'Submitted'
+                                                SET    Status = (CASE WHEN JSON_VALUE(ApplicationSections.QnAData, '$.FinancialApplicationGrade.SelectedGrade') IN ('Excellent','Good','Satisfactory') THEN 'Graded' ELSE 'Submitted' END)
                                                 FROM   ApplicationSections INNER JOIN
                                                             Applications ON ApplicationSections.ApplicationId = Applications.Id INNER JOIN
                                                             Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
