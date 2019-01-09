@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 using SFA.DAS.ApplyService.Application.Apply.Upload;
 using SFA.DAS.ApplyService.Domain.Apply;
@@ -30,7 +31,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<ApplicationSequence> GetSequence(Guid applicationId, Guid userId);
         Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId, int sectionId, Guid userId);
         
-        Task<Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid userId);
+        Task<Domain.Apply.Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid userId);
 
         Task<UpdatePageAnswersResult> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId, int sectionId,
             string pageId, List<Answer> answers);
@@ -43,5 +44,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<Domain.Entities.Application> GetApplication(Guid applicationId);
        
         Task<string> GetApplicationStatus(Guid applicationId, int standardCode);
+
+        Task<List<StandardCollation>> GetStandards();
     }
 }

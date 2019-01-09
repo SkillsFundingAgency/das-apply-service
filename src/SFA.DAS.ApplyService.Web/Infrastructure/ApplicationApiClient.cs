@@ -32,10 +32,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<List<Domain.Entities.Application>> GetApplicationsFor(Guid userId)
         {
-            return await (await _httpClient.GetAsync($"/Applications/{userId}")).Content.ReadAsAsync<List<Domain.Entities.Application>>();
+            return await (await _httpClient.GetAsync($"/Applications/{userId}")).Content
+                .ReadAsAsync<List<Domain.Entities.Application>>();
         }
 
-        public async Task<UploadResult> Upload(string applicationId, string userId, int sequenceId, int sectionId, string pageId, IFormFileCollection files)
+        public async Task<UploadResult> Upload(string applicationId, string userId, int sequenceId, int sectionId,
+            string pageId, IFormFileCollection files)
         {
             var formDataContent = new MultipartFormDataContent();
             foreach (var file in files)
@@ -46,11 +48,13 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
 
             return await (await _httpClient.PostAsync(
-                    $"/Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Upload", formDataContent)).Content
+                    $"/Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Upload",
+                    formDataContent)).Content
                 .ReadAsAsync<UploadResult>();
         }
 
-        public async Task<byte[]> Download(Guid applicationId, Guid userId, string pageId, string questionId, string filename)
+        public async Task<byte[]> Download(Guid applicationId, Guid userId, string pageId, string questionId,
+            string filename)
         {
             var stream = await _httpClient.GetByteArrayAsync(
                 $"/Application/{applicationId}/User/{userId}/Page/{pageId}/Question/{questionId}/{filename}/Download");
@@ -59,12 +63,15 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<ApplicationSequence> GetSequence(Guid applicationId, Guid userId)
         {
-            return await (await _httpClient.GetAsync($"Application/{applicationId}/User/{userId}/Sections")).Content.ReadAsAsync<ApplicationSequence>();
+            return await (await _httpClient.GetAsync($"Application/{applicationId}/User/{userId}/Sections")).Content
+                .ReadAsAsync<ApplicationSequence>();
         }
 
         public async Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId, int sectionId, Guid userId)
         {
-            return await (await _httpClient.GetAsync($"Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections/{sectionId}")).Content.ReadAsAsync<ApplicationSection>();
+            return await (await _httpClient.GetAsync(
+                    $"Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections/{sectionId}")).Content
+                .ReadAsAsync<ApplicationSection>();
         }
 
         public async Task<Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid userId)
@@ -75,10 +82,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .Content.ReadAsAsync<Page>();
         }
 
-        public async Task<UpdatePageAnswersResult> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, List<Answer> answers)
+        public async Task<UpdatePageAnswersResult> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId,
+            int sectionId, string pageId, List<Answer> answers)
         {
             return await (await _httpClient.PostAsJsonAsync(
-                    $"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}", answers)).Content
+                    $"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}",
+                    answers)).Content
                 .ReadAsAsync<UpdatePageAnswersResult>();
         }
 
@@ -92,10 +101,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             await _httpClient.PostAsJsonAsync("/Applications/Submit", new {applicationId, sequenceId, userId});
         }
 
-        public async Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, Guid userId)
+        public async Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId,
+            Guid userId)
         {
             await _httpClient.PostAsJsonAsync(
-                $"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/DeleteAnswer/{answerId}", new{});
+                $"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/DeleteAnswer/{answerId}",
+                new { });
         }
 
         public async Task ImportWorkflow(IFormFile file)
@@ -107,9 +118,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             formDataContent.Add(fileContent, file.Name, file.FileName);
 
             _logger.LogInformation($"API ImportWorkflow > Added content {file.FileName}");
-            
+
             await _httpClient.PostAsync($"/Import/Workflow", formDataContent);
-            
+
             _logger.LogInformation($"API ImportWorkflow > After post to Internal API");
         }
 
@@ -121,13 +132,52 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<Domain.Entities.Application> GetApplication(Guid applicationId)
         {
-            return await (await _httpClient.GetAsync($"Application/{applicationId}")).Content.ReadAsAsync<Domain.Entities.Application>();
+            return await (await _httpClient.GetAsync($"Application/{applicationId}")).Content
+                .ReadAsAsync<Domain.Entities.Application>();
         }
 
         public async Task<string> GetApplicationStatus(Guid applicationId, int standardCode)
         {
-            return await( await _httpClient.GetAsync(
+            return await(await _httpClient.GetAsync(
                 $"Application/{applicationId}/standard/{standardCode}/check-status")).Content.ReadAsStringAsync();
         }
+
+        public async Task<List<StandardCollation>> GetStandards()
+        {
+            return await(await _httpClient.GetAsync("all-standards")).Content.ReadAsAsync<List<StandardCollation>>();
+        }
+    }
+
+    public class StandardCollation
+    {
+        public int? StandardId { get; set; }
+        public string ReferenceNumber { get; set; }
+        public string Title { get; set; }
+        public StandardData StandardData { get; set; }
+    }
+
+    public class StandardData
+    {
+        public int? Level { get; set; }
+        public string Category { get; set; }
+        public string IfaStatus { get; set; }
+
+        public DateTime? EffectiveFrom { get; set; }
+        public DateTime? EffectiveTo { get; set; }
+        public DateTime? LastDateForNewStarts { get; set; }
+        public bool IfaOnly { get; set; }
+
+        public int? Duration { get; set; }
+        public int? MaxFunding { get; set; }
+        public string Ssa1 { get; set; }
+        public string Ssa2 { get; set; }
+        public string OverviewOfRole { get; set; }
+        public DateTime? PublishedDate { get; set; }
+        public bool? IsPublished { get; set; }
+
+        public bool? IsActiveStandardInWin { get; set; }
+
+        public string FatUri { get; set; }
+        public string IfaUri { get; set; }
     }
 }

@@ -20,7 +20,6 @@ using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.DfeSignIn;
-using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Controllers;
 using SFA.DAS.ApplyService.Web.Infrastructure;
@@ -58,12 +57,12 @@ namespace SFA.DAS.ApplyService.Web
             
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
 
-            services.AddHttpClient<AssessorServiceApiClient>("AssessorServiceApiClient", config =>
-                {
-                    config.BaseAddress = new Uri(_applyConfig.AssessorServiceApiAuthentication.ApiBaseAddress); //  "http://localhost:59022"
-                    config.DefaultRequestHeaders.Add("Accept", "Application/json");
-                })
-                .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+            //services.AddHttpClient<AssessorServiceApiClient>("AssessorServiceApiClient", config =>
+            //    {
+            //        config.BaseAddress = new Uri(_applyConfig.AssessorServiceApiAuthentication.ApiBaseAddress); //  "http://localhost:59022"
+            //        config.DefaultRequestHeaders.Add("Accept", "Application/json");
+            //    })
+            //    .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
             services.AddMvc(options => { options.Filters.Add<PerformValidationFilter>(); })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -116,7 +115,7 @@ namespace SFA.DAS.ApplyService.Web
                 config.For<IApplicationApiClient>().Use<ApplicationApiClient>();
                 config.For<OrganisationApiClient>().Use<OrganisationApiClient>();
                 config.For<OrganisationSearchApiClient>().Use<OrganisationSearchApiClient>();
-                config.For<AssessorServiceApiClient>().Use<AssessorServiceApiClient>();
+                //config.For<AssessorServiceApiClient>().Use<AssessorServiceApiClient>();
 
                 config.Populate(services);
             });
