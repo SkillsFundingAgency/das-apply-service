@@ -43,5 +43,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task ClearAssets();
         Task<List<ApplicationSection>> GetApplicationSections();
         Task<List<WorkflowSection>> GetWorkflowSections();
+
+        Task<List<Contact>> GetNotifyContactsForApplication(Guid requestApplicationId);
     }
 }
