@@ -1129,7 +1129,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-17-226';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-17-226', '', '<p class="govuk-body">If you make an application to be added to the register, youï¿½re agreeing to the terms and conditions in the legal documentation.</p><p class="govuk-body">You must be able to truthfully answer ï¿½yesï¿½ to every question on this page for your application to be considered eligible.</p><p class="govuk-body">If you canï¿½t answer ï¿½yesï¿½ to every question on this page, itï¿½s very unlikely that your application will be accepted.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-17-226', '', '<p class="govuk-body">If you make an application to be added to the register, you''re agreeing to the terms and conditions in the legal documentation.</p><p class="govuk-body">You must be able to truthfully answer ''yes'' to every question on this page for your application to be considered eligible.</p><p class="govuk-body">If you can''t answer ''yes'' to every question on this page, it''s very unlikely that your application will be accepted.</p>', 'Live', GETUTCDATE(), 'Import')
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-17-227';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
@@ -1149,7 +1149,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-17-W_DEL-03-230';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-17-W_DEL-03-230', '', 'Do you agree to comply with the terms of the conditions for organisations on the register of end-point assessment organisations (link opens in a new tab) and sign and return the ï¿½Conditions for organisations on the register of end-point assessment organisationsï¿½?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-17-W_DEL-03-230', '', 'Do you agree to comply with the terms of the conditions for organisations on the register of end-point assessment organisations (link opens in a new tab) and sign and return the ''Conditions for organisations on the register of end-point assessment organisations''?', 'Live', GETUTCDATE(), 'Import')
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-17-W_DEL-03-231';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
@@ -1229,7 +1229,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-246';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-246', '', '<p class="govuk-body">You must be able to truthfully answer ï¿½noï¿½ to every question under ï¿½Grounds for mandatory exclusionï¿½ for your application to be considered eligible. If you canï¿½t answer ï¿½noï¿½ to every question in this section, itï¿½s very unlikely that your application will be accepted.</p><p class="govuk-body">In the next series of questions under grounds for mandatory exclusion, ï¿½anyone who represents, supervises or has control in your organisation or a partner or parent organisationï¿½ includes members of your group of economic operators, their proposed subcontractors, and any directors, partners, or any other person who has powers of representation, decision or control.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-246', '', '<p class="govuk-body">You must be able to truthfully answer ''no'' to every question under ''Grounds for mandatory exclusion'' for your application to be considered eligible. If you can''t answer ''no'' to every question in this section, it''s very unlikely that your application will be accepted.</p><p class="govuk-body">In the next series of questions under grounds for mandatory exclusion, ''anyone who represents, supervises or has control in your organisation or a partner or parent organisation'' includes members of your group of economic operators, their proposed subcontractors, and any directors, partners, or any other person who has powers of representation, decision or control.</p>', 'Live', GETUTCDATE(), 'Import')
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-247';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
@@ -1289,12 +1289,12 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-07-258';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-07-258', '', 'Do you agree to inform the Education and Skills Funding Agency as soon as possible if there are any changes to the information youï¿½re providing in this declaration?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-07-258', '', 'Do you agree to inform the Education and Skills Funding Agency as soon as possible if there are any changes to the information you''re providing in this declaration?', 'Live', GETUTCDATE(), 'Import')
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-07-259';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-07-259', '', 'Do you agree to inform the Education and Skills Funding Agency as soon as possible if there are any changes to the information youï¿½re providing in this declaration?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-07-259', '', 'Do you agree to inform the Education and Skills Funding Agency as soon as possible if there are any changes to the information you''re providing in this declaration?', 'Live', GETUTCDATE(), 'Import')
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-07-260';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
@@ -1339,7 +1339,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-09-268';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-09-268', '', '<ul class="govuk-list govuk-list--bullet"><li>any offence under sections 44 to 46 of the Serious Crime Act 2007 which relates to an offence covered by subparagraph (f)</li><li>conspiracy within the meaning of section 1 or 1A of the Criminal Law Act 1977</li><li>conspiracy within the meaning of article 9 or 9A of the Criminal Attempts and Conspiracy (Northern Ireland) Order 1983 where that conspiracy relates to participation in a criminal organisation as defined in Article 2 of Council Framework Decision 2008/842/JHA on the fight against organised crime</li></ul><p class="govuk-body">Answer ï¿½yesï¿½ if anyone who represents, supervises or has control in your organisation or a partner or parent organisation has been convicted of any of the above.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-09-268', '', '<ul class="govuk-list govuk-list--bullet"><li>any offence under sections 44 to 46 of the Serious Crime Act 2007 which relates to an offence covered by subparagraph (f)</li><li>conspiracy within the meaning of section 1 or 1A of the Criminal Law Act 1977</li><li>conspiracy within the meaning of article 9 or 9A of the Criminal Attempts and Conspiracy (Northern Ireland) Order 1983 where that conspiracy relates to participation in a criminal organisation as defined in Article 2 of Council Framework Decision 2008/842/JHA on the fight against organised crime</li></ul><p class="govuk-body">Answer ''yes'' if anyone who represents, supervises or has control in your organisation or a partner or parent organisation has been convicted of any of the above.</p>', 'Live', GETUTCDATE(), 'Import')
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-10-269';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
@@ -1349,7 +1349,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-10-270';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-10-270', '', 'Confirm whether, within the past 5 years, anyone who represents, supervises or has control in your organisation or a partner or parent organisations has been convicted of any offence that relates to fraud affecting the European Communitiesï¿½ financial interests as defined by article 1 of the Convention of the Protection of the Financial Interests of the European Communities, including:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-10-270', '', 'Confirm whether, within the past 5 years, anyone who represents, supervises or has control in your organisation or a partner or parent organisations has been convicted of any offence that relates to fraud affecting the European Communities'' financial interests as defined by article 1 of the Convention of the Protection of the Financial Interests of the European Communities, including:', 'Live', GETUTCDATE(), 'Import')
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-10-271';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
@@ -1359,7 +1359,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-10-272';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-10-272', '', '<ul class="govuk-list govuk-list--bullet"><li>the common law offence of cheating the Revenue (HMRC)</li><li>the common law offence of conspiracy to defraud</li><li>fraud or theft within the meaning of the Theft Act 1968, the Theft Act (Northern Ireland) 1969, the Theft Act 1978 or the Theft (Northern Ireland) Order 1978</li><li>fraudulent trading within the meaning of section 458 of the Companies Act 1985, article 451 of the Companies (Northern Ireland) Order 1986 or section 993 of the Companies Act 2006</li><li>fraudulent evasion within the meaning of section 170 of the Customs and Excise Management Act 1979 or section 72 of the Value Added Tax Act 1994</li><li>an offence in connection with taxation in the European Union within the meaning of section 71 of the Criminal Justice Act 1993</li><li>destroying, defacing or concealing of documents or procuring the execution of a valuable security within the meaning of section 20 of the Theft Act 1968 or section 19 of the Theft Act (Northern Ireland) 1969</li><li>fraud within the meaning of section 2, 3 or 4 of the Fraud Act 2006</li><li>the possession of articles for use in frauds within the meaning of section 6 of the Fraud Act 2006, or the making, adapting, supplying or offering to supply articles for use in frauds within the meaning of section 7 of that Act</li></ul><p class="govuk-body">Answer ï¿½yesï¿½ if anyone who represents, supervises or has control in your organisation or a partner or parent organisation has been convicted of any of the above.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-10-272', '', '<ul class="govuk-list govuk-list--bullet"><li>the common law offence of cheating the Revenue (HMRC)</li><li>the common law offence of conspiracy to defraud</li><li>fraud or theft within the meaning of the Theft Act 1968, the Theft Act (Northern Ireland) 1969, the Theft Act 1978 or the Theft (Northern Ireland) Order 1978</li><li>fraudulent trading within the meaning of section 458 of the Companies Act 1985, article 451 of the Companies (Northern Ireland) Order 1986 or section 993 of the Companies Act 2006</li><li>fraudulent evasion within the meaning of section 170 of the Customs and Excise Management Act 1979 or section 72 of the Value Added Tax Act 1994</li><li>an offence in connection with taxation in the European Union within the meaning of section 71 of the Criminal Justice Act 1993</li><li>destroying, defacing or concealing of documents or procuring the execution of a valuable security within the meaning of section 20 of the Theft Act 1968 or section 19 of the Theft Act (Northern Ireland) 1969</li><li>fraud within the meaning of section 2, 3 or 4 of the Fraud Act 2006</li><li>the possession of articles for use in frauds within the meaning of section 6 of the Fraud Act 2006, or the making, adapting, supplying or offering to supply articles for use in frauds within the meaning of section 7 of that Act</li></ul><p class="govuk-body">Answer ''yes'' if anyone who represents, supervises or has control in your organisation or a partner or parent organisation has been convicted of any of the above.</p>', 'Live', GETUTCDATE(), 'Import')
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-11-273';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
@@ -1379,7 +1379,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-11-276';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-11-276', '', '<ul class="govuk-list govuk-list--bullet"><li>section 41 of the Counter Terrorism Act 2008</li><li>schedule 2 of the Counter Terrorism Act 2008 where the court has determined that there is a terrorist connection</li><li>any offence under sections 44 to 46 of the Serious Crime Act 2007</li></ul><p class="govuk-body">Answer ï¿½yesï¿½ if anyone who represents, supervises or has control in your organisation or a partner or parent organisation has been convicted of any of the above.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-11-276', '', '<ul class="govuk-list govuk-list--bullet"><li>section 41 of the Counter Terrorism Act 2008</li><li>schedule 2 of the Counter Terrorism Act 2008 where the court has determined that there is a terrorist connection</li><li>any offence under sections 44 to 46 of the Serious Crime Act 2007</li></ul><p class="govuk-body">Answer ''yes'' if anyone who represents, supervises or has control in your organisation or a partner or parent organisation has been convicted of any of the above.</p>', 'Live', GETUTCDATE(), 'Import')
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-12-277';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
@@ -1399,7 +1399,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-12-280';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-12-280', '', '<ul class="govuk-list govuk-list--bullet"><li>money laundering within the meaning of sections 340(11) and 415 of the Proceeds of Crime Act 2002</li><li>an offence in connection with the proceeds of criminal conduct within the meaning of section 93A, 93B or 93C of the Criminal Justice Act 1988 or article 45, 46 or 47 of the Proceeds of Crime (Northern Ireland) Order 1996</li><li>an offence under section 4 of the Asylum and Immigration (Treatment of Claimants etc) Act 2004</li><li>an offence under section 59A of the Sexual Offences Act 2003</li><li>an offence under section 71 of the Coroners and Justice Act 2009</li><li>an offence in connection with the proceeds of drug trafficking within the meaning of section 49, 50 and 51 of the Drug Trafficking Act 1994</li></ul><p class="govuk-body">Answer ï¿½yesï¿½ if anyone who represents, supervises or has control in your organisation or a partner or parent organisation has been convicted of any of the above.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-12-280', '', '<ul class="govuk-list govuk-list--bullet"><li>money laundering within the meaning of sections 340(11) and 415 of the Proceeds of Crime Act 2002</li><li>an offence in connection with the proceeds of criminal conduct within the meaning of section 93A, 93B or 93C of the Criminal Justice Act 1988 or article 45, 46 or 47 of the Proceeds of Crime (Northern Ireland) Order 1996</li><li>an offence under section 4 of the Asylum and Immigration (Treatment of Claimants etc) Act 2004</li><li>an offence under section 59A of the Sexual Offences Act 2003</li><li>an offence under section 71 of the Coroners and Justice Act 2009</li><li>an offence in connection with the proceeds of drug trafficking within the meaning of section 49, 50 and 51 of the Drug Trafficking Act 1994</li></ul><p class="govuk-body">Answer ''yes'' if anyone who represents, supervises or has control in your organisation or a partner or parent organisation has been convicted of any of the above.</p>', 'Live', GETUTCDATE(), 'Import')
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-281';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
@@ -1409,7 +1409,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-282';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20-282', '', '<p class="govuk-body">Information cannot be amended after the application has been submitted and reviewed,the Education and Skills Funding Agency may at its sole discretion use information it already holds, obtains from other Government bodies or which is already in the public domain to validate part or all of any answer we have given in this submission and the information obtained may be shared with employers to assist them in their selection process,the Education and Skills Funding Agency may seek additional assurances from my organisation based on this information.</p> <p class="govuk-body">You must be able to truthfully answer ï¿½noï¿½ to every question under ï¿½Grounds for discretionary exclusionï¿½ for your application to be considered eligible. If you canï¿½t answer ï¿½noï¿½, your application may not be accepted.</p><p class="govuk-body">If you do answer ï¿½yesï¿½, you must provide full details of any subsequent event or remedial action that you think the Education and Skills Funding Agency (ESFA) should take into consideration. ESFA will use the information you provide to consider whether or not you will be able to proceed any further with this application.</p><p class="govuk-body">''A partner organisation'' includes members of your group of economic operators or their proposed subcontractors.</p><p class="govuk-body">ESFA can also exclude you if you are guilty of serious misrepresentation in providing any information referred to within regulations 23 (link opens in a new tab), 24 (new tab), 25 (new tab), 26 (new tab) or 27 (new tab) of the Public Contracts Regulations 2015 (new tab) or if you fail to provide any such information it requests.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20-282', '', '<p class="govuk-body">Information cannot be amended after the application has been submitted and reviewed,the Education and Skills Funding Agency may at its sole discretion use information it already holds, obtains from other Government bodies or which is already in the public domain to validate part or all of any answer we have given in this submission and the information obtained may be shared with employers to assist them in their selection process,the Education and Skills Funding Agency may seek additional assurances from my organisation based on this information.</p> <p class="govuk-body">You must be able to truthfully answer ''no'' to every question under ''Grounds for discretionary exclusion'' for your application to be considered eligible. If you can''t answer ''no'', your application may not be accepted.</p><p class="govuk-body">If you do answer ''yes'', you must provide full details of any subsequent event or remedial action that you think the Education and Skills Funding Agency (ESFA) should take into consideration. ESFA will use the information you provide to consider whether or not you will be able to proceed any further with this application.</p><p class="govuk-body">''A partner organisation'' includes members of your group of economic operators or their proposed subcontractors.</p><p class="govuk-body">ESFA can also exclude you if you are guilty of serious misrepresentation in providing any information referred to within regulations 23 (link opens in a new tab), 24 (new tab), 25 (new tab), 26 (new tab) or 27 (new tab) of the Public Contracts Regulations 2015 (new tab) or if you fail to provide any such information it requests.</p>', 'Live', GETUTCDATE(), 'Import')
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-283';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
@@ -1589,7 +1589,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-318';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-318', '', '<p class="govuk-body">You must confirm the accuracy of the information in this declaration and in your application to deliver end-point assessments. We might ask you for proof after youï¿½ve submitted your application.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-318', '', '<p class="govuk-body">You must confirm the accuracy of the information in this declaration and in your application to deliver end-point assessments. We might ask you for proof after you''ve submitted your application.</p>', 'Live', GETUTCDATE(), 'Import')
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-319';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
@@ -1649,7 +1649,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-22-330';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-22-330', '', 'Confirm whether any of your organisationï¿½s tax returns, submitted on or after 1 October 2012, have:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-22-330', '', 'Confirm whether any of your organisation''s tax returns, submitted on or after 1 October 2012, have:', 'Live', GETUTCDATE(), 'Import')
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-22-331';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
@@ -1689,7 +1689,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-23-338';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-23-338', '', 'Confirm whether any of your organisationï¿½s tax returns, submitted on or after 1 October 2012, have been found to be incorrect on or after 1 April 2013 because:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-23-338', '', 'Confirm whether any of your organisation''s tax returns, submitted on or after 1 October 2012, have been found to be incorrect on or after 1 April 2013 because:', 'Live', GETUTCDATE(), 'Import')
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-23-339';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
@@ -1859,7 +1859,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-26-372';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26-372', '', 'Education and Skills Funding Agencyï¿½s Register of Training Organisations RoATP, EPAO register,Ofqualï¿½s Register,Other professional or trade registers', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26-372', '', 'Education and Skills Funding Agency''s Register of Training Organisations RoATP, EPAO register,Ofqual''s Register,Other professional or trade registers', 'Live', GETUTCDATE(), 'Import')
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-26.1-373';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
@@ -2129,7 +2129,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-426';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-22-426', '', '<p class="govuk-body">You must confirm the accuracy of the information in this declaration and in your application to deliver end-point assessments. We might ask you for proof after youï¿½ve submitted your application.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-22-426', '', '<p class="govuk-body">You must confirm the accuracy of the information in this declaration and in your application to deliver end-point assessments. We might ask you for proof after you''ve submitted your application.</p>', 'Live', GETUTCDATE(), 'Import')
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-427';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
@@ -2209,7 +2209,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-442';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-442', '', '<p class="govuk-body">You will fail the financial health assessment process if you do not upload financial statements where available. Management accounts must only be submitted where financial statements/accounts are yet to be produced.</p><p class="govuk-body">For further information on what you must include if you select ï¿½aï¿½, ï¿½bï¿½ or ï¿½cï¿½ please check <a class="govuk-link" href="https://www.gov.uk/government/publications/esfa-financial-health-assessment/">https://www.gov.uk/government/publications/esfa-financial-health-assessment</a>.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-442', '', '<p class="govuk-body">You will fail the financial health assessment process if you do not upload financial statements where available. Management accounts must only be submitted where financial statements/accounts are yet to be produced.</p><p class="govuk-body">For further information on what you must include if you select ''a'', ''b'' or ''c'' please check <a class="govuk-link" href="https://www.gov.uk/government/publications/esfa-financial-health-assessment/">https://www.gov.uk/government/publications/esfa-financial-health-assessment</a>.</p>', 'Live', GETUTCDATE(), 'Import')
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-443';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
