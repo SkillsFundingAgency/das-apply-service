@@ -16,7 +16,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review
         
         public async Task<List<dynamic>> Handle(NewApplicationsRequest request, CancellationToken cancellationToken)
         {
-            return await _repository.GetNewApplications();
+            return await _repository.GetNewApplications(request.SequenceId);
         }
     }
 }

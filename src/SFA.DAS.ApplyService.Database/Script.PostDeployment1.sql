@@ -30,4 +30,16 @@ BEGIN
 END
 GO
 
+IF NOT EXISTS( SELECT * FROM [dbo].[EmailTemplates] WHERE [TemplateId] = '68410850-909b-4669-a60a-f60e4b1cb89f')
+BEGIN
+	INSERT INTO [dbo].[EmailTemplates] ([Id], [Status], [TemplateName], [TemplateId], [Recipients], [CreatedAt], [CreatedBy])
+	VALUES (NEWID(), 'Live', 'ApplyEPAOInitialSubmission', '68410850-909b-4669-a60a-f60e4b1cb89f', 'epao.helpdesk@education.gov.uk', GETDATE(), 'System')
+END
+GO
 
+IF NOT EXISTS( SELECT * FROM [dbo].[EmailTemplates] WHERE [TemplateId] = 'e0a52c44-10be-4164-9543-3c312769c4e3')
+BEGIN
+	INSERT INTO [dbo].[EmailTemplates] ([Id], [Status], [TemplateName], [TemplateId], [Recipients], [CreatedAt], [CreatedBy])
+	VALUES (NEWID(), 'Live', 'ApplyEPAOStandardSubmission', 'e0a52c44-10be-4164-9543-3c312769c4e3', 'epao.helpdesk@education.gov.uk', GETDATE(), 'System')
+END
+GO

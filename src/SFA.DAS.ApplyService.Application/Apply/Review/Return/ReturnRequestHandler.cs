@@ -1,7 +1,10 @@
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using SFA.DAS.ApplyService.Application.Email.Consts;
+using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
@@ -9,10 +12,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
     public class ReturnRequestHandler : IRequestHandler<ReturnRequest>
     {
         private readonly IApplyRepository _applyRepository;
+        private readonly IEmailService _emailServiceObject;
 
-        public ReturnRequestHandler(IApplyRepository applyRepository)
+        public ReturnRequestHandler(IApplyRepository applyRepository, IEmailService emailServiceObject)
         {
             _applyRepository = applyRepository;
+            _emailServiceObject = emailServiceObject;
         }
         
         public async Task<Unit> Handle(ReturnRequest request, CancellationToken cancellationToken)
@@ -52,8 +57,22 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
                 await _applyRepository.UpdateSequenceStatus(request.ApplicationId, request.SequenceId,
                     ApplicationSequenceStatus.Rejected, ApplicationStatus.Rejected);
             }
-                
+
+            await NotifyContacts(request.ApplicationId, "unknown reference"); // TODO: Get application reference
+
             return Unit.Value;
+        }
+
+        private async Task NotifyContacts(Guid applicationId, string applicationReference)
+        {
+            var contactsToNotify = await _applyRepository.GetNotifyContactsForApplication(applicationId);
+
+            foreach (var contact in contactsToNotify)
+            {
+                // TODO: Think about a better way to send this as it will send a copy to the EPAO team for each contact
+                await _emailServiceObject.SendEmail(EmailTemplateName.APPLY_EPAO_UPDATE, contact.Email,
+                    new { contactname = $"{contact.GivenNames} {contact.FamilyName}", reference = applicationReference });
+            }
         }
     }
 }

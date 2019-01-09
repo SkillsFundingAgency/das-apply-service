@@ -5,13 +5,14 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.GetSection;
 using SFA.DAS.ApplyService.Application.Apply.Review;
+using SFA.DAS.ApplyService.Application.Apply.Review.Evaluate;
 using SFA.DAS.ApplyService.Application.Apply.Review.Feedback;
-using SFA.DAS.ApplyService.Application.Apply.Review.Grade;
 using SFA.DAS.ApplyService.Application.Apply.Review.Return;
 using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
+    //[Authorize(Roles = "ApplyServiceInternalAPI")]
     public class ReviewController : Controller
     {
         private readonly IMediator _mediator;
@@ -21,10 +22,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("Review/NewApplications")]
-        public async Task<ActionResult> NewApplications()
+        [HttpGet("Review/NewApplications/{sequenceId}")]
+        public async Task<ActionResult> NewApplications(int sequenceId)
         {
-            var applications = await _mediator.Send(new NewApplicationsRequest());
+            var applications = await _mediator.Send(new NewApplicationsRequest(sequenceId));
             return Ok(applications);
         }
 
@@ -42,10 +43,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             await _mediator.Send(new AddFeedbackRequest(applicationId, sequenceId, sectionId, pageId, feedback));
         }
 
-        [HttpPost("Review/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Grade")]
-        public async Task GradeSection(Guid applicationId, int sequenceId, int sectionId, [FromBody] GradeSectionRequest request)
+        [HttpPost("Review/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Evaluate")]
+        public async Task EvaluateSection(Guid applicationId, int sequenceId, int sectionId, [FromBody] EvaluateSectionRequest request)
         {
-            await _mediator.Send(new GradeRequest(applicationId, sequenceId, sectionId, request.FeedbackComment, request.IsSectionComplete));
+            await _mediator.Send(new EvaluateRequest(applicationId, sequenceId, sectionId, request.Feedback, request.IsSectionComplete));
         }
 
         [HttpPost("Review/Applications/{applicationId}/Sequences/{sequenceId}/Return")]
@@ -66,9 +67,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public string ReturnType { get; set; }
     }
 
-    public class GradeSectionRequest
+    public class EvaluateSectionRequest
     {
-        public string FeedbackComment { get; set; }
+        public Feedback Feedback { get; set; }
         public bool IsSectionComplete { get; set; }
     }
 }

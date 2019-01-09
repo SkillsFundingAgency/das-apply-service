@@ -18,14 +18,13 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<Guid> CreateApplication(string applicationType, Guid applyingOrganisationId, Guid userId, Guid workflowId);
         Task<Guid> GetLatestWorkflow(string applicationType);
         Task<List<ApplicationSection>> CopyWorkflowToApplication(Guid applicationId, Guid workflowId, string organisationType);
-        Task GradeSection(ApplicationSection section);
         Task UpdateSections(List<ApplicationSection> sections);
         Task SaveSection(ApplicationSection section, Guid? userId = null);
         Task<Guid> CreateNewWorkflow(string workflowType);
         Task CreateSequence(Guid workflowId, double sequenceId, bool isActive);
         Task CreateSection(WorkflowSection section);
         Task AddAssets(Dictionary<string,string> assets);
-        Task<List<dynamic>> GetNewApplications();
+        Task<List<dynamic>> GetNewApplications(int sequenceId);
         Task SubmitApplicationSequence(ApplicationSubmitRequest request);
         Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string status, string applicationStatus);
         Task CloseSequence(Guid applicationId, int sequenceId);
@@ -44,5 +43,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task ClearAssets();
         Task<List<ApplicationSection>> GetApplicationSections();
         Task<List<WorkflowSection>> GetWorkflowSections();
+
+        Task<List<Contact>> GetNotifyContactsForApplication(Guid requestApplicationId);
     }
 }

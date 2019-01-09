@@ -77,7 +77,7 @@
     <PostDeploy Include="Script.PostDeployment1.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="SFA.DAS.ApplyService.publish.publish.xml" />
-    <None Include="ApplyService.publish.xml" />
+    <PreDeploy Include="Script.PreDeployment1.sql" />
+  </ItemGroup>
   </ItemGroup>
 </Project>

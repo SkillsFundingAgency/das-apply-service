@@ -28,7 +28,7 @@
                 @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionId))
                 {
                     <li>
-                        <h2 class="gvuk-heading-m govuk-!-margin-bottom-2">
+                        <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
                             @applicationSection.LinkTitle
                         </h2>
                         <span id="company-details-hint" class="govuk-hint">
@@ -45,13 +45,37 @@
                 }
             </ul>
 
-            @if (Model.Sections.Sum(m => m.PagesComplete) == Model.Sections.Sum(m => m.PagesActive) && Model.Status != ApplicationSequenceStatus.Submitted)
+            
+            @if (Model.Sections.Sum(m => m.PagesComplete) != Model.Sections.Sum(m => m.PagesActive) && Model.Status != ApplicationSequenceStatus.Submitted)
             {
-                <div>
+                <p class="govuk-body">Do you agree to comply with the terms of the conditions for organisations on <a href="#">the register of end-point assessment organisations</a> and sign and return the 'Conditions for organisations on the register of end-point assessment organisations'?</p>
+                <p class="govuk-body">If you make an application to be added to the register, you're agreeing to the terms and conditions in the legal documentation.</p>
+                <div class="govuk-form-group">
+                    <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                        <div class="govuk-checkboxes">
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="terms-and-conditions" name="terms-and-conditions" type="checkbox" value="terms-and-conditions">
+                                <label class="govuk-label govuk-checkboxes__label" for="terms-and-conditions">
+                                    I accept the terms and conditions
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="govuk-form-group">
                     <form asp-action="Submit" asp-controller="Application">
                         <input type="hidden" id="applicationId" name="applicationId" value="@Model.ApplicationId"/>
                         <input type="hidden" id="sequenceId" name="sequenceId" value="@((int)Model.SequenceId)"/>
-                        <button class="govuk-button">Continue</button>
+                        @*
+                        Need to add the attributes: 
+                            disabled="disabled" aria-disabled="true" 
+                        and the class: 
+                            govuk-button--disabled 
+                        with js so this functions with js off.
+                        *@
+                        <button type="submit" class="govuk-button">
+                            Continue
+                        </button>
                     </form>
                 </div>
             }

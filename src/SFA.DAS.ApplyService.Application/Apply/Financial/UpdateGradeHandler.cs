@@ -24,12 +24,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
         {
             var section = await _mediator.Send(new GetSectionRequest(request.ApplicationId, null, 1, 3));
 
-            var qnADataObject = section.QnADataObject;
-
-            qnADataObject.FinancialApplicationGrade = request.UpdatedGrade;
-            qnADataObject.FinancialApplicationGrade.GradedDateTime = DateTime.UtcNow;            
-            
-            section.QnADataObject = qnADataObject;
+            section.QnAData.FinancialApplicationGrade = request.UpdatedGrade;
+            section.QnAData.FinancialApplicationGrade.GradedDateTime = DateTime.UtcNow;                    
             section.Status = ApplicationSectionStatus.Graded;
             
             await _applyRepository.SaveSection(section);
