@@ -43,15 +43,3 @@ BEGIN
 	VALUES (NEWID(), 'Live', 'ApplyEPAOStandardSubmission', 'e0a52c44-10be-4164-9543-3c312769c4e3', 'epao.helpdesk@education.gov.uk', GETDATE(), 'System')
 END
 GO
-
-IF EXISTS 
-(
-    SELECT * 
-    FROM INFORMATION_SCHEMA.COLUMNS 
-    WHERE table_name = 'ApplicationSections'
-    AND column_name = 'FeedbackComment'
-)
-BEGIN
-    ALTER TABLE [ApplicationSections] DROP COLUMN [FeedbackComment];
-END
-GO
