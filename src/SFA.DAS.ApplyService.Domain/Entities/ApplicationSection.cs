@@ -17,10 +17,10 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public bool HasFeedback => Feedback?.Any() ?? false;
 
         [JsonIgnore]
-        public bool HasNewFeedback => HasFeedback && Feedback.Any(f => f.IsNew || !f.IsCompleted);
+        public bool HasNewFeedback => HasFeedback && Feedback.Any(f => f.IsNew);
 
         [JsonIgnore]
-        public bool HasCompletedFeedback => HasFeedback && Feedback.Any(f => f.IsCompleted);
+        public bool AllFeedbackIsCompleted => HasFeedback ? Feedback.All(f => f.IsCompleted) : true;
     }
 
     public class ApplicationSection : EntityBase

@@ -20,51 +20,44 @@
                 {
                     <li>
                         <h2 class="govuk-heading-l">@sec.LinkTitle</h2>
-                        @if (sec.HasNewSectionFeedback){
-                            @foreach (var fb in sec.QnAData.Feedback.Where(f => f.IsNew || !f.IsCompleted))
-                            {
-                                <div class="govuk-inset-text">@fb.Message</div>
-                            }
+                        @{
+                            var pagesWithNewFeedback = sec.QnAData.HasNewFeedback ? sec.QnAData.Pages : sec.QnAData.Pages.Where(p => p.HasNewFeedback);
 
-                            <ul class="app-task-list__items app-task-list__items--no-number">
-                                @foreach (var pg in sec.QnAData.Pages.OrderBy(p => p.PageId))
+                            if (pagesWithNewFeedback.Any())
+                            {
+                                @foreach (var fb in sec.QnAData.Feedback.Where(f => f.IsNew || !f.IsCompleted))
                                 {
-                                    <li class="app-task-list__item">
-                                        <a aria-describedby="eligibility-completed" class="app-task-list__task-name" 
-                                           href="@Url.Action("Page", "Application", new {applicationId = Model.ApplicationId, sequenceId = (int)Model.SequenceId, sectionId = sec.SectionId, pageId = pg.PageId, redirectAction="Feedback"})">@pg.LinkTitle</a>
-                                    </li>
+                                    <div class="govuk-inset-text">@fb.Message</div>
                                 }
-                            </ul>
-                        }
-                        else if (sec.HasNewPageFeedback)
-                        {
-                            <ul class="app-task-list__items app-task-list__items--no-number">
-                                @foreach (var pg in sec.QnAData.Pages.OrderBy(p => p.PageId).Where(p => p.HasFeedback))
-                                {
-                                    <li class="app-task-list__item">
-                                        <a aria-describedby="eligibility-completed" class="app-task-list__task-name" 
-                                           href="@Url.Action("Page", "Application", new {applicationId = Model.ApplicationId, sequenceId = (int)Model.SequenceId, sectionId = sec.SectionId, pageId = pg.PageId, redirectAction="Feedback"})">@pg.LinkTitle</a>
-                                        @if (pg.HasCompletedFeedback) // TODO: Not sure if this is correct. Shouldn't all feedback for this page be completed?
-                                        {
-                                            <strong class="govuk-tag app-task-list__task-completed" id="completed">Completed</strong>
-                                        }
-                                    </li>
-                                }
-                            </ul>
-                        }
-                        else
-                        {
-                            <div class="govuk-inset-text">No further action required for this section</div>
+
+                                <ul class="app-task-list__items app-task-list__items--no-number">
+                                    @foreach (var pg in pagesWithNewFeedback.OrderBy(p => p.PageId))
+                                    {
+                                        <li class="app-task-list__item">
+                                            <a aria-describedby="eligibility-completed" class="app-task-list__task-name"
+                                               href="@Url.Action("Page", "Application", new { applicationId = Model.ApplicationId, sequenceId = (int)Model.SequenceId, sectionId = sec.SectionId, pageId = pg.PageId, redirectAction = "Feedback" })">@pg.LinkTitle</a>
+                                            @if (pg.AllFeedbackIsCompleted)
+                                            {
+                                                <strong class="govuk-tag app-task-list__task-completed" id="completed">Completed</strong>
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <div class="govuk-inset-text">No further action required for this section</div>
+                            }
                         }
                     </li>
                 }
             </ol>
-            
+
             @* TODO: Should all feedback be completed before resubmitting?? *@
             <div>
                 <form asp-action="Submit" asp-controller="Application">
-                    <input type="hidden" id="applicationId" name="applicationId" value="@Model.ApplicationId"/>
-                    <input type="hidden" id="sequenceId" name="sequenceId" value="@((int)Model.SequenceId)"/>
+                    <input type="hidden" id="applicationId" name="applicationId" value="@Model.ApplicationId" />
+                    <input type="hidden" id="sequenceId" name="sequenceId" value="@((int)Model.SequenceId)" />
                     <button class="govuk-button">Submit application</button>
                 </form>
             </div>
