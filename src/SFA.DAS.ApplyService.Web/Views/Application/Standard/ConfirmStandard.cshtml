@@ -18,20 +18,23 @@
             </h2>
             <div class="govuk-error-summary__body">
                 <ul class="govuk-list govuk-error-summary__list">
-                        <li><a href="#IsConfirmed">Please tick box to confirm</a></li>
+                    <li><a href="#IsConfirmed">Please tick box to confirm</a></li>
                 </ul>
             </div>
         </div>
     }
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl">
-                Confirm you want to offer the standard: @Model.SelectedStandard?.Title
-                <span class="govuk-caption-xl">Standard Code: @Model.SelectedStandard?.StandardId</span>
+            <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
+                @if (string.IsNullOrEmpty(Model.ApplicationStatus))
+                {
+                    <span class="govuk-caption-l govuk-!-margin-bottom-2">Confirm you want to offer the standard:</span>
+                }
+                @Model.SelectedStandard?.Title
             </h1>
-
-            <div>Effective From: @Model.SelectedStandard?.StandardData?.EffectiveFrom</div>
-            <div>Effective To: @Model.SelectedStandard?.StandardData?.EffectiveTo</div>
+            <p class="govuk-body-l govuk-!-margin-bottom-2">Standard Code: @Model.SelectedStandard?.StandardId</p>
+            <p class="govuk-body govuk-!-margin-bottom-0">Effective from: @Model.SelectedStandard?.StandardData?.EffectiveFrom</p>
+            <p class="govuk-body">Effective to: @Model.SelectedStandard?.StandardData?.EffectiveTo</p>
         </div>
     </div>
 
@@ -50,15 +53,28 @@
                 <p class="govuk-body">Once you confirm you will be able to view the assessment plan for @Model.SelectedStandard?.Title and start the required application process.</p>
                 <button type="submit" class="govuk-button">Confirm and apply</button>
             }
-            else
+            
+            @if (!string.IsNullOrEmpty(Model.ApplicationStatus))
             {
                 if (Model.ApplicationStatus == "Approved")
                 {
-                    <div>You are already approved to assess this standard</div>
+                    <p class="govuk-body">.</p>
+                    <div class="das-apply-notification-summary govuk-!-margin-bottom-8">
+                        <h2 class="govuk-heading-m govuk-!-margin-bottom-0">
+                            You are already approved to assess this standard
+                        </h2>
+                    </div>
                 }
                 else
                 {
-                    <div>You have already applied to assess this standard. Your application is pending.</div>
+                    <div class="das-apply-notification-summary govuk-!-margin-bottom-8">
+                        <h2 class="govuk-heading-m">
+                            You have already applied to assess this standard
+                        </h2>
+                        <div class="govuk-body govuk-!-margin-bottom-0">
+                            Your application is pending.
+                        </div>
+                    </div>
                 }
             }
             </form>
