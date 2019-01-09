@@ -85,9 +85,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             await _apiClient.UpdateApplicationData(applicationData, model.ApplicationId);
 
-            return View("/Applications", model.ApplicationId);
-
-
+            return RedirectToAction("Applications", "Application");
         }
     }
 }
