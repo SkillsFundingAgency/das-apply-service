@@ -18,7 +18,7 @@
             </h2>
             <div class="govuk-error-summary__body">
                 <ul class="govuk-list govuk-error-summary__list">
-                    <li><a href="#IsConfirmed">Please tick box to confirm</a></li>
+                    <li><a href="#IsConfirmed">Confirm you have read the assessment plan</a></li>
                 </ul>
             </div>
         </div>
@@ -35,48 +35,53 @@
             <p class="govuk-body-l govuk-!-margin-bottom-2">Standard Code: @Model.SelectedStandard?.StandardId</p>
             <p class="govuk-body govuk-!-margin-bottom-0">Effective from: @Model.SelectedStandard?.StandardData?.EffectiveFrom</p>
             <p class="govuk-body">Effective to: @Model.SelectedStandard?.StandardData?.EffectiveTo</p>
-        </div>
-    </div>
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
             <form asp-action="StandardConfirm" asp-controller="Standard" asp-route-applicationId="@Model.ApplicationId">
                 <input asp-for="@Model.StandardCode" value="@standardCode" type="hidden" />
-            @if (!ViewData.ModelState.IsValid || showErrors)
-            {
-                <span id="search-string-error" class="govuk-error-message">Please tick to confirm</span>
-            }
-            @if (string.IsNullOrEmpty(Model.ApplicationStatus))
-            {
-                <div><input type="Checkbox" name="IsConfirmed" asp-for="@Model.IsConfirmed"/> By continuing with this application you are confirming you have read the assessment plan
-                </div>
-                <p class="govuk-body">Once you confirm you will be able to view the assessment plan for @Model.SelectedStandard?.Title and start the required application process.</p>
-                <button type="submit" class="govuk-button">Confirm and apply</button>
-            }
-            
-            @if (!string.IsNullOrEmpty(Model.ApplicationStatus))
-            {
-                if (Model.ApplicationStatus == "Approved")
+
+                @if (string.IsNullOrEmpty(Model.ApplicationStatus))
                 {
-                    <p class="govuk-body">.</p>
-                    <div class="das-apply-notification-summary govuk-!-margin-bottom-8">
-                        <h2 class="govuk-heading-m govuk-!-margin-bottom-0">
-                            You are already approved to assess this standard
-                        </h2>
-                    </div>
-                }
-                else
-                {
-                    <div class="das-apply-notification-summary govuk-!-margin-bottom-8">
-                        <h2 class="govuk-heading-m">
-                            You have already applied to assess this standard
-                        </h2>
-                        <div class="govuk-body govuk-!-margin-bottom-0">
-                            Your application is pending.
+                    <div class="govuk-form-group @(!ViewData.ModelState.IsValid || showErrors ? "govuk-form-group--error" : "")">
+
+                        @if (!ViewData.ModelState.IsValid || showErrors)
+                        {
+                            <span id="search-string-error" class="govuk-error-message">Confirm you have read the assessment plan</span>
+                        }
+
+                        <div class="govuk-checkboxes">
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" asp-for="@Model.IsConfirmed" name="IsConfirmed" type="checkbox">
+                                <label class="govuk-label govuk-checkboxes__label" for="IsConfirmed">
+                                    By continuing with this application you are confirming you have read the assessment plan
+                                </label>
+                            </div>
                         </div>
                     </div>
+                    <button type="submit" class="govuk-button">Confirm and apply</button>
                 }
-            }
+            
+                @if (!string.IsNullOrEmpty(Model.ApplicationStatus))
+                {
+                    if (Model.ApplicationStatus == "Approved")
+                    {
+                        <div class="das-apply-notification-summary govuk-!-margin-bottom-8">
+                            <h2 class="govuk-heading-m govuk-!-margin-bottom-0">
+                                You are already approved to assess this standard
+                            </h2>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="das-apply-notification-summary govuk-!-margin-bottom-8">
+                            <h2 class="govuk-heading-m">
+                                You have already applied to assess this standard
+                            </h2>
+                            <div class="govuk-body govuk-!-margin-bottom-0">
+                                Your application is pending.
+                            </div>
+                        </div>
+                    }
+                }
             </form>
         </div>
     </div>
