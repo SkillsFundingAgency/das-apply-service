@@ -225,7 +225,7 @@ namespace SFA.DAS.ApplyService.Data
                                                 FROM   ApplicationSections INNER JOIN
                                                             Applications ON ApplicationSections.ApplicationId = Applications.Id INNER JOIN
                                                             Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
-                                                WHERE  (ApplicationSections.ApplicationId = @ApplicationId) AND Contacts.Id = @UserId;
+                                                WHERE  (ApplicationSections.ApplicationId = @ApplicationId) AND (ApplicationSections.SequenceId = @SequenceId) AND Contacts.Id = @UserId;
 
                                                 UPDATE       Applications
                                                 SET                ApplicationStatus = 'Submitted', ApplicationData = @applicationdata
@@ -433,6 +433,21 @@ namespace SFA.DAS.ApplyService.Data
                                                                         INNER JOIN Applications appl ON appl.ApplyingOrganisationId = org.Id
                                                                         WHERE appl.Id = @ApplicationId",
                     new {applicationId});
+            }
+        }
+
+        public async Task<string> CheckOrganisationStandardStatus(Guid applicationId, int standardId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+               var applicationStatuses= await connection.QueryAsync<string>(@"select top 1 A.applicationStatus from Applications A
+                                                                    where JSON_VALUE(ApplicationData,'$.StandardCode')= @standardId
+                                                                    and ApplyingOrganisationId in 
+                                                                        (select ApplyingOrganisationId from Applications where Id = @applicationId)
+",
+                    new { applicationId, standardId });
+
+                return !applicationStatuses.Any() ? string.Empty : applicationStatuses.FirstOrDefault();
             }
         }
 

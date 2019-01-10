@@ -16,7 +16,7 @@ namespace SFA.DAS.ApplyService.EmailService
     public class EmailService : IEmailService
     {
         private const string SYSTEM_ID = "ApplyService";
-        private const string REPLY_TO_ADDRESS = "digital.apprenticeship.service @notifications.service.gov.uk";
+        private const string REPLY_TO_ADDRESS = "digital.apprenticeship.service@notifications.service.gov.uk";
         private const string SUBJECT = "Update on your EPAO application";
 
         private readonly ILogger<EmailService> _logger;

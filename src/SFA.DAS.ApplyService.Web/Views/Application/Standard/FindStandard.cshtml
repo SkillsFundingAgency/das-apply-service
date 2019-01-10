@@ -1,26 +1,49 @@
-@model Guid
+@using SFA.DAS.ApplyService.Web.ViewModels
+@model SFA.DAS.ApplyService.Web.ViewModels.StandardViewModel
 
 @{
-    ViewBag.Title = "title";
+    ViewBag.Title = "Apply for a Standard";
     Layout = "_Layout";
+    bool showErrors = TempData["ShowErrors"] as bool? ?? false;
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
-          
+    @if (!ViewData.ModelState.IsValid || showErrors)
+    {
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    <li><a href="#standard-name">Enter 2 or more characters to search</a></li>
+                </ul>
+            </div>
+        </div>
+    }
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form asp-action="Search" asp-controller="Standard" asp-route-applicationId="@Model">
-                <div class="govuk-form-group">
+            <form asp-action="Search" asp-controller="Standard" asp-route-applicationId="@Model.ApplicationId">
+                <div class="govuk-form-group @(!ViewData.ModelState.IsValid || showErrors ? "govuk-form-group--error" : "")">
                     <h1 class="govuk-label-wrapper">
-                        <label class="govuk-label govuk-label--l" for="standard-name">
+                        <label class="govuk-label govuk-label--xl" for="standard-name">
                             What standard are you applying for?
                         </label>
                     </h1>
+
                     <span id="standard-hint" class="govuk-hint">
                         For example, financial adviser
                     </span>
-                    <input class="govuk-input govuk-input--width-20 ui-autocomplete-input" id="standard-name" name="StandardToFind" type="text" value="" autocomplete="off">
+
+                    @if (!ViewData.ModelState.IsValid || showErrors)
+                    {
+                        <span id="search-string-error" class="govuk-error-message">Enter 2 or more characters to search</span>
+                    }
+
+                    <input class="govuk-input govuk-input--width-20 ui-autocomplete-input @(!ViewData.ModelState.IsValid || showErrors ? "govuk-input--error" : "")" id="standard-name" name="StandardToFind" asp-for="@Model.StandardToFind"type="text" value="" autocomplete="off">
                 </div>
+
+                @*
                 <h2 class="govuk-heading-m js-no-results" style="display: none;">No results found</h2>
                 <p class="govuk-body js-no-results" style="display: none;">Details about standards can be found on the <a href="#" class="govuk-link">Institute for Apprenticeships (IFA)</a> website.</p>
                 <div class="js-prerequisites govuk-form-group" style="display: none;">
@@ -28,9 +51,14 @@
                     <ul class="js-requirements govuk-list govuk-list--bullet">
                     </ul>
                 </div>
-                <button type="submit" class="govuk-button js-choose-standard-button">
-                    Continue
-                </button>
+                *@
+
+                <div class="govuk-form-group">
+                    <button type="submit" class="govuk-button js-choose-standard-button">
+                        Continue
+                    </button>
+                </div>
+
             </form>
         </div>
     </div>
