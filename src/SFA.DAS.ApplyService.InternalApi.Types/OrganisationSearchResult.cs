@@ -24,6 +24,8 @@
 
         public bool RoEPAOApproved { get; set; }
         public bool RoATPApproved { get; set; }
+
+        public string EasApiOrganisationType { get; set; }
     }
 
     public class OrganisationAddress

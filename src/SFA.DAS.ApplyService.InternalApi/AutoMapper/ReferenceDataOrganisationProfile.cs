@@ -16,6 +16,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(source => Mapper.Map<Address, Types.OrganisationAddress>(source.Address)))
                 .ForMember(dest => dest.CompanyNumber, opt => opt.ResolveUsing(source => source.Type == OrganisationType.Company ? source.Code : null))
                 .ForMember(dest => dest.CharityNumber, opt => opt.ResolveUsing(source => source.Type == OrganisationType.Charity ? source.Code : null))
+                .ForMember(dest => dest.EasApiOrganisationType, opt => opt.MapFrom(source => source.Type.ToString()))
                 .ForAllOtherMembers(dest => dest.Ignore());
         }
     }

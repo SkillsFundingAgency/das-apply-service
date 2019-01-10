@@ -5180,78 +5180,6 @@ VALUES
 }
 ', N'Financial Health Assessment', N'Financial Health Assessment', N'Draft', N'Pages', N'')
 GO
-DELETE FROM WorkflowSections where SequenceId = 2 and SectionId = 4
-INSERT [dbo].[WorkflowSections]
-  ([Id], [WorkflowId], [SequenceId], [SectionId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType], [DisallowedOrgTypes])
-VALUES
-  (N'b4951ead-ee4a-49f2-a31e-3a658605e32a', N'83b35024-8aef-440d-8f59-8c1cc459c350', 2, 4, N'
-{
-    "Pages": [
-      {
-        "PageId": "24",
-        "SequenceId": "2",
-        "SectionId": "4",
-        "Title": "SQ-2-SE-4-PG-24-T-1",
-        "LinkTitle": "SQ-2-SE-4-PG-24-LT-1",
-        "InfoText": "SQ-2-SE-4-PG-24-IT-1",
-        "Questions": [
-          {
-            "QuestionId": "CC-03",
-            "Label": "SQ-2-SE-4-PG-24-CC-03-L-1",
-            "ShortLabel": "SQ-2-SE-4-PG-24-CC-03-SL-1",
-            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-03-QB-1",
-            "Hint": "SQ-2-SE-4-PG-24-CC-03-H-1",
-            "Input": {
-              "Type": "FileUpload",
-              "Options": null,
-              "Validations": [
-                {
-                  "Name": "Required",
-                  "Value": null,
-                  "ErrorMessage": "Upload a file"
-                }
-              ]
-            },
-            "Order": null
-          },
-          {
-            "QuestionId": "CC-07",
-            "Label": "SQ-2-SE-4-PG-24-CC-07-L-1",
-            "ShortLabel": "SQ-2-SE-4-PG-24-CC-07-SL-1",
-            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-07-QB-1",
-            "Hint": "SQ-2-SE-4-PG-24-CC-07-H-1",
-            "Input": {
-              "Type": "FileUpload",
-              "Options": null,
-              "Validations": [
-              ]
-            },
-            "Order": null
-          }
-        ],
-        "PageOfAnswers": [],
-        "Next": [
-          {
-            "Action": "ReturnToSection",
-            "ReturnId": "4",
-            "Condition": null,
-            "ConditionMet": false
-          }
-        ],
-        "Complete": false,
-        "AllowMultipleAnswers": false,
-        "Order": null,
-        "Active": true,
-        "Visible": true,
-        "Feedback": null,
-        "HasFeedback": false,
-        "BodyText": "NP"
-      }
-    ],
-    "FinancialApplicationGrade": null
-  }  
-', N'Capacity & Capability', N'Capacity & Capability', N'Draft', N'Pages', N'')
-GO
 
 DELETE from WorkFlowSequences  where sequenceId=1
 
@@ -5267,3 +5195,276 @@ INSERT [dbo].[WorkflowSequences]
 VALUES
   (N'981325d9-c7a4-43d5-8ece-75fef3b080f5', N'83b35024-8aef-440d-8f59-8c1cc459c350', 2, N'Draft', 0)
 GO
+
+
+
+
+-- SECTION 4 WORK
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-T-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-T-1', '', 'Your policies and procedures', 'Live', GETUTCDATE(), 'Import')
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-LT-1', '', '', 'Live', GETUTCDATE(), 'Import')
+
+-- page 24 question 1
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-01-L-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-01-L-1', '', 'Information Commisioner''s Office (ICO) registration number', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-01-SL-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-01-SL-1', '', 'Information Commisoner''s Office Registration', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-01-QB-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-01-QB-1', '','Provide your Information Commisioner''s Office (ICO) registration number', 'Live', GETUTCDATE(), 'Import')
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-01-H-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-01-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-BT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-BT-1', '', '', 'Live', GETUTCDATE(), 'Import')
+
+-- page 24 question 2
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-02-L-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-02-L-1', '', 'Internal audit policy', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-02-SL-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-02-SL-1', '', 'Internal Audit Policy', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-02-QB-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-02-QB-1', '','Upload a PDF of your organisation''s internal audit policy in respect to fraud and financial irregularity', 'Live', GETUTCDATE(), 'Import')
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-02-H-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-02-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+
+-- page 24 question 3
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-03-L-1';  -- Row L
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-03-L-1', '', 'Public Liability Insurance', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-03-SL-1'; -- Row J
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-03-SL-1', '', 'Public Liability Insurance', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-03-QB-1';   -- Row P
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-03-QB-1', '','Upload a PDF of your public liability certificate of insurance', 'Live', GETUTCDATE(), 'Import')
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-03-H-1';   -- Row AA
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-03-H-1', '', 'If you are providing any form of training or consultancy, you must have public liability insurance.', 'Live', GETUTCDATE(), 'Import')
+
+
+-- page 24 question 4
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-04-L-1';  -- Row L
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-04-L-1', '', 'Professional indemnity insurance', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-04-SL-1'; -- Row J
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-04-SL-1', '', 'Professional indemnity insurance', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-04-QB-1';   -- Row P
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-04-QB-1', '','Upload a PDF of your professional indemnity certificate of insurance', 'Live', GETUTCDATE(), 'Import')
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-04-H-1';   -- Row AA
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-04-H-1', '', 'If you are providing any form of training or consultancy, you must have professional indemnity insurance.', 'Live', GETUTCDATE(), 'Import')
+
+-- page 24 question 5
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-05-L-1';  -- Row L
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-05-L-1', '', 'Employers liability insurance', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-05-SL-1'; -- Row J
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-05-SL-1', '', 'Employers liability insurance', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-05-QB-1';   -- Row P
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-05-QB-1', '','Upload a PDF of your employers liability certificate of insurance (optional)', 'Live', GETUTCDATE(), 'Import')
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-05-H-1';   -- Row AA
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-05-H-1', '', 'If you have any employees, you must have employers liability insurance. ', 'Live', GETUTCDATE(), 'Import')
+
+
+---- END OF SECTION 4 ASSETS
+DELETE FROM WorkflowSections where SequenceId = 2 and SectionId = 4
+INSERT [dbo].[WorkflowSections]
+  ([Id], [WorkflowId], [SequenceId], [SectionId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType], [DisallowedOrgTypes])
+VALUES
+  (N'b4951ead-ee4a-49f2-a31e-3a658605e32a', N'83b35024-8aef-440d-8f59-8c1cc459c350', 2, 4, N'
+{
+    "Pages": [
+      {
+        "PageId": "24",
+        "SequenceId": "2",
+        "SectionId": "4",
+        "Title": "SQ-2-SE-4-PG-24-T-1",
+        "LinkTitle": "SQ-2-SE-4-PG-24-LT-1",
+        "InfoText": "SQ-2-SE-4-PG-24-IT-1",
+        "Questions": [
+		  {
+            "QuestionId": "CC-01",
+            "Label": "SQ-2-SE-4-PG-24-CC-01-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-24-CC-01-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-01-QB-1",
+            "Hint": "SQ-2-SE-4-PG-24-CC-01-H-1",
+            "Input": {
+              "Type": "text",
+                      "Options": null,
+                      "Validations": [
+                        {
+                          "Name": "Required",
+                          "Value": null,
+                          "ErrorMessage": "Enter your ICO registration number"
+                        }
+                      ]
+            },
+            "Order": null
+          },
+          {
+            "QuestionId": "CC-02",
+            "Label": "SQ-2-SE-4-PG-24-CC-02-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-24-CC-02-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-02-QB-1",
+            "Hint": "SQ-2-SE-4-PG-24-CC-02-H-1",
+            "Input": {
+              "Type": "FileUpload",
+              "Options": null,
+              "Validations": [
+                {
+                  "Name": "Required",
+                  "Value": null,
+                  "ErrorMessage": "Upload your PDF policy document"
+                }
+              ]
+            },
+            "Order": null
+          },
+          {
+            "QuestionId": "CC-03",
+            "Label": "SQ-2-SE-4-PG-24-CC-03-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-24-CC-03-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-03-QB-1",
+            "Hint": "SQ-2-SE-4-PG-24-CC-03-H-1",
+            "Input": {
+              "Type": "FileUpload",
+              "Options": null,
+              "Validations": [
+                {
+                  "Name": "Required",
+                  "Value": null,
+                  "ErrorMessage": "Upload your PDF of your public liability certificate of insurance"
+                }
+              ]
+            },
+            "Order": null
+          },
+          {
+            "QuestionId": "CC-04",
+            "Label": "SQ-2-SE-4-PG-24-CC-04-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-24-CC-04-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-04-QB-1",
+            "Hint": "SQ-2-SE-4-PG-24-CC-04-H-1",
+            "Input": {
+              "Type": "FileUpload",
+              "Options": null,
+              "Validations": [
+                {
+                  "Name": "Required",
+                  "Value": null,
+                  "ErrorMessage": "Upload your PDF of your professional indemnity certificate of insurance"
+                }
+              ]
+            },
+            "Order": null
+          },
+          {
+            "QuestionId": "CC-05",
+            "Label": "SQ-2-SE-4-PG-24-CC-05-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-24-CC-05-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-05-QB-1",
+            "Hint": "SQ-2-SE-4-PG-24-CC-05-H-1",
+            "Input": {
+              "Type": "FileUpload",
+              "Options": null,
+              "Validations": []
+            },
+            "Order": null
+          }
+        ],
+        "PageOfAnswers": [],
+        "Next": [
+          {
+             "Action": "ReturnToSection",
+            "ReturnId": "4",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+        "Complete": false,
+        "AllowMultipleAnswers": false,
+        "Order": null,
+        "Active": true,
+        "Visible": true,
+        "Feedback": null,
+        "HasFeedback": false,
+        "BodyText": "SQ-2-SE-4-PG-24-BT-1"
+      }
+    ],
+    "FinancialApplicationGrade": null
+  }  
+', N'Apply to assess a standard', N'Apply to assess a standard', N'Draft', N'Questions', N'')
+GOGO

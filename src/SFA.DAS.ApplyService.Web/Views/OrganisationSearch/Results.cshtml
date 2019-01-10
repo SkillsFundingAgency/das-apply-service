@@ -103,7 +103,14 @@
                                         }
                                         @if (!result.RoEPAOApproved && !result.RoATPApproved)
                                         {
-                                            <span>Companies House and/or Charity Commission</span>
+                                            switch (result.EasApiOrganisationType)
+                                            {
+                                                case "Charity": <span>Charity Commission</span> break;
+                                                case "Company": <span>Companies House</span> break;
+                                                case "PublicSector": <span>EASAPI - Public Sector</span>break;
+                                                case "EducationOrganisation": <span>EASAPI - Education Organisation</span> break;
+                                                default: <span>EASAPI</span> break;
+                                            }
                                         }
                                     </p>
                                 }
