@@ -47,9 +47,60 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload a file"
+                  "ErrorMessage": "Upload your PDF policy document"
                 }
               ]
+            },
+            "Order": null
+          },
+          {
+            "QuestionId": "CC-03",
+            "Label": "SQ-2-SE-4-PG-24-CC-03-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-24-CC-03-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-03-QB-1",
+            "Hint": "SQ-2-SE-4-PG-24-CC-03-H-1",
+            "Input": {
+              "Type": "FileUpload",
+              "Options": null,
+              "Validations": [
+                {
+                  "Name": "Required",
+                  "Value": null,
+                  "ErrorMessage": "Upload your PDF of your public liability certificate of insurance"
+                }
+              ]
+            },
+            "Order": null
+          },
+          {
+            "QuestionId": "CC-04",
+            "Label": "SQ-2-SE-4-PG-24-CC-04-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-24-CC-04-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-04-QB-1",
+            "Hint": "SQ-2-SE-4-PG-24-CC-04-H-1",
+            "Input": {
+              "Type": "FileUpload",
+              "Options": null,
+              "Validations": [
+                {
+                  "Name": "Required",
+                  "Value": null,
+                  "ErrorMessage": "Upload your PDF of your professional indemnity certificate of insurance"
+                }
+              ]
+            },
+            "Order": null
+          },
+          {
+            "QuestionId": "CC-05",
+            "Label": "SQ-2-SE-4-PG-24-CC-05-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-24-CC-05-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-05-QB-1",
+            "Hint": "SQ-2-SE-4-PG-24-CC-05-H-1",
+            "Input": {
+              "Type": "FileUpload",
+              "Options": null,
+              "Validations": []
             },
             "Order": null
           }
