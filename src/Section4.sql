@@ -36,10 +36,10 @@ VALUES
           },
 		  {
             "QuestionId": "CC-02",
-            "Label": "SQ-2-SE-4-PG-25-CC-02-L-1",
-            "ShortLabel": "SQ-2-SE-4-PG-25-CC-02-SL-1",
-            "QuestionBodyText": "SQ-2-SE-4-PG-25-CC-02-QB-1",
-            "Hint": "SQ-2-SE-4-PG-25-CC-02-H-1",
+            "Label": "SQ-2-SE-4-PG-24-CC-02-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-24-CC-02-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-02-QB-1",
+            "Hint": "SQ-2-SE-4-PG-24-CC-02-H-1",
             "Input": {
               "Type": "text",
                       "Options": null,
