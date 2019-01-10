@@ -9,6 +9,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
             CreateMap<Models.AssessorService.OrganisationSummary, Types.OrganisationSearchResult>()
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "RoEPAO")
                 .BeforeMap((source, dest) => dest.RoEPAOApproved = true)
+                .BeforeMap((source, dest) => dest.EasApiOrganisationType = null)
                 .ForMember(dest => dest.Ukprn, opt => opt.MapFrom(source => source.Ukprn))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Id))
                 .ForMember(dest => dest.TradingName, opt => opt.MapFrom(source => source.Name))
