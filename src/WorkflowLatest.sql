@@ -5200,8 +5200,6 @@ GO
 
 
 -- SECTION 4 WORK
---SECTION 4
--- page 24 question 1
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-T-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
@@ -5292,8 +5290,56 @@ VALUES
   (NEWID(), 'SQ-2-SE-4-PG-24-CC-03-H-1', '', 'If you are providing any form of training or consultancy, you must have public liability insurance.', 'Live', GETUTCDATE(), 'Import')
 
 
+-- page 24 question 4
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-04-L-1';  -- Row L
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-04-L-1', '', 'Professional indemnity insurance', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-04-SL-1'; -- Row J
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-04-SL-1', '', 'Professional indemnity insurance', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-04-QB-1';   -- Row P
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-04-QB-1', '','Upload a PDF of your professional indemnity certificate of insurance', 'Live', GETUTCDATE(), 'Import')
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-04-H-1';   -- Row AA
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-04-H-1', '', 'If you are providing any form of training or consultancy, you must have professional indemnity insurance.', 'Live', GETUTCDATE(), 'Import')
+
+-- page 24 question 5
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-05-L-1';  -- Row L
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-05-L-1', '', 'Employers liability insurance', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-05-SL-1'; -- Row J
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-05-SL-1', '', 'Employers liability insurance', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-05-QB-1';   -- Row P
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-05-QB-1', '','Upload a PDF of your employers liability certificate of insurance (optional)', 'Live', GETUTCDATE(), 'Import')
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-05-H-1';   -- Row AA
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-05-H-1', '', 'If you have any employees, you must have employers liability insurance. ', 'Live', GETUTCDATE(), 'Import')
+
+
 ---- END OF SECTION 4 ASSETS
- 
 DELETE FROM WorkflowSections where SequenceId = 2 and SectionId = 4
 INSERT [dbo].[WorkflowSections]
   ([Id], [WorkflowId], [SequenceId], [SectionId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType], [DisallowedOrgTypes])
@@ -5360,9 +5406,41 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF policy document"
+                  "ErrorMessage": "Upload your PDF of your public liability certificate of insurance"
                 }
               ]
+            },
+            "Order": null
+          },
+          {
+            "QuestionId": "CC-04",
+            "Label": "SQ-2-SE-4-PG-24-CC-04-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-24-CC-04-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-04-QB-1",
+            "Hint": "SQ-2-SE-4-PG-24-CC-04-H-1",
+            "Input": {
+              "Type": "FileUpload",
+              "Options": null,
+              "Validations": [
+                {
+                  "Name": "Required",
+                  "Value": null,
+                  "ErrorMessage": "Upload your PDF of your professional indemnity certificate of insurance"
+                }
+              ]
+            },
+            "Order": null
+          },
+          {
+            "QuestionId": "CC-05",
+            "Label": "SQ-2-SE-4-PG-24-CC-05-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-24-CC-05-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-05-QB-1",
+            "Hint": "SQ-2-SE-4-PG-24-CC-05-H-1",
+            "Input": {
+              "Type": "FileUpload",
+              "Options": null,
+              "Validations": []
             },
             "Order": null
           }
@@ -5389,4 +5467,4 @@ VALUES
     "FinancialApplicationGrade": null
   }  
 ', N'Apply to assess a standard', N'Apply to assess a standard', N'Draft', N'Questions', N'')
-GO
+GOGO
