@@ -145,7 +145,7 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
              else if (section.DisplayType == SectionDisplayType.Questions)
              {
                  return View("~/Views/Application/SectionQuestions.cshtml", section);
-             }
+            }
              throw new BadRequestException("Section does not have a valid DisplayType");
          }
          

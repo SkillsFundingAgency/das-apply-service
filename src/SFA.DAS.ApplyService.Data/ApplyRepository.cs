@@ -66,11 +66,11 @@ namespace SFA.DAS.ApplyService.Data
                             INNER JOIN Applications a ON a.Id = seq.ApplicationId
                             WHERE seq.ApplicationId = @applicationId 
                             AND seq.IsActive = 1", new {applicationId});
-                
+
                 var sections = (await connection.QueryAsync<ApplicationSection>(@"SELECT * FROM ApplicationSections 
                             WHERE ApplicationId = @ApplicationId 
                             AND SequenceId = @SequenceId",
-                    sequence)).ToList();
+                        sequence)).ToList();
 
                 sequence.Sections = sections;
                 
