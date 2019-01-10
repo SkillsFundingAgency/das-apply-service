@@ -1,3 +1,4 @@
+@model SFA.DAS.ApplyService.Domain.Entities.ApplicationData
 @{
     ViewBag.Title = "Application submitted";
     Layout = "_Layout";
@@ -11,7 +12,7 @@
                 <h1 class="govuk-panel__title">Application submitted</h1>
                 <div class="govuk-panel__body">
                     Reference number
-                    <br /><strong>xxxxxx</strong>
+                    <br /><strong>@Model.ReferenceNumber</strong>
                 </div>
             </div>
             
@@ -19,7 +20,7 @@
 
             <h3 class="govuk-heading-m">What happens next</h3>
 
-            <p class="govuk-body">We will review your application and let you know the outcome within the next [XX] weeks.</p>
+            <p class="govuk-body">We will review your application and let you know the outcome within the next 3 weeks.</p>
 
             <p class="govuk-body">
                 <a href="http://www.smartsurvey.co.uk/s/apply-transaction-complete">What did you think of this service?</a>

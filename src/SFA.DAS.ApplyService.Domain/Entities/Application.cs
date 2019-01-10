@@ -11,7 +11,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public DateTime WithdrawnAt { get; set; }
         public string WithdrawnBy { get; set; }
         public string ApplicationStatus { get; set; }
-        public string ApplicationData { get; set; }
+        public ApplicationData ApplicationData { get; set; }
     }
 
     public class StandardApplicationData

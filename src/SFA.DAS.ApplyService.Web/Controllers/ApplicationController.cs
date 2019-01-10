@@ -111,7 +111,10 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
 
              if (application.ApplicationData != null)
              {
-                 applicationData = JsonConvert.DeserializeObject<StandardApplicationData>(application.ApplicationData);
+                 applicationData = new StandardApplicationData
+                 {
+                     StandardName = application.ApplicationData.StandardName
+                 };
              }
              
              // Only go to search if application hasn't got a selected standard?
@@ -312,7 +315,7 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
          public async Task<IActionResult> Submit(Guid applicationId, int sequenceId)
          {
              await _apiClient.Submit(applicationId, sequenceId, Guid.Parse(User.FindFirstValue("UserId")));
-             return RedirectToAction("Submitted");
+             return RedirectToAction("Submitted", new {applicationId});
          }
  
          [HttpPost("/Application/DeleteAnswer")]
@@ -332,10 +335,11 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
              return View("~/Views/Application/Feedback.cshtml", sequence);
          }
 
-         [HttpGet("/Application/Submitted")]
-         public async Task<IActionResult> Submitted()
+         [HttpGet("/Application/{applicationId}/Submitted")]
+         public async Task<IActionResult> Submitted(Guid applicationId)
          {
-             return View("~/Views/Application/Submitted.cshtml");
+             var application = await _apiClient.GetApplication(applicationId);
+            return View("~/Views/Application/Submitted.cshtml", application.ApplicationData);
          }
      }
  }
