@@ -15,31 +15,12 @@ VALUES
         "LinkTitle": "SQ-2-SE-4-PG-24-LT-1",
         "InfoText": "SQ-2-SE-4-PG-24-IT-1",
         "Questions": [
-          {
+		  {
             "QuestionId": "CC-01",
             "Label": "SQ-2-SE-4-PG-24-CC-01-L-1",
             "ShortLabel": "SQ-2-SE-4-PG-24-CC-01-SL-1",
             "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-01-QB-1",
             "Hint": "SQ-2-SE-4-PG-24-CC-01-H-1",
-            "Input": {
-              "Type": "FileUpload",
-              "Options": null,
-              "Validations": [
-                {
-                  "Name": "Required",
-                  "Value": null,
-                  "ErrorMessage": "Upload a file"
-                }
-              ]
-            },
-            "Order": null
-          },
-		  {
-            "QuestionId": "CC-02",
-            "Label": "SQ-2-SE-4-PG-24-CC-02-L-1",
-            "ShortLabel": "SQ-2-SE-4-PG-24-CC-02-SL-1",
-            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-02-QB-1",
-            "Hint": "SQ-2-SE-4-PG-24-CC-02-H-1",
             "Input": {
               "Type": "text",
                       "Options": null,
@@ -50,6 +31,25 @@ VALUES
                           "ErrorMessage": "Enter your ICO registration number"
                         }
                       ]
+            },
+            "Order": null
+          },
+          {
+            "QuestionId": "CC-02",
+            "Label": "SQ-2-SE-4-PG-24-CC-02-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-24-CC-02-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-02-QB-1",
+            "Hint": "SQ-2-SE-4-PG-24-CC-02-H-1",
+            "Input": {
+              "Type": "FileUpload",
+              "Options": null,
+              "Validations": [
+                {
+                  "Name": "Required",
+                  "Value": null,
+                  "ErrorMessage": "Upload a file"
+                }
+              ]
             },
             "Order": null
           }
