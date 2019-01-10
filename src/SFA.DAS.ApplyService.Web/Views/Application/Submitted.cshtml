@@ -1,4 +1,4 @@
-@model SFA.DAS.ApplyService.Domain.Entities.ApplicationData
+@model SFA.DAS.ApplyService.Web.ViewModels.SubmittedViewModel
 @{
     ViewBag.Title = "Application submitted";
     Layout = "_Layout";
@@ -20,10 +20,10 @@
 
             <h3 class="govuk-heading-m">What happens next</h3>
 
-            <p class="govuk-body">We will review your application and let you know the outcome within the next 3 weeks.</p>
+            <p class="govuk-body">We will review your application and let you know the outcome within the next 20 days.</p>
 
             <p class="govuk-body">
-                <a href="http://www.smartsurvey.co.uk/s/apply-transaction-complete">What did you think of this service?</a>
+                <a href="@Model.FeedbackUrl">What did you think of this service?</a>
             </p>
             <p class="govuk-body">
                 <a asp-action="Applications" asp-controller="Application">Return to application overview</a>

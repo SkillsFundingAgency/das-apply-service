@@ -13,12 +13,14 @@ using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.Upload;
 using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Application.Interfaces;
- using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
- 
- namespace SFA.DAS.ApplyService.Web.Controllers
+using SFA.DAS.ApplyService.Web.ViewModels;
+
+namespace SFA.DAS.ApplyService.Web.Controllers
  {
      [Authorize]
      public class ApplicationController : Controller
@@ -26,12 +28,14 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
          private readonly IApplicationApiClient _apiClient;
          private readonly ILogger<ApplicationController> _logger;
          private readonly ISessionService _sessionService;
+         private readonly IConfigurationService _configService;
 
-         public ApplicationController(IApplicationApiClient apiClient, ILogger<ApplicationController> logger, ISessionService sessionService)
+         public ApplicationController(IApplicationApiClient apiClient, ILogger<ApplicationController> logger, ISessionService sessionService, IConfigurationService configService)
          {
              _apiClient = apiClient;
              _logger = logger;
              _sessionService = sessionService;
+             _configService = configService;
          }
          
          [HttpGet("/Applications")]
@@ -338,8 +342,12 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
          [HttpGet("/Application/{applicationId}/Submitted")]
          public async Task<IActionResult> Submitted(Guid applicationId)
          {
-             var application = await _apiClient.GetApplication(applicationId);
-            return View("~/Views/Application/Submitted.cshtml", application.ApplicationData);
+            var application = await _apiClient.GetApplication(applicationId);
+            var config = await _configService.GetConfig();
+            return View("~/Views/Application/Submitted.cshtml", new SubmittedViewModel{
+                ReferenceNumber = application.ApplicationData.ReferenceNumber,
+                FeedbackUrl = config.FeedbackUrl
+            });
          }
      }
  }
