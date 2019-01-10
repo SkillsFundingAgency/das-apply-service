@@ -18,6 +18,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     {
         public string StandardName { get; set; }
         public int StandardCode { get; set; }
+        public string UserEmail { get; set; }
     }
     
     public class ApplicationStatus

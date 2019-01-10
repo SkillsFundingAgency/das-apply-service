@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.ApplyService.Application.Email.Consts;
 using SFA.DAS.ApplyService.Application.Interfaces;
+using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Submit
@@ -13,12 +14,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
     public class ApplicationSubmitHandler : IRequestHandler<ApplicationSubmitRequest>
     {
         private readonly IApplyRepository _applyRepository;
+        private readonly IContactRepository _contactRepository;
         private readonly IEmailService _emailServiceObject;
 
-        public ApplicationSubmitHandler(IApplyRepository applyRepository, IEmailService emailServiceObject)
+        public ApplicationSubmitHandler(IApplyRepository applyRepository, IEmailService emailServiceObject, IContactRepository contactRepository)
         {
             _applyRepository = applyRepository;
             _emailServiceObject = emailServiceObject;
+            _contactRepository = contactRepository;
         }
         
         public async Task<Unit> Handle(ApplicationSubmitRequest request, CancellationToken cancellationToken)
@@ -48,27 +51,50 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
                 }
             }
             
-            var referenceNumber =  await CreateReferenceNumber(request.ApplicationId);
+           
             var contactsToNotify = await _applyRepository.GetNotifyContactsForApplication(request.ApplicationId);
 
             await _applyRepository.UpdateSections(sections);
 
-            await UpdateApplication(request, contactsToNotify, referenceNumber);
+            var referenceNumber = await UpdateApplication(request);
 
             await NotifyContacts(contactsToNotify, referenceNumber);
 
             return Unit.Value;
         }
 
-        private async Task UpdateApplication(ApplicationSubmitRequest request, IEnumerable<Contact> contactsToNotify, string referenceNumber)
+        private async Task<string> UpdateApplication(ApplicationSubmitRequest request)
         {
-            var initSubmissions = contactsToNotify.Select(contact => new InitSubmission {SubmittedAt = DateTime.UtcNow, SubmittedBy = contact.Email}).ToList();
-
-            await _applyRepository.SubmitApplicationSequence(request, new ApplicationData
+            var application = await _applyRepository.GetApplication(request.ApplicationId);
+            var referenceNumber = application.ApplicationData?.ReferenceNumber;
+            
+            if (!string.IsNullOrEmpty(referenceNumber))
             {
-                InitSubmissions = initSubmissions,
-                ReferenceNumber = referenceNumber
-            });
+                application.ApplicationData?.InitSubmissions.Add(new InitSubmission
+                {
+                    SubmittedAt = DateTime.UtcNow,
+                    SubmittedBy = request.UserEmail
+                });
+                await _applyRepository.SubmitApplicationSequence(request, application.ApplicationData);
+            }
+            else
+            {
+                referenceNumber = await CreateReferenceNumber(request.ApplicationId);
+                await _applyRepository.SubmitApplicationSequence(request, new ApplicationData
+                {
+                    InitSubmissions = new List<InitSubmission>
+                    {
+                        new InitSubmission
+                        {
+                            SubmittedAt = DateTime.UtcNow,
+                            SubmittedBy = request.UserEmail
+                        }
+                    },
+                    ReferenceNumber = referenceNumber
+                });
+            }
+
+            return referenceNumber;
         }
 
         private async Task NotifyContacts(IEnumerable<Contact> contactsToNotify, string applicationReference)

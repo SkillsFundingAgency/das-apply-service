@@ -38,7 +38,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             string pageId, List<Answer> answers);
 
         Task StartApplication(Guid userId);
-        Task Submit(Guid applicationId, int sequenceId, Guid userId);
+        Task Submit(Guid applicationId, int sequenceId, Guid userId, string userEmail);
         Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, Guid userId);
         Task ImportWorkflow(IFormFile file);
         Task UpdateApplicationData<T>(T applicationData, Guid applicationId);

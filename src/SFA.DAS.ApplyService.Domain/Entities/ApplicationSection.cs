@@ -78,7 +78,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     public class ApplicationData
     {
         public string ReferenceNumber { get; set; }
-        public string StandardCode { get; set; }
+        public int StandardCode { get; set; }
         public string StandardName { get; set; }
         public List<InitSubmission> InitSubmissions { get; set; }
         public List<StandardSubmission> StandardSubmissions { get; set; }

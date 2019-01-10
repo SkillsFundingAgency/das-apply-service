@@ -334,7 +334,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("Sequence", new { applicationId, notAcceptedTermsAndConditions = true });
             }
 
-             await _apiClient.Submit(applicationId, sequenceId, Guid.Parse(User.FindFirstValue("UserId")));
+             await _apiClient.Submit(applicationId, sequenceId, Guid.Parse(User.FindFirstValue("UserId")), User.FindFirstValue("Email"));
              return RedirectToAction("Submitted", new {applicationId});
          }
  
