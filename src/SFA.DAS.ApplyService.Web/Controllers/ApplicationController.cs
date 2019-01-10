@@ -83,12 +83,23 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
          }
          
          [HttpGet("/Applications/{applicationId}/Sequence")]
-         public async Task<IActionResult> Sequence(Guid applicationId)
+         public async Task<IActionResult> Sequence(Guid applicationId, bool notAcceptedTermsAndConditions)
          {
              // Break this out into a "Signpost" action.
-             var sequence = await _apiClient.GetSequence(applicationId, userId: Guid.Parse(User.FindFirstValue("UserId")));
+            var sequence = await _apiClient.GetSequence(applicationId, userId: Guid.Parse(User.FindFirstValue("UserId")));
 
-                return View(sequence);
+            var errorMessages = new List<ValidationErrorDetail>();
+
+            if (notAcceptedTermsAndConditions)
+            {
+                string key = "terms-and-conditions";
+                string errorMessage = "You must accept the terms and conditions to proceed";
+                ModelState.AddModelError(key, errorMessage);
+                errorMessages.Add(new ValidationErrorDetail(key, errorMessage));
+            }
+
+            var sequenceVm = new SequenceViewModel(sequence, applicationId, errorMessages);
+            return View(sequenceVm);
          }
          
          [HttpGet("/Applications/{applicationId}")]
@@ -309,8 +320,13 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
  
          
          [HttpPost("/Applications/Submit")]
-         public async Task<IActionResult> Submit(Guid applicationId, int sequenceId)
+         public async Task<IActionResult> Submit(Guid applicationId, int sequenceId, bool acceptedTermsAndConditions)
          {
+            if(!acceptedTermsAndConditions)
+            {
+                return RedirectToAction("Sequence", new { applicationId, notAcceptedTermsAndConditions = true });
+            }
+
              await _apiClient.Submit(applicationId, sequenceId, Guid.Parse(User.FindFirstValue("UserId")));
              return RedirectToAction("Submitted");
          }

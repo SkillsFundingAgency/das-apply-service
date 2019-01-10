@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.Application.Apply.CheckOrganisationStandardStatus;
 using SFA.DAS.ApplyService.Application.Apply.DeleteAnswer;
 using SFA.DAS.ApplyService.Application.Apply.Download;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
@@ -139,5 +140,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             return await _mediator.Send(new GetOrganisationForApplicationRequest(applicationId));
         }
+
+        [HttpGet("/Application/{applicationId}/standard/{standardId}/check-status")]
+        public async Task<String> GetApplicationStatusForStandard(Guid applicationId, int standardId)
+        { 
+            return await _mediator.Send(new CheckOrganisationStandardStatusRequest(applicationId, standardId));
+        }
+
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.InternalApi.Models.AssessorService;
+using SFA.DAS.ApplyService.InternalApi.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,14 +47,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
         public async Task<IEnumerable<Types.OrganisationType>> GetOrgansiationTypes(bool activeOnly = true)
         {
             _logger.LogInformation($"Getting Organisation Types from EPAO Register.");
-            var apiResponse = await Get<IEnumerable<OrganisationType>>($"/api/ao/organisation-types");
+            var apiResponse = await Get<IEnumerable<Models.AssessorService.OrganisationType>>($"/api/ao/organisation-types");
 
             if(activeOnly)
             {
                 apiResponse = apiResponse.Where(ot => "Live".Equals(ot.Status, StringComparison.InvariantCultureIgnoreCase));
             }
 
-            return Mapper.Map<IEnumerable<OrganisationType>, IEnumerable<Types.OrganisationType>>(apiResponse);
+            return Mapper.Map<IEnumerable<Models.AssessorService.OrganisationType>, IEnumerable<Types.OrganisationType>>(apiResponse);
         }
 
         public async Task<IEnumerable<DeliveryArea>> GetDeliveryAreas()

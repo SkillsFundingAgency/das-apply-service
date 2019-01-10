@@ -11,7 +11,7 @@
     var organisationType = Model.OrganisationTypes?.FirstOrDefault(ot => ot.Type == organisation?.OrganisationType);
 
     var epaoRegex = new Regex(@"[eE][pP][aA][0-9]{4,9}$");
-    var epaoId = organisation?.Id.Split(',').FirstOrDefault(id => epaoRegex.Match(id).Success);
+    var epaoId = organisation?.Id?.Split(',').FirstOrDefault(id => epaoRegex.Match(id).Success);
 }
 
 <a asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString" class="govuk-back-link">Back to search results</a>
