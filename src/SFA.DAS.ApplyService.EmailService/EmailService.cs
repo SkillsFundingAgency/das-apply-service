@@ -2,6 +2,7 @@
 using SFA.DAS.ApplyService.Application.Email;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.Http;
 using SFA.DAS.Http.TokenGenerators;
 using SFA.DAS.Notifications.Api.Client;
@@ -36,31 +37,65 @@ namespace SFA.DAS.ApplyService.EmailService
         {
             var emailTemplate = await _emailTemplateRepository.GetEmailTemplate(templateName);
 
-            if (emailTemplate != null)
+            if (emailTemplate != null || !string.IsNullOrWhiteSpace(toAddress))
             {
-                var recipients = new List<string>();
+                var personalisationTokens = new Dictionary<string, string>();
 
-                if (!string.IsNullOrWhiteSpace(toAddress))
+                if (tokens != null)
                 {
-                    recipients.Add(toAddress.Trim());
+                    foreach (var property in tokens.GetType().GetProperties())
+                    {
+                        personalisationTokens[property.Name] = property.GetValue(tokens);
+                    }
                 }
+
+                await SendEmailViaNotificationsApi(toAddress, emailTemplate.TemplateId, personalisationTokens);
 
                 if (!string.IsNullOrWhiteSpace(emailTemplate.Recipients))
                 {
-                    recipients.AddRange(emailTemplate.Recipients.Split(';').Select(x => x.Trim()));
+                    _logger.LogInformation($"Sending {templateName} email to it's template recipients");
+                    foreach (var recipient in emailTemplate.Recipients.Split(';').Select(x => x.Trim()))
+                    {
+                        await SendEmailViaNotificationsApi(recipient, emailTemplate.TemplateId, personalisationTokens);
+                    }
                 }
+            }
+        }
 
-                var personalisationTokens = new Dictionary<string, string>();
+        public async Task SendEmailToContact(string templateName, Contact contact, dynamic tokens)
+        {
+            await SendEmailToContacts(templateName, new List<Contact> { contact }, tokens);
+        }
 
-                foreach (var property in tokens.GetType().GetProperties())
+        public async Task SendEmailToContacts(string templateName, IEnumerable<Contact> contacts, dynamic tokens)
+        {
+            var emailTemplate = await _emailTemplateRepository.GetEmailTemplate(templateName);
+
+            if (emailTemplate != null)
+            {
+                foreach(var contact in contacts?.Where(c => !string.IsNullOrWhiteSpace(c.Email)))
                 {
-                    personalisationTokens[property.Name] = property.GetValue(tokens);
-                }
+                    var personalisationTokens = new Dictionary<string, string>();
+                    personalisationTokens["contactname"] = $"{contact.GivenNames} {contact.FamilyName}";
 
-                foreach (var recipient in recipients)
-                {
-                    _logger.LogInformation($"Sending {templateName} email to {recipient}");
-                    await SendEmailViaNotificationsApi(recipient, emailTemplate.TemplateId, personalisationTokens);
+                    if (tokens != null)
+                    {
+                        foreach (var property in tokens.GetType().GetProperties())
+                        {
+                            personalisationTokens[property.Name] = property.GetValue(tokens);
+                        }
+                    }
+  
+                    await SendEmailViaNotificationsApi(contact.Email, emailTemplate.TemplateId, personalisationTokens);
+
+                    if (!string.IsNullOrWhiteSpace(emailTemplate.Recipients))
+                    {
+                        _logger.LogInformation($"Sending {templateName} email to it's template recipients");
+                        foreach (var recipient in emailTemplate.Recipients.Split(';').Select(x => x.Trim()))
+                        {
+                            await SendEmailViaNotificationsApi(recipient, emailTemplate.TemplateId, personalisationTokens);
+                        }
+                    }
                 }
             }
         }
@@ -80,6 +115,7 @@ namespace SFA.DAS.ApplyService.EmailService
 
             try
             {
+                _logger.LogInformation($"Sending email template {templateId} to {toAddress}");
                 await _notificationsApi.SendEmail(email);
             }
             catch(Exception ex)
