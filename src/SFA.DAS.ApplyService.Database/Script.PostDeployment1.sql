@@ -43,3 +43,9 @@ BEGIN
 	VALUES (NEWID(), 'Live', 'ApplyEPAOStandardSubmission', 'e0a52c44-10be-4164-9543-3c312769c4e3', 'epao.helpdesk@education.gov.uk', GETDATE(), 'System')
 END
 GO
+
+IF NOT EXISTS( select * from sys.sequences where object_id = object_id('AppRefSequence'))
+BEGIN
+	CREATE SEQUENCE [dbo].[AppRefSequence]  AS [int] START WITH 1235681 INCREMENT BY 1 MINVALUE -2147483648 MAXVALUE 2147483647 CYCLE  CACHE 
+END
+GO
