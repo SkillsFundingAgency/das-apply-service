@@ -37,7 +37,7 @@ namespace SFA.DAS.ApplyService.EmailService
         {
             var emailTemplate = await _emailTemplateRepository.GetEmailTemplate(templateName);
 
-            if (emailTemplate != null || !string.IsNullOrWhiteSpace(toAddress))
+            if (emailTemplate != null && !string.IsNullOrWhiteSpace(toAddress))
             {
                 var personalisationTokens = new Dictionary<string, string>();
 
@@ -49,16 +49,23 @@ namespace SFA.DAS.ApplyService.EmailService
                     }
                 }
 
-                await SendEmailViaNotificationsApi(toAddress, emailTemplate.TemplateId, personalisationTokens);
+                await SendEmailViaNotificationsApi(toAddress, emailTemplate.TemplateId, emailTemplate.TemplateName, personalisationTokens);
 
                 if (!string.IsNullOrWhiteSpace(emailTemplate.Recipients))
                 {
-                    _logger.LogInformation($"Sending {templateName} email to it's template recipients");
                     foreach (var recipient in emailTemplate.Recipients.Split(';').Select(x => x.Trim()))
                     {
-                        await SendEmailViaNotificationsApi(recipient, emailTemplate.TemplateId, personalisationTokens);
+                        await SendEmailViaNotificationsApi(recipient, emailTemplate.TemplateId, emailTemplate.TemplateName, personalisationTokens);
                     }
                 }
+            }
+            else if(emailTemplate is null)
+            {
+                _logger.LogError($"Cannot find email template {emailTemplate}");
+            }
+            else
+            {
+                _logger.LogError($"Cannot send email template {emailTemplate} to '{toAddress}'");
             }
         }
 
@@ -85,22 +92,25 @@ namespace SFA.DAS.ApplyService.EmailService
                             personalisationTokens[property.Name] = property.GetValue(tokens);
                         }
                     }
-  
-                    await SendEmailViaNotificationsApi(contact.Email, emailTemplate.TemplateId, personalisationTokens);
+
+                    await SendEmailViaNotificationsApi(contact.Email, emailTemplate.TemplateId, emailTemplate.TemplateName, personalisationTokens);
 
                     if (!string.IsNullOrWhiteSpace(emailTemplate.Recipients))
                     {
-                        _logger.LogInformation($"Sending {templateName} email to it's template recipients");
                         foreach (var recipient in emailTemplate.Recipients.Split(';').Select(x => x.Trim()))
                         {
-                            await SendEmailViaNotificationsApi(recipient, emailTemplate.TemplateId, personalisationTokens);
+                            await SendEmailViaNotificationsApi(recipient, emailTemplate.TemplateId, emailTemplate.TemplateName, personalisationTokens);
                         }
                     }
                 }
             }
+            else
+            {
+                _logger.LogError($"Cannot find email template {emailTemplate}");
+            }
         }
 
-        private async Task SendEmailViaNotificationsApi(string toAddress, string templateId, Dictionary<string, string> personalisationTokens)
+        private async Task SendEmailViaNotificationsApi(string toAddress, string templateId, string templateName, Dictionary<string, string> personalisationTokens)
         {
             // Note: It appears that if anything is hard copied in the template it'll ignore any values below
             var email = new Notifications.Api.Types.Email
@@ -115,12 +125,12 @@ namespace SFA.DAS.ApplyService.EmailService
 
             try
             {
-                _logger.LogInformation($"Sending email template {templateId} to {toAddress}");
+                _logger.LogInformation($"Sending {templateName} email to {toAddress}");
                 await _notificationsApi.SendEmail(email);
             }
             catch(Exception ex)
             {
-                _logger.LogError(ex, $"Error sending email template {templateId} to {toAddress}");
+                _logger.LogError(ex, $"Error sending {templateName} email to {toAddress}");
             }
         }
 
