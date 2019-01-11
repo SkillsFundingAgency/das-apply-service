@@ -25,5 +25,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types
 
         public string FatUri { get; set; }
         public string IfaUri { get; set; }
+
+        public string AssessmentPlanUrl { get; set; }
     }
 }
