@@ -24,6 +24,8 @@ namespace SFA.DAS.ApplyService.Data
             _config = configurationService.GetConfig().Result;
             SqlMapper.AddTypeHandler(typeof(OrganisationDetails), new OrganisationDetailsHandler());
             SqlMapper.AddTypeHandler(typeof(QnAData), new QnADataHandler());
+            SqlMapper.AddTypeHandler(typeof(ApplicationData), new ApplicationDataHandler());
+
         }
         public async Task<List<Domain.Entities.Application>> GetApplications(Guid userId)
         {
@@ -157,9 +159,9 @@ namespace SFA.DAS.ApplyService.Data
                                                     UPDATE Workflows SET Status = 'Deleted' WHERE Type = @workflowType;
 
                                                     INSERT INTO Workflows 
-                                                            (Description, Version, Type, Status, CreatedAt, CreatedBy) 
+                                                            (Description, Version, Type, Status, CreatedAt, CreatedBy, ReferenceFormat) 
                                                     OUTPUT INSERTED.[Id]
-                                                    VALUES  ('EPAO Workflow','1.0',@workflowType, 'Live', GETUTCDATE(), 'SpreadsheetImport'); ",
+                                                    VALUES  ('EPAO Workflow','1.0',@workflowType, 'Live', GETUTCDATE(), 'SpreadsheetImport', 'AAD'); ",
                     new {workflowType});
             }
         }
@@ -207,7 +209,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task SubmitApplicationSequence(ApplicationSubmitRequest request)
+        public async Task SubmitApplicationSequence(ApplicationSubmitRequest request, ApplicationData applicationdata)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
@@ -226,11 +228,11 @@ namespace SFA.DAS.ApplyService.Data
                                                 WHERE  (ApplicationSections.ApplicationId = @ApplicationId) AND (ApplicationSections.SequenceId = @SequenceId) AND Contacts.Id = @UserId;
 
                                                 UPDATE       Applications
-                                                SET                ApplicationStatus = 'Submitted'
+                                                SET                ApplicationStatus = 'Submitted', ApplicationData = @applicationdata
                                                 FROM            Applications INNER JOIN
                                                                 Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
                                                 WHERE  (Applications.Id = @ApplicationId) AND Contacts.Id = @UserId	",
-                    request);
+                    new {request.ApplicationId, request.UserId, request.SequenceId, applicationdata });
             }
             
         }
@@ -292,14 +294,14 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task UpdateApplicationData(Guid applicationId, string serialisedData)
+        public async Task UpdateApplicationData(Guid applicationId, ApplicationData applicationData)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(@"UPDATE Applications
-                                                SET    ApplicationData = @serialisedData
+                                                SET    ApplicationData = @applicationData
                                                 WHERE  Applications.Id = @applicationId",
-                    new {applicationId, serialisedData});
+                    new {applicationId, applicationData});
             }
         }
 
@@ -520,5 +522,29 @@ namespace SFA.DAS.ApplyService.Data
                     })).ToList();
             }
         }
+
+        public async Task<int> GetNextAppReferenceSequence()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<int>(@"SELECT NEXT VALUE FOR AppRefSequence")).FirstOrDefault();
+
+            }
+        }
+
+        public async Task<string> GetWorkflowReferenceFormat(Guid requestApplicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<string>(@"SELECT wf.ReferenceFormat
+                                FROM Applications app inner join Workflows wf ON wf.Id = app.CreatedFromWorkflowId
+                                AND app.id = @requestApplicationId",
+                    new
+                    {
+                        requestApplicationId
+                    })).FirstOrDefault();
+            }
+        }
+        
     }
 }

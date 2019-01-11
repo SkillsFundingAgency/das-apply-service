@@ -3,20 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.ViewModels;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
+    [Authorize]
     public class StandardController : Controller
     {
         private readonly IApplicationApiClient _apiClient;
-
-        public StandardController(IApplicationApiClient apiClient)
+        private readonly ISessionService _sessionService;
+        public StandardController(IApplicationApiClient apiClient, ISessionService sessionService)
         {
             _apiClient = apiClient;
+            _sessionService = sessionService;
         }
 
         [HttpGet("Standard/{applicationId}")]
@@ -72,12 +76,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
             }
-
             var applicationData =
                 new StandardApplicationData
                 {
                     StandardName = model.SelectedStandard?.Title,
-                    StandardCode = standardCode
+                    StandardCode = standardCode,
+                    UserEmail = User.FindFirstValue("Email")
                 };
 
             await _apiClient.UpdateApplicationData(applicationData, model.ApplicationId);

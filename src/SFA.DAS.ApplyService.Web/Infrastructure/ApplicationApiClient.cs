@@ -97,9 +97,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             await _httpClient.PostAsJsonAsync("/Application/Start", new {userId});
         }
 
-        public async Task Submit(Guid applicationId, int sequenceId, Guid userId)
+        public async Task Submit(Guid applicationId, int sequenceId, Guid userId, string userEmail)
         {
-            await _httpClient.PostAsJsonAsync("/Applications/Submit", new {applicationId, sequenceId, userId});
+            await _httpClient.PostAsJsonAsync("/Applications/Submit", new {applicationId, sequenceId, userId, userEmail });
         }
 
         public async Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId,

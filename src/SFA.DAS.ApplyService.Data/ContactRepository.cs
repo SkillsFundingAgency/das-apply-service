@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using SFA.DAS.ApplyService.Application.Users;
@@ -77,6 +78,15 @@ namespace SFA.DAS.ApplyService.Data
                     new { contactId, isApproved });
 
                 return rowsAffected > 0;
+            }
+        }
+
+        public async Task<Contact> GetContact(Guid userId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<Contact>(@"SELECT * FROM Contacts 
+                                                    WHERE Id = @userId", new { userId })).FirstOrDefault();
             }
         }
     }

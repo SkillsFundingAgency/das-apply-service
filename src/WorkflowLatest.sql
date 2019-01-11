@@ -2314,9 +2314,9 @@ GO
 
 if not exists(select * from workflows where Description='Epao Workflow' and Version='1.0')
 	INSERT [dbo].[Workflows]
-	  ([Id], [Description], [Version], [Type], [Status], [CreatedAt], [CreatedBy], [UpdatedAt], [UpdatedBy], [DeletedAt], [DeletedBy])
+	  ([Id], [Description], [Version], [Type], [Status], [CreatedAt], [CreatedBy], [UpdatedAt], [UpdatedBy], [DeletedAt], [DeletedBy], [ReferenceFormat])
 	VALUES
-	  (N'83b35024-8aef-440d-8f59-8c1cc459c350', N'EPAO Workflow', N'1.0', N'EPAO', N'Live', CAST(N'2018-12-12T14:41:46.0600000' AS DateTime2), N'Import', NULL, NULL, NULL, NULL)
+	  (N'83b35024-8aef-440d-8f59-8c1cc459c350', N'EPAO Workflow', N'1.0', N'EPAO', N'Live', CAST(N'2018-12-12T14:41:46.0600000' AS DateTime2), N'Import', NULL, NULL, NULL, NULL,N'AAD')
 GO
 DELETE FROM WorkflowSections where SequenceId=1 and SectionId=1
 
@@ -5467,4 +5467,4 @@ VALUES
     "FinancialApplicationGrade": null
   }  
 ', N'Apply to assess a standard', N'Apply to assess a standard', N'Draft', N'Questions', N'')
-GO
+GOGO

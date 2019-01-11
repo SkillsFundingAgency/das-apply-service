@@ -7,7 +7,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdateApplicationData
     {
         public Guid ApplicationId { get; }
         public object ApplicationData { get; }
-
         public UpdateApplicationDataRequest(Guid applicationId, object applicationData)
         {
             ApplicationId = applicationId;
