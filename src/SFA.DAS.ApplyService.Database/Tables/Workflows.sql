@@ -10,7 +10,8 @@ CREATE TABLE [dbo].[Workflows](
 	[UpdatedBy] [nvarchar](120) NULL,
 	[DeletedAt] [datetime2](7) NULL,
 	[DeletedBy] [nvarchar](120) NULL,
- CONSTRAINT [PK_Workflows] PRIMARY KEY CLUSTERED 
+ [ReferenceFormat] NVARCHAR(10) NULL, 
+    CONSTRAINT [PK_Workflows] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]

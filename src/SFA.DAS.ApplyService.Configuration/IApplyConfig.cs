@@ -16,5 +16,6 @@ namespace SFA.DAS.ApplyService.Configuration
         AssessorServiceApiAuthentication AssessorServiceApiAuthentication { get; set; }
         ProviderRegisterApiAuthentication ProviderRegisterApiAuthentication { get; set; }
         ReferenceDataApiAuthentication ReferenceDataApiAuthentication { get; set; }
+        string FeedbackUrl { get; set; }
     }
 }
