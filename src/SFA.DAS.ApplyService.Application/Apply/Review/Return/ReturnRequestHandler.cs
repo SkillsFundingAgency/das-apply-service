@@ -67,12 +67,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
         {
             var contactsToNotify = await _applyRepository.GetNotifyContactsForApplication(applicationId);
 
-            foreach (var contact in contactsToNotify)
-            {
-                // TODO: Think about a better way to send this as it will send a copy to the EPAO team for each contact
-                await _emailServiceObject.SendEmail(EmailTemplateName.APPLY_EPAO_UPDATE, contact.Email,
-                    new { contactname = $"{contact.GivenNames} {contact.FamilyName}", reference = applicationReference });
-            }
+            await _emailServiceObject.SendEmailToContacts(EmailTemplateName.APPLY_EPAO_UPDATE, contactsToNotify, new { reference = applicationReference });
         }
     }
 }

@@ -50,15 +50,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
                     }
                 }
             }
-            
-           
-            var contactsToNotify = await _applyRepository.GetNotifyContactsForApplication(request.ApplicationId);
 
             await _applyRepository.UpdateSections(sections);
 
             var referenceNumber = await UpdateApplication(request);
 
-            await NotifyContacts(contactsToNotify, referenceNumber);
+            await NotifyContacts(request.ApplicationId, referenceNumber);
 
             return Unit.Value;
         }
@@ -97,16 +94,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
             return referenceNumber;
         }
 
-        private async Task NotifyContacts(IEnumerable<Contact> contactsToNotify, string applicationReference)
-        {
-            foreach (var contact in contactsToNotify)
-            {
-                // TODO: Think about a better way to send this as it will send a copy to the EPAO team for each contact
-                await _emailServiceObject.SendEmail(EmailTemplateName.APPLY_EPAO_INITIAL_SUBMISSION, contact.Email,
-                    new { contactname = $"{contact.GivenNames} {contact.FamilyName}", reference = applicationReference });
-            }
-        }
-
         private async Task<string> CreateReferenceNumber(Guid applicationId)
         {
             var referenceNumber = string.Empty;
@@ -117,6 +104,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
             referenceNumber = string.Format($"{refFormat}{seq:D6}");
 
             return referenceNumber;
+        }
+
+        private async Task NotifyContacts(Guid applicationId, string applicationReference)
+        {
+            var contactsToNotify = await _applyRepository.GetNotifyContactsForApplication(applicationId);
+
+            await _emailServiceObject.SendEmailToContacts(EmailTemplateName.APPLY_EPAO_INITIAL_SUBMISSION, contactsToNotify, new { reference = applicationReference });
         }
     }
 }
