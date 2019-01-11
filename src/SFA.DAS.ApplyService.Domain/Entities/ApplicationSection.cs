@@ -35,7 +35,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         {
             get { return QnAData.Pages.Count(p => p.Active && p.Complete); }
         }
-        
+
         public int PagesActive
         {
             get { return QnAData.Pages.Count(p => p.Active); }
@@ -55,18 +55,16 @@ namespace SFA.DAS.ApplyService.Domain.Entities
             var currentPages = QnAData.Pages;
 
             var currentPageIndex = currentPages.IndexOf(currentPages.Single(p => p.PageId == page.PageId));
-            
+
             currentPages.RemoveAt(currentPageIndex);
             currentPages.Insert(currentPageIndex, page);
 
             QnAData.Pages = currentPages;
         }
-        
-        [JsonIgnore]
-        public bool HasNewPageFeedback => QnAData.Pages.Any(p => p.HasNewFeedback);
 
-        [JsonIgnore]
-        public bool HasNewSectionFeedback => QnAData.HasNewFeedback;
+        [JsonIgnore] public bool HasNewPageFeedback => QnAData.Pages.Any(p => p.HasNewFeedback);
+
+        [JsonIgnore] public bool HasNewSectionFeedback => QnAData.HasNewFeedback;
     }
 
     public class ApplicationSectionStatus
@@ -75,5 +73,28 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string InProgress = "In Progress";
         public const string Graded = "Graded";
         public const string Evaluated = "Evaluated";
+    }
+
+    public class ApplicationData
+    {
+        public string ReferenceNumber { get; set; }
+        public int StandardCode { get; set; }
+        public string StandardName { get; set; }
+        public List<InitSubmission> InitSubmissions { get; set; }
+        public List<StandardSubmission> StandardSubmissions { get; set; }
+    }
+
+    public abstract class Submission
+    {
+        public DateTime SubmittedAt { get; set; }
+        public string SubmittedBy { get; set; }
+    }
+
+    public class InitSubmission : Submission
+    {
+    }
+
+    public class StandardSubmission : Submission
+    {
     }
 }

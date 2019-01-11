@@ -25,12 +25,12 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task CreateSection(WorkflowSection section);
         Task AddAssets(Dictionary<string,string> assets);
         Task<List<dynamic>> GetNewApplications(int sequenceId);
-        Task SubmitApplicationSequence(ApplicationSubmitRequest request);
+        Task SubmitApplicationSequence(ApplicationSubmitRequest request, ApplicationData applicationdata);
         Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string status, string applicationStatus);
         Task CloseSequence(Guid applicationId, int sequenceId);
         Task<List<ApplicationSequence>> GetSequences(Guid applicationId);
         Task OpenSequence(Guid applicationId, int nextSequenceId);
-        Task UpdateApplicationData(Guid requestApplicationId, string serialisedData);
+        Task UpdateApplicationData(Guid applicationId, ApplicationData applicationData);
         Task<Domain.Entities.Application> GetApplication(Guid requestApplicationId);
         Task UpdateApplicationStatus(Guid applicationId, string status);
         Task<List<ApplicationSection>> GetSections(Guid applicationId);
@@ -47,5 +47,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<WorkflowSection>> GetWorkflowSections();
 
         Task<List<Contact>> GetNotifyContactsForApplication(Guid requestApplicationId);
+        Task<int> GetNextAppReferenceSequence();
+        Task<string> GetWorkflowReferenceFormat(Guid requestApplicationId);
     }
 }

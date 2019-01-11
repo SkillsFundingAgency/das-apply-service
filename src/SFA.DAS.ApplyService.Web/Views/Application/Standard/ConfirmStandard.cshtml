@@ -1,4 +1,5 @@
 ﻿@using SFA.DAS.ApplyService.Web.ViewModels
+@using SFA.DAS.ApplyService.Domain.Extensions
 @model SFA.DAS.ApplyService.Web.ViewModels.StandardViewModel
 
 @{
@@ -33,8 +34,17 @@
                 @Model.SelectedStandard?.Title
             </h1>
             <p class="govuk-body-l govuk-!-margin-bottom-2">Standard Code: @Model.SelectedStandard?.StandardId</p>
-            <p class="govuk-body govuk-!-margin-bottom-0">Effective from: @Model.SelectedStandard?.StandardData?.EffectiveFrom</p>
-            <p class="govuk-body">Effective to: @Model.SelectedStandard?.StandardData?.EffectiveTo</p>
+            <p class="govuk-body govuk-!-margin-bottom-0">Effective from: @Model.SelectedStandard?.StandardData?.EffectiveFrom.ToSfaShortDateString()</p>
+            <p class="govuk-body">
+                Effective to: @if (@Model.SelectedStandard?.StandardData?.EffectiveTo == null)
+                {
+                    @Html.Raw("No expiry date set")
+                }
+                else
+                {
+                    @Model.SelectedStandard?.StandardData?.EffectiveTo.ToSfaShortDateString()
+                }
+            </p>
 
             <form asp-action="StandardConfirm" asp-controller="Standard" asp-route-applicationId="@Model.ApplicationId">
                 <input asp-for="@Model.StandardCode" value="@standardCode" type="hidden" />
@@ -52,14 +62,14 @@
                             <div class="govuk-checkboxes__item">
                                 <input class="govuk-checkboxes__input" asp-for="@Model.IsConfirmed" name="IsConfirmed" type="checkbox">
                                 <label class="govuk-label govuk-checkboxes__label" for="IsConfirmed">
-                                    By continuing with this application you are confirming you have read the assessment plan
+                                    By continuing with this application you are confirming you have <a href="@Model.SelectedStandard.StandardData.AssessmentPlanUrl" target="_blank">read the assessment plan</a> (PDF).
                                 </label>
                             </div>
                         </div>
                     </div>
                     <button type="submit" class="govuk-button">Confirm and apply</button>
                 }
-            
+
                 @if (!string.IsNullOrEmpty(Model.ApplicationStatus))
                 {
                     if (Model.ApplicationStatus == "Approved")
