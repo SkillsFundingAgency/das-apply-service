@@ -55,7 +55,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
 
             var referenceNumber = await UpdateApplication(request);
 
-            await NotifyContacts(request.ApplicationId, referenceNumber);
+            var contact = await _contactRepository.GetContact(request.UserEmail);
+
+            await NotifyContact(contact, request.SequenceId, referenceNumber);
 
             return Unit.Value;
         }
@@ -106,11 +108,17 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
             return referenceNumber;
         }
 
-        private async Task NotifyContacts(Guid applicationId, string applicationReference)
+        private async Task NotifyContact(Contact contact, int sequenceId, string referenceNumber, int standardCode = int.MinValue)
         {
-            var contactsToNotify = await _applyRepository.GetNotifyContactsForApplication(applicationId);
-
-            await _emailServiceObject.SendEmailToContacts(EmailTemplateName.APPLY_EPAO_INITIAL_SUBMISSION, contactsToNotify, new { reference = applicationReference });
+            if (sequenceId == 1)
+            {
+                await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_INITIAL_SUBMISSION, contact, new { reference = referenceNumber });
+            }
+            else if (sequenceId == 2)
+            {
+                // TODO: Get the correct standard code
+                await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_STANDARD_SUBMISSION, contact, new { reference = referenceNumber, standard = standardCode });
+            }
         }
     }
 }
