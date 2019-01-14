@@ -417,7 +417,26 @@ VALUES
                       ]
             },
             "Order": null
-          },
+          }
+        ],
+        "PageOfAnswers": [],
+        "Next": [
+          {
+             "Action": "ReturnToSection",
+            "ReturnId": "4",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+        "Complete": false,
+        "AllowMultipleAnswers": false,
+        "Order": null,
+        "Active": true,
+        "Visible": true,
+        "Feedback": null,
+        "HasFeedback": false,
+        "BodyText": "SQ-2-SE-4-PG-24-BT-1"
+      },
 	  {
         "PageId": "27",
         "SequenceId": "2",
@@ -439,7 +458,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Provide number of assessors"
+                          "ErrorMessage": "Field must not be empty"
                         }
                       ]
             },

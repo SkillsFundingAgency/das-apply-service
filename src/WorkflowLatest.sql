@@ -2312,6 +2312,8 @@ VALUES
   (NEWID(), 'SQ-2-SE-4-PG-24-CC-07-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
 GO
 
+DELETE FROM workflows where Description='Epao Workflow' and Version='1.0'
+
 if not exists(select * from workflows where Description='Epao Workflow' and Version='1.0')
 	INSERT [dbo].[Workflows]
 	  ([Id], [Description], [Version], [Type], [Status], [CreatedAt], [CreatedBy], [UpdatedAt], [UpdatedBy], [DeletedAt], [DeletedBy], [ReferenceFormat])

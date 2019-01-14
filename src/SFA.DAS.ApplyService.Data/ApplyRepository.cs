@@ -69,12 +69,20 @@ namespace SFA.DAS.ApplyService.Data
                             WHERE seq.ApplicationId = @applicationId 
                             AND seq.IsActive = 1", new {applicationId});
 
-                var sections = (await connection.QueryAsync<ApplicationSection>(@"SELECT * FROM ApplicationSections 
+                try
+                {
+                    var sections = (await connection.QueryAsync<ApplicationSection>(@"SELECT * FROM ApplicationSections 
                             WHERE ApplicationId = @ApplicationId 
                             AND SequenceId = @SequenceId",
                         sequence)).ToList();
 
-                sequence.Sections = sections;
+                    sequence.Sections = sections;
+                }
+                catch (Exception e)
+                {
+                    var x = e.Message;
+                }
+                
                 
                 return sequence;
             }
