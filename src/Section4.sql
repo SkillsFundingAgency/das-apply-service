@@ -366,7 +366,7 @@ VALUES
             "Label": "SQ-2-SE-4-PG-26-CC-20-L-1",
             "ShortLabel": "SQ-2-SE-4-PG-26-CC-20-SL-1",
             "QuestionBodyText": "SQ-2-SE-4-PG-26-CC-20-QB-1",
-            "Hint": "SQ-2-SE-4-PG-25-CC-16-H-1",
+            "Hint": "SQ-2-SE-4-PG-26-CC-20-H-1",
             "Input": {
               "Type": "text",
                       "Options": null,
@@ -385,7 +385,7 @@ VALUES
             "Label": "SQ-2-SE-4-PG-26-CC-21-L-1",
             "ShortLabel": "SQ-2-SE-4-PG-26-CC-21-SL-1",
             "QuestionBodyText": "SQ-2-SE-4-PG-26-CC-21-QB-1",
-            "Hint": "SQ-2-SE-4-PG-25-CC-16-H-1",
+            "Hint": "SQ-2-SE-4-PG-26-CC-21-H-1",
             "Input": {
               "Type": "text",
                       "Options": null,
@@ -404,7 +404,7 @@ VALUES
             "Label": "SQ-2-SE-4-PG-26-CC-22-L-1",
             "ShortLabel": "SQ-2-SE-4-PG-26-CC-22-SL-1",
             "QuestionBodyText": "SQ-2-SE-4-PG-26-CC-22-QB-1",
-            "Hint": "SQ-2-SE-4-PG-25-CC-16-H-1",
+            "Hint": "SQ-2-SE-4-PG-26-CC-22-H-1",
             "Input": {
               "Type": "text",
                       "Options": null,
@@ -417,8 +417,34 @@ VALUES
                       ]
             },
             "Order": null
+          },
+	  {
+        "PageId": "27",
+        "SequenceId": "2",
+        "SectionId": "4",
+        "Title": "SQ-2-SE-4-PG-27-T-1",
+        "LinkTitle": "SQ-2-SE-4-PG-27-LT-1",
+        "InfoText": "SQ-2-SE-4-PG-27-IT-1",
+        "Questions": [
+		  {
+            "QuestionId": "CC-23",
+            "Label": "SQ-2-SE-4-PG-27-CC-23-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-27-CC-23-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-27-CC-23-QB-1",
+            "Hint": "SQ-2-SE-4-PG-27-CC-23-H-1",
+            "Input": {
+              "Type": "text",
+                      "Options": null,
+                      "Validations": [
+                        {
+                          "Name": "Required",
+                          "Value": null,
+                          "ErrorMessage": "Provide number of assessors"
+                        }
+                      ]
+            },
+            "Order": null
           }
-
         ],
         "PageOfAnswers": [],
         "Next": [
