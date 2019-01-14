@@ -58,21 +58,18 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
                     ApplicationSequenceStatus.Rejected, ApplicationStatus.Rejected);
             }
 
-            await NotifyContacts(request.ApplicationId, "unknown reference"); // TODO: Get application reference
+            await NotifyContacts(request.ApplicationId);
 
             return Unit.Value;
         }
 
-        private async Task NotifyContacts(Guid applicationId, string applicationReference)
+        private async Task NotifyContacts(Guid applicationId)
         {
             var contactsToNotify = await _applyRepository.GetNotifyContactsForApplication(applicationId);
+            var application = await _applyRepository.GetApplication(applicationId);
+            var referenceNumber = application.ApplicationData?.ReferenceNumber ?? string.Empty;
 
-            foreach (var contact in contactsToNotify)
-            {
-                // TODO: Think about a better way to send this as it will send a copy to the EPAO team for each contact
-                await _emailServiceObject.SendEmail(EmailTemplateName.APPLY_EPAO_UPDATE, contact.Email,
-                    new { contactname = $"{contact.GivenNames} {contact.FamilyName}", reference = applicationReference });
-            }
+            await _emailServiceObject.SendEmailToContacts(EmailTemplateName.APPLY_EPAO_UPDATE, contactsToNotify, new { reference = referenceNumber });
         }
     }
 }

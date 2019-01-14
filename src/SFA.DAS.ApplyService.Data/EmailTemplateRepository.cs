@@ -28,7 +28,7 @@ namespace SFA.DAS.ApplyService.Data
                 var sql =
                     "SELECT * " +
                     "FROM [EmailTemplates] " +
-                    "WHERE TemplateName LIKE @templateName " + 
+                    "WHERE TemplateName = @templateName " + 
                     "AND Status = 'Live'";
 
                 var emailTemplates = await connection.QueryAsync<EmailTemplate>(sql, new { templateName });

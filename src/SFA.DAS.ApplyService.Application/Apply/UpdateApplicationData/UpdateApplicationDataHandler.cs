@@ -27,9 +27,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdateApplicationData
             var standardAppData = JsonConvert.DeserializeObject<StandardApplicationData>(request.ApplicationData.ToString()); 
             var application = await _applyRepository.GetApplication(request.ApplicationId);
             //application data entry must exist in application table
-            if (application?.ApplicationData == null) return Unit.Value;
+            if (application== null) return Unit.Value;
+            if (application?.ApplicationData == null)
+                application.ApplicationData = new ApplicationData(); 
             application.ApplicationData.StandardName = standardAppData.StandardName;
             application.ApplicationData.StandardCode = standardAppData.StandardCode;
+
             if (application.ApplicationData.StandardSubmissions == null)
             {
                 application.ApplicationData.StandardSubmissions = new List<StandardSubmission>
