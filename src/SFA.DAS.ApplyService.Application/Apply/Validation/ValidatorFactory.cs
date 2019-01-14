@@ -25,10 +25,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
                 {
                     var validator = _serviceProvider.GetServices<IValidator>()
                         .FirstOrDefault(v => v.GetType().Name == inputValidation.Name + "Validator");
-                    
-                    validator.ValidationDefinition = inputValidation;
 
-                    validators.Add(validator);
+                    if (validator != null)
+                    {
+                        validator.ValidationDefinition = inputValidation;
+                        validators.Add(validator);
+                    }
                 }   
             }
             else
