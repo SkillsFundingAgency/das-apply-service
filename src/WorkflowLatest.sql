@@ -2260,59 +2260,12 @@ INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
   (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-452', '', '', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-T-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-T-1', '', ' Your policies and practices', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-LT-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-LT-1', '', ' Your policies and practices', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-03-L-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-03-L-1', '', ' Upload a copy of your fraud and financial irregularity policy', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-07-L-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-07-L-1', '', ' Upload a copy of your insurance certificate', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-03-SL-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-03-SL-1', '', ' Fraud & financial irregularity policy', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-07-SL-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-07-SL-1', '', ' Proof of insurance', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-03-QB-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-03-QB-1', '', '', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-03-H-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-03-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-07-QB-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-07-QB-1', '', '', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-07-H-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-07-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+
 GO
 
 DELETE FROM workflows where Description='Epao Workflow' and Version='1.0'
+
+GO
 
 if not exists(select * from workflows where Description='Epao Workflow' and Version='1.0')
 	INSERT [dbo].[Workflows]
@@ -5206,652 +5159,10 @@ VALUES
 GO
 
 
--- SECTION 4 WORK
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-T-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-T-1', '', 'Your policies and procedures', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-LT-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-LT-1', '', '', 'Live', GETUTCDATE(), 'Import')
-
--- page 24 question 1
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-01-L-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-01-L-1', '', 'Information Commisioner''s Office (ICO) registration number', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-01-SL-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-01-SL-1', '', 'Information Commisoner''s Office Registration', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-01-QB-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-01-QB-1', '','Provide your Information Commisioner''s Office (ICO) registration number', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-01-H-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-01-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-BT-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-BT-1', '', '', 'Live', GETUTCDATE(), 'Import')
-
--- page 24 question 2
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-02-L-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-02-L-1', '', 'Internal audit policy', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-02-SL-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-02-SL-1', '', 'Internal Audit Policy', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-02-QB-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-02-QB-1', '','Upload a PDF of your organisation''s internal audit policy in respect to fraud and financial irregularity', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-02-H-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-02-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
-
--- page 24 question 3
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-03-L-1';  -- Row L
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-03-L-1', '', 'Public Liability Insurance', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-03-SL-1'; -- Row J
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-03-SL-1', '', 'Public Liability Insurance', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-03-QB-1';   -- Row P
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-03-QB-1', '','Upload a PDF of your public liability certificate of insurance', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-03-H-1';   -- Row AA
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-03-H-1', '', 'If you are providing any form of training or consultancy, you must have public liability insurance.', 'Live', GETUTCDATE(), 'Import')
-
-
--- page 24 question 4
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-04-L-1';  -- Row L
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-04-L-1', '', 'Professional indemnity insurance', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-04-SL-1'; -- Row J
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-04-SL-1', '', 'Professional indemnity insurance', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-04-QB-1';   -- Row P
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-04-QB-1', '','Upload a PDF of your professional indemnity certificate of insurance', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-04-H-1';   -- Row AA
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-04-H-1', '', 'If you are providing any form of training or consultancy, you must have professional indemnity insurance.', 'Live', GETUTCDATE(), 'Import')
-
--- page 24 question 5
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-05-L-1';  -- Row L
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-05-L-1', '', 'Employers liability insurance', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-05-SL-1'; -- Row J
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-05-SL-1', '', 'Employers liability insurance', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-05-QB-1';   -- Row P
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-05-QB-1', '','Upload a PDF of your employers liability certificate of insurance (optional)', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-05-H-1';   -- Row AA
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-05-H-1', '', 'If you have any employees, you must have employers liability insurance. ', 'Live', GETUTCDATE(), 'Import')
-
-
-
-  -- page 24 question 6
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-06-L-1';  -- Row L
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-06-L-1', '', 'Safeguarding policy', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-06-SL-1'; -- Row J
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-06-SL-1', '', 'Safeguarding policy', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-06-QB-1';   -- Row P
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-06-QB-1', '','Upload a PDF of your safeguarding policy', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-06-H-1';   -- Row AA
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-06-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
-
--- page 24 question 7
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-07-L-1';  -- Row L
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-07-L-1', '', 'Prevent Agenda policy', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-07-SL-1'; -- Row J
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-07-SL-1', '', 'Prevent Agenda policy', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-07-QB-1';   -- Row P
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-07-QB-1', '','Upload your PDF conflict of interest policy document', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-07-H-1';   -- Row AA
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-07-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
-
-  -- page 24 question 8
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-08-L-1';  -- Row L
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-08-L-1', '', 'Conflict of interest policy', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-08-SL-1'; -- Row J
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-08-SL-1', '', 'Conflict of interest policy', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-08-QB-1';   -- Row P
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-08-QB-1', '','Upload a PDF of your conflict of interest policy', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-08-H-1';   -- Row AA
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-08-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
-
--- page 24 question 9
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-09-L-1';  -- Row L
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-09-L-1', '', 'Monitoring procedures', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-09-SL-1'; -- Row J
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-09-SL-1', '', 'Monitoring procedures', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-09-QB-1';   -- Row P
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-09-QB-1', '','Upload a PDF of your procedures for monitoring assessor practices and decisions', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-09-H-1';   -- Row AA
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-09-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
-
--- page 24 question 10
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-10-L-1';  -- Row L
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-10-L-1', '', 'Moderation processes', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-10-SL-1'; -- Row J
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-10-SL-1', '', 'Moderation processes', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-10-QB-1';   -- Row P
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-10-QB-1', '','Upload a PDF describing your standardisation and moderation activities, including how you sample assessment decisions', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-10-H-1';   -- Row AA
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-10-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
-
--- page 24 question 11
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-11-L-1';  -- Row L
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-11-L-1', '', 'Complaints and appeals policy', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-11-SL-1'; -- Row J
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-11-SL-1', '', 'Employers liability insurance', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-11-QB-1';   -- Row P
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-11-QB-1', '','Upload a PDF of your complaints and appeals policy', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-11-H-1';   -- Row AA
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-11-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
-
-  -- page 24 question 12
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-12-L-1';  -- Row L
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-12-L-1', '', 'Fair Access', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-12-SL-1'; -- Row J
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-12-SL-1', '', 'Fair Access', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-12-QB-1';   -- Row P
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-12-QB-1', '','Upload a PDF of your Fair Access policy', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-12-H-1';   -- Row AA
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-12-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
-
-  -- page 24 question 13
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-13-L-1';  -- Row L
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-13-L-1', '', 'Consistency assurance', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-13-SL-1'; -- Row J
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-13-SL-1', '', 'Consistency assurance', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-13-QB-1';   -- Row P
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-13-QB-1', '','Upload a PDF of your strategy for ensuring comparability and consistency of assessment decisions', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-13-H-1';   -- Row AA
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-13-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
-  
-
-  -- page 24 question 14
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-14-L-1';  -- Row L
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-14-L-1', '', 'How do you continuously improve the quality of your assessment practice?', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-14-SL-1'; -- Row J
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-14-SL-1', '', 'Continuous quality assurance', 'Live', GETUTCDATE(), 'Import')
-
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-14-QB-1';   -- Row P
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-14-QB-1', '','Upload a PDF of your employers liability certificate of insurance (optional)', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-14-H-1';   -- Row AA
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-14-H-1', '', 'If you have any employees, you must have employers liability insurance. ', 'Live', GETUTCDATE(), 'Import')
-
-
----- END OF SECTION 4 ASSETS
-DELETE FROM WorkflowSections where SequenceId = 2 and SectionId = 4
-INSERT [dbo].[WorkflowSections]
-  ([Id], [WorkflowId], [SequenceId], [SectionId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType], [DisallowedOrgTypes])
-VALUES
-  (N'b4951ead-ee4a-49f2-a31e-3a658605e32a', N'83b35024-8aef-440d-8f59-8c1cc459c350', 2, 4, N'
-{
-    "Pages": [
-      {
-        "PageId": "24",
-        "SequenceId": "2",
-        "SectionId": "4",
-        "Title": "SQ-2-SE-4-PG-24-T-1",
-        "LinkTitle": "SQ-2-SE-4-PG-24-LT-1",
-        "InfoText": "SQ-2-SE-4-PG-24-IT-1",
-        "Questions": [
-		  {
-            "QuestionId": "CC-01",
-            "Label": "SQ-2-SE-4-PG-24-CC-01-L-1",
-            "ShortLabel": "SQ-2-SE-4-PG-24-CC-01-SL-1",
-            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-01-QB-1",
-            "Hint": "SQ-2-SE-4-PG-24-CC-01-H-1",
-            "Input": {
-              "Type": "text",
-                      "Options": null,
-                      "Validations": [
-                        {
-                          "Name": "Required",
-                          "Value": null,
-                          "ErrorMessage": "Enter your ICO registration number"
-                        }
-                      ]
-            },
-            "Order": null
-          },
-          {
-            "QuestionId": "CC-02",
-            "Label": "SQ-2-SE-4-PG-24-CC-02-L-1",
-            "ShortLabel": "SQ-2-SE-4-PG-24-CC-02-SL-1",
-            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-02-QB-1",
-            "Hint": "SQ-2-SE-4-PG-24-CC-02-H-1",
-            "Input": {
-              "Type": "FileUpload",
-              "Options": null,
-              "Validations": [
-                {
-                  "Name": "Required",
-                  "Value": null,
-                  "ErrorMessage": "Upload your PDF policy document"
-                }
-              ]
-            },
-            "Order": null
-          },
-          {
-            "QuestionId": "CC-03",
-            "Label": "SQ-2-SE-4-PG-24-CC-03-L-1",
-            "ShortLabel": "SQ-2-SE-4-PG-24-CC-03-SL-1",
-            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-03-QB-1",
-            "Hint": "SQ-2-SE-4-PG-24-CC-03-H-1",
-            "Input": {
-              "Type": "FileUpload",
-              "Options": null,
-              "Validations": [
-                {
-                  "Name": "Required",
-                  "Value": null,
-                  "ErrorMessage": "Upload your PDF of your public liability certificate of insurance"
-                }
-              ]
-            },
-            "Order": null
-          },
-          {
-            "QuestionId": "CC-04",
-            "Label": "SQ-2-SE-4-PG-24-CC-04-L-1",
-            "ShortLabel": "SQ-2-SE-4-PG-24-CC-04-SL-1",
-            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-04-QB-1",
-            "Hint": "SQ-2-SE-4-PG-24-CC-04-H-1",
-            "Input": {
-              "Type": "FileUpload",
-              "Options": null,
-              "Validations": [
-                {
-                  "Name": "Required",
-                  "Value": null,
-                  "ErrorMessage": "Upload your PDF of your professional indemnity certificate of insurance"
-                }
-              ]
-            },
-            "Order": null
-          },
-          {
-            "QuestionId": "CC-05",
-            "Label": "SQ-2-SE-4-PG-24-CC-05-L-1",
-            "ShortLabel": "SQ-2-SE-4-PG-24-CC-05-SL-1",
-            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-05-QB-1",
-            "Hint": "SQ-2-SE-4-PG-24-CC-05-H-1",
-            "Input": {
-              "Type": "FileUpload",
-              "Options": null,
-              "Validations": []
-            },
-            "Order": null
-          },
-          {
-            "QuestionId": "CC-06",
-            "Label": "SQ-2-SE-4-PG-24-CC-06-L-1",
-            "ShortLabel": "SQ-2-SE-4-PG-24-CC-06-SL-1",
-            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-06-QB-1",
-            "Hint": "SQ-2-SE-4-PG-24-CC-06-H-1",
-            "Input": {
-              "Type": "FileUpload",
-              "Options": null,
-              "Validations": [
-                {
-                  "Name": "Required",
-                  "Value": null,
-                  "ErrorMessage": "Upload your PDF of your policy safeguarding document"
-                }
-              ]
-            },
-            "Order": null
-          },
-          {
-            "QuestionId": "CC-07",
-            "Label": "SQ-2-SE-4-PG-24-CC-07-L-1",
-            "ShortLabel": "SQ-2-SE-4-PG-24-CC-07-SL-1",
-            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-07-QB-1",
-            "Hint": "SQ-2-SE-4-PG-24-CC-07-H-1",
-            "Input": {
-              "Type": "FileUpload",
-              "Options": null,
-              "Validations": [
-                {
-                  "Name": "Required",
-                  "Value": null,
-                  "ErrorMessage": "Upload your PDF Prevent Agenda policy document"
-                }
-              ]
-            },
-            "Order": null
-          },
-          {
-            "QuestionId": "CC-08",
-            "Label": "SQ-2-SE-4-PG-24-CC-08-L-1",
-            "ShortLabel": "SQ-2-SE-4-PG-24-CC-08-SL-1",
-            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-08-QB-1",
-            "Hint": "SQ-2-SE-4-PG-24-CC-08-H-1",
-            "Input": {
-              "Type": "FileUpload",
-              "Options": null,
-              "Validations": [
-                {
-                  "Name": "Required",
-                  "Value": null,
-                  "ErrorMessage": "Upload your PDF conflict of interest policy document"
-                }
-              ]
-            },
-            "Order": null
-          },
-          {
-            "QuestionId": "CC-09",
-            "Label": "SQ-2-SE-4-PG-24-CC-09-L-1",
-            "ShortLabel": "SQ-2-SE-4-PG-24-CC-09-SL-1",
-            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-09-QB-1",
-            "Hint": "SQ-2-SE-4-PG-24-CC-09-H-1",
-            "Input": {
-              "Type": "FileUpload",
-              "Options": null,
-              "Validations": [
-                {
-                  "Name": "Required",
-                  "Value": null,
-                  "ErrorMessage": "Upload your PDF procedure for monitoring assessor policy document"
-                }
-              ]
-            },
-            "Order": null
-          },
-          {
-            "QuestionId": "CC-10",
-            "Label": "SQ-2-SE-4-PG-24-CC-10-L-1",
-            "ShortLabel": "SQ-2-SE-4-PG-24-CC-10-SL-1",
-            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-10-QB-1",
-            "Hint": "SQ-2-SE-4-PG-24-CC-10-H-1",
-            "Input": {
-              "Type": "FileUpload",
-              "Options": null,
-              "Validations": [
-                {
-                  "Name": "Required",
-                  "Value": null,
-                  "ErrorMessage": "Upload your PDF standardisation and moderation policy document"
-                }
-              ]
-            },
-            "Order": null
-          },
-          {
-            "QuestionId": "CC-11",
-            "Label": "SQ-2-SE-4-PG-24-CC-11-L-1",
-            "ShortLabel": "SQ-2-SE-4-PG-24-CC-11-SL-1",
-            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-11-QB-1",
-            "Hint": "SQ-2-SE-4-PG-24-CC-11-H-1",
-            "Input": {
-              "Type": "FileUpload",
-              "Options": null,
-              "Validations": [
-                {
-                  "Name": "Required",
-                  "Value": null,
-                  "ErrorMessage": "Upload your PDF compalints policy document"
-                }
-              ]
-            },
-            "Order": null
-          },
-          {
-            "QuestionId": "CC-12",
-            "Label": "SQ-2-SE-4-PG-24-CC-12-L-1",
-            "ShortLabel": "SQ-2-SE-4-PG-24-CC-12-SL-1",
-            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-12-QB-1",
-            "Hint": "SQ-2-SE-4-PG-24-CC-12-H-1",
-            "Input": {
-              "Type": "FileUpload",
-              "Options": null,
-              "Validations": [
-                {
-                  "Name": "Required",
-                  "Value": null,
-                  "ErrorMessage": "Upload your PDF fair access policy document"
-                }
-              ]
-            },
-            "Order": null
-          },
-          {
-            "QuestionId": "CC-13",
-            "Label": "SQ-2-SE-4-PG-24-CC-13-L-1",
-            "ShortLabel": "SQ-2-SE-4-PG-24-CC-13-SL-1",
-            "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-13-QB-1",
-            "Hint": "SQ-2-SE-4-PG-24-CC-13-H-1",
-            "Input": {
-              "Type": "FileUpload",
-              "Options": null,
-              "Validations": [
-                {
-                  "Name": "Required",
-                  "Value": null,
-                  "ErrorMessage": "Upload your PDF comparability and consistency policy document"
-                }
-              ]
-            },
-            "Order": null
-          }
-        ],
-        "PageOfAnswers": [],
-        "Next": [
-          {
-             "Action": "ReturnToSection",
-            "ReturnId": "4",
-            "Condition": null,
-            "ConditionMet": false
-          }
-        ],
-        "Complete": false,
-        "AllowMultipleAnswers": false,
-        "Order": null,
-        "Active": true,
-        "Visible": true,
-        "Feedback": null,
-        "HasFeedback": false,
-        "BodyText": "SQ-2-SE-4-PG-24-BT-1"
-      }
-    ],
-    "FinancialApplicationGrade": null
-  }  
-', N'Apply to assess a standard', N'Apply to assess a standard', N'Draft', N'Questions', N'')
-GO
-
-
 
 
 -- SECTION 4 WORK
-
+--SECTION 4
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-T-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
@@ -5892,7 +5203,18 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-25-LT-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-25-LT-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-26-LT-1', '', '', 'Live', GETUTCDATE(), 'Import')
+
+  DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-27-T-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-27-T-1', '', 'Your professional standards', 'Live', GETUTCDATE(), 'Import')
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-27-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-27-LT-1', '', '', 'Live', GETUTCDATE(), 'Import')
 
 
 -- page 24 question 1
@@ -6399,8 +5721,31 @@ VALUES
   (NEWID(), 'SQ-2-SE-4-PG-26-CC-22-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
 
 
+      -- page 27 question 23
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-27-CC-23-L-1';  -- Row L
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-27-CC-23-L-1', '', 'How do you recruit and train assessors?', 'Live', GETUTCDATE(), 'Import')
 
----- END OF SECTION 4 ASSETS
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4--CC-23-SL-1'; -- Row J
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-27-CC-23-SL-1', '', 'Recruitment and training','Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-27-CC-23-QB-1';   -- Row P
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-27-CC-23-QB-1', '',N'<p class=\"govuk-body\">All assessors must be qualified to undertake assessments in line with the requirements laid out in the assessment plan.</p><p class=\"govuk-body\">They must have expertise and experience in designing and developing assessment products and tools where this is a requirement of the assessment plan</p>',  'Live', GETUTCDATE(), 'I	mport')
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-27-CC-23-H-1';   -- Row AA
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-27-CC-23-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+
+GO
 
 
 DELETE FROM WorkflowSections where SequenceId = 2 and SectionId = 4
@@ -6769,7 +6114,7 @@ VALUES
             "Label": "SQ-2-SE-4-PG-26-CC-20-L-1",
             "ShortLabel": "SQ-2-SE-4-PG-26-CC-20-SL-1",
             "QuestionBodyText": "SQ-2-SE-4-PG-26-CC-20-QB-1",
-            "Hint": "SQ-2-SE-4-PG-25-CC-16-H-1",
+            "Hint": "SQ-2-SE-4-PG-26-CC-20-H-1",
             "Input": {
               "Type": "text",
                       "Options": null,
@@ -6788,7 +6133,7 @@ VALUES
             "Label": "SQ-2-SE-4-PG-26-CC-21-L-1",
             "ShortLabel": "SQ-2-SE-4-PG-26-CC-21-SL-1",
             "QuestionBodyText": "SQ-2-SE-4-PG-26-CC-21-QB-1",
-            "Hint": "SQ-2-SE-4-PG-25-CC-16-H-1",
+            "Hint": "SQ-2-SE-4-PG-26-CC-21-H-1",
             "Input": {
               "Type": "text",
                       "Options": null,
@@ -6807,7 +6152,7 @@ VALUES
             "Label": "SQ-2-SE-4-PG-26-CC-22-L-1",
             "ShortLabel": "SQ-2-SE-4-PG-26-CC-22-SL-1",
             "QuestionBodyText": "SQ-2-SE-4-PG-26-CC-22-QB-1",
-            "Hint": "SQ-2-SE-4-PG-25-CC-16-H-1",
+            "Hint": "SQ-2-SE-4-PG-26-CC-22-H-1",
             "Input": {
               "Type": "text",
                       "Options": null,
@@ -6821,7 +6166,52 @@ VALUES
             },
             "Order": null
           }
-
+        ],
+        "PageOfAnswers": [],
+        "Next": [
+          {
+             "Action": "ReturnToSection",
+            "ReturnId": "4",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+        "Complete": false,
+        "AllowMultipleAnswers": false,
+        "Order": null,
+        "Active": true,
+        "Visible": true,
+        "Feedback": null,
+        "HasFeedback": false,
+        "BodyText": "SQ-2-SE-4-PG-24-BT-1"
+      },
+	  {
+        "PageId": "27",
+        "SequenceId": "2",
+        "SectionId": "4",
+        "Title": "SQ-2-SE-4-PG-27-T-1",
+        "LinkTitle": "SQ-2-SE-4-PG-27-LT-1",
+        "InfoText": "SQ-2-SE-4-PG-27-IT-1",
+        "Questions": [
+		  {
+            "QuestionId": "CC-23",
+            "Label": "SQ-2-SE-4-PG-27-CC-23-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-27-CC-23-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-27-CC-23-QB-1",
+            "Hint": "SQ-2-SE-4-PG-27-CC-23-H-1",
+            "Input": {
+              "Type": "text",
+                      "Options": null,
+                      "Validations": [
+                        {
+                          "Name": "Required",
+                          "Value": null,
+                          "ErrorMessage": "Field must not be empty"
+                        }
+                      ]
+            },
+            "Order": null
+          }
         ],
         "PageOfAnswers": [],
         "Next": [
@@ -6846,3 +6236,4 @@ VALUES
   }  
 ', N'Apply to assess a standard', N'Apply to assess a standard', N'Draft', N'Questions', N'')
 GO
+
