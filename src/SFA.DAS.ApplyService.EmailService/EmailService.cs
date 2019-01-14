@@ -51,11 +51,11 @@ namespace SFA.DAS.ApplyService.EmailService
 
                 await SendEmailViaNotificationsApi(toAddress, emailTemplate.TemplateId, emailTemplate.TemplateName, personalisationTokens);
 
-                if (!string.IsNullOrWhiteSpace(emailTemplate.Recipients))
+                if (!string.IsNullOrWhiteSpace(emailTemplate.Recipients) && !string.IsNullOrWhiteSpace(emailTemplate.RecipientTemplateId))
                 {
                     foreach (var recipient in emailTemplate.Recipients.Split(';').Select(x => x.Trim()))
                     {
-                        await SendEmailViaNotificationsApi(recipient, emailTemplate.TemplateId, emailTemplate.TemplateName, personalisationTokens);
+                        await SendEmailViaNotificationsApi(recipient, emailTemplate.RecipientTemplateId, emailTemplate.TemplateName, personalisationTokens);
                     }
                 }
             }
@@ -95,11 +95,11 @@ namespace SFA.DAS.ApplyService.EmailService
 
                     await SendEmailViaNotificationsApi(contact.Email, emailTemplate.TemplateId, emailTemplate.TemplateName, personalisationTokens);
 
-                    if (!string.IsNullOrWhiteSpace(emailTemplate.Recipients))
+                    if (!string.IsNullOrWhiteSpace(emailTemplate.Recipients) && !string.IsNullOrWhiteSpace(emailTemplate.RecipientTemplateId))
                     {
                         foreach (var recipient in emailTemplate.Recipients.Split(';').Select(x => x.Trim()))
                         {
-                            await SendEmailViaNotificationsApi(recipient, emailTemplate.TemplateId, emailTemplate.TemplateName, personalisationTokens);
+                            await SendEmailViaNotificationsApi(recipient, emailTemplate.RecipientTemplateId, emailTemplate.TemplateName, personalisationTokens);
                         }
                     }
                 }
@@ -125,12 +125,12 @@ namespace SFA.DAS.ApplyService.EmailService
 
             try
             {
-                _logger.LogInformation($"Sending {templateName} email to {toAddress}");
+                _logger.LogInformation($"Sending {templateName} email ({templateId}) to {toAddress}");
                 await _notificationsApi.SendEmail(email);
             }
             catch(Exception ex)
             {
-                _logger.LogError(ex, $"Error sending {templateName} email to {toAddress}");
+                _logger.LogError(ex, $"Error sending {templateName} email ({templateId}) to {toAddress}");
             }
         }
 

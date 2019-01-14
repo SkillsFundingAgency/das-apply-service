@@ -8,5 +8,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string TemplateName { get; set; }
         public string TemplateId { get; set; }
         public string Recipients { get; set; }
+        public string RecipientTemplateId { get; set; }
     }
 }
