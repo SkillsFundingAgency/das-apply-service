@@ -5216,6 +5216,39 @@ INSERT INTO Assets
 VALUES
   (NEWID(), 'SQ-2-SE-4-PG-27-LT-1', '', '', 'Live', GETUTCDATE(), 'Import')
 
+  DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-T-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-T-1', '', 'Your end-point assessment delivery model', 'Live', GETUTCDATE(), 'Import')
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-LT-1', '', '', 'Live', GETUTCDATE(), 'Import')
+
+  DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-29-T-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-29-T-1', '', 'Your end-point assessment competence', 'Live', GETUTCDATE(), 'Import')
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-29-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-29-LT-1', '', '', 'Live', GETUTCDATE(), 'Import')
+
+    DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-30-T-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-30-T-1', '', 'Your online information', 'Live', GETUTCDATE(), 'Import')
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-30-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-30-LT-1', '', '', 'Live', GETUTCDATE(), 'Import')
+
 
 -- page 24 question 1
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-01-L-1';
@@ -5252,6 +5285,24 @@ INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
   (NEWID(), 'SQ-2-SE-4-PG-25-BT-1', '', '', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-26-BT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-26-BT-1', '', '', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-27-BT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-27-BT-1', '', '', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-BT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-BT-1', '', '', 'Live', GETUTCDATE(), 'Import')
 
 
 -- page 24 question 2
@@ -6100,7 +6151,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
-        "BodyText": "SQ-2-SE-4-PG-24-BT-1"
+        "BodyText": "SQ-2-SE-4-PG-25-BT-1"
       },
 	  {
         "PageId": "26",
@@ -6184,7 +6235,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
-        "BodyText": "SQ-2-SE-4-PG-24-BT-1"
+        "BodyText": "SQ-2-SE-4-PG-26-BT-1"
       },
 	  {
         "PageId": "27",
@@ -6268,7 +6319,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
-        "BodyText": "SQ-2-SE-4-PG-24-BT-1"
+        "BodyText": "SQ-2-SE-4-PG-27-BT-1"
       },
 	  {
         "PageId": "28",
@@ -6346,6 +6397,101 @@ VALUES
             ]
             },
             "Order": null
+          },
+		   {
+            "QuestionId": "CC-29",
+            "Label": "SQ-2-SE-4-PG-28-CC-29-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-28-CC-29-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-29-QB-1",
+            "Hint": "SQ-2-SE-4-PG-28-CC-29-H-1",
+            "Input": {
+              "Type": "text",
+                      "Options": null,
+                      "Validations": [
+                        {
+                          "Name": "Required",
+                          "Value": null,
+                          "ErrorMessage": "Field must not be empty"
+                        }
+                      ]
+            },
+            "Order": null
+          },
+		   {
+            "QuestionId": "CC-30",
+            "Label": "SQ-2-SE-4-PG-28-CC-30-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-28-CC-30-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-30-QB-1",
+            "Hint": "SQ-2-SE-4-PG-28-CC-30-H-1",
+            "Input": {
+              "Type": "text",
+                      "Options": null,
+                      "Validations": [
+                        {
+                          "Name": "Required",
+                          "Value": null,
+                          "ErrorMessage": "Field must not be empty"
+                        }
+                      ]
+            },
+            "Order": null
+          },
+		   {
+            "QuestionId": "CC-31",
+            "Label": "SQ-2-SE-4-PG-28-CC-31-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-28-CC-31-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-31-QB-1",
+            "Hint": "SQ-2-SE-4-PG-28-CC-31-H-1",
+            "Input": {
+              "Type": "text",
+                      "Options": null,
+                      "Validations": [
+                        {
+                          "Name": "Required",
+                          "Value": null,
+                          "ErrorMessage": "Field must not be empty"
+                        }
+                      ]
+            },
+            "Order": null
+          },
+		   {
+            "QuestionId": "CC-32",
+            "Label": "SQ-2-SE-4-PG-28-CC-32-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-28-CC-32-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-32-QB-1",
+            "Hint": "SQ-2-SE-4-PG-28-CC-32-H-1",
+            "Input": {
+              "Type": "text",
+                      "Options": null,
+                      "Validations": [
+                        {
+                          "Name": "Required",
+                          "Value": null,
+                          "ErrorMessage": "Field must not be empty"
+                        }
+                      ]
+            },
+            "Order": null
+          },
+		   {
+            "QuestionId": "CC-33",
+            "Label": "SQ-2-SE-4-PG-28-CC-33-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-28-CC-33-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-33-QB-1",
+            "Hint": "SQ-2-SE-4-PG-28-CC-33-H-1",
+            "Input": {
+              "Type": "text",
+                      "Options": null,
+                      "Validations": [
+                        {
+                          "Name": "Required",
+                          "Value": null,
+                          "ErrorMessage": "Field must not be empty"
+                        }
+                      ]
+            },
+            "Order": null
           }
         ],
         "PageOfAnswers": [],
@@ -6364,7 +6510,188 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
-        "BodyText": "SQ-2-SE-4-PG-24-BT-1"
+        "BodyText": "SQ-2-SE-4-PG-28-BT-1"
+      },
+	  {
+        "PageId": "29",
+        "SequenceId": "2",
+        "SectionId": "4",
+        "Title": "SQ-2-SE-4-PG-29-T-1",
+        "LinkTitle": "SQ-2-SE-4-PG-29-LT-1",
+        "InfoText": "SQ-2-SE-4-PG-29-IT-1",
+        "Questions": [
+		  {
+            "QuestionId": "CC-34",
+            "Label": "SQ-2-SE-4-PG-29-CC-34-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-29-CC-34-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-29-CC-34-QB-1",
+            "Hint": "SQ-2-SE-4-PG-29-CC-34-H-1",
+            "Input": {
+              "Type": "text",
+                      "Options": null,
+                      "Validations": [
+                        {
+                          "Name": "Required",
+                          "Value": null,
+                          "ErrorMessage": "Field must not be empty"
+                        }
+                      ]
+            },
+            "Order": null
+          },
+		   {
+            "QuestionId": "CC-35",
+            "Label": "SQ-2-SE-4-PG-29-CC-35-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-29-CC-35-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-29-CC-35-QB-1",
+            "Hint": "SQ-2-SE-4-PG-29-CC-35-H-1",
+            "Input": {
+              "Type": "text",
+                      "Options": null,
+                      "Validations": [
+                        {
+                          "Name": "Required",
+                          "Value": null,
+                          "ErrorMessage": "Field must not be empty"
+                        }
+                      ]
+            },
+            "Order": null
+          },
+		   {
+            "QuestionId": "CC-36",
+            "Label": "SQ-2-SE-4-PG-29-CC-36-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-29-CC-36-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-29-CC-36-QB-1",
+            "Hint": "SQ-2-SE-4-PG-29-CC-36-H-1",
+            "Input": {
+              "Type": "text",
+                      "Options": null,
+                      "Validations": [
+                        {
+                          "Name": "Required",
+                          "Value": null,
+                          "ErrorMessage": "Field must not be empty"
+                        }
+                      ]
+            },
+            "Order": null
+          },
+		   {
+            "QuestionId": "CC-37",
+            "Label": "SQ-2-SE-4-PG-29-CC-37-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-29-CC-37-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-29-CC-37-QB-1",
+            "Hint": "SQ-2-SE-4-PG-29-CC-37-H-1",
+            "Input": {
+              "Type": "text",
+                      "Options": null,
+                      "Validations": [
+                        {
+                          "Name": "Required",
+                          "Value": null,
+                          "ErrorMessage": "Field must not be empty"
+                        }
+                      ]
+            },
+            "Order": null
+          },
+		   {
+            "QuestionId": "CC-38",
+            "Label": "SQ-2-SE-4-PG-29-CC-38-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-29-CC-38-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-29-CC-38-QB-1",
+            "Hint": "SQ-2-SE-4-PG-29-CC-38-H-1",
+            "Input": {
+              "Type": "text",
+                      "Options": null,
+                      "Validations": [
+                        {
+                          "Name": "Required",
+                          "Value": null,
+                          "ErrorMessage": "Field must not be empty"
+                        }
+                      ]
+            },
+            "Order": null
+          },
+		   {
+            "QuestionId": "CC-39",
+            "Label": "SQ-2-SE-4-PG-29-CC-39-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-29-CC-39-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-29-CC-39-QB-1",
+            "Hint": "SQ-2-SE-4-PG-29-CC-39-H-1",
+            "Input": {
+              "Type": "text",
+                      "Options": null,
+                      "Validations": [
+                        {
+                          "Name": "Required",
+                          "Value": null,
+                          "ErrorMessage": "Field must not be empty"
+                        }
+                      ]
+            },
+            "Order": null
+          }
+        ],
+        "PageOfAnswers": [],
+        "Next": [
+          {
+             "Action": "ReturnToSection",
+            "ReturnId": "4",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+        "Complete": false,
+        "AllowMultipleAnswers": false,
+        "Order": null,
+        "Active": true,
+        "Visible": true,
+        "Feedback": null,
+        "HasFeedback": false,
+        "BodyText": "SQ-2-SE-4-PG-29-BT-1"
+      },
+	  {
+        "PageId": "30",
+        "SequenceId": "2",
+        "SectionId": "4",
+        "Title": "SQ-2-SE-4-PG-30-T-1",
+        "LinkTitle": "SQ-2-SE-4-PG-30-LT-1",
+        "InfoText": "SQ-2-SE-4-PG-30-IT-1",
+        "Questions": [
+		  {
+            "QuestionId": "CC-40",
+            "Label": "SQ-2-SE-4-PG-30-CC-40-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-30-CC-40-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-30-CC-40-QB-1",
+            "Hint": "SQ-2-SE-4-PG-30-CC-40-H-1",
+            "Input": {
+              "Type": "text",
+                      "Options": null,
+                      "Validations": []
+            },
+            "Order": null
+          }
+        ],
+        "PageOfAnswers": [],
+        "Next": [
+          {
+             "Action": "ReturnToSection",
+            "ReturnId": "4",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+        "Complete": false,
+        "AllowMultipleAnswers": false,
+        "Order": null,
+        "Active": true,
+        "Visible": true,
+        "Feedback": null,
+        "HasFeedback": false,
+        "BodyText": "SQ-2-SE-4-PG-30-BT-1"
       }
     ],
     "FinancialApplicationGrade": null

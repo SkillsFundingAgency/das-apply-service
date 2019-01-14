@@ -30,11 +30,11 @@ VALUES
   (NEWID(), 'SQ-2-SE-4-PG-25-LT-1', '', '', 'Live', GETUTCDATE(), 'Import')
 
 
-  DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-25-T-1';
+  DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-26-T-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-25-T-1', '', 'Your assessors', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-26-T-1', '', 'Your assessors', 'Live', GETUTCDATE(), 'Import')
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-26-LT-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
@@ -664,3 +664,125 @@ INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
   (NEWID(), 'SQ-2-SE-4-PG-28-CC-26-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+
+
+-- page 28 question 27
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-27-L-1';  -- Row L
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-27-L-1', '', 'Do you intend to outsource any of your end-point assessments?', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-27-SL-1'; -- Row J
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-27-SL-1', '', 'Outsourcing of end-point assessments'	,'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-27-QB-1';   -- Row P
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-27-QB-1', '',N'',  'Live', GETUTCDATE(), 'Import')
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-27-H-1';   -- Row AA
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-27-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+
+
+  -- page 28 question 28
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-28-L-1';  -- Row L
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-28-L-1', '', 'Quality Assurance of outsourced services', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-28-SL-1'; -- Row J
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-28-SL-1', '', 'Quality Assurance of outsourced services'	,'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-28-QB-1';   -- Row P
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-28-QB-1', '',N'Give details of your procedures to obtain assurance in respect to the quality of the occupational  and assessment capacity of the outsourced services?',  'Live', GETUTCDATE(), 'Import')
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-28-H-1';   -- Row AA
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-28-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+
+  -- page 28 question 29
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-29-L-1';  -- Row L
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-29-L-1', '', 'Engaging with employers and training providers', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-29-SL-1'; -- Row J
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-29-SL-1', '', 'Engaging with employers and training providers'	,'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-29-QB-1';   -- Row P
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-29-QB-1', '',N'How will you engage with employers and training organisations?',  'Live', GETUTCDATE(), 'Import')
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-29-H-1';   -- Row AA
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-29-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+
+  -- page 28 question 30
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-30-L-1';  -- Row L
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-30-L-1', '', 'Managing conflicts of interest', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-30-SL-1'; -- Row J
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-30-SL-1', '', 'Managing conflicts of interest'	,'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-30-QB-1';   -- Row P
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-30-QB-1', '',N'How will you manage any potential conflict of interest, particular to other functions your organisation may have?',  'Live', GETUTCDATE(), 'Import')
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-30-H-1';   -- Row AA
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-30-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+
+  -- page 28 question 31
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-31-L-1';  -- Row L
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-31-L-1', '', 'Where will you conduct end-point assessments?', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-31-SL-1'; -- Row J
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-31-SL-1', '', 'Assessment locations'	,'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-31-QB-1';   -- Row P
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-31-QB-1', '',N'			',  'Live', GETUTCDATE(), 'Import')
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-31-H-1';   -- Row AA
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-31-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
