@@ -33,31 +33,54 @@ namespace SFA.DAS.ApplyService.EmailService
             _notificationsApi = SetupNotificationApi(); 
         }
 
+        private Dictionary<string, string> GetPersonalisationTokens(dynamic tokens)
+        {
+            var personalisationTokens = new Dictionary<string, string>();
+
+            if (tokens != null)
+            {
+                foreach (var property in tokens.GetType().GetProperties())
+                {
+                    personalisationTokens[property.Name] = property.GetValue(tokens);
+                }
+            }
+
+            return personalisationTokens;
+        }
+
+        private async Task SendEmailToRecipients(IEnumerable<string> recipients, string templateName, dynamic tokens)
+        {
+            if (recipients != null)
+            {
+                var emailTemplate = await _emailTemplateRepository.GetEmailTemplate(templateName);
+
+                if (emailTemplate != null)
+                {
+                    var personalisationTokens = GetPersonalisationTokens(tokens);
+
+                    foreach (var recipient in recipients)
+                    {
+                        await SendEmailViaNotificationsApi(recipient, emailTemplate.TemplateId, emailTemplate.TemplateName, personalisationTokens);
+                    }
+
+                    var rcpList = string.IsNullOrWhiteSpace(emailTemplate.Recipients) ? null : emailTemplate.Recipients.Split(';').Select(x => x.Trim());
+                    await SendEmailToRecipients(rcpList, emailTemplate.RecipientTemplate, tokens);
+                }
+            }
+        }
+
         public async Task SendEmail(string templateName, string toAddress, dynamic tokens)
         {
             var emailTemplate = await _emailTemplateRepository.GetEmailTemplate(templateName);
 
             if (emailTemplate != null && !string.IsNullOrWhiteSpace(toAddress))
             {
-                var personalisationTokens = new Dictionary<string, string>();
-
-                if (tokens != null)
-                {
-                    foreach (var property in tokens.GetType().GetProperties())
-                    {
-                        personalisationTokens[property.Name] = property.GetValue(tokens);
-                    }
-                }
+                var personalisationTokens = GetPersonalisationTokens(tokens);
 
                 await SendEmailViaNotificationsApi(toAddress, emailTemplate.TemplateId, emailTemplate.TemplateName, personalisationTokens);
 
-                if (!string.IsNullOrWhiteSpace(emailTemplate.Recipients) && !string.IsNullOrWhiteSpace(emailTemplate.RecipientTemplateId))
-                {
-                    foreach (var recipient in emailTemplate.Recipients.Split(';').Select(x => x.Trim()))
-                    {
-                        await SendEmailViaNotificationsApi(recipient, emailTemplate.RecipientTemplateId, emailTemplate.TemplateName, personalisationTokens);
-                    }
-                }
+                var rcpList = string.IsNullOrWhiteSpace(emailTemplate.Recipients) ? null : emailTemplate.Recipients.Split(';').Select(x => x.Trim());
+                await SendEmailToRecipients(rcpList, emailTemplate.RecipientTemplate, tokens);
             }
             else if(emailTemplate is null)
             {
@@ -82,27 +105,14 @@ namespace SFA.DAS.ApplyService.EmailService
             {
                 foreach(var contact in contacts?.Where(c => !string.IsNullOrWhiteSpace(c.Email)))
                 {
-                    var personalisationTokens = new Dictionary<string, string>();
+                    var personalisationTokens = GetPersonalisationTokens(tokens);
                     personalisationTokens["contactname"] = $"{contact.GivenNames} {contact.FamilyName}";
 
-                    if (tokens != null)
-                    {
-                        foreach (var property in tokens.GetType().GetProperties())
-                        {
-                            personalisationTokens[property.Name] = property.GetValue(tokens);
-                        }
-                    }
-
                     await SendEmailViaNotificationsApi(contact.Email, emailTemplate.TemplateId, emailTemplate.TemplateName, personalisationTokens);
-
-                    if (!string.IsNullOrWhiteSpace(emailTemplate.Recipients) && !string.IsNullOrWhiteSpace(emailTemplate.RecipientTemplateId))
-                    {
-                        foreach (var recipient in emailTemplate.Recipients.Split(';').Select(x => x.Trim()))
-                        {
-                            await SendEmailViaNotificationsApi(recipient, emailTemplate.RecipientTemplateId, emailTemplate.TemplateName, personalisationTokens);
-                        }
-                    }
                 }
+
+                var rcpList = string.IsNullOrWhiteSpace(emailTemplate.Recipients) ? null : emailTemplate.Recipients.Split(';').Select(x => x.Trim());
+                await SendEmailToRecipients(rcpList, emailTemplate.RecipientTemplate, tokens);
             }
             else
             {
