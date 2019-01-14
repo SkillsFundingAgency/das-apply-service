@@ -2317,7 +2317,14 @@ if not exists(select * from workflows where Description='Epao Workflow' and Vers
 	  ([Id], [Description], [Version], [Type], [Status], [CreatedAt], [CreatedBy], [UpdatedAt], [UpdatedBy], [DeletedAt], [DeletedBy], [ReferenceFormat])
 	VALUES
 	  (N'83b35024-8aef-440d-8f59-8c1cc459c350', N'EPAO Workflow', N'1.0', N'EPAO', N'Live', CAST(N'2018-12-12T14:41:46.0600000' AS DateTime2), N'Import', NULL, NULL, NULL, NULL,N'AAD')
+else
+begin
+	UPDATE [dbo].[Workflows] SET  [Description] = N'EPAO Workflow', [Version] =  N'1.0', [Type] = N'EPAO', 
+	[Status] = N'Live', [CreatedAt] = CAST(N'2018-12-12T14:41:46.0600000' AS DateTime2), 
+	[CreatedBy] = N'Import', [UpdatedBy] = N'Import', [UpdatedAt] = GETDATE(), [ReferenceFormat] = N'AAD' where [Id] = '83b35024-8aef-440d-8f59-8c1cc459c350'
+end
 GO
+
 DELETE FROM WorkflowSections where SequenceId=1 and SectionId=1
 
 INSERT [dbo].[WorkflowSections]
