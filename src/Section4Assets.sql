@@ -30,12 +30,12 @@ VALUES
   (NEWID(), 'SQ-2-SE-4-PG-25-LT-1', '', '', 'Live', GETUTCDATE(), 'Import')
 
 
-  DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-26-T-1';
+  DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-25-T-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-26-T-1', '', 'Your assessors', 'Live', GETUTCDATE(), 'Import')
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-25-LT-1';
+  (NEWID(), 'SQ-2-SE-4-PG-25-T-1', '', 'Your assessors', 'Live', GETUTCDATE(), 'Import')
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-26-LT-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
@@ -52,6 +52,17 @@ INSERT INTO Assets
 VALUES
   (NEWID(), 'SQ-2-SE-4-PG-27-LT-1', '', '', 'Live', GETUTCDATE(), 'Import')
 
+-- ROW F
+  DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-T-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-T-1', '', 'Your end-point assessment delivery model', 'Live', GETUTCDATE(), 'Import')
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-LT-1', '', '', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 1
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-01-L-1';
@@ -433,7 +444,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-25-CC-16-L-1';  -- Row L
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-25-CC-16-L-1', '', 'Give evidence of engagement with trailblazers and employers to demonstrate your organisation''s occupational competence to assess [standard name]', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-25-CC-16-L-1', '', 'Give evidence of engagement with trailblazers and employers to demonstrate your organisation''s occupational competence to assess [StandardName]', 'Live', GETUTCDATE(), 'Import')
 
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-25-CC-16-SL-1'; -- Row J
 INSERT INTO Assets
@@ -564,7 +575,7 @@ INSERT INTO Assets
 VALUES
   (NEWID(), 'SQ-2-SE-4-PG-27-CC-23-L-1', '', 'How do you recruit and train assessors?', 'Live', GETUTCDATE(), 'Import')
 
-DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4--CC-23-SL-1'; -- Row J
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-27-CC-23-SL-1'; -- Row J
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
@@ -580,3 +591,76 @@ INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
   (NEWID(), 'SQ-2-SE-4-PG-27-CC-23-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+
+
+      -- page 27 question 24
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-27-CC-24-L-1';  -- Row L
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-27-CC-24-L-1', '', 'What experience, skills and qualifications do your assessors have?', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-27-CC-24-SL-1'; -- Row J
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-27-CC-24-SL-1', '', 'Skills and qualifications','Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-27-CC-24-QB-1';   -- Row P
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-27-CC-24-QB-1', '',N'<p class=\"govuk-body\">You need to give examples of how, when and where the assessor has demonstrated their capability.  Assessors must have current and relevant occupational and assessment experience. Give details, evidence and context for this experience of current and future assessors. </p>',  'Live', GETUTCDATE(), 'Import')
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-27-CC-24-H-1';   -- Row AA
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-27-CC-24-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+
+      -- page 27 question 25
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-27-CC-25-L-1';  -- Row L
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-27-CC-25-L-1', '', 'How do you ensure your assessors'' occupational expertise is maintained and kept current? ', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-27-CC-25-SL-1'; -- Row J
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-27-CC-25-SL-1', '', 'Continuous professional development','Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-27-CC-25-QB-1';   -- Row P
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-27-CC-25-QB-1', '',N'<p class=\"govuk-body\">Give examples, of up to 500 words, for current professional development and recent experience of where and how they have demonstrated their suitability.  Give details, evidence and context for this experience, for the assessors you have now or will have in place by the time you start delivery.</p>',  'Live', GETUTCDATE(), 'Import')
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-27-CC-25-H-1';   -- Row AA
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-27-CC-25-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+
+      -- page 28 question 26
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-26-L-1';  -- Row L
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-26-L-1', '', 'How will you conduct an end-point assessment for this standard?', 'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-26-SL-1'; -- Row J
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-26-SL-1', '', 'End-point assessment delivery model'	,'Live', GETUTCDATE(), 'Import')
+
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-26-QB-1';   -- Row P
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-26-QB-1', '',N'',  'Live', GETUTCDATE(), 'Import')
+DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-26-H-1';   -- Row AA
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-26-H-1', '', '', 'Live', GETUTCDATE(), 'Import')

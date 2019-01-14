@@ -174,17 +174,50 @@ namespace SFA.DAS.ApplyService.Web.Controllers
              var pageVm = new PageViewModel(page, Guid.Parse(applicationId));
  
              pageVm.SectionId = sectionId;
-
              pageVm.RedirectAction = redirectAction;
-             
+
+     
+            ProcessPageVmQuestionsForStandardName(pageVm.Questions, applicationId);
+
              if (page.AllowMultipleAnswers)
              {
                  return View("~/Views/Application/Pages/MultipleAnswers.cshtml", pageVm);
              }
              return View("~/Views/Application/Pages/Index.cshtml", pageVm);
          }
- 
- 
+
+         private void ProcessPageVmQuestionsForStandardName(List<QuestionViewModel> pageVmQuestions, string applicationId)
+         {
+             var placeholderString = "StandardName";
+             var isPlaceholderPresent = false;
+
+             foreach (var question in pageVmQuestions)
+             
+                 if (question.Label.Contains($"[{placeholderString}]") ||
+                    question.Hint.Contains($"[{placeholderString}]") ||
+                     question.QuestionBodyText.Contains($"[{placeholderString}]") ||
+                     question.ShortLabel.Contains($"[{placeholderString}]")
+                    )
+                    isPlaceholderPresent=true;
+
+             if (!isPlaceholderPresent) return;
+
+             var application = _apiClient.GetApplication(Guid.Parse(applicationId)).Result;
+             var standardName = application?.ApplicationData?.StandardName;
+
+
+             if (string.IsNullOrEmpty(standardName)) standardName = "the standard to be selected";
+
+            foreach (var question in pageVmQuestions)
+             {
+                question.Label = question.Label?.Replace($"[{placeholderString}]", standardName);
+                question.Hint = question.Hint?.Replace($"[{placeholderString}]", standardName);
+                question.QuestionBodyText = question.QuestionBodyText?.Replace($"[{placeholderString}]", standardName);
+                question.ShortLabel = question.Label?.Replace($"[{placeholderString}]", standardName);
+            }     
+         }
+
+
          [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/NextPage/{redirectAction}")]
          public async Task<IActionResult> NextPage(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
          {

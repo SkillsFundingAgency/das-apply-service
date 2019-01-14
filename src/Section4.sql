@@ -463,6 +463,140 @@ VALUES
                       ]
             },
             "Order": null
+          },
+		   {
+            "QuestionId": "CC-24",
+            "Label": "SQ-2-SE-4-PG-27-CC-24-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-27-CC-24-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-27-CC-24-QB-1",
+            "Hint": "SQ-2-SE-4-PG-27-CC-24-H-1",
+            "Input": {
+              "Type": "text",
+                      "Options": null,
+                      "Validations": [
+                        {
+                          "Name": "Required",
+                          "Value": null,
+                          "ErrorMessage": "Field must not be empty"
+                        }
+                      ]
+            },
+            "Order": null
+          },
+		   {
+            "QuestionId": "CC-25",
+            "Label": "SQ-2-SE-4-PG-27-CC-25-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-27-CC-25-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-27-CC-25-QB-1",
+            "Hint": "SQ-2-SE-4-PG-27-CC-25-H-1",
+            "Input": {
+              "Type": "text",
+                      "Options": null,
+                      "Validations": [
+                        {
+                          "Name": "Required",
+                          "Value": null,
+                          "ErrorMessage": "Field must not be empty"
+                        }
+                      ]
+            },
+            "Order": null
+          }
+        ],
+        "PageOfAnswers": [],
+        "Next": [
+          {
+             "Action": "ReturnToSection",
+            "ReturnId": "4",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+        "Complete": false,
+        "AllowMultipleAnswers": false,
+        "Order": null,
+        "Active": true,
+        "Visible": true,
+        "Feedback": null,
+        "HasFeedback": false,
+        "BodyText": "SQ-2-SE-4-PG-24-BT-1"
+      },
+	  {
+        "PageId": "28",
+        "SequenceId": "2",
+        "SectionId": "4",
+        "Title": "SQ-2-SE-4-PG-28-T-1",
+        "LinkTitle": "SQ-2-SE-4-PG-28-LT-1",
+        "InfoText": "SQ-2-SE-4-PG-28-IT-1",
+        "Questions": [
+		  {
+            "QuestionId": "CC-26",
+            "Label": "SQ-2-SE-4-PG-28-CC-26-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-28-CC-26-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-26-QB-1",
+            "Hint": "SQ-2-SE-4-PG-28-CC-26-H-1",
+            "Input": {
+              "Type": "text",
+                      "Options": null,
+                      "Validations": [
+                        {
+                          "Name": "Required",
+                          "Value": null,
+                          "ErrorMessage": "Field must not be empty"
+                        }
+                      ]
+            },
+            "Order": null
+          },
+		  {
+            "QuestionId": "CC-27",
+            "Label": "SQ-2-SE-4-PG-28-CC-27-L-1",
+            "ShortLabel": "SQ-2-SE-4-PG-28-CC-27-SL-1",
+            "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-27-QB-1",
+            "Hint": "SQ-2-SE-4-PG-28-CC-27-H-1",
+"Input": {
+            "Type": "ComplexRadio",
+            "Options": [
+              {
+                "Label": "Yes",
+                "Value": "Yes",
+                "FurtherQuestions": [
+                  {
+                    "QuestionId": "CD-28",
+                    "Label": "SQ-1-SE-1-PG-28-CD-28-L-1",
+                    "Hint": "SQ-1-SE-1-PG-28-CD-28-H-1",
+                    "Input": {
+                      "Type": "number",
+                      "Options": null,
+                      "Validations": [
+                        {
+                          "Name": "Required",
+                          "Value": null,
+                          "ErrorMessage": "Field must not be empty"
+                        }
+                      ]
+                    },
+                    "Order": null,
+                    "ShortLabel": "SQ-1-SE-1-PG-28-CD-28-SL-1",
+                    "QuestionBodyText": "SQ-1-SE-1-PG-28-CD-28-QB-1"
+                  }
+                ]
+              },
+              {
+                "Label": "No",
+                "Value": "No",
+                "FurtherQuestions": null
+              }
+            ],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "select an option"
+              }
+            ]
+            },
+            "Order": null
           }
         ],
         "PageOfAnswers": [],
