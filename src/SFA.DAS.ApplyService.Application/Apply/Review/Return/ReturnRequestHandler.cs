@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.ApplyService.Application.Email.Consts;
 using SFA.DAS.ApplyService.Application.Interfaces;
+using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
@@ -13,11 +14,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
     {
         private readonly IApplyRepository _applyRepository;
         private readonly IEmailService _emailServiceObject;
+        private readonly IContactRepository _contactRepository;
 
-        public ReturnRequestHandler(IApplyRepository applyRepository, IEmailService emailServiceObject)
+        public ReturnRequestHandler(IApplyRepository applyRepository, IContactRepository contactRepository, IEmailService emailServiceObject)
         {
             _applyRepository = applyRepository;
             _emailServiceObject = emailServiceObject;
+            _contactRepository = contactRepository;
         }
         
         public async Task<Unit> Handle(ReturnRequest request, CancellationToken cancellationToken)
@@ -58,18 +61,33 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
                     ApplicationSequenceStatus.Rejected, ApplicationStatus.Rejected);
             }
 
-            await NotifyContacts(request.ApplicationId);
+            await NotifyContact(request.ApplicationId, request.SequenceId);
 
             return Unit.Value;
         }
 
-        private async Task NotifyContacts(Guid applicationId)
+        private async Task NotifyContact(Guid applicationId, int sequenceId)
         {
-            var contactsToNotify = await _applyRepository.GetNotifyContactsForApplication(applicationId);
             var application = await _applyRepository.GetApplication(applicationId);
-            var referenceNumber = application.ApplicationData?.ReferenceNumber ?? string.Empty;
+            var standard = application.ApplicationData?.StandardName ?? string.Empty;
+            var reference = application.ApplicationData?.ReferenceNumber ?? string.Empty;
 
-            await _emailServiceObject.SendEmailToContacts(EmailTemplateName.APPLY_EPAO_UPDATE, contactsToNotify, new { reference = referenceNumber });
+            if (sequenceId == 1)
+            {
+                var lastInitSubmission = application.ApplicationData?.InitSubmissions.OrderByDescending(sub => sub.SubmittedAt).FirstOrDefault();
+                var contactToNotify = await _contactRepository.GetContact(lastInitSubmission?.SubmittedBy);
+
+                await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_UPDATE, contactToNotify, new { reference });
+            }
+            else if (sequenceId == 2)
+            {
+                var lastStandardSubmission = application.ApplicationData?.StandardSubmissions.OrderByDescending(sub => sub.SubmittedAt).FirstOrDefault();
+                var contactToNotify = await _contactRepository.GetContact(lastStandardSubmission?.SubmittedBy);
+
+                await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_RESPONSE, contactToNotify, new { reference , standard });
+            }
+
+            
         }
     }
 }

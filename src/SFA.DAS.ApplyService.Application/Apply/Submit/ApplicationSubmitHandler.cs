@@ -108,16 +108,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
             return referenceNumber;
         }
 
-        private async Task NotifyContact(Contact contact, int sequenceId, string referenceNumber, int standardCode = int.MinValue)
+        private async Task NotifyContact(Contact contact, int sequenceId, string reference, string standard = "")
         {
             if (sequenceId == 1)
             {
-                await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_INITIAL_SUBMISSION, contact, new { reference = referenceNumber });
+                await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_INITIAL_SUBMISSION, contact, new { reference });
             }
             else if (sequenceId == 2)
             {
-                // TODO: Get the correct standard code
-                await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_STANDARD_SUBMISSION, contact, new { reference = referenceNumber, standard = standardCode });
+                // TODO: This flow isn't being called. Check out UpdateApplicationDataHandler
+                await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_STANDARD_SUBMISSION, contact, new { reference, standard });
             }
         }
     }
