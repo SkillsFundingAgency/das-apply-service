@@ -516,24 +516,6 @@ namespace SFA.DAS.ApplyService.Data
                 return applicationSections;
             }
         }
-
-        public async Task<List<Contact>> GetNotifyContactsForApplication(Guid requestApplicationId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection.QueryAsync<Contact>(@"SELECT con.*
-                                FROM Applications appl
-                                INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-                                INNER JOIN Contacts con ON con.ApplyOrganisationID = org.Id
-                                WHERE con.SigninId IN (appl.CreatedBy, appl.UpdatedBy)
-                                AND appl.id = @requestApplicationId",
-                    new
-                    {
-                        requestApplicationId
-                    })).ToList();
-            }
-        }
-
         public async Task<int> GetNextAppReferenceSequence()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))

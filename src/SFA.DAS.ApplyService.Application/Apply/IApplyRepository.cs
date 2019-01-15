@@ -46,7 +46,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<ApplicationSection>> GetApplicationSections();
         Task<List<WorkflowSection>> GetWorkflowSections();
 
-        Task<List<Contact>> GetNotifyContactsForApplication(Guid requestApplicationId);
         Task<int> GetNextAppReferenceSequence();
         Task<string> GetWorkflowReferenceFormat(Guid requestApplicationId);
     }
