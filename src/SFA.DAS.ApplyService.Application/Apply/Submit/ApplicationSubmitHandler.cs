@@ -26,6 +26,22 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
         
         public async Task<Unit> Handle(ApplicationSubmitRequest request, CancellationToken cancellationToken)
         {
+            await UpdateApplicationSections(request);
+            await SubmitApplicationSequence(request);
+
+            var updatedApplication = await _applyRepository.GetApplication(request.ApplicationId);
+
+            var contact = await _contactRepository.GetContact(request.UserEmail);
+            var reference = updatedApplication.ApplicationData.ReferenceNumber;
+            var standard = updatedApplication.ApplicationData.StandardName;
+
+            await NotifyContact(contact, request.SequenceId, reference, standard);
+
+            return Unit.Value;
+        }
+
+        private async Task UpdateApplicationSections(ApplicationSubmitRequest request)
+        {
             var sections = await _applyRepository.GetSections(request.ApplicationId);
 
             foreach (var section in sections)
@@ -52,63 +68,73 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
             }
 
             await _applyRepository.UpdateSections(sections);
-
-            var referenceNumber = await UpdateApplication(request);
-
-            var contact = await _contactRepository.GetContact(request.UserEmail);
-
-            await NotifyContact(contact, request.SequenceId, referenceNumber);
-
-            return Unit.Value;
         }
 
-        private async Task<string> UpdateApplication(ApplicationSubmitRequest request)
+        private async Task SubmitApplicationSequence(ApplicationSubmitRequest request)
         {
             var application = await _applyRepository.GetApplication(request.ApplicationId);
-            var referenceNumber = application.ApplicationData?.ReferenceNumber;
-            
-            if (!string.IsNullOrEmpty(referenceNumber))
+
+            if(application.ApplicationData == null)
             {
-                application.ApplicationData?.InitSubmissions.Add(new InitSubmission
+                // Note: If this has happened then are bigger issues elsewhere. Perhaps raise an exception rather than masking it??
+                application.ApplicationData = new ApplicationData();
+            }
+
+            if(string.IsNullOrWhiteSpace(application.ApplicationData.ReferenceNumber))
+            {
+                application.ApplicationData.ReferenceNumber = await CreateReferenceNumber(request.ApplicationId);
+            }
+
+            if(request.SequenceId == 1)
+            {
+                if (application.ApplicationData.InitSubmissions == null)
+                {
+                    application.ApplicationData.InitSubmissions = new List<InitSubmission>();
+                }
+
+                var submission = new InitSubmission
                 {
                     SubmittedAt = DateTime.UtcNow,
                     SubmittedBy = request.UserEmail
-                });
-                await _applyRepository.SubmitApplicationSequence(request, application.ApplicationData);
+                };
+
+                application.ApplicationData.InitSubmissions.Add(submission);
             }
-            else
+            else if(request.SequenceId == 2)
             {
-                referenceNumber = await CreateReferenceNumber(request.ApplicationId);
-                await _applyRepository.SubmitApplicationSequence(request, new ApplicationData
+                if (application.ApplicationData.StandardSubmissions == null)
                 {
-                    InitSubmissions = new List<InitSubmission>
-                    {
-                        new InitSubmission
-                        {
-                            SubmittedAt = DateTime.UtcNow,
-                            SubmittedBy = request.UserEmail
-                        }
-                    },
-                    ReferenceNumber = referenceNumber
-                });
+                    application.ApplicationData.StandardSubmissions = new List<StandardSubmission>();
+                }
+
+                var submission = new StandardSubmission
+                {
+                    SubmittedAt = DateTime.UtcNow,
+                    SubmittedBy = request.UserEmail
+                };
+
+                application.ApplicationData.StandardSubmissions.Add(submission);
             }
 
-            return referenceNumber;
+            await _applyRepository.SubmitApplicationSequence(request, application.ApplicationData);
         }
 
         private async Task<string> CreateReferenceNumber(Guid applicationId)
         {
             var referenceNumber = string.Empty;
+
             var seq = await _applyRepository.GetNextAppReferenceSequence();
-            if (seq <= 0) return referenceNumber;
             var refFormat = await _applyRepository.GetWorkflowReferenceFormat(applicationId);
-            if (string.IsNullOrEmpty(refFormat)) return referenceNumber;
-            referenceNumber = string.Format($"{refFormat}{seq:D6}");
+
+            if (seq > 0 && !string.IsNullOrEmpty(refFormat))
+            {
+                referenceNumber = string.Format($"{refFormat}{seq:D6}");
+            }
 
             return referenceNumber;
         }
 
-        private async Task NotifyContact(Contact contact, int sequenceId, string reference, string standard = "")
+        private async Task NotifyContact(Contact contact, int sequenceId, string reference, string standard)
         {
             if (sequenceId == 1)
             {
@@ -116,7 +142,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
             }
             else if (sequenceId == 2)
             {
-                // TODO: This flow isn't being called. Check out UpdateApplicationDataHandler
                 await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_STANDARD_SUBMISSION, contact, new { reference, standard });
             }
         }
