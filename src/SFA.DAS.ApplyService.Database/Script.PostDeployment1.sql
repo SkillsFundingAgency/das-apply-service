@@ -70,7 +70,6 @@ BEGIN
 END
 GO
 
-DROP SEQUENCE [dbo].[AppRefSequence]
 
 IF NOT EXISTS( select * from sys.sequences where object_id = object_id('AppRefSequence'))
 BEGIN
