@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,11 +23,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
             _emailServiceObject = emailServiceObject;
             _contactRepository = contactRepository;
         }
-        
+
         public async Task<Unit> Handle(ReturnRequest request, CancellationToken cancellationToken)
         {
             // There will probably be some sort of decision of notifications here based on what status the Application
             // is being set to.  But for now I'm just setting it and forgetting.
+            await AddApplicationFeedback(request);
 
             var sequence = await _applyRepository.GetActiveSequence(request.ApplicationId);
             if (request.RequestReturnType == "ReturnWithFeedback")
@@ -34,7 +36,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
                 await _applyRepository.UpdateSequenceStatus(request.ApplicationId, request.SequenceId,
                     ApplicationSequenceStatus.FeedbackAdded, ApplicationStatus.FeedbackAdded);
             }
-            else if (request.RequestReturnType == "Approve")
+            else if (request.RequestReturnType == "Approve" || request.RequestReturnType == "ApproveWithFeedback")
             {
                 await _applyRepository.UpdateSequenceStatus(request.ApplicationId, request.SequenceId,
                     ApplicationSequenceStatus.Approved, ApplicationStatus.InProgress);
@@ -88,6 +90,28 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
             }
 
             
+        }
+
+        private async Task AddApplicationFeedback(ReturnRequest request)
+        {
+            if (request.Feedback != null)
+            {
+                request.Feedback.IsNew = true;
+
+                var application = await _applyRepository.GetApplication(request.ApplicationId);
+
+                if (application != null)
+                {
+                    if (application.ApplicationData.Feedback == null)
+                    {
+                        application.ApplicationData.Feedback = new List<Domain.Apply.Feedback>();
+                    }
+
+                    application.ApplicationData.Feedback.Add(request.Feedback);
+
+                    await _applyRepository.UpdateApplicationData(application.Id, application.ApplicationData);
+                }
+            }
         }
     }
 }
