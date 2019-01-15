@@ -3279,7 +3279,11 @@ VALUES
           "Input": {
             "Type": "Text",
             "Options": null,
-            "Validations": []
+            "Validations": [{
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Enter a name"
+              }]
           },
           "Order": null
         },
@@ -3292,7 +3296,18 @@ VALUES
           "Input": {
             "Type": "Date",
             "Options": null,
-            "Validations": []
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Enter a date"
+              },
+              {
+                "Name":"Date",
+                "Value":"",
+                "ErrorMessage": "Date must be correct"
+              }
+            ]
           },
           "Order": null
         },
@@ -3305,7 +3320,11 @@ VALUES
           "Input": {
             "Type": "text",
             "Options": null,
-            "Validations": []
+            "Validations": [{
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Enter number of shares"
+              }]
           },
           "Order": null
         }
@@ -5675,7 +5694,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-25-CC-16-QB-1';   -- Row P
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-25-CC-16-QB-1', '',N'Your evidence must demonstrate your organisation’s relevant experience of working with employers or working in the specific occupational area. 
+  (NEWID(), 'SQ-2-SE-4-PG-25-CC-16-QB-1', '',N'Your evidence must demonstrate your organisationï¿½s relevant experience of working with employers or working in the specific occupational area. 
 
 Your evidence must not be over three years old and must not relate to the development and implementation of qualifications.
 
