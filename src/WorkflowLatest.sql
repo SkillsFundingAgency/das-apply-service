@@ -5191,13 +5191,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-LT-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-LT-1', '', '', 'Live', GETUTCDATE(), 'Import')
-
-  DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-LT-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-LT-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-LT-1', '','Your policies and procedures', 'Live', GETUTCDATE(), 'Import')
 
 
 
@@ -5210,7 +5204,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-25-LT-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-25-LT-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-25-LT-1', '', 'Your occupational competence', 'Live', GETUTCDATE(), 'Import')
 
 
   DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-26-T-1';
@@ -5694,7 +5688,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-25-CC-16-QB-1';   -- Row P
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-25-CC-16-QB-1', '',N'Your evidence must demonstrate your organisation�s relevant experience of working with employers or working in the specific occupational area. 
+  (NEWID(), 'SQ-2-SE-4-PG-25-CC-16-QB-1', '',N'Your evidence must demonstrate your organisation''s relevant experience of working with employers or working in the specific occupational area. 
 
 Your evidence must not be over three years old and must not relate to the development and implementation of qualifications.
 
