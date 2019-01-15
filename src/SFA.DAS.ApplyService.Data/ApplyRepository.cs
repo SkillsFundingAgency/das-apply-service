@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
@@ -18,9 +19,11 @@ namespace SFA.DAS.ApplyService.Data
     public class ApplyRepository : IApplyRepository
     {
         private readonly IApplyConfig _config;
+        private readonly ILogger<ApplyRepository> _logger;
 
-        public ApplyRepository(IConfigurationService configurationService)
+        public ApplyRepository(IConfigurationService configurationService, ILogger<ApplyRepository> logger)
         {
+            _logger = logger;
             _config = configurationService.GetConfig().Result;
             SqlMapper.AddTypeHandler(typeof(OrganisationDetails), new OrganisationDetailsHandler());
             SqlMapper.AddTypeHandler(typeof(QnAData), new QnADataHandler());
@@ -68,13 +71,21 @@ namespace SFA.DAS.ApplyService.Data
                             INNER JOIN Applications a ON a.Id = seq.ApplicationId
                             WHERE seq.ApplicationId = @applicationId 
                             AND seq.IsActive = 1", new {applicationId});
-                
-                var sections = (await connection.QueryAsync<ApplicationSection>(@"SELECT * FROM ApplicationSections 
+
+                try
+                {
+                    var sections = (await connection.QueryAsync<ApplicationSection>(@"SELECT * FROM ApplicationSections 
                             WHERE ApplicationId = @ApplicationId 
                             AND SequenceId = @SequenceId",
-                    sequence)).ToList();
+                        sequence)).ToList();
 
-                sequence.Sections = sections;
+                    sequence.Sections = sections;
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e,"There has been an error trying to map ApplicationSections - this is most likely caused by to invalid JSON in the QnAData of ApplicationSections and WorkflowSections");
+                }
+                
                 
                 return sequence;
             }
@@ -505,24 +516,6 @@ namespace SFA.DAS.ApplyService.Data
                 return applicationSections;
             }
         }
-
-        public async Task<List<Contact>> GetNotifyContactsForApplication(Guid requestApplicationId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection.QueryAsync<Contact>(@"SELECT con.*
-                                FROM Applications appl
-                                INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-                                INNER JOIN Contacts con ON con.ApplyOrganisationID = org.Id
-                                WHERE con.SigninId IN (appl.CreatedBy, appl.UpdatedBy)
-                                AND appl.id = @requestApplicationId",
-                    new
-                    {
-                        requestApplicationId
-                    })).ToList();
-            }
-        }
-
         public async Task<int> GetNextAppReferenceSequence()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))

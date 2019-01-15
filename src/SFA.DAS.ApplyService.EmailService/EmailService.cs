@@ -90,22 +90,14 @@ namespace SFA.DAS.ApplyService.EmailService
 
         public async Task SendEmailToContact(string templateName, Contact contact, dynamic tokens)
         {
-            await SendEmailToContacts(templateName, new List<Contact> { contact }, tokens);
-        }
-
-        public async Task SendEmailToContacts(string templateName, IEnumerable<Contact> contacts, dynamic tokens)
-        {
             var emailTemplate = await _emailTemplateRepository.GetEmailTemplate(templateName);
 
-            if (emailTemplate != null)
+            if (emailTemplate != null && contact != null)
             {
-                foreach(var contact in contacts?.Where(c => !string.IsNullOrWhiteSpace(c.Email)))
-                {
-                    var personalisationTokens = GetPersonalisationTokens(tokens);
-                    personalisationTokens["contactname"] = $"{contact.GivenNames} {contact.FamilyName}";
+                var personalisationTokens = GetPersonalisationTokens(tokens);
+                personalisationTokens["contactname"] = $"{contact.GivenNames} {contact.FamilyName}";
 
-                    await SendEmailViaNotificationsApi(contact.Email, emailTemplate.TemplateId, emailTemplate.TemplateName, personalisationTokens);
-                }
+                await SendEmailViaNotificationsApi(contact.Email, emailTemplate.TemplateId, emailTemplate.TemplateName, personalisationTokens);
 
                 await SendEmailToRecipients(emailTemplate.RecipientTemplate, tokens);
             }
