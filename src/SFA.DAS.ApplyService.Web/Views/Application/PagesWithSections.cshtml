@@ -22,7 +22,7 @@
                 <h1 class="govuk-heading-xl">@Model.Title</h1>
                 <ul class="govuk-list">
                     <li>
-                        <ul class="app-task-list">
+                        <ul class="app-task-list"  style='margin-bottom:50px'>
                    
                             @for (var i=0; i < pagesToCheck.Count; i++)
                             {
@@ -52,8 +52,15 @@
                                 </li>
                                 @if (nextPageTitle != pageTitle)
                                  {
-                                     @Html.Raw("</br></br></br>")
-                                 }
+                                     @*@Html.Raw("</br></br></br>")*@
+                                    @Html.Raw("</ul>");
+
+                                    if (i < pagesToCheck.Count - 1)
+                                    {
+                                        @Html.Raw("<ul class='app-task-list' style='margin-bottom:50px'>")
+                                     }
+                                    
+                                }
                                 
                             }
                         </ul>
