@@ -1,13 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.ApplyService.Application.Email.Consts;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
 {
@@ -28,9 +28,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
         {
             // There will probably be some sort of decision of notifications here based on what status the Application
             // is being set to.  But for now I'm just setting it and forgetting.
-            await AddApplicationFeedback(request);
-
             var sequence = await _applyRepository.GetActiveSequence(request.ApplicationId);
+
+            await AddSequenceFeedback(sequence, request.Feedback);
+
             if (request.RequestReturnType == "ReturnWithFeedback")
             {
                 await _applyRepository.UpdateSequenceStatus(request.ApplicationId, request.SequenceId,
@@ -86,31 +87,30 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
                 var lastStandardSubmission = application.ApplicationData?.StandardSubmissions.OrderByDescending(sub => sub.SubmittedAt).FirstOrDefault();
                 var contactToNotify = await _contactRepository.GetContact(lastStandardSubmission?.SubmittedBy);
 
-                await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_RESPONSE, contactToNotify, new { reference , standard });
+                await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_RESPONSE, contactToNotify, new { reference, standard });
             }
-
-            
         }
 
-        private async Task AddApplicationFeedback(ReturnRequest request)
+        private async Task AddSequenceFeedback(ApplicationSequence sequence, Domain.Apply.Feedback feedback)
         {
-            if (request.Feedback != null)
+            if (sequence != null & feedback != null)
             {
-                request.Feedback.IsNew = true;
+                feedback.IsNew = true;
 
-                var application = await _applyRepository.GetApplication(request.ApplicationId);
-
-                if (application != null)
+                if (sequence.SequenceData == null)
                 {
-                    if (application.ApplicationData.Feedback == null)
-                    {
-                        application.ApplicationData.Feedback = new List<Domain.Apply.Feedback>();
-                    }
-
-                    application.ApplicationData.Feedback.Add(request.Feedback);
-
-                    await _applyRepository.UpdateApplicationData(application.Id, application.ApplicationData);
+                    sequence.SequenceData = new SequenceData();
                 }
+
+                if (sequence.SequenceData.Feedback == null)
+                {
+                    sequence.SequenceData.Feedback = new List<Domain.Apply.Feedback>();
+                }
+
+                sequence.SequenceData.Feedback.Add(feedback);
+
+                await _applyRepository.UpdateSequenceData(sequence.ApplicationId, (int)sequence.SequenceId, sequence.SequenceData);
+
             }
         }
     }
