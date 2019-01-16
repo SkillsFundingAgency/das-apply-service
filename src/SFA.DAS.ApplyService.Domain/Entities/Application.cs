@@ -38,7 +38,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string StandardName { get; set; }
         public List<InitSubmission> InitSubmissions { get; set; }
         public List<StandardSubmission> StandardSubmissions { get; set; }
-        public List<Feedback> Feedback { get; set; }
     }
 
     public abstract class Submission
