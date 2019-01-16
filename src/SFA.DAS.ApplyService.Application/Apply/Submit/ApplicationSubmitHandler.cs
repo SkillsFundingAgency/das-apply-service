@@ -27,6 +27,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
         public async Task<Unit> Handle(ApplicationSubmitRequest request, CancellationToken cancellationToken)
         {
             await UpdateApplicationSections(request);
+            await UpdateSequenceData(request);
             await SubmitApplicationSequence(request);
 
             var updatedApplication = await _applyRepository.GetApplication(request.ApplicationId);
@@ -68,6 +69,22 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
             }
 
             await _applyRepository.UpdateSections(sections);
+        }
+
+        private async Task UpdateSequenceData(ApplicationSubmitRequest request)
+        {
+            var sequence = await _applyRepository.GetActiveSequence(request.ApplicationId);
+
+            if(sequence.SequenceData?.Feedback != null)
+            {
+                foreach (var feedback in sequence.SequenceData.Feedback)
+                {
+                    feedback.IsNew = false;
+                    feedback.IsCompleted = true;
+                }
+            }
+
+            await _applyRepository.UpdateSequenceData(sequence.ApplicationId, (int)sequence.SequenceId, sequence.SequenceData);
         }
 
         private async Task SubmitApplicationSequence(ApplicationSubmitRequest request)
