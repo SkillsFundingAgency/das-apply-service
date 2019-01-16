@@ -22,8 +22,7 @@
                 <h1 class="govuk-heading-xl">@Model.Title</h1>
                 <ul class="govuk-list">
                     <li>
-                        <ul class="app-task-list"  style='margin-bottom:50px'>
-                   
+                        <ul class="app-task-list govuk-!-margin-bottom-7">
                             @for (var i=0; i < pagesToCheck.Count; i++)
                             {
                                     var pg = pagesToCheck[i];
@@ -36,9 +35,9 @@
                                     }
 
                                 @if (!isSamePage)
-                                 {
+                                {
                                     <h2 class="govuk-heading-m">@Html.Raw(pg.Title)</h2>
-                                 }
+                                }
                            
                                 <li class="app-task-list__item">
                                     <a class="govuk-link app-task-list__task-name" 
@@ -50,16 +49,14 @@
                                         <strong class="govuk-tag app-task-list__task-completed" id="completed">Completed</strong>
                                     }
                                 </li>
+                                
                                 @if (nextPageTitle != pageTitle)
                                  {
-                                     @*@Html.Raw("</br></br></br>")*@
                                     @Html.Raw("</ul>");
-
                                     if (i < pagesToCheck.Count - 1)
                                     {
-                                        @Html.Raw("<ul class='app-task-list' style='margin-bottom:50px'>")
-                                     }
-                                    
+                                        @Html.Raw("<ul class=\"app-task-list govuk-!-margin-bottom-7\">")
+                                    }
                                 }
                                 
                             }
