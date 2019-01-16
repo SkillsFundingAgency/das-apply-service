@@ -108,7 +108,7 @@ namespace SFA.DAS.ApplyService.InternalApi
 //                app.UseHsts();
 //                app.UseHttpsRedirection();
             }
-
+            app.UseRequestLocalization();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

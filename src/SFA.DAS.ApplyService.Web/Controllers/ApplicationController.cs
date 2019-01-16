@@ -396,12 +396,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpPost("/Application/DeleteAnswer")]
-        public async Task<IActionResult> DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId)
+        public async Task<IActionResult> DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, string redirectAction)
         {
             await _apiClient.DeleteAnswer(applicationId, sequenceId, sectionId, pageId, answerId,
                 Guid.Parse(User.FindFirstValue("UserId")));
-
-            return RedirectToAction("Page", new {applicationId, sequenceId, sectionId, pageId});
+            
+            return RedirectToAction("Page", new {applicationId, sequenceId, sectionId, pageId, redirectAction});
+            
+            //return RedirectToAction("Page", new {applicationId, sequenceId, sectionId, pageId});
         }
 
         [HttpGet("/Application/{applicationId}/Feedback")]
