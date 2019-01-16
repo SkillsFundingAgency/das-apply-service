@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Domain.Apply;
 
@@ -28,5 +29,29 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string FeedbackAdded = "FeedbackAdded";
         public const string Rejected = "Rejected";
         public const string Approved = "Approved";
+    }
+
+    public class ApplicationData
+    {
+        public string ReferenceNumber { get; set; }
+        public int StandardCode { get; set; }
+        public string StandardName { get; set; }
+        public List<InitSubmission> InitSubmissions { get; set; }
+        public List<StandardSubmission> StandardSubmissions { get; set; }
+        public List<Feedback> Feedback { get; set; }
+    }
+
+    public abstract class Submission
+    {
+        public DateTime SubmittedAt { get; set; }
+        public string SubmittedBy { get; set; }
+    }
+
+    public class InitSubmission : Submission
+    {
+    }
+
+    public class StandardSubmission : Submission
+    {
     }
 }
