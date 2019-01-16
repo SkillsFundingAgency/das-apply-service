@@ -160,9 +160,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return View("~/Views/Application/Section.cshtml", section);
             }
-            else if (section.DisplayType == SectionDisplayType.Questions)
+            if (section.DisplayType == SectionDisplayType.Questions)
             {
                 return View("~/Views/Application/SectionQuestions.cshtml", section);
+            }
+            if (section.DisplayType == SectionDisplayType.PagesWithSections)
+            {
+                return View("~/Views/Application/PagesWithSections.cshtml", section);
             }
 
             throw new BadRequestException("Section does not have a valid DisplayType");
