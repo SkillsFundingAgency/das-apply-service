@@ -28,7 +28,7 @@ namespace SFA.DAS.ApplyService.Data
             SqlMapper.AddTypeHandler(typeof(OrganisationDetails), new OrganisationDetailsHandler());
             SqlMapper.AddTypeHandler(typeof(QnAData), new QnADataHandler());
             SqlMapper.AddTypeHandler(typeof(ApplicationData), new ApplicationDataHandler());
-
+            SqlMapper.AddTypeHandler(typeof(SequenceData), new SequenceDataHandler());
         }
         public async Task<List<Domain.Entities.Application>> GetApplications(Guid userId)
         {
@@ -265,6 +265,19 @@ namespace SFA.DAS.ApplyService.Data
                                                                 Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
                                                 WHERE  (Applications.Id = @ApplicationId)",
                     new {applicationId, sequenceId, status, applicationStatus});
+            }
+        }
+
+        public async Task UpdateSequenceData(Guid applicationId, int sequenceId, SequenceData sequenceData)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE ApplicationSequences
+                                                SET    SequenceData = @SequenceData
+                                                FROM   ApplicationSequences INNER JOIN
+                                                       Applications ON ApplicationSequences.ApplicationId = Applications.Id
+                                                WHERE  (ApplicationSequences.ApplicationId = @ApplicationId) AND (ApplicationSequences.SequenceId = @SequenceId);",
+                                    new { applicationId, sequenceId, sequenceData });
             }
         }
 

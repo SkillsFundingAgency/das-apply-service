@@ -70,9 +70,13 @@ BEGIN
 END
 GO
 
-
 IF NOT EXISTS( select * from sys.sequences where object_id = object_id('AppRefSequence'))
 BEGIN
 	CREATE SEQUENCE [dbo].[AppRefSequence]  AS [int] START WITH 100001 INCREMENT BY 1 MINVALUE 100000 MAXVALUE 2147483647 CYCLE  CACHE 
 END
 GO
+
+-- Add the Workflows
+:r ..\WorkflowLatest.sql
+
+
