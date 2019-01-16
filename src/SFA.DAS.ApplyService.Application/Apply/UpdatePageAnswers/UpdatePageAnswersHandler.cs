@@ -181,9 +181,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                         answer.Value = "Yes";
                     }
                 }
-
-                pageAnswers.Answers.Add(answer);
             }
+            
+            pageAnswers.Answers.Add(answer);
 
             return validationPassed;
         }
