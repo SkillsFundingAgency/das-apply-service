@@ -79,7 +79,9 @@
                     <button type="submit" class="govuk-button">Confirm</button>
                 </form>
 
-                <a class="govuk-body govuk-link" asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString">Choose a different organisation</a>
+                <p class="govuk-body">
+                    <a class="govuk-link" asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString">Choose a different organisation</a>
+                </p>
             </div>
         }
         else
@@ -97,7 +99,9 @@
                     </ul>
                 </div>
 
-                <a class="govuk-body govuk-link" asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString">Back to search results</a>
+                <p class="govuk-body">
+                    <a class="govuk-link" asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString">Back to search results</a>
+                </p>
             </div>
         }
     </div>

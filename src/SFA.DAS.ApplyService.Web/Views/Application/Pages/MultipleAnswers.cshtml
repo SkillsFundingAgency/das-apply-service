@@ -7,7 +7,7 @@
 <a href="@Url.Action("Section", "Application", new {Model.ApplicationId, Model.SequenceId, Model.SectionId})" class="govuk-back-link">Back to summary</a>
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
+        <p class="govuk-grid-column-two-thirds">
             @if (!string.IsNullOrEmpty(@Model.Title) && Model.Questions.Count() > 1)
             {
                 <h1 class="govuk-heading-xl">
@@ -180,9 +180,9 @@
                 <button type="submit" class="govuk-button">Save and continue</button>
             </form>
 
-            <div>
-                <a class="govuk-body govuk-link" href="@Url.Action("Section", "Application", new {Model.ApplicationId, Model.SequenceId, Model.SectionId})">Return to summary</a>
-            </div>
+            <p class="govuk-body">
+                <a class="govuk-link" href="@Url.Action("Section", "Application", new {Model.ApplicationId, Model.SequenceId, Model.SectionId})">Return to summary</a>
+            </p>
         </div>
     </div>
 </main>
