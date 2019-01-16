@@ -13,6 +13,15 @@
                 Application feedback
             </h1>
 
+            @if ((int)Model.SequenceId == 1)
+            {
+                <p class="govuk-body">The first part of your application to join the Register of end-point assessment organisations has been rejected</p>
+            }
+            else if ((int)Model.SequenceId == 2)
+            {
+                <p class="govuk-body">The second part of your application to join the Register of end-point assessment organisations has been rejected</p>
+            }
+
             <p class="govuk-body">Go into each question to view comments, where you will have an opportunity to give more information.</p>
 
             <ol class="app-task-list">

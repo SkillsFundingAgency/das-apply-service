@@ -52,7 +52,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("Review/Applications/{applicationId}/Sequences/{sequenceId}/Return")]
         public async Task Return(Guid applicationId, int sequenceId, [FromBody] ReturnApplicationRequest request)
         {
-            await _mediator.Send(new ReturnRequest(applicationId, sequenceId, request.ReturnType));
+            await _mediator.Send(new ReturnRequest(applicationId, sequenceId, request.Feedback, request.ReturnType));
         }
 
         [HttpPost("Review/Applications/{applicationId}/Sequences/{sequenceId}/StartReview")]
@@ -64,6 +64,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
     public class ReturnApplicationRequest
     {
+        public Feedback Feedback { get; set; }
         public string ReturnType { get; set; }
     }
 
