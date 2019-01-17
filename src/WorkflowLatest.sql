@@ -6704,14 +6704,14 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-28-L-1';  -- Row L
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-28-CC-28-L-1', '', 'Quality Assurance of outsourced services', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-28-L-1', '', 'Quality assurance of outsourced services', 'Live', GETUTCDATE(), 'Import')
 
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-28-SL-1'; -- Row J
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-28-CC-28-SL-1', '', 'Quality Assurance of outsourced services'	,'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-28-SL-1', '', 'Quality assurance of outsourced services'	,'Live', GETUTCDATE(), 'Import')
 
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-28-QB-1';   -- Row P
@@ -7273,7 +7273,7 @@ VALUES
         "Next": [
           {
             "Action": "NextPage",
-			"ReturnId": "28",
+			      "ReturnId": "28",
             "Condition": null,
             "ConditionMet": false
           }
@@ -7312,7 +7312,7 @@ VALUES
         "PageOfAnswers": [],
         "Next": [
           {
-             "Action": "NextPage",
+            "Action": "NextPage",
             "ReturnId": "29",
             "Condition": null,
             "ConditionMet": false
@@ -7710,7 +7710,7 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-14-QB-1",
             "Hint": "SQ-2-SE-4-PG-24-CC-14-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -7756,7 +7756,7 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-25-CC-16-QB-1",
             "Hint": "SQ-2-SE-4-PG-25-CC-16-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -7802,7 +7802,7 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-25-CC-19-QB-1",
             "Hint": "SQ-2-SE-4-PG-25-CC-19-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": []
             },
@@ -7812,7 +7812,7 @@ VALUES
         "PageOfAnswers": [],
         "Next": [
           {
-             "Action": "NextPage",
+            "Action": "NextPage",
             "ReturnId": "39",
             "Condition": null,
             "ConditionMet": false
@@ -7894,7 +7894,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "number of assessors - THIS SOUNDS WRONG"
+                          "ErrorMessage": "Enter the volume of end-point assessments you can deliver"
                         }
                       ]
             },
@@ -7934,7 +7934,7 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-26-CC-22-QB-1",
             "Hint": "SQ-2-SE-4-PG-26-CC-22-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -7980,7 +7980,7 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-27-CC-23-QB-1",
             "Hint": "SQ-2-SE-4-PG-27-CC-23-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -8026,7 +8026,7 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-27-CC-24-QB-1",
             "Hint": "SQ-2-SE-4-PG-27-CC-24-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -8072,7 +8072,7 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-27-CC-25-QB-1",
             "Hint": "SQ-2-SE-4-PG-27-CC-25-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -8118,7 +8118,7 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-26-QB-1",
             "Hint": "SQ-2-SE-4-PG-28-CC-26-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -8175,7 +8175,7 @@ VALUES
                     "Label": "SQ-2-SE-4-PG-28-CC-28-L-1",
                     "Hint":  "SQ-2-SE-4-PG-28-CC-28-H-1",
                     "Input": {
-                      "Type": "text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -8241,7 +8241,7 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-29-QB-1",
             "Hint": "SQ-2-SE-4-PG-28-CC-29-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -8287,7 +8287,7 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-30-QB-1",
             "Hint": "SQ-2-SE-4-PG-28-CC-30-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -8333,7 +8333,7 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-31-QB-1",
             "Hint": "SQ-2-SE-4-PG-28-CC-31-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -8379,7 +8379,7 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-32-QB-1",
             "Hint": "SQ-2-SE-4-PG-28-CC-32-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -8425,7 +8425,7 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-33-QB-1",
             "Hint": "SQ-2-SE-4-PG-28-CC-33-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -8471,7 +8471,7 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-29-CC-34-QB-1",
             "Hint": "SQ-2-SE-4-PG-29-CC-34-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -8517,7 +8517,7 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-29-CC-35-QB-1",
             "Hint": "SQ-2-SE-4-PG-29-CC-35-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -8563,7 +8563,7 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-29-CC-36-QB-1",
             "Hint": "SQ-2-SE-4-PG-29-CC-36-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -8609,7 +8609,7 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-29-CC-37-QB-1",
             "Hint": "SQ-2-SE-4-PG-29-CC-37-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -8655,7 +8655,7 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-29-CC-38-QB-1",
             "Hint": "SQ-2-SE-4-PG-29-CC-38-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -8701,7 +8701,7 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-29-CC-39-QB-1",
             "Hint": "SQ-2-SE-4-PG-29-CC-39-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
