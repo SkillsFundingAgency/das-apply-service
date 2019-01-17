@@ -8171,7 +8171,7 @@ VALUES
                 "Value": "Yes",
                 "FurtherQuestions": [
                   {
-                    "QuestionId": "CD-28",
+                    "QuestionId": "CD-27.1",
                     "Label": "SQ-2-SE-4-PG-28-CC-28-L-1",
                     "Hint":  "SQ-2-SE-4-PG-28-CC-28-H-1",
                     "Input": {
