@@ -1,0 +1,70 @@
+﻿@model SFA.DAS.ApplyService.Domain.Entities.ApplicationSection
+
+@{
+    ViewBag.Title = @Model.Title;
+    Layout = "_Layout";
+    var pageTitle = "";
+    var isSamePage = false;
+    var nextPageTitle = "";
+    var pagesToCheck = Model.QnAData.Pages.Where(p => p.Active).ToList();
+}
+
+<a href="@Url.Action("Sequence", "Application", new {applicationId = Model.ApplicationId})" class="govuk-back-link">Back to application overview</a>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @if (Model == null)
+            {
+                <h1 class="govuk-heading-xl">Sequence not active</h1>
+            }
+            else
+            {
+                <h1 class="govuk-heading-xl">@Model.Title</h1>
+                <ul class="govuk-list">
+                    <li>
+                        <ul class="app-task-list govuk-!-margin-bottom-7">
+                            @for (var i=0; i < pagesToCheck.Count; i++)
+                            {
+                                    var pg = pagesToCheck[i];
+                                    isSamePage = pageTitle == pg.Title;
+                                    pageTitle = pg.Title;
+                                    nextPageTitle = "";
+                                    if (i < pagesToCheck.Count-1)
+                                    {
+                                        nextPageTitle = (pagesToCheck[i + 1]).Title;                                    
+                                    }
+
+                                @if (!isSamePage)
+                                {
+                                    <h2 class="govuk-heading-m">@Html.Raw(pg.Title)</h2>
+                                }
+                           
+                                <li class="app-task-list__item">
+                                    <a class="govuk-link app-task-list__task-name" 
+                                       href="@Url.Action("Page", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pg.PageId, redirectAction="Section"})">
+                                        @pg.LinkTitle
+                                    </a>
+                                    @if (pg.Complete)
+                                    {
+                                        <strong class="govuk-tag app-task-list__task-completed" id="completed">Completed</strong>
+                                    }
+                                </li>
+                                
+                                @if (nextPageTitle != pageTitle)
+                                 {
+                                    @Html.Raw("</ul>");
+                                    if (i < pagesToCheck.Count - 1)
+                                    {
+                                        @Html.Raw("<ul class=\"app-task-list govuk-!-margin-bottom-7\">")
+                                    }
+                                }
+                                
+                            }
+                        </ul>
+                    </li>
+                </ul>
+                <a href="@Url.Action("Sequence", "Application", new {applicationId = Model.ApplicationId})" class="govuk-button">Return to application overview</a>
+            }
+        </div>
+    </div>
+</main>
