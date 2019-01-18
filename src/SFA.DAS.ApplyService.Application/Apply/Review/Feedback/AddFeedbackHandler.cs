@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -27,8 +28,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Feedback
                 page.Feedback = new List<Domain.Apply.Feedback>();
             }
 
+            request.Feedback.Id = Guid.NewGuid();
             request.Feedback.IsNew = true;
-            
+            request.Feedback.IsCompleted = false;
+
             page.Feedback.Add(request.Feedback);
 
             section.UpdatePage(page);
