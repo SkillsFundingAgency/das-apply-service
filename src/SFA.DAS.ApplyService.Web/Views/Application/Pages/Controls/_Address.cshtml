@@ -1,0 +1,69 @@
+@model dynamic
+
+@{ var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : ""; }
+
+<div class="govuk-form-group">
+    <label class="govuk-label" for="@Model.QuestionId">
+        Building and street
+        <span class="govuk-visually-hidden">line 1 of 2</span>
+    </label>
+    <input
+        value="@(string.IsNullOrWhiteSpace(Model.Value?.ToString()) ? "" : Model.Value?.ToString().Split(',')[0])"
+        class="govuk-input @isError"
+        id="@Model.QuestionId"
+        name="@Model.QuestionId"
+        type="text"
+    >
+</div>
+
+<div class="govuk-form-group">
+    <label class="govuk-label" for="@Model.QuestionId">
+        <span class="govuk-visually-hidden">Building and street line 2 of 2</span>
+    </label>
+    <input
+        value="@(string.IsNullOrWhiteSpace(Model.Value?.ToString()) ? "" : Model.Value?.ToString().Split(',')[1])"
+        class="govuk-input @isError"
+        id="@Model.QuestionId"
+        name="@Model.QuestionId"
+        type="text"
+    >
+</div>
+
+<div class="govuk-form-group">
+    <label class="govuk-label" for="@Model.QuestionId">
+        Town or city
+    </label>
+    <input
+        value="@(string.IsNullOrWhiteSpace(Model.Value?.ToString()) ? "" : Model.Value?.ToString().Split(',')[2])"
+        class="govuk-input govuk-!-width-two-thirds @isError"
+        id="@Model.QuestionId"
+        name="@Model.QuestionId"
+        type="text"
+    >
+</div>
+
+<div class="govuk-form-group">
+    <label class="govuk-label" for="@Model.QuestionId">
+        County
+    </label>
+    <input
+        value="@(string.IsNullOrWhiteSpace(Model.Value?.ToString()) ? "" : Model.Value?.ToString().Split(',')[3])"
+        class="govuk-input govuk-!-width-two-thirds @isError"
+        id="@Model.QuestionId"
+        name="@Model.QuestionId"
+        type="text"
+    >
+</div>
+
+<div class="govuk-form-group">
+    <label class="govuk-label" for="@Model.QuestionId">
+        Postcode
+    </label>
+    <input
+        value="@(string.IsNullOrWhiteSpace(Model.Value?.ToString()) ? "" : Model.Value?.ToString().Split(',')[4])"
+        class="govuk-input govuk-input--width-10 @isError"
+        id="@Model.QuestionId"
+        name="@Model.QuestionId"
+        type="text"
+    >
+</div>
