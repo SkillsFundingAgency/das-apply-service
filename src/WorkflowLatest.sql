@@ -1720,7 +1720,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-13-287';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-13-287', '', 'Cessation of trading - THIS LOOKS WRONG', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-13-287', '', 'Cessation of trading', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-13-288';
 INSERT INTO Assets
@@ -1744,6 +1744,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-13.1-291';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
+
   (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-13.1-291', '', '', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-13.1-292';
@@ -1780,7 +1781,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20.1-297';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20.1-297', '', 'Bankruptcy and Insolvency details', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20.1-297', '', 'Bankruptcy and Insolvency details 1', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20.1-298';
 INSERT INTO Assets
@@ -2793,21 +2794,30 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-LT-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20-LT-1', '', 'Cessation of trading ***', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20-LT-1', '', 'Tax and social security irregularities', 'Live', GETUTCDATE(), 'Import')
 GO
 
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-201-LT-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-201-LT-1', '', 'Tax and social security irregularities ***', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-201-LT-1', '', 'Bankruptcy and Insolvency', 'Live', GETUTCDATE(), 'Import')
 GO
+
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20.1-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-20.1-LT-1', '', 'Bankruptcy and Insolvency details', 'Live', GETUTCDATE(), 'Import')
+GO
+
 
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-202-LT-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-202-LT-1', '', 'Bankruptcy and insolvency', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-202-LT-1', '', 'Cessation of Trading', 'Live', GETUTCDATE(), 'Import')
 GO
 
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-203-LT-1';
@@ -5014,8 +5024,8 @@ VALUES
       "PageId": "20.1",
       "SequenceId": "1",
       "SectionId": "2",
-      "Title": "SQ-1-SE-2-PG-20.1-297",
-      "LinkTitle": "SQ-1-SE-2-PG-20.1-300",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-20.1-LT-1",
       "InfoText": "SQ-1-SE-2-PG-20.1-299",
       "Questions": [
         {
