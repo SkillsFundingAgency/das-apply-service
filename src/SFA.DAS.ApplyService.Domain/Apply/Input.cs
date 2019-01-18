@@ -8,6 +8,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public string Type { get; set; }
         public List<Option> Options { get; set; }
         public List<ValidationDefinition> Validations { get; set; }
+        public string DataEndpoint { get; set; }
     }
 
     public class Option

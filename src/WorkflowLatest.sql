@@ -6464,7 +6464,7 @@ VALUES
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-340-LT-1', '', 'Fair Access', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-340-LT-1', '', 'Fair access', 'Live', GETUTCDATE(), 'Import')
 
 
   GO
@@ -7359,14 +7359,14 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-28-L-1';  -- Row L
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-28-CC-28-L-1', '', 'Quality Assurance of outsourced services', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-28-L-1', '', 'Quality assurance of outsourced services', 'Live', GETUTCDATE(), 'Import')
 
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-28-SL-1'; -- Row J
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-28-CC-28-SL-1', '', 'Quality Assurance of outsourced services'	,'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-28-SL-1', '', 'Quality assurance of outsourced services'	,'Live', GETUTCDATE(), 'Import')
 
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-28-QB-1';   -- Row P
@@ -7825,7 +7825,7 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF policy document"
+                  "ErrorMessage": "Upload a PDF of your internal audit policy document"
                 }
               ]
             },
@@ -7871,7 +7871,7 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF of your public liability certificate of insurance"
+                  "ErrorMessage": "Upload a PDF of your public liability certificate of insurance"
                 }
               ]
             },
@@ -7917,7 +7917,7 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF of your professional indemnity certificate of insurance"
+                  "ErrorMessage": "Upload a PDF of your professional indemnity certificate of insurance"
                 }
               ]
             },
@@ -7928,7 +7928,7 @@ VALUES
         "Next": [
           {
             "Action": "NextPage",
-			"ReturnId": "28",
+			      "ReturnId": "28",
             "Condition": null,
             "ConditionMet": false
           }
@@ -7967,7 +7967,7 @@ VALUES
         "PageOfAnswers": [],
         "Next": [
           {
-             "Action": "NextPage",
+            "Action": "NextPage",
             "ReturnId": "29",
             "Condition": null,
             "ConditionMet": false
@@ -8003,7 +8003,7 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF of your policy safeguarding document"
+                  "ErrorMessage": "Upload a PDF of your safeguarding policy document"
                 }
               ]
             },
@@ -8049,7 +8049,7 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF Prevent Agenda policy document"
+                  "ErrorMessage": "Upload a PDF of your prevent agenda policy document"
                 }
               ]
             },
@@ -8095,7 +8095,7 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF conflict of interest policy document"
+                  "ErrorMessage": "Upload a PDF of your conflict of interest policy document"
                 }
               ]
             },
@@ -8141,7 +8141,7 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF procedure for monitoring assessor policy document"
+                  "ErrorMessage": "Upload a PDF of your procedures for monitoring assessor practices and decisions"
                 }
               ]
             },
@@ -8187,7 +8187,7 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF standardisation and moderation policy document"
+                  "ErrorMessage": "Upload a PDF of your standardisation and moderation activities"
                 }
               ]
             },
@@ -8233,7 +8233,7 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF compalints policy document"
+                  "ErrorMessage": "Upload a PDF of your compalints policy document"
                 }
               ]
             },
@@ -8279,7 +8279,7 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF fair access policy document"
+                  "ErrorMessage": "Upload a PDF of your fair access policy document"
                 }
               ]
             },
@@ -8325,7 +8325,7 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF comparability and consistency policy document"
+                  "ErrorMessage": "Upload a PDF of your comparability and consistency decisions"
                 }
               ]
             },
@@ -8365,13 +8365,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-14-QB-1",
             "Hint": "SQ-2-SE-4-PG-24-CC-14-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how you continuously improve the quality of your assessment practice"
                         }
                       ]
             },
@@ -8411,13 +8411,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-25-CC-16-QB-1",
             "Hint": "SQ-2-SE-4-PG-25-CC-16-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter your evidence of engagement with trailblazers and employers"
                         }
                       ]
             },
@@ -8457,9 +8457,15 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-25-CC-19-QB-1",
             "Hint": "SQ-2-SE-4-PG-25-CC-19-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
-                      "Validations": []
+                      "Validations": [
+                        {
+                          "Name": "Required",
+                          "Value": null,
+                          "ErrorMessage": "Enter details of membership to professional organisations"
+                        }
+                      ]
             },
             "Order": null
           }
@@ -8467,7 +8473,7 @@ VALUES
         "PageOfAnswers": [],
         "Next": [
           {
-             "Action": "NextPage",
+            "Action": "NextPage",
             "ReturnId": "39",
             "Condition": null,
             "ConditionMet": false
@@ -8503,7 +8509,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Provide number of assessors"
+                          "ErrorMessage": "Provide the number of assessors your organisation has"
                         }
                       ]
             },
@@ -8549,7 +8555,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "number of assessors - THIS SOUNDS WRONG"
+                          "ErrorMessage": "Enter the volume of end-point assessments you can deliver"
                         }
                       ]
             },
@@ -8589,13 +8595,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-26-CC-22-QB-1",
             "Hint": "SQ-2-SE-4-PG-26-CC-22-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how the volume of end-point assessments be achieved"
                         }
                       ]
             },
@@ -8635,13 +8641,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-27-CC-23-QB-1",
             "Hint": "SQ-2-SE-4-PG-27-CC-23-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how you recruit and train assessors"
                         }
                       ]
             },
@@ -8681,13 +8687,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-27-CC-24-QB-1",
             "Hint": "SQ-2-SE-4-PG-27-CC-24-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter the experience, skills and qualifications your assessors have"
                         }
                       ]
             },
@@ -8727,13 +8733,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-27-CC-25-QB-1",
             "Hint": "SQ-2-SE-4-PG-27-CC-25-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how you ensure your assessors'' occupational expertise is maintained"
                         }
                       ]
             },
@@ -8773,13 +8779,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-26-QB-1",
             "Hint": "SQ-2-SE-4-PG-28-CC-26-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how you will conduct an end-point assessment for this standard"
                         }
                       ]
             },
@@ -8826,17 +8832,17 @@ VALUES
                 "Value": "Yes",
                 "FurtherQuestions": [
                   {
-                    "QuestionId": "CD-28",
+                    "QuestionId": "CC-27.1",
                     "Label": "SQ-2-SE-4-PG-28-CC-28-L-1",
                     "Hint":  "SQ-2-SE-4-PG-28-CC-28-H-1",
                     "Input": {
-                      "Type": "text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter the quality assurance of outsourced services"
                         }
                       ]
                     },
@@ -8856,7 +8862,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "select an option"
+                "ErrorMessage": "Select yes if you intend to outsource any of your end-point assessments"
               }
             ]
             },
@@ -8896,13 +8902,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-29-QB-1",
             "Hint": "SQ-2-SE-4-PG-28-CC-29-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how you will engage with employers and training organisations"
                         }
                       ]
             },
@@ -8942,13 +8948,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-30-QB-1",
             "Hint": "SQ-2-SE-4-PG-28-CC-30-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how you will manage any potential conflict of interest"
                         }
                       ]
             },
@@ -8988,13 +8994,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-31-QB-1",
             "Hint": "SQ-2-SE-4-PG-28-CC-31-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter where you will conduct end-point assessments"
                         }
                       ]
             },
@@ -9034,13 +9040,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-32-QB-1",
             "Hint": "SQ-2-SE-4-PG-28-CC-32-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how you will conduct end-point assessments"
                         }
                       ]
             },
@@ -9080,13 +9086,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-33-QB-1",
             "Hint": "SQ-2-SE-4-PG-28-CC-33-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how you will develop and maintain the required resources and assessment tools"
                         }
                       ]
             },
@@ -9126,13 +9132,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-29-CC-34-QB-1",
             "Hint": "SQ-2-SE-4-PG-29-CC-34-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of the secure IT infrastructure you will implement"
                         }
                       ]
             },
@@ -9172,13 +9178,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-29-CC-35-QB-1",
             "Hint": "SQ-2-SE-4-PG-29-CC-35-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of processes in place for administration of assessments"
                         }
                       ]
             },
@@ -9218,13 +9224,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-29-CC-36-QB-1",
             "Hint": "SQ-2-SE-4-PG-29-CC-36-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter the strategies in place for development of assessment products and tools"
                         }
                       ]
             },
@@ -9264,13 +9270,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-29-CC-37-QB-1",
             "Hint": "SQ-2-SE-4-PG-29-CC-37-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter the actions you will take and the processes you will implement"
                         }
                       ]
             },
@@ -9310,13 +9316,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-29-CC-38-QB-1",
             "Hint": "SQ-2-SE-4-PG-29-CC-38-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of how you collate and confirm assessment outcomes to employers, training providers and apprentices"
                         }
                       ]
             },
@@ -9356,13 +9362,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-29-CC-39-QB-1",
             "Hint": "SQ-2-SE-4-PG-29-CC-39-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of the processes in place for recording and issuing assessment results and certificates"
                         }
                       ]
             },

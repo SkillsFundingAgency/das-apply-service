@@ -25,6 +25,8 @@ namespace SFA.DAS.ApplyService.Web
         private readonly IConfiguration _configuration;
         private readonly ILogger<Startup> _logger;
         private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IHostingEnvironment _env;
+        private IApplyConfig _configService;
         private const string ServiceName = "SFA.DAS.ApplyService";
         private const string Version = "1.0";
 
@@ -33,8 +35,8 @@ namespace SFA.DAS.ApplyService.Web
             _configuration = configuration;
             _logger = logger;
             _hostingEnvironment = hostingEnvironment;
-            new ConfigurationService(env, _configuration["EnvironmentName"], _configuration["ConfigurationStorageConnectionString"], Version, ServiceName).GetConfig().GetAwaiter().GetResult();
-
+            _env = env;
+            _configService =  new ConfigurationService(env, _configuration["EnvironmentName"], _configuration["ConfigurationStorageConnectionString"], Version, ServiceName).GetConfig().GetAwaiter().GetResult();
         }
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
@@ -54,13 +56,30 @@ namespace SFA.DAS.ApplyService.Web
             services.AddMvc(options => { options.Filters.Add<PerformValidationFilter>(); })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            if (_env.IsDevelopment())
+            {
+                services.AddDistributedMemoryCache();
+            }
+            else
+            {
+                try
+                {
+                    services.AddDistributedRedisCache(options => { options.Configuration = _configService.SessionRedisConnectionString; });
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, $"Error setting redis for session.  Conn: {_configService.SessionRedisConnectionString}");
+                    throw;
+                }
+            }
+            
             services.AddSession(opt =>
             {
                 opt.IdleTimeout = TimeSpan.FromHours(1);
                 opt.Cookie = new CookieBuilder() {Name = ".Apply.Session", HttpOnly = true};
             });
             
-            services.AddDistributedMemoryCache();
+
 
             return ConfigureIOC(services).Result;
         }

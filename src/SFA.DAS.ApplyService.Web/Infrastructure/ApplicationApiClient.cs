@@ -147,5 +147,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         {
             return await(await _httpClient.GetAsync("all-standards")).Content.ReadAsAsync<List<StandardCollation>>();
         }
+
+        public async Task<List<Option>> GetQuestionDataFedOptions(string dataEndpoint)
+        {
+            return await(await _httpClient.GetAsync($"QuestionOptions/{dataEndpoint}")).Content.ReadAsAsync<List<Option>>();
+        }
     }
 }
