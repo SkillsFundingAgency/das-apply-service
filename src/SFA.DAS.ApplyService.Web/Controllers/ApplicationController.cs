@@ -176,6 +176,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> Page(string applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
             var page = await _apiClient.GetPage(Guid.Parse(applicationId), sequenceId, sectionId, pageId, Guid.Parse(User.FindFirstValue("UserId")));
+
+            page = await GetDataFedOptions(page);
+            
             var pageVm = new PageViewModel(page, Guid.Parse(applicationId));
 
             pageVm.SectionId = sectionId;
@@ -192,7 +195,23 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return View("~/Views/Application/Pages/Index.cshtml", pageVm);
         }
 
-         private void ProcessPageVmQuestionsForStandardName(List<QuestionViewModel> pageVmQuestions, string applicationId)
+        private async Task<Page> GetDataFedOptions(Page page)
+        {
+            foreach (var question in page.Questions)
+            {
+                if (question.Input.Type.StartsWith("DataFed_"))
+                {
+                    var questionOptions = await _apiClient.GetQuestionDataFedOptions(question.Input.DataEndpoint);
+                    // Get data from API using question.Input.DataEndpoint
+                    question.Input.Options = questionOptions;
+                    question.Input.Type = question.Input.Type.Replace("DataFed_", "");
+                }
+            }
+
+            return page;
+        }
+
+        private void ProcessPageVmQuestionsForStandardName(List<QuestionViewModel> pageVmQuestions, string applicationId)
          {
              var placeholderString = "StandardName";
              var isPlaceholderPresent = false;
