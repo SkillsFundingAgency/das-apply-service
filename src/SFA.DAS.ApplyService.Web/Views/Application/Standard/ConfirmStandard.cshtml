@@ -11,21 +11,23 @@
 
 <a href="/standard/@Model.ApplicationId" class="govuk-back-link">Return to standards search</a>
 <main class="govuk-main-wrapper " id="main-content" role="main">
-    @if (!ViewData.ModelState.IsValid || showErrors)
-    {
-        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-            <h2 class="govuk-error-summary__title" id="error-summary-title">
-                There is a problem
-            </h2>
-            <div class="govuk-error-summary__body">
-                <ul class="govuk-list govuk-error-summary__list">
-                    <li><a href="#IsConfirmed">Confirm you have read the assessment plan</a></li>
-                </ul>
-            </div>
-        </div>
-    }
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
+
+            @if (!ViewData.ModelState.IsValid || showErrors)
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            <li><a href="#IsConfirmed">Confirm you have read the assessment plan</a></li>
+                        </ul>
+                    </div>
+                </div>
+            }
+ 
             <h1 class="govuk-heading-xl govuk-!-margin-bottom-1">
                 @if (string.IsNullOrEmpty(Model.ApplicationStatus))
                 {
@@ -33,18 +35,29 @@
                 }
                 @Model.SelectedStandard?.Title
             </h1>
-            <p class="govuk-body-l govuk-!-margin-bottom-2">Standard Code: @Model.SelectedStandard?.StandardId</p>
-            <p class="govuk-body govuk-!-margin-bottom-0">Effective from: @Model.SelectedStandard?.StandardData?.EffectiveFrom.ToSfaShortDateString()</p>
-            <p class="govuk-body">
-                Effective to: @if (@Model.SelectedStandard?.StandardData?.EffectiveTo == null)
-                {
-                    @Html.Raw("No expiry date set")
-                }
-                else
-                {
-                    @Model.SelectedStandard?.StandardData?.EffectiveTo.ToSfaShortDateString()
-                }
-            </p>
+            <p class="govuk-body-l">Standard Code: @Model.SelectedStandard?.StandardId</p>
+
+            <table class="govuk-table govuk-!-margin-bottom-7">
+                <tbody class="govuk-table__body">
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Effective from</th>
+                        <td class="govuk-table__cell">@Model.SelectedStandard?.StandardData?.EffectiveFrom.ToSfaShortDateString()</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="row">Effective to</th>
+                        <td class="govuk-table__cell">
+                            @if (@Model.SelectedStandard?.StandardData?.EffectiveTo == null)
+                            {
+                                @Html.Raw("Expiry date not set")
+                            }
+                            else
+                            {
+                                @Model.SelectedStandard?.StandardData?.EffectiveTo.ToSfaShortDateString()
+                            }
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
             <form asp-action="StandardConfirm" asp-controller="Standard" asp-route-applicationId="@Model.ApplicationId">
                 <input asp-for="@Model.StandardCode" value="@standardCode" type="hidden" />
