@@ -43,6 +43,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             await _mediator.Send(new AddFeedbackRequest(applicationId, sequenceId, sectionId, pageId, feedback));
         }
 
+        [HttpPost("Review/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/DeleteFeedback")]
+        public async Task DeleteFeedback(Guid applicationId, int sequenceId, int sectionId, string pageId, [FromBody] Guid feedbackId)
+        {
+            await _mediator.Send(new DeleteFeedbackRequest(applicationId, sequenceId, sectionId, pageId, feedbackId));
+        }
+
         [HttpPost("Review/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Evaluate")]
         public async Task EvaluateSection(Guid applicationId, int sequenceId, int sectionId, [FromBody] EvaluateSectionRequest request)
         {
