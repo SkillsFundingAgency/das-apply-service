@@ -5809,7 +5809,7 @@ VALUES
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-340-LT-1', '', 'Fair Access', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-340-LT-1', '', 'Fair access', 'Live', GETUTCDATE(), 'Import')
 
 
   GO
@@ -7170,7 +7170,7 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF policy document"
+                  "ErrorMessage": "Upload a PDF of your internal audit policy document"
                 }
               ]
             },
@@ -7216,7 +7216,7 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF of your public liability certificate of insurance"
+                  "ErrorMessage": "Upload a PDF of your public liability certificate of insurance"
                 }
               ]
             },
@@ -7262,7 +7262,7 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF of your professional indemnity certificate of insurance"
+                  "ErrorMessage": "Upload a PDF of your professional indemnity certificate of insurance"
                 }
               ]
             },
@@ -7348,7 +7348,7 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF of your policy safeguarding document"
+                  "ErrorMessage": "Upload a PDF of your safeguarding policy document"
                 }
               ]
             },
@@ -7394,7 +7394,7 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF Prevent Agenda policy document"
+                  "ErrorMessage": "Upload a PDF of your prevent agenda policy document"
                 }
               ]
             },
@@ -7440,7 +7440,7 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF conflict of interest policy document"
+                  "ErrorMessage": "Upload a PDF of your conflict of interest policy document"
                 }
               ]
             },
@@ -7486,7 +7486,7 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF procedure for monitoring assessor policy document"
+                  "ErrorMessage": "Upload a PDF of your procedures for monitoring assessor practices and decisions"
                 }
               ]
             },
@@ -7532,7 +7532,7 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF standardisation and moderation policy document"
+                  "ErrorMessage": "Upload a PDF of your standardisation and moderation activities"
                 }
               ]
             },
@@ -7578,7 +7578,7 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF compalints policy document"
+                  "ErrorMessage": "Upload a PDF of your compalints policy document"
                 }
               ]
             },
@@ -7624,7 +7624,7 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF fair access policy document"
+                  "ErrorMessage": "Upload a PDF of your fair access policy document"
                 }
               ]
             },
@@ -7670,7 +7670,7 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF comparability and consistency policy document"
+                  "ErrorMessage": "Upload a PDF of your comparability and consistency decisions"
                 }
               ]
             },
@@ -7716,7 +7716,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how you continuously improve the quality of your assessment practice"
                         }
                       ]
             },
@@ -7762,7 +7762,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter your evidence of engagement with trailblazers and employers"
                         }
                       ]
             },
@@ -7804,7 +7804,13 @@ VALUES
             "Input": {
               "Type": "Textarea",
                       "Options": null,
-                      "Validations": []
+                      "Validations": [
+                        {
+                          "Name": "Required",
+                          "Value": null,
+                          "ErrorMessage": "Enter details of membership to professional organisations"
+                        }
+                      ]
             },
             "Order": null
           }
@@ -7848,7 +7854,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Provide number of assessors"
+                          "ErrorMessage": "Provide the number of assessors your organisation has"
                         }
                       ]
             },
@@ -7940,7 +7946,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how the volume of end-point assessments be achieved"
                         }
                       ]
             },
@@ -7986,7 +7992,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how you recruit and train assessors"
                         }
                       ]
             },
@@ -8032,7 +8038,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter the experience, skills and qualifications your assessors have"
                         }
                       ]
             },
@@ -8078,7 +8084,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how you ensure your assessors'' occupational expertise is maintained"
                         }
                       ]
             },
@@ -8124,7 +8130,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how you will conduct an end-point assessment for this standard"
                         }
                       ]
             },
@@ -8181,7 +8187,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter the quality assurance of outsourced services"
                         }
                       ]
                     },
@@ -8201,7 +8207,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "select an option"
+                "ErrorMessage": "Select yes if you intend to outsource any of your end-point assessments"
               }
             ]
             },
@@ -8247,7 +8253,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how you will engage with employers and training organisations"
                         }
                       ]
             },
@@ -8293,7 +8299,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how you will manage any potential conflict of interest"
                         }
                       ]
             },
@@ -8339,7 +8345,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter where you will conduct end-point assessments"
                         }
                       ]
             },
@@ -8385,7 +8391,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how you will conduct end-point assessments"
                         }
                       ]
             },
@@ -8431,7 +8437,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how you will develop and maintain the required resources and assessment tools"
                         }
                       ]
             },
@@ -8477,7 +8483,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of the secure IT infrastructure you will implement"
                         }
                       ]
             },
@@ -8523,7 +8529,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of processes in place for administration of assessments"
                         }
                       ]
             },
@@ -8569,7 +8575,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter the strategies in place for development of assessment products and tools"
                         }
                       ]
             },
@@ -8615,7 +8621,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter the actions you will take and the processes you will implement"
                         }
                       ]
             },
@@ -8661,7 +8667,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of how you collate and confirm assessment outcomes to employers, training providers and apprentices"
                         }
                       ]
             },
@@ -8707,7 +8713,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of the processes in place for recording and issuing assessment results and certificates"
                         }
                       ]
             },
