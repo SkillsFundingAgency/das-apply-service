@@ -261,8 +261,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var page = await _apiClient.GetPage(Guid.Parse(applicationId), sequenceId, sectionId, pageId, Guid.Parse(User.FindFirstValue("UserId")));
 
-            //MFCMFC 
-            //var section = await _apiClient.GetSection(Guid.Parse(applicationId), sequenceId, sectionId, Guid.Parse(User.FindFirstValue("UserId")));
             var errorMessages = new List<ValidationErrorDetail>();
             var answers = new List<Answer>();
             
@@ -270,10 +268,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             GetAnswersFromForm(answers);
 
             var updatePageResult = await _apiClient.UpdatePageAnswers(Guid.Parse(applicationId), userId, sequenceId, sectionId, pageId, answers);
-
-
-            //MFCMFC 
-            //var section2 = await _apiClient.GetSection(Guid.Parse(applicationId), sequenceId, sectionId, Guid.Parse(User.FindFirstValue("UserId")));
 
 
             if (updatePageResult.ValidationPassed && fileValidationPassed)
