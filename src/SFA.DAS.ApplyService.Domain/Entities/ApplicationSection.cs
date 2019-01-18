@@ -10,17 +10,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     {
         public List<Page> Pages { get; set; }
         public FinancialApplicationGrade FinancialApplicationGrade { get; set; }
-
-        public List<Feedback> Feedback { get; set; } // Section level feedback
-
-        [JsonIgnore]
-        public bool HasFeedback => Feedback?.Any() ?? false;
-
-        [JsonIgnore]
-        public bool HasNewFeedback => HasFeedback && Feedback.Any(f => f.IsNew);
-
-        [JsonIgnore]
-        public bool AllFeedbackIsCompleted => HasFeedback ? Feedback.All(f => f.IsCompleted) : true;
     }
 
     public class ApplicationSection : EntityBase
@@ -61,10 +50,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
 
             QnAData.Pages = currentPages;
         }
-
-        [JsonIgnore] public bool HasNewPageFeedback => QnAData.Pages.Any(p => p.HasNewFeedback);
-
-        [JsonIgnore] public bool HasNewSectionFeedback => QnAData.HasNewFeedback;
     }
 
     public class ApplicationSectionStatus

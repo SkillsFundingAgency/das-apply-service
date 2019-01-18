@@ -8,15 +8,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Evaluate
         public Guid ApplicationId { get; }
         public int SequenceId { get; }
         public int SectionId { get; }
-        public Domain.Apply.Feedback Feedback { get; }
         public bool IsSectionComplete { get; }
 
-        public EvaluateRequest(Guid applicationId, int sequenceId, int sectionId, Domain.Apply.Feedback feedback, bool isSectionComplete)
+        public EvaluateRequest(Guid applicationId, int sequenceId, int sectionId, bool isSectionComplete)
         {
             ApplicationId = applicationId;
             SequenceId = sequenceId;
             SectionId = sectionId;
-            Feedback = feedback;
             IsSectionComplete = isSectionComplete;
         }
     }

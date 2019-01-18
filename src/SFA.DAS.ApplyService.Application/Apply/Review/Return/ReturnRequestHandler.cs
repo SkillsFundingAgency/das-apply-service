@@ -30,8 +30,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
             // is being set to.  But for now I'm just setting it and forgetting.
             var sequence = await _applyRepository.GetActiveSequence(request.ApplicationId);
 
-            await AddSequenceFeedback(sequence, request.Feedback);
-
             if (request.RequestReturnType == "ReturnWithFeedback")
             {
                 await _applyRepository.UpdateSequenceStatus(request.ApplicationId, request.SequenceId,
@@ -88,29 +86,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
                 var contactToNotify = await _contactRepository.GetContact(lastStandardSubmission?.SubmittedBy);
 
                 await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_RESPONSE, contactToNotify, new { reference, standard });
-            }
-        }
-
-        private async Task AddSequenceFeedback(ApplicationSequence sequence, Domain.Apply.Feedback feedback)
-        {
-            if (sequence != null & feedback != null)
-            {
-                feedback.IsNew = true;
-
-                if (sequence.SequenceData == null)
-                {
-                    sequence.SequenceData = new SequenceData();
-                }
-
-                if (sequence.SequenceData.Feedback == null)
-                {
-                    sequence.SequenceData.Feedback = new List<Domain.Apply.Feedback>();
-                }
-
-                sequence.SequenceData.Feedback.Add(feedback);
-
-                await _applyRepository.UpdateSequenceData(sequence.ApplicationId, (int)sequence.SequenceId, sequence.SequenceData);
-
             }
         }
     }

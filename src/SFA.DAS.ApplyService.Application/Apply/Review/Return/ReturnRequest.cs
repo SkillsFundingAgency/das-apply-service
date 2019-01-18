@@ -7,14 +7,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
     {
         public Guid ApplicationId { get; }
         public int SequenceId { get; }
-        public Domain.Apply.Feedback Feedback { get; }
         public string RequestReturnType { get; }
 
-        public ReturnRequest(Guid applicationId, int sequenceId, Domain.Apply.Feedback feedback, string requestReturnType)
+        public ReturnRequest(Guid applicationId, int sequenceId, string requestReturnType)
         {
             ApplicationId = applicationId;
             SequenceId = sequenceId;
-            Feedback = feedback;
             RequestReturnType = requestReturnType;
         }
     }
