@@ -27,7 +27,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<dynamic>> GetNewApplications(int sequenceId);
         Task SubmitApplicationSequence(ApplicationSubmitRequest request, ApplicationData applicationdata);
         Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string status, string applicationStatus);
-        Task UpdateSequenceData(Guid applicationId, int sequenceId, SequenceData sequenceData);
         Task CloseSequence(Guid applicationId, int sequenceId);
         Task<List<ApplicationSequence>> GetSequences(Guid applicationId);
         Task OpenSequence(Guid applicationId, int nextSequenceId);

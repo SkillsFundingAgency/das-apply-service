@@ -12,19 +12,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public SequenceId SequenceId { get; set; }
         public string Status { get; set; }
         public bool IsActive { get; set; }
-        public SequenceData SequenceData { get; set; }
         public List<ApplicationSection> Sections { get; set; }
-    }
-
-    public class SequenceData
-    {
-        public List<Apply.Feedback> Feedback { get; set; }
-
-        [JsonIgnore]
-        public bool HasFeedback => Feedback?.Any() ?? false;
-
-        [JsonIgnore]
-        public bool HasNewFeedback => HasFeedback && Feedback.Any(f => f.IsNew);
     }
 
     public class ApplicationSequenceStatus
