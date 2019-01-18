@@ -47,5 +47,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<string> GetApplicationStatus(Guid applicationId, int standardCode);
 
         Task<List<StandardCollation>> GetStandards();
+        Task<List<Option>> GetQuestionDataFedOptions(string dataEndpoint);
     }
 }
