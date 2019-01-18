@@ -1,9 +1,10 @@
-@model dynamic 
+@model dynamic
+
+@{ var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : ""; }
 
 <textarea
-    class="govuk-textarea govuk-!-margin-bottom-0"
+    class="govuk-textarea govuk-!-margin-bottom-0 @isError"
     sfa-validation-for-id="@Model.QuestionId"
-    sfa-validationerror-class="form-control-error"
     id="@Model.QuestionId"
     name="@Model.QuestionId"
     rows="5"
