@@ -12,9 +12,26 @@
             </div>
             if (Model.Options[i].FurtherQuestions != null)
             {
+               
                 <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-@(Model.QuestionId + "_" + i)">
                     @for (int furtherQuestionIndex = 0; furtherQuestionIndex < Model.Options[i].FurtherQuestions.Count; furtherQuestionIndex++)
                     {
+                        {
+                            if (Model.ErrorMessages != null)
+                            {
+                                foreach (var errorMessage in Model.ErrorMessages)
+                                {
+                                    foreach (var furtherQuestion in Model.Options[i].FurtherQuestions)
+                                    {
+                                        if (errorMessage.Field == furtherQuestion.QuestionId)
+                                        {
+
+                                            furtherQuestion.ErrorMessages = Model.ErrorMessages;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         <div class="govuk-form-group">
                             <label class="govuk-label" for="@Model.Options[i].FurtherQuestions[furtherQuestionIndex].QuestionId">@Model.Options[i].FurtherQuestions[furtherQuestionIndex].Label</label>
                             @HtmlHelperPartialExtensions.Partial(Html, $"~/Views/Application/Pages/Controls/_{Model.Options[i].FurtherQuestions[furtherQuestionIndex].Input.Type}.cshtml", Model.Options[i].FurtherQuestions[furtherQuestionIndex])

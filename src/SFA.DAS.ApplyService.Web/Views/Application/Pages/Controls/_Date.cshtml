@@ -1,4 +1,18 @@
 @model dynamic 
+@{
+    var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
+    var otherError = "";
+}
+
+
+@if (isError!=string.Empty)
+{
+    if (Model.ErrorMessages.Count>0)
+    {
+        <span class="govuk-error-message">@Model.ErrorMessages[0].ErrorMessage</span>
+ 
+    }
+}
 
 <div class="govuk-date-input" id="dob">
     <div class="govuk-date-input__item">

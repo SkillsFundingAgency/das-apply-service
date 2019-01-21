@@ -1,5 +1,13 @@
-@model dynamic 
+@model dynamic
 
 @{ var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : ""; }
+@if (isError != string.Empty)
+{
+    if (Model.ErrorMessages.Count > 0)
+    {
+        <span class="govuk-error-message">@Model.ErrorMessages[0].ErrorMessage</span>
 
-<input class="govuk-input govuk-!-width-two-thirds @isError" sfa-validation-for-id="@Model.QuestionId" type="text" id="@Model.QuestionId" name="@Model.QuestionId" value="@Model.Value"/>
+    }
+}
+
+<input class="govuk-input govuk-!-width-two-thirds @isError" sfa-validation-for-id="@Model.QuestionId" type="text" id="@Model.QuestionId" name="@Model.QuestionId" value="@Model.Value" />
