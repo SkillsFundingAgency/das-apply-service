@@ -11,7 +11,7 @@
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="7.0.1" />
         <PackageReference Include="FluentValidation.AspNetCore">
-          <Version>8.0.100</Version>
+          <Version>8.1.2</Version>
         </PackageReference>
         <PackageReference Include="MediatR">
           <Version>5.1.0</Version>

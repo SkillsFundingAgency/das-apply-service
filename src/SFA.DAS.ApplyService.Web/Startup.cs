@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
@@ -17,6 +19,7 @@ using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using StructureMap;
+using StackExchange.Redis;
 
 namespace SFA.DAS.ApplyService.Web
 {
@@ -56,6 +59,13 @@ namespace SFA.DAS.ApplyService.Web
             services.AddMvc(options => { options.Filters.Add<PerformValidationFilter>(); })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            var redis = ConnectionMultiplexer.Connect("localhost");
+            
+            services.AddDataProtection()
+                .PersistKeysToStackExchangeRedis(redis)
+                .SetApplicationName("SharedCookieApp");
+
+            
             if (_env.IsDevelopment())
             {
                 services.AddDistributedMemoryCache();
