@@ -288,6 +288,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var updatePageResult = await _apiClient.UpdatePageAnswers(Guid.Parse(applicationId), userId, sequenceId, sectionId, pageId, answers);
 
+
             if (updatePageResult.ValidationPassed && fileValidationPassed)
             {
                 await UploadFilesToStorage(applicationId, sequenceId, sectionId, pageId, userId);

@@ -1504,7 +1504,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-05-251';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-05-251', '', 'I understand and accept that:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-05-251', '', 'Conditions for application', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-05-252';
 INSERT INTO Assets
@@ -1528,7 +1528,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-06-255';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-06-255', '', 'I confirm that the information to be uploaded in response to the Financial Health Assessment complies with the requirements stated in the ''Guidance for Applicants'' document.', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-06-255', '', 'Conditions for financial health assessment', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-06-256';
 INSERT INTO Assets
@@ -1552,7 +1552,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-07-259';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-07-259', '', 'Do you agree to inform the Education and Skills Funding Agency as soon as possible if there are any changes to the information you''re providing in this declaration?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-07-259', '', 'Changes of circumstance', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-07-260';
 INSERT INTO Assets
@@ -1576,7 +1576,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-08-263';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-08-263', '', 'Condition of acceptance', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-08-263', '', 'Conditions of acceptance', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-08-264';
 INSERT INTO Assets
@@ -1600,7 +1600,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-09-267';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-09-267', '', 'Organised crime or conspiracy convictions', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-09-267', '', 'Criminal convictions', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-09-268';
 INSERT INTO Assets
@@ -1618,13 +1618,13 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-10-270';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-10-270', '', 'Confirm whether, within the past 5 years, anyone who represents, supervises or has control in your organisation or a partner or parent organisations has been convicted of any offence that relates to fraud affecting the European Communities'' financial interests as defined by article 1 of the Convention of the Protection of the Financial Interests of the European Communities, including:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-10-270', '', 'Confirm whether, within the past 5 years, anyone who represents, supervises or has control in your organisation or a parent or partner organisations has been convicted of any offence that relates to fraud affecting the European Communities'' financial interests as defined by article 1 of the Convention of the Protection of the Financial Interests of the European Communities, including:', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-10-271';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-10-271', '', 'Bribery or corruption convictions', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-10-271', '', 'Financial convictions', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-10-272';
 INSERT INTO Assets
@@ -1648,7 +1648,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-11-275';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-11-275', '', 'Terrorism convictions', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-11-275', '', 'Acts of terrorism', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-11-276';
 INSERT INTO Assets
@@ -1672,7 +1672,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-12-279';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-12-279', '', 'Criminal conducts', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-12-279', '', 'Parent or partner organisation details', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-12-280';
 INSERT INTO Assets
@@ -1720,7 +1720,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-13-287';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-13-287', '', 'In breach of tax payments', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-13-287', '', 'Cessation of trading', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-13-288';
 INSERT INTO Assets
@@ -1744,6 +1744,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-13.1-291';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
+
   (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-13.1-291', '', '', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-13.1-292';
@@ -1768,7 +1769,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-14-295';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-14-295', '', 'Bankruptcy and Insolvency', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-14-295', '', 'Tax and social security irregularities - THIS LOOKS WRONG', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-14-296';
 INSERT INTO Assets
@@ -1780,7 +1781,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20.1-297';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20.1-297', '', 'Bankruptcy and Insolvency details', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20.1-297', '', 'Bankruptcy and Insolvency details 1', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20.1-298';
 INSERT INTO Assets
@@ -1936,7 +1937,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-21-323';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-21-323', '', 'Confirm whether your organisation or any of your partner organisations is in:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-21-323', '', 'Bankrupcy or insolvency', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-21-324';
 INSERT INTO Assets
@@ -1984,7 +1985,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-22-331';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-22-331', '', 'Why a tax return was incorrect', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-22-331', '', 'Incorrect tax returns', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-22-332';
 INSERT INTO Assets
@@ -2032,7 +2033,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-23-339';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-23-339', '', 'Why a tax return was incorrect', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-23-339', '', 'HMRC challenges to tax returns', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-23-340';
 INSERT INTO Assets
@@ -2128,7 +2129,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-25-355';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-25-355', '', 'Withdrawn from contracts', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-25-355', '', 'Contracts you have withdrawn from', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-25-356';
 INSERT INTO Assets
@@ -2296,7 +2297,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-27-383';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27-383', '', 'Direction and sanctions', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27-383', '', 'Directions and sanctions', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-27-384';
 INSERT INTO Assets
@@ -2368,7 +2369,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-28-395';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-28-395', '', 'Repaying public money', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-28-395', '', 'Repayment of public money', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-28-396';
 INSERT INTO Assets
@@ -2416,7 +2417,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-29-403';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-29-403', '', 'Public bodies', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-29-403', '', 'Public body funds and contracts', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-29-404';
 INSERT INTO Assets
@@ -2464,7 +2465,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-30-411';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-30-411', '', 'Legal disputes', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-30-411', '', 'Legal dispute', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-30-412';
 INSERT INTO Assets
@@ -2584,7 +2585,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-28-431';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-28-431', '', 'I certify that the information provided is accurate and accept the conditions and undertakings requested in this application. It''s understood that false information may result in:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-28-431', '', 'False declarations', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-28-432';
 INSERT INTO Assets
@@ -2608,7 +2609,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-29-435';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-29-435', '', 'Will your applications to deliver end-point assessments for standards be accurate and true representations?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-29-435', '', 'Accurate and true representation', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-29-436';
 INSERT INTO Assets
@@ -2632,7 +2633,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-30-439';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-30-439', '', 'Do you agree your company details will be added to the register of end-point assessment organisations if your application is successful?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-30-439', '', 'Agreement to appear on the register', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-30-440';
 INSERT INTO Assets
@@ -2713,6 +2714,199 @@ VALUES
   (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-452', '', '', 'Live', GETUTCDATE(), 'Import')
 
 GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-15-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-15-LT-1', '', 'Name and Job Title', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-18-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-18-LT-1', '', 'Providing services straight away', 'Live', GETUTCDATE(), 'Import')
+GO
+
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-19-LT-1', '', 'Conditions for application', 'Live', GETUTCDATE(), 'Import')
+GO
+
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-190-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-190-LT-1', '', 'Conditions for financial health assessment', 'Live', GETUTCDATE(), 'Import')
+GO
+
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-191-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-191-LT-1', '', 'Changes of circumstance', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-192-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-192-LT-1', '', 'Conditions of acceptance', 'Live', GETUTCDATE(), 'Import')
+GO
+
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-193-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-193-LT-1', '', 'Criminal convictions', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-194-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-194-LT-1', '', 'Financial convictions', 'Live', GETUTCDATE(), 'Import')
+GO
+
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-195-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-195-LT-1', '', 'Acts of terrorism', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-196-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-196-LT-1', '', 'Parent or partner organisations', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-20-LT-1', '', 'Tax and social security irregularities', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-201-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-201-LT-1', '', 'Bankruptcy and Insolvency', 'Live', GETUTCDATE(), 'Import')
+GO
+
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20.1-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-20.1-LT-1', '', 'Bankruptcy and Insolvency details', 'Live', GETUTCDATE(), 'Import')
+GO
+
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-202-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-202-LT-1', '', 'Cessation of Trading', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-203-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-203-LT-1', '', 'Incorrect tax returns', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-204-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-204-LT-1', '', 'HMRC challenges to tax returns', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-205-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-205-LT-1', '', 'Contracts withdrawn from you', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-206-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-206-LT-1', '', 'Contracts you have withdrawn from', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-207-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-207-LT-1', '', 'Company removed from registers', 'Live', GETUTCDATE(), 'Import')
+GO
+
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-208-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-208-LT-1', '', 'Directions and sanctions', 'Live', GETUTCDATE(), 'Import')
+GO
+
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-209-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-209-LT-1', '', 'Repayment of public money', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-210-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-210-LT-1', '', 'Public body funds and contracts', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-211-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-211-LT-1', '', 'Legal dispute', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-22-LT-1', '', 'False declarations', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-221-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-221-LT-1', '', 'Accurate and true representation', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-222-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-222-LT-1', '', 'Agreement to appear on the register', 'Live', GETUTCDATE(), 'Import')
+GO
+
+
 DELETE FROM workflows where Description='Epao Workflow' and Version='1.0'
 
 GO
@@ -4088,6 +4282,9 @@ VALUES
 }    
 ', N'Organisation details', N'Organisation details', N'Draft', N'Pages', N'')
 GO
+
+
+
 DELETE from WorkflowSections where SequenceId = 1 and SectionId=2;
 
 INSERT [dbo].[WorkflowSections]
@@ -4102,7 +4299,7 @@ VALUES
       "SequenceId": "1",
       "SectionId": "2",
       "Title": "SQ-1-SE-2-PG-15-213",
-      "LinkTitle": "SQ-1-SE-2-PG-15-216",
+      "LinkTitle": "SQ-1-SE-2-PG-15-LT-1",
       "InfoText": "SQ-1-SE-2-PG-15-215",
       "Questions": [
         {
@@ -4148,7 +4345,7 @@ VALUES
       "Next": [
         {
           "Action": "NextPage",
-          "ReturnId": "17",
+          "ReturnId": "18",
           "Condition": null,
           "ConditionMet": false
         }
@@ -4163,68 +4360,11 @@ VALUES
       "BodyText": "SQ-1-SE-2-PG-15-214"
     },
     {
-      "PageId": "17",
-      "SequenceId": "1",
-      "SectionId": "2",
-      "Title": "SQ-1-SE-2-PG-17-225",
-      "LinkTitle": "SQ-1-SE-2-PG-17-228",
-      "InfoText": "SQ-1-SE-2-PG-17-227",
-      "Questions": [
-        {
-          "QuestionId": "W_DEL-03",
-          "Label": "SQ-1-SE-2-PG-17-W_DEL-03-230",
-          "ShortLabel": "SQ-1-SE-2-PG-17-W_DEL-03-231",
-          "QuestionBodyText": "SQ-1-SE-2-PG-17-W_DEL-03-232",
-          "Hint": "SQ-1-SE-2-PG-17-W_DEL-03-229",
-          "Input": {
-            "Type": "Radio",
-            "Options": [
-              {
-                "Label": "Yes",
-                "Value": "Yes",
-                "FurtherQuestions": null
-              },
-              {
-                "Label": "No",
-                "Value": "No",
-                "FurtherQuestions": null
-              }
-            ],
-            "Validations": [
-              {
-                "Name": "Required",
-                "Value": null,
-                "ErrorMessage": "Select an option"
-              }
-            ]
-          },
-          "Order": null
-        }
-      ],
-      "PageOfAnswers": [],
-      "Next": [
-        {
-          "Action": "NextPage",
-          "ReturnId": "18",
-          "Condition": null,
-          "ConditionMet": false
-        }
-      ],
-      "Complete": false,
-      "AllowMultipleAnswers": false,
-      "Order": null,
-      "Active": true,
-      "Visible": true,
-      "Feedback": null,
-      "HasFeedback": false,
-      "BodyText": "SQ-1-SE-2-PG-17-226"
-    },
-    {
       "PageId": "18",
       "SequenceId": "1",
       "SectionId": "2",
       "Title": "SQ-1-SE-2-PG-18-233",
-      "LinkTitle": "SQ-1-SE-2-PG-18-236",
+      "LinkTitle": "SQ-1-SE-2-PG-18-LT-1",
       "InfoText": "SQ-1-SE-2-PG-18-235",
       "Questions": [
         {
@@ -4301,7 +4441,7 @@ VALUES
       "SequenceId": "1",
       "SectionId": "2",
       "Title": "SQ-1-SE-2-PG-19-245",
-      "LinkTitle": "SQ-1-SE-2-PG-19-248",
+      "LinkTitle": "SQ-1-SE-2-PG-19-LT-1",
       "InfoText": "SQ-1-SE-2-PG-19-247",
       "Questions": [
         {
@@ -4327,8 +4467,35 @@ VALUES
             "Validations": []
           },
           "Order": null
-        },
+        } 
+      ],
+      "PageOfAnswers": [],
+      "Next": [
         {
+          "Action": "NextPage",
+          "ReturnId": "190",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-19-246"
+    },
+	   {
+      "PageId": "190",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-19-245",
+      "LinkTitle": "SQ-1-SE-2-PG-190-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-19-247",
+      "Questions": [
+       {
           "QuestionId": "M_DEL-06",
           "Label": "SQ-1-SE-2-PG-19-M_DEL-06-254",
           "ShortLabel": "SQ-1-SE-2-PG-19-M_DEL-06-255",
@@ -4351,8 +4518,35 @@ VALUES
             "Validations": []
           },
           "Order": null
-        },
+        }       
+      ],
+      "PageOfAnswers": [],
+      "Next": [
         {
+          "Action": "NextPage",
+          "ReturnId": "191",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-19-246"
+    },
+	   {
+      "PageId": "191",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-19-245",
+      "LinkTitle": "SQ-1-SE-2-PG-191-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-19-247",
+      "Questions": [
+              {
           "QuestionId": "M_DEL-07",
           "Label": "SQ-1-SE-2-PG-19-M_DEL-07-258",
           "ShortLabel": "SQ-1-SE-2-PG-19-M_DEL-07-259",
@@ -4381,8 +4575,35 @@ VALUES
             ]
           },
           "Order": null
-        },
+        }   
+      ],
+      "PageOfAnswers": [],
+      "Next": [
         {
+          "Action": "NextPage",
+          "ReturnId": "192",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-19-246"
+    },
+	   {
+      "PageId": "192",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-19-245",
+      "LinkTitle": "SQ-1-SE-2-PG-192-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-19-247",
+      "Questions": [
+             {
           "QuestionId": "M_DEL-08",
           "Label": "SQ-1-SE-2-PG-19-M_DEL-08-262",
           "ShortLabel": "SQ-1-SE-2-PG-19-M_DEL-08-263",
@@ -4405,8 +4626,35 @@ VALUES
             "Validations": []
           },
           "Order": null
-        },
+        }  
+      ],
+      "PageOfAnswers": [],
+      "Next": [
         {
+          "Action": "NextPage",
+          "ReturnId": "193",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-19-246"
+    },
+	   {
+      "PageId": "193",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-19-245",
+      "LinkTitle": "SQ-1-SE-2-PG-193-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-19-247",
+      "Questions": [
+            {
           "QuestionId": "M_DEL-09",
           "Label": "SQ-1-SE-2-PG-19-M_DEL-09-266",
           "ShortLabel": "SQ-1-SE-2-PG-19-M_DEL-09-267",
@@ -4435,8 +4683,35 @@ VALUES
             ]
           },
           "Order": null
-        },
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
         {
+          "Action": "NextPage",
+          "ReturnId": "194",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-19-246"
+    },
+	   {
+      "PageId": "194",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-19-245",
+      "LinkTitle": "SQ-1-SE-2-PG-194-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-19-247",
+      "Questions": [
+           {
           "QuestionId": "M_DEL-10",
           "Label": "SQ-1-SE-2-PG-19-M_DEL-10-270",
           "ShortLabel": "SQ-1-SE-2-PG-19-M_DEL-10-271",
@@ -4465,8 +4740,35 @@ VALUES
             ]
           },
           "Order": null
-        },
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
         {
+          "Action": "NextPage",
+          "ReturnId": "195",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-19-246"
+    },
+	   {
+      "PageId": "195",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-19-245",
+      "LinkTitle": "SQ-1-SE-2-PG-195-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-19-247",
+      "Questions": [
+                 {
           "QuestionId": "M_DEL-11",
           "Label": "SQ-1-SE-2-PG-19-M_DEL-11-274",
           "ShortLabel": "SQ-1-SE-2-PG-19-M_DEL-11-275",
@@ -4495,8 +4797,35 @@ VALUES
             ]
           },
           "Order": null
-        },
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
         {
+          "Action": "NextPage",
+          "ReturnId": "196",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-19-246"
+    },
+	   {
+      "PageId": "196",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-19-245",
+      "LinkTitle": "SQ-1-SE-2-PG-196-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-19-247",
+      "Questions": [
+          {
           "QuestionId": "M_DEL-12",
           "Label": "SQ-1-SE-2-PG-19-M_DEL-12-278",
           "ShortLabel": "SQ-1-SE-2-PG-19-M_DEL-12-279",
@@ -4550,7 +4879,7 @@ VALUES
       "SequenceId": "1",
       "SectionId": "2",
       "Title": "SQ-1-SE-2-PG-20-281",
-      "LinkTitle": "SQ-1-SE-2-PG-20-284",
+      "LinkTitle": "SQ-1-SE-2-PG-20-LT-1",
       "InfoText": "SQ-1-SE-2-PG-20-283",
       "Questions": [
         {
@@ -4602,8 +4931,35 @@ VALUES
             ]
           },
           "Order": null
-        },
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
         {
+          "Action": "NextPage",
+          "ReturnId": "201",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-20-282"
+    },
+	{
+      "PageId": "201",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-201-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-20-283",
+      "Questions": [
+         {
           "QuestionId": "D_DEL-14",
           "Label": "SQ-1-SE-2-PG-20-D_DEL-14-294",
           "ShortLabel": "SQ-1-SE-2-PG-20-D_DEL-14-295",
@@ -4647,11 +5003,8 @@ VALUES
         },
         {
           "Action": "NextPage",
-          "ReturnId": "21",
-          "Condition": {
-            "QuestionId": "D_DEL-14",
-            "MustEqual": "No"
-          },
+          "ReturnId": "202",
+          "Condition": null,
           "ConditionMet": false
         }
       ],
@@ -4668,8 +5021,8 @@ VALUES
       "PageId": "20.1",
       "SequenceId": "1",
       "SectionId": "2",
-      "Title": "SQ-1-SE-2-PG-20.1-297",
-      "LinkTitle": "SQ-1-SE-2-PG-20.1-300",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-20.1-LT-1",
       "InfoText": "SQ-1-SE-2-PG-20.1-299",
       "Questions": [
         {
@@ -4748,12 +5101,13 @@ VALUES
           },
           "Order": null
         }
+
       ],
       "PageOfAnswers": [],
       "Next": [
         {
           "Action": "NextPage",
-          "ReturnId": "21",
+          "ReturnId": "202",
           "Condition": null,
           "ConditionMet": false
         }
@@ -4767,15 +5121,15 @@ VALUES
       "HasFeedback": false,
       "BodyText": "SQ-1-SE-2-PG-20.1-298"
     },
-    {
-      "PageId": "21",
+	{
+      "PageId": "202",
       "SequenceId": "1",
       "SectionId": "2",
-      "Title": "SQ-1-SE-2-PG-21-317",
-      "LinkTitle": "SQ-1-SE-2-PG-21-320",
-      "InfoText": "SQ-1-SE-2-PG-21-319",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-202-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-20-283",
       "Questions": [
-        {
+         {
           "QuestionId": "A_DEL-21",
           "Label": "SQ-1-SE-2-PG-21-A_DEL-21-322",
           "ShortLabel": "SQ-1-SE-2-PG-21-A_DEL-21-323",
@@ -4824,7 +5178,34 @@ VALUES
             ]
           },
           "Order": null
-        },
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+          {
+            "Action": "NextPage",
+			"ReturnId": "203",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-20-282"
+    },
+	{
+      "PageId": "203",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-203-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-20-283",
+      "Questions": [
         {
           "QuestionId": "A_DEL-22",
           "Label": "SQ-1-SE-2-PG-21-A_DEL-22-330",
@@ -4874,7 +5255,34 @@ VALUES
             ]
           },
           "Order": null
-        },
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+          {
+            "Action": "NextPage",
+			"ReturnId": "204",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-20-282"
+    },
+	{
+      "PageId": "204",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-204-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-20-283",
+      "Questions": [
         {
           "QuestionId": "A_DEL-23",
           "Label": "SQ-1-SE-2-PG-21-A_DEL-23-338",
@@ -4924,8 +5332,35 @@ VALUES
             ]
           },
           "Order": null
-        },
-        {
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+          {
+            "Action": "NextPage",
+			"ReturnId": "205",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-20-282"
+    },
+	{
+      "PageId": "205",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-205-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-20-283",
+      "Questions": [
+       {
           "QuestionId": "A_DEL-24",
           "Label": "SQ-1-SE-2-PG-21-A_DEL-24-346",
           "ShortLabel": "SQ-1-SE-2-PG-21-A_DEL-24-347",
@@ -4974,8 +5409,35 @@ VALUES
             ]
           },
           "Order": null
-        },
-        {
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+          {
+            "Action": "NextPage",
+			"ReturnId": "206",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-20-282"
+    },
+	{
+      "PageId": "206",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-206-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-20-283",
+      "Questions": [
+       {
           "QuestionId": "A_DEL-25",
           "Label": "SQ-1-SE-2-PG-21-A_DEL-25-354",
           "ShortLabel": "SQ-1-SE-2-PG-21-A_DEL-25-355",
@@ -5062,7 +5524,34 @@ VALUES
             ]
           },
           "Order": null
-        },
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+          {
+            "Action": "NextPage",
+			"ReturnId": "207",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-20-282"
+    },
+	{
+      "PageId": "207",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-207-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-20-283",
+      "Questions": [
         {
           "QuestionId": "A_DEL-26",
           "Label": "SQ-1-SE-2-PG-21-A_DEL-26-370",
@@ -5131,8 +5620,35 @@ VALUES
             ]
           },
           "Order": null
-        },
-        {
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+          {
+            "Action": "NextPage",
+			"ReturnId": "208",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-20-282"
+    },
+	{
+      "PageId": "208",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-208-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-20-283",
+      "Questions": [
+       {
           "QuestionId": "A_DEL-27",
           "Label": "SQ-1-SE-2-PG-21-A_DEL-27-382",
           "ShortLabel": "SQ-1-SE-2-PG-21-A_DEL-27-383",
@@ -5200,7 +5716,34 @@ VALUES
             ]
           },
           "Order": null
-        },
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+          {
+            "Action": "NextPage",
+			"ReturnId": "209",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-20-282"
+    },
+	{
+      "PageId": "209",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-209-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-20-283",
+      "Questions": [
         {
           "QuestionId": "A_DEL-28",
           "Label": "SQ-1-SE-2-PG-21-A_DEL-28-394",
@@ -5250,7 +5793,34 @@ VALUES
             ]
           },
           "Order": null
-        },
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+          {
+            "Action": "NextPage",
+			"ReturnId": "210",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-20-282"
+    },
+	{
+      "PageId": "210",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-210-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-20-283",
+      "Questions": [
         {
           "QuestionId": "A_DEL-29",
           "Label": "SQ-1-SE-2-PG-21-A_DEL-29-402",
@@ -5300,7 +5870,34 @@ VALUES
             ]
           },
           "Order": null
-        },
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+          {
+            "Action": "NextPage",
+			"ReturnId": "211",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-20-282"
+    },
+	{
+      "PageId": "211",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-211-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-20-283",
+      "Questions": [
         {
           "QuestionId": "A_DEL-30",
           "Label": "SQ-1-SE-2-PG-21-A_DEL-30-410",
@@ -5392,13 +5989,13 @@ VALUES
       ],
       "PageOfAnswers": [],
       "Next": [
-        {
-          "Action": "NextPage",
-          "ReturnId": "22",
-          "Condition": null,
-          "ConditionMet": false
-        }
-      ],
+          {
+            "Action": "NextPage",
+			"ReturnId": "22",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
       "Complete": false,
       "AllowMultipleAnswers": false,
       "Order": null,
@@ -5406,14 +6003,14 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
-      "BodyText": "SQ-1-SE-2-PG-21-318"
+      "BodyText": "SQ-1-SE-2-PG-20-282"
     },
     {
       "PageId": "22",
       "SequenceId": "1",
       "SectionId": "2",
       "Title": "SQ-1-SE-2-PG-22-425",
-      "LinkTitle": "SQ-1-SE-2-PG-22-428",
+      "LinkTitle": "SQ-1-SE-2-PG-22-LT-1",
       "InfoText": "SQ-1-SE-2-PG-22-427",
       "Questions": [
         {
@@ -5445,8 +6042,35 @@ VALUES
             ]
           },
           "Order": null
-        },
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
         {
+          "Action": "NextPage",
+          "ReturnId": "221",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-22-426"
+    },
+    {
+      "PageId": "221",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-22-425",
+      "LinkTitle": "SQ-1-SE-2-PG-221-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-22-427",
+      "Questions": [
+       {
           "QuestionId": "A_DEL-29",
           "Label": "SQ-1-SE-2-PG-22-A_DEL-29-434",
           "ShortLabel": "SQ-1-SE-2-PG-22-A_DEL-29-435",
@@ -5475,8 +6099,35 @@ VALUES
             ]
           },
           "Order": null
-        },
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
         {
+          "Action": "NextPage",
+          "ReturnId": "222",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-22-426"
+    },
+    {
+      "PageId": "222",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-22-425",
+      "LinkTitle": "SQ-1-SE-2-PG-222-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-22-427",
+      "Questions": [
+       {
           "QuestionId": "A_DEL-30",
           "Label": "SQ-1-SE-2-PG-22-A_DEL-30-438",
           "ShortLabel": "SQ-1-SE-2-PG-22-A_DEL-30-439",
@@ -5529,8 +6180,9 @@ VALUES
   "FinancialApplicationGrade": null
 }
    
-', N'Declarations', N'Declarations', N'Draft', N'Questions', N'')
+', N'Declarations', N'Declarations', N'Draft', N'PagesWithSections', N'')
 GO
+
 DELETE from WorkflowSections where SequenceId=1 and SectionId=3
 GO
 INSERT [dbo].[WorkflowSections]
