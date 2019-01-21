@@ -1,10 +1,8 @@
 @model dynamic
 
-@{ var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : ""; }
-
 <input
     type="file"
-    class="govuk-file-upload @isError"
+    class="govuk-file-upload"
     sfa-validation-for-id="@Model.QuestionId"
     id="@Model.QuestionId"
     name="@Model.QuestionId"
