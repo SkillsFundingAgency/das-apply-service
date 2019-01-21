@@ -1979,7 +1979,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-22-330';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-22-330', '', 'Confirm whether any of your organisation''s tax returns, submitted on or after 1 October 2012, have:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-22-330', '', 'Incorrect tax returns', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-22-331';
 INSERT INTO Assets
@@ -1991,7 +1991,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-22-332';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-22-332', '', '<ul class="govuk-list govuk-list--bullet"><li>been found to be incorrect as of 1 April 2013</li><li>given rise to a criminal conviction for tax-related offences which is unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-22-332', '', '<p class="govuk-body">Confirm whether any of your organisation''s tax returns, submitted on or after 1 October 2012, have:</p><ul class="govuk-list govuk-list--bullet"><li>been found to be incorrect as of 1 April 2013</li><li>given rise to a criminal conviction for tax-related offences which is unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-22.1-333';
 INSERT INTO Assets
@@ -2027,7 +2027,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-23-338';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-23-338', '', 'Confirm whether any of your organisation''s tax returns, submitted on or after 1 October 2012, have been found to be incorrect on or after 1 April 2013 because:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-23-338', '', 'HMRC challenges to tax returns', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-23-339';
 INSERT INTO Assets
@@ -2039,7 +2039,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-23-340';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-23-340', '', '<ul class="govuk-list govuk-list--bullet"><li>HMRC successfully challenged it under the General Anti-Abuse Rule (GAAR) or Halifax abuse principle OR</li><li>a tax authority (in a jurisdiction in which your organisation is established) successfully challenging it under any tax rules or legislation that have an effect equivalent or similar to the GAAR or Halifax abuse principle</li><li>given rise to a criminal conviction for tax-related offences which is unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-23-340', '', '<p class="govuk-body">Confirm whether any of your organisation''s tax returns, submitted on or after 1 October 2012, have been found to be incorrect on or after 1 April 2013 because:</p><ul class="govuk-list govuk-list--bullet"><li>HMRC successfully challenged it under the General Anti-Abuse Rule (GAAR) or Halifax abuse principle OR</li><li>a tax authority (in a jurisdiction in which your organisation is established) successfully challenging it under any tax rules or legislation that have an effect equivalent or similar to the GAAR or Halifax abuse principle</li><li>given rise to a criminal conviction for tax-related offences which is unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-23.1-341';
 INSERT INTO Assets
@@ -2075,7 +2075,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-24-346';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-24-346', '', 'Has your organisation had any contract for the delivery of services withdrawn within the last 3 financial years?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-24-346', '', 'Contracts withdrawn from you', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-24-347';
 INSERT INTO Assets
@@ -2087,7 +2087,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-24-348';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-24-348', '', '<ul class="govuk-list govuk-list--bullet"><li>HMRC successfully challenged it under the General Anti-Abuse Rule (GAAR) or Halifax abuse principle OR</li><li>a tax authority (in a jurisdiction in which your organisation is established) successfully challenging it under any tax rules or legislation that have an effect equivalent or similar to the GAAR or Halifax abuse principle</li><li>given rise to a criminal conviction for tax-related offences which is unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-24-348', '', '<p class="govuk-body">Has your organisation had any contract for the delivery of services withdrawn within the last 3 financial years?</p><ul class="govuk-list govuk-list--bullet"><li>HMRC successfully challenged it under the General Anti-Abuse Rule (GAAR) or Halifax abuse principle OR</li><li>a tax authority (in a jurisdiction in which your organisation is established) successfully challenging it under any tax rules or legislation that have an effect equivalent or similar to the GAAR or Halifax abuse principle</li><li>given rise to a criminal conviction for tax-related offences which is unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-24.1-349';
 INSERT INTO Assets
@@ -2123,7 +2123,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-25-354';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-25-354', '', 'Has your organisation withdrawn from a contract for the delivery of services within the last 3 years?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-25-354', '', 'Contracts you have withdrawn from', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-25-355';
 INSERT INTO Assets
@@ -2135,7 +2135,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-25-356';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-25-356', '', '<ul class="govuk-list govuk-list--bullet"><li>HMRC successfully challenged it under the General Anti-Abuse Rule (GAAR) or Halifax abuse principle OR</li><li>a tax authority (in a jurisdiction in which your organisation is established) successfully challenging it under any tax rules or legislation that have an effect equivalent or similar to the GAAR or Halifax abuse principle</li><li>given rise to a criminal conviction for tax-related offences which is unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-25-356', '', '<p class="govuk-body">Has your organisation withdrawn from a contract for the delivery of services within the last 3 years?</p><ul class="govuk-list govuk-list--bullet"><li>HMRC successfully challenged it under the General Anti-Abuse Rule (GAAR) or Halifax abuse principle OR</li><li>a tax authority (in a jurisdiction in which your organisation is established) successfully challenging it under any tax rules or legislation that have an effect equivalent or similar to the GAAR or Halifax abuse principle</li><li>given rise to a criminal conviction for tax-related offences which is unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-25.1-357';
 INSERT INTO Assets
@@ -2219,7 +2219,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-26-370';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26-370', '', 'Has your organisation been removed from any of the following registers?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26-370', '', 'Company removed from registers', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-26-371';
 INSERT INTO Assets
@@ -2231,7 +2231,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-26-372';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26-372', '', 'Education and Skills Funding Agency''s Register of Training Organisations RoATP, EPAO register,Ofqual''s Register,Other professional or trade registers', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26-372', '', '<p class="govuk-body">Has your organisation been removed from any of the following registers?</p><ul class="govuk-list govuk-list--bullet"><li>Education and skills funding agency''s register of training organisations RoATP</li><li>EPAO register</li><li>Ofqual''s register</li><li>Other professional or trade registers</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-26.1-373';
 INSERT INTO Assets
@@ -2291,7 +2291,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-27-382';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27-382', '', 'Has your organisation received direction or sanctions from any of the following?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27-382', '', 'Directions and sanctions', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-27-383';
 INSERT INTO Assets
@@ -2303,7 +2303,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-27-384';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27-384', '', 'Ofqual,The QAA,Awarding organisations,Other similar bodies', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27-384', '', '<p class="govuk-body">Has your organisation received direction or sanctions from any of the following?</p><ul class="govuk-list govuk-list--bullet"><li>Ofqual</li><li>The QAA</li><li>Awarding organisations</li><li>Other similar bodies</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-27.1-385';
 INSERT INTO Assets
@@ -2411,7 +2411,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-29-402';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-29-402', '', 'Have any directors, shareholders, senior employees or someone that has powers of representation, decision or control of your organisation had any of the following?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-29-402', '', 'Public body funds and contracts', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-29-403';
 INSERT INTO Assets
@@ -2423,7 +2423,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-29-404';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-29-404', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-29-404', '', '<p class="govuk-body">Have any directors, shareholders, senior employees or someone that has powers of representation, decision or control of your organisation had any of the following?</p><ul class="govuk-list govuk-list--bullet"><li>Failure to repay funding due to any public body</li><li>Early termination of a contract with a public body</li><li>Early withdrawal from a contract with a public body</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-29.1-405';
 INSERT INTO Assets
@@ -4660,7 +4660,7 @@ VALUES
                     "QuestionBodyText": "SQ-1-SE-2-PG-20-D_DEL-13.1-292",
                     "Hint": "SQ-1-SE-2-PG-20-D_DEL-13.1-289",
                     "Input": {
-                      "Type": "text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -4907,7 +4907,7 @@ VALUES
                     "QuestionBodyText": "SQ-1-SE-2-PG-21-A_DEL-21.1-328",
                     "Hint": "SQ-1-SE-2-PG-21-A_DEL-21.1-325",
                     "Input": {
-                      "Type": "Text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -4984,7 +4984,7 @@ VALUES
                     "QuestionBodyText": "SQ-1-SE-2-PG-21-A_DEL-22.1-336",
                     "Hint": "SQ-1-SE-2-PG-21-A_DEL-22.1-333",
                     "Input": {
-                      "Type": "Text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -5061,7 +5061,7 @@ VALUES
                     "QuestionBodyText": "SQ-1-SE-2-PG-21-A_DEL-23.1-344",
                     "Hint": "SQ-1-SE-2-PG-21-A_DEL-23.1-341",
                     "Input": {
-                      "Type": "Text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -5138,7 +5138,7 @@ VALUES
                     "QuestionBodyText": "SQ-1-SE-2-PG-21-A_DEL-24.1-352",
                     "Hint": "SQ-1-SE-2-PG-21-A_DEL-24.1-349",
                     "Input": {
-                      "Type": "Text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -5215,7 +5215,7 @@ VALUES
                     "QuestionBodyText": "SQ-1-SE-2-PG-21-A_DEL-25.1-360",
                     "Hint": "SQ-1-SE-2-PG-21-A_DEL-25.1-357",
                     "Input": {
-                      "Type": "Text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -5349,7 +5349,7 @@ VALUES
                     "QuestionBodyText": "SQ-1-SE-2-PG-21-A_DEL-26.2-380",
                     "Hint": "SQ-1-SE-2-PG-21-A_DEL-26.2-377",
                     "Input": {
-                      "Type": "Text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -5445,7 +5445,7 @@ VALUES
                     "QuestionBodyText": "SQ-1-SE-2-PG-21-A_DEL-27.2-392",
                     "Hint": "SQ-1-SE-2-PG-21-A_DEL-27.2-389",
                     "Input": {
-                      "Type": "Text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -5522,7 +5522,7 @@ VALUES
                     "QuestionBodyText": "SQ-1-SE-2-PG-21-A_DEL-28.1-400",
                     "Hint": "SQ-1-SE-2-PG-21-A_DEL-28.1-397",
                     "Input": {
-                      "Type": "Text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -5599,7 +5599,7 @@ VALUES
                     "QuestionBodyText": "SQ-1-SE-2-PG-21-A_DEL-29.1-408",
                     "Hint": "SQ-1-SE-2-PG-21-A_DEL-29.1-405",
                     "Input": {
-                      "Type": "Text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -5695,7 +5695,7 @@ VALUES
                     "QuestionBodyText": "SQ-1-SE-2-PG-21-A_DEL-30.2-420",
                     "Hint": "SQ-1-SE-2-PG-21-A_DEL-30.2-417",
                     "Input": {
-                      "Type": "Text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
