@@ -1907,7 +1907,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-318';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-318', '', '<p class="govuk-body">You must confirm the accuracy of the information in this declaration and in your application to deliver end-point assessments. We might ask you for proof after you''ve submitted your application.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-318', '', '', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-319';
 INSERT INTO Assets
@@ -2555,7 +2555,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-426';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-22-426', '', '<p class="govuk-body">You must confirm the accuracy of the information in this declaration and in your application to deliver end-point assessments. We might ask you for proof after you''ve submitted your application.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-22-426', '', '', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-427';
 INSERT INTO Assets
@@ -2579,7 +2579,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-28-430';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-28-430', '', 'I certify that the information provided is accurate and accept the conditions and undertakings requested in this application. It''s understood that false information may result in:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-28-430', '', 'False declarations', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-28-431';
 INSERT INTO Assets
@@ -2591,7 +2591,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-28-432';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-28-432', '', '<ul class="govuk-list govuk-list--bullet"><li>exclusion from this and future registers</li><li>the removal from the Register of End-point Assessments Organisations</li><li>the withdrawal of contracts with employers</li><li>civil or criminal proceedings</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-28-432', '', '<p class="govuk-body">I certify that the information provided is accurate and accept the conditions and undertakings requested in this application. It''s understood that false information may result in:</p><ul class="govuk-list govuk-list--bullet"><li>exclusion from this and future registers</li><li>the removal from the Register of End-point Assessments Organisations</li><li>the withdrawal of contracts with employers</li><li>civil or criminal proceedings</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-29-433';
 INSERT INTO Assets
@@ -2603,7 +2603,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-29-434';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-29-434', '', 'Will your applications to deliver end-point assessments for standards be accurate and true representations?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-29-434', '', 'Accurate and true representation', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-29-435';
 INSERT INTO Assets
@@ -2615,7 +2615,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-29-436';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-29-436', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-29-436', '', '<p class="govuk-body">Will your applications to deliver end-point assessments for standards be accurate and true representations?</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-30-437';
 INSERT INTO Assets
@@ -2627,7 +2627,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-30-438';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-30-438', '', 'Do you agree your company details will be added to the register of end-point assessment organisations if your application is successful?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-30-438', '', 'Agreement to appear on the register', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-30-439';
 INSERT INTO Assets
@@ -2639,7 +2639,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-30-440';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-30-440', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-30-440', '', '<p class="govuk-body">Do you agree your company details will be added to the register of end-point assessment organisations if your application is successful?</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-441';
 INSERT INTO Assets
