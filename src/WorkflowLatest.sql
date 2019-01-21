@@ -1426,7 +1426,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-18-W_DEL-04-238';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-18-W_DEL-04-238', '', 'If your application is successful, can you start an end-point assessment on the day you join the RoEPAO?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-18-W_DEL-04-238', '', 'If your application is successful, can you start an end-point assessment on the day you join the register?', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-18-W_DEL-04-239';
 INSERT INTO Assets
@@ -1474,7 +1474,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-246';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-246', '', '<p class="govuk-body">You must be able to truthfully answer ''no'' to every question under ''Grounds for mandatory exclusion'' for your application to be considered eligible. If you can''t answer ''no'' to every question in this section, it''s very unlikely that your application will be accepted.</p><p class="govuk-body">In the next series of questions under grounds for mandatory exclusion, ''anyone who represents, supervises or has control in your organisation or a partner or parent organisation'' includes members of your group of economic operators, their proposed subcontractors, and any directors, partners, or any other person who has powers of representation, decision or control.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-246', '', '', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-247';
 INSERT INTO Assets
@@ -1594,7 +1594,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-09-266';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-09-266', '', 'Confirm whether, within the past 5 years, anyone who represents, supervises or has control in your organisation or a partner or parent organisations has been convicted of:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-09-266', '', 'Criminal convictions', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-09-267';
 INSERT INTO Assets
@@ -1606,7 +1606,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-09-268';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-09-268', '', '<ul class="govuk-list govuk-list--bullet"><li>any offence under sections 44 to 46 of the Serious Crime Act 2007 which relates to an offence covered by subparagraph (f)</li><li>conspiracy within the meaning of section 1 or 1A of the Criminal Law Act 1977</li><li>conspiracy within the meaning of article 9 or 9A of the Criminal Attempts and Conspiracy (Northern Ireland) Order 1983 where that conspiracy relates to participation in a criminal organisation as defined in Article 2 of Council Framework Decision 2008/842/JHA on the fight against organised crime</li></ul><p class="govuk-body">Answer ''yes'' if anyone who represents, supervises or has control in your organisation or a partner or parent organisation has been convicted of any of the above.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-09-268', '', '<p class="govuk-body">Confirm whether, within the past 5 years, anyone who represents, supervises or has control in your organisation or a partner or parent organisations has been convicted of:</p><ul class="govuk-list govuk-list--bullet"><li>any offence under sections 44 to 46 of the Serious Crime Act 2007 which relates to an offence covered by subparagraph (f)</li><li>conspiracy within the meaning of section 1 or 1A of the Criminal Law Act 1977</li><li>conspiracy within the meaning of article 9 or 9A of the Criminal Attempts and Conspiracy (Northern Ireland) Order 1983 where that conspiracy relates to participation in a criminal organisation as defined in Article 2 of Council Framework Decision 2008/842/JHA on the fight against organised crime</li></ul><p class="govuk-body">Answer ''yes'' if anyone who represents, supervises or has control in your organisation or a partner or parent organisation has been convicted of any of the above.</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-10-269';
 INSERT INTO Assets
@@ -2728,38 +2728,6 @@ INSERT INTO Assets
 VALUES
   (NEWID(), 'SQ-1-SE-2-PG-18-LT-1', '', 'Providing services straight away', 'Live', GETUTCDATE(), 'Import')
 GO
-
-
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-LT-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-LT-1', '', 'Conditions for application', 'Live', GETUTCDATE(), 'Import')
-GO
-
-
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-190-LT-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-190-LT-1', '', 'Conditions for financial health assessment', 'Live', GETUTCDATE(), 'Import')
-GO
-
-
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-191-LT-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-191-LT-1', '', 'Changes of circumstance', 'Live', GETUTCDATE(), 'Import')
-GO
-
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-192-LT-1';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-192-LT-1', '', 'Conditions of acceptance', 'Live', GETUTCDATE(), 'Import')
-GO
-
 
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-193-LT-1';
 INSERT INTO Assets
@@ -4422,216 +4390,6 @@ VALUES
       "Next": [
         {
           "Action": "NextPage",
-          "ReturnId": "19",
-          "Condition": null,
-          "ConditionMet": false
-        }
-      ],
-      "Complete": false,
-      "AllowMultipleAnswers": false,
-      "Order": null,
-      "Active": true,
-      "Visible": true,
-      "Feedback": null,
-      "HasFeedback": false,
-      "BodyText": "SQ-1-SE-2-PG-18-234"
-    },
-    {
-      "PageId": "19",
-      "SequenceId": "1",
-      "SectionId": "2",
-      "Title": "SQ-1-SE-2-PG-19-245",
-      "LinkTitle": "SQ-1-SE-2-PG-19-LT-1",
-      "InfoText": "SQ-1-SE-2-PG-19-247",
-      "Questions": [
-        {
-          "QuestionId": "M_DEL-05",
-          "Label": "SQ-1-SE-2-PG-19-M_DEL-05-250",
-          "ShortLabel": "SQ-1-SE-2-PG-19-M_DEL-05-251",
-          "QuestionBodyText": "SQ-1-SE-2-PG-19-M_DEL-05-252",
-          "Hint": "SQ-1-SE-2-PG-19-M_DEL-05-249",
-          "Input": {
-            "Type": "Radio",
-            "Options": [
-              {
-                "Label": "Yes",
-                "Value": "Yes",
-                "FurtherQuestions": null
-              },
-              {
-                "Label": "No",
-                "Value": "No",
-                "FurtherQuestions": null
-              }
-            ],
-            "Validations": []
-          },
-          "Order": null
-        } 
-      ],
-      "PageOfAnswers": [],
-      "Next": [
-        {
-          "Action": "NextPage",
-          "ReturnId": "190",
-          "Condition": null,
-          "ConditionMet": false
-        }
-      ],
-      "Complete": false,
-      "AllowMultipleAnswers": false,
-      "Order": null,
-      "Active": true,
-      "Visible": true,
-      "Feedback": null,
-      "HasFeedback": false,
-      "BodyText": "SQ-1-SE-2-PG-19-246"
-    },
-	   {
-      "PageId": "190",
-      "SequenceId": "1",
-      "SectionId": "2",
-      "Title": "SQ-1-SE-2-PG-19-245",
-      "LinkTitle": "SQ-1-SE-2-PG-190-LT-1",
-      "InfoText": "SQ-1-SE-2-PG-19-247",
-      "Questions": [
-       {
-          "QuestionId": "M_DEL-06",
-          "Label": "SQ-1-SE-2-PG-19-M_DEL-06-254",
-          "ShortLabel": "SQ-1-SE-2-PG-19-M_DEL-06-255",
-          "QuestionBodyText": "SQ-1-SE-2-PG-19-M_DEL-06-256",
-          "Hint": "SQ-1-SE-2-PG-19-M_DEL-06-253",
-          "Input": {
-            "Type": "Radio",
-            "Options": [
-              {
-                "Label": "Yes",
-                "Value": "Yes",
-                "FurtherQuestions": null
-              },
-              {
-                "Label": "No",
-                "Value": "No",
-                "FurtherQuestions": null
-              }
-            ],
-            "Validations": []
-          },
-          "Order": null
-        }       
-      ],
-      "PageOfAnswers": [],
-      "Next": [
-        {
-          "Action": "NextPage",
-          "ReturnId": "191",
-          "Condition": null,
-          "ConditionMet": false
-        }
-      ],
-      "Complete": false,
-      "AllowMultipleAnswers": false,
-      "Order": null,
-      "Active": true,
-      "Visible": true,
-      "Feedback": null,
-      "HasFeedback": false,
-      "BodyText": "SQ-1-SE-2-PG-19-246"
-    },
-	   {
-      "PageId": "191",
-      "SequenceId": "1",
-      "SectionId": "2",
-      "Title": "SQ-1-SE-2-PG-19-245",
-      "LinkTitle": "SQ-1-SE-2-PG-191-LT-1",
-      "InfoText": "SQ-1-SE-2-PG-19-247",
-      "Questions": [
-              {
-          "QuestionId": "M_DEL-07",
-          "Label": "SQ-1-SE-2-PG-19-M_DEL-07-258",
-          "ShortLabel": "SQ-1-SE-2-PG-19-M_DEL-07-259",
-          "QuestionBodyText": "SQ-1-SE-2-PG-19-M_DEL-07-260",
-          "Hint": "SQ-1-SE-2-PG-19-M_DEL-07-257",
-          "Input": {
-            "Type": "Radio",
-            "Options": [
-              {
-                "Label": "Yes",
-                "Value": "Yes",
-                "FurtherQuestions": null
-              },
-              {
-                "Label": "No",
-                "Value": "No",
-                "FurtherQuestions": null
-              }
-            ],
-            "Validations": [
-              {
-                "Name": "Required",
-                "Value": null,
-                "ErrorMessage": "Select an option"
-              }
-            ]
-          },
-          "Order": null
-        }   
-      ],
-      "PageOfAnswers": [],
-      "Next": [
-        {
-          "Action": "NextPage",
-          "ReturnId": "192",
-          "Condition": null,
-          "ConditionMet": false
-        }
-      ],
-      "Complete": false,
-      "AllowMultipleAnswers": false,
-      "Order": null,
-      "Active": true,
-      "Visible": true,
-      "Feedback": null,
-      "HasFeedback": false,
-      "BodyText": "SQ-1-SE-2-PG-19-246"
-    },
-	   {
-      "PageId": "192",
-      "SequenceId": "1",
-      "SectionId": "2",
-      "Title": "SQ-1-SE-2-PG-19-245",
-      "LinkTitle": "SQ-1-SE-2-PG-192-LT-1",
-      "InfoText": "SQ-1-SE-2-PG-19-247",
-      "Questions": [
-             {
-          "QuestionId": "M_DEL-08",
-          "Label": "SQ-1-SE-2-PG-19-M_DEL-08-262",
-          "ShortLabel": "SQ-1-SE-2-PG-19-M_DEL-08-263",
-          "QuestionBodyText": "SQ-1-SE-2-PG-19-M_DEL-08-264",
-          "Hint": "SQ-1-SE-2-PG-19-M_DEL-08-261",
-          "Input": {
-            "Type": "Radio",
-            "Options": [
-              {
-                "Label": "Yes",
-                "Value": "Yes",
-                "FurtherQuestions": null
-              },
-              {
-                "Label": "No",
-                "Value": "No",
-                "FurtherQuestions": null
-              }
-            ],
-            "Validations": []
-          },
-          "Order": null
-        }  
-      ],
-      "PageOfAnswers": [],
-      "Next": [
-        {
-          "Action": "NextPage",
           "ReturnId": "193",
           "Condition": null,
           "ConditionMet": false
@@ -4644,7 +4402,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
-      "BodyText": "SQ-1-SE-2-PG-19-246"
+      "BodyText": "SQ-1-SE-2-PG-18-234"
     },
 	   {
       "PageId": "193",
