@@ -5,16 +5,11 @@
   var otherError = "";
 }
 
-@*
-@if (Model.Input != null) {
-  otherError = Model.Input.Validations.Count > 0 ? "govuk-input--error" : "";
-  if (Model.Input.Validations.Count > 0) {
-    for (int i = 0; i < Model.Input.Validations.Count; i++)
-    {
-      <span class="govuk-error-message">@Model.Input.Validations[i].ErrorMessage</span>
-    }
-  }
-}
-*@
-
-<input class="govuk-input govuk-!-width-two-thirds @isError" sfa-validation-for-id="@Model.QuestionId" type="text" id="@Model.QuestionId" name="@Model.QuestionId" value="@Model.Value"/>
+<input
+    class="govuk-input govuk-!-width-two-thirds @isError"
+    sfa-validation-for-id="@Model.QuestionId"
+    type="text"
+    id="@Model.QuestionId"
+    name="@Model.QuestionId"
+    value="@Model.Value"
+/>

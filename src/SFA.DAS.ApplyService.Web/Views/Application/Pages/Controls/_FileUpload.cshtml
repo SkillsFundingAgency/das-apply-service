@@ -1,4 +1,12 @@
-@model dynamic 
+@model dynamic
 
-<input type="file" class="govuk-file-upload" sfa-validation-for-id="@Model.QuestionId" sfa-validationerror-class="form-control-error" 
-       id="@Model.QuestionId" name="@Model.QuestionId" accept=".pdf,application/pdf"/>
+@{ var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : ""; }
+
+<input
+    type="file"
+    class="govuk-file-upload @isError"
+    sfa-validation-for-id="@Model.QuestionId"
+    id="@Model.QuestionId"
+    name="@Model.QuestionId"
+    accept=".pdf,application/pdf"
+/>

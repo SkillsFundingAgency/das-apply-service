@@ -8,14 +8,3 @@
     <label for="option_@i">@Model.Options[i].Label</label>
     <input type="checkbox" id="option_@i" name="@Model.QuestionId" value="@Model.Options[i].Value" @checkboxChecked/>
 }
-
-
-@* *@
-@* *@
-@* *@
-@* *@
-@* @foreach (var option in Model.Options) *@
-@* { *@
-@*     <label>@option.Label</label> *@
-@*     <input type="checkbox" id="@Model.QuestionId" name="@Model.QuestionId" value="@option.Label" />     *@
-@* } *@
