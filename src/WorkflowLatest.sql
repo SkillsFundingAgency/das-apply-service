@@ -202,7 +202,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-3-CD-04-34';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-3-CD-04-34', '', 'Post code', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-1-PG-3-CD-04-34', '', 'Postcode', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-3-CD-04-35';
 INSERT INTO Assets
@@ -346,7 +346,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-09-58';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-4-CD-09-58', '', 'Post code', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-1-PG-4-CD-09-58', '', 'Postcode', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-09-59';
 INSERT INTO Assets
@@ -3447,7 +3447,7 @@ VALUES
                     "Label": "SQ-1-SE-1-PG-6-CD-14.1-94",
                     "Hint": "SQ-1-SE-1-PG-6-CD-14.1-93",
                     "Input": {
-                      "Type": "text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
@@ -4022,7 +4022,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if a director, or any person with significant control of your organisation have had any of the listed issues"
               }
             ]
           },
