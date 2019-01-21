@@ -1690,7 +1690,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-282';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20-282', '', '<p class="govuk-body">Have members of your organisation or a partner organisation been legally found to be in breach of tax payments or social security contributions?</p><p class="govuk-body">If you do answer ''yes'', you must provide full details of any subsequent event or remedial action that you think the Education and Skills Funding Agency (ESFA) should take into consideration. ESFA will use the information you provide to consider whether or not you will be able to proceed any further with this application.</p><p class="govuk-body">''A partner organisation'' includes members of your group of economic operators or their proposed subcontractors.</p><p class="govuk-body">ESFA can also exclude you if you are guilty of serious misrepresentation in providing any information referred to within regulations 23, 24, 25, 26 or 27 of the ''Public Contracts Regulations 2015'' or if you fail to provide any such information it requests.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20-282', '', '', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-283';
 INSERT INTO Assets
@@ -1726,7 +1726,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-13-288';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-13-288', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-13-288', '', '<p class="govuk-body">Have members of your organisation or a partner organisation been legally found to be in breach of tax payments or social security contributions?</p><p class="govuk-body">If you do answer ''yes'', you must provide full details of any subsequent event or remedial action that you think the Education and Skills Funding Agency (ESFA) should take into consideration. ESFA will use the information you provide to consider whether or not you will be able to proceed any further with this application.</p><p class="govuk-body">''A partner organisation'' includes members of your group of economic operators or their proposed subcontractors.</p><p class="govuk-body">ESFA can also exclude you if you are guilty of serious misrepresentation in providing any information referred to within regulations 23, 24, 25, 26 or 27 of the ''Public Contracts Regulations 2015'' or if you fail to provide any such information it requests.</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-13.1-289';
 INSERT INTO Assets
@@ -1763,7 +1763,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-14-294';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-14-294', '', 'Confirm whether, within the past 3 years, your organisation or any of your partner organisations:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-14-294', '', 'Bankruptcy and insolvency', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-14-295';
 INSERT INTO Assets
@@ -1775,13 +1775,13 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-14-296';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-14-296', '', '<ul class="govuk-list govuk-list--bullet"><li>has been made bankrupt or the subject of insolvency or winding-up proceedings</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-14-296', '', '<p class="govuk-body">Confirm whether, within the past 3 years, your organisation or any of your partner organisations:</p><ul class="govuk-list govuk-list--bullet"><li>has been made bankrupt or the subject of insolvency or winding-up proceedings</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20.1-297';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20.1-297', '', 'Bankruptcy and Insolvency details 1', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20.1-297', '', 'Bankruptcy and insolvency details 1', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20.1-298';
 INSERT INTO Assets
@@ -1799,7 +1799,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20.1-300';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20.1-300', '', 'Bankruptcy and Insolvency details', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20.1-300', '', 'Bankruptcy and insolvency details', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20.1-D_DEL-13-1-301';
 INSERT INTO Assets
@@ -1931,19 +1931,19 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-21-322';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-21-322', '', 'Confirm whether your organisation or any of your partner organisations is in:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-21-322', '', 'Cessation of trading', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-21-323';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-21-323', '', 'Bankrupcy or insolvency', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-21-323', '', 'Cessation of trading', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-21-324';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-21-324', '', '<ul class="govuk-list govuk-list--bullet"><li>voluntary administration or company voluntary arrangement</li><li>compulsory winding up</li><li>receivership</li><li>composition with creditors</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-21-324', '', '<p class="govuk-body">Confirm whether your organisation or any of your partner organisations is in:</p><ul class="govuk-list govuk-list--bullet"><li>voluntary administration or company voluntary arrangement</li><li>compulsory winding up</li><li>receivership</li><li>composition with creditors</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-21.1-325';
 INSERT INTO Assets
@@ -2769,7 +2769,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-201-LT-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-201-LT-1', '', 'Bankruptcy and Insolvency', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-201-LT-1', '', 'Bankruptcy and insolvency', 'Live', GETUTCDATE(), 'Import')
 GO
 
 
@@ -2777,7 +2777,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20.1-LT-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20.1-LT-1', '', 'Bankruptcy and Insolvency details', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20.1-LT-1', '', 'Bankruptcy and insolvency details', 'Live', GETUTCDATE(), 'Import')
 GO
 
 
@@ -2785,7 +2785,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-202-LT-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-202-LT-1', '', 'Cessation of Trading', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-202-LT-1', '', 'Cessation of trading', 'Live', GETUTCDATE(), 'Import')
 GO
 
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-203-LT-1';
