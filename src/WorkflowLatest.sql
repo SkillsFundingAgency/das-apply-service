@@ -5004,10 +5004,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "202",
-          "Condition": {
-            "QuestionId": "D_DEL-14",
-            "MustEqual": "No"
-          },
+          "Condition": null,
           "ConditionMet": false
         }
       ],

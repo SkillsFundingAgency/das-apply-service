@@ -168,14 +168,15 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                         }
                     }
 
+                    // if not set elsewhere, then a null condition must be the one met
                     if (!aConditionMet)
                     {
                         foreach (var nextAction in page.Next)
                         {
-                            if (!aConditionMet && nextAction.Condition == null)
+                            if (nextAction.Condition == null)
                             {
-                                nextAction.ConditionMet = true; // if not set elsewhere, then a null condition must be the one met
-                                aConditionMet = true;
+                                nextAction.ConditionMet = true; 
+                                break;
                             }
                         }
                     }
