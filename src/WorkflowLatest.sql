@@ -3421,7 +3421,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Enter other orgainisation details"
+                          "ErrorMessage": "Enter other organisation details"
                         }
                       ]
                     },
