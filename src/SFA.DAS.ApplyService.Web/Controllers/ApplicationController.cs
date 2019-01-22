@@ -29,13 +29,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly ILogger<ApplicationController> _logger;
         private readonly ISessionService _sessionService;
         private readonly IConfigurationService _configService;
+        private readonly UserService _userService;
 
-        public ApplicationController(IApplicationApiClient apiClient, ILogger<ApplicationController> logger, ISessionService sessionService, IConfigurationService configService)
+        public ApplicationController(IApplicationApiClient apiClient, ILogger<ApplicationController> logger, ISessionService sessionService, IConfigurationService configService, UserService userService)
         {
             _apiClient = apiClient;
             _logger = logger;
             _sessionService = sessionService;
             _configService = configService;
+            _userService = userService;
         }
 
         [HttpGet("/Applications")]
@@ -44,7 +46,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var user = _sessionService.Get("LoggedInUser");
             _logger.LogInformation($"Got LoggedInUser from Session: {user}");
 
-            var applications = await _apiClient.GetApplicationsFor(Guid.Parse(User.FindFirstValue("UserId")));
+            //var applications = await _apiClient.GetApplicationsFor(Guid.Parse(User.FindFirstValue("UserId")));
+            var applications = await _apiClient.GetApplicationsFor(Guid.Parse(await _userService.GetClaim("UserId")));
 
             if (!applications.Any())
             {

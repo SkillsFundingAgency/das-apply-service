@@ -57,13 +57,13 @@ namespace SFA.DAS.ApplyService.Web
             });
             
             services.AddMvc(options => { options.Filters.Add<PerformValidationFilter>(); })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             var redis = ConnectionMultiplexer.Connect("localhost");
             
             services.AddDataProtection()
-                .PersistKeysToStackExchangeRedis(redis)
-                .SetApplicationName("SharedCookieApp");
+                .PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")
+                .SetApplicationName("AssessorApply");
 
             
             if (_env.IsDevelopment())
@@ -125,6 +125,7 @@ namespace SFA.DAS.ApplyService.Web
                 config.For<IApplicationApiClient>().Use<ApplicationApiClient>();
                 config.For<OrganisationApiClient>().Use<OrganisationApiClient>();
                 config.For<OrganisationSearchApiClient>().Use<OrganisationSearchApiClient>();
+                config.For<UserService>().Use<UserService>();
                 config.Populate(services);
             });
 
