@@ -1,6 +1,7 @@
 @model dynamic
 
 @{ var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : ""; }
+
 @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
 {
     foreach (var errorMessage in Model.ErrorMessages)

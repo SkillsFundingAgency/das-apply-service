@@ -37,7 +37,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .ReadAsAsync<List<Domain.Entities.Application>>();
         }
 
-        public async Task<UploadResult> Upload(string applicationId, string userId, int sequenceId, int sectionId,
+        public async Task<UploadResult> Upload(Guid applicationId, string userId, int sequenceId, int sectionId,
             string pageId, IFormFileCollection files)
         {
             var formDataContent = new MultipartFormDataContent();

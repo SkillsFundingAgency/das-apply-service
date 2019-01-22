@@ -2,8 +2,6 @@
 
 @{ var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : ""; }
 
-
-
 @if (Model.ErrorMessages!=null && Model.ErrorMessages.Count > 0)
 {
     foreach (var errorMessage in Model.ErrorMessages)
@@ -14,7 +12,6 @@
         }
     }
 }
-
 
 <textarea class="govuk-textarea govuk-!-margin-bottom-0 @isError"
           sfa-validation-for-id="@Model.QuestionId"
