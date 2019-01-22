@@ -4,7 +4,14 @@
     ViewBag.Title = @Model.Title;
 }
 
-<a href="@Url.Action("Section", "Application", new {Model.ApplicationId, Model.SequenceId, Model.SectionId})" class="govuk-back-link">Back to summary</a>
+@if (Model.RedirectAction == "Feedback")
+{
+    <a href="@Url.Action("Feedback", "Application", new { Model.ApplicationId })" class="govuk-back-link">Back to summary</a>
+}
+else
+{
+    <a href="@Url.Action("Section", "Application", new { Model.ApplicationId, Model.SequenceId, Model.SectionId })" class="govuk-back-link">Back to summary</a>
+}
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -35,8 +42,8 @@
                     @Html.Raw(Model.Title)
                 </h1>
             }
-            
-            
+
+
             @if (Model.HasFeedback)
             {
                 <div class="govuk-inset-text">
@@ -49,13 +56,15 @@
             }
 
             <form method="post" asp-action="SaveAnswers" asp-controller="Application" novalidate enctype="multipart/form-data">
+                <input type="hidden" id="RedirectAction" name="RedirectAction" value="@Model.RedirectAction" />
                 @if (Model.Questions.Count() == 1)
                 {
                     foreach (var question in Model.Questions)
                     {
                         <div class="govuk-form-group @(!ViewData.ModelState.IsValid ? "govuk-form-group--error" : "")">
                             <fieldset class="govuk-fieldset">
-                                @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio") {
+                                @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio")
+                                {
                                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
                                         <h1 class="govuk-fieldset__heading">
                                             @Html.Raw(question.Label)
@@ -77,7 +86,7 @@
                                     }
                                     <h2 class="govuk-label-wrapper">
                                         <label class="govuk-label govuk-label--xl" for="@question.QuestionId">
-                                                @Html.Raw(question.Label)
+                                            @Html.Raw(question.Label)
                                         </label>
                                     </h2>
                                 }
@@ -135,7 +144,7 @@
                             {
                                 @Html.Raw(question.QuestionBodyText)
                             }
-                            
+
                             @if (question.Hint != "")
                             {
                                 <span class="govuk-hint">
@@ -160,9 +169,16 @@
                         </div>
                     }
                 }
-                <button type="submit" class="govuk-button" >Save and continue</button>
+                <button type="submit" class="govuk-button">Save and continue</button>
                 <p class="govuk-body">
-                    <a class="govuk-link" href="@Url.Action("Section", "Application", new {Model.ApplicationId, Model.SequenceId, Model.SectionId})">Return to summary</a>
+                    @if (Model.RedirectAction == "Feedback")
+                    {
+                        <a class="govuk-link" href="@Url.Action("Feedback", "Application", new {Model.ApplicationId})">Return to summary</a>
+                    }
+                    else
+                    {
+                        <a class="govuk-link" href="@Url.Action("Section", "Application", new {Model.ApplicationId, Model.SequenceId, Model.SectionId})">Return to summary</a>
+                    }
                 </p>
             </form>
         </div>
