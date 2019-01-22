@@ -404,14 +404,6 @@
   padding-top: 0;
 }
 
-/* .govuk-error-message {
-  display: none;
-} */
-
-/* .govuk-error-message.field-validation-error {
-  display: block;
-} */
-
 .govuk-header__container--das-epao {
   border-bottom: 10px solid #004274;
 }
@@ -419,4 +411,14 @@
 .das-apply-notification-summary {
   border: 4px solid #005ea5;
   padding: 20px 15px;
+}
+
+.govuk-radios__conditional:last-child {
+  margin-bottom: 0;
+}
+
+@media (min-width: 40.0625em) {
+  .govuk-radios__conditional:last-child {
+    margin-bottom: 0;
+  }
 }

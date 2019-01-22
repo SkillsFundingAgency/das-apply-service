@@ -28,6 +28,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public string PageId { get; set; }
         public string Title { get; set; }
+
+        public string DisplayType { get; set; }
         
         public List<QuestionViewModel> Questions { get; set; }
         public string SequenceId { get; set; }
@@ -43,6 +45,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             Title = page.Title;
             LinkTitle = page.LinkTitle;
+            DisplayType = page.DisplayType;
             PageId = page.PageId;
             SequenceId = page.SequenceId;
             if (errorMessages != null && errorMessages.Any())
