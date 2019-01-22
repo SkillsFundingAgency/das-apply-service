@@ -4365,7 +4365,7 @@ VALUES
                         {
                           "Name": "Date",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Put in a valid date"
                         }
                       ]
                     },

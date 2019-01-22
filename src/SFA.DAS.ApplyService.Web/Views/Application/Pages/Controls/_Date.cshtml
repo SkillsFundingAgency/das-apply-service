@@ -4,12 +4,14 @@
 }
 
 
-@if (isError!=string.Empty)
+@if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
 {
-    if (Model.ErrorMessages.Count>0)
+    foreach (var errorMessage in Model.ErrorMessages)
     {
-        <span class="govuk-error-message">@Model.ErrorMessages[0].ErrorMessage</span>
- 
+        if (errorMessage.Field == Model.QuestionId)
+        {
+            <span class="govuk-error-message">@errorMessage.ErrorMessage</span>
+        }
     }
 }
 
@@ -17,40 +19,34 @@
     <div class="govuk-date-input__item">
         <div class="govuk-form-group">
             <label class="govuk-label govuk-date-input__label" for="@Model.QuestionId">Day</label>
-            <input
-                value="@(string.IsNullOrWhiteSpace(Model.Value?.ToString()) ? "" : Model.Value?.ToString().Split(',')[0])"
-                class="govuk-input govuk-date-input__input govuk-input--width-2 @isError"
-                sfa-validation-for-id="@Model.QuestionId"
-                type="text"
-                id="@Model.QuestionId" 
-                name="@Model.QuestionId" 
-            />
+            <input value="@(string.IsNullOrWhiteSpace(Model.Value?.ToString()) ? "" : Model.Value?.ToString().Split(',')[0])"
+                   class="govuk-input govuk-date-input__input govuk-input--width-2 @isError"
+                   sfa-validation-for-id="@Model.QuestionId"
+                   type="text"
+                   id="@Model.QuestionId"
+                   name="@Model.QuestionId" />
         </div>
     </div>
     <div class="govuk-date-input__item">
         <div class="govuk-form-group">
             <label class="govuk-label govuk-date-input__label" for="@Model.QuestionId">Month</label>
-            <input
-                value="@(string.IsNullOrWhiteSpace(Model.Value?.ToString()) ? "" : Model.Value?.ToString().Split(',')[1])"
-                class="govuk-input govuk-date-input__input govuk-input--width-2 @isError"
-                sfa-validation-for-id="@Model.QuestionId"
-                type="text"
-                id="@Model.QuestionId" 
-                name="@Model.QuestionId" 
-            />
+            <input value="@(string.IsNullOrWhiteSpace(Model.Value?.ToString()) ? "" : Model.Value?.ToString().Split(',')[1])"
+                   class="govuk-input govuk-date-input__input govuk-input--width-2 @isError"
+                   sfa-validation-for-id="@Model.QuestionId"
+                   type="text"
+                   id="@Model.QuestionId"
+                   name="@Model.QuestionId" />
         </div>
     </div>
     <div class="govuk-date-input__item">
         <div class="govuk-form-group">
             <label class="govuk-label govuk-date-input__label" for="@Model.QuestionId">Year</label>
-            <input
-                value="@(string.IsNullOrWhiteSpace(Model.Value?.ToString()) ? "" : Model.Value?.ToString().Split(',')[2])"
-                class="govuk-input govuk-date-input__input govuk-input--width-4 @isError"
-                sfa-validation-for-id="@Model.QuestionId"
-                type="text"
-                id="@Model.QuestionId" 
-                name="@Model.QuestionId" 
-            />
+            <input value="@(string.IsNullOrWhiteSpace(Model.Value?.ToString()) ? "" : Model.Value?.ToString().Split(',')[2])"
+                   class="govuk-input govuk-date-input__input govuk-input--width-4 @isError"
+                   sfa-validation-for-id="@Model.QuestionId"
+                   type="text"
+                   id="@Model.QuestionId"
+                   name="@Model.QuestionId" />
         </div>
     </div>
 </div>

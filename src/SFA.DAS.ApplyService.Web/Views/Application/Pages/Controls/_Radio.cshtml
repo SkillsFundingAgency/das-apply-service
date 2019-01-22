@@ -1,5 +1,20 @@
 @model SFA.DAS.ApplyService.Web.Controllers.QuestionViewModel
 
+@{
+    var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
+}
+
+
+@if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
+{
+    foreach (var errorMessage in Model.ErrorMessages)
+    {
+        if (errorMessage.Field == Model.QuestionId)
+        {
+            <span class="govuk-error-message">@errorMessage.ErrorMessage</span>
+        }
+    }
+}
 
 <div class="govuk-form-group" sfa-validation-for-id="@Model.QuestionId">
 

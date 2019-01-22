@@ -2,11 +2,23 @@
 
 @{ var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : ""; }
 
-<textarea
-    class="govuk-textarea govuk-!-margin-bottom-0 @isError"
-    sfa-validation-for-id="@Model.QuestionId"
-    id="@Model.QuestionId"
-    name="@Model.QuestionId"
-    rows="5"
-    aria-describedby="@Model.Label"
->@Model.Value</textarea>
+
+
+@if (Model.ErrorMessages!=null && Model.ErrorMessages.Count > 0)
+{
+    foreach (var errorMessage in Model.ErrorMessages)
+    {
+        if (errorMessage.Field == Model.QuestionId)
+        {
+            <span class="govuk-error-message">@errorMessage.ErrorMessage</span>
+        }
+    }
+}
+
+
+<textarea class="govuk-textarea govuk-!-margin-bottom-0 @isError"
+          sfa-validation-for-id="@Model.QuestionId"
+          id="@Model.QuestionId"
+          name="@Model.QuestionId"
+          rows="5"
+          aria-describedby="@Model.Label">@Model.Value</textarea>

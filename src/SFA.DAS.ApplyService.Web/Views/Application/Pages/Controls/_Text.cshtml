@@ -1,25 +1,33 @@
-@model dynamic 
+@model dynamic
 
 @{
-  var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
-  var otherError = "";
+    var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
 }
 
 
-@if (isError != string.Empty)
-{
-    if (Model.ErrorMessages.Count > 0)
+@*@if (isError != string.Empty)
     {
-        <span class="govuk-error-message">@Model.ErrorMessages[0].ErrorMessage</span>
+        if (Model.ErrorMessages.Count > 0)
+        {
+            <span class="govuk-error-message">@Model.ErrorMessages[0].ErrorMessage</span>
 
+        }
+    }*@
+
+@if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
+{
+    foreach (var errorMessage in Model.ErrorMessages)
+    {
+        if (errorMessage.Field == Model.QuestionId)
+        {
+            <span class="govuk-error-message">@errorMessage.ErrorMessage</span>
+        }
     }
 }
 
-<input
-    class="govuk-input govuk-!-width-two-thirds @isError"
-    sfa-validation-for-id="@Model.QuestionId"
-    type="text"
-    id="@Model.QuestionId"
-    name="@Model.QuestionId"
-    value="@Model.Value"
-/>
+<input class="govuk-input govuk-!-width-two-thirds @isError"
+       sfa-validation-for-id="@Model.QuestionId"
+       type="text"
+       id="@Model.QuestionId"
+       name="@Model.QuestionId"
+       value="@Model.Value" />

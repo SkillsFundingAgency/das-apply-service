@@ -160,6 +160,10 @@
                                     }
                                 }
                             }*@
+                        @if (question.Type == "ComplexRadio" && (question.ErrorMessages==null || question.ErrorMessages.Count==0))
+                        {
+                            question.ErrorMessages = Model.ErrorMessages;
+                        }
 
                             @Html.Partial($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
                         </div>

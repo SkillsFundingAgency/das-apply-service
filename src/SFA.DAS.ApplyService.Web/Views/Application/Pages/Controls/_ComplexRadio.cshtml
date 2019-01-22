@@ -1,5 +1,17 @@
 @model SFA.DAS.ApplyService.Web.Controllers.QuestionViewModel
+@{
+    var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
+}
 
+
+@if (isError != string.Empty)
+{
+    if (Model.ErrorMessages.Count > 0  && Model.ErrorMessages[0].Field==Model.QuestionId)
+    {
+        <span class="govuk-error-message">@Model.ErrorMessages[0].ErrorMessage</span>
+
+    }
+}
 <div class="govuk-form-group" sfa-validation-for-id="@Model.QuestionId">
 
     <div class="govuk-radios govuk-radios--conditional" data-module="radios">
