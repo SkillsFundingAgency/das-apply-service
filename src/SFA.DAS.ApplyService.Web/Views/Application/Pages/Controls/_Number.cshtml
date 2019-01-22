@@ -1,3 +1,11 @@
 @model dynamic 
 
-<input class="govuk-input govuk-!-width-two-thirds" sfa-validation-for-id="@Model.QuestionId" sfa-validationerror-class="form-control-error" type="number" id="@Model.QuestionId" name="@Model.QuestionId" value="@Model.Value"/>
+@{ var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : ""; }
+
+<input
+    class="govuk-input govuk-!-width-two-thirds @isError"
+    sfa-validation-for-id="@Model.QuestionId"
+    type="number" id="@Model.QuestionId"
+    name="@Model.QuestionId"
+    value="@Model.Value"
+/>

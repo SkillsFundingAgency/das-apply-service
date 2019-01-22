@@ -24,6 +24,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         
         public string BodyText { get; set; }
 
+        public string DisplayType { get; set; }
         public bool IsQuestionAnswered(string questionId)
         {
             var allAnswers = PageOfAnswers.SelectMany(poa => poa.Answers).ToList();
