@@ -241,31 +241,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
 
             return validationPassed;
         }
-
-//        private static void MarkSequenceAsCompleteIfAllPagesComplete(ApplicationSequence sequence, List<Sequence> workflow)
-//        {
-//            sequence.Complete = sequence.Sections.SelectMany(s => s.Pages).All(p => p.Complete);
-//
-//            if (!sequence.Complete) return;
-//
-//            var nextSequences = sequence.NextSequences;
-//            foreach (var nextSequence in nextSequences)
-//            {
-//                if (nextSequence.Condition != null)
-//                {
-//                    var answers = sequence.Sections.SelectMany(s => s.Pages).SelectMany(p => p.PageOfAnswers[0].Answers).ToList();
-//                    if (answers.Any(a =>
-//                        a.QuestionId == nextSequence.Condition.QuestionId &&
-//                        a.Value == nextSequence.Condition.MustEqual))
-//                    {
-//                        workflow.Single(w => w.SequenceId == nextSequence.NextSequenceId).Active = true;
-//                    }
-//                }
-//                else
-//                {
-//                    workflow.Single(w => w.SequenceId == nextSequence.NextSequenceId).Active = true;
-//                }
-//            }
-//        }
+        
     }
 }
