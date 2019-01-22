@@ -8991,15 +8991,16 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-31-QB-1",
             "Hint": "SQ-2-SE-4-PG-28-CC-31-H-1",
             "Input": {
-              "Type": "Textarea",
-                      "Options": null,
-                      "Validations": [
-                        {
-                          "Name": "Required",
-                          "Value": null,
-                          "ErrorMessage": "Enter where you will conduct end-point assessments"
-                        }
-                      ]
+              "Type": "DataFed_CheckboxList",
+              "Options": null,
+              "Validations": [
+                {
+                  "Name": "Required",
+                  "Value": null,
+                  "ErrorMessage": "Enter where you will conduct end-point assessments"
+                }
+              ],
+              "DataEndpoint":"DeliveryAreas"
             },
             "Order": null
           }
