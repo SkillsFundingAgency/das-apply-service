@@ -32,34 +32,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
                         validators.Add(validator);
                     }
                 }
-
-//                if (question.Input.Options != null)
-//                {
-//                    foreach (var option in question.Input.Options)
-//                    {
-//                        if (option.FurtherQuestions != null && option.FurtherQuestions.Count > 0)
-//                        {
-//                            foreach (var questn in option.FurtherQuestions)
-//                            {
-//                                if (questn.Input.Validations != null && questn.Input.Validations.Any())
-//                                {
-//                                    foreach (var inputVal in questn.Input.Validations)
-//                                    {
-//                                        var validator = _serviceProvider.GetServices<IValidator>()
-//                                            .FirstOrDefault(
-//                                                v => v.GetType().Name == inputVal.Name + "Validator");
-//
-//                                        if (validator != null)
-//                                        {
-//                                            validator.ValidationDefinition = inputVal;
-//                                            validators.Add(validator);
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
             }
             else
             {
