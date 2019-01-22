@@ -4048,7 +4048,12 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Field must not be empty"
+                "ErrorMessage": "Enter a date"
+              },
+              {
+                "Name":"Date",
+                "Value":"",
+                "ErrorMessage": "Date must be correct"
               }
             ]
           },
@@ -4365,7 +4370,12 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter a date"
+                        },
+                        {
+                          "Name":"Date",
+                          "Value":"",
+                          "ErrorMessage": "Date must be correct"
                         }
                       ]
                     },
@@ -4815,7 +4825,12 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Field must not be empty"
+                "ErrorMessage": "Enter a date"
+              },
+              {
+                "Name":"Date",
+                "Value":"",
+                "ErrorMessage": "Date must be correct"
               }
             ]
           },
@@ -4853,7 +4868,12 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Field must not be empty"
+                "ErrorMessage": "Enter a date"
+              },
+              {
+                "Name":"Date",
+                "Value":"",
+                "ErrorMessage": "Date must be correct"
               }
             ]
           },
@@ -5259,7 +5279,12 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter a date"
+                        },
+                        {
+                          "Name":"Date",
+                          "Value":"",
+                          "ErrorMessage": "Date must be correct"
                         }
                       ]
                     },
@@ -5336,7 +5361,12 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter a date"
+                        },
+                        {
+                          "Name":"Date",
+                          "Value":"",
+                          "ErrorMessage": "Date must be correct"
                         }
                       ]
                     },
@@ -5432,7 +5462,12 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter a date"
+                        },
+                        {
+                          "Name":"Date",
+                          "Value":"",
+                          "ErrorMessage": "Date must be correct"
                         }
                       ]
                     },
@@ -5682,7 +5717,12 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter a date"
+                        },
+                        {
+                          "Name":"Date",
+                          "Value":"",
+                          "ErrorMessage": "Date must be correct"
                         }
                       ]
                     },
