@@ -12,17 +12,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     {
         public Guid ApplicationId { get; }
 
-        public PageViewModel(Page page, Guid applicationId)
+        public PageViewModel(Page page, Guid applicationId, string redirectAction, List<ValidationErrorDetail> errorMessages)
         {
             ApplicationId = applicationId;
-            SetupPage(page, null);
-        }
-
-        public PageViewModel(Page page, Guid applicationId, List< ValidationErrorDetail> errorMessages)
-        {
-            ApplicationId = applicationId;
-            SetupPage(page, errorMessages);
+            RedirectAction = redirectAction;
             ErrorMessages = errorMessages;
+            SetupPage(page, errorMessages);
         }
 
         public bool HasFeedback { get; set; }

@@ -4,7 +4,14 @@
     ViewBag.Title = @Model.Title;
 }
 
-<a href="@Url.Action("Section", "Application", new {Model.ApplicationId, Model.SequenceId, Model.SectionId})" class="govuk-back-link">Back to summary</a>
+@if (Model.RedirectAction == "Feedback")
+{
+    <a href="@Url.Action("Feedback", "Application", new { Model.ApplicationId })" class="govuk-back-link">Back to summary</a>
+}
+else
+{
+    <a href="@Url.Action("Section", "Application", new { Model.ApplicationId, Model.SequenceId, Model.SectionId })" class="govuk-back-link">Back to summary</a>
+}
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -15,18 +22,16 @@
                 </h1>
             }
 
-
             @if (Model.HasFeedback)
             {
                 <div class="govuk-inset-text">
+                    <h2 class="govuk-heading-l">Feedback</h2>
                     @foreach (var fb in Model.Feedback)
                     {
-                        <p class="govuk-body">@fb.Message</p>
+                        <p class="govuk-body">@Html.Raw(fb.Message)</p>
                     }
                 </div>
             }
-
-
 
             @if (!ViewData.ModelState.IsValid)
             {
@@ -47,8 +52,47 @@
                     </div>
                 </div>
             }
-            
-            <form method="post" asp-action="SaveAnswers" asp-controller="Application" novalidate enctype="multipart/form-data">
+
+            @if (Model.PageOfAnswers.Any())
+            {
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            @foreach (var answer in Model.PageOfAnswers.First().Answers)
+                            {
+                                <th class="govuk-table__header" scope="col">@Model.Questions.Single(q => q.QuestionId == answer.QuestionId).Label</th>
+                            }
+                            <th class="govuk-table__header"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+
+                        @foreach (var answerPage in Model.PageOfAnswers)
+                        {
+                            <tr class="govuk-table__row">
+                                @foreach (var answer in answerPage.Answers)
+                                {
+                                    <td class="govuk-table__cell">@Model.Questions.Single(q => q.QuestionId == answer.QuestionId).DisplayAnswerValue(answer)</td>
+                                }
+                                <td class="govuk-table__cell">
+                                    <form asp-action="DeleteAnswer" asp-controller="Application">
+                                        <input type="hidden" id="AnswerId" name="AnswerId" value="@answerPage.Id" />
+                                        <input type="hidden" id="ApplicationId" name="ApplicationId" value="@Model.ApplicationId" />
+                                        <input type="hidden" id="SectionId" name="SectionId" value="@Model.SectionId" />
+                                        <input type="hidden" id="SequenceId" name="SequenceId" value="@Model.SequenceId" />
+                                        <input type="hidden" id="PageId" name="PageId" value="@Model.PageId" />
+                                        <input type="hidden" id="RedirectAction" name="RedirectAction" value="@Model.RedirectAction" />
+                                        <button class="govuk-button govuk-button--looks-like-link" type="submit">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+            <form method="post" asp-action="SaveAnswersMulti" asp-controller="Application" novalidate enctype="multipart/form-data">
+                <input type="hidden" id="RedirectAction" name="RedirectAction" value="@Model.RedirectAction" />
                 @if (Model.Questions.Count() == 1)
                 {
                     foreach (var question in Model.Questions)
@@ -74,7 +118,7 @@
                                 <span class="govuk-hint">
                                     @Html.Raw(question.Hint)
                                 </span>
-                                
+
                                 @if (Model.ErrorMessages != null)
                                 {
                                     foreach (var error in Model.ErrorMessages)
@@ -87,7 +131,7 @@
                                         }
                                     }
                                 }
-                                @Html.Partial($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
+                                @await Html.PartialAsync($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
                             </fieldset>
                         </div>
                     }
@@ -130,58 +174,26 @@
                                     }
                                 }
                             }
-                            @Html.Partial($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
+                            @await Html.PartialAsync($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
                         </div>
                     }
                 }
-                <button type="submit" class="govuk-button">Add</button>
-            </form>
+                <button type="submit" class="govuk-button" name="__formAction" value="Add">Add another</button>
 
-            @if (Model.PageOfAnswers.Any())
-            {
-                <table class="govuk-table">
-                    <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        @foreach (var answer in Model.PageOfAnswers.First().Answers)
-                        {
-                            <th class="govuk-table__header" scope="col">@Model.Questions.Single(q => q.QuestionId == answer.QuestionId).Label</th>
-                        }
-                        <th class="govuk-table__header"></th>
-                    </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                    
-                    @foreach (var answerPage in Model.PageOfAnswers)
-                    {
-                        <tr class="govuk-table__row">
-                            @foreach (var answer in answerPage.Answers)
-                            {
-                                <td class="govuk-table__cell">@Model.Questions.Single(q => q.QuestionId == answer.QuestionId).DisplayAnswerValue(answer)</td>
-                            }
-                            <td class="govuk-table__cell">
-                                <form asp-action="DeleteAnswer" asp-controller="Application">
-                                    <input type="hidden" id="AnswerId" name="AnswerId" value="@answerPage.Id"/>
-                                    <input type="hidden" id="ApplicationId" name="ApplicationId" value="@Model.ApplicationId"/>
-                                    <input type="hidden" id="SectionId" name="SectionId" value="@Model.SectionId"/>
-                                    <input type="hidden" id="SequenceId" name="SequenceId" value="@Model.SequenceId"/>
-                                    <input type="hidden" id="PageId" name="PageId" value="@Model.PageId"/>
-                                    <input type="hidden" id="RedirectAction" name="RedirectAction" value="@Model.RedirectAction"/>
-                                    <button class="govuk-button govuk-button--looks-like-link" type="submit">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            }
-
-
-            <form method="post" asp-action="NextPage" asp-controller="Application" novalidate enctype="multipart/form-data">
-                <button type="submit" class="govuk-button">Save and continue</button>
+                <div class="govuk-form-group">
+                    <button type="submit" class="govuk-button" name="__formAction" value="Save">Save and continue</button>
+                </div>
             </form>
 
             <p class="govuk-body">
-                <a class="govuk-link" href="@Url.Action("Section", "Application", new {Model.ApplicationId, Model.SequenceId, Model.SectionId})">Return to summary</a>
+                @if (Model.RedirectAction == "Feedback")
+                {
+                    <a class="govuk-link" href="@Url.Action("Feedback", "Application", new {Model.ApplicationId})">Return to summary</a>
+                }
+                else
+                {
+                    <a class="govuk-link" href="@Url.Action("Section", "Application", new {Model.ApplicationId, Model.SequenceId, Model.SectionId})">Return to summary</a>
+                }
             </p>
         </div>
     </div>
