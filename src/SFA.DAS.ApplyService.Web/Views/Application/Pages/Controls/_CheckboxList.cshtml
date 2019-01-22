@@ -1,22 +1,28 @@
 @using NPOI.Util
 @model SFA.DAS.ApplyService.Web.Controllers.QuestionViewModel
 
+<div class="govuk-form-group">
+    <div class="govuk-checkboxes">
+        <div class="govuk-checkboxes__item">
+            <input class="govuk-checkboxes__input" type="checkbox" id="allAreas" name="allAreas" value="" />
+            <label class="govuk-label govuk-checkboxes__label" for="allAreas">
+                All areas
+            </label>
+        </div>
+    </div>
+</div>
 
-@for (int i = 0; i < Model.Options.Count; i++)
-{ 
-    var checkboxChecked = ((Model.Value != null && Model.Value.Contains(Model.Options[i].Value)) || Model.Value == null) ? "checked" : "";
 
-    <label for="option_@i">@Model.Options[i].Label</label>
-    <input type="checkbox" id="option_@i" name="@Model.QuestionId" value="@Model.Options[i].Value" @checkboxChecked/>
-}
+<div class="govuk-checkboxes">
+    @for (int i = 0; i < Model.Options.Count; i++)
+    { 
+        var checkboxChecked = ((Model.Value != null && Model.Value.Contains(Model.Options[i].Value)) || Model.Value == null) ? "checked" : "";
 
-
-@* *@
-@* *@
-@* *@
-@* *@
-@* @foreach (var option in Model.Options) *@
-@* { *@
-@*     <label>@option.Label</label> *@
-@*     <input type="checkbox" id="@Model.QuestionId" name="@Model.QuestionId" value="@option.Label" />     *@
-@* } *@
+        <div class="govuk-checkboxes__item">
+            <input class="govuk-checkboxes__input" type="checkbox" id="option_@i" name="@Model.QuestionId" value="@Model.Options[i].Value" @checkboxChecked/>
+            <label class="govuk-label govuk-checkboxes__label" for="option_@i">
+                @Model.Options[i].Label
+            </label>
+        </div>
+    }
+</div>
