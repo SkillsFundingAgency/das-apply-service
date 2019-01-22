@@ -172,14 +172,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             throw new BadRequestException("Section does not have a valid DisplayType");
         }
 
-        [HttpGet("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/{redirectAction}")]
-        public async Task<IActionResult> Page(string applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
+        [HttpGet("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
+        public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
-            var page = await _apiClient.GetPage(Guid.Parse(applicationId), sequenceId, sectionId, pageId, Guid.Parse(User.FindFirstValue("UserId")));
+            var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, Guid.Parse(User.FindFirstValue("UserId")));
 
             page = await GetDataFedOptions(page);
             
-            var pageVm = new PageViewModel(page, Guid.Parse(applicationId));
+            var pageVm = new PageViewModel(page, applicationId, redirectAction, null);
 
             pageVm.SectionId = sectionId;
             pageVm.RedirectAction = redirectAction;
@@ -211,7 +211,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return page;
         }
 
-        private void ProcessPageVmQuestionsForStandardName(List<QuestionViewModel> pageVmQuestions, string applicationId)
+        private void ProcessPageVmQuestionsForStandardName(List<QuestionViewModel> pageVmQuestions, Guid applicationId)
          {
              var placeholderString = "StandardName";
              var isPlaceholderPresent = false;
@@ -227,7 +227,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
              if (!isPlaceholderPresent) return;
 
-             var application = _apiClient.GetApplication(Guid.Parse(applicationId)).Result;
+             var application = _apiClient.GetApplication(applicationId).Result;
              var standardName = application?.ApplicationData?.StandardName;
 
 
@@ -242,43 +242,63 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }     
          }
 
-
-        [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/NextPage/{redirectAction}")]
-        public async Task<IActionResult> NextPage(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
+        [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/Multi")]
+        public async Task<IActionResult> SaveAnswersMulti(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, string __formAction)
         {
+            if (__formAction == "Add")
+            {
+                return await SaveAnswers(applicationId, sequenceId, sectionId, pageId, redirectAction);
+            }
+            else if (__formAction == "Save")
+            {
+                var answers = new List<Answer>();
+                GetAnswersFromForm(answers);
+                var inputEnteredRegex = new System.Text.RegularExpressions.Regex(@"\w+");
+
+                if (answers.Any(a => inputEnteredRegex.IsMatch(a.Value))) 
+                {
+                    var invaidSaveResult = await SaveAnswers(applicationId, sequenceId, sectionId, pageId, redirectAction);
+
+                    if (!ModelState.IsValid) return invaidSaveResult;
+                }
+            }
+
+            // If we got to here then all is well
             if (redirectAction == "Feedback")
             {
-                return RedirectToAction("Feedback", new {applicationId});
+                return RedirectToAction("Feedback", new { applicationId });
             }
-
-            var thisPage = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, Guid.Parse(User.FindFirstValue("UserId")));
-            if (thisPage.PageOfAnswers.Any())
+            else
             {
-                var next = thisPage.Next.FirstOrDefault();
-                if (next == null)
+                var thisPage = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, Guid.Parse(User.FindFirstValue("UserId")));
+                if (thisPage.PageOfAnswers.Any())
                 {
-                    RedirectToAction("Section", "Application", new {applicationId, sectionId = thisPage.SectionId});
+                    var next = thisPage.Next.FirstOrDefault();
+                    if (next == null)
+                    {
+                        return RedirectToAction("Section", "Application", new { applicationId, sectionId = thisPage.SectionId });
+                    }
+
+                    if (next.Action == "NextPage")
+                    {
+                        return RedirectToAction("Page", new { applicationId, sequenceId = thisPage.SequenceId, sectionId = thisPage.SectionId, pageId = next.ReturnId, redirectaction = redirectAction });
+                    }
+
+                    return next.Action == "ReturnToSection"
+                        ? RedirectToAction("Section", "Application", new { applicationId, sectionId = next.ReturnId })
+                        : RedirectToAction("Sequence", "Application", new { applicationId });
                 }
 
-                if (next.Action == "NextPage")
-                {
-                    return RedirectToAction("Page", new {applicationId, sequenceId = thisPage.SequenceId, sectionId = thisPage.SectionId, pageId = next.ReturnId, redirectAction});
-                }
-
-                return next.Action == "ReturnToSection"
-                    ? RedirectToAction("Section", "Application", new {applicationId, sectionId = next.ReturnId})
-                    : RedirectToAction("Sequence", "Application", new {applicationId});
+                return RedirectToAction("Page", new { applicationId, sequenceId = thisPage.SequenceId, sectionId = thisPage.SectionId, pageId = thisPage.PageId, redirectaction = redirectAction });
             }
-
-            return RedirectToAction("Page", new {applicationId, sequenceId = thisPage.SequenceId, sectionId = thisPage.SectionId, pageId = thisPage.PageId, redirectAction});
         }
 
-        [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/{redirectAction}")]
-        public async Task<IActionResult> SaveAnswers(string applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
+        [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
+        public async Task<IActionResult> SaveAnswers(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
             var userId = Guid.Parse(User.FindFirstValue("UserId"));
 
-            var page = await _apiClient.GetPage(Guid.Parse(applicationId), sequenceId, sectionId, pageId, Guid.Parse(User.FindFirstValue("UserId")));
+            var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, Guid.Parse(User.FindFirstValue("UserId")));
 
             var errorMessages = new List<ValidationErrorDetail>();
             var answers = new List<Answer>();
@@ -286,7 +306,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var fileValidationPassed = FileValidationPassed(answers, page, errorMessages);
             GetAnswersFromForm(answers);
 
-            var updatePageResult = await _apiClient.UpdatePageAnswers(Guid.Parse(applicationId), userId, sequenceId, sectionId, pageId, answers);
+            var updatePageResult = await _apiClient.UpdatePageAnswers(applicationId, userId, sequenceId, sectionId, pageId, answers);
+
 
             if (updatePageResult.ValidationPassed && fileValidationPassed)
             {
@@ -294,12 +315,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 if (updatePageResult.Page.AllowMultipleAnswers)
                 {
-                    return RedirectToAction("Page",
-                        new
-                        {
-                            applicationId, sequenceId = updatePageResult.Page.SequenceId,
-                            sectionId = updatePageResult.Page.SectionId, pageId = updatePageResult.Page.PageId, redirectAction = redirectAction
-                        });
+                    return RedirectToAction("Page", new {applicationId, sequenceId = updatePageResult.Page.SequenceId,
+                            sectionId = updatePageResult.Page.SectionId, pageId = updatePageResult.Page.PageId, redirectAction});
                 }
 
                 if (redirectAction == "Feedback")
@@ -314,11 +331,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     var pageNext = nextActions[0];
                     if (pageNext.Action == "NextPage" && pageNext.ConditionMet)
                     {
-                        return RedirectToAction("Page", new {applicationId, pageId = pageNext.ReturnId, redirectAction = redirectAction});
+                        return RedirectToAction("Page", new {applicationId, sequenceId = updatePageResult.Page.SequenceId,
+                            sectionId = updatePageResult.Page.SectionId, pageId = pageNext.ReturnId, redirectAction});
                     }
 
                     return pageNext.Action == "ReturnToSection"
-                        ? RedirectToAction("Section", "Application", new {applicationId, sectionId = pageNext.ReturnId})
+                        ? RedirectToAction("Section", "Application", new {applicationId, sequenceId = updatePageResult.Page.SequenceId, sectionId = pageNext.ReturnId})
                         : RedirectToAction("Sequence", "Application", new {applicationId});
                 }
 
@@ -327,11 +345,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 
                 if (nextConditionMet.Action == "NextPage")
                 {
-                    return RedirectToAction("Page", new {applicationId, pageId = nextConditionMet.ReturnId, redirectAction = redirectAction});
+                    return RedirectToAction("Page", new {applicationId, sequenceId = updatePageResult.Page.SequenceId,
+                        sectionId = updatePageResult.Page.SectionId, pageId = nextConditionMet.ReturnId, redirectAction});
                 }
 
                 return nextConditionMet.Action == "ReturnToSequence"
-                    ? RedirectToAction("Section", "Application", new {applicationId, sectionId = nextConditionMet.ReturnId})
+                    ? RedirectToAction("Section", "Application", new {applicationId, sequenceId = updatePageResult.Page.SequenceId, sectionId = nextConditionMet.ReturnId})
                     : RedirectToAction("Sequence", "Application", new {applicationId});
             }
 
@@ -344,7 +363,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
             }
 
-            var pageVm = new PageViewModel(updatePageResult.Page, Guid.Parse(applicationId), errorMessages);
+            var pageVm = new PageViewModel(updatePageResult.Page, applicationId, redirectAction, errorMessages);
 
 
             if (page.AllowMultipleAnswers)
@@ -355,7 +374,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return View("~/Views/Application/Pages/Index.cshtml", pageVm);
         }
 
-        private async Task UploadFilesToStorage(string applicationId, int sequenceId, int sectionId, string pageId, Guid userId)
+        private async Task UploadFilesToStorage(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid userId)
         {
             if (HttpContext.Request.Form.Files.Any())
             {
@@ -425,8 +444,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 Guid.Parse(User.FindFirstValue("UserId")));
             
             return RedirectToAction("Page", new {applicationId, sequenceId, sectionId, pageId, redirectAction});
-            
-            //return RedirectToAction("Page", new {applicationId, sequenceId, sectionId, pageId});
         }
 
         [HttpGet("/Application/{applicationId}/Feedback")]

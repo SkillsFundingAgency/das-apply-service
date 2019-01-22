@@ -2,4 +2,11 @@
 
 @{ var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : ""; }
 
-<input class="govuk-input govuk-!-width-two-thirds @isError" sfa-validation-for-id="@Model.QuestionId" type="text" id="@Model.QuestionId" name="@Model.QuestionId" value="@Model.Value"/>
+<input
+    class="govuk-input govuk-!-width-two-thirds @isError"
+    sfa-validation-for-id="@Model.QuestionId"
+    type="text"
+    id="@Model.QuestionId"
+    name="@Model.QuestionId"
+    value="@Model.Value"
+/>
