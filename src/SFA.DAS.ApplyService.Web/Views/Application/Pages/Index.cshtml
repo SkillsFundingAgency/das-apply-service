@@ -63,12 +63,7 @@ else
                     {
                         <div class="govuk-form-group @(!ViewData.ModelState.IsValid ? "govuk-form-group--error" : "")">
                             <fieldset class="govuk-fieldset">
-<<<<<<< HEAD
                                 @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio" || question.Type == "CheckboxList") {
-=======
-                                @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio")
-                                {
->>>>>>> 3f3f90bfcb3d977c08cf1b7eb5d8895c6b34552a
                                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
                                         <h1 class="govuk-fieldset__heading">
                                             @Html.Raw(question.Label)
