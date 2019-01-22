@@ -11,7 +11,10 @@
             @if (!string.IsNullOrEmpty(@Model.Title) && Model.Questions.Count() > 1)
             {
                 <h1 class="govuk-heading-xl">
-                    @Model.Title
+                    @if (Model?.DisplayType=="PagesWithSections")
+                    {@Model.LinkTitle}
+                    else
+                    {@Model.Title}
                 </h1>
             }
 

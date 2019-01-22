@@ -1,21 +1,11 @@
+@using NPOI.Util
 @model SFA.DAS.ApplyService.Web.Controllers.QuestionViewModel
 
 
 @for (int i = 0; i < Model.Options.Count; i++)
 { 
-    var checkboxChecked = Model.Value.Contains(Model.Options[i].Value) ? "checked" : "";
+    var checkboxChecked = ((Model.Value != null && Model.Value.Contains(Model.Options[i].Value)) || Model.Value == null) ? "checked" : "";
 
     <label for="option_@i">@Model.Options[i].Label</label>
     <input type="checkbox" id="option_@i" name="@Model.QuestionId" value="@Model.Options[i].Value" @checkboxChecked/>
 }
-
-
-@* *@
-@* *@
-@* *@
-@* *@
-@* @foreach (var option in Model.Options) *@
-@* { *@
-@*     <label>@option.Label</label> *@
-@*     <input type="checkbox" id="@Model.QuestionId" name="@Model.QuestionId" value="@option.Label" />     *@
-@* } *@

@@ -6,13 +6,20 @@
 }
 
 
-@if (isError!=string.Empty)
+@if (isError != string.Empty)
 {
-    if (Model.ErrorMessages.Count>0)
+    if (Model.ErrorMessages.Count > 0)
     {
         <span class="govuk-error-message">@Model.ErrorMessages[0].ErrorMessage</span>
- 
+
     }
 }
 
-<input class="govuk-input govuk-!-width-two-thirds @isError" sfa-validation-for-id="@Model.QuestionId" type="text" id="@Model.QuestionId" name="@Model.QuestionId" value="@Model.Value"/>
+<input
+    class="govuk-input govuk-!-width-two-thirds @isError"
+    sfa-validation-for-id="@Model.QuestionId"
+    type="text"
+    id="@Model.QuestionId"
+    name="@Model.QuestionId"
+    value="@Model.Value"
+/>
