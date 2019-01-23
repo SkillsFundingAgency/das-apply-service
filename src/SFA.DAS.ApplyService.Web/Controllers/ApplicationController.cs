@@ -48,12 +48,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (!applications.Any())
             {
-                await _apiClient.StartApplication(Guid.Parse(User.FindFirstValue("UserId")));
-                applications = await _apiClient.GetApplicationsFor(Guid.Parse(User.FindFirstValue("UserId")));
-                return RedirectToAction("SequenceSignPost", new {applicationId = applications.First().Id});
+                return View("~/Views/Application/Declaration.cshtml");
             }
-
-            if (applications.Count() > 1)
+            else if (applications.Count() > 1)
             {
                 return View(applications);
             }
