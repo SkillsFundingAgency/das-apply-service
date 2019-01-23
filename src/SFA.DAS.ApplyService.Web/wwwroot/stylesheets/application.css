@@ -420,3 +420,11 @@
   border: 4px solid #005ea5;
   padding: 20px 15px;
 }
+
+.js-check-all-container {
+  display: none;
+}
+
+.js-enabled .js-check-all-container {
+  display: block;
+}
