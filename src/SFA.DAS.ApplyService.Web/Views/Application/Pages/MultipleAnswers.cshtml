@@ -3,15 +3,29 @@
 @{
     ViewBag.Title = @Model.Title;
 }
-
-@if (Model.RedirectAction == "Feedback")
-{
-    <a href="@Url.Action("Feedback", "Application", new { Model.ApplicationId })" class="govuk-back-link">Back to summary</a>
-}
-else
-{
-    <a href="@Url.Action("Section", "Application", new { Model.ApplicationId, Model.SequenceId, Model.SectionId })" class="govuk-back-link">Back to summary</a>
-}
+@*
+<noscript>
+    @if (!string.IsNullOrWhiteSpace(Model.ReturnUrl))
+    {
+        <a href="@Model.ReturnUrl" class="govuk-back-link">Back to previous page</a>
+    }
+    else if (Model.RedirectAction == "Feedback")
+    {
+        <a href="@Url.Action("Feedback", "Application", new { Model.ApplicationId })" class="govuk-back-link">Back to summary</a>
+    }
+    else
+    {
+        <a href="@Url.Action("Section", "Application", new { Model.ApplicationId, Model.SequenceId, Model.SectionId })" class="govuk-back-link">Back to summary</a>
+    }
+</noscript>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var jsBackButton = document.getElementById("jsBackButton");
+        jsBackButton.style = "";
+    });
+</script>
+<a id="jsBackButton" href="javascript:history.back()" class="govuk-back-link" style="display:none">Back to previous page</a>
+*@
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -20,8 +34,8 @@ else
                 <h1 class="govuk-heading-xl">
                     @if (Model?.DisplayType=="PagesWithSections")
                     {@Model.LinkTitle}
-                    else
-                    {@Model.Title}
+                else
+                {@Model.Title}
                 </h1>
             }
 
