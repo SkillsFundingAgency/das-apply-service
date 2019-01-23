@@ -17,6 +17,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public List<Option> Options { get; set; }
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
 
+        public Guid ApplicationId { get; set; }
+        public int SequenceId { get; set; }    
+        public int SectionId { get; set; }
+        public string PageId { get; set; }
+        public string RedirectAction { get; set; }
+
         public string DisplayAnswerValue(Answer answer)
         {
             if (Type == "Date")

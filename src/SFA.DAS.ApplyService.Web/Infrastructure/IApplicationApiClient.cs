@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using SFA.DAS.ApplyService.Application.Apply.Download;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 using SFA.DAS.ApplyService.Application.Apply.Upload;
 using SFA.DAS.ApplyService.Domain.Apply;
@@ -27,8 +29,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<List<Domain.Entities.Application>> GetApplicationsFor(Guid userId);
 
         Task<UploadResult> Upload(Guid applicationId, string userId, int sequenceId, int sectionId, string pageId, IFormFileCollection files);
-        
-        Task<byte[]> Download(Guid applicationId, Guid userId, string pageId, string questionId, string filename);
+
+        Task<HttpResponseMessage> Download(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string filename);
+        Task<FileInfoResponse> FileInfo(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string filename);
         Task<ApplicationSequence> GetSequence(Guid applicationId, Guid userId);
         Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId, int sectionId, Guid userId);
         
@@ -48,5 +51,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         Task<List<StandardCollation>> GetStandards();
         Task<List<Option>> GetQuestionDataFedOptions(string dataEndpoint);
+        Task DeleteFile(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId);
     }
 }

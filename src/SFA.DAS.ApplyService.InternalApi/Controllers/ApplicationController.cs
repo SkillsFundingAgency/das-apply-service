@@ -99,20 +99,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return updatedPage;
         }
         
-        [HttpPost("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Upload")]
-        public async Task<ActionResult<UploadResult>> Upload(string applicationId, string userId, int sequenceId, int sectionId, string pageId)
-        {
-            var uploadResult = await _mediator.Send(new UploadRequest(Guid.Parse(applicationId), sequenceId, sectionId, Guid.Parse(userId), pageId, HttpContext.Request.Form.Files));
-            return uploadResult;
-        }
-        
-        [HttpGet("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}/Download")]
-        public async Task<ActionResult<DownloadResponse>> Download(string applicationId, string userId, int sequenceId, int sectionId, string pageId, string questionId, string filename)
-        {
-            var downloadResponse = await _mediator.Send(new DownloadRequest(Guid.Parse(applicationId), Guid.Parse(userId), pageId, sequenceId, sectionId, questionId, filename));
-            //return downloadResponse;
-            return File(downloadResponse.FileStream, downloadResponse.ContentType, downloadResponse.Filename);
-        }
+       
 
         [HttpPost("/Applications/Submit")]
         public async Task<ActionResult> Submit([FromBody] ApplicationSubmitRequest request)
