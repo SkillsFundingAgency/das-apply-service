@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -247,17 +248,24 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return await SaveAnswers(applicationId, sequenceId, sectionId, pageId, redirectAction);
             }
-            else if (__formAction == "Save")
-            {
+
+            if (__formAction == "Save")
+            {     
+
                 var answers = new List<Answer>();
                 GetAnswersFromForm(answers);
                 var inputEnteredRegex = new System.Text.RegularExpressions.Regex(@"\w+");
+                var applyValidationRulesOnSaveAndContinue = await CheckIfValidationRequiredOnSaveAndContinue(applicationId, sequenceId, sectionId, pageId, answers, inputEnteredRegex);
 
-                if (answers.Any(a => inputEnteredRegex.IsMatch(a.Value))) 
+                if (applyValidationRulesOnSaveAndContinue)
                 {
-                    var invaidSaveResult = await SaveAnswers(applicationId, sequenceId, sectionId, pageId, redirectAction);
+                    if (answers.Any(a => inputEnteredRegex.IsMatch(a.Value)))
+                    {
+                        var invaidSaveResult =
+                            await SaveAnswers(applicationId, sequenceId, sectionId, pageId, redirectAction);
 
-                    if (!ModelState.IsValid) return invaidSaveResult;
+                        if (!ModelState.IsValid) return invaidSaveResult;
+                    }
                 }
             }
 
@@ -289,6 +297,31 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 return RedirectToAction("Page", new { applicationId, sequenceId = thisPage.SequenceId, sectionId = thisPage.SectionId, pageId = thisPage.PageId, redirectaction = redirectAction });
             }
+        }
+
+        private async Task<bool> CheckIfValidationRequiredOnSaveAndContinue(Guid applicationId, int sequenceId, int sectionId,
+            string pageId, List<Answer> answers, Regex inputEnteredRegex)
+        {
+            var hasAnswersAlready = false;
+            var oneOrMoreAnswerEntered = false;
+
+            foreach (var answer in answers)
+            {
+                if (answer.QuestionId == "RedirectAction") continue;
+                if (!inputEnteredRegex.IsMatch(answer.Value)) continue;
+                oneOrMoreAnswerEntered = true;
+                break;
+            }
+
+            if (!oneOrMoreAnswerEntered)
+            {
+                var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId,
+                    Guid.Parse(User.FindFirstValue("UserId")));
+
+                hasAnswersAlready = page.PageOfAnswers.Any();
+            }
+
+            return !hasAnswersAlready || oneOrMoreAnswerEntered;
         }
 
         [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
