@@ -1,14 +1,14 @@
 @model Guid
 
 @{
-    ViewBag.Title = "Stage 2 introduction";
+    ViewBag.Title = "Apply for a standard";
     Layout = "_Layout";
 }
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-l">
-                Stage 2 Intro
+                Apply for a standard
             </h1>
 
             <p class="govuk-body">The first part of your application to join the Register of end-point assessment organisations has been approved.</p>
@@ -16,7 +16,7 @@
             <p class="govuk-body">You can now apply to assess a Standard</p>
 
             <a href="@Url.Action("Search", "Standard", new {applicationId = Model})" class="govuk-button">
-                Apply for Standard
+                Start
             </a>
         </div>
     </div>
