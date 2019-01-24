@@ -261,10 +261,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 {
                     if (answers.Any(a => inputEnteredRegex.IsMatch(a.Value)))
                     {
-                        var invaidSaveResult =
+                        var invalidSaveResult =
                             await SaveAnswers(applicationId, sequenceId, sectionId, pageId, redirectAction);
 
-                        if (!ModelState.IsValid) return invaidSaveResult;
+                        if (!ModelState.IsValid) return invalidSaveResult;
                     }
                 }
             }
@@ -302,7 +302,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private async Task<bool> CheckIfValidationRequiredOnSaveAndContinue(Guid applicationId, int sequenceId, int sectionId,
             string pageId, List<Answer> answers, Regex inputEnteredRegex)
         {
-            var hasAnswersAlready = false;
             var oneOrMoreAnswerEntered = false;
 
             foreach (var answer in answers)
@@ -313,15 +312,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 break;
             }
 
-            if (!oneOrMoreAnswerEntered)
-            {
-                var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId,
-                    Guid.Parse(User.FindFirstValue("UserId")));
-
-                hasAnswersAlready = page.PageOfAnswers.Any();
-            }
-
-            return !hasAnswersAlready || oneOrMoreAnswerEntered;
+            if (oneOrMoreAnswerEntered) return true;
+           
+            var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, Guid.Parse(User.FindFirstValue("UserId")));
+            var hasAnswersAlready = page.PageOfAnswers.Any();
+            return !hasAnswersAlready;
         }
 
         [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
