@@ -12,10 +12,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     {
         public Guid ApplicationId { get; }
 
-        public PageViewModel(Page page, Guid applicationId, string redirectAction, List<ValidationErrorDetail> errorMessages)
+        public PageViewModel(Page page, Guid applicationId, string redirectAction, string returnUrl, List<ValidationErrorDetail> errorMessages)
         {
             ApplicationId = applicationId;
             RedirectAction = redirectAction;
+            ReturnUrl = returnUrl;
             ErrorMessages = errorMessages;
             SetupPage(page, errorMessages);
         }
@@ -38,6 +39,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public List<PageOfAnswers> PageOfAnswers { get; set; }
         public string BodyText { get; set; }
         public string RedirectAction { get; set; }
+        public string ReturnUrl { get; set; }
 
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
 
