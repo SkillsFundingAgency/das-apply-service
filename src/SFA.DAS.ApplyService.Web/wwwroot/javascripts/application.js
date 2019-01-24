@@ -8,47 +8,45 @@ window.GOVUKFrontend.initAll();
 
   GOVUK.checkAll = {
     checkAllContainer: document.querySelector(".js-check-all-container"),
-    checkAllCheckboxContainer: document.querySelector(
-      ".js-check-all-checkbox-container"
-    ),
+    checkboxContainer: document.querySelector(".js-checkbox-container"),
+    checkAllControl: document.querySelector(".js-check-all-control"),
     checkAllCheckbox: document.querySelectorAll(".js-check-all-checkbox"),
 
-    addEvent: function(node, type, callback) {
-      if (node.addEventListener) {
-        node.addEventListener(
-          type,
-          function(e) {
-            callback(e, e.target);
-          },
-          false
-        );
-      } else if (node.attachEvent) {
-        node.attachEvent("on" + type, function(e) {
-          callback(e, e.srcElement);
-        });
-      }
-    },
+    handleClick: function(event) {
+      if (event.target.classList.contains("js-check-all-control")) {
+        if (
+          GOVUK.checkAll.checkAllControl.classList.contains(
+            "govuk-checkboxes__input--indeterminate"
+          )
+        ) {
+          GOVUK.checkAll.checkAllControl.indeterminate = false;
+          GOVUK.checkAll.checkAllControl.classList.remove(
+            "govuk-checkboxes__input--indeterminate"
+          );
+        }
 
-    handleCheckAll: function(event) {
-      if (event.target.id !== "allAreas") return false;
-      for (
-        var i = 0, length = GOVUK.checkAll.checkAllCheckbox.length;
-        i < length;
-        i++
-      ) {
-        GOVUK.checkAll.checkAllCheckbox[i].checked = event.target.checked;
+        for (
+          var i = 0, length = GOVUK.checkAll.checkAllCheckbox.length;
+          i < length;
+          i++
+        ) {
+          GOVUK.checkAll.checkAllCheckbox[i].checked = event.target.checked;
+        }
+      } else if (event.target.classList.contains("js-check-all-checkbox")) {
+        if (!GOVUK.checkAll.checkAllControl.indeterminate) {
+          GOVUK.checkAll.checkAllControl.indeterminate = true;
+          GOVUK.checkAll.checkAllControl.classList.add(
+            "govuk-checkboxes__input--indeterminate"
+          );
+        }
+      } else {
+        return false;
       }
     },
 
     init: function() {
-      GOVUK.checkAll.checkAllCheckboxContainer.classList.add(
-        "govuk-!-margin-left-8"
-      );
-      GOVUK.checkAll.addEvent(
-        document,
-        "change",
-        GOVUK.checkAll.handleCheckAll
-      );
+      GOVUK.checkAll.checkboxContainer.classList.add("govuk-!-margin-left-8");
+      document.addEventListener("change", GOVUK.checkAll.handleClick);
     }
   };
 

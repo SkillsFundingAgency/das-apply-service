@@ -1,10 +1,5 @@
 /* Application styles */
 
-/* Remove extra spacing when multiple empty error summary list items */
-/* .govuk-error-summary__list > li > a:empty {
-  margin-top: -5px;
-} */
-
 .das-inline-button-link {
   display: inline-block;
   padding: 0.526315em 0 0.263157em 0;
@@ -404,14 +399,6 @@
   padding-top: 0;
 }
 
-/* .govuk-error-message {
-  display: none;
-} */
-
-/* .govuk-error-message.field-validation-error {
-  display: block;
-} */
-
 .govuk-header__container--das-epao {
   border-bottom: 10px solid #004274;
 }
@@ -427,4 +414,19 @@
 
 .js-enabled .js-check-all-container {
   display: block;
+}
+
+ {
+}
+
+.govuk-checkboxes__input--indeterminate + .govuk-checkboxes__label:after {
+  top: 16px;
+  left: 6px;
+  width: 28px;
+  height: 0px;
+  -webkit-transform: rotate(0deg);
+  -ms-transform: rotate(0deg);
+  transform: rotate(0deg);
+  border-width: 0 0 7px 0;
+  opacity: 1;
 }

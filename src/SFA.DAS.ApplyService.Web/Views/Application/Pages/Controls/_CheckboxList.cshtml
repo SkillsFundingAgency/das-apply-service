@@ -1,9 +1,9 @@
 @using NPOI.Util
 @model SFA.DAS.ApplyService.Web.Controllers.QuestionViewModel
 
-<div class="govuk-checkboxes govuk-!-margin-bottom-7 js-check-all-container">
+<div class="govuk-checkboxes govuk-!-margin-bottom-5 js-check-all-container">
     <div class="govuk-checkboxes__item">
-        <input class="govuk-checkboxes__input js-check-all-control" type="checkbox" id="allAreas" name="allAreas" value="" checked/>
+        <input class="govuk-checkboxes__input js-check-all-control" type="checkbox" id="allAreas" name="allAreas" value="" checked />
         <label class="govuk-label govuk-checkboxes__label" for="allAreas">
             All areas
         </label>
@@ -11,7 +11,7 @@
 </div>
 
 
-<div class="govuk-checkboxes js-check-all-checkbox-container">
+<div class="govuk-checkboxes js-checkbox-container">
     @for (int i = 0; i < Model.Options.Count; i++)
     { 
         var checkboxChecked = ((Model.Value != null && Model.Value.Contains(Model.Options[i].Value)) || Model.Value == null) ? "checked" : "";
