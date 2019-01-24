@@ -48,12 +48,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (!applications.Any())
             {
-                await _apiClient.StartApplication(Guid.Parse(User.FindFirstValue("UserId")));
-                applications = await _apiClient.GetApplicationsFor(Guid.Parse(User.FindFirstValue("UserId")));
-                return RedirectToAction("SequenceSignPost", new {applicationId = applications.First().Id});
+                return View("~/Views/Application/Declaration.cshtml");
             }
-
-            if (applications.Count() > 1)
+            else if (applications.Count() > 1)
             {
                 return View(applications);
             }
@@ -178,8 +175,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, Guid.Parse(User.FindFirstValue("UserId")));
 
             page = await GetDataFedOptions(page);
-            
-            var pageVm = new PageViewModel(page, applicationId, redirectAction, null);
+
+            var returnUrl = Request.Headers["Referer"].ToString();
+            var pageVm = new PageViewModel(page, applicationId, redirectAction, returnUrl, null);
 
             pageVm.SectionId = sectionId;
             pageVm.RedirectAction = redirectAction;
@@ -362,8 +360,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     errorMessages.Add(new ValidationErrorDetail(error.Key, error.Value));
                 }
             }
-
-            var pageVm = new PageViewModel(updatePageResult.Page, applicationId, redirectAction, errorMessages);
+            var returnUrl = Request.Headers["Referer"].ToString();
+            var pageVm = new PageViewModel(updatePageResult.Page, applicationId, redirectAction, returnUrl, errorMessages);
 
 
             if (page.AllowMultipleAnswers)

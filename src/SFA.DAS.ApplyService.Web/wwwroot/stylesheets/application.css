@@ -416,9 +416,6 @@
   display: block;
 }
 
- {
-}
-
 .govuk-checkboxes__input--indeterminate + .govuk-checkboxes__label:after {
   top: 16px;
   left: 6px;
@@ -429,4 +426,14 @@
   transform: rotate(0deg);
   border-width: 0 0 7px 0;
   opacity: 1;
+}
+
+.govuk-radios__conditional:last-child {
+  margin-bottom: 0;
+}
+
+@media (min-width: 40.0625em) {
+  .govuk-radios__conditional:last-child {
+    margin-bottom: 0;
+  }
 }
