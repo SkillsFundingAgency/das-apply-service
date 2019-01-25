@@ -2976,10 +2976,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "3",
-          "Condition": {
-            "QuestionId": "CD-30",
-            "MustEqual": "No"
-          },
+          "Condition": null,
           "ConditionMet": false
         }
       ],
