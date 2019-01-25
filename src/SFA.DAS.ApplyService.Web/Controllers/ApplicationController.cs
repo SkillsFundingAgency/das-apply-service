@@ -460,7 +460,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return View("~/Views/Application/Submitted.cshtml", new SubmittedViewModel
             {
                 ReferenceNumber = application.ApplicationData.ReferenceNumber,
-                FeedbackUrl = config.FeedbackUrl
+                FeedbackUrl = config.FeedbackUrl,
+                StandardName = application?.ApplicationData?.StandardName
             });
         }
     }
