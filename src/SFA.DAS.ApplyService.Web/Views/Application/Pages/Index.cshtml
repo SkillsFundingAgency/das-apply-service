@@ -116,19 +116,16 @@
                                     </span>
                                 }
 
-                                @if (Model.ErrorMessages != null)
+                                @if (question.Type == "ComplexRadio" && (question.ErrorMessages==null || question.ErrorMessages.Count==0))
                                 {
-                                    foreach (var error in Model.ErrorMessages)
-                                    {
-                                        if (error.Field == question.QuestionId)
-                                        {
-                                            <span id="@error.Field-error" class="govuk-error-message">
-                                                @Html.Raw(error.ErrorMessage)
-                                            </span>
-                                        }
-                                    }
+                                    question.ErrorMessages = Model.ErrorMessages;
                                 }
-                                @Html.Partial($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
+                                @{
+                                    var questionType = question.Type.Replace("DataFed_", ""); 
+                                    
+                                }
+
+                                @Html.Partial($"~/Views/Application/Pages/Controls/_{questionType}.cshtml", question)
                             </fieldset>
                         </div>
                     }
@@ -164,19 +161,11 @@
                                     @Html.Raw(question.Hint)
                                 </span>
                             }
-
-                            @if (Model.ErrorMessages != null)
-                            {
-                                foreach (var error in Model.ErrorMessages)
-                                {
-                                    if (error.Field == question.QuestionId)
-                                    {
-                                        <span id="@error.Field-error" class="govuk-error-message">
-                                            @Html.Raw(error.ErrorMessage)
-                                        </span>
-                                    }
-                                }
-                            }
+   
+                        @if (question.Type == "ComplexRadio" && (question.ErrorMessages==null || question.ErrorMessages.Count==0))
+                        {
+                            question.ErrorMessages = Model.ErrorMessages;
+                        }
 
                             @Html.Partial($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
                         </div>

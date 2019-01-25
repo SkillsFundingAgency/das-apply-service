@@ -1,9 +1,23 @@
 @using NPOI.Util
 @model SFA.DAS.ApplyService.Web.Controllers.QuestionViewModel
+@{
+    var checkedStatus = "checked";
+}
+@if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
+{
+    foreach (var errorMessage in Model.ErrorMessages)
+    {
+        if (errorMessage.Field == Model.QuestionId)
+        {
+            <span class="govuk-error-message">@errorMessage.ErrorMessage</span>
+            //checkedStatus = string.Empty;
+        }
+    }
+}
 
 <div class="govuk-checkboxes govuk-!-margin-bottom-5 js-check-all-container">
     <div class="govuk-checkboxes__item">
-        <input class="govuk-checkboxes__input js-check-all-control" type="checkbox" id="allAreas" name="allAreas" value="" checked />
+        <input class="govuk-checkboxes__input js-check-all-control" type="checkbox" id="allAreas" name="allAreas" value="" @checkedStatus />
         <label class="govuk-label govuk-checkboxes__label" for="allAreas">
             All areas
         </label>
@@ -14,7 +28,7 @@
 <div class="govuk-checkboxes js-checkbox-container">
     @for (int i = 0; i < Model.Options.Count; i++)
     { 
-        var checkboxChecked = ((Model.Value != null && Model.Value.Contains(Model.Options[i].Value)) || Model.Value == null) ? "checked" : "";
+        var checkboxChecked = ((Model.Value != null && Model.Value.Contains(Model.Options[i].Value)) || Model.Value == null) ? checkedStatus : "";
 
         <div class="govuk-checkboxes__item">
             <input class="govuk-checkboxes__input js-check-all-checkbox" type="checkbox" id="option_@i" name="@Model.QuestionId" value="@Model.Options[i].Value" @checkboxChecked/>

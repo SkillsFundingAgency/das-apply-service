@@ -31,7 +31,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
                         validator.ValidationDefinition = inputValidation;
                         validators.Add(validator);
                     }
-                }   
+                }
             }
             else
             {

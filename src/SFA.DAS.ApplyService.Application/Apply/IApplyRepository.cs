@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.Apply
 {
@@ -25,6 +25,8 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task CreateSection(WorkflowSection section);
         Task AddAssets(Dictionary<string,string> assets);
         Task<List<dynamic>> GetNewApplications(int sequenceId);
+        Task<List<ApplicationSummaryItem>> GetOpenApplications();
+        Task<List<ApplicationSummaryItem>> GetClosedApplications();
         Task SubmitApplicationSequence(ApplicationSubmitRequest request, ApplicationData applicationdata);
         Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string status, string applicationStatus);
         Task CloseSequence(Guid applicationId, int sequenceId);
