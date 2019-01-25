@@ -290,11 +290,6 @@
   clear: both;
 }
 
-.app-task-list__item:first-child,
-.app-task-list li:first-of-type {
-  border-top: 1px solid #bfc1c3;
-}
-
 .app-task-list__task-name {
   display: block;
 }
