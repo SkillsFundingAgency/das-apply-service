@@ -22,12 +22,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.DeleteFile
         
         public async Task<Unit> Handle(DeleteFileRequest request, CancellationToken cancellationToken)
         {
-            // Get page.
-            // Remove question answer.
-            // Save page.
-            
-            // Delete file from storage
-
             var section = await _applyRepository.GetSection(request.ApplicationId, request.SequenceId, request.SectionId,
                 request.UserId);
 
@@ -37,25 +31,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.DeleteFile
 
             var updatedAnswers = page.PageOfAnswers.SingleOrDefault(poa => poa.Answers.Any(a => a.QuestionId == request.QuestionId));
 
-
-
             var answer = updatedAnswers.Answers.SingleOrDefault(a => a.QuestionId == request.QuestionId);
 
             var fileName = answer.Value;
             
             updatedAnswers.Answers.Remove(answer);
-//            updatedAnswers.ForEach(poa =>
-//            {
-//                poa.Answers.ForEach(a =>
-//                {
-//                    if (a.QuestionId == request.QuestionId)
-//                    {
-//                        poa.Answers.Remove(a);
-//                    }
-//                });
-//            });
-//            
-//            
+            
             qnaDataObject.Pages.ForEach(p =>
             {
                 if (p.PageId == page.PageId)
