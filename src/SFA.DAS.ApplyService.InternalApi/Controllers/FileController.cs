@@ -41,7 +41,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpPost("/DeleteFile")]
-        public async Task<IActionResult> DeleteFile(DeleteFileRequest request)
+        public async Task<IActionResult> DeleteFile([FromBody] DeleteFileRequest request)
         {
             await _mediator.Send(request);
             return Ok();
