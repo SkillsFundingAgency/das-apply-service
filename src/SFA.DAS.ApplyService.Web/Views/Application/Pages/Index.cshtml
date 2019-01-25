@@ -120,7 +120,12 @@
                                 {
                                     question.ErrorMessages = Model.ErrorMessages;
                                 }
-                                @Html.Partial($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
+                                @{
+                                    var questionType = question.Type.Replace("DataFed_", ""); 
+                                    
+                                }
+
+                                @Html.Partial($"~/Views/Application/Pages/Controls/_{questionType}.cshtml", question)
                             </fieldset>
                         </div>
                     }
