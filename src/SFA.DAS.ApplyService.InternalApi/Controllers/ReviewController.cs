@@ -1,14 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.GetSection;
 using SFA.DAS.ApplyService.Application.Apply.Review;
+using SFA.DAS.ApplyService.Application.Apply.Review.Applications;
 using SFA.DAS.ApplyService.Application.Apply.Review.Evaluate;
 using SFA.DAS.ApplyService.Application.Apply.Review.Feedback;
 using SFA.DAS.ApplyService.Application.Apply.Review.Return;
 using SFA.DAS.ApplyService.Domain.Apply;
+using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -20,6 +20,20 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public ReviewController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpGet("Review/OpenApplications")]
+        public async Task<ActionResult> OpenApplications()
+        {
+            var applications = await _mediator.Send(new OpenApplicationsRequest());
+            return Ok(applications);
+        }
+
+        [HttpGet("Review/ClosedApplications")]
+        public async Task<ActionResult> ClosedApplications()
+        {
+            var applications = await _mediator.Send(new ClosedApplicationsRequest());
+            return Ok(applications);
         }
 
         [HttpGet("Review/NewApplications/{sequenceId}")]

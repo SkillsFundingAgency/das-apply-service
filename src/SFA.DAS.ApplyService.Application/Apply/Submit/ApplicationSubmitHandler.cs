@@ -1,13 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.ApplyService.Application.Email.Consts;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Submit
 {
@@ -90,6 +89,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
                 };
 
                 application.ApplicationData.InitSubmissions.Add(submission);
+                application.ApplicationData.LatestInitSubmissionDate = submission.SubmittedAt;
             }
             else if(request.SequenceId == 2)
             {
@@ -105,6 +105,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
                 };
 
                 application.ApplicationData.StandardSubmissions.Add(submission);
+                application.ApplicationData.LatestStandardSubmissionDate = submission.SubmittedAt;
             }
 
             await _applyRepository.SubmitApplicationSequence(request, application.ApplicationData);
