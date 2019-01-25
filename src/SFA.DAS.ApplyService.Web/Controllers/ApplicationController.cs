@@ -326,6 +326,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, Guid.Parse(User.FindFirstValue("UserId")));
 
+
             var errorMessages = new List<ValidationErrorDetail>();
             var answers = new List<Answer>();
             
@@ -389,7 +390,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
             }
             var returnUrl = Request.Headers["Referer"].ToString();
-            var pageVm = new PageViewModel(updatePageResult.Page, applicationId, redirectAction, returnUrl, errorMessages);
+
+            var newPage = await GetDataFedOptions(updatePageResult.Page);
+
+
+            var pageVm = new PageViewModel(newPage, applicationId, redirectAction, returnUrl, errorMessages);
 
 
             if (page.AllowMultipleAnswers)
@@ -488,7 +493,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return View("~/Views/Application/Submitted.cshtml", new SubmittedViewModel
             {
                 ReferenceNumber = application.ApplicationData.ReferenceNumber,
-                FeedbackUrl = config.FeedbackUrl
+                FeedbackUrl = config.FeedbackUrl,
+                StandardName = application?.ApplicationData?.StandardName
             });
         }
     }
