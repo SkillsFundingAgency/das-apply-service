@@ -64,8 +64,7 @@
                     @Html.Raw(Model.BodyText)
                 }
             }
-
-
+            
             @if (Model.HasFeedback)
             {
                 <div class="govuk-inset-text">
@@ -179,6 +178,9 @@
                         </div>
                     }
                 }
+                
+                <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details"/>
+                
                 <button type="submit" class="govuk-button">Save and continue</button>
                 <p class="govuk-body">
                     @if (Model.RedirectAction == "Feedback")
