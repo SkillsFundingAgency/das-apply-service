@@ -2699,19 +2699,19 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-02-450';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-450', '', 'Attach the latest available accounts for the UK ultimate parent company. Organisations that are subject to the financial health assessment must submit their UK parent company accounts or they will fail the process', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-450', '', 'Attach the latest available accounts for the UK ultimate parent company.', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-02-451';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-451', '', 'Attach the latest available accounts for the UK ultimate parent company. Organisations that are subject to the financial health assessment must submit their UK parent company accounts or they will fail the process', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-451', '', 'Attach the latest available accounts for the UK ultimate parent company', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-02-452';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-452', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-452', '', '<p class="govuk-body">Organisations that are subject to the financial health assessment must submit their UK parent company accounts or they will fail the process.</p>', 'Live', GETUTCDATE(), 'Import')
 
 GO
 
@@ -6007,7 +6007,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Upload a file"
+                "ErrorMessage": "Select a file containing your financial evidences"
               }
             ]
           },
@@ -6026,7 +6026,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Upload a file"
+                "ErrorMessage": "Select a file containg the latest available accounts for the UK ultimate parent company"
               }
             ]
           },
@@ -7617,7 +7617,12 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload a PDF of your internal audit policy document"
+                  "ErrorMessage": "Select an internal audit policy document"
+                },
+                {
+                  "Name": "FileType",
+                  "Value": "pdf,application/pdf",
+                  "ErrorMessage": "The selected file must be a PDF"
                 }
               ]
             },
@@ -7663,7 +7668,12 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload a PDF of your public liability certificate of insurance"
+                  "ErrorMessage": "Select a public liability certificate of insurance"
+                },
+                {
+                  "Name": "FileType",
+                  "Value": "pdf,application/pdf",
+                  "ErrorMessage": "The selected file must be a PDF"
                 }
               ]
             },
@@ -7709,7 +7719,12 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload a PDF of your professional indemnity certificate of insurance"
+                  "ErrorMessage": "Select a professional indemnity certificate of insurance"
+                },
+                {
+                  "Name": "FileType",
+                  "Value": "pdf,application/pdf",
+                  "ErrorMessage": "The selected file must be a PDF"
                 }
               ]
             },
@@ -7751,7 +7766,13 @@ VALUES
             "Input": {
               "Type": "FileUpload",
               "Options": null,
-              "Validations": []
+              "Validations": [
+                {
+                  "Name": "FileType",
+                  "Value": "pdf,application/pdf",
+                  "ErrorMessage": "The selected file must be a PDF"
+                }
+              ]
             },
             "Order": null
           }
@@ -7795,7 +7816,12 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload a PDF of your safeguarding policy document"
+                  "ErrorMessage": "Select a safeguarding policy document"
+                },
+                {
+                  "Name": "FileType",
+                  "Value": "pdf,application/pdf",
+                  "ErrorMessage": "The selected file must be a PDF"
                 }
               ]
             },
@@ -7841,7 +7867,12 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload a PDF of your prevent agenda policy document"
+                  "ErrorMessage": "Select a prevent agenda policy document"
+                },
+                {
+                  "Name": "FileType",
+                  "Value": "pdf,application/pdf",
+                  "ErrorMessage": "The selected file must be a PDF"
                 }
               ]
             },
@@ -7887,7 +7918,12 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload a PDF of your conflict of interest policy document"
+                  "ErrorMessage": "Select a conflict of interest policy document"
+                },
+                {
+                  "Name": "FileType",
+                  "Value": "pdf,application/pdf",
+                  "ErrorMessage": "The selected file must be a PDF"
                 }
               ]
             },
@@ -7920,7 +7956,7 @@ VALUES
         "LinkTitle": "SQ-2-SE-4-PG-32-LT-1",
         "InfoText": "SQ-2-SE-4-PG-24-IT-1",
         "Questions": [          
-		{
+		      {
             "QuestionId": "CC-09",
             "Label": "SQ-2-SE-4-PG-24-CC-09-L-1",
             "ShortLabel": "SQ-2-SE-4-PG-24-CC-09-SL-1",
@@ -7933,7 +7969,12 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload a PDF of your procedures for monitoring assessor practices and decisions"
+                  "ErrorMessage": "Select a file describing your procedures for monitoring assessor practices and decisions"
+                },
+                {
+                  "Name": "FileType",
+                  "Value": "pdf,application/pdf",
+                  "ErrorMessage": "The selected file must be a PDF"
                 }
               ]
             },
@@ -7966,7 +8007,7 @@ VALUES
         "LinkTitle": "SQ-2-SE-4-PG-33-LT-1",
         "InfoText": "SQ-2-SE-4-PG-24-IT-1",
         "Questions": [          
-		 {
+		      {
             "QuestionId": "CC-10",
             "Label": "SQ-2-SE-4-PG-24-CC-10-L-1",
             "ShortLabel": "SQ-2-SE-4-PG-24-CC-10-SL-1",
@@ -7979,7 +8020,12 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload a PDF of your standardisation and moderation activities"
+                  "ErrorMessage": "Select an file describing your standardisation and moderation activities"
+                },
+                {
+                  "Name": "FileType",
+                  "Value": "pdf,application/pdf",
+                  "ErrorMessage": "The selected file must be a PDF"
                 }
               ]
             },
@@ -8025,7 +8071,12 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload a PDF of your compalints policy document"
+                  "ErrorMessage": "Select a compalints and appeals policy document"
+                },
+                {
+                  "Name": "FileType",
+                  "Value": "pdf,application/pdf",
+                  "ErrorMessage": "The selected file must be a PDF"
                 }
               ]
             },
@@ -8071,7 +8122,12 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload a PDF of your fair access policy document"
+                  "ErrorMessage": "Select a fair access policy document"
+                },
+                {
+                  "Name": "FileType",
+                  "Value": "pdf,application/pdf",
+                  "ErrorMessage": "The selected file must be a PDF"
                 }
               ]
             },
@@ -8117,7 +8173,12 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload a PDF of your comparability and consistency decisions"
+                  "ErrorMessage": "Select a file describing your comparability and consistency decisions"
+                },
+                {
+                  "Name": "FileType",
+                  "Value": "pdf,application/pdf",
+                  "ErrorMessage": "The selected file must be a PDF"
                 }
               ]
             },
