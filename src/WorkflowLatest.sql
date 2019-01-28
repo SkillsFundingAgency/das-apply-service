@@ -1210,7 +1210,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-15-202';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-15-202', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-1-PG-15-202', '', 'Has any director, or any other person with significant control of your organisation, been removed from the charities commission or appear on the register of removed trustees?', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-15-203';
 INSERT INTO Assets
@@ -1234,7 +1234,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-15-CD-27-206';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-15-CD-27-206', '', 'Has any director, or any other person with significant control of your organisation, been removed from the charities commission or appear on the register of removed trustees?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-1-PG-15-CD-27-206', '', 'Register of removed trustees', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-15-CD-27-207';
 INSERT INTO Assets
