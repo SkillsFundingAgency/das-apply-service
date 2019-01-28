@@ -410,8 +410,8 @@ namespace SFA.DAS.ApplyService.Data
 		                         WHEN SequenceId = 2 THEN JSON_VALUE(ApplicationData, '$.LatestStandardSubmissionDate')
 		                         ELSE NULL
 	                        END As SubmittedDate,
-                            CASE WHEN SequenceId = 1 THEN JSON_VALUE(ApplicationData, '$.InitSubmissionCount')
-		                         WHEN SequenceId = 2 THEN JSON_VALUE(ApplicationData, '$.StandardSubmissionCount')
+                            CASE WHEN SequenceId = 1 THEN JSON_VALUE(ApplicationData, '$.InitSubmissionsCount')
+		                         WHEN SequenceId = 2 THEN JSON_VALUE(ApplicationData, '$.StandardSubmissionsCount')
 		                         ELSE 0
 	                        END As SubmissionCount
                             CASE WHEN SequenceId = 1 THEN Sec3Status
