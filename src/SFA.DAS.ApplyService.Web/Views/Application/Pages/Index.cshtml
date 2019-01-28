@@ -179,9 +179,10 @@
                     }
                 }
                 
-                <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details"/>
-                
                 <button type="submit" class="govuk-button">Save and continue</button>
+
+                <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details" />
+
                 <p class="govuk-body">
                     @if (Model.RedirectAction == "Feedback")
                     {
