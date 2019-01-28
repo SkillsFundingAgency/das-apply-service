@@ -31,7 +31,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
 
             if (!DateTime.TryParse($"{day}/{month}/{year}", out DateTime dateEntered)) return errorMessages;
 
-            if (dateEntered> DateTime.Today)    
+            if (dateEntered > DateTime.Today)    
                 errorMessages.Add(new KeyValuePair<string, string>(question.QuestionId, ValidationDefinition.ErrorMessage));
 
             return errorMessages;
