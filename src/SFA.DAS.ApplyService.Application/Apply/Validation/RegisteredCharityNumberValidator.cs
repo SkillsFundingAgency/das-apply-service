@@ -23,8 +23,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
         {
             try
             {
+                // MFC 28/01/2019 left in cos specific rules unclear
                 //var rx = new Regex(@"^[0-9]{7}$");
-
                 //if (registeredCharityNumber.Length==8)
                 //    registeredCharityNumber = registeredCharityNumber.Replace("-","");
 
