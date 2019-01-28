@@ -2651,7 +2651,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-442';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  NEWID(), 'SQ-1-SE-3-PG-23-442', '', '<p class="govuk-body">If you have been trading for more than 12 months upload your last financial years'' statutory accounts, and your parent company''s accounts (if you have a parent company).</p><p class="govuk-body">If you have been trading for less than 12 months upload your management accounts.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-442', '', '<p class="govuk-body">If you have been trading for more than 12 months upload your last financial years'' statutory accounts, and your parent company''s accounts (if you have a parent company).</p><p class="govuk-body">If you have been trading for less than 12 months upload your management accounts.</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-443';
 INSERT INTO Assets
