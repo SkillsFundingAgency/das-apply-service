@@ -2645,13 +2645,13 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-441';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-441', '', 'Financial health assessment', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-441', '', 'Financial health', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-442';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-442', '', '<p class="govuk-body">You will fail the financial health assessment process if you do not upload financial statements where available. Management accounts must only be submitted where financial statements/accounts are yet to be produced.</p><p class="govuk-body">For further information on what you must include if you select ''a'', ''b'' or ''c'' please check <a class="govuk-link" href="https://www.gov.uk/government/publications/esfa-financial-health-assessment/">https://www.gov.uk/government/publications/esfa-financial-health-assessment</a>.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-442', '', '<p class="govuk-body">If you have been trading for more than 12 months upload your last financial years'' statutory accounts, and your parent company''s accounts (if you have a parent company).</p><p class="govuk-body">If you have been trading for less than 12 months upload your management accounts.</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-443';
 INSERT INTO Assets
