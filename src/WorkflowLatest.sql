@@ -4175,7 +4175,7 @@ VALUES
 						 {
                           "Name": "RegisteredCharityNumber",
                           "Value": null,
-                          "ErrorMessage": "Enter valid registered charity number (7 numbers with an optional hyphen)"
+                          "ErrorMessage": "Enter valid registered charity number"
                         }
                       ]
                     },

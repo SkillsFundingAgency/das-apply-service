@@ -23,10 +23,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
         {
             try
             {
-                var rx = new Regex(@"^[0-9]{7}$");
+                //var rx = new Regex(@"^[0-9]{7}$");
 
-                if (registeredCharityNumber.Length==8)
-                    registeredCharityNumber = registeredCharityNumber.Replace("-","");
+                //if (registeredCharityNumber.Length==8)
+                //    registeredCharityNumber = registeredCharityNumber.Replace("-","");
+
+                var rx = new Regex(@"^[0-9-]{1,}$");
                 return rx.IsMatch(registeredCharityNumber);
             }
             catch (FormatException)
