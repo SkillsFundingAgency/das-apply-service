@@ -36,13 +36,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return Ok(applications);
         }
 
-        [HttpGet("Review/NewApplications/{sequenceId}")]
-        public async Task<ActionResult> NewApplications(int sequenceId)
-        {
-            var applications = await _mediator.Send(new NewApplicationsRequest(sequenceId));
-            return Ok(applications);
-        }
-
         [HttpGet("Review/Applications/{applicationId}")]
         public async Task<ActionResult> ReviewApplications(Guid applicationId)
         {
