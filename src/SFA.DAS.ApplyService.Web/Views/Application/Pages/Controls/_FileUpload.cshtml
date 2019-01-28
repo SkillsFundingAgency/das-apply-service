@@ -1,10 +1,56 @@
-@model dynamic
+@model SFA.DAS.ApplyService.Web.Controllers.QuestionViewModel
 
-<input
-    type="file"
-    class="govuk-file-upload"
-    sfa-validation-for-id="@Model.QuestionId"
-    id="@Model.QuestionId"
-    name="@Model.QuestionId"
-    accept=".pdf,application/pdf"
-/>
+@if (!string.IsNullOrWhiteSpace(Model.Value))
+{
+    <span>@Model.Value</span>
+
+@if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
+{
+    foreach (var errorMessage in Model.ErrorMessages)
+    {
+        if (errorMessage.Field == Model.QuestionId)
+        {
+            <span class="govuk-error-message">@errorMessage.ErrorMessage</span>
+        }
+    }
+}
+<input type="file"
+       class="govuk-file-upload"
+       sfa-validation-for-id="@Model.QuestionId"
+       id="@Model.QuestionId"
+       name="@Model.QuestionId"
+       accept=".pdf,application/pdf" />
+
+    <a href="@Url.Action("Download", "Application", new
+             {
+                 applicationId = Model.ApplicationId,
+                 sequenceId = Model.SequenceId,
+                 sectionId = Model.SectionId,
+                 pageId = Model.PageId,
+                 questionId = Model.QuestionId,
+                 filename = Model.Value
+             })">
+        @Model.Value</a>
+                    
+                    
+    <a href="@Url.Action("DeleteFile", "Application", new
+             {
+                 applicationId = Model.ApplicationId,
+                 sequenceId = Model.SequenceId,
+                 sectionId = Model.SectionId,
+                 pageId = Model.PageId,
+                 questionId = Model.QuestionId,
+                 redirectAction = Model.RedirectAction
+             })">
+        Remove file</a>
+}
+else
+{
+    <input
+        type="file"
+        class="govuk-file-upload"
+        sfa-validation-for-id="@Model.QuestionId"
+        id="@Model.QuestionId"
+        name="@Model.QuestionId"
+        accept=".pdf,application/pdf"/>
+}

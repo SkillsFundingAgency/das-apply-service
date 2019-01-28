@@ -17,9 +17,9 @@
     <link rel="apple-touch-icon" href="/assets/images/govuk-apple-touch-icon.png">
 
     <!--[if !IE 8]><!-->
-    <link rel="stylesheet" href="/stylesheets/govuk-frontend-2.1.0.min.css">
+    <link rel="stylesheet" href="/stylesheets/govuk-frontend-2.5.1.min.css">
     <!--<![endif]-->
-    <!--[if IE 8]><link rel="stylesheet" href="/stylesheets/govuk-frontend-ie8-2.1.0.min.css"><![endif]-->
+    <!--[if IE 8]><link rel="stylesheet" href="/stylesheets/govuk-frontend-ie8-2.5.1.min.css"><![endif]-->
     <!--[if lt IE 9]><script src="/javascripts/html5shiv.min.js"></script><![endif]-->
 
     <environment include="Development">
@@ -145,13 +145,16 @@
     </div>
 </footer>
 
-<script src="/javascripts/govuk-frontend-2.1.0.min.js"></script>
+<script src="/javascripts/govuk-frontend-2.5.1.min.js"></script>
 <environment include="Development">
     <script src="/javascripts/application.js"></script>
 </environment>
 <environment exclude="Development">
     <script src="/javascripts/application.min.js"></script>
 </environment>
+
+@RenderSection("Scripts", required: false)
+
 </body>
 
 </html>

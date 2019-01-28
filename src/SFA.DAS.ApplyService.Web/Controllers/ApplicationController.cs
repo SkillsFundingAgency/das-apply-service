@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -247,17 +248,24 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return await SaveAnswers(applicationId, sequenceId, sectionId, pageId, redirectAction);
             }
-            else if (__formAction == "Save")
-            {
+
+            if (__formAction == "Save")
+            {     
+
                 var answers = new List<Answer>();
                 GetAnswersFromForm(answers);
                 var inputEnteredRegex = new System.Text.RegularExpressions.Regex(@"\w+");
+                var applyValidationRulesOnSaveAndContinue = await CheckIfValidationRequiredOnSaveAndContinue(applicationId, sequenceId, sectionId, pageId, answers, inputEnteredRegex);
 
-                if (answers.Any(a => inputEnteredRegex.IsMatch(a.Value))) 
+                if (applyValidationRulesOnSaveAndContinue)
                 {
-                    var invaidSaveResult = await SaveAnswers(applicationId, sequenceId, sectionId, pageId, redirectAction);
+                    if (answers.Any(a => inputEnteredRegex.IsMatch(a.Value)))
+                    {
+                        var invalidSaveResult =
+                            await SaveAnswers(applicationId, sequenceId, sectionId, pageId, redirectAction);
 
-                    if (!ModelState.IsValid) return invaidSaveResult;
+                        if (!ModelState.IsValid) return invalidSaveResult;
+                    }
                 }
             }
 
@@ -291,12 +299,33 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
         }
 
+        private async Task<bool> CheckIfValidationRequiredOnSaveAndContinue(Guid applicationId, int sequenceId, int sectionId,
+            string pageId, List<Answer> answers, Regex inputEnteredRegex)
+        {
+            var oneOrMoreAnswerEntered = false;
+
+            foreach (var answer in answers)
+            {
+                if (answer.QuestionId == "RedirectAction") continue;
+                if (!inputEnteredRegex.IsMatch(answer.Value)) continue;
+                oneOrMoreAnswerEntered = true;
+                break;
+            }
+
+            if (oneOrMoreAnswerEntered) return true;
+           
+            var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, Guid.Parse(User.FindFirstValue("UserId")));
+            var hasAnswersAlready = page.PageOfAnswers.Any();
+            return !hasAnswersAlready;
+        }
+
         [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
         public async Task<IActionResult> SaveAnswers(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
             var userId = Guid.Parse(User.FindFirstValue("UserId"));
 
             var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, Guid.Parse(User.FindFirstValue("UserId")));
+
 
             var errorMessages = new List<ValidationErrorDetail>();
             var answers = new List<Answer>();
@@ -361,7 +390,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
             }
             var returnUrl = Request.Headers["Referer"].ToString();
-            var pageVm = new PageViewModel(updatePageResult.Page, applicationId, redirectAction, returnUrl, errorMessages);
+
+            var newPage = await GetDataFedOptions(updatePageResult.Page);
+
+
+            var pageVm = new PageViewModel(newPage, applicationId, redirectAction, returnUrl, errorMessages);
 
 
             if (page.AllowMultipleAnswers)
@@ -396,30 +429,60 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             foreach (var file in HttpContext.Request.Form.Files)
             {
-                answers.Add(new Answer() {QuestionId = file.Name, Value = file.FileName});
+                
                 var typeValidation = page.Questions.First(q => q.QuestionId == file.Name).Input.Validations.FirstOrDefault(v => v.Name == "FileType");
-                if (typeValidation == null) continue;
-                var extension = typeValidation.Value.ToString().Split(",", StringSplitOptions.RemoveEmptyEntries)[0];
-                var mimeType = typeValidation.Value.ToString().Split(",", StringSplitOptions.RemoveEmptyEntries)[1];
+                if (typeValidation != null)
+                {
+                    var extension = typeValidation.Value.ToString().Split(",", StringSplitOptions.RemoveEmptyEntries)[0];
+                    var mimeType = typeValidation.Value.ToString().Split(",", StringSplitOptions.RemoveEmptyEntries)[1];
 
-                if (file.FileName.Substring(file.FileName.IndexOf(".") + 1, (file.FileName.Length - 1) - file.FileName.IndexOf(".")).ToLower() == extension && file.ContentType.ToLower() == mimeType) continue;
-
-                ModelState.AddModelError(file.Name, typeValidation.ErrorMessage);
-                errorMessages.Add(new ValidationErrorDetail(file.Name, typeValidation.ErrorMessage));
-                fileValidationPassed = false;
+                    if (file.FileName.Substring(file.FileName.IndexOf(".") + 1, (file.FileName.Length - 1) - file.FileName.IndexOf(".")).ToLower() != extension || file.ContentType.ToLower() != mimeType)
+                    {
+                        ModelState.AddModelError(file.Name, typeValidation.ErrorMessage);
+                        errorMessages.Add(new ValidationErrorDetail(file.Name, typeValidation.ErrorMessage));
+                        fileValidationPassed = false;
+                    }
+                    else
+                    {
+                        // Only add to answers if type validation passes.
+                        answers.Add(new Answer() {QuestionId = file.Name, Value = file.FileName});
+                    }
+                }
+                else
+                {
+                    // Only add to answers if type validation passes.
+                    answers.Add(new Answer() {QuestionId = file.Name, Value = file.FileName});
+                }
             }
 
             return fileValidationPassed;
         }
 
-        [HttpGet("/Application/{applicationId}/Page/{pageId}/Question/{questionId}/File/{filename}/Download")]
-        public async Task<IActionResult> Download(Guid applicationId, string pageId, string questionId, string filename)
+        [HttpGet("Application/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}/Download")]
+        
+        //[HttpGet("/Application/{applicationId}/Page/{pageId}/Question/{questionId}/File/{filename}/Download")]
+        public async Task<IActionResult> Download(Guid applicationId, int sequenceId, int sectionId, string pageId, string questionId, string filename)
         {
             var userId = Guid.Parse(User.FindFirstValue("UserId"));
 
-            var file = await _apiClient.Download(applicationId, userId, pageId, questionId, filename);
+            var fileInfo = await _apiClient.FileInfo(applicationId, userId, sequenceId, sectionId, pageId, questionId, filename);
+            
+            var file = await _apiClient.Download(applicationId, userId, sequenceId,sectionId, pageId, questionId, filename);
 
-            return File(file, "file/file", filename);
+            var fileStream = await file.Content.ReadAsStreamAsync();
+            
+            return File(fileStream, fileInfo.ContentType, fileInfo.Filename);
+        }
+
+        [HttpGet("Application/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{redirectAction}/Delete")]
+        public async Task<IActionResult> DeleteFile(Guid applicationId, int sequenceId, int sectionId, string pageId, string questionId, string redirectAction)
+        {
+            var userId = Guid.Parse(User.FindFirstValue("UserId"));
+
+            await _apiClient.DeleteFile(applicationId, userId, sequenceId, sectionId, pageId, questionId);
+            
+            return RedirectToAction("Page", new {applicationId, sequenceId = sequenceId,
+                sectionId = sectionId, pageId = pageId, redirectAction});
         }
 
 
@@ -460,7 +523,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return View("~/Views/Application/Submitted.cshtml", new SubmittedViewModel
             {
                 ReferenceNumber = application.ApplicationData.ReferenceNumber,
-                FeedbackUrl = config.FeedbackUrl
+                FeedbackUrl = config.FeedbackUrl,
+                StandardName = application?.ApplicationData?.StandardName
             });
         }
     }

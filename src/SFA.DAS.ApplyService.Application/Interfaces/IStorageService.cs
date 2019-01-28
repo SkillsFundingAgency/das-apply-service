@@ -9,5 +9,7 @@ namespace SFA.DAS.ApplyService.Application.Interfaces
         Task<string> Store(string applicationId, int sequenceId, int sectionId, string pageId, string questionId, string fileName, Stream fileStream, string fileContentType);
         Task<Tuple<string, Stream, string>> Retrieve(string applicationId, int sequenceId, int sectionId, string pageId, string questionId,
             string filename);
+
+        Task Delete(Guid applicationId, int sequenceId, int sectionId, string pageId, string questionId, string filename);
     }
 }
