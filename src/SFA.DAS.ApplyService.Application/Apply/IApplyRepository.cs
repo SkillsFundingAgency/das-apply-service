@@ -24,7 +24,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task CreateSequence(Guid workflowId, double sequenceId, bool isActive);
         Task CreateSection(WorkflowSection section);
         Task AddAssets(Dictionary<string,string> assets);
-        Task<List<dynamic>> GetNewApplications(int sequenceId);
         Task<List<ApplicationSummaryItem>> GetOpenApplications();
         Task<List<ApplicationSummaryItem>> GetClosedApplications();
         Task SubmitApplicationSequence(ApplicationSubmitRequest request, ApplicationData applicationdata);
