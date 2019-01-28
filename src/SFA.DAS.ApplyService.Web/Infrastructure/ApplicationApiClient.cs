@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.ApplyService.Application.Apply.Download;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 using SFA.DAS.ApplyService.Application.Apply.Upload;
 using SFA.DAS.ApplyService.Configuration;
@@ -49,19 +50,25 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
 
             return await (await _httpClient.PostAsync(
-                    $"/Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Upload",
+                    $"/Upload/Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}",
                     formDataContent)).Content
                 .ReadAsAsync<UploadResult>();
         }
-
-        public async Task<byte[]> Download(Guid applicationId, Guid userId, string pageId, string questionId,
-            string filename)
+        
+        public async Task<HttpResponseMessage> Download(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId,string filename)
         {
-            var stream = await _httpClient.GetByteArrayAsync(
-                $"/Application/{applicationId}/User/{userId}/Page/{pageId}/Question/{questionId}/{filename}/Download");
-            return stream;
+            var downloadResponse = await _httpClient.GetAsync(
+                $"/Download/Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}");
+            return downloadResponse;
         }
 
+        public async Task<FileInfoResponse> FileInfo(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId,string filename)
+        {
+            var downloadResponse = await (await _httpClient.GetAsync(
+                $"/FileInfo/Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}")).Content.ReadAsAsync<FileInfoResponse>();
+            return downloadResponse;
+        }
+        
         public async Task<ApplicationSequence> GetSequence(Guid applicationId, Guid userId)
         {
             return await (await _httpClient.GetAsync($"Application/{applicationId}/User/{userId}/Sections")).Content
@@ -151,6 +158,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task<List<Option>> GetQuestionDataFedOptions(string dataEndpoint)
         {
             return await(await _httpClient.GetAsync($"QuestionOptions/{dataEndpoint}")).Content.ReadAsAsync<List<Option>>();
+        }
+
+        public async Task DeleteFile(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId)
+        {
+            await _httpClient.PostAsJsonAsync($"/DeleteFile", new {applicationId, userId, sequenceId, sectionId, pageId, questionId});
         }
     }
 }

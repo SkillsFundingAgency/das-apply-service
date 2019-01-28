@@ -46,7 +46,15 @@ namespace SFA.DAS.ApplyService.Storage
             ms.Position = 0;
             return new Tuple<string, Stream, string>(filename, ms, blob.Properties.ContentType);
         }
-        
+
+        public async Task Delete(Guid applicationId, int sequenceId, int sectionId, string pageId, string questionId, string filename)
+        {
+            var container = await GetContainer();
+            var questionFolder = GetDirectory(applicationId.ToString(), sequenceId, sectionId, pageId, questionId, container);
+            var blob = questionFolder.GetBlobReference(filename);
+            await blob.DeleteAsync();   
+        }
+
         private async Task<CloudBlobContainer> GetContainer()
         {
             var config = await _configurationService.GetConfig();
