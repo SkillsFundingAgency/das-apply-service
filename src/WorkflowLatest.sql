@@ -3125,7 +3125,12 @@ VALUES
                 "Name": "Required",
                 "Value": null,
                 "ErrorMessage": "Enter email address"
-              }
+              },
+			  {
+			  "Name": "EmailAddressIsValid",
+			  "Value": null,
+			  "ErrorMessage": "Enter a valid email address"
+			  }
             ]
           },
           "Order": null
@@ -3247,7 +3252,12 @@ VALUES
                 "Name": "Required",
                 "Value": null,
                 "ErrorMessage": "Enter email address"
-              }
+              },
+			  {
+			  "Name": "EmailAddressIsValid",
+			  "Value": null,
+			  "ErrorMessage": "Enter a valid email address"
+			  }
             ]
           },
           "Order": null
@@ -3323,7 +3333,12 @@ VALUES
                           "Name": "Required",
                           "Value": null,
                           "ErrorMessage": "Enter your UKPRN"
-                        }
+                        },
+						{
+						  "Name": "Regex",
+                          "Value": "^[0-9]{8}$",
+                          "ErrorMessage": "Enter your UKPRN (must be 8 digits)"
+						}
                       ]
                     },
                     "Order": null,
@@ -3914,6 +3929,11 @@ VALUES
                 "Name":"Date",
                 "Value":"",
                 "ErrorMessage": "Date must be correct"
+              },
+              {
+                "Name":"DateNotInFuture",
+                "Value":"",
+                "ErrorMessage": "Date cannot be in the future"
               }
             ]
           },
@@ -3926,7 +3946,7 @@ VALUES
           "QuestionBodyText": "SQ-1-SE-1-PG-11-CD-21-164",
           "Hint": "SQ-1-SE-1-PG-11-CD-21-161",
           "Input": {
-            "Type": "text",
+            "Type": "number",
             "Options": null,
             "Validations": [{
                 "Name": "Required",
@@ -4048,6 +4068,11 @@ VALUES
                 "Name":"Date",
                 "Value":"",
                 "ErrorMessage": "Date must be correct"
+              },
+              {
+                "Name":"DateNotInFuture",
+                "Value":"",
+                "ErrorMessage": "Date cannot be in the future"
               }
             ]
           },
@@ -4143,6 +4168,11 @@ VALUES
                           "Name": "Required",
                           "Value": null,
                           "ErrorMessage": "Enter registered charity number"
+                        },
+						 {
+                          "Name": "RegisteredCharityNumber",
+                          "Value": null,
+                          "ErrorMessage": "Enter valid registered charity number"
                         }
                       ]
                     },
