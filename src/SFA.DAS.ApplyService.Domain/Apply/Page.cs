@@ -24,7 +24,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         
         public string BodyText { get; set; }
 
-        public Details Details { get; set; }
+        public PageDetails Details { get; set; }
 
         public string DisplayType { get; set; }
         public bool IsQuestionAnswered(string questionId)
@@ -43,11 +43,5 @@ namespace SFA.DAS.ApplyService.Domain.Apply
 
         [JsonIgnore]
         public bool AllFeedbackIsCompleted => HasFeedback ? Feedback.All(f => f.IsCompleted) : true;
-    }
-
-    public class Details
-    {
-        public string Title { get; set; }
-        public string Body { get; set; }
     }
 }

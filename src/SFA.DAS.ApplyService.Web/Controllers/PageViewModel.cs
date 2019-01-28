@@ -39,7 +39,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public List<PageOfAnswers> PageOfAnswers { get; set; }
         public string BodyText { get; set; }
         
-        public Details Details { get; set; }
+        public PageDetails Details { get; set; }
         
         public string RedirectAction { get; set; }
         public string ReturnUrl { get; set; }
