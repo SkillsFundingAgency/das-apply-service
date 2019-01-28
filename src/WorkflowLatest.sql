@@ -4008,10 +4008,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "14",
-          "Condition": {
-            "QuestionId": "CD-22",
-            "MustEqual": "No"
-          },
+          "Condition": null,
           "ConditionMet": false
         }
       ],
@@ -6008,6 +6005,11 @@ VALUES
                 "Name": "Required",
                 "Value": null,
                 "ErrorMessage": "Upload a file"
+              },
+              {
+                "Name": "FileType",
+                "Value": "pdf,application/pdf",
+                "ErrorMessage": "Upload a PDF"
               }
             ]
           },
@@ -6024,9 +6026,9 @@ VALUES
             "Options": null,
             "Validations": [
               {
-                "Name": "Required",
-                "Value": null,
-                "ErrorMessage": "Upload a file"
+                "Name": "FileType",
+                "Value": "pdf,application/pdf",
+                "ErrorMessage": "Upload a PDF"
               }
             ]
           },
