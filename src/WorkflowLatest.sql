@@ -4008,10 +4008,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "14",
-          "Condition": {
-            "QuestionId": "CD-22",
-            "MustEqual": "No"
-          },
+          "Condition": null,
           "ConditionMet": false
         }
       ],
@@ -6004,7 +6001,7 @@ VALUES
             "Type": "FileUpload",
             "Options": null,
             "Validations": [
-              {
+               {
                 "Name": "Required",
                 "Value": null,
                 "ErrorMessage": "Select a file containing your financial evidences"
@@ -6023,7 +6020,7 @@ VALUES
             "Type": "FileUpload",
             "Options": null,
             "Validations": [
-              {
+               {
                 "Name": "Required",
                 "Value": null,
                 "ErrorMessage": "Select a file containg the latest available accounts for the UK ultimate parent company"
