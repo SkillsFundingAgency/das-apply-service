@@ -89,6 +89,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
                 };
 
                 application.ApplicationData.InitSubmissions.Add(submission);
+                application.ApplicationData.InitSubmissionsCount = application.ApplicationData.InitSubmissions.Count;
                 application.ApplicationData.LatestInitSubmissionDate = submission.SubmittedAt;
             }
             else if(request.SequenceId == 2)
@@ -105,6 +106,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
                 };
 
                 application.ApplicationData.StandardSubmissions.Add(submission);
+                application.ApplicationData.StandardSubmissionsCount = application.ApplicationData.StandardSubmissions.Count;
                 application.ApplicationData.LatestStandardSubmissionDate = submission.SubmittedAt;
             }
 

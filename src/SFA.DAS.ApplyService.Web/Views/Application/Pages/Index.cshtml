@@ -50,14 +50,21 @@
                 </div>
             }
 
-            @if (!string.IsNullOrEmpty(@Model.Title) && Model.Questions.Count() > 1)
+            @if (Model.Questions.Count() > 1)
             {
-                <h1 class="govuk-heading-xl">
-                    @Html.Raw(Model.Title)
-                </h1>
+                @if (!string.IsNullOrEmpty(@Model.Title))
+                {
+                    <h1 class="govuk-heading-xl">
+                        @Html.Raw(Model.Title)
+                    </h1>
+                }
+
+                @if (!string.IsNullOrEmpty(@Model.BodyText))
+                {
+                    @Html.Raw(Model.BodyText)
+                }
             }
-
-
+            
             @if (Model.HasFeedback)
             {
                 <div class="govuk-inset-text">
@@ -171,6 +178,9 @@
                         </div>
                     }
                 }
+                
+                <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details"/>
+                
                 <button type="submit" class="govuk-button">Save and continue</button>
                 <p class="govuk-body">
                     @if (Model.RedirectAction == "Feedback")
