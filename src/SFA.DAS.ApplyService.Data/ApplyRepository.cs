@@ -413,7 +413,7 @@ namespace SFA.DAS.ApplyService.Data
                             CASE WHEN SequenceId = 1 THEN JSON_VALUE(ApplicationData, '$.InitSubmissionsCount')
 		                         WHEN SequenceId = 2 THEN JSON_VALUE(ApplicationData, '$.StandardSubmissionsCount')
 		                         ELSE 0
-	                        END As SubmissionCount
+	                        END As SubmissionCount,
                             CASE WHEN SequenceId = 1 THEN Sec3Status
 		                         ELSE NULL
 	                        END As FinancialStatus,
@@ -454,7 +454,7 @@ namespace SFA.DAS.ApplyService.Data
                 return (await connection
                     .QueryAsync<ApplicationSummaryItem>(
                         @"SELECT OrganisationName, ApplicationId, SequenceId,
-                            CASE WHEN SequenceId = 1 THEN 'Mid point'
+                            CASE WHEN SequenceId = 1 THEN 'Midpoint'
                                  WHEN SequenceId = 2 THEN 'Standard'
                                  ELSE 'Unknown'
                             END As ApplicationType,
@@ -462,6 +462,10 @@ namespace SFA.DAS.ApplyService.Data
 		                         WHEN SequenceId = 2 THEN JSON_VALUE(ApplicationData, '$.StandardSubmissionClosedDate')
 		                         ELSE NULL
 	                        END As ClosedDate,
+                            CASE WHEN SequenceId = 1 THEN JSON_VALUE(ApplicationData, '$.InitSubmissionsCount')
+		                         WHEN SequenceId = 2 THEN JSON_VALUE(ApplicationData, '$.StandardSubmissionsCount')
+		                         ELSE 0
+	                        END As SubmissionCount,
                             SequenceStatus As CurrentStatus
                         FROM (
 	                        SELECT 
