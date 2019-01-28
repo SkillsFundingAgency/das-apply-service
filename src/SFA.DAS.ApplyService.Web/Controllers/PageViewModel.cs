@@ -38,6 +38,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public List<PageOfAnswers> PageOfAnswers { get; set; }
         public string BodyText { get; set; }
+        
+        public Details Details { get; set; }
+        
         public string RedirectAction { get; set; }
         public string ReturnUrl { get; set; }
 
@@ -87,6 +90,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             Feedback = page.Feedback;
             HasFeedback = page.HasFeedback;
             BodyText = page.BodyText;
+
+            Details = page.Details;
 
             foreach (var question in Questions)
             {

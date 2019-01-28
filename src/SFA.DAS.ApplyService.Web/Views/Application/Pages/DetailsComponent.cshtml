@@ -1,0 +1,15 @@
+@model SFA.DAS.ApplyService.Domain.Apply.Details
+
+@if (Model != null)
+{
+    <details class="govuk-details">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+                @Model.Title
+            </span>
+        </summary>
+        <div class="govuk-details__text">
+            @Html.Raw(Model.Body)
+        </div>
+    </details>
+}
