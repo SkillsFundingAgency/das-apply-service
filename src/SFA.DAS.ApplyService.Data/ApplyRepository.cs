@@ -402,7 +402,7 @@ namespace SFA.DAS.ApplyService.Data
                 return (await connection
                     .QueryAsync<ApplicationSummaryItem>(
                         @"SELECT OrganisationName, ApplicationId, SequenceId,
-                            CASE WHEN SequenceId = 1 THEN 'Mid point'
+                            CASE WHEN SequenceId = 1 THEN 'Midpoint'
                                  WHEN SequenceId = 2 THEN 'Standard'
                                  ELSE 'Unknown'
                             END As ApplicationType,
@@ -410,13 +410,17 @@ namespace SFA.DAS.ApplyService.Data
 		                         WHEN SequenceId = 2 THEN JSON_VALUE(ApplicationData, '$.LatestStandardSubmissionDate')
 		                         ELSE NULL
 	                        END As SubmittedDate,
+                            CASE WHEN SequenceId = 1 THEN JSON_VALUE(ApplicationData, '$.InitSubmissionCount')
+		                         WHEN SequenceId = 2 THEN JSON_VALUE(ApplicationData, '$.StandardSubmissionCount')
+		                         ELSE 0
+	                        END As SubmissionCount
                             CASE WHEN SequenceId = 1 THEN Sec3Status
 		                         ELSE NULL
 	                        END As FinancialStatus,
 	                        CASE WHEN (SequenceId = 1 AND (Sec1Status = Sec2Status) AND (Sec1Status = Sec3Status) AND (Sec2Status = Sec3Status)) THEN Sec1Status
 		                         WHEN SequenceId = 2 THEN Sec4Status
 		                         ELSE @sectionStatusInProgress
-	                        END As CurrentStatus 
+	                        END As CurrentStatus
                         FROM (
 	                        SELECT 
                                 org.Name AS OrganisationName,
