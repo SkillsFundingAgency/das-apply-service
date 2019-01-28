@@ -429,30 +429,60 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             foreach (var file in HttpContext.Request.Form.Files)
             {
-                answers.Add(new Answer() {QuestionId = file.Name, Value = file.FileName});
+                
                 var typeValidation = page.Questions.First(q => q.QuestionId == file.Name).Input.Validations.FirstOrDefault(v => v.Name == "FileType");
-                if (typeValidation == null) continue;
-                var extension = typeValidation.Value.ToString().Split(",", StringSplitOptions.RemoveEmptyEntries)[0];
-                var mimeType = typeValidation.Value.ToString().Split(",", StringSplitOptions.RemoveEmptyEntries)[1];
+                if (typeValidation != null)
+                {
+                    var extension = typeValidation.Value.ToString().Split(",", StringSplitOptions.RemoveEmptyEntries)[0];
+                    var mimeType = typeValidation.Value.ToString().Split(",", StringSplitOptions.RemoveEmptyEntries)[1];
 
-                if (file.FileName.Substring(file.FileName.IndexOf(".") + 1, (file.FileName.Length - 1) - file.FileName.IndexOf(".")).ToLower() == extension && file.ContentType.ToLower() == mimeType) continue;
-
-                ModelState.AddModelError(file.Name, typeValidation.ErrorMessage);
-                errorMessages.Add(new ValidationErrorDetail(file.Name, typeValidation.ErrorMessage));
-                fileValidationPassed = false;
+                    if (file.FileName.Substring(file.FileName.IndexOf(".") + 1, (file.FileName.Length - 1) - file.FileName.IndexOf(".")).ToLower() != extension || file.ContentType.ToLower() != mimeType)
+                    {
+                        ModelState.AddModelError(file.Name, typeValidation.ErrorMessage);
+                        errorMessages.Add(new ValidationErrorDetail(file.Name, typeValidation.ErrorMessage));
+                        fileValidationPassed = false;
+                    }
+                    else
+                    {
+                        // Only add to answers if type validation passes.
+                        answers.Add(new Answer() {QuestionId = file.Name, Value = file.FileName});
+                    }
+                }
+                else
+                {
+                    // Only add to answers if type validation passes.
+                    answers.Add(new Answer() {QuestionId = file.Name, Value = file.FileName});
+                }
             }
 
             return fileValidationPassed;
         }
 
-        [HttpGet("/Application/{applicationId}/Page/{pageId}/Question/{questionId}/File/{filename}/Download")]
-        public async Task<IActionResult> Download(Guid applicationId, string pageId, string questionId, string filename)
+        [HttpGet("Application/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}/Download")]
+        
+        //[HttpGet("/Application/{applicationId}/Page/{pageId}/Question/{questionId}/File/{filename}/Download")]
+        public async Task<IActionResult> Download(Guid applicationId, int sequenceId, int sectionId, string pageId, string questionId, string filename)
         {
             var userId = Guid.Parse(User.FindFirstValue("UserId"));
 
-            var file = await _apiClient.Download(applicationId, userId, pageId, questionId, filename);
+            var fileInfo = await _apiClient.FileInfo(applicationId, userId, sequenceId, sectionId, pageId, questionId, filename);
+            
+            var file = await _apiClient.Download(applicationId, userId, sequenceId,sectionId, pageId, questionId, filename);
 
-            return File(file, "file/file", filename);
+            var fileStream = await file.Content.ReadAsStreamAsync();
+            
+            return File(fileStream, fileInfo.ContentType, fileInfo.Filename);
+        }
+
+        [HttpGet("Application/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{redirectAction}/Delete")]
+        public async Task<IActionResult> DeleteFile(Guid applicationId, int sequenceId, int sectionId, string pageId, string questionId, string redirectAction)
+        {
+            var userId = Guid.Parse(User.FindFirstValue("UserId"));
+
+            await _apiClient.DeleteFile(applicationId, userId, sequenceId, sectionId, pageId, questionId);
+            
+            return RedirectToAction("Page", new {applicationId, sequenceId = sequenceId,
+                sectionId = sectionId, pageId = pageId, redirectAction});
         }
 
 

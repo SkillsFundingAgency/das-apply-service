@@ -79,6 +79,7 @@ namespace SFA.DAS.ApplyService.Web
                 opt.Cookie = new CookieBuilder() {Name = ".Apply.Session", HttpOnly = true};
             });
             
+            services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Apply.AntiForgery", HttpOnly = true });
 
 
             return ConfigureIOC(services).Result;
