@@ -1606,7 +1606,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-09-268';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-09-268', '', '<p class="govuk-body">Confirm whether, within the past 5 years, anyone who represents, supervises or has control in your organisation or a partner or parent organisations has been convicted of:</p><ul class="govuk-list govuk-list--bullet"><li>any offence under sections 44 to 46 of the Serious Crime Act 2007 which relates to an offence covered by subparagraph (f)</li><li>conspiracy within the meaning of section 1 or 1A of the Criminal Law Act 1977</li><li>conspiracy within the meaning of article 9 or 9A of the Criminal Attempts and Conspiracy (Northern Ireland) Order 1983 where that conspiracy relates to participation in a criminal organisation as defined in Article 2 of Council Framework Decision 2008/842/JHA on the fight against organised crime</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-09-268', '', '<p class="govuk-body">Has any person of significant control (PSC) in the last 5 years, been convicted of:</p><ul class="govuk-list govuk-list--bullet"><li>any offence under sections 44 to 46 of the Serious Crime Act 2007 which relates to an offence covered by subparagraph (f)</li><li>conspiracy within the meaning of section 1 or 1A of the Criminal Law Act 1977</li><li>conspiracy within article 9 or 9A of the criminal attempts and conspiracy (Northern Ireland) order 1983, relating to participation in a criminal organisation</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-10-269';
 INSERT INTO Assets
@@ -2733,7 +2733,21 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-193-LT-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-193-LT-1', '', 'Criminal convictions', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-193-LT-1', '', 'What is a psc?', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-193-DT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-193-DT-1', '', '<p class="govuk-body">A <a class="govuk-link" href="https://www.gov.uk/government/news/people-with-significant-control-psc-who-controls-your-company">person with significant control (PSC)</a> is someone who owns or controls your organisation. They''re sometimes called ''beneficial owners''</p>', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-193-DB-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-193-DB-1', '', 'Criminal convictions', 'Live', GETUTCDATE(), 'Import')
 GO
 
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-194-LT-1';
@@ -4438,13 +4452,17 @@ VALUES
       "HasFeedback": false,
       "BodyText": "SQ-1-SE-2-PG-18-234"
     },
-	   {
+	  {
       "PageId": "193",
       "SequenceId": "1",
       "SectionId": "2",
       "Title": "SQ-1-SE-2-PG-19-245",
       "LinkTitle": "SQ-1-SE-2-PG-193-LT-1",
       "InfoText": "SQ-1-SE-2-PG-19-247",
+      "Details": {
+        "Title": "SQ-1-SE-2-PG-193-DT-1",
+        "Body": "SQ-1-SE-2-PG-193-DB-1"
+      },
       "Questions": [
             {
           "QuestionId": "M_DEL-09",
