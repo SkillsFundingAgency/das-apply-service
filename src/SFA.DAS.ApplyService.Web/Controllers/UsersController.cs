@@ -16,14 +16,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     public class UsersController : Controller
     {
         private readonly IUsersApiClient _usersApiClient;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ISessionService _sessionService;
         private readonly ILogger<UsersController> _logger;
 
-        public UsersController(IUsersApiClient usersApiClient, IHttpContextAccessor httpContextAccessor, ISessionService sessionService, ILogger<UsersController> logger)
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger)
         {
             _usersApiClient = usersApiClient;
-            _httpContextAccessor = httpContextAccessor;
             _sessionService = sessionService;
             _logger = logger;
         }
@@ -87,9 +85,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public async Task<IActionResult> PostSignIn()
         {
-            var signInId = _httpContextAccessor.HttpContext.User.FindFirstValue("sub");
-            
-            var user = await _usersApiClient.GetUserBySignInId(signInId);
+            var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
          
             _logger.LogInformation($"Setting LoggedInUser in Session: {user.GivenNames} {user.FamilyName}");
             
@@ -99,11 +95,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return RedirectToAction("Index", "OrganisationSearch");
             }
-            
-            
-            
-            
-            
             
             return RedirectToAction("Applications", "Application");
         }
