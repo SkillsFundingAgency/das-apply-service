@@ -41,6 +41,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
 //
             var page = section.QnAData.Pages.Single(p => p.PageId == request.PageId);
 
+            var existingAnswers = page.PageOfAnswers.Select(poa => new PageOfAnswers{Answers = poa.Answers}).ToList();
+            
             //var pages = section.Pages;
             var qnADataObject = section.QnAData;
             
@@ -66,7 +68,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
 
             foreach (var question in page.Questions)
             {
-                validationPassed = ProcessAnswer(request, question, validationPassed, validationErrors, pageAnswers);
+                validationPassed = ProcessAnswer(request, question, validationPassed, validationErrors, pageAnswers, existingAnswers);
                 // IF Question is type ComplexRadio
                 // Need to get all answers from Input.Options.FurtherQuestions
 
@@ -85,7 +87,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                                     //var fq = JsonConvert.DeserializeObject<Question>(furtherQuestion.ToString());
 
                                     validationPassed = ProcessAnswer(request, furtherQuestion, validationPassed, validationErrors,
-                                        pageAnswers);
+                                        pageAnswers, existingAnswers);
                                 }
                             }
                         }
@@ -214,32 +216,66 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
         
         private bool ProcessAnswer(UpdatePageAnswersRequest request, Question question, bool validationPassed,
             List<KeyValuePair<string, string>> validationErrors,
-            PageOfAnswers pageAnswers)
+            PageOfAnswers pageAnswers, List<PageOfAnswers> pagePageOfAnswers)
         {
-            var answer = request.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
 
-            var validators = _validatorFactory.Build(question);
-            foreach (var validator in validators)
+            if (question.Input.Type == "FileUpload")
             {
-                var errors = validator.Validate(question, answer);
-
-                if (errors.Any())
+                var answer = request.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
+                if (ExistingUpload(question.QuestionId, pagePageOfAnswers) && (answer == null || answer.Value == ""))
                 {
-                    validationPassed = false;
-                    validationErrors.AddRange(errors);
+                    var existingAnswer = pagePageOfAnswers.SelectMany(poa => poa.Answers).Single(a => a.QuestionId == question.QuestionId);
+                    pageAnswers.Answers.Add(existingAnswer);
                 }
                 else
                 {
-                    if (question.Input.Type == "Checkbox" && answer.Value == "on")
+                    var validators = _validatorFactory.Build(question);
+                    foreach (var validator in validators)
                     {
-                        answer.Value = "Yes";
+                        var errors = validator.Validate(question, answer);
+
+                        if (!errors.Any()) continue;
+                        
+                        validationPassed = false;
+                        validationErrors.AddRange(errors);
                     }
+            
+                    pageAnswers.Answers.Add(answer);
                 }
             }
-            
-            pageAnswers.Answers.Add(answer);
+            else
+            {
+                var answer = request.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
 
+                var validators = _validatorFactory.Build(question);
+                foreach (var validator in validators)
+                {
+                    var errors = validator.Validate(question, answer);
+
+                    if (errors.Any())
+                    {
+                        validationPassed = false;
+                        validationErrors.AddRange(errors);
+                    }
+                    else
+                    {
+                        if (question.Input.Type == "Checkbox" && answer.Value == "on")
+                        {
+                            answer.Value = "Yes";
+                        }
+                    }
+                }
+            
+                pageAnswers.Answers.Add(answer);
+    
+            }
+            
             return validationPassed;
+        }
+
+        private static bool ExistingUpload(string questionId, List<PageOfAnswers> pagePageOfAnswers)
+        {
+            return pagePageOfAnswers.Any(poa => poa.Answers.Any(a => a.QuestionId == questionId && a.Value != ""));
         }
 
 //        private static void MarkSequenceAsCompleteIfAllPagesComplete(ApplicationSequence sequence, List<Sequence> workflow)
