@@ -52,7 +52,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-2-9';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-2-9', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-1-PG-2-9', '', 'Trading name', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-2-10';
 INSERT INTO Assets
@@ -4262,7 +4262,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if any removals apply"
               }
             ]
           },
@@ -6070,7 +6070,7 @@ VALUES
                {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select a file containg the latest available accounts for the UK ultimate parent company"
+                "ErrorMessage": "Select a file containg the latest available accounts for the parent company"
               }
             ]
           },
