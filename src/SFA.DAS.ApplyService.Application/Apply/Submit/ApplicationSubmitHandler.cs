@@ -85,7 +85,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
                 var submission = new InitSubmission
                 {
                     SubmittedAt = DateTime.UtcNow,
-                    SubmittedBy = request.UserEmail
+                    SubmittedBy = request.UserId,
+                    SubmittedByEmail = request.UserEmail
                 };
 
                 application.ApplicationData.InitSubmissions.Add(submission);
@@ -102,7 +103,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
                 var submission = new StandardSubmission
                 {
                     SubmittedAt = DateTime.UtcNow,
-                    SubmittedBy = request.UserEmail
+                    SubmittedBy = request.UserId,
+                    SubmittedByEmail = request.UserEmail
                 };
 
                 application.ApplicationData.StandardSubmissions.Add(submission);

@@ -175,7 +175,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (organisationSearchResult != null)
             {
-                var orgThatWasCreated = await _organisationApiClient.Create(organisationSearchResult, user.Id, user.Email);
+                var orgThatWasCreated = await _organisationApiClient.Create(organisationSearchResult, user.Id);
 
                 return RedirectToAction("Applications", "Application");
             }

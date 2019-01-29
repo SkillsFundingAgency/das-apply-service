@@ -81,6 +81,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 {
                     StandardName = model.SelectedStandard?.Title,
                     StandardCode = standardCode,
+                    UserId = User.GetUserId(),
                     UserEmail = User.GetEmail()
                 };
 

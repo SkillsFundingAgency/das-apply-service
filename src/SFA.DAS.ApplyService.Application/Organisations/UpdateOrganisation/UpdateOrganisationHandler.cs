@@ -28,11 +28,11 @@ namespace SFA.DAS.ApplyService.Application.Organisations.UpdateOrganisation
                 existingOrganisation.OrganisationDetails = request.OrganisationDetails;
                 existingOrganisation.OrganisationType = request.OrganisationType;
                 existingOrganisation.OrganisationUkprn = request.OrganisationUkprn;
-                existingOrganisation.UpdatedBy = request.UpdatedBy;
+                existingOrganisation.UpdatedBy = request.UpdatedBy.ToString();
                 existingOrganisation.RoEPAOApproved = request.RoEPAOApproved;
                 existingOrganisation.RoATPApproved = request.RoATPApproved;
 
-                return await _organisationRepository.UpdateOrganisation(existingOrganisation, request.UpdatedByUserId);
+                return await _organisationRepository.UpdateOrganisation(existingOrganisation, request.UpdatedBy);
             }
 
             return null;
