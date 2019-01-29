@@ -45,7 +45,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var user = _sessionService.Get("LoggedInUser");
             _logger.LogInformation($"Got LoggedInUser from Session: {user}");
 
-            var applications = await _apiClient.GetApplicationsFor(Guid.Parse(User.FindFirstValue("UserId")));
+            var applications = await _apiClient.GetApplicationsFor(User.GetUserId());
 
             if (!applications.Any())
             {
@@ -79,7 +79,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost("/Applications")]
         public async Task<IActionResult> StartApplication()
         {
-            await _apiClient.StartApplication(Guid.Parse(User.FindFirstValue("UserId")));
+            await _apiClient.StartApplication(User.GetUserId());
 
             return RedirectToAction("Applications");
         }
@@ -88,7 +88,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> Sequence(Guid applicationId, bool notAcceptedTermsAndConditions)
         {
             // Break this out into a "Signpost" action.
-            var sequence = await _apiClient.GetSequence(applicationId, userId: Guid.Parse(User.FindFirstValue("UserId")));
+            var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
 
             var errorMessages = new List<ValidationErrorDetail>();
 
@@ -118,7 +118,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return View("~/Views/Application/Rejected.cshtml", application);
             }
 
-            var sequence = await _apiClient.GetSequence(applicationId, userId: Guid.Parse(User.FindFirstValue("UserId")));
+            var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
 
             StandardApplicationData applicationData = null;
 
@@ -152,7 +152,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet("/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}")]
         public async Task<IActionResult> Section(Guid applicationId, int sequenceId, int sectionId)
         {
-            var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, userId: Guid.Parse(User.FindFirstValue("UserId")));
+            var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, User.GetUserId());
 
             if (section.DisplayType == SectionDisplayType.Pages)
             {
@@ -173,7 +173,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
         public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
-            var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, Guid.Parse(User.FindFirstValue("UserId")));
+            var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, User.GetUserId());
 
             page = await GetDataFedOptions(page);
 
@@ -276,7 +276,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
             else
             {
-                var thisPage = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, Guid.Parse(User.FindFirstValue("UserId")));
+                var thisPage = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, User.GetUserId());
                 if (thisPage.PageOfAnswers.Any())
                 {
                     var next = thisPage.Next.FirstOrDefault();
@@ -314,7 +314,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (oneOrMoreAnswerEntered) return true;
            
-            var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, Guid.Parse(User.FindFirstValue("UserId")));
+            var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, User.GetUserId());
             var hasAnswersAlready = page.PageOfAnswers.Any();
             return !hasAnswersAlready;
         }
@@ -322,9 +322,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
         public async Task<IActionResult> SaveAnswers(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
-            var userId = Guid.Parse(User.FindFirstValue("UserId"));
+            var userId = User.GetUserId();
 
-            var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, Guid.Parse(User.FindFirstValue("UserId")));
+            var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, userId);
 
 
             var errorMessages = new List<ValidationErrorDetail>();
@@ -463,7 +463,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         //[HttpGet("/Application/{applicationId}/Page/{pageId}/Question/{questionId}/File/{filename}/Download")]
         public async Task<IActionResult> Download(Guid applicationId, int sequenceId, int sectionId, string pageId, string questionId, string filename)
         {
-            var userId = Guid.Parse(User.FindFirstValue("UserId"));
+            var userId = User.GetUserId();
 
             var fileInfo = await _apiClient.FileInfo(applicationId, userId, sequenceId, sectionId, pageId, questionId, filename);
             
@@ -477,12 +477,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet("Application/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{redirectAction}/Delete")]
         public async Task<IActionResult> DeleteFile(Guid applicationId, int sequenceId, int sectionId, string pageId, string questionId, string redirectAction)
         {
-            var userId = Guid.Parse(User.FindFirstValue("UserId"));
-
-            await _apiClient.DeleteFile(applicationId, userId, sequenceId, sectionId, pageId, questionId);
+            await _apiClient.DeleteFile(applicationId, User.GetUserId(), sequenceId, sectionId, pageId, questionId);
             
-            return RedirectToAction("Page", new {applicationId, sequenceId = sequenceId,
-                sectionId = sectionId, pageId = pageId, redirectAction});
+            return RedirectToAction("Page", new {applicationId, sequenceId, sectionId, pageId, redirectAction});
         }
 
 
@@ -494,15 +491,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("Sequence", new {applicationId, notAcceptedTermsAndConditions = true});
             }
 
-            await _apiClient.Submit(applicationId, sequenceId, Guid.Parse(User.FindFirstValue("UserId")), User.FindFirstValue("Email"));
+            await _apiClient.Submit(applicationId, sequenceId, User.GetUserId(), User.GetEmail());
             return RedirectToAction("Submitted", new {applicationId});
         }
 
         [HttpPost("/Application/DeleteAnswer")]
         public async Task<IActionResult> DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, string redirectAction)
         {
-            await _apiClient.DeleteAnswer(applicationId, sequenceId, sectionId, pageId, answerId,
-                Guid.Parse(User.FindFirstValue("UserId")));
+            await _apiClient.DeleteAnswer(applicationId, sequenceId, sectionId, pageId, answerId, User.GetUserId());
             
             return RedirectToAction("Page", new {applicationId, sequenceId, sectionId, pageId, redirectAction});
         }
@@ -510,7 +506,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet("/Application/{applicationId}/Feedback")]
         public async Task<IActionResult> Feedback(Guid applicationId)
         {
-            var sequence = await _apiClient.GetSequence(applicationId, userId: Guid.Parse(User.FindFirstValue("UserId")));
+            var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
 
             return View("~/Views/Application/Feedback.cshtml", sequence);
         }

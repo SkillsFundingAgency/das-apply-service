@@ -81,7 +81,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 {
                     StandardName = model.SelectedStandard?.Title,
                     StandardCode = standardCode,
-                    UserEmail = User.FindFirstValue("Email")
+                    UserId = User.GetUserId(),
+                    UserEmail = User.GetEmail()
                 };
 
             await _apiClient.UpdateApplicationData(applicationData, model.ApplicationId);

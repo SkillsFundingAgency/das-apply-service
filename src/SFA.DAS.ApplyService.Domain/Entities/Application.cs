@@ -19,6 +19,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     {
         public string StandardName { get; set; }
         public int StandardCode { get; set; }
+        public Guid UserId { get; set; }
         public string UserEmail { get; set; }
     }
     
@@ -49,7 +50,8 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     public abstract class Submission
     {
         public DateTime SubmittedAt { get; set; }
-        public string SubmittedBy { get; set; }
+        public Guid SubmittedBy { get; set; }
+        public string SubmittedByEmail { get; set; }
     }
 
     public class InitSubmission : Submission
