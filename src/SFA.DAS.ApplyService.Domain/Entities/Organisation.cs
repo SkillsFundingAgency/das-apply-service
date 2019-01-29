@@ -1,3 +1,5 @@
+using System;
+
 namespace SFA.DAS.ApplyService.Domain.Entities
 {
     public class Organisation : EntityBase
@@ -28,5 +30,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string Address3 { get; set; }
         public string City { get; set; }
         public string Postcode { get; set; }
+        public DateTime? FinancialDueDate { get; set; }
     }
 }

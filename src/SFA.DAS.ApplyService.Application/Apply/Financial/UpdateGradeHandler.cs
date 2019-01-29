@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.ApplyService.Application.Apply.GetSection;
+using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 
@@ -13,11 +14,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
     {
         private readonly IApplyRepository _applyRepository;
         private readonly IMediator _mediator;
+        private readonly IOrganisationRepository _organisationRepository;
 
-        public UpdateGradeHandler(IApplyRepository applyRepository, IMediator mediator)
+        public UpdateGradeHandler(IApplyRepository applyRepository, IMediator mediator, IOrganisationRepository organisationRepository)
         {
             _applyRepository = applyRepository;
             _mediator = mediator;
+            _organisationRepository = organisationRepository;
         }
 
         public async Task<Unit> Handle(UpdateGradeRequest request, CancellationToken cancellationToken)
@@ -30,6 +33,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
             
             await _applyRepository.SaveSection(section);
 
+            if (request.UpdatedGrade.FinancialDueDate.HasValue)
+            {
+                var org = await _organisationRepository.GetOrganisationByApplicationId(request.ApplicationId);
+                org.OrganisationDetails.FinancialDueDate = request.UpdatedGrade.FinancialDueDate.Value;
+
+                await _organisationRepository.UpdateOrganisation(org, Guid.NewGuid());
+            }
+                        
             return Unit.Value;
         }
     }

@@ -49,6 +49,25 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<Organisation> GetOrganisationByApplicationId(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var sql =
+                    "SELECT Organisations.* " +
+                    "FROM Organisations" +
+                    "INNER JOIN Applications ON Applications.ApplyingOrganisationId = Organisations.Id" +
+                    "WHERE Applications.Id = @applicationId";
+
+                var org = await connection.QuerySingleAsync<Organisation>(sql, new { applicationId });
+                
+                return org;
+            }
+        }
+
         public async Task<Organisation> UpdateOrganisation(Organisation organisation, Guid userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
