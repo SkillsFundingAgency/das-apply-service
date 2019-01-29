@@ -17,24 +17,21 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IUsersApiClient _usersApiClient;
         private readonly OrganisationApiClient _organisationApiClient;
         private readonly OrganisationSearchApiClient _apiClient;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ISessionService _sessionService;
 
         public OrganisationSearchController(IUsersApiClient usersApiClient, OrganisationApiClient organisationApiClient,
-            OrganisationSearchApiClient apiClient, IHttpContextAccessor httpContextAccessor,
-            ISessionService sessionService)
+            OrganisationSearchApiClient apiClient, ISessionService sessionService)
         {
             _usersApiClient = usersApiClient;
             _organisationApiClient = organisationApiClient;
             _apiClient = apiClient;
-            _httpContextAccessor = httpContextAccessor;
             _sessionService = sessionService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var user = await _usersApiClient.GetUserBySignInId(_httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
+            var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
 
             if (user.ApplyOrganisationId != null)
             {
@@ -85,7 +82,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Results(OrganisationSearchViewModel viewModel)
         {
-            var user = await _usersApiClient.GetUserBySignInId(_httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
+            var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
 
             if (user.ApplyOrganisationId != null)
             {
@@ -120,7 +117,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Confirm(OrganisationSearchViewModel viewModel)
         {
-            var user = await _usersApiClient.GetUserBySignInId(_httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
+            var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
 
             if (user.ApplyOrganisationId != null)
             {
@@ -154,7 +151,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(OrganisationSearchViewModel viewModel)
         {
-            var user = await _usersApiClient.GetUserBySignInId(_httpContextAccessor.HttpContext.User.FindFirstValue("sub"));
+            var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
 
             if (user.ApplyOrganisationId != null)
             {
