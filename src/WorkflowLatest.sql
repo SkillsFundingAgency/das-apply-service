@@ -1654,7 +1654,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-11-276';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-11-276', '', '<p class="govuk-body">Has any person with significant control in the last 5 years been convicted of:</p><ul class="govuk-list govuk-list--bullet"><li>section 41 of the Counter Terrorism Act 2008</li><li>schedule 2 of the Counter Terrorism Act 2008 where the court has determined that there is a terrorist connection</li><li>any offence under sections 44 to 46 of the Serious Crime Act 2007</li></ul><p class="govuk-body"><a class="govuk-link" target="_blank" href="https://www.gov.uk/government/collections/counter-terrorism-and-security-bill">Read the counter terrorism act</a></p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-11-276', '', '<p class="govuk-body">Has any person with significant control in the last 5 years been convicted of:</p><ul class="govuk-list govuk-list--bullet"><li>section 41 of the <a class="govuk-link" target="_blank" href="https://www.gov.uk/government/collections/counter-terrorism-and-security-bill">Counter Terrorism Act 2008</a></li><li>schedule 2 of the Counter Terrorism Act 2008 where the court has determined that there is a terrorist connection</li><li>any offence under sections 44 to 46 of the Serious Crime Act 2007</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-12-277';
 INSERT INTO Assets
@@ -1726,7 +1726,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-13-288';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-13-288', '', '<p class="govuk-body">Have members of your organisation or a partner organisation been legally found to be in breach of tax payments or social security contributions?</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-13-288', '', '<p class="govuk-body">Has any person of significant control (PSC) breached tax payments or social security contributions?</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-13.1-289';
 INSERT INTO Assets
@@ -1775,7 +1775,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-14-296';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-14-296', '', '<p class="govuk-body">In the past 3 years has your organisation or partner organisations been:</p><ul class="govuk-list govuk-list--bullet"><li>made bankrupt</li><li>subject of insolvency</li><li>winding-up proceedings/li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-14-296', '', '<p class="govuk-body">In the past 3 years has your organisation or partner organisations been:</p><ul class="govuk-list govuk-list--bullet"><li>made bankrupt</li><li>subject of insolvency</li><li>winding-up proceedings</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20.1-297';
 INSERT INTO Assets
@@ -2747,7 +2747,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-193-DB-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-193-DB-1', '', '<p class="govuk-body">A <a class="govuk-link" href="https://www.gov.uk/government/news/people-with-significant-control-psc-who-controls-your-company">person with significant control (PSC)</a> is someone who owns or controls your organisation. They''re sometimes called ''beneficial owners''</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-193-DB-1', '', '<p class="govuk-body">A <a class="govuk-link" target="_blank" href="https://www.gov.uk/government/news/people-with-significant-control-psc-who-controls-your-company">person with significant control (PSC)</a> is someone who owns or controls your organisation. They''re sometimes called ''beneficial owners''</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-194-LT-1';
@@ -2785,7 +2785,6 @@ INSERT INTO Assets
 VALUES
   (NEWID(), 'SQ-1-SE-2-PG-201-LT-1', '', 'Bankruptcy and insolvency', 'Live', GETUTCDATE(), 'Import')
 GO
-
 
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20.1-LT-1';
 INSERT INTO Assets
@@ -4848,7 +4847,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Field must not be empty"
+                "ErrorMessage": "Enter the type of proceeding"
               }
             ]
           },
@@ -4885,13 +4884,13 @@ VALUES
           "QuestionBodyText": "SQ-1-SE-2-PG-20.1-D_DEL-13-1-312",
           "Hint": "SQ-1-SE-2-PG-20.1-D_DEL-13-1-309",
           "Input": {
-            "Type": "text",
+            "Type": "Textarea",
             "Options": null,
             "Validations": [
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Field must not be empty"
+                "ErrorMessage": "Enter how you are repaying the debts"
               }
             ]
           },

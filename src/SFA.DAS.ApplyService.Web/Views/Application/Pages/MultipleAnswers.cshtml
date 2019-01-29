@@ -33,9 +33,13 @@
             {
                 <h1 class="govuk-heading-xl">
                     @if (Model?.DisplayType=="PagesWithSections")
-                    {@Model.LinkTitle}
-                else
-                {@Model.Title}
+                    {
+                        @Model.LinkTitle
+                    }
+                    else
+                    {
+                        @Model.Title
+                    }
                 </h1>
             }
 
