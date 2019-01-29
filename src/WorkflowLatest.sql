@@ -1630,7 +1630,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-10-272';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-10-272', '', '<p class="govuk-body">Confirm whether, within the past 5 years, anyone who represents, supervises or has control in your organisation or a parent or partner organisations has been convicted of any offence that relates to fraud affecting the European Communities'' financial interests as defined by article 1 of the Convention of the Protection of the Financial Interests of the European Communities, including:</p><ul class="govuk-list govuk-list--bullet"><li>the common law offence of cheating the Revenue (HMRC)</li><li>the common law offence of conspiracy to defraud</li><li>fraud or theft within the meaning of the Theft Act 1968, the Theft Act (Northern Ireland) 1969, the Theft Act 1978 or the Theft (Northern Ireland) Order 1978</li><li>fraudulent trading within the meaning of section 458 of the Companies Act 1985, article 451 of the Companies (Northern Ireland) Order 1986 or section 993 of the Companies Act 2006</li><li>fraudulent evasion within the meaning of section 170 of the Customs and Excise Management Act 1979 or section 72 of the Value Added Tax Act 1994</li><li>an offence in connection with taxation in the European Union within the meaning of section 71 of the Criminal Justice Act 1993</li><li>destroying, defacing or concealing of documents or procuring the execution of a valuable security within the meaning of section 20 of the Theft Act 1968 or section 19 of the Theft Act (Northern Ireland) 1969</li><li>fraud within the meaning of section 2, 3 or 4 of the Fraud Act 2006</li><li>the possession of articles for use in frauds within the meaning of section 6 of the Fraud Act 2006, or the making, adapting, supplying or offering to supply articles for use in frauds within the meaning of section 7 of that Act</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-10-272', '', '<p class="govuk-body">Has any person of significant control (PSC) in the last 5 years, been convicted of fraud affecting European communities, including:</p><ul class="govuk-list govuk-list--bullet"><li>the common law offence of cheating the Revenue (HMRC)</li><li>the common law offence of conspiracy to defraud</li><li>fraud or theft within the meaning of the Theft Act 1968, the Theft Act (Northern Ireland) 1969, the Theft Act 1978 or the Theft (Northern Ireland) Order 1978</li><li>fraudulent trading within the meaning of section 458 of the Companies Act 1985, article 451 of the Companies (Northern Ireland) Order 1986 or section 993 of the Companies Act 2006</li><li>fraudulent evasion within the meaning of section 170 of the Customs and Excise Management Act 1979 or section 72 of the Value Added Tax Act 1994</li><li>an offence in connection with taxation in the European Union within the meaning of section 71 of the Criminal Justice Act 1993</li><li>destroying, defacing or concealing of documents or procuring the execution of a valuable security within the meaning of section 20 of the Theft Act 1968 or section 19 of the Theft Act (Northern Ireland) 1969</li><li>fraud within the meaning of section 2, 3 or 4 of the Fraud Act 2006</li><li>the possession of articles for use in frauds within the meaning of section 6 of the Fraud Act 2006, or the making, adapting, supplying or offering to supply articles for use in frauds within the meaning of section 7 of that Act</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-11-273';
 INSERT INTO Assets
@@ -1642,19 +1642,19 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-11-274';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-11-274', '', 'Acts of terrorism', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-11-274', '', 'Counter terrorism', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-11-275';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-11-275', '', 'Acts of terrorism', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-11-275', '', 'Counter terrorism', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-11-276';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-11-276', '', '<p class="govuk-body">Confirm whether, within the past 5 years, anyone who represents, supervises or has control in your organisation or a partner or parent organisation has been convicted of:</p><ul class="govuk-list govuk-list--bullet"><li>section 41 of the Counter Terrorism Act 2008</li><li>schedule 2 of the Counter Terrorism Act 2008 where the court has determined that there is a terrorist connection</li><li>any offence under sections 44 to 46 of the Serious Crime Act 2007</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-11-276', '', '<p class="govuk-body">Has any person with significant control in the last 5 years been convicted of:</p><ul class="govuk-list govuk-list--bullet"><li>section 41 of the Counter Terrorism Act 2008</li><li>schedule 2 of the Counter Terrorism Act 2008 where the court has determined that there is a terrorist connection</li><li>any offence under sections 44 to 46 of the Serious Crime Act 2007</li></ul><p class="govuk-body"><a class="govuk-link" target="_blank" href="https://www.gov.uk/government/collections/counter-terrorism-and-security-bill">Read the counter terrorism act</a></p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-12-277';
 INSERT INTO Assets
@@ -1666,19 +1666,19 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-12-278';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-12-278', '', 'Parent or partner organisations', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-12-278', '', 'Other criminal convictions', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-12-279';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-12-279', '', 'Parent or partner organisations', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-12-279', '', 'Other criminal convictions', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-12-280';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-12-280', '', '<p class="govuk-body">Confirm whether, within the past 5 years, anyone who represents, supervises or has control in your organisation or a partner or parent organisation has been convicted of:</p><ul class="govuk-list govuk-list--bullet"><li>money laundering within the meaning of sections 340(11) and 415 of the Proceeds of Crime Act 2002</li><li>an offence in connection with the proceeds of criminal conduct within the meaning of section 93A, 93B or 93C of the Criminal Justice Act 1988 or article 45, 46 or 47 of the Proceeds of Crime (Northern Ireland) Order 1996</li><li>an offence under section 4 of the Asylum and Immigration (Treatment of Claimants etc) Act 2004</li><li>an offence under section 59A of the Sexual Offences Act 2003</li><li>an offence under section 71 of the Coroners and Justice Act 2009</li><li>an offence in connection with the proceeds of drug trafficking within the meaning of section 49, 50 and 51 of the Drug Trafficking Act 1994</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-12-280', '', '<p class="govuk-body">Has any person of significant control (PSC) in the last 5 years, been convicted of:</p><ul class="govuk-list govuk-list--bullet"><li>money laundering within the meaning of sections 340(11) and 415 of the Proceeds of Crime Act 2002</li><li>an offence in connection with the proceeds of criminal conduct within the meaning of section 93A, 93B or 93C of the Criminal Justice Act 1988 or article 45, 46 or 47 of the Proceeds of Crime (Northern Ireland) Order 1996</li><li>an offence under section 4 of the Asylum and Immigration (Treatment of Claimants etc) Act 2004</li><li>an offence under section 59A of the Sexual Offences Act 2003</li><li>an offence under section 71 of the Coroners and Justice Act 2009</li><li>an offence in connection with the proceeds of drug trafficking within the meaning of section 49, 50 and 51 of the Drug Trafficking Act 1994</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-281';
 INSERT INTO Assets
@@ -1726,7 +1726,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-13-288';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-13-288', '', '<p class="govuk-body">Have members of your organisation or a partner organisation been legally found to be in breach of tax payments or social security contributions?</p><p class="govuk-body">If you do answer ''yes'', you must provide full details of any subsequent event or remedial action that you think the Education and Skills Funding Agency (ESFA) should take into consideration. ESFA will use the information you provide to consider whether or not you will be able to proceed any further with this application.</p><p class="govuk-body">''A partner organisation'' includes members of your group of economic operators or their proposed subcontractors.</p><p class="govuk-body">ESFA can also exclude you if you are guilty of serious misrepresentation in providing any information referred to within regulations 23, 24, 25, 26 or 27 of the ''Public Contracts Regulations 2015'' or if you fail to provide any such information it requests.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-13-288', '', '<p class="govuk-body">Have members of your organisation or a partner organisation been legally found to be in breach of tax payments or social security contributions?</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-13.1-289';
 INSERT INTO Assets
@@ -1775,7 +1775,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-14-296';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-14-296', '', '<p class="govuk-body">Confirm whether, within the past 3 years, your organisation or any of your partner organisations:</p><ul class="govuk-list govuk-list--bullet"><li>has been made bankrupt or the subject of insolvency or winding-up proceedings</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-14-296', '', '<p class="govuk-body">In the past 3 years has your organisation or partner organisations been:</p><ul class="govuk-list govuk-list--bullet"><li>made bankrupt</li><li>subject of insolvency</li><li>winding-up proceedings/li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20.1-297';
 INSERT INTO Assets
@@ -1991,7 +1991,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-22-332';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-22-332', '', '<p class="govuk-body">Confirm whether any of your organisation''s tax returns, submitted on or after 1 October 2012, have:</p><ul class="govuk-list govuk-list--bullet"><li>been found to be incorrect as of 1 April 2013</li><li>given rise to a criminal conviction for tax-related offences which is unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-22-332', '', '<p class="govuk-body">Has your organisation or partner organisations tax returns on or after the 1 October 2013:</p><ul class="govuk-list govuk-list--bullet"><li>been found to be incorrect as of 1 April 2013</li><li>resulted in a criminal conviction for tax-related offences which are unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-22.1-333';
 INSERT INTO Assets
@@ -2039,7 +2039,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-23-340';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-23-340', '', '<p class="govuk-body">Confirm whether any of your organisation''s tax returns, submitted on or after 1 October 2012, have been found to be incorrect on or after 1 April 2013 because:</p><ul class="govuk-list govuk-list--bullet"><li>HMRC successfully challenged it under the General Anti-Abuse Rule (GAAR) or Halifax abuse principle OR</li><li>a tax authority (in a jurisdiction in which your organisation is established) successfully challenging it under any tax rules or legislation that have an effect equivalent or similar to the GAAR or Halifax abuse principle</li><li>given rise to a criminal conviction for tax-related offences which is unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-23-340', '', '<p class="govuk-body">Has your organisation or your partner organisations tax returns between 1 October 2012 and 1 April 2013 been:</p><ul class="govuk-list govuk-list--bullet"><li>successfully challenged by HMRC under the general anti-abuse rule (GAAR) or the Halifax abuse principle</li><li>challenged by a tax authority in the jurisdiction your organisation is based with rules or legislation similar to GAAR or Halifax</li><li>resulted in criminal convictions for tax-related offences which are unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-23.1-341';
 INSERT INTO Assets
@@ -2087,7 +2087,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-24-348';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-24-348', '', '<p class="govuk-body">Has your organisation had any contract for the delivery of services withdrawn within the last 3 financial years?</p><ul class="govuk-list govuk-list--bullet"><li>HMRC successfully challenged it under the General Anti-Abuse Rule (GAAR) or Halifax abuse principle OR</li><li>a tax authority (in a jurisdiction in which your organisation is established) successfully challenging it under any tax rules or legislation that have an effect equivalent or similar to the GAAR or Halifax abuse principle</li><li>given rise to a criminal conviction for tax-related offences which is unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-24-348', '', '<p class="govuk-body">Has your organisation had any contract for the delivery of services withdrawn within the last 3 financial years?</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-24.1-349';
 INSERT INTO Assets
@@ -2135,7 +2135,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-25-356';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-25-356', '', '<p class="govuk-body">Has your organisation withdrawn from a contract for the delivery of services within the last 3 years?</p><ul class="govuk-list govuk-list--bullet"><li>HMRC successfully challenged it under the General Anti-Abuse Rule (GAAR) or Halifax abuse principle OR</li><li>a tax authority (in a jurisdiction in which your organisation is established) successfully challenging it under any tax rules or legislation that have an effect equivalent or similar to the GAAR or Halifax abuse principle</li><li>given rise to a criminal conviction for tax-related offences which is unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-25-356', '', '<p class="govuk-body">Has your organisation withdrawn from a contract for the delivery of services within the last 3 years?</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-25.1-357';
 INSERT INTO Assets
@@ -2219,19 +2219,19 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-26-370';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26-370', '', 'Organisation removed from registers', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26-370', '', 'Organisation removal from registers', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-26-371';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26-371', '', 'Organisation removed from registers', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26-371', '', 'Organisation removal from registers', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-26-372';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26-372', '', '<p class="govuk-body">Has your organisation been removed from any of the following registers?</p><ul class="govuk-list govuk-list--bullet"><li>Education and skills funding agency''s register of training organisations RoATP</li><li>EPAO register</li><li>Ofqual''s register</li><li>Other professional or trade registers</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26-372', '', '<p class="govuk-body">Has you organisation been removed from:</p><ul class="govuk-list govuk-list--bullet"><li>Education and skills funding agency''s register of training organisations (RoATP)</li><li>End-point assessor organisations (EPAO) register</li><li>Ofqual''s register</li><li>other professional or trade registers</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-26.1-373';
 INSERT INTO Assets
@@ -2267,13 +2267,13 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-26.2-378';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26.2-378', '', 'Reasons why', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26.2-378', '', 'Reasons why your organisation was removed', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-26.2-379';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26.2-379', '', 'Reasons why', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26.2-379', '', 'Reasons why your organisation was removed', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-26.2-380';
 INSERT INTO Assets
@@ -2303,7 +2303,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-27-384';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27-384', '', '<p class="govuk-body">Has your organisation received direction or sanctions from any of the following?</p><ul class="govuk-list govuk-list--bullet"><li>Ofqual</li><li>The QAA</li><li>Awarding organisations</li><li>Other similar bodies</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27-384', '', '<p class="govuk-body">Has your organisation received direction or sanctions from any of the following?</p><ul class="govuk-list govuk-list--bullet"><li>Ofqual</li><li>Quality Assurance Agency (QAA) for higher education</li><li>awarding organisations</li><li>other similar bodies</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-27.1-385';
 INSERT INTO Assets
@@ -2339,13 +2339,13 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-27.2-390';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27.2-390', '', 'Reasons why', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27.2-390', '', 'Reasons why your organisation received direction or sanctions', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-27.2-391';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27.2-391', '', 'Reasons why', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27.2-391', '', 'Reasons why your organisation received direction or sanctions', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-27.2-392';
 INSERT INTO Assets
@@ -2423,7 +2423,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-29-404';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-29-404', '', '<p class="govuk-body">Have any directors, shareholders, senior employees or someone that has powers of representation, decision or control of your organisation had any of the following?</p><ul class="govuk-list govuk-list--bullet"><li>Failure to repay funding due to any public body</li><li>Early termination of a contract with a public body</li><li>Early withdrawal from a contract with a public body</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-29-404', '', '<p class="govuk-body">Has any person of significant control in your organisation had:</p><ul class="govuk-list govuk-list--bullet"><li>a failure to repay funding due to any public body</li><li>early termination of a contract with a public body</li><li>early withdrawal from a contract with a public body</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-29.1-405';
 INSERT INTO Assets
@@ -2740,7 +2740,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-193-DT-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-193-DT-1', '', 'What is a PSC?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-193-DT-1', '', 'What classifies as a person with significant control?', 'Live', GETUTCDATE(), 'Import')
 GO
 
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-193-DB-1';
@@ -2762,14 +2762,14 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-195-LT-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-195-LT-1', '', 'Acts of terrorism', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-195-LT-1', '', 'Counter terrorism', 'Live', GETUTCDATE(), 'Import')
 GO
 
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-196-LT-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-196-LT-1', '', 'Parent or partner organisations', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-196-LT-1', '', 'Other criminal convictions', 'Live', GETUTCDATE(), 'Import')
 GO
 
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-LT-1';
@@ -2834,7 +2834,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-207-LT-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-207-LT-1', '', 'Organisation removed from registers', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-207-LT-1', '', 'Organisation removal from registers', 'Live', GETUTCDATE(), 'Import')
 GO
 
 
@@ -4326,7 +4326,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Field must not be empty"
+                "ErrorMessage": "Enter the name of the person named as authoriser"
               }
             ]
           },
@@ -4345,7 +4345,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Field must not be empty"
+                "ErrorMessage": "Enter the job title of the person named as authoriser"
               }
             ]
           },
@@ -4427,7 +4427,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if you can start an end-point assessment on the day you join the register"
               }
             ]
           },
@@ -4545,7 +4545,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if any convictions apply"
               }
             ]
           },
@@ -4602,7 +4602,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if any convictions apply"
               }
             ]
           },
@@ -4659,7 +4659,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if any convictions apply"
               }
             ]
           },
@@ -4718,7 +4718,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of payments or payment agreements"
                         }
                       ]
                     },
@@ -4736,7 +4736,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if any convictions apply"
               }
             ]
           },
@@ -4793,7 +4793,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if any bankruptcy or insolvency proceedings apply"
               }
             ]
           },
@@ -4975,7 +4975,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of any mitigating factors"
                         }
                       ]
                     },
@@ -4993,7 +4993,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if any cessation of trading proceedings apply"
               }
             ]
           },
@@ -5052,7 +5052,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of any mitigating factors"
                         }
                       ]
                     },
@@ -5070,7 +5070,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if any tax returns have been found to be incorrect"
               }
             ]
           },
@@ -5081,7 +5081,7 @@ VALUES
       "Next": [
           {
             "Action": "NextPage",
-			"ReturnId": "204",
+			      "ReturnId": "204",
             "Condition": null,
             "ConditionMet": false
           }
@@ -5095,7 +5095,7 @@ VALUES
       "HasFeedback": false,
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
-	{
+	  {
       "PageId": "204",
       "SequenceId": "1",
       "SectionId": "2",
@@ -5129,7 +5129,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of any mitigating factors"
                         }
                       ]
                     },
@@ -5147,7 +5147,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if any tax returns have been found to be incorrect"
               }
             ]
           },
@@ -5206,7 +5206,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of any mitigating factors"
                         }
                       ]
                     },
@@ -5224,7 +5224,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if your organisation has had any contracts withdrawn"
               }
             ]
           },
@@ -5283,7 +5283,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of any mitigating factors"
                         }
                       ]
                     },
@@ -5302,7 +5302,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter a full name"
                         }
                       ]
                     },
@@ -5344,7 +5344,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if your organisation has withdrawn from any contracts"
               }
             ]
           },
@@ -5427,7 +5427,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter the reasons why your organisation was removed from those registers"
                         }
                       ]
                     },
@@ -5445,7 +5445,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if your organisation been removed from the listed registers"
               }
             ]
           },
@@ -5528,7 +5528,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter the reasons why your organisation received direction or sanctions"
                         }
                       ]
                     },
@@ -5546,7 +5546,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if your organisation has received direction or sanctions"
               }
             ]
           },
@@ -5557,7 +5557,7 @@ VALUES
       "Next": [
           {
             "Action": "NextPage",
-			"ReturnId": "209",
+			      "ReturnId": "209",
             "Condition": null,
             "ConditionMet": false
           }
@@ -5571,7 +5571,7 @@ VALUES
       "HasFeedback": false,
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
-	{
+	  {
       "PageId": "209",
       "SequenceId": "1",
       "SectionId": "2",
@@ -5605,7 +5605,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of any mitigating factors"
                         }
                       ]
                     },
@@ -5623,7 +5623,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if your organisation has ever had to repay public money"
               }
             ]
           },
@@ -5634,7 +5634,7 @@ VALUES
       "Next": [
           {
             "Action": "NextPage",
-			"ReturnId": "210",
+			      "ReturnId": "210",
             "Condition": null,
             "ConditionMet": false
           }
@@ -5648,7 +5648,7 @@ VALUES
       "HasFeedback": false,
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
-	{
+	  {
       "PageId": "210",
       "SequenceId": "1",
       "SectionId": "2",
@@ -5682,7 +5682,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of any mitigating factors"
                         }
                       ]
                     },
@@ -5700,7 +5700,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if any of the listed apply"
               }
             ]
           },
@@ -5725,7 +5725,7 @@ VALUES
       "HasFeedback": false,
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
-	{
+	  {
       "PageId": "211",
       "SequenceId": "1",
       "SectionId": "2",
@@ -5783,7 +5783,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of the dispute"
                         }
                       ]
                     },
@@ -5802,7 +5802,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter current status of the dispute"
                         }
                       ]
                     },
@@ -5820,7 +5820,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if your organisation has an outstanding or ongoing legal dispute"
               }
             ]
           },
@@ -5831,7 +5831,7 @@ VALUES
       "Next": [
           {
             "Action": "NextPage",
-			"ReturnId": "22",
+			      "ReturnId": "22",
             "Condition": null,
             "ConditionMet": false
           }
@@ -5877,7 +5877,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if you understand the false declarations statement"
               }
             ]
           },
@@ -5934,7 +5934,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if your applications to deliver end-point assessments will be accurate and true representations"
               }
             ]
           },
@@ -5991,7 +5991,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if you agree for your organisation details to be added to the register"
               }
             ]
           },
