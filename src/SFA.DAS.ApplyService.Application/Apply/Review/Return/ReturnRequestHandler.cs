@@ -76,14 +76,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
             if (sequenceId == 1)
             {
                 var lastInitSubmission = application.ApplicationData?.InitSubmissions.OrderByDescending(sub => sub.SubmittedAt).FirstOrDefault();
-                var contactToNotify = await _contactRepository.GetContact(lastInitSubmission?.SubmittedBy);
+                var contactToNotify = await _contactRepository.GetContact(lastInitSubmission.SubmittedBy);
 
                 await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_UPDATE, contactToNotify, new { reference });
             }
             else if (sequenceId == 2)
             {
                 var lastStandardSubmission = application.ApplicationData?.StandardSubmissions.OrderByDescending(sub => sub.SubmittedAt).FirstOrDefault();
-                var contactToNotify = await _contactRepository.GetContact(lastStandardSubmission?.SubmittedBy);
+                var contactToNotify = await _contactRepository.GetContact(lastStandardSubmission.SubmittedBy);
 
                 await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_RESPONSE, contactToNotify, new { reference, standard });
             }
