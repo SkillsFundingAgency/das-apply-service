@@ -154,20 +154,19 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, User.GetUserId());
 
-            if (section.DisplayType == SectionDisplayType.Pages)
+            switch(section?.DisplayType)
             {
-                return View("~/Views/Application/Section.cshtml", section);
-            }
-            if (section.DisplayType == SectionDisplayType.Questions)
-            {
-                return View("~/Views/Application/SectionQuestions.cshtml", section);
-            }
-            if (section.DisplayType == SectionDisplayType.PagesWithSections)
-            {
-                return View("~/Views/Application/PagesWithSections.cshtml", section);
-            }
+                case null:
+                case SectionDisplayType.Pages:
+                    return View("~/Views/Application/Section.cshtml", section);
+                case SectionDisplayType.Questions:
+                    return View("~/Views/Application/Section.cshtml", section);
+                case SectionDisplayType.PagesWithSections:
+                    return View("~/Views/Application/PagesWithSections.cshtml", section);
+                default:
+                    throw new BadRequestException("Section does not have a valid DisplayType");
 
-            throw new BadRequestException("Section does not have a valid DisplayType");
+            }
         }
 
         [HttpGet("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
@@ -178,15 +177,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             page = await GetDataFedOptions(page);
 
             var returnUrl = Request.Headers["Referer"].ToString();
-            var pageVm = new PageViewModel(page, applicationId, redirectAction, returnUrl, null);
-
-            pageVm.SectionId = sectionId;
-            pageVm.RedirectAction = redirectAction;
-
+            var pageVm = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, redirectAction, returnUrl, null);
      
             ProcessPageVmQuestionsForStandardName(pageVm.Questions, applicationId);
 
-            if (page.AllowMultipleAnswers)
+            if (page != null && page.AllowMultipleAnswers)
             {
                 return View("~/Views/Application/Pages/MultipleAnswers.cshtml", pageVm);
             }
@@ -196,14 +191,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private async Task<Page> GetDataFedOptions(Page page)
         {
-            foreach (var question in page.Questions)
+            if (page != null)
             {
-                if (question.Input.Type.StartsWith("DataFed_"))
+                foreach (var question in page.Questions)
                 {
-                    var questionOptions = await _apiClient.GetQuestionDataFedOptions(question.Input.DataEndpoint);
-                    // Get data from API using question.Input.DataEndpoint
-                    question.Input.Options = questionOptions;
-                    question.Input.Type = question.Input.Type.Replace("DataFed_", "");
+                    if (question.Input.Type.StartsWith("DataFed_"))
+                    {
+                        var questionOptions = await _apiClient.GetQuestionDataFedOptions(question.Input.DataEndpoint);
+                        // Get data from API using question.Input.DataEndpoint
+                        question.Input.Options = questionOptions;
+                        question.Input.Type = question.Input.Type.Replace("DataFed_", "");
+                    }
                 }
             }
 
@@ -212,6 +210,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private void ProcessPageVmQuestionsForStandardName(List<QuestionViewModel> pageVmQuestions, Guid applicationId)
          {
+            if (pageVmQuestions == null) return;
+
              var placeholderString = "StandardName";
              var isPlaceholderPresent = false;
 
@@ -394,7 +394,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var newPage = await GetDataFedOptions(updatePageResult.Page);
 
 
-            var pageVm = new PageViewModel(newPage, applicationId, redirectAction, returnUrl, errorMessages);
+            var pageVm = new PageViewModel(applicationId, sequenceId, sectionId, pageId, newPage, redirectAction, returnUrl, errorMessages);
 
 
             if (page.AllowMultipleAnswers)
