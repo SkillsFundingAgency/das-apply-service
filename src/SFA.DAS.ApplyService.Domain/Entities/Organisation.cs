@@ -31,5 +31,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string City { get; set; }
         public string Postcode { get; set; }
         public DateTime? FinancialDueDate { get; set; }
+        public bool? FinancialExempt { get; set; }
     }
 }

@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Organisation = SFA.DAS.ApplyService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
@@ -43,7 +44,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
             return Mapper.Map<OrganisationSummary, Types.OrganisationSearchResult>(apiResponse);
         }
-
+        
         public async Task<IEnumerable<Types.OrganisationType>> GetOrgansiationTypes(bool activeOnly = true)
         {
             _logger.LogInformation($"Getting Organisation Types from EPAO Register.");
@@ -106,6 +107,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             var result = context.AcquireTokenAsync(resourceId, clientCredential).Result;
 
             return result.AccessToken;
+        }
+
+        public async Task UpdateOrganisation(Organisation organisation)
+        {
+            //var org = GetOrganisationByEmail()
         }
     }
 

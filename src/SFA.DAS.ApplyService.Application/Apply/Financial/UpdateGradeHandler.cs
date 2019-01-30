@@ -10,38 +10,44 @@ using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Financial
 {
-    public class UpdateGradeHandler : IRequestHandler<UpdateGradeRequest>
+    public class UpdateGradeHandler : IRequestHandler<UpdateGradeRequest, Organisation>
     {
         private readonly IApplyRepository _applyRepository;
         private readonly IMediator _mediator;
         private readonly IOrganisationRepository _organisationRepository;
 
-        public UpdateGradeHandler(IApplyRepository applyRepository, IMediator mediator, IOrganisationRepository organisationRepository)
+        public UpdateGradeHandler(IApplyRepository applyRepository, IMediator mediator,
+            IOrganisationRepository organisationRepository)
         {
             _applyRepository = applyRepository;
             _mediator = mediator;
             _organisationRepository = organisationRepository;
         }
 
-        public async Task<Unit> Handle(UpdateGradeRequest request, CancellationToken cancellationToken)
+        public async Task<Organisation> Handle(UpdateGradeRequest request, CancellationToken cancellationToken)
         {
             var section = await _mediator.Send(new GetSectionRequest(request.ApplicationId, null, 1, 3));
 
             section.QnAData.FinancialApplicationGrade = request.UpdatedGrade;
-            section.QnAData.FinancialApplicationGrade.GradedDateTime = DateTime.UtcNow;                    
+            section.QnAData.FinancialApplicationGrade.GradedDateTime = DateTime.UtcNow;
             section.Status = ApplicationSectionStatus.Graded;
-            
+
             await _applyRepository.SaveSection(section);
 
-            if (request.UpdatedGrade.FinancialDueDate.HasValue)
-            {
-                var org = await _organisationRepository.GetOrganisationByApplicationId(request.ApplicationId);
-                org.OrganisationDetails.FinancialDueDate = request.UpdatedGrade.FinancialDueDate.Value;
+            var org = await UpdateApplyOrganisation(request);
 
-                await _organisationRepository.UpdateOrganisation(org, Guid.NewGuid());
-            }
-                        
-            return Unit.Value;
+            return org;
+        }
+
+        private async Task<Organisation> UpdateApplyOrganisation(UpdateGradeRequest request)
+        {
+            var org = await _organisationRepository.GetOrganisationByApplicationId(request.ApplicationId);
+            org.OrganisationDetails.FinancialDueDate = request.UpdatedGrade.FinancialDueDate;
+            org.OrganisationDetails.FinancialExempt =
+                request.UpdatedGrade.SelectedGrade == FinancialApplicationSelectedGrade.Exempt;
+            await _organisationRepository.UpdateOrganisation(org, Guid.NewGuid());
+
+            return org;
         }
     }
 }
