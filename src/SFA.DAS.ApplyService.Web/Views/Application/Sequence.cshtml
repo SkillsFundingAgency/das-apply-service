@@ -13,25 +13,6 @@
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">Application overview</h1>
 
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-                    <h2 class="govuk-error-summary__title" id="error-summary-title">
-                        There is a problem
-                    </h2>
-                    <div class="govuk-error-summary__body">
-                        <ul class="govuk-list govuk-error-summary__list">
-                            @foreach (var error in Model.ErrorMessages)
-                            {
-                                <li>
-                                    <a href="#@error.Field">@error.ErrorMessage</a>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                </div>
-            }
-
             @if (Model.Status == ApplicationSequenceStatus.Submitted)
             {
                 <div class="das-apply-notification-summary govuk-!-margin-bottom-8">
@@ -67,44 +48,15 @@
 
             @if (Model.Sections.Sum(m => m.PagesComplete) == Model.Sections.Sum(m => m.PagesActive) && Model.Status != ApplicationSequenceStatus.Submitted)
             {
-                <div class="govuk-form-group">
-                    <form asp-action="Submit" asp-controller="Application">
-                        <input type="hidden" id="applicationId" name="applicationId" value="@Model.ApplicationId" />
-                        <input type="hidden" id="sequenceId" name="sequenceId" value="@Model.SequenceId" />
-                        <p class="govuk-body">Do you agree to comply with the terms of the conditions for organisations on <a class="govuk-link" target="_blank" href="https://www.gov.uk/guidance/register-of-end-point-assessment-organisations#how-to-apply-to-the-register-of-end-point-assessment-organisations">the register of end-point assessment organisations</a> and sign and return document titled: 'Conditions for organisations on the register of end-point assessment organisations'?</p>
-                        <p class="govuk-body">If you make an application to be added to the register, you're agreeing to the terms and conditions in the legal documentation.</p>
-                        <div class="govuk-form-group @(Model.TermsAndConditionsErrorMessage != null ? "govuk-form-group--error" : "")">
-                            <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
-                                <div class="govuk-checkboxes">
-                                    @if (Model.TermsAndConditionsErrorMessage != null)
-                                    {
-                                        <span id="terms-and-conditions-error" class="govuk-error-message">
-                                            @Model.TermsAndConditionsErrorMessage.ErrorMessage
-                                        </span>
-                                    }
-                                    <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" id="terms-and-conditions" name="acceptedTermsAndConditions" type="checkbox" value="True">
-                                        <label class="govuk-label govuk-checkboxes__label" for="terms-and-conditions">
-                                            I accept the terms and conditions
-                                        </label>
-                                    </div>
-                                </div>
-                            </fieldset>
-                        </div>
-                        <div class="govuk-form-group">
-                            @*
-                                Need to add the attributes:
-                                    disabled="disabled" aria-disabled="true"
-                                and the class:
-                                    govuk-button--disabled
-                                with js so this functions with js off.
-                            *@
-                            <button type="submit" class="govuk-button">
-                                Continue
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                <form asp-action="Submit" asp-controller="Application">
+                    <input type="hidden" id="applicationId" name="applicationId" value="@Model.ApplicationId" />
+                    <input type="hidden" id="sequenceId" name="sequenceId" value="@Model.SequenceId" />
+                    <div class="govuk-form-group">
+                        <button type="submit" class="govuk-button">
+                            Continue
+                        </button>
+                    </div>
+                </form>
             }
 
         </div>
