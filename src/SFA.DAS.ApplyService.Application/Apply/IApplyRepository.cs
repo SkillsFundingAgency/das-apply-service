@@ -13,6 +13,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         Task<List<Domain.Entities.Application>> GetApplications(Guid userId);
         Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId,  int sectionId, Guid? userId);
+        Task<ApplicationSequence> GetSequence(Guid applicationId, int sequenceId, Guid? userId);
         Task<ApplicationSequence> GetActiveSequence(Guid applicationId);
         Task<List<Asset>> GetAssets();
         Task<Guid> CreateApplication(string applicationType, Guid applyingOrganisationId, Guid userId, Guid workflowId);
