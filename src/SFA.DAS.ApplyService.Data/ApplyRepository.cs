@@ -489,16 +489,13 @@ namespace SFA.DAS.ApplyService.Data
 	                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
 	                        INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id 
 	                        INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-	                        WHERE appl.ApplicationStatus IN(@applicationStatusApproved, @applicationStatusRejected) 
-                                AND seq.Status IN (@sequenceStatusApproved, @sequenceStatusRejected)
+	                        WHERE seq.Status IN (@sequenceStatusApproved, @sequenceStatusRejected)
 	                        GROUP BY seq.SequenceId, seq.Status, appl.ApplyingOrganisationId, appl.id, org.Name, appl.ApplicationData 
                         ) ab",
                         new
                         {
-                            applicationStatusApproved = ApplicationStatus.Approved,
-                            applicationStatusRejected = ApplicationStatus.Rejected,
                             sequenceStatusApproved = ApplicationSequenceStatus.Approved,
-                            sequenceStatusRejected = ApplicationSequenceStatus.Rejected,
+                            sequenceStatusRejected = ApplicationSequenceStatus.Rejected
                         })).ToList();
             }
         }
