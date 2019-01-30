@@ -484,13 +484,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
 
         [HttpPost("/Applications/Submit")]
-        public async Task<IActionResult> Submit(Guid applicationId, int sequenceId, bool acceptedTermsAndConditions)
+        public async Task<IActionResult> Submit(Guid applicationId, int sequenceId)
         {
-            if (!acceptedTermsAndConditions)
-            {
-                return RedirectToAction("Sequence", new {applicationId, notAcceptedTermsAndConditions = true});
-            }
-
             await _apiClient.Submit(applicationId, sequenceId, User.GetUserId(), User.GetEmail());
             return RedirectToAction("Submitted", new {applicationId});
         }
