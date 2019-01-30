@@ -85,22 +85,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet("/Applications/{applicationId}/Sequence")]
-        public async Task<IActionResult> Sequence(Guid applicationId, bool notAcceptedTermsAndConditions)
+        public async Task<IActionResult> Sequence(Guid applicationId)
         {
             // Break this out into a "Signpost" action.
             var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
-
-            var errorMessages = new List<ValidationErrorDetail>();
-
-            if (notAcceptedTermsAndConditions)
-            {
-                string key = "terms-and-conditions";
-                string errorMessage = "You must accept the terms and conditions to proceed";
-                ModelState.AddModelError(key, errorMessage);
-                errorMessages.Add(new ValidationErrorDetail(key, errorMessage));
-            }
-
-            var sequenceVm = new SequenceViewModel(sequence, applicationId, errorMessages);
+            var sequenceVm = new SequenceViewModel(sequence, applicationId, null);
             return View(sequenceVm);
         }
 
