@@ -34,7 +34,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             _logger.LogInformation($"Searching EPAO Register. Search Term: {searchTerm}");
             var apiResponse = await Get<IEnumerable<OrganisationSummary>>($"/api/ao/assessment-organisations/search/{searchTerm}");
 
-            return Mapper.Map<IEnumerable<OrganisationSummary>, IEnumerable<Types.OrganisationSearchResult>>(apiResponse);
+            var organisationSearchResults = Mapper.Map<IEnumerable<OrganisationSummary>, IEnumerable<Types.OrganisationSearchResult>>(apiResponse);
+            
+            return organisationSearchResults;
         }
 
         public async Task<Types.OrganisationSearchResult> GetOrganisationByEmail(string emailAddress)

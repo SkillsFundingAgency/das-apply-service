@@ -34,5 +34,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types
         public string Address3 { get; set; }
         public string City { get; set; }
         public string Postcode { get; set; }
+        public DateTime? FinancialDueDate { get; set; }
+        public bool? FinancialExempt { get; set; }
     }
 }

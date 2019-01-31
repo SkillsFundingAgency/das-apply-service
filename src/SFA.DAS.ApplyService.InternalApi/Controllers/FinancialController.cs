@@ -35,12 +35,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<ActionResult> UpdateGrade(Guid applicationId, [FromBody] FinancialApplicationGrade updatedGrade)
         {
             var organisation = await _mediator.Send(new UpdateGradeRequest(applicationId, updatedGrade));
-
-            if (organisation.OrganisationDetails.OrganisationReferenceType == "RoEPAO")
-            {
-                // Call the assessor Api to update the org with the financial due date and exemption status. 
-            }
-            
+           
             return Ok();
         }
 

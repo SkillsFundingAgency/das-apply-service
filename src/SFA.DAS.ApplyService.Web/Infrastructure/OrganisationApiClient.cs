@@ -35,7 +35,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 Address2 = organisation.Address?.Address2,
                 Address3 = organisation.Address?.Address3,
                 City = organisation.Address?.City,
-                Postcode = organisation.Address?.Postcode
+                Postcode = organisation.Address?.Postcode, 
+                FinancialDueDate = organisation.FinancialDueDate, 
+                FinancialExempt = organisation.FinancialExempt
             };
 
             var request = new CreateOrganisationRequest
