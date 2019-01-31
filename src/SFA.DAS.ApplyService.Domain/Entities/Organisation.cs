@@ -30,6 +30,11 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string Address3 { get; set; }
         public string City { get; set; }
         public string Postcode { get; set; }
+        public FHADetails FHADetails { get; set; }
+    }
+
+    public class FHADetails
+    {
         public DateTime? FinancialDueDate { get; set; }
         public bool? FinancialExempt { get; set; }
     }

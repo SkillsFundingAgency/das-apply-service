@@ -42,10 +42,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
         private async Task<Organisation> UpdateApplyOrganisation(UpdateGradeRequest request)
         {
             var org = await _organisationRepository.GetOrganisationByApplicationId(request.ApplicationId);
-            org.OrganisationDetails.FinancialDueDate = request.UpdatedGrade.FinancialDueDate;
-            org.OrganisationDetails.FinancialExempt =
-                request.UpdatedGrade.SelectedGrade == FinancialApplicationSelectedGrade.Exempt;
-            await _organisationRepository.UpdateOrganisation(org, Guid.NewGuid());
+            org.OrganisationDetails.FHADetails = new FHADetails()
+            {
+                FinancialDueDate = request.UpdatedGrade.FinancialDueDate,
+                FinancialExempt = request.UpdatedGrade.SelectedGrade == FinancialApplicationSelectedGrade.Exempt
+            };
+            
+            await _organisationRepository.UpdateOrganisation(org);
 
             return org;
         }

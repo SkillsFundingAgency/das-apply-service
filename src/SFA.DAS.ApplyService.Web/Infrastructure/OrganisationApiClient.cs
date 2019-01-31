@@ -4,6 +4,7 @@ using SFA.DAS.ApplyService.InternalApi.Types;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using FHADetails = SFA.DAS.ApplyService.InternalApi.Types.FHADetails;
 using OrganisationDetails = SFA.DAS.ApplyService.InternalApi.Types.OrganisationDetails;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
@@ -36,8 +37,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 Address3 = organisation.Address?.Address3,
                 City = organisation.Address?.City,
                 Postcode = organisation.Address?.Postcode, 
-                FinancialDueDate = organisation.FinancialDueDate, 
-                FinancialExempt = organisation.FinancialExempt
+                FHADetails = new FHADetails()
+                {
+                    FinancialDueDate = organisation.FinancialDueDate, 
+                    FinancialExempt = organisation.FinancialExempt   
+                }
             };
 
             var request = new CreateOrganisationRequest

@@ -110,11 +110,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
             return result.AccessToken;
         }
-
-        public async Task UpdateOrganisation(Organisation organisation)
-        {
-            //var org = GetOrganisationByEmail()
-        }
     }
 
     public class GatherStandardsRequest : IRequest<string>

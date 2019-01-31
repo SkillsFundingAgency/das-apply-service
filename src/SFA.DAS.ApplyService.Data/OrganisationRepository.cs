@@ -68,6 +68,32 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<Organisation> UpdateOrganisation(Organisation organisation)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                return await UpdateOrganisation(organisation, connection);
+            }
+        }
+
+        private async Task<Organisation> UpdateOrganisation(Organisation organisation, SqlConnection connection)
+        {
+            connection.Execute(
+                "UPDATE [Organisations] " +
+                "SET [UpdatedAt] = GETUTCDATE(), [UpdatedBy] = @UpdatedBy, [Name] = @Name, " +
+                "[OrganisationType] = @OrganisationType, [OrganisationUKPRN] = @OrganisationUkprn, " +
+                "[OrganisationDetails] = @OrganisationDetails, [RoEPAOApproved] = @RoEPAOApproved, [RoATPApproved] = @RoATPApproved " +
+                "WHERE [Id] = @Id",
+                new {organisation.Id, organisation.Name, organisation.OrganisationType, organisation.OrganisationUkprn, organisation.OrganisationDetails, organisation.UpdatedBy, organisation.RoEPAOApproved, organisation.RoATPApproved});
+
+            var org = await GetOrganisationByName(organisation.Name);
+
+            return org;
+        }
+
         public async Task<Organisation> UpdateOrganisation(Organisation organisation, Guid userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -75,15 +101,7 @@ namespace SFA.DAS.ApplyService.Data
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
-                connection.Execute(
-                    "UPDATE [Organisations] " +
-                    "SET [UpdatedAt] = GETUTCDATE(), [UpdatedBy] = @UpdatedBy, [Name] = @Name, " +
-                    "[OrganisationType] = @OrganisationType, [OrganisationUKPRN] = @OrganisationUkprn, " +
-                    "[OrganisationDetails] = @OrganisationDetails, [RoEPAOApproved] = @RoEPAOApproved, [RoATPApproved] = @RoATPApproved " +
-                    "WHERE [Id] = @Id",
-                    new { organisation.Id, organisation.Name, organisation.OrganisationType, organisation.OrganisationUkprn, organisation.OrganisationDetails, organisation.UpdatedBy, organisation.RoEPAOApproved, organisation.RoATPApproved });
-
-                var org = await GetOrganisationByName(organisation.Name);
+                var org = await UpdateOrganisation(organisation, connection);
 
                 if (org != null)
                 {
