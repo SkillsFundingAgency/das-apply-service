@@ -18,13 +18,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.GetSection
         
         public async Task<ApplicationSequence> Handle(GetActiveSequenceRequest request, CancellationToken cancellationToken)
         {
-            var sequence = await _applyRepository.GetActiveSequence(request.ApplicationId);
-            if (sequence == null)
-            {
-                throw new BadRequestException("Application not found");
-            }
-
-            return sequence;
+            return await _applyRepository.GetActiveSequence(request.ApplicationId);
         }
     }
 }

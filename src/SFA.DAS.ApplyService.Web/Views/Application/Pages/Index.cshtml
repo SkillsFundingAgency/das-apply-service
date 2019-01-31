@@ -1,199 +1,208 @@
 @model SFA.DAS.ApplyService.Web.Controllers.PageViewModel
 
 @{
-    ViewBag.Title = @Model.Title;
+    ViewBag.Title = @Model.Title ?? "Page not active";
 }
 @*
-<noscript>
-    @if(!string.IsNullOrWhiteSpace(Model.ReturnUrl))
-    {
-    <a href="@Model.ReturnUrl" class="govuk-back-link">Back to previous page</a>
-    }
-    else if (Model.RedirectAction == "Feedback")
-    {
-    <a href="@Url.Action("Feedback", "Application", new { Model.ApplicationId })" class="govuk-back-link">Back to summary</a>
-    }
-    else
-    {
-    <a href="@Url.Action("Section", "Application", new { Model.ApplicationId, Model.SequenceId, Model.SectionId })" class="govuk-back-link">Back to summary</a>
-    }
-</noscript>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var jsBackButton = document.getElementById("jsBackButton");
-        jsBackButton.style = "";
-    });
-</script>
-<a id="jsBackButton" href="javascript:history.back()" class="govuk-back-link" style="display:none">Back to previous page</a>
+    <noscript>
+        @if(!string.IsNullOrWhiteSpace(Model.ReturnUrl))
+        {
+        <a href="@Model.ReturnUrl" class="govuk-back-link">Back to previous page</a>
+        }
+        else if (Model.RedirectAction == "Feedback")
+        {
+        <a href="@Url.Action("Feedback", "Application", new { Model.ApplicationId })" class="govuk-back-link">Back to summary</a>
+        }
+        else
+        {
+        <a href="@Url.Action("Section", "Application", new { Model.ApplicationId, Model.SequenceId, Model.SectionId })" class="govuk-back-link">Back to summary</a>
+        }
+    </noscript>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var jsBackButton = document.getElementById("jsBackButton");
+            jsBackButton.style = "";
+        });
+    </script>
+    <a id="jsBackButton" href="javascript:history.back()" class="govuk-back-link" style="display:none">Back to previous page</a>
 *@
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-
-            @if (!ViewData.ModelState.IsValid)
+            @if (Model.Questions == null)
             {
-
-                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-                    <h2 class="govuk-error-summary__title" id="error-summary-title">
-                        There is a problem
-                    </h2>
-                    <div class="govuk-error-summary__body">
-                        <ul class="govuk-list govuk-error-summary__list">
-                            @foreach (var error in Model.ErrorMessages)
-                            {
-                                <li>
-                                    <a href="#@error.Field">@error.ErrorMessage</a>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                </div>
+                <h1 class="govuk-heading-xl">
+                    Page not active
+                </h1>
             }
-
-            @if (Model.Questions.Count() > 1)
+            else
             {
-                @if (!string.IsNullOrEmpty(@Model.Title))
+                @if (!ViewData.ModelState.IsValid)
                 {
-                    <h1 class="govuk-heading-xl">
-                        @Html.Raw(Model.Title)
-                    </h1>
-                }
 
-                @if (!string.IsNullOrEmpty(@Model.BodyText))
-                {
-                    @Html.Raw(Model.BodyText)
-                }
-            }
-            
-            @if (Model.HasFeedback)
-            {
-                <div class="govuk-inset-text">
-                    <h2 class="govuk-heading-l">Feedback</h2>
-                    @foreach (var fb in Model.Feedback)
-                    {
-                        <p class="govuk-body">@Html.Raw(fb.Message)</p>
-                    }
-                </div>
-            }
-
-            <form method="post" asp-action="SaveAnswers" asp-controller="Application" novalidate enctype="multipart/form-data">
-                <input type="hidden" id="RedirectAction" name="RedirectAction" value="@Model.RedirectAction" />
-                @if (Model.Questions.Count() == 1)
-                {
-                    foreach (var question in Model.Questions)
-                    {
-                        <div class="govuk-form-group @(!ViewData.ModelState.IsValid ? "govuk-form-group--error" : "")">
-                            <fieldset class="govuk-fieldset">
-                                @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio" || question.Type == "CheckboxList") {
-                                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-                                        <h1 class="govuk-fieldset__heading">
-                                            @Html.Raw(question.Label)
-                                            @* @Html.Raw(question.QuestionId) *@
-                                        </h1>
-                                    </legend>
-                                    if (!string.IsNullOrWhiteSpace(@Model.BodyText))
-                                    {
-                                        @Html.Raw(Model.BodyText)
-                                    }
-                                }
-                                else
+                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                        <h2 class="govuk-error-summary__title" id="error-summary-title">
+                            There is a problem
+                        </h2>
+                        <div class="govuk-error-summary__body">
+                            <ul class="govuk-list govuk-error-summary__list">
+                                @foreach (var error in Model.ErrorMessages)
                                 {
-                                    if (!string.IsNullOrWhiteSpace(@Model.BodyText))
-                                    {
-                                        <div>
-                                            @Html.Raw(Model.BodyText)
-                                        </div>
-                                    }
-                                    <h2 class="govuk-label-wrapper">
-                                        <label class="govuk-label govuk-label--xl" for="@question.QuestionId">
-                                            @Html.Raw(question.Label)
-                                        </label>
-                                    </h2>
+                                    <li>
+                                        <a href="#@error.Field">@error.ErrorMessage</a>
+                                    </li>
                                 }
+                            </ul>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.Questions.Count() > 1)
+                {
+                    @if (!string.IsNullOrEmpty(@Model.Title))
+                    {
+                        <h1 class="govuk-heading-xl">
+                            @Html.Raw(Model.Title)
+                        </h1>
+                    }
+
+                    @if (!string.IsNullOrEmpty(@Model.BodyText))
+                    {
+                        @Html.Raw(Model.BodyText)
+                    }
+                }
+
+                @if (Model.HasFeedback)
+                {
+                    <div class="govuk-inset-text">
+                        <h2 class="govuk-heading-l">Feedback</h2>
+                        @foreach (var fb in Model.Feedback)
+                        {
+                            <p class="govuk-body">@Html.Raw(fb.Message)</p>
+                        }
+                    </div>
+                }
+
+                <form method="post" asp-action="SaveAnswers" asp-controller="Application" novalidate enctype="multipart/form-data">
+                    <input type="hidden" id="RedirectAction" name="RedirectAction" value="@Model.RedirectAction" />
+                    @if (Model.Questions.Count() == 1)
+                    {
+                        foreach (var question in Model.Questions)
+                        {
+                            <div class="govuk-form-group @(!ViewData.ModelState.IsValid ? "govuk-form-group--error" : "")">
+                                <fieldset class="govuk-fieldset">
+                                    @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio" || question.Type == "CheckboxList")
+                                    {
+                                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                                            <h1 class="govuk-fieldset__heading">
+                                                @Html.Raw(question.Label)
+                                                @* @Html.Raw(question.QuestionId) *@
+                                            </h1>
+                                        </legend>
+                                        if (!string.IsNullOrWhiteSpace(@Model.BodyText))
+                                        {
+                                            @Html.Raw(Model.BodyText)
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (!string.IsNullOrWhiteSpace(@Model.BodyText))
+                                        {
+                                            <div>
+                                                @Html.Raw(Model.BodyText)
+                                            </div>
+                                        }
+                                        <h2 class="govuk-label-wrapper">
+                                            <label class="govuk-label govuk-label--xl" for="@question.QuestionId">
+                                                @Html.Raw(question.Label)
+                                            </label>
+                                        </h2>
+                                    }
+
+                                    @if (question.QuestionBodyText != null)
+                                    {
+                                        @Html.Raw(question.QuestionBodyText)
+                                    }
+
+                                    @if (question.Hint != null)
+                                    {
+                                        <span class="govuk-hint">
+                                            @Html.Raw(question.Hint)
+                                        </span>
+                                    }
+
+                                    @if (question.Type == "ComplexRadio" && (question.ErrorMessages == null || question.ErrorMessages.Count == 0))
+                                    {
+                                        question.ErrorMessages = Model.ErrorMessages;
+                                    }
+                                    @{
+                                        var questionType = question.Type.Replace("DataFed_", "");
+
+                                    }
+
+                                    @Html.Partial($"~/Views/Application/Pages/Controls/_{questionType}.cshtml", question)
+                                </fieldset>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        foreach (var question in Model.Questions)
+                        {
+                            var questionHasError = false;
+                            if (Model.ErrorMessages != null)
+                            {
+                                foreach (var error in Model.ErrorMessages)
+                                {
+                                    if (error.Field == question.QuestionId)
+                                    {
+                                        questionHasError = true;
+                                    }
+                                }
+                            }
+                            <div class="govuk-form-group govuk-!-margin-bottom-8 @(questionHasError ? "govuk-form-group--error" : "")">
+                                <label class="govuk-label govuk-label--m" for="@question.QuestionId">
+                                    @Html.Raw(question.Label)
+                                </label>
 
                                 @if (question.QuestionBodyText != null)
                                 {
                                     @Html.Raw(question.QuestionBodyText)
                                 }
 
-                                @if (question.Hint != null)
+                                @if (question.Hint != "")
                                 {
                                     <span class="govuk-hint">
                                         @Html.Raw(question.Hint)
                                     </span>
                                 }
 
-                                @if (question.Type == "ComplexRadio" && (question.ErrorMessages==null || question.ErrorMessages.Count==0))
+                                @if (question.Type == "ComplexRadio" && (question.ErrorMessages == null || question.ErrorMessages.Count == 0))
                                 {
                                     question.ErrorMessages = Model.ErrorMessages;
                                 }
-                                @{
-                                    var questionType = question.Type.Replace("DataFed_", ""); 
-                                    
-                                }
 
-                                @Html.Partial($"~/Views/Application/Pages/Controls/_{questionType}.cshtml", question)
-                            </fieldset>
-                        </div>
+                                @Html.Partial($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
+                            </div>
+                        }
                     }
+
+                    <button type="submit" class="govuk-button">Save and continue</button>
+
+                    <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details" />
+                </form>
+            }
+
+            <p class="govuk-body">
+                @if (Model.RedirectAction == "Feedback")
+                {
+                    <a class="govuk-link" href="@Url.Action("Feedback", "Application", new { Model.ApplicationId })">Return to summary</a>
                 }
                 else
                 {
-                    foreach (var question in Model.Questions)
-                    {
-                        var questionHasError = false;
-                        if (Model.ErrorMessages != null)
-                        {
-                            foreach (var error in Model.ErrorMessages)
-                            {
-                                if (error.Field == question.QuestionId)
-                                {
-                                    questionHasError = true;
-                                }
-                            }
-                        }
-                        <div class="govuk-form-group govuk-!-margin-bottom-8 @(questionHasError ? "govuk-form-group--error" : "")">
-                            <label class="govuk-label govuk-label--m" for="@question.QuestionId">
-                                @Html.Raw(question.Label)
-                            </label>
-
-                            @if (question.QuestionBodyText != null)
-                            {
-                                @Html.Raw(question.QuestionBodyText)
-                            }
-
-                            @if (question.Hint != "")
-                            {
-                                <span class="govuk-hint">
-                                    @Html.Raw(question.Hint)
-                                </span>
-                            }
-   
-                        @if (question.Type == "ComplexRadio" && (question.ErrorMessages==null || question.ErrorMessages.Count==0))
-                        {
-                            question.ErrorMessages = Model.ErrorMessages;
-                        }
-
-                            @Html.Partial($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
-                        </div>
-                    }
+                    <a class="govuk-link" href="@Url.Action("Section", "Application", new { Model.ApplicationId, Model.SequenceId, Model.SectionId })">Return to summary</a>
                 }
-                
-                <button type="submit" class="govuk-button">Save and continue</button>
-
-                <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details" />
-
-                <p class="govuk-body">
-                    @if (Model.RedirectAction == "Feedback")
-                    {
-                        <a class="govuk-link" href="@Url.Action("Feedback", "Application", new {Model.ApplicationId})">Return to summary</a>
-                    }
-                    else
-                    {
-                        <a class="govuk-link" href="@Url.Action("Section", "Application", new {Model.ApplicationId, Model.SequenceId, Model.SectionId})">Return to summary</a>
-                    }
-                </p>
-            </form>
+            </p>
         </div>
     </div>
 </main>

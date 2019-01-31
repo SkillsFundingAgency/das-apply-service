@@ -17,14 +17,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.GetSection
         
         public async Task<ApplicationSection> Handle(GetSectionRequest request, CancellationToken cancellationToken)
         {
-            var section =
-                await _applyRepository.GetSection(request.ApplicationId, request.SequenceId, request.SectionId, request.UserId);
-            
-            if (section == null)
-            {
-                throw new BadRequestException("Application Section not found");}
-
-            return section;
+            return await _applyRepository.GetSection(request.ApplicationId, request.SequenceId, request.SectionId, request.UserId);
         }
     }
 }

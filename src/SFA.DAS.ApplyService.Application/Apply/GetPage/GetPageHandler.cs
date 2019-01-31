@@ -17,16 +17,15 @@ namespace SFA.DAS.ApplyService.Application.Apply.GetPage
         
         public async Task<Page> Handle(GetPageRequest request, CancellationToken cancellationToken)
         {
+            Page page = null;
+
             var section = await _applyRepository.GetSection(request.ApplicationId, request.SequenceId, request.SectionId, request.UserId);
-            if (section == null)
+            if (section != null)
             {
-                throw new BadRequestException("Application Section not found");
+                page = section.QnAData.Pages.SingleOrDefault(p => p.PageId == request.PageId);
+
+                if(page != null) page.DisplayType = section.DisplayType;
             }
-
-        
-            var page = section.QnAData.Pages.Single(p => p.PageId == request.PageId);
-
-            page.DisplayType = section.DisplayType;
 
             return page;
         }

@@ -43,19 +43,57 @@ namespace SFA.DAS.ApplyService.Data
             {
                 if (userId == null)
                 {
-                    return (await connection.QuerySingleAsync<ApplicationSection>(@"SELECT asec.* 
+                    return (await connection.QuerySingleOrDefaultAsync<ApplicationSection>(@"SELECT asec.* 
                                                                 FROM ApplicationSections asec
                                                                 INNER JOIN Applications a ON a.Id = asec.ApplicationId
                                                                 WHERE asec.ApplicationId = @applicationId AND asec.SectionId =@sectionId AND asec.SequenceId = @sequenceId",
                         new {applicationId, sequenceId, sectionId}));   
                 }
 
-                return (await connection.QuerySingleAsync<ApplicationSection>(@"SELECT asec.* 
+                return (await connection.QuerySingleOrDefaultAsync<ApplicationSection>(@"SELECT asec.* 
                                                                 FROM ApplicationSections asec
                                                                 INNER JOIN Applications a ON a.Id = asec.ApplicationId
                                                                 INNER JOIN Contacts c ON c.ApplyOrganisationID = a.ApplyingOrganisationId
                                                                 WHERE asec.ApplicationId = @applicationId AND asec.SectionId =@sectionId AND asec.SequenceId = @sequenceId AND c.Id = @userId",
                     new {applicationId, sequenceId, sectionId, userId}));
+            }
+        }
+
+        public async Task<ApplicationSequence> GetSequence(Guid applicationId, int sequenceId, Guid? userId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                ApplicationSequence sequence = null;
+
+                if (userId == null)
+                {
+                    sequence = await connection.QuerySingleOrDefaultAsync<ApplicationSequence>(@"SELECT seq.* 
+                            FROM ApplicationSequences seq
+                            INNER JOIN Applications a ON a.Id = seq.ApplicationId
+                            WHERE seq.ApplicationId = @applicationId 
+                            AND seq.SequenceId = @sequenceId", new { applicationId, sequenceId });
+                }
+                else
+                {
+                    sequence = await connection.QuerySingleOrDefaultAsync<ApplicationSequence>(@"SELECT seq.* 
+                            FROM ApplicationSequences seq
+                            INNER JOIN Applications a ON a.Id = seq.ApplicationId
+                            INNER JOIN Contacts c ON c.ApplyOrganisationID = a.ApplyingOrganisationId
+                            WHERE seq.ApplicationId = @applicationId 
+                            AND seq.SequenceId = @sequenceId AND c.Id = @userId", new { applicationId, sequenceId, userId });
+                }
+
+                if(sequence != null)
+                {
+                    var sections = (await connection.QueryAsync<ApplicationSection>(@"SELECT * FROM ApplicationSections 
+                                        WHERE ApplicationId = @ApplicationId 
+                                        AND SequenceId = @SequenceId",
+                                        new { sequence.ApplicationId, sequence.SequenceId })).ToList();
+
+                    sequence.Sections = sections;
+                }
+
+                return sequence;
             }
         }
 
@@ -449,18 +487,14 @@ namespace SFA.DAS.ApplyService.Data
                                 seq.Status As SequenceStatus
 	                        FROM Applications appl
 	                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
-	                        INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id 
 	                        INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-	                        WHERE appl.ApplicationStatus IN(@applicationStatusApproved, @applicationStatusRejected) 
-                                AND seq.Status IN (@sequenceStatusApproved, @sequenceStatusRejected)
+	                        WHERE seq.Status IN (@sequenceStatusApproved, @sequenceStatusRejected)
 	                        GROUP BY seq.SequenceId, seq.Status, appl.ApplyingOrganisationId, appl.id, org.Name, appl.ApplicationData 
                         ) ab",
                         new
                         {
-                            applicationStatusApproved = ApplicationStatus.Approved,
-                            applicationStatusRejected = ApplicationStatus.Rejected,
                             sequenceStatusApproved = ApplicationSequenceStatus.Approved,
-                            sequenceStatusRejected = ApplicationSequenceStatus.Rejected,
+                            sequenceStatusRejected = ApplicationSequenceStatus.Rejected
                         })).ToList();
             }
         }

@@ -1,17 +1,24 @@
 @model SFA.DAS.ApplyService.Domain.Entities.ApplicationSection
 
 @{
-    ViewBag.Title = @Model.Title;
+    ViewBag.Title = @Model?.Title ?? "Section not active";
     Layout = "_Layout";
 }
 
-<a href="@Url.Action("Sequence", "Application", new {applicationId = Model.ApplicationId})" class="govuk-back-link">Back to application overview</a>
+@if (Model == null)
+{
+    <a href="@Url.Action("Applications", "Application")" class="govuk-back-link">Back to application overview</a>
+}
+else
+{
+    <a href="@Url.Action("Sequence", "Application", new { applicationId = Model.ApplicationId })" class="govuk-back-link">Back to application overview</a>
+}
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             @if (Model == null)
             {
-                <h1 class="govuk-heading-xl">Sequence not active</h1>
+                <h1 class="govuk-heading-xl">Section not active</h1>
             }
             else
             {

@@ -5,6 +5,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
     public class ApplicationSummaryItem
     {
         public Guid ApplicationId { get; set; }
+        public int SequenceId { get; set; }
         public string OrganisationName { get; set; }
         public string ApplicationType { get; set; }
         public DateTime? SubmittedDate { get; set; }
