@@ -78,6 +78,13 @@ namespace SFA.DAS.ApplyService.InternalApi
             })
             .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
+            services.AddHttpClient<CompaniesHouseApiClient>("CompaniesHouseApiClient", config =>
+            {
+                config.BaseAddress = new Uri(_applyConfig.CompaniesHouseApiAuthentication.ApiBaseAddress); //  "https://api.companieshouse.gov.uk"
+                config.DefaultRequestHeaders.Add("Accept", "Application/json");
+            })
+            .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 options.DefaultRequestCulture = new RequestCulture("en-GB");
