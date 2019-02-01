@@ -143,6 +143,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, User.GetUserId());
 
+            if (section.Status != ApplicationSectionStatus.Draft)
+            {
+                return RedirectToAction("Sequence", new { applicationId = applicationId });
+            }
+
             switch(section?.DisplayType)
             {
                 case null:
@@ -163,6 +168,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, User.GetUserId());
 
+            var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, User.GetUserId());
+
+            if (section.Status != ApplicationSectionStatus.Draft)
+            {
+                return RedirectToAction("Sequence", new { applicationId = applicationId });
+            }
+            
+            
             page = await GetDataFedOptions(page);
 
             var returnUrl = Request.Headers["Referer"].ToString();
