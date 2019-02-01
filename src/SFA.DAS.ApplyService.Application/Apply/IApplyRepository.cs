@@ -27,6 +27,8 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task AddAssets(Dictionary<string,string> assets);
         Task<List<ApplicationSummaryItem>> GetOpenApplications();
         Task<List<ApplicationSummaryItem>> GetClosedApplications();
+        Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
+        Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();
         Task SubmitApplicationSequence(ApplicationSubmitRequest request, ApplicationData applicationdata);
         Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string status, string applicationStatus);
         Task CloseSequence(Guid applicationId, int sequenceId);
@@ -36,13 +38,11 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<Domain.Entities.Application> GetApplication(Guid requestApplicationId);
         Task UpdateApplicationStatus(Guid applicationId, string status);
         Task<List<ApplicationSection>> GetSections(Guid applicationId);
-        Task<List<dynamic>> GetNewFinancialApplications();
         Task StartApplicationReview(Guid applicationId, int sectionId);
         Task StartFinancialReview(Guid applicationId);
         Task<Organisation> GetOrganisationForApplication(Guid applicationId);
 
         Task<string> CheckOrganisationStandardStatus(Guid applicationId, int standardId);
-        Task<List<dynamic>> GetPreviousFinancialApplications();
 
         Task ClearAssets();
         Task<List<ApplicationSection>> GetApplicationSections();

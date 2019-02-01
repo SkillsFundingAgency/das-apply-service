@@ -26,6 +26,7 @@ namespace SFA.DAS.ApplyService.Data
             SqlMapper.AddTypeHandler(typeof(OrganisationDetails), new OrganisationDetailsHandler());
             SqlMapper.AddTypeHandler(typeof(QnAData), new QnADataHandler());
             SqlMapper.AddTypeHandler(typeof(ApplicationData), new ApplicationDataHandler());
+            SqlMapper.AddTypeHandler(typeof(FinancialApplicationGrade), new FinancialApplicationGradeDataHandler());
         }
         public async Task<List<Domain.Entities.Application>> GetApplications(Guid userId)
         {
@@ -499,26 +500,80 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-
-        public async Task<List<dynamic>> GetNewFinancialApplications()
+        public async Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                return (await connection.QueryAsync(@"SELECT org.Name, sec.Status, appl.Id
-                                FROM Applications appl
-                            INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-                            INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id
-                            WHERE appl.ApplicationStatus = @applicationStatusSubmitted 
-                            AND sec.SectionId = 3 
-                            AND (sec.Status = @financialStatusInProgress OR sec.Status = @financialStatusSubmitted)",
-                    new
-                    {
-                        applicationStatusSubmitted = ApplicationStatus.Submitted, 
-                        financialStatusInProgress = ApplicationSectionStatus.InProgress, 
-                        financialStatusSubmitted = ApplicationSectionStatus.Submitted
-                    })).ToList();
+                return (await connection
+                    .QueryAsync<FinancialApplicationSummaryItem>(
+                        @"SELECT 
+                            org.Name AS OrganisationName,
+                            appl.id AS ApplicationId,
+                            seq.SequenceId AS SequenceId,
+                            sec.SectionId AS SectionId,
+                            JSON_VALUE(appl.ApplicationData, '$.LatestInitSubmissionDate') As SubmittedDate,
+                            JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') As SubmissionCount,
+	                        CASE WHEN (seq.Status = @sequenceStatusFeedbackAdded) THEN @sequenceStatusFeedbackAdded
+                                 WHEN (JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') > 1 AND sec.Status = @financialStatusSubmitted) THEN @sequenceStatusResubmitted
+                                 ELSE sec.Status
+	                        END As CurrentStatus
+	                      FROM Applications appl
+	                      INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
+	                      INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id
+	                      INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
+	                      WHERE seq.SequenceId = 1 AND sec.SectionId = 3 AND seq.IsActive = 1
+                            AND appl.ApplicationStatus = @applicationStatusSubmitted
+                            AND seq.Status IN (@sequenceStatusSubmitted, @sequenceStatusFeedbackAdded)
+                            AND sec.Status IN (@financialStatusSubmitted, @financialStatusInProgress)",
+                        new
+                        {
+                            applicationStatusSubmitted = ApplicationStatus.Submitted,
+                            sequenceStatusSubmitted = ApplicationSequenceStatus.Submitted,
+                            sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded,
+                            sequenceStatusResubmitted = ApplicationSequenceStatus.Resubmitted,
+                            financialStatusSubmitted = ApplicationSectionStatus.Submitted,
+                            financialStatusInProgress = ApplicationSectionStatus.InProgress
+                        })).ToList();
             }
         }
+
+        public async Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection
+                    .QueryAsync<FinancialApplicationSummaryItem>(
+                        @"SELECT 
+                            org.Name AS OrganisationName,
+                            appl.id AS ApplicationId,
+                            seq.SequenceId AS SequenceId,
+                            sec.SectionId AS SectionId,
+                            JSON_QUERY(sec.QnAData, '$.FinancialApplicationGrade') AS Grade,
+                            JSON_VALUE(appl.ApplicationData, '$.LatestInitSubmissionDate') As SubmittedDate,
+                            JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') As SubmissionCount,
+	                        CASE WHEN (seq.Status = @sequenceStatusApproved) THEN @sequenceStatusApproved
+                                 WHEN (seq.Status = @sequenceStatusRejected) THEN @sequenceStatusRejected
+                                 ELSE sec.Status
+	                        END As CurrentStatus
+	                      FROM Applications appl
+	                      INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
+	                      INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id
+	                      INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
+	                      WHERE seq.SequenceId = 1 AND sec.SectionId = 3
+                            AND seq.Status IN (@sequenceStatusApproved, @sequenceStatusRejected, @sequenceStatusSubmitted)
+                            AND sec.Status IN (@financialStatusGraded, @financialStatusEvaluated)",
+                        new
+                        {
+                            sequenceStatusApproved = ApplicationSequenceStatus.Approved,
+                            sequenceStatusRejected = ApplicationSequenceStatus.Rejected,
+                            sequenceStatusSubmitted = ApplicationSequenceStatus.Submitted,
+                            financialStatusGraded = ApplicationSectionStatus.Graded,
+                            financialStatusEvaluated = ApplicationSectionStatus.Evaluated
+                        })).ToList();
+            }
+        }
+
+
         //
         //        public async Task UpdateFinancialGrade(Guid applicationId, FinancialApplicationGrade updatedGrade)
         //        {
@@ -576,28 +631,6 @@ namespace SFA.DAS.ApplyService.Data
                     new { applicationId, standardId });
 
                 return !applicationStatuses.Any() ? string.Empty : applicationStatuses.FirstOrDefault();
-            }
-        }
-
-        public async Task<List<dynamic>> GetPreviousFinancialApplications()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection.QueryAsync(@"SELECT org.Name, sec.Status, appl.Id, 
-                                                JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.GradedBy') AS GradedBy, 
-	                                            JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.GradedDateTime') AS GradedDateTime,
-                                                JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.SelectedGrade') AS Grade
-                                FROM Applications appl
-                            INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-                            INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id
-                            WHERE appl.ApplicationStatus = @applicationStatusSubmitted
-                            AND sec.SectionId = 3 
-                            AND (sec.Status = @financialStatusGraded)",
-                    new
-                    {
-                        applicationStatusSubmitted = ApplicationStatus.Submitted, 
-                        financialStatusGraded = ApplicationSectionStatus.Graded
-                    })).ToList();
             }
         }
 
