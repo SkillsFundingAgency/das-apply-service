@@ -2,27 +2,30 @@
 
 @if (!string.IsNullOrWhiteSpace(Model.Value))
 {
-
-    
-
-    <dl class="govuk-summary-list">
-        <div class="govuk-summary-list__row">
-            <dd class="govuk-summary-list__value govuk-summary-list__value--break-word">
-                <a href="@Url.Action("Download", "Application", new
-                {
-                    applicationId = Model.ApplicationId,
-                    sequenceId = Model.SequenceId,
-                    sectionId = Model.SectionId,
-                    pageId = Model.PageId,
-                    questionId = Model.QuestionId,
-                    filename = Model.Value
-                })">
-                    @Model.Value
-                </a>
-            </dd>
-            <dd class="govuk-summary-list__actions">
-                <a class="govuk-link" href="#">
-                    <a href="@Url.Action("DeleteFile", "Application", new
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th class="govuk-table__header" scope="col">Uploaded file</th>
+                <th class="govuk-table__header" scope="col"></th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            <tr class="govuk-table__row">
+                <th class="govuk-table__header" scope="row">
+                    <a href="@Url.Action("Download", "Application", new
+                    {
+                        applicationId = Model.ApplicationId,
+                        sequenceId = Model.SequenceId,
+                        sectionId = Model.SectionId,
+                        pageId = Model.PageId,
+                        questionId = Model.QuestionId,
+                        filename = Model.Value
+                    })">
+                        @Model.Value
+                    </a>
+                </th>
+                <td class="govuk-table__cell govuk-table__cell--numeric">
+                    <a class="govuk-link" href="@Url.Action("DeleteFile", "Application", new
                     {
                         applicationId = Model.ApplicationId,
                         sequenceId = Model.SequenceId,
@@ -32,12 +35,12 @@
                         redirectAction = Model.RedirectAction
                     })">
                         Remove 
+                        <span class="govuk-visually-hidden"> file</span>
                     </a>
-                    <span class="govuk-visually-hidden"> file</span>
-                </a>
-            </dd>
-        </div>
-    </dl>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 }
 else
 {
