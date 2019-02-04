@@ -24,6 +24,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Resubmitted = "Resubmitted";
         public const string Rejected = "Rejected";
         public const string Approved = "Approved";
+        public const string NotRequired = "NotRequired";
     }
 
     public enum SequenceId

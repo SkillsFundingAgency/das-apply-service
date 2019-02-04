@@ -188,6 +188,17 @@ namespace SFA.DAS.ApplyService.Data
                 }
             }
         }
+        
+        public async Task UpdateSequences(List<ApplicationSequence> sequences)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                foreach (var applicationSequence in sequences)
+                {
+                    await connection.ExecuteAsync(@"UPDATE ApplicationSequences SET Status = @Status, IsActive = @IsActive WHERE Id = @Id", applicationSequence);    
+                }
+            }
+        }
 
         public async Task SaveSection(ApplicationSection section, Guid? userId = null)
         {
