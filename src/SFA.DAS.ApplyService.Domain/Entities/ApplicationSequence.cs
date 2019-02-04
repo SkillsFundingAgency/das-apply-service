@@ -12,19 +12,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public SequenceId SequenceId { get; set; }
         public string Status { get; set; }
         public bool IsActive { get; set; }
-        public SequenceData SequenceData { get; set; }
         public List<ApplicationSection> Sections { get; set; }
-    }
-
-    public class SequenceData
-    {
-        public List<Apply.Feedback> Feedback { get; set; }
-
-        [JsonIgnore]
-        public bool HasFeedback => Feedback?.Any() ?? false;
-
-        [JsonIgnore]
-        public bool HasNewFeedback => HasFeedback && Feedback.Any(f => f.IsNew);
     }
 
     public class ApplicationSequenceStatus
@@ -33,6 +21,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Submitted = "Submitted";
         public const string InProgress = "In Progress";
         public const string FeedbackAdded = "FeedbackAdded";
+        public const string Resubmitted = "Resubmitted";
         public const string Rejected = "Rejected";
         public const string Approved = "Approved";
     }

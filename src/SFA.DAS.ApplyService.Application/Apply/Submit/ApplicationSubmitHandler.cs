@@ -1,13 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.ApplyService.Application.Email.Consts;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Submit
 {
@@ -27,7 +26,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
         public async Task<Unit> Handle(ApplicationSubmitRequest request, CancellationToken cancellationToken)
         {
             await UpdateApplicationSections(request);
-            await UpdateSequenceData(request);
             await SubmitApplicationSequence(request);
 
             var updatedApplication = await _applyRepository.GetApplication(request.ApplicationId);
@@ -47,15 +45,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
 
             foreach (var section in sections)
             {
-                if (section.QnAData.HasFeedback)
-                {
-                    foreach (var feedback in section.QnAData.Feedback)
-                    {
-                        feedback.IsNew = false;
-                        feedback.IsCompleted = true;
-                    }
-                }
-
                 foreach (var page in section.QnAData.Pages)
                 {
                     if (page.HasFeedback)
@@ -69,22 +58,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
             }
 
             await _applyRepository.UpdateSections(sections);
-        }
-
-        private async Task UpdateSequenceData(ApplicationSubmitRequest request)
-        {
-            var sequence = await _applyRepository.GetActiveSequence(request.ApplicationId);
-
-            if(sequence.SequenceData?.Feedback != null)
-            {
-                foreach (var feedback in sequence.SequenceData.Feedback)
-                {
-                    feedback.IsNew = false;
-                    feedback.IsCompleted = true;
-                }
-            }
-
-            await _applyRepository.UpdateSequenceData(sequence.ApplicationId, (int)sequence.SequenceId, sequence.SequenceData);
         }
 
         private async Task SubmitApplicationSequence(ApplicationSubmitRequest request)
@@ -112,10 +85,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
                 var submission = new InitSubmission
                 {
                     SubmittedAt = DateTime.UtcNow,
-                    SubmittedBy = request.UserEmail
+                    SubmittedBy = request.UserId,
+                    SubmittedByEmail = request.UserEmail
                 };
 
                 application.ApplicationData.InitSubmissions.Add(submission);
+                application.ApplicationData.InitSubmissionsCount = application.ApplicationData.InitSubmissions.Count;
+                application.ApplicationData.LatestInitSubmissionDate = submission.SubmittedAt;
             }
             else if(request.SequenceId == 2)
             {
@@ -127,10 +103,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
                 var submission = new StandardSubmission
                 {
                     SubmittedAt = DateTime.UtcNow,
-                    SubmittedBy = request.UserEmail
+                    SubmittedBy = request.UserId,
+                    SubmittedByEmail = request.UserEmail
                 };
 
                 application.ApplicationData.StandardSubmissions.Add(submission);
+                application.ApplicationData.StandardSubmissionsCount = application.ApplicationData.StandardSubmissions.Count;
+                application.ApplicationData.LatestStandardSubmissionDate = submission.SubmittedAt;
             }
 
             await _applyRepository.SubmitApplicationSequence(request, application.ApplicationData);

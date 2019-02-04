@@ -20,7 +20,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
         }
 
-        public async Task<Organisation> Create(OrganisationSearchResult organisation, Guid createdByUserId, string createdBy = "System")
+        public async Task<Organisation> Create(OrganisationSearchResult organisation, Guid userId)
         {
             var orgDetails = new OrganisationDetails
             {
@@ -46,8 +46,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 RoEPAOApproved = organisation.RoEPAOApproved,
                 RoATPApproved = organisation.RoATPApproved,
                 OrganisationDetails = orgDetails,
-                CreatedByUserId = createdByUserId,
-                CreatedBy = createdBy,
+                CreatedBy = userId,
                 PrimaryContactEmail = organisation.Email
             };
 

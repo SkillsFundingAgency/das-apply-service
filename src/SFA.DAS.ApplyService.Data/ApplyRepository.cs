@@ -1,18 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data.DapperTypeHandlers;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Data
 {
@@ -28,7 +26,6 @@ namespace SFA.DAS.ApplyService.Data
             SqlMapper.AddTypeHandler(typeof(OrganisationDetails), new OrganisationDetailsHandler());
             SqlMapper.AddTypeHandler(typeof(QnAData), new QnADataHandler());
             SqlMapper.AddTypeHandler(typeof(ApplicationData), new ApplicationDataHandler());
-            SqlMapper.AddTypeHandler(typeof(SequenceData), new SequenceDataHandler());
         }
         public async Task<List<Domain.Entities.Application>> GetApplications(Guid userId)
         {
@@ -46,19 +43,57 @@ namespace SFA.DAS.ApplyService.Data
             {
                 if (userId == null)
                 {
-                    return (await connection.QuerySingleAsync<ApplicationSection>(@"SELECT asec.* 
+                    return (await connection.QuerySingleOrDefaultAsync<ApplicationSection>(@"SELECT asec.* 
                                                                 FROM ApplicationSections asec
                                                                 INNER JOIN Applications a ON a.Id = asec.ApplicationId
                                                                 WHERE asec.ApplicationId = @applicationId AND asec.SectionId =@sectionId AND asec.SequenceId = @sequenceId",
                         new {applicationId, sequenceId, sectionId}));   
                 }
 
-                return (await connection.QuerySingleAsync<ApplicationSection>(@"SELECT asec.* 
+                return (await connection.QuerySingleOrDefaultAsync<ApplicationSection>(@"SELECT asec.* 
                                                                 FROM ApplicationSections asec
                                                                 INNER JOIN Applications a ON a.Id = asec.ApplicationId
                                                                 INNER JOIN Contacts c ON c.ApplyOrganisationID = a.ApplyingOrganisationId
                                                                 WHERE asec.ApplicationId = @applicationId AND asec.SectionId =@sectionId AND asec.SequenceId = @sequenceId AND c.Id = @userId",
                     new {applicationId, sequenceId, sectionId, userId}));
+            }
+        }
+
+        public async Task<ApplicationSequence> GetSequence(Guid applicationId, int sequenceId, Guid? userId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                ApplicationSequence sequence = null;
+
+                if (userId == null)
+                {
+                    sequence = await connection.QuerySingleOrDefaultAsync<ApplicationSequence>(@"SELECT seq.* 
+                            FROM ApplicationSequences seq
+                            INNER JOIN Applications a ON a.Id = seq.ApplicationId
+                            WHERE seq.ApplicationId = @applicationId 
+                            AND seq.SequenceId = @sequenceId", new { applicationId, sequenceId });
+                }
+                else
+                {
+                    sequence = await connection.QuerySingleOrDefaultAsync<ApplicationSequence>(@"SELECT seq.* 
+                            FROM ApplicationSequences seq
+                            INNER JOIN Applications a ON a.Id = seq.ApplicationId
+                            INNER JOIN Contacts c ON c.ApplyOrganisationID = a.ApplyingOrganisationId
+                            WHERE seq.ApplicationId = @applicationId 
+                            AND seq.SequenceId = @sequenceId AND c.Id = @userId", new { applicationId, sequenceId, userId });
+                }
+
+                if(sequence != null)
+                {
+                    var sections = (await connection.QueryAsync<ApplicationSection>(@"SELECT * FROM ApplicationSections 
+                                        WHERE ApplicationId = @ApplicationId 
+                                        AND SequenceId = @SequenceId",
+                                        new { sequence.ApplicationId, sequence.SequenceId })).ToList();
+
+                    sequence.Sections = sections;
+                }
+
+                return sequence;
             }
         }
 
@@ -268,19 +303,6 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task UpdateSequenceData(Guid applicationId, int sequenceId, SequenceData sequenceData)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(@"UPDATE ApplicationSequences
-                                                SET    SequenceData = @SequenceData
-                                                FROM   ApplicationSequences INNER JOIN
-                                                       Applications ON ApplicationSequences.ApplicationId = Applications.Id
-                                                WHERE  (ApplicationSequences.ApplicationId = @ApplicationId) AND (ApplicationSequences.SequenceId = @SequenceId);",
-                                    new { applicationId, sequenceId, sequenceData });
-            }
-        }
-
         public async Task CloseSequence(Guid applicationId, int sequenceId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -291,7 +313,22 @@ namespace SFA.DAS.ApplyService.Data
                                                          Applications ON ApplicationSequences.ApplicationId = Applications.Id INNER JOIN
                                                          Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
                                                 WHERE  (ApplicationSequences.ApplicationId = @ApplicationId) AND (ApplicationSequences.SequenceId = @SequenceId);",
-                    new {applicationId, sequenceId});
+                                                new {applicationId, sequenceId});
+
+                if(sequenceId == 1)
+                {
+                    await connection.ExecuteAsync(@"UPDATE Applications
+                                                    SET ApplicationData = JSON_MODIFY(ApplicationData, '$.InitSubmissionClosedDate', CONVERT(varchar(30), GETUTCDATE(), 126))
+                                                    WHERE  (Applications.Id = @ApplicationId);",
+                    new { applicationId });
+                }
+                else if(sequenceId == 2)
+                {
+                    await connection.ExecuteAsync(@"UPDATE Applications
+                                                    SET ApplicationData = JSON_MODIFY(ApplicationData, '$.StandardSubmissionClosedDate', CONVERT(varchar(30), GETUTCDATE(), 126))
+                                                    WHERE  (Applications.Id = @ApplicationId);",
+                                                    new { applicationId });
+                }
             }
         }
 
@@ -358,43 +395,110 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<dynamic>> GetNewApplications(int sequenceId)
+        public async Task<List<ApplicationSummaryItem>> GetOpenApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection
-                    .QueryAsync(
-                        @"SELECT OrganisationName, ApplicationId, SequenceId, sec3Status AS FinanceStatus,  
-	                        CASE WHEN (SequenceId = 1 AND (sec1Status = 'Evaluated' AND sec2Status = 'Evaluated')) OR (SequenceId = 2 AND sec4Status = 'Evaluated') THEN @sectionStatusEvaluated
-		                         WHEN (SequenceId = 1 AND (sec1Status = 'Submitted' AND sec2Status = 'Submitted')) OR (SequenceId = 2 AND sec4Status = 'Submitted') THEN @sectionStatusSubmitted
+                    .QueryAsync<ApplicationSummaryItem>(
+                        @"SELECT OrganisationName, ApplicationId, SequenceId,
+                            CASE WHEN SequenceId = 1 THEN 'Midpoint'
+                                 WHEN SequenceId = 2 THEN 'Standard'
+                                 ELSE 'Unknown'
+                            END As ApplicationType,
+                            SubmittedDate,
+                            SubmissionCount,
+                            CASE WHEN SequenceId = 1 THEN Sec3Status
+		                         ELSE NULL
+	                        END As FinancialStatus,
+	                        CASE WHEN (SequenceStatus = @sequenceStatusFeedbackAdded) THEN @sequenceStatusFeedbackAdded
+                                 WHEN (SubmissionCount > 1 AND SequenceId = 1 AND Sec1Status = @sectionStatusSubmitted AND Sec2Status = @sectionStatusSubmitted) THEN @sequenceStatusResubmitted
+                                 WHEN (SubmissionCount > 1 AND SequenceId = 2 AND Sec4Status = @sectionStatusSubmitted) THEN @sequenceStatusResubmitted
+                                 WHEN (SequenceId = 1 AND Sec1Status = Sec2Status) THEN Sec1Status
+		                         WHEN SequenceId = 2 THEN Sec4Status
 		                         ELSE @sectionStatusInProgress
-	                        END As SequenceStatus
+	                        END As CurrentStatus
                         FROM (
-	                        SELECT seq.SequenceId,
-	                        MAX(CASE WHEN SectionId = 1 THEN sec1.[Status] ELSE NULL END) Sec1Status,
-	                        MAX(CASE WHEN SectionId = 2 THEN sec1.[Status] ELSE NULL END) Sec2Status,
-	                        MAX(CASE WHEN SectionId = 3 THEN sec1.[Status] ELSE NULL END) Sec3Status,
-	                        MAX(CASE WHEN SectionId = 4 THEN sec1.[Status] ELSE NULL END) Sec4Status,
-	                        appl.ApplyingOrganisationId, appl.id ApplicationId, org.Name OrganisationName
+	                        SELECT 
+                                org.Name AS OrganisationName,
+                                appl.id AS ApplicationId,
+                                seq.SequenceId AS SequenceId,
+                                CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.LatestInitSubmissionDate')
+		                             WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.LatestStandardSubmissionDate')
+		                             ELSE NULL
+	                            END As SubmittedDate,
+                                CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount')
+		                             WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardSubmissionsCount')
+		                             ELSE 0
+	                            END As SubmissionCount,
+                                seq.Status AS SequenceStatus,
+	                            MAX(CASE WHEN sec.[SectionId] = 1 THEN sec.[Status] ELSE NULL END) AS Sec1Status,
+	                            MAX(CASE WHEN sec.[SectionId] = 2 THEN sec.[Status] ELSE NULL END) AS Sec2Status,
+	                            MAX(CASE WHEN sec.[SectionId] = 3 THEN sec.[Status] ELSE NULL END) AS Sec3Status,
+	                            MAX(CASE WHEN sec.[SectionId] = 4 THEN sec.[Status] ELSE NULL END) AS Sec4Status
 	                        FROM Applications appl
-	                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id AND seq.SequenceId = @sequenceId
-	                        INNER JOIN ApplicationSections sec1 ON sec1.ApplicationId = appl.Id 
+	                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
+	                        INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id 
 	                        INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-	                        WHERE appl.ApplicationStatus = @applicationStatusSubmitted AND seq.Status = @sequenceStatusSubmitted
-	                        GROUP BY seq.SequenceId, appl.ApplyingOrganisationId, appl.id, org.Name
+	                        WHERE appl.ApplicationStatus = @applicationStatusSubmitted
+                                AND seq.Status IN(@sequenceStatusSubmitted, @sequenceStatusFeedbackAdded)
+                                AND seq.IsActive = 1
+	                        GROUP BY seq.SequenceId, seq.Status, appl.ApplyingOrganisationId, appl.id, org.Name, appl.ApplicationData 
                         ) ab",
                         new
                         {
-                            sequenceId, // 1 for new applications, until accepted; 2 when reviewing Capacity & Capability
                             applicationStatusSubmitted = ApplicationStatus.Submitted,
-                            sequenceStatusInProgress = ApplicationSectionStatus.InProgress,
-                            sequenceStatusSubmitted = ApplicationSectionStatus.Submitted,
-                            sectionStatusEvaluated = ApplicationSectionStatus.Evaluated,
+                            sequenceStatusSubmitted = ApplicationSequenceStatus.Submitted,
+                            sequenceStatusResubmitted = ApplicationSequenceStatus.Resubmitted,
+                            sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded,
                             sectionStatusSubmitted = ApplicationSectionStatus.Submitted,
-                            sectionStatusInProgress = ApplicationSectionStatus.InProgress
+                            sectionStatusInProgress = ApplicationSectionStatus.InProgress   
                         })).ToList();
             }
         }
+
+        public async Task<List<ApplicationSummaryItem>> GetClosedApplications()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection
+                    .QueryAsync<ApplicationSummaryItem>(
+                        @"SELECT OrganisationName, ApplicationId, SequenceId,
+                            CASE WHEN SequenceId = 1 THEN 'Midpoint'
+                                 WHEN SequenceId = 2 THEN 'Standard'
+                                 ELSE 'Unknown'
+                            END As ApplicationType,
+                            ClosedDate,
+                            SubmissionCount,
+                            SequenceStatus As CurrentStatus
+                        FROM (
+	                        SELECT 
+                                org.Name AS OrganisationName,
+                                appl.id AS ApplicationId,
+                                seq.SequenceId AS SequenceId,
+                            CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.InitSubmissionClosedDate')
+		                         WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardSubmissionClosedDate')
+		                         ELSE NULL
+	                        END As ClosedDate,
+                            CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount')
+		                         WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardSubmissionsCount')
+		                         ELSE 0
+	                        END As SubmissionCount,
+                                seq.Status As SequenceStatus
+	                        FROM Applications appl
+	                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
+	                        INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
+	                        WHERE seq.Status IN (@sequenceStatusApproved, @sequenceStatusRejected)
+	                        GROUP BY seq.SequenceId, seq.Status, appl.ApplyingOrganisationId, appl.id, org.Name, appl.ApplicationData 
+                        ) ab",
+                        new
+                        {
+                            sequenceStatusApproved = ApplicationSequenceStatus.Approved,
+                            sequenceStatusRejected = ApplicationSequenceStatus.Rejected
+                        })).ToList();
+            }
+        }
+
 
         public async Task<List<dynamic>> GetNewFinancialApplications()
         {

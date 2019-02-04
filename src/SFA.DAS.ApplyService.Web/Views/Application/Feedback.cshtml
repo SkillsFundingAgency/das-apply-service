@@ -2,7 +2,7 @@
 @model SFA.DAS.ApplyService.Domain.Entities.ApplicationSequence
 
 @{
-    ViewBag.Title = "title";
+    ViewBag.Title = "Feedback";
     Layout = "_Layout";
 }
 
@@ -25,32 +25,15 @@
             <p class="govuk-body">Go into each question to view comments, where you will have an opportunity to give more information.</p>
 
             <ol class="app-task-list">
-                @if(Model.SequenceData?.HasNewFeedback == true)
-                {   
-                <li>
-                    <h2 class="govuk-heading-l">General feedback</h2>
-
-                    @foreach (var fb in Model.SequenceData.Feedback.Where(f => f.IsNew || !f.IsCompleted))
-                    {
-                        <div class="govuk-inset-text">@fb.Message</div>
-                    }
-                </li>
-                }
-
                 @foreach (var sec in Model.Sections.OrderBy(s => s.SectionId))
                 {
                     <li>
                         <h2 class="govuk-heading-l">@sec.LinkTitle</h2>
                         @{
-                            var pagesWithNewFeedback = sec.QnAData.HasNewFeedback ? sec.QnAData.Pages : sec.QnAData.Pages.Where(p => p.HasNewFeedback);
+                            var pagesWithNewFeedback = sec.QnAData.Pages.Where(p => p.HasNewFeedback);
 
                             if (pagesWithNewFeedback.Any())
                             {
-                                @foreach (var fb in sec.QnAData.Feedback.Where(f => f.IsNew || !f.IsCompleted))
-                                {
-                                    <div class="govuk-inset-text">@fb.Message</div>
-                                }
-
                                 <ul class="app-task-list__items app-task-list__items--no-number">
                                     @foreach (var pg in pagesWithNewFeedback.OrderBy(p => p.PageId))
                                     {

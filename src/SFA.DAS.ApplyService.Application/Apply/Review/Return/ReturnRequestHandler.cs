@@ -30,8 +30,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
             // is being set to.  But for now I'm just setting it and forgetting.
             var sequence = await _applyRepository.GetActiveSequence(request.ApplicationId);
 
-            await AddSequenceFeedback(sequence, request.Feedback);
-
             if (request.RequestReturnType == "ReturnWithFeedback")
             {
                 await _applyRepository.UpdateSequenceStatus(request.ApplicationId, request.SequenceId,
@@ -78,39 +76,22 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
             if (sequenceId == 1)
             {
                 var lastInitSubmission = application.ApplicationData?.InitSubmissions.OrderByDescending(sub => sub.SubmittedAt).FirstOrDefault();
-                var contactToNotify = await _contactRepository.GetContact(lastInitSubmission?.SubmittedBy);
 
-                await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_UPDATE, contactToNotify, new { reference });
+                if (lastInitSubmission != null)
+                {
+                    var contactToNotify = await _contactRepository.GetContact(lastInitSubmission.SubmittedBy);
+                    await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_UPDATE, contactToNotify, new { reference });
+                }
             }
             else if (sequenceId == 2)
             {
                 var lastStandardSubmission = application.ApplicationData?.StandardSubmissions.OrderByDescending(sub => sub.SubmittedAt).FirstOrDefault();
-                var contactToNotify = await _contactRepository.GetContact(lastStandardSubmission?.SubmittedBy);
 
-                await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_RESPONSE, contactToNotify, new { reference, standard });
-            }
-        }
-
-        private async Task AddSequenceFeedback(ApplicationSequence sequence, Domain.Apply.Feedback feedback)
-        {
-            if (sequence != null & feedback != null)
-            {
-                feedback.IsNew = true;
-
-                if (sequence.SequenceData == null)
+                if (lastStandardSubmission != null)
                 {
-                    sequence.SequenceData = new SequenceData();
+                    var contactToNotify = await _contactRepository.GetContact(lastStandardSubmission.SubmittedBy);
+                    await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_RESPONSE, contactToNotify, new { reference, standard });
                 }
-
-                if (sequence.SequenceData.Feedback == null)
-                {
-                    sequence.SequenceData.Feedback = new List<Domain.Apply.Feedback>();
-                }
-
-                sequence.SequenceData.Feedback.Add(feedback);
-
-                await _applyRepository.UpdateSequenceData(sequence.ApplicationId, (int)sequence.SequenceId, sequence.SequenceData);
-
             }
         }
     }

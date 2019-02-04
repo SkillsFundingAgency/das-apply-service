@@ -12,17 +12,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     {
         public Guid ApplicationId { get; }
 
-        public PageViewModel(Page page, Guid applicationId)
+        public PageViewModel(Guid applicationId, int sequenceId, int sectionId, string pageId,  Page page, string redirectAction, string returnUrl, List<ValidationErrorDetail> errorMessages)
         {
             ApplicationId = applicationId;
-            SetupPage(page, null);
-        }
-
-        public PageViewModel(Page page, Guid applicationId, List< ValidationErrorDetail> errorMessages)
-        {
-            ApplicationId = applicationId;
-            SetupPage(page, errorMessages);
+            SequenceId = sequenceId.ToString();
+            SectionId = sectionId;
+            PageId = pageId;
+            RedirectAction = redirectAction;
+            ReturnUrl = returnUrl;
             ErrorMessages = errorMessages;
+
+            if (page != null)
+            {
+                SetupPage(page, errorMessages);
+            }
         }
 
         public bool HasFeedback { get; set; }
@@ -33,6 +36,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public string PageId { get; set; }
         public string Title { get; set; }
+
+        public string DisplayType { get; set; }
         
         public List<QuestionViewModel> Questions { get; set; }
         public string SequenceId { get; set; }
@@ -40,7 +45,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public List<PageOfAnswers> PageOfAnswers { get; set; }
         public string BodyText { get; set; }
+        
+        public PageDetails Details { get; set; }
+        
         public string RedirectAction { get; set; }
+        public string ReturnUrl { get; set; }
 
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
 
@@ -48,6 +57,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             Title = page.Title;
             LinkTitle = page.LinkTitle;
+            DisplayType = page.DisplayType;
             PageId = page.PageId;
             SequenceId = page.SequenceId;
             if (errorMessages != null && errorMessages.Any())
@@ -76,12 +86,19 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 Hint = q.Hint,
                 Options = q.Input.Options,
                 Value = page.AllowMultipleAnswers ? GetMultipleValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value,
-                ErrorMessages = errorMessages?.Where(f=>f.Field == q.QuestionId).ToList()
+                ErrorMessages = errorMessages?.Where(f=>f.Field == q.QuestionId).ToList(),
+                SequenceId = int.Parse(SequenceId),
+                SectionId = SectionId,
+                ApplicationId = ApplicationId,
+                PageId = PageId,
+                RedirectAction = RedirectAction
             }));
 
             Feedback = page.Feedback;
             HasFeedback = page.HasFeedback;
             BodyText = page.BodyText;
+
+            Details = page.Details;
 
             foreach (var question in Questions)
             {

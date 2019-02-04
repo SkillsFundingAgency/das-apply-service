@@ -52,7 +52,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-2-9';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-2-9', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-1-PG-2-9', '', 'Trading name', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-2-10';
 INSERT INTO Assets
@@ -202,7 +202,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-3-CD-04-34';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-3-CD-04-34', '', 'Post code', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-1-PG-3-CD-04-34', '', 'Postcode', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-3-CD-04-35';
 INSERT INTO Assets
@@ -346,7 +346,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-09-58';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-4-CD-09-58', '', 'Post code', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-1-PG-4-CD-09-58', '', 'Postcode', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-09-59';
 INSERT INTO Assets
@@ -1210,7 +1210,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-15-202';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-15-202', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-1-PG-15-202', '', '<p class="govuk-body">Has any director, or any other person with significant control of your organisation, been removed from the charities commission or appear on the register of removed trustees?</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-15-203';
 INSERT INTO Assets
@@ -1234,7 +1234,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-15-CD-27-206';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-15-CD-27-206', '', 'Has any director, or any other person with significant control of your organisation, been removed from the charities commission or appear on the register of removed trustees?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-1-PG-15-CD-27-206', '', 'Register of removed trustees', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-15-CD-27-207';
 INSERT INTO Assets
@@ -1426,7 +1426,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-18-W_DEL-04-238';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-18-W_DEL-04-238', '', 'If your application is successful, can you start an end-point assessment on the day you join the RoEPAO?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-18-W_DEL-04-238', '', 'If your application is successful, can you start an end-point assessment on the day you join the register?', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-18-W_DEL-04-239';
 INSERT INTO Assets
@@ -1474,7 +1474,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-246';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-246', '', '<p class="govuk-body">You must be able to truthfully answer ''no'' to every question under ''Grounds for mandatory exclusion'' for your application to be considered eligible. If you can''t answer ''no'' to every question in this section, it''s very unlikely that your application will be accepted.</p><p class="govuk-body">In the next series of questions under grounds for mandatory exclusion, ''anyone who represents, supervises or has control in your organisation or a partner or parent organisation'' includes members of your group of economic operators, their proposed subcontractors, and any directors, partners, or any other person who has powers of representation, decision or control.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-246', '', '', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-247';
 INSERT INTO Assets
@@ -1504,7 +1504,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-05-251';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-05-251', '', 'I understand and accept that:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-05-251', '', 'Conditions for application', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-05-252';
 INSERT INTO Assets
@@ -1528,7 +1528,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-06-255';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-06-255', '', 'I confirm that the information to be uploaded in response to the Financial Health Assessment complies with the requirements stated in the ''Guidance for Applicants'' document.', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-06-255', '', 'Conditions for financial health assessment', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-06-256';
 INSERT INTO Assets
@@ -1552,7 +1552,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-07-259';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-07-259', '', 'Do you agree to inform the Education and Skills Funding Agency as soon as possible if there are any changes to the information you''re providing in this declaration?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-07-259', '', 'Changes of circumstance', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-07-260';
 INSERT INTO Assets
@@ -1576,7 +1576,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-08-263';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-08-263', '', 'Condition of acceptance', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-08-263', '', 'Conditions of acceptance', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-08-264';
 INSERT INTO Assets
@@ -1594,19 +1594,19 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-09-266';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-09-266', '', 'Confirm whether, within the past 5 years, anyone who represents, supervises or has control in your organisation or a partner or parent organisations has been convicted of:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-09-266', '', 'Criminal convictions', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-09-267';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-09-267', '', 'Organised crime or conspiracy convictions', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-09-267', '', 'Criminal convictions', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-09-268';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-09-268', '', '<ul class="govuk-list govuk-list--bullet"><li>any offence under sections 44 to 46 of the Serious Crime Act 2007 which relates to an offence covered by subparagraph (f)</li><li>conspiracy within the meaning of section 1 or 1A of the Criminal Law Act 1977</li><li>conspiracy within the meaning of article 9 or 9A of the Criminal Attempts and Conspiracy (Northern Ireland) Order 1983 where that conspiracy relates to participation in a criminal organisation as defined in Article 2 of Council Framework Decision 2008/842/JHA on the fight against organised crime</li></ul><p class="govuk-body">Answer ''yes'' if anyone who represents, supervises or has control in your organisation or a partner or parent organisation has been convicted of any of the above.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-09-268', '', '<p class="govuk-body">Has any person of significant control (PSC) in the last 5 years, been convicted of:</p><ul class="govuk-list govuk-list--bullet"><li>any offence under sections 44 to 46 of the Serious Crime Act 2007 which relates to an offence covered by subparagraph (f)</li><li>conspiracy within the meaning of section 1 or 1A of the Criminal Law Act 1977</li><li>conspiracy within article 9 or 9A of the criminal attempts and conspiracy (Northern Ireland) order 1983, relating to participation in a criminal organisation</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-10-269';
 INSERT INTO Assets
@@ -1618,19 +1618,19 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-10-270';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-10-270', '', 'Confirm whether, within the past 5 years, anyone who represents, supervises or has control in your organisation or a partner or parent organisations has been convicted of any offence that relates to fraud affecting the European Communities'' financial interests as defined by article 1 of the Convention of the Protection of the Financial Interests of the European Communities, including:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-10-270', '', 'Financial convictions', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-10-271';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-10-271', '', 'Bribery or corruption convictions', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-10-271', '', 'Financial convictions', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-10-272';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-10-272', '', '<ul class="govuk-list govuk-list--bullet"><li>the common law offence of cheating the Revenue (HMRC)</li><li>the common law offence of conspiracy to defraud</li><li>fraud or theft within the meaning of the Theft Act 1968, the Theft Act (Northern Ireland) 1969, the Theft Act 1978 or the Theft (Northern Ireland) Order 1978</li><li>fraudulent trading within the meaning of section 458 of the Companies Act 1985, article 451 of the Companies (Northern Ireland) Order 1986 or section 993 of the Companies Act 2006</li><li>fraudulent evasion within the meaning of section 170 of the Customs and Excise Management Act 1979 or section 72 of the Value Added Tax Act 1994</li><li>an offence in connection with taxation in the European Union within the meaning of section 71 of the Criminal Justice Act 1993</li><li>destroying, defacing or concealing of documents or procuring the execution of a valuable security within the meaning of section 20 of the Theft Act 1968 or section 19 of the Theft Act (Northern Ireland) 1969</li><li>fraud within the meaning of section 2, 3 or 4 of the Fraud Act 2006</li><li>the possession of articles for use in frauds within the meaning of section 6 of the Fraud Act 2006, or the making, adapting, supplying or offering to supply articles for use in frauds within the meaning of section 7 of that Act</li></ul><p class="govuk-body">Answer ''yes'' if anyone who represents, supervises or has control in your organisation or a partner or parent organisation has been convicted of any of the above.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-10-272', '', '<p class="govuk-body">Has any person of significant control (PSC) in the last 5 years, been convicted of fraud affecting European communities, including:</p><ul class="govuk-list govuk-list--bullet"><li>the common law offence of cheating the Revenue (HMRC)</li><li>the common law offence of conspiracy to defraud</li><li>fraud or theft within the meaning of the Theft Act 1968, the Theft Act (Northern Ireland) 1969, the Theft Act 1978 or the Theft (Northern Ireland) Order 1978</li><li>fraudulent trading within the meaning of section 458 of the Companies Act 1985, article 451 of the Companies (Northern Ireland) Order 1986 or section 993 of the Companies Act 2006</li><li>fraudulent evasion within the meaning of section 170 of the Customs and Excise Management Act 1979 or section 72 of the Value Added Tax Act 1994</li><li>an offence in connection with taxation in the European Union within the meaning of section 71 of the Criminal Justice Act 1993</li><li>destroying, defacing or concealing of documents or procuring the execution of a valuable security within the meaning of section 20 of the Theft Act 1968 or section 19 of the Theft Act (Northern Ireland) 1969</li><li>fraud within the meaning of section 2, 3 or 4 of the Fraud Act 2006</li><li>the possession of articles for use in frauds within the meaning of section 6 of the Fraud Act 2006, or the making, adapting, supplying or offering to supply articles for use in frauds within the meaning of section 7 of that Act</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-11-273';
 INSERT INTO Assets
@@ -1642,19 +1642,19 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-11-274';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-11-274', '', 'Confirm whether, within the past 5 years, anyone who represents, supervises or has control in your organisation or a partner or parent organisation has been convicted of any offence listed in:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-11-274', '', 'Counter terrorism', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-11-275';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-11-275', '', 'Terrorism convictions', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-11-275', '', 'Counter terrorism', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-11-276';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-11-276', '', '<ul class="govuk-list govuk-list--bullet"><li>section 41 of the Counter Terrorism Act 2008</li><li>schedule 2 of the Counter Terrorism Act 2008 where the court has determined that there is a terrorist connection</li><li>any offence under sections 44 to 46 of the Serious Crime Act 2007</li></ul><p class="govuk-body">Answer ''yes'' if anyone who represents, supervises or has control in your organisation or a partner or parent organisation has been convicted of any of the above.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-11-276', '', '<p class="govuk-body">Has any person with significant control in the last 5 years been convicted of:</p><ul class="govuk-list govuk-list--bullet"><li>section 41 of the <a class="govuk-link" target="_blank" href="https://www.gov.uk/government/collections/counter-terrorism-and-security-bill">Counter Terrorism Act 2008</a></li><li>schedule 2 of the Counter Terrorism Act 2008 where the court has determined that there is a terrorist connection</li><li>any offence under sections 44 to 46 of the Serious Crime Act 2007</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-12-277';
 INSERT INTO Assets
@@ -1666,19 +1666,19 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-12-278';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-12-278', '', 'Confirm whether, within the past 5 years, anyone who represents, supervises or has control in your organisation or a partner or parent organisation has been convicted of:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-12-278', '', 'Other criminal convictions', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-12-279';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-12-279', '', 'Criminal conducts', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-12-279', '', 'Other criminal convictions', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-12-280';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-12-280', '', '<ul class="govuk-list govuk-list--bullet"><li>money laundering within the meaning of sections 340(11) and 415 of the Proceeds of Crime Act 2002</li><li>an offence in connection with the proceeds of criminal conduct within the meaning of section 93A, 93B or 93C of the Criminal Justice Act 1988 or article 45, 46 or 47 of the Proceeds of Crime (Northern Ireland) Order 1996</li><li>an offence under section 4 of the Asylum and Immigration (Treatment of Claimants etc) Act 2004</li><li>an offence under section 59A of the Sexual Offences Act 2003</li><li>an offence under section 71 of the Coroners and Justice Act 2009</li><li>an offence in connection with the proceeds of drug trafficking within the meaning of section 49, 50 and 51 of the Drug Trafficking Act 1994</li></ul><p class="govuk-body">Answer ''yes'' if anyone who represents, supervises or has control in your organisation or a partner or parent organisation has been convicted of any of the above.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-12-280', '', '<p class="govuk-body">Has any person of significant control (PSC) in the last 5 years, been convicted of:</p><ul class="govuk-list govuk-list--bullet"><li>money laundering within the meaning of sections 340(11) and 415 of the Proceeds of Crime Act 2002</li><li>an offence in connection with the proceeds of criminal conduct within the meaning of section 93A, 93B or 93C of the Criminal Justice Act 1988 or article 45, 46 or 47 of the Proceeds of Crime (Northern Ireland) Order 1996</li><li>an offence under section 4 of the Asylum and Immigration (Treatment of Claimants etc) Act 2004</li><li>an offence under section 59A of the Sexual Offences Act 2003</li><li>an offence under section 71 of the Coroners and Justice Act 2009</li><li>an offence in connection with the proceeds of drug trafficking within the meaning of section 49, 50 and 51 of the Drug Trafficking Act 1994</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-281';
 INSERT INTO Assets
@@ -1690,7 +1690,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-282';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20-282', '', '<p class="govuk-body">Information cannot be amended after the application has been submitted and reviewed,the Education and Skills Funding Agency may at its sole discretion use information it already holds, obtains from other Government bodies or which is already in the public domain to validate part or all of any answer we have given in this submission and the information obtained may be shared with employers to assist them in their selection process,the Education and Skills Funding Agency may seek additional assurances from my organisation based on this information.</p> <p class="govuk-body">You must be able to truthfully answer ''no'' to every question under ''Grounds for discretionary exclusion'' for your application to be considered eligible. If you can''t answer ''no'', your application may not be accepted.</p><p class="govuk-body">If you do answer ''yes'', you must provide full details of any subsequent event or remedial action that you think the Education and Skills Funding Agency (ESFA) should take into consideration. ESFA will use the information you provide to consider whether or not you will be able to proceed any further with this application.</p><p class="govuk-body">''A partner organisation'' includes members of your group of economic operators or their proposed subcontractors.</p><p class="govuk-body">ESFA can also exclude you if you are guilty of serious misrepresentation in providing any information referred to within regulations 23 (link opens in a new tab), 24 (new tab), 25 (new tab), 26 (new tab) or 27 (new tab) of the Public Contracts Regulations 2015 (new tab) or if you fail to provide any such information it requests.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20-282', '', '', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-283';
 INSERT INTO Assets
@@ -1714,19 +1714,19 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-13-286';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-13-286', '', 'Have members of your organisation or a partner organisation been legally found to be in breach of tax payments or social security contributions?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-13-286', '', 'Tax and social security irregularities', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-13-287';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-13-287', '', 'In breach of tax payments', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-13-287', '', 'Cessation of trading', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-13-288';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-13-288', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-13-288', '', '<p class="govuk-body">Has any person of significant control (PSC) breached tax payments or social security contributions?</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-13.1-289';
 INSERT INTO Assets
@@ -1744,6 +1744,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-13.1-291';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
+
   (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-13.1-291', '', '', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-13.1-292';
@@ -1762,25 +1763,25 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-14-294';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-14-294', '', 'Confirm whether, within the past 3 years, your organisation or any of your partner organisations:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-14-294', '', 'Bankruptcy and insolvency', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-14-295';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-14-295', '', 'Bankruptcy and Insolvency', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-14-295', '', 'Tax and social security irregularities', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-14-296';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-14-296', '', '<ul class="govuk-list govuk-list--bullet"><li>has been made bankrupt or the subject of insolvency or winding-up proceedings</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-14-296', '', '<p class="govuk-body">In the past 3 years has your organisation or partner organisations been:</p><ul class="govuk-list govuk-list--bullet"><li>made bankrupt</li><li>subject of insolvency</li><li>winding-up proceedings</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20.1-297';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20.1-297', '', 'Bankruptcy and Insolvency details', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20.1-297', '', 'Bankruptcy and insolvency details 1', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20.1-298';
 INSERT INTO Assets
@@ -1798,7 +1799,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20.1-300';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20.1-300', '', 'Bankruptcy and Insolvency details', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20.1-300', '', 'Bankruptcy and insolvency details', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20.1-D_DEL-13-1-301';
 INSERT INTO Assets
@@ -1906,7 +1907,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-318';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-318', '', '<p class="govuk-body">You must confirm the accuracy of the information in this declaration and in your application to deliver end-point assessments. We might ask you for proof after you''ve submitted your application.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-318', '', '', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-319';
 INSERT INTO Assets
@@ -1930,19 +1931,19 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-21-322';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-21-322', '', 'Confirm whether your organisation or any of your partner organisations is in:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-21-322', '', 'Cessation of trading', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-21-323';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-21-323', '', 'Confirm whether your organisation or any of your partner organisations is in:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-21-323', '', 'Cessation of trading', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-21-324';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-21-324', '', '<ul class="govuk-list govuk-list--bullet"><li>voluntary administration or company voluntary arrangement</li><li>compulsory winding up</li><li>receivership</li><li>composition with creditors</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-21-324', '', '<p class="govuk-body">Confirm whether your organisation or any of your partner organisations is in:</p><ul class="govuk-list govuk-list--bullet"><li>voluntary administration or company voluntary arrangement</li><li>compulsory winding up</li><li>receivership</li><li>composition with creditors</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-21.1-325';
 INSERT INTO Assets
@@ -1978,19 +1979,19 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-22-330';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-22-330', '', 'Confirm whether any of your organisation''s tax returns, submitted on or after 1 October 2012, have:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-22-330', '', 'Incorrect tax returns', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-22-331';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-22-331', '', 'Why a tax return was incorrect', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-22-331', '', 'Incorrect tax returns', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-22-332';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-22-332', '', '<ul class="govuk-list govuk-list--bullet"><li>been found to be incorrect as of 1 April 2013</li><li>given rise to a criminal conviction for tax-related offences which is unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-22-332', '', '<p class="govuk-body">Has your organisation or partner organisations tax returns on or after the 1 October 2013:</p><ul class="govuk-list govuk-list--bullet"><li>been found to be incorrect as of 1 April 2013</li><li>resulted in a criminal conviction for tax-related offences which are unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-22.1-333';
 INSERT INTO Assets
@@ -2026,19 +2027,19 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-23-338';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-23-338', '', 'Confirm whether any of your organisation''s tax returns, submitted on or after 1 October 2012, have been found to be incorrect on or after 1 April 2013 because:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-23-338', '', 'HMRC challenges to tax returns', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-23-339';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-23-339', '', 'Why a tax return was incorrect', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-23-339', '', 'HMRC challenges to tax returns', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-23-340';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-23-340', '', '<ul class="govuk-list govuk-list--bullet"><li>HMRC successfully challenged it under the General Anti-Abuse Rule (GAAR) or Halifax abuse principle OR</li><li>a tax authority (in a jurisdiction in which your organisation is established) successfully challenging it under any tax rules or legislation that have an effect equivalent or similar to the GAAR or Halifax abuse principle</li><li>given rise to a criminal conviction for tax-related offences which is unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-23-340', '', '<p class="govuk-body">Has your organisation or your partner organisations tax returns between 1 October 2012 and 1 April 2013 been:</p><ul class="govuk-list govuk-list--bullet"><li>successfully challenged by HMRC under the general anti-abuse rule (GAAR) or the Halifax abuse principle</li><li>challenged by a tax authority in the jurisdiction your organisation is based with rules or legislation similar to GAAR or Halifax</li><li>resulted in criminal convictions for tax-related offences which are unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-23.1-341';
 INSERT INTO Assets
@@ -2074,7 +2075,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-24-346';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-24-346', '', 'Has your organisation had any contract for the delivery of services withdrawn within the last 3 financial years?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-24-346', '', 'Contracts withdrawn from you', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-24-347';
 INSERT INTO Assets
@@ -2086,7 +2087,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-24-348';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-24-348', '', '<ul class="govuk-list govuk-list--bullet"><li>HMRC successfully challenged it under the General Anti-Abuse Rule (GAAR) or Halifax abuse principle OR</li><li>a tax authority (in a jurisdiction in which your organisation is established) successfully challenging it under any tax rules or legislation that have an effect equivalent or similar to the GAAR or Halifax abuse principle</li><li>given rise to a criminal conviction for tax-related offences which is unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-24-348', '', '<p class="govuk-body">Has your organisation had any contract for the delivery of services withdrawn within the last 3 financial years?</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-24.1-349';
 INSERT INTO Assets
@@ -2122,19 +2123,19 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-25-354';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-25-354', '', 'Has your organisation withdrawn from a contract for the delivery of services within the last 3 years?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-25-354', '', 'Contracts you have withdrawn from', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-25-355';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-25-355', '', 'Withdrawn from contracts', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-25-355', '', 'Contracts you have withdrawn from', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-25-356';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-25-356', '', '<ul class="govuk-list govuk-list--bullet"><li>HMRC successfully challenged it under the General Anti-Abuse Rule (GAAR) or Halifax abuse principle OR</li><li>a tax authority (in a jurisdiction in which your organisation is established) successfully challenging it under any tax rules or legislation that have an effect equivalent or similar to the GAAR or Halifax abuse principle</li><li>given rise to a criminal conviction for tax-related offences which is unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-25-356', '', '<p class="govuk-body">Has your organisation withdrawn from a contract for the delivery of services within the last 3 years?</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-25.1-357';
 INSERT INTO Assets
@@ -2218,19 +2219,19 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-26-370';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26-370', '', 'Has your organisation been removed from any of the following registers?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26-370', '', 'Organisation removal from registers', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-26-371';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26-371', '', 'Company removed from registers', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26-371', '', 'Organisation removal from registers', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-26-372';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26-372', '', 'Education and Skills Funding Agency''s Register of Training Organisations RoATP, EPAO register,Ofqual''s Register,Other professional or trade registers', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26-372', '', '<p class="govuk-body">Has you organisation been removed from:</p><ul class="govuk-list govuk-list--bullet"><li>Education and skills funding agency''s register of training organisations (RoATP)</li><li>End-point assessor organisations (EPAO) register</li><li>Ofqual''s register</li><li>other professional or trade registers</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-26.1-373';
 INSERT INTO Assets
@@ -2266,13 +2267,13 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-26.2-378';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26.2-378', '', 'Reasons why', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26.2-378', '', 'Reasons why your organisation was removed', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-26.2-379';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26.2-379', '', 'Reasons why', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-26.2-379', '', 'Reasons why your organisation was removed', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-26.2-380';
 INSERT INTO Assets
@@ -2290,19 +2291,19 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-27-382';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27-382', '', 'Has your organisation received direction or sanctions from any of the following?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27-382', '', 'Directions and sanctions', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-27-383';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27-383', '', 'Direction and sanctions', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27-383', '', 'Directions and sanctions', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-27-384';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27-384', '', 'Ofqual,The QAA,Awarding organisations,Other similar bodies', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27-384', '', '<p class="govuk-body">Has your organisation received direction or sanctions from any of the following?</p><ul class="govuk-list govuk-list--bullet"><li>Ofqual</li><li>Quality Assurance Agency (QAA) for higher education</li><li>awarding organisations</li><li>other similar bodies</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-27.1-385';
 INSERT INTO Assets
@@ -2338,13 +2339,13 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-27.2-390';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27.2-390', '', 'Reasons why', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27.2-390', '', 'Reasons why your organisation received direction or sanctions', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-27.2-391';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27.2-391', '', 'Reasons why', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27.2-391', '', 'Reasons why your organisation received direction or sanctions', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-27.2-392';
 INSERT INTO Assets
@@ -2362,19 +2363,19 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-28-394';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-28-394', '', 'Has your organisation ever had to repay public money?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-28-394', '', 'Repayment of public money', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-28-395';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-28-395', '', 'Repaying public money', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-28-395', '', 'Repayment of public money', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-28-396';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-28-396', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-28-396', '', '<p class="govuk-body">Has your organisation ever had to repay public money?</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-28.1-397';
 INSERT INTO Assets
@@ -2410,19 +2411,19 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-29-402';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-29-402', '', 'Have any directors, shareholders, senior employees or someone that has powers of representation, decision or control of your organisation had any of the following?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-29-402', '', 'Public body funds and contracts', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-29-403';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-29-403', '', 'Public bodies', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-29-403', '', 'Public body funds and contracts', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-29-404';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-29-404', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-29-404', '', '<p class="govuk-body">Has any person of significant control in your organisation had:</p><ul class="govuk-list govuk-list--bullet"><li>a failure to repay funding due to any public body</li><li>early termination of a contract with a public body</li><li>early withdrawal from a contract with a public body</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-29.1-405';
 INSERT INTO Assets
@@ -2458,19 +2459,19 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-30-410';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-30-410', '', 'Does your organisation have any outstanding or ongoing legal dispute that could prevent you from conducting end-point assessments?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-30-410', '', 'Legal dispute', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-30-411';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-30-411', '', 'Legal disputes', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-30-411', '', 'Legal dispute', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-30-412';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-30-412', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-30-412', '', '<p class="govuk-body">Does your organisation have any outstanding or ongoing legal dispute that could prevent you from conducting end-point assessments?</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-30.1-413';
 INSERT INTO Assets
@@ -2554,7 +2555,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-426';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-22-426', '', '<p class="govuk-body">You must confirm the accuracy of the information in this declaration and in your application to deliver end-point assessments. We might ask you for proof after you''ve submitted your application.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-22-426', '', '', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-427';
 INSERT INTO Assets
@@ -2578,19 +2579,19 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-28-430';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-28-430', '', 'I certify that the information provided is accurate and accept the conditions and undertakings requested in this application. It''s understood that false information may result in:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-28-430', '', 'False declarations', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-28-431';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-28-431', '', 'I certify that the information provided is accurate and accept the conditions and undertakings requested in this application. It''s understood that false information may result in:', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-28-431', '', 'False declarations', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-28-432';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-28-432', '', '<ul class="govuk-list govuk-list--bullet"><li>exclusion from this and future registers</li><li>the removal from the Register of End-point Assessments Organisations</li><li>the withdrawal of contracts with employers</li><li>civil or criminal proceedings</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-28-432', '', '<p class="govuk-body">I certify that the information provided is accurate and accept the conditions and undertakings requested in this application. It''s understood that false information may result in:</p><ul class="govuk-list govuk-list--bullet"><li>exclusion from this and future registers</li><li>the removal from the Register of End-point Assessments Organisations</li><li>the withdrawal of contracts with employers</li><li>civil or criminal proceedings</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-29-433';
 INSERT INTO Assets
@@ -2602,19 +2603,19 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-29-434';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-29-434', '', 'Will your applications to deliver end-point assessments for standards be accurate and true representations?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-29-434', '', 'Accurate and true representation', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-29-435';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-29-435', '', 'Will your applications to deliver end-point assessments for standards be accurate and true representations?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-29-435', '', 'Accurate and true representation', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-29-436';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-29-436', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-29-436', '', '<p class="govuk-body">Will your applications to deliver end-point assessments for standards be accurate and true representations?</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-30-437';
 INSERT INTO Assets
@@ -2626,31 +2627,31 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-30-438';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-30-438', '', 'Do you agree your company details will be added to the register of end-point assessment organisations if your application is successful?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-30-438', '', 'Agreement to appear on the register', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-30-439';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-30-439', '', 'Do you agree your company details will be added to the register of end-point assessment organisations if your application is successful?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-30-439', '', 'Agreement to appear on the register', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-A_DEL-30-440';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-30-440', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-22-A_DEL-30-440', '', '<p class="govuk-body">Do you agree your organisation details will be added to the register of end-point assessment organisations if your application is successful?</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-441';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-441', '', 'Financial health assessment', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-441', '', 'Financial health', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-442';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-442', '', '<p class="govuk-body">You will fail the financial health assessment process if you do not upload financial statements where available. Management accounts must only be submitted where financial statements/accounts are yet to be produced.</p><p class="govuk-body">For further information on what you must include if you select ''a'', ''b'' or ''c'' please check <a class="govuk-link" href="https://www.gov.uk/government/publications/esfa-financial-health-assessment/">https://www.gov.uk/government/publications/esfa-financial-health-assessment</a>.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-442', '', '<p class="govuk-body">If you have been trading for more than 12 months upload your last financial years'' statutory accounts, and your parent company''s accounts (if you have a parent company).</p><p class="govuk-body">If you have been trading for less than 12 months upload your management accounts.</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-443';
 INSERT INTO Assets
@@ -2698,21 +2699,195 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-02-450';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-450', '', 'Attach the latest available accounts for the UK ultimate parent company. Organisations that are subject to the financial health assessment must submit their UK parent company accounts or they will fail the process', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-450', '', 'Attach the latest available accounts for the UK ultimate parent company.', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-02-451';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-451', '', 'Attach the latest available accounts for the UK ultimate parent company. Organisations that are subject to the financial health assessment must submit their UK parent company accounts or they will fail the process', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-451', '', 'Attach the latest available accounts for the UK ultimate parent company', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-02-452';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-452', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-452', '', '<p class="govuk-body">Organisations that are subject to the financial health assessment must submit their UK parent company accounts or they will fail the process.</p>', 'Live', GETUTCDATE(), 'Import')
 
 GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-15-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-15-LT-1', '', 'Name and job title', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-18-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-18-LT-1', '', 'Providing services straight away', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-193-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-193-LT-1', '', 'Criminal convictions', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-193-DT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-193-DT-1', '', 'What classifies as a person with significant control?', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-193-DB-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-193-DB-1', '', '<p class="govuk-body">A <a class="govuk-link" target="_blank" href="https://www.gov.uk/government/news/people-with-significant-control-psc-who-controls-your-company">person with significant control (PSC)</a> is someone who owns or controls your organisation. They''re sometimes called ''beneficial owners''</p>', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-194-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-194-LT-1', '', 'Financial convictions', 'Live', GETUTCDATE(), 'Import')
+GO
+
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-195-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-195-LT-1', '', 'Counter terrorism', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-196-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-196-LT-1', '', 'Other criminal convictions', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-20-LT-1', '', 'Tax and social security irregularities', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-201-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-201-LT-1', '', 'Bankruptcy and insolvency', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20.1-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-20.1-LT-1', '', 'Bankruptcy and insolvency details', 'Live', GETUTCDATE(), 'Import')
+GO
+
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-202-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-202-LT-1', '', 'Cessation of trading', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-203-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-203-LT-1', '', 'Incorrect tax returns', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-204-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-204-LT-1', '', 'HMRC challenges to tax returns', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-205-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-205-LT-1', '', 'Contracts withdrawn from you', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-206-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-206-LT-1', '', 'Contracts you have withdrawn from', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-207-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-207-LT-1', '', 'Organisation removal from registers', 'Live', GETUTCDATE(), 'Import')
+GO
+
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-208-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-208-LT-1', '', 'Directions and sanctions', 'Live', GETUTCDATE(), 'Import')
+GO
+
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-209-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-209-LT-1', '', 'Repayment of public money', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-210-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-210-LT-1', '', 'Public body funds and contracts', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-211-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-211-LT-1', '', 'Legal dispute', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-22-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-22-LT-1', '', 'False declarations', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-221-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-221-LT-1', '', 'Accurate and true representation', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-222-LT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-222-LT-1', '', 'Agreement to appear on the register', 'Live', GETUTCDATE(), 'Import')
+GO
+
+
 DELETE FROM workflows where Description='Epao Workflow' and Version='1.0'
 
 GO
@@ -2814,10 +2989,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "3",
-          "Condition": {
-            "QuestionId": "CD-30",
-            "MustEqual": "No"
-          },
+          "Condition": null,
           "ConditionMet": false
         }
       ],
@@ -2966,7 +3138,12 @@ VALUES
                 "Name": "Required",
                 "Value": null,
                 "ErrorMessage": "Enter email address"
-              }
+              },
+			  {
+			  "Name": "EmailAddressIsValid",
+			  "Value": null,
+			  "ErrorMessage": "Enter a valid email address"
+			  }
             ]
           },
           "Order": null
@@ -3088,7 +3265,12 @@ VALUES
                 "Name": "Required",
                 "Value": null,
                 "ErrorMessage": "Enter email address"
-              }
+              },
+			  {
+			  "Name": "EmailAddressIsValid",
+			  "Value": null,
+			  "ErrorMessage": "Enter a valid email address"
+			  }
             ]
           },
           "Order": null
@@ -3164,7 +3346,12 @@ VALUES
                           "Name": "Required",
                           "Value": null,
                           "ErrorMessage": "Enter your UKPRN"
-                        }
+                        },
+						{
+						  "Name": "Regex",
+                          "Value": "^[0-9]{8}$",
+                          "ErrorMessage": "Enter your UKPRN (must be 8 digits)"
+						}
                       ]
                     },
                     "Order": null,
@@ -3253,13 +3440,13 @@ VALUES
                     "Label": "SQ-1-SE-1-PG-6-CD-14.1-94",
                     "Hint": "SQ-1-SE-1-PG-6-CD-14.1-93",
                     "Input": {
-                      "Type": "text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Enter other orgainisation details"
+                          "ErrorMessage": "Enter other organisation details"
                         }
                       ]
                     },
@@ -3755,6 +3942,11 @@ VALUES
                 "Name":"Date",
                 "Value":"",
                 "ErrorMessage": "Date must be correct"
+              },
+              {
+                "Name":"DateNotInFuture",
+                "Value":"",
+                "ErrorMessage": "Date cannot be in the future"
               }
             ]
           },
@@ -3767,7 +3959,7 @@ VALUES
           "QuestionBodyText": "SQ-1-SE-1-PG-11-CD-21-164",
           "Hint": "SQ-1-SE-1-PG-11-CD-21-161",
           "Input": {
-            "Type": "text",
+            "Type": "number",
             "Options": null,
             "Validations": [{
                 "Name": "Required",
@@ -3828,7 +4020,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if a director, or any person with significant control of your organisation have had any of the listed issues"
               }
             ]
           },
@@ -3849,10 +4041,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "14",
-          "Condition": {
-            "QuestionId": "CD-22",
-            "MustEqual": "No"
-          },
+          "Condition": null,
           "ConditionMet": false
         }
       ],
@@ -3886,7 +4075,17 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Field must not be empty"
+                "ErrorMessage": "Enter a date"
+              },
+              {
+                "Name":"Date",
+                "Value":"",
+                "ErrorMessage": "Date must be correct"
+              },
+              {
+                "Name":"DateNotInFuture",
+                "Value":"",
+                "ErrorMessage": "Date cannot be in the future"
               }
             ]
           },
@@ -3982,6 +4181,11 @@ VALUES
                           "Name": "Required",
                           "Value": null,
                           "ErrorMessage": "Enter registered charity number"
+                        },
+						 {
+                          "Name": "RegisteredCharityNumber",
+                          "Value": null,
+                          "ErrorMessage": "Enter valid registered charity number"
                         }
                       ]
                     },
@@ -4058,7 +4262,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if any removals apply"
               }
             ]
           },
@@ -4088,6 +4292,9 @@ VALUES
 }    
 ', N'Organisation details', N'Organisation details', N'Draft', N'Pages', N'')
 GO
+
+
+
 DELETE from WorkflowSections where SequenceId = 1 and SectionId=2;
 
 INSERT [dbo].[WorkflowSections]
@@ -4102,7 +4309,7 @@ VALUES
       "SequenceId": "1",
       "SectionId": "2",
       "Title": "SQ-1-SE-2-PG-15-213",
-      "LinkTitle": "SQ-1-SE-2-PG-15-216",
+      "LinkTitle": "SQ-1-SE-2-PG-15-LT-1",
       "InfoText": "SQ-1-SE-2-PG-15-215",
       "Questions": [
         {
@@ -4118,7 +4325,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Field must not be empty"
+                "ErrorMessage": "Enter the name of the person named as authoriser"
               }
             ]
           },
@@ -4137,64 +4344,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Field must not be empty"
-              }
-            ]
-          },
-          "Order": null
-        }
-      ],
-      "PageOfAnswers": [],
-      "Next": [
-        {
-          "Action": "NextPage",
-          "ReturnId": "17",
-          "Condition": null,
-          "ConditionMet": false
-        }
-      ],
-      "Complete": false,
-      "AllowMultipleAnswers": false,
-      "Order": null,
-      "Active": true,
-      "Visible": true,
-      "Feedback": null,
-      "HasFeedback": false,
-      "BodyText": "SQ-1-SE-2-PG-15-214"
-    },
-    {
-      "PageId": "17",
-      "SequenceId": "1",
-      "SectionId": "2",
-      "Title": "SQ-1-SE-2-PG-17-225",
-      "LinkTitle": "SQ-1-SE-2-PG-17-228",
-      "InfoText": "SQ-1-SE-2-PG-17-227",
-      "Questions": [
-        {
-          "QuestionId": "W_DEL-03",
-          "Label": "SQ-1-SE-2-PG-17-W_DEL-03-230",
-          "ShortLabel": "SQ-1-SE-2-PG-17-W_DEL-03-231",
-          "QuestionBodyText": "SQ-1-SE-2-PG-17-W_DEL-03-232",
-          "Hint": "SQ-1-SE-2-PG-17-W_DEL-03-229",
-          "Input": {
-            "Type": "Radio",
-            "Options": [
-              {
-                "Label": "Yes",
-                "Value": "Yes",
-                "FurtherQuestions": null
-              },
-              {
-                "Label": "No",
-                "Value": "No",
-                "FurtherQuestions": null
-              }
-            ],
-            "Validations": [
-              {
-                "Name": "Required",
-                "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Enter the job title of the person named as authoriser"
               }
             ]
           },
@@ -4217,14 +4367,14 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
-      "BodyText": "SQ-1-SE-2-PG-17-226"
+      "BodyText": "SQ-1-SE-2-PG-15-214"
     },
     {
       "PageId": "18",
       "SequenceId": "1",
       "SectionId": "2",
       "Title": "SQ-1-SE-2-PG-18-233",
-      "LinkTitle": "SQ-1-SE-2-PG-18-236",
+      "LinkTitle": "SQ-1-SE-2-PG-18-LT-1",
       "InfoText": "SQ-1-SE-2-PG-18-235",
       "Questions": [
         {
@@ -4257,7 +4407,12 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter a date"
+                        },
+                        {
+                          "Name":"Date",
+                          "Value":"",
+                          "ErrorMessage": "Date must be correct"
                         }
                       ]
                     },
@@ -4271,7 +4426,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if you can start an end-point assessment on the day you join the register"
               }
             ]
           },
@@ -4282,7 +4437,7 @@ VALUES
       "Next": [
         {
           "Action": "NextPage",
-          "ReturnId": "19",
+          "ReturnId": "193",
           "Condition": null,
           "ConditionMet": false
         }
@@ -4296,117 +4451,19 @@ VALUES
       "HasFeedback": false,
       "BodyText": "SQ-1-SE-2-PG-18-234"
     },
-    {
-      "PageId": "19",
+	  {
+      "PageId": "193",
       "SequenceId": "1",
       "SectionId": "2",
       "Title": "SQ-1-SE-2-PG-19-245",
-      "LinkTitle": "SQ-1-SE-2-PG-19-248",
+      "LinkTitle": "SQ-1-SE-2-PG-193-LT-1",
       "InfoText": "SQ-1-SE-2-PG-19-247",
+      "Details": {
+        "Title": "SQ-1-SE-2-PG-193-DT-1",
+        "Body": "SQ-1-SE-2-PG-193-DB-1"
+      },
       "Questions": [
-        {
-          "QuestionId": "M_DEL-05",
-          "Label": "SQ-1-SE-2-PG-19-M_DEL-05-250",
-          "ShortLabel": "SQ-1-SE-2-PG-19-M_DEL-05-251",
-          "QuestionBodyText": "SQ-1-SE-2-PG-19-M_DEL-05-252",
-          "Hint": "SQ-1-SE-2-PG-19-M_DEL-05-249",
-          "Input": {
-            "Type": "Radio",
-            "Options": [
-              {
-                "Label": "Yes",
-                "Value": "Yes",
-                "FurtherQuestions": null
-              },
-              {
-                "Label": "No",
-                "Value": "No",
-                "FurtherQuestions": null
-              }
-            ],
-            "Validations": []
-          },
-          "Order": null
-        },
-        {
-          "QuestionId": "M_DEL-06",
-          "Label": "SQ-1-SE-2-PG-19-M_DEL-06-254",
-          "ShortLabel": "SQ-1-SE-2-PG-19-M_DEL-06-255",
-          "QuestionBodyText": "SQ-1-SE-2-PG-19-M_DEL-06-256",
-          "Hint": "SQ-1-SE-2-PG-19-M_DEL-06-253",
-          "Input": {
-            "Type": "Radio",
-            "Options": [
-              {
-                "Label": "Yes",
-                "Value": "Yes",
-                "FurtherQuestions": null
-              },
-              {
-                "Label": "No",
-                "Value": "No",
-                "FurtherQuestions": null
-              }
-            ],
-            "Validations": []
-          },
-          "Order": null
-        },
-        {
-          "QuestionId": "M_DEL-07",
-          "Label": "SQ-1-SE-2-PG-19-M_DEL-07-258",
-          "ShortLabel": "SQ-1-SE-2-PG-19-M_DEL-07-259",
-          "QuestionBodyText": "SQ-1-SE-2-PG-19-M_DEL-07-260",
-          "Hint": "SQ-1-SE-2-PG-19-M_DEL-07-257",
-          "Input": {
-            "Type": "Radio",
-            "Options": [
-              {
-                "Label": "Yes",
-                "Value": "Yes",
-                "FurtherQuestions": null
-              },
-              {
-                "Label": "No",
-                "Value": "No",
-                "FurtherQuestions": null
-              }
-            ],
-            "Validations": [
-              {
-                "Name": "Required",
-                "Value": null,
-                "ErrorMessage": "Select an option"
-              }
-            ]
-          },
-          "Order": null
-        },
-        {
-          "QuestionId": "M_DEL-08",
-          "Label": "SQ-1-SE-2-PG-19-M_DEL-08-262",
-          "ShortLabel": "SQ-1-SE-2-PG-19-M_DEL-08-263",
-          "QuestionBodyText": "SQ-1-SE-2-PG-19-M_DEL-08-264",
-          "Hint": "SQ-1-SE-2-PG-19-M_DEL-08-261",
-          "Input": {
-            "Type": "Radio",
-            "Options": [
-              {
-                "Label": "Yes",
-                "Value": "Yes",
-                "FurtherQuestions": null
-              },
-              {
-                "Label": "No",
-                "Value": "No",
-                "FurtherQuestions": null
-              }
-            ],
-            "Validations": []
-          },
-          "Order": null
-        },
-        {
+            {
           "QuestionId": "M_DEL-09",
           "Label": "SQ-1-SE-2-PG-19-M_DEL-09-266",
           "ShortLabel": "SQ-1-SE-2-PG-19-M_DEL-09-267",
@@ -4430,13 +4487,40 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if any convictions apply"
               }
             ]
           },
           "Order": null
-        },
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
         {
+          "Action": "NextPage",
+          "ReturnId": "194",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-19-246"
+    },
+	   {
+      "PageId": "194",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-19-245",
+      "LinkTitle": "SQ-1-SE-2-PG-194-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-19-247",
+      "Questions": [
+           {
           "QuestionId": "M_DEL-10",
           "Label": "SQ-1-SE-2-PG-19-M_DEL-10-270",
           "ShortLabel": "SQ-1-SE-2-PG-19-M_DEL-10-271",
@@ -4460,13 +4544,40 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if any convictions apply"
               }
             ]
           },
           "Order": null
-        },
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
         {
+          "Action": "NextPage",
+          "ReturnId": "195",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-19-246"
+    },
+	   {
+      "PageId": "195",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-19-245",
+      "LinkTitle": "SQ-1-SE-2-PG-195-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-19-247",
+      "Questions": [
+                 {
           "QuestionId": "M_DEL-11",
           "Label": "SQ-1-SE-2-PG-19-M_DEL-11-274",
           "ShortLabel": "SQ-1-SE-2-PG-19-M_DEL-11-275",
@@ -4490,13 +4601,40 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if any convictions apply"
               }
             ]
           },
           "Order": null
-        },
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
         {
+          "Action": "NextPage",
+          "ReturnId": "196",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-19-246"
+    },
+	   {
+      "PageId": "196",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-19-245",
+      "LinkTitle": "SQ-1-SE-2-PG-196-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-19-247",
+      "Questions": [
+          {
           "QuestionId": "M_DEL-12",
           "Label": "SQ-1-SE-2-PG-19-M_DEL-12-278",
           "ShortLabel": "SQ-1-SE-2-PG-19-M_DEL-12-279",
@@ -4520,7 +4658,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if any convictions apply"
               }
             ]
           },
@@ -4550,7 +4688,7 @@ VALUES
       "SequenceId": "1",
       "SectionId": "2",
       "Title": "SQ-1-SE-2-PG-20-281",
-      "LinkTitle": "SQ-1-SE-2-PG-20-284",
+      "LinkTitle": "SQ-1-SE-2-PG-20-LT-1",
       "InfoText": "SQ-1-SE-2-PG-20-283",
       "Questions": [
         {
@@ -4573,13 +4711,13 @@ VALUES
                     "QuestionBodyText": "SQ-1-SE-2-PG-20-D_DEL-13.1-292",
                     "Hint": "SQ-1-SE-2-PG-20-D_DEL-13.1-289",
                     "Input": {
-                      "Type": "text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of payments or payment agreements"
                         }
                       ]
                     },
@@ -4597,13 +4735,40 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if any convictions apply"
               }
             ]
           },
           "Order": null
-        },
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
         {
+          "Action": "NextPage",
+          "ReturnId": "201",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-20-282"
+    },
+	{
+      "PageId": "201",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-201-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-20-283",
+      "Questions": [
+         {
           "QuestionId": "D_DEL-14",
           "Label": "SQ-1-SE-2-PG-20-D_DEL-14-294",
           "ShortLabel": "SQ-1-SE-2-PG-20-D_DEL-14-295",
@@ -4627,7 +4792,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if any bankruptcy or insolvency proceedings apply"
               }
             ]
           },
@@ -4647,11 +4812,8 @@ VALUES
         },
         {
           "Action": "NextPage",
-          "ReturnId": "21",
-          "Condition": {
-            "QuestionId": "D_DEL-14",
-            "MustEqual": "No"
-          },
+          "ReturnId": "202",
+          "Condition": null,
           "ConditionMet": false
         }
       ],
@@ -4668,8 +4830,8 @@ VALUES
       "PageId": "20.1",
       "SequenceId": "1",
       "SectionId": "2",
-      "Title": "SQ-1-SE-2-PG-20.1-297",
-      "LinkTitle": "SQ-1-SE-2-PG-20.1-300",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-20.1-LT-1",
       "InfoText": "SQ-1-SE-2-PG-20.1-299",
       "Questions": [
         {
@@ -4685,7 +4847,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Field must not be empty"
+                "ErrorMessage": "Enter the type of proceeding"
               }
             ]
           },
@@ -4704,7 +4866,12 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Field must not be empty"
+                "ErrorMessage": "Enter a date"
+              },
+              {
+                "Name":"Date",
+                "Value":"",
+                "ErrorMessage": "Date must be correct"
               }
             ]
           },
@@ -4717,13 +4884,13 @@ VALUES
           "QuestionBodyText": "SQ-1-SE-2-PG-20.1-D_DEL-13-1-312",
           "Hint": "SQ-1-SE-2-PG-20.1-D_DEL-13-1-309",
           "Input": {
-            "Type": "text",
+            "Type": "Textarea",
             "Options": null,
             "Validations": [
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Field must not be empty"
+                "ErrorMessage": "Enter how you are repaying the debts"
               }
             ]
           },
@@ -4742,18 +4909,24 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Field must not be empty"
+                "ErrorMessage": "Enter a date"
+              },
+              {
+                "Name":"Date",
+                "Value":"",
+                "ErrorMessage": "Date must be correct"
               }
             ]
           },
           "Order": null
         }
+
       ],
       "PageOfAnswers": [],
       "Next": [
         {
           "Action": "NextPage",
-          "ReturnId": "21",
+          "ReturnId": "202",
           "Condition": null,
           "ConditionMet": false
         }
@@ -4767,15 +4940,15 @@ VALUES
       "HasFeedback": false,
       "BodyText": "SQ-1-SE-2-PG-20.1-298"
     },
-    {
-      "PageId": "21",
+	{
+      "PageId": "202",
       "SequenceId": "1",
       "SectionId": "2",
-      "Title": "SQ-1-SE-2-PG-21-317",
-      "LinkTitle": "SQ-1-SE-2-PG-21-320",
-      "InfoText": "SQ-1-SE-2-PG-21-319",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-202-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-20-283",
       "Questions": [
-        {
+         {
           "QuestionId": "A_DEL-21",
           "Label": "SQ-1-SE-2-PG-21-A_DEL-21-322",
           "ShortLabel": "SQ-1-SE-2-PG-21-A_DEL-21-323",
@@ -4795,13 +4968,13 @@ VALUES
                     "QuestionBodyText": "SQ-1-SE-2-PG-21-A_DEL-21.1-328",
                     "Hint": "SQ-1-SE-2-PG-21-A_DEL-21.1-325",
                     "Input": {
-                      "Type": "Text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of any mitigating factors"
                         }
                       ]
                     },
@@ -4819,12 +4992,39 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if any cessation of trading proceedings apply"
               }
             ]
           },
           "Order": null
-        },
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+          {
+            "Action": "NextPage",
+			"ReturnId": "203",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-20-282"
+    },
+	{
+      "PageId": "203",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-203-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-20-283",
+      "Questions": [
         {
           "QuestionId": "A_DEL-22",
           "Label": "SQ-1-SE-2-PG-21-A_DEL-22-330",
@@ -4845,13 +5045,13 @@ VALUES
                     "QuestionBodyText": "SQ-1-SE-2-PG-21-A_DEL-22.1-336",
                     "Hint": "SQ-1-SE-2-PG-21-A_DEL-22.1-333",
                     "Input": {
-                      "Type": "Text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of any mitigating factors"
                         }
                       ]
                     },
@@ -4869,12 +5069,39 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if any tax returns have been found to be incorrect"
               }
             ]
           },
           "Order": null
-        },
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+          {
+            "Action": "NextPage",
+			      "ReturnId": "204",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-20-282"
+    },
+	  {
+      "PageId": "204",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-204-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-20-283",
+      "Questions": [
         {
           "QuestionId": "A_DEL-23",
           "Label": "SQ-1-SE-2-PG-21-A_DEL-23-338",
@@ -4895,13 +5122,13 @@ VALUES
                     "QuestionBodyText": "SQ-1-SE-2-PG-21-A_DEL-23.1-344",
                     "Hint": "SQ-1-SE-2-PG-21-A_DEL-23.1-341",
                     "Input": {
-                      "Type": "Text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of any mitigating factors"
                         }
                       ]
                     },
@@ -4919,13 +5146,40 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if any tax returns have been found to be incorrect"
               }
             ]
           },
           "Order": null
-        },
-        {
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+          {
+            "Action": "NextPage",
+			"ReturnId": "205",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-20-282"
+    },
+	{
+      "PageId": "205",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-205-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-20-283",
+      "Questions": [
+       {
           "QuestionId": "A_DEL-24",
           "Label": "SQ-1-SE-2-PG-21-A_DEL-24-346",
           "ShortLabel": "SQ-1-SE-2-PG-21-A_DEL-24-347",
@@ -4945,13 +5199,13 @@ VALUES
                     "QuestionBodyText": "SQ-1-SE-2-PG-21-A_DEL-24.1-352",
                     "Hint": "SQ-1-SE-2-PG-21-A_DEL-24.1-349",
                     "Input": {
-                      "Type": "Text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of any mitigating factors"
                         }
                       ]
                     },
@@ -4969,13 +5223,40 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if your organisation has had any contracts withdrawn"
               }
             ]
           },
           "Order": null
-        },
-        {
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+          {
+            "Action": "NextPage",
+			"ReturnId": "206",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-20-282"
+    },
+	{
+      "PageId": "206",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-206-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-20-283",
+      "Questions": [
+       {
           "QuestionId": "A_DEL-25",
           "Label": "SQ-1-SE-2-PG-21-A_DEL-25-354",
           "ShortLabel": "SQ-1-SE-2-PG-21-A_DEL-25-355",
@@ -4995,13 +5276,13 @@ VALUES
                     "QuestionBodyText": "SQ-1-SE-2-PG-21-A_DEL-25.1-360",
                     "Hint": "SQ-1-SE-2-PG-21-A_DEL-25.1-357",
                     "Input": {
-                      "Type": "Text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of any mitigating factors"
                         }
                       ]
                     },
@@ -5020,7 +5301,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter a full name"
                         }
                       ]
                     },
@@ -5039,7 +5320,12 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter a date"
+                        },
+                        {
+                          "Name":"Date",
+                          "Value":"",
+                          "ErrorMessage": "Date must be correct"
                         }
                       ]
                     },
@@ -5057,12 +5343,39 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if your organisation has withdrawn from any contracts"
               }
             ]
           },
           "Order": null
-        },
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+          {
+            "Action": "NextPage",
+			"ReturnId": "207",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-20-282"
+    },
+	{
+      "PageId": "207",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-207-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-20-283",
+      "Questions": [
         {
           "QuestionId": "A_DEL-26",
           "Label": "SQ-1-SE-2-PG-21-A_DEL-26-370",
@@ -5089,7 +5402,12 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter a date"
+                        },
+                        {
+                          "Name":"Date",
+                          "Value":"",
+                          "ErrorMessage": "Date must be correct"
                         }
                       ]
                     },
@@ -5102,13 +5420,13 @@ VALUES
                     "QuestionBodyText": "SQ-1-SE-2-PG-21-A_DEL-26.2-380",
                     "Hint": "SQ-1-SE-2-PG-21-A_DEL-26.2-377",
                     "Input": {
-                      "Type": "Text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter the reasons why your organisation was removed from those registers"
                         }
                       ]
                     },
@@ -5126,13 +5444,40 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if your organisation been removed from the listed registers"
               }
             ]
           },
           "Order": null
-        },
-        {
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+          {
+            "Action": "NextPage",
+			"ReturnId": "208",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-20-282"
+    },
+	{
+      "PageId": "208",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-208-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-20-283",
+      "Questions": [
+       {
           "QuestionId": "A_DEL-27",
           "Label": "SQ-1-SE-2-PG-21-A_DEL-27-382",
           "ShortLabel": "SQ-1-SE-2-PG-21-A_DEL-27-383",
@@ -5158,7 +5503,12 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter a date"
+                        },
+                        {
+                          "Name":"Date",
+                          "Value":"",
+                          "ErrorMessage": "Date must be correct"
                         }
                       ]
                     },
@@ -5171,13 +5521,13 @@ VALUES
                     "QuestionBodyText": "SQ-1-SE-2-PG-21-A_DEL-27.2-392",
                     "Hint": "SQ-1-SE-2-PG-21-A_DEL-27.2-389",
                     "Input": {
-                      "Type": "Text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter the reasons why your organisation received direction or sanctions"
                         }
                       ]
                     },
@@ -5195,12 +5545,39 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if your organisation has received direction or sanctions"
               }
             ]
           },
           "Order": null
-        },
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+          {
+            "Action": "NextPage",
+			      "ReturnId": "209",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-20-282"
+    },
+	  {
+      "PageId": "209",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-209-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-20-283",
+      "Questions": [
         {
           "QuestionId": "A_DEL-28",
           "Label": "SQ-1-SE-2-PG-21-A_DEL-28-394",
@@ -5221,13 +5598,13 @@ VALUES
                     "QuestionBodyText": "SQ-1-SE-2-PG-21-A_DEL-28.1-400",
                     "Hint": "SQ-1-SE-2-PG-21-A_DEL-28.1-397",
                     "Input": {
-                      "Type": "Text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of any mitigating factors"
                         }
                       ]
                     },
@@ -5245,12 +5622,39 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if your organisation has ever had to repay public money"
               }
             ]
           },
           "Order": null
-        },
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+          {
+            "Action": "NextPage",
+			      "ReturnId": "210",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-20-282"
+    },
+	  {
+      "PageId": "210",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-210-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-20-283",
+      "Questions": [
         {
           "QuestionId": "A_DEL-29",
           "Label": "SQ-1-SE-2-PG-21-A_DEL-29-402",
@@ -5271,13 +5675,13 @@ VALUES
                     "QuestionBodyText": "SQ-1-SE-2-PG-21-A_DEL-29.1-408",
                     "Hint": "SQ-1-SE-2-PG-21-A_DEL-29.1-405",
                     "Input": {
-                      "Type": "Text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of any mitigating factors"
                         }
                       ]
                     },
@@ -5295,12 +5699,39 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if any of the listed apply"
               }
             ]
           },
           "Order": null
-        },
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+          {
+            "Action": "NextPage",
+			"ReturnId": "211",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-20-282"
+    },
+	  {
+      "PageId": "211",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-20-281",
+      "LinkTitle": "SQ-1-SE-2-PG-211-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-20-283",
+      "Questions": [
         {
           "QuestionId": "A_DEL-30",
           "Label": "SQ-1-SE-2-PG-21-A_DEL-30-410",
@@ -5327,7 +5758,12 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter a date"
+                        },
+                        {
+                          "Name":"Date",
+                          "Value":"",
+                          "ErrorMessage": "Date must be correct"
                         }
                       ]
                     },
@@ -5340,13 +5776,13 @@ VALUES
                     "QuestionBodyText": "SQ-1-SE-2-PG-21-A_DEL-30.2-420",
                     "Hint": "SQ-1-SE-2-PG-21-A_DEL-30.2-417",
                     "Input": {
-                      "Type": "Text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of the dispute"
                         }
                       ]
                     },
@@ -5365,7 +5801,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter current status of the dispute"
                         }
                       ]
                     },
@@ -5383,7 +5819,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if your organisation has an outstanding or ongoing legal dispute"
               }
             ]
           },
@@ -5392,13 +5828,13 @@ VALUES
       ],
       "PageOfAnswers": [],
       "Next": [
-        {
-          "Action": "NextPage",
-          "ReturnId": "22",
-          "Condition": null,
-          "ConditionMet": false
-        }
-      ],
+          {
+            "Action": "NextPage",
+			      "ReturnId": "22",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
       "Complete": false,
       "AllowMultipleAnswers": false,
       "Order": null,
@@ -5406,14 +5842,14 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
-      "BodyText": "SQ-1-SE-2-PG-21-318"
+      "BodyText": "SQ-1-SE-2-PG-20-282"
     },
     {
       "PageId": "22",
       "SequenceId": "1",
       "SectionId": "2",
       "Title": "SQ-1-SE-2-PG-22-425",
-      "LinkTitle": "SQ-1-SE-2-PG-22-428",
+      "LinkTitle": "SQ-1-SE-2-PG-22-LT-1",
       "InfoText": "SQ-1-SE-2-PG-22-427",
       "Questions": [
         {
@@ -5440,13 +5876,40 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if you understand the false declarations statement"
               }
             ]
           },
           "Order": null
-        },
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
         {
+          "Action": "NextPage",
+          "ReturnId": "221",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-22-426"
+    },
+    {
+      "PageId": "221",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-22-425",
+      "LinkTitle": "SQ-1-SE-2-PG-221-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-22-427",
+      "Questions": [
+       {
           "QuestionId": "A_DEL-29",
           "Label": "SQ-1-SE-2-PG-22-A_DEL-29-434",
           "ShortLabel": "SQ-1-SE-2-PG-22-A_DEL-29-435",
@@ -5470,13 +5933,40 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if your applications to deliver end-point assessments will be accurate and true representations"
               }
             ]
           },
           "Order": null
-        },
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
         {
+          "Action": "NextPage",
+          "ReturnId": "222",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "BodyText": "SQ-1-SE-2-PG-22-426"
+    },
+    {
+      "PageId": "222",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "SQ-1-SE-2-PG-22-425",
+      "LinkTitle": "SQ-1-SE-2-PG-222-LT-1",
+      "InfoText": "SQ-1-SE-2-PG-22-427",
+      "Questions": [
+       {
           "QuestionId": "A_DEL-30",
           "Label": "SQ-1-SE-2-PG-22-A_DEL-30-438",
           "ShortLabel": "SQ-1-SE-2-PG-22-A_DEL-30-439",
@@ -5500,7 +5990,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select an option"
+                "ErrorMessage": "Select yes if you agree for your organisation details to be added to the register"
               }
             ]
           },
@@ -5529,8 +6019,9 @@ VALUES
   "FinancialApplicationGrade": null
 }
    
-', N'Declarations', N'Declarations', N'Draft', N'Questions', N'')
+', N'Declarations', N'Declarations', N'Draft', N'PagesWithSections', N'')
 GO
+
 DELETE from WorkflowSections where SequenceId=1 and SectionId=3
 GO
 INSERT [dbo].[WorkflowSections]
@@ -5557,10 +6048,10 @@ VALUES
             "Type": "FileUpload",
             "Options": null,
             "Validations": [
-              {
+               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Upload a file"
+                "ErrorMessage": "Select a file containing your financial evidences"
               }
             ]
           },
@@ -5576,10 +6067,10 @@ VALUES
             "Type": "FileUpload",
             "Options": null,
             "Validations": [
-              {
+               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Upload a file"
+                "ErrorMessage": "Select a file containg the latest available accounts for the parent company"
               }
             ]
           },
@@ -5809,7 +6300,7 @@ VALUES
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-340-LT-1', '', 'Fair Access', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-340-LT-1', '', 'Fair access', 'Live', GETUTCDATE(), 'Import')
 
 
   GO
@@ -6704,14 +7195,14 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-28-L-1';  -- Row L
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-28-CC-28-L-1', '', 'Quality Assurance of outsourced services', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-28-L-1', '', 'Quality assurance of outsourced services', 'Live', GETUTCDATE(), 'Import')
 
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-28-SL-1'; -- Row J
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-28-CC-28-SL-1', '', 'Quality Assurance of outsourced services'	,'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-28-SL-1', '', 'Quality assurance of outsourced services'	,'Live', GETUTCDATE(), 'Import')
 
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-28-QB-1';   -- Row P
@@ -7170,7 +7661,12 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF policy document"
+                  "ErrorMessage": "Select an internal audit policy document"
+                },
+                {
+                  "Name": "FileType",
+                  "Value": "pdf,application/pdf",
+                  "ErrorMessage": "The selected file must be a PDF"
                 }
               ]
             },
@@ -7216,7 +7712,12 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF of your public liability certificate of insurance"
+                  "ErrorMessage": "Select a public liability certificate of insurance"
+                },
+                {
+                  "Name": "FileType",
+                  "Value": "pdf,application/pdf",
+                  "ErrorMessage": "The selected file must be a PDF"
                 }
               ]
             },
@@ -7262,7 +7763,12 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF of your professional indemnity certificate of insurance"
+                  "ErrorMessage": "Select a professional indemnity certificate of insurance"
+                },
+                {
+                  "Name": "FileType",
+                  "Value": "pdf,application/pdf",
+                  "ErrorMessage": "The selected file must be a PDF"
                 }
               ]
             },
@@ -7273,7 +7779,7 @@ VALUES
         "Next": [
           {
             "Action": "NextPage",
-			"ReturnId": "28",
+			      "ReturnId": "28",
             "Condition": null,
             "ConditionMet": false
           }
@@ -7304,7 +7810,13 @@ VALUES
             "Input": {
               "Type": "FileUpload",
               "Options": null,
-              "Validations": []
+              "Validations": [
+                {
+                  "Name": "FileType",
+                  "Value": "pdf,application/pdf",
+                  "ErrorMessage": "The selected file must be a PDF"
+                }
+              ]
             },
             "Order": null
           }
@@ -7312,7 +7824,7 @@ VALUES
         "PageOfAnswers": [],
         "Next": [
           {
-             "Action": "NextPage",
+            "Action": "NextPage",
             "ReturnId": "29",
             "Condition": null,
             "ConditionMet": false
@@ -7348,7 +7860,12 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF of your policy safeguarding document"
+                  "ErrorMessage": "Select a safeguarding policy document"
+                },
+                {
+                  "Name": "FileType",
+                  "Value": "pdf,application/pdf",
+                  "ErrorMessage": "The selected file must be a PDF"
                 }
               ]
             },
@@ -7394,7 +7911,12 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF Prevent Agenda policy document"
+                  "ErrorMessage": "Select a prevent agenda policy document"
+                },
+                {
+                  "Name": "FileType",
+                  "Value": "pdf,application/pdf",
+                  "ErrorMessage": "The selected file must be a PDF"
                 }
               ]
             },
@@ -7440,7 +7962,12 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF conflict of interest policy document"
+                  "ErrorMessage": "Select a conflict of interest policy document"
+                },
+                {
+                  "Name": "FileType",
+                  "Value": "pdf,application/pdf",
+                  "ErrorMessage": "The selected file must be a PDF"
                 }
               ]
             },
@@ -7473,7 +8000,7 @@ VALUES
         "LinkTitle": "SQ-2-SE-4-PG-32-LT-1",
         "InfoText": "SQ-2-SE-4-PG-24-IT-1",
         "Questions": [          
-		{
+		      {
             "QuestionId": "CC-09",
             "Label": "SQ-2-SE-4-PG-24-CC-09-L-1",
             "ShortLabel": "SQ-2-SE-4-PG-24-CC-09-SL-1",
@@ -7486,7 +8013,12 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF procedure for monitoring assessor policy document"
+                  "ErrorMessage": "Select a file describing your procedures for monitoring assessor practices and decisions"
+                },
+                {
+                  "Name": "FileType",
+                  "Value": "pdf,application/pdf",
+                  "ErrorMessage": "The selected file must be a PDF"
                 }
               ]
             },
@@ -7519,7 +8051,7 @@ VALUES
         "LinkTitle": "SQ-2-SE-4-PG-33-LT-1",
         "InfoText": "SQ-2-SE-4-PG-24-IT-1",
         "Questions": [          
-		 {
+		      {
             "QuestionId": "CC-10",
             "Label": "SQ-2-SE-4-PG-24-CC-10-L-1",
             "ShortLabel": "SQ-2-SE-4-PG-24-CC-10-SL-1",
@@ -7532,7 +8064,12 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF standardisation and moderation policy document"
+                  "ErrorMessage": "Select an file describing your standardisation and moderation activities"
+                },
+                {
+                  "Name": "FileType",
+                  "Value": "pdf,application/pdf",
+                  "ErrorMessage": "The selected file must be a PDF"
                 }
               ]
             },
@@ -7578,7 +8115,12 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF compalints policy document"
+                  "ErrorMessage": "Select a compalints and appeals policy document"
+                },
+                {
+                  "Name": "FileType",
+                  "Value": "pdf,application/pdf",
+                  "ErrorMessage": "The selected file must be a PDF"
                 }
               ]
             },
@@ -7624,7 +8166,12 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF fair access policy document"
+                  "ErrorMessage": "Select a fair access policy document"
+                },
+                {
+                  "Name": "FileType",
+                  "Value": "pdf,application/pdf",
+                  "ErrorMessage": "The selected file must be a PDF"
                 }
               ]
             },
@@ -7670,7 +8217,12 @@ VALUES
                 {
                   "Name": "Required",
                   "Value": null,
-                  "ErrorMessage": "Upload your PDF comparability and consistency policy document"
+                  "ErrorMessage": "Select a file describing your comparability and consistency decisions"
+                },
+                {
+                  "Name": "FileType",
+                  "Value": "pdf,application/pdf",
+                  "ErrorMessage": "The selected file must be a PDF"
                 }
               ]
             },
@@ -7710,13 +8262,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-24-CC-14-QB-1",
             "Hint": "SQ-2-SE-4-PG-24-CC-14-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how you continuously improve the quality of your assessment practice"
                         }
                       ]
             },
@@ -7756,13 +8308,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-25-CC-16-QB-1",
             "Hint": "SQ-2-SE-4-PG-25-CC-16-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter your evidence of engagement with trailblazers and employers"
                         }
                       ]
             },
@@ -7802,9 +8354,15 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-25-CC-19-QB-1",
             "Hint": "SQ-2-SE-4-PG-25-CC-19-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
-                      "Validations": []
+                      "Validations": [
+                        {
+                          "Name": "Required",
+                          "Value": null,
+                          "ErrorMessage": "Enter details of membership to professional organisations"
+                        }
+                      ]
             },
             "Order": null
           }
@@ -7812,7 +8370,7 @@ VALUES
         "PageOfAnswers": [],
         "Next": [
           {
-             "Action": "NextPage",
+            "Action": "NextPage",
             "ReturnId": "39",
             "Condition": null,
             "ConditionMet": false
@@ -7848,7 +8406,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Provide number of assessors"
+                          "ErrorMessage": "Provide the number of assessors your organisation has"
                         }
                       ]
             },
@@ -7894,7 +8452,7 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "number of assessors - THIS SOUNDS WRONG"
+                          "ErrorMessage": "Enter the volume of end-point assessments you can deliver"
                         }
                       ]
             },
@@ -7934,13 +8492,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-26-CC-22-QB-1",
             "Hint": "SQ-2-SE-4-PG-26-CC-22-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how the volume of end-point assessments be achieved"
                         }
                       ]
             },
@@ -7980,13 +8538,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-27-CC-23-QB-1",
             "Hint": "SQ-2-SE-4-PG-27-CC-23-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how you recruit and train assessors"
                         }
                       ]
             },
@@ -8026,13 +8584,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-27-CC-24-QB-1",
             "Hint": "SQ-2-SE-4-PG-27-CC-24-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter the experience, skills and qualifications your assessors have"
                         }
                       ]
             },
@@ -8072,13 +8630,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-27-CC-25-QB-1",
             "Hint": "SQ-2-SE-4-PG-27-CC-25-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how you ensure your assessors'' occupational expertise is maintained"
                         }
                       ]
             },
@@ -8118,13 +8676,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-26-QB-1",
             "Hint": "SQ-2-SE-4-PG-28-CC-26-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how you will conduct an end-point assessment for this standard"
                         }
                       ]
             },
@@ -8175,13 +8733,13 @@ VALUES
                     "Label": "SQ-2-SE-4-PG-28-CC-28-L-1",
                     "Hint":  "SQ-2-SE-4-PG-28-CC-28-H-1",
                     "Input": {
-                      "Type": "text",
+                      "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter the quality assurance of outsourced services"
                         }
                       ]
                     },
@@ -8201,7 +8759,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "select an option"
+                "ErrorMessage": "Select yes if you intend to outsource any of your end-point assessments"
               }
             ]
             },
@@ -8241,13 +8799,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-29-QB-1",
             "Hint": "SQ-2-SE-4-PG-28-CC-29-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how you will engage with employers and training organisations"
                         }
                       ]
             },
@@ -8287,13 +8845,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-30-QB-1",
             "Hint": "SQ-2-SE-4-PG-28-CC-30-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how you will manage any potential conflict of interest"
                         }
                       ]
             },
@@ -8333,15 +8891,16 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-31-QB-1",
             "Hint": "SQ-2-SE-4-PG-28-CC-31-H-1",
             "Input": {
-              "Type": "text",
-                      "Options": null,
-                      "Validations": [
-                        {
-                          "Name": "Required",
-                          "Value": null,
-                          "ErrorMessage": "Field must not be empty"
-                        }
-                      ]
+              "Type": "DataFed_CheckboxList",
+              "Options": null,
+              "Validations": [
+                {
+                  "Name": "Required",
+                  "Value": null,
+                  "ErrorMessage": "Enter where you will conduct end-point assessments"
+                }
+              ],
+              "DataEndpoint":"DeliveryAreas"
             },
             "Order": null
           }
@@ -8379,13 +8938,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-32-QB-1",
             "Hint": "SQ-2-SE-4-PG-28-CC-32-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how you will conduct end-point assessments"
                         }
                       ]
             },
@@ -8425,13 +8984,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-33-QB-1",
             "Hint": "SQ-2-SE-4-PG-28-CC-33-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter how you will develop and maintain the required resources and assessment tools"
                         }
                       ]
             },
@@ -8471,13 +9030,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-29-CC-34-QB-1",
             "Hint": "SQ-2-SE-4-PG-29-CC-34-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of the secure IT infrastructure you will implement"
                         }
                       ]
             },
@@ -8517,13 +9076,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-29-CC-35-QB-1",
             "Hint": "SQ-2-SE-4-PG-29-CC-35-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of processes in place for administration of assessments"
                         }
                       ]
             },
@@ -8563,13 +9122,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-29-CC-36-QB-1",
             "Hint": "SQ-2-SE-4-PG-29-CC-36-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter the strategies in place for development of assessment products and tools"
                         }
                       ]
             },
@@ -8609,13 +9168,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-29-CC-37-QB-1",
             "Hint": "SQ-2-SE-4-PG-29-CC-37-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter the actions you will take and the processes you will implement"
                         }
                       ]
             },
@@ -8655,13 +9214,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-29-CC-38-QB-1",
             "Hint": "SQ-2-SE-4-PG-29-CC-38-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of how you collate and confirm assessment outcomes to employers, training providers and apprentices"
                         }
                       ]
             },
@@ -8701,13 +9260,13 @@ VALUES
             "QuestionBodyText": "SQ-2-SE-4-PG-29-CC-39-QB-1",
             "Hint": "SQ-2-SE-4-PG-29-CC-39-H-1",
             "Input": {
-              "Type": "text",
+              "Type": "Textarea",
                       "Options": null,
                       "Validations": [
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Field must not be empty"
+                          "ErrorMessage": "Enter details of the processes in place for recording and issuing assessment results and certificates"
                         }
                       ]
             },

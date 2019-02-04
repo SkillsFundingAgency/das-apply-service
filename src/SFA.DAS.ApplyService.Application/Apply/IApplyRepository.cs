@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.Apply
 {
@@ -13,6 +13,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         Task<List<Domain.Entities.Application>> GetApplications(Guid userId);
         Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId,  int sectionId, Guid? userId);
+        Task<ApplicationSequence> GetSequence(Guid applicationId, int sequenceId, Guid? userId);
         Task<ApplicationSequence> GetActiveSequence(Guid applicationId);
         Task<List<Asset>> GetAssets();
         Task<Guid> CreateApplication(string applicationType, Guid applyingOrganisationId, Guid userId, Guid workflowId);
@@ -24,10 +25,10 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task CreateSequence(Guid workflowId, double sequenceId, bool isActive);
         Task CreateSection(WorkflowSection section);
         Task AddAssets(Dictionary<string,string> assets);
-        Task<List<dynamic>> GetNewApplications(int sequenceId);
+        Task<List<ApplicationSummaryItem>> GetOpenApplications();
+        Task<List<ApplicationSummaryItem>> GetClosedApplications();
         Task SubmitApplicationSequence(ApplicationSubmitRequest request, ApplicationData applicationdata);
         Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string status, string applicationStatus);
-        Task UpdateSequenceData(Guid applicationId, int sequenceId, SequenceData sequenceData);
         Task CloseSequence(Guid applicationId, int sequenceId);
         Task<List<ApplicationSequence>> GetSequences(Guid applicationId);
         Task OpenSequence(Guid applicationId, int nextSequenceId);
