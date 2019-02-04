@@ -6066,13 +6066,7 @@ VALUES
           "Input": {
             "Type": "FileUpload",
             "Options": null,
-            "Validations": [
-               {
-                "Name": "Required",
-                "Value": null,
-                "ErrorMessage": "Select a file containg the latest available accounts for the parent company"
-              }
-            ]
+            "Validations": []
           },
           "Order": null
         }
