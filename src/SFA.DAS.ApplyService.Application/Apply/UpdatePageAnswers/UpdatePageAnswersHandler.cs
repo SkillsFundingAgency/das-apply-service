@@ -240,7 +240,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
             validationErrors.AddRange(errors);
           }
 
-          pageAnswers.Answers.Add(answer);
+          if (answer != null)
+          {
+            pageAnswers.Answers.Add(answer);  
+          }
         }
       }
       else
@@ -266,8 +269,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
           }
         }
 
-        pageAnswers.Answers.Add(answer);
-
+        if (answer != null)
+        {
+          pageAnswers.Answers.Add(answer);
+        }
       }
 
       return validationPassed;

@@ -2363,7 +2363,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-28-394';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-28-394', '', 'Has your organisation ever had to repay public money?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-28-394', '', 'Repayment of public money', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-28-395';
 INSERT INTO Assets
@@ -2375,7 +2375,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-28-396';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-28-396', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-28-396', '', '<p class="govuk-body">Has your organisation ever had to repay public money?</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-28.1-397';
 INSERT INTO Assets
@@ -2459,7 +2459,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-30-410';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-30-410', '', 'Does your organisation have any outstanding or ongoing legal dispute that could prevent you from conducting end-point assessments?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-30-410', '', 'Legal dispute', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-30-411';
 INSERT INTO Assets
@@ -2471,7 +2471,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-30-412';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-30-412', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-30-412', '', '<p class="govuk-body">Does your organisation have any outstanding or ongoing legal dispute that could prevent you from conducting end-point assessments?</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-30.1-413';
 INSERT INTO Assets
