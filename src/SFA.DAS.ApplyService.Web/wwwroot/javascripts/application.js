@@ -27,6 +27,34 @@ window.GOVUKFrontend.initAll();
       return trueCount;
     },
 
+    setControl: function(indeterminate, checked) {
+      GOVUK.checkAll.checkAllControl.indeterminate = indeterminate;
+      if (checked !== undefined)
+        GOVUK.checkAll.checkAllControl.checked = checked;
+      if (indeterminate) {
+        GOVUK.checkAll.checkAllControl.classList.add(
+          "govuk-checkboxes__input--indeterminate"
+        );
+      } else {
+        GOVUK.checkAll.checkAllControl.classList.remove(
+          "govuk-checkboxes__input--indeterminate"
+        );
+      }
+    },
+
+    determineControlState: function() {
+      if (
+        GOVUK.checkAll.numberChecked() ===
+        GOVUK.checkAll.checkAllCheckbox.length
+      ) {
+        GOVUK.checkAll.setControl(false, true);
+      } else if (GOVUK.checkAll.numberChecked() === 0) {
+        GOVUK.checkAll.setControl(false, false);
+      } else if (!GOVUK.checkAll.checkAllControl.indeterminate) {
+        GOVUK.checkAll.setControl(true);
+      }
+    },
+
     handleClick: function(event) {
       if (event.target.classList.contains("js-check-all-control")) {
         if (
@@ -34,10 +62,7 @@ window.GOVUKFrontend.initAll();
             "govuk-checkboxes__input--indeterminate"
           )
         ) {
-          GOVUK.checkAll.checkAllControl.indeterminate = false;
-          GOVUK.checkAll.checkAllControl.classList.remove(
-            "govuk-checkboxes__input--indeterminate"
-          );
+          GOVUK.checkAll.setControl(false);
         }
 
         for (
@@ -48,27 +73,7 @@ window.GOVUKFrontend.initAll();
           GOVUK.checkAll.checkAllCheckbox[i].checked = event.target.checked;
         }
       } else if (event.target.classList.contains("js-check-all-checkbox")) {
-        if (
-          GOVUK.checkAll.numberChecked() ===
-          GOVUK.checkAll.checkAllCheckbox.length
-        ) {
-          GOVUK.checkAll.checkAllControl.indeterminate = false;
-          GOVUK.checkAll.checkAllControl.checked = true;
-          GOVUK.checkAll.checkAllControl.classList.remove(
-            "govuk-checkboxes__input--indeterminate"
-          );
-        } else if (GOVUK.checkAll.numberChecked() === 0) {
-          GOVUK.checkAll.checkAllControl.indeterminate = false;
-          GOVUK.checkAll.checkAllControl.checked = false;
-          GOVUK.checkAll.checkAllControl.classList.remove(
-            "govuk-checkboxes__input--indeterminate"
-          );
-        } else if (!GOVUK.checkAll.checkAllControl.indeterminate) {
-          GOVUK.checkAll.checkAllControl.indeterminate = true;
-          GOVUK.checkAll.checkAllControl.classList.add(
-            "govuk-checkboxes__input--indeterminate"
-          );
-        }
+        GOVUK.checkAll.determineControlState();
       } else {
         return false;
       }
@@ -76,6 +81,7 @@ window.GOVUKFrontend.initAll();
 
     init: function() {
       GOVUK.checkAll.checkboxContainer.classList.add("govuk-!-margin-left-8");
+      GOVUK.checkAll.determineControlState();
       document.addEventListener("change", GOVUK.checkAll.handleClick);
     }
   };

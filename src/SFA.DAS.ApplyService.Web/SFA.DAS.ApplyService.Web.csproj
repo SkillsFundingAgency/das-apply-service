@@ -27,6 +27,9 @@
     <Content Update="nlog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="inactive_app_offline_private_beta.htm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.ApplyService.Application\SFA.DAS.ApplyService.Application.csproj" />
