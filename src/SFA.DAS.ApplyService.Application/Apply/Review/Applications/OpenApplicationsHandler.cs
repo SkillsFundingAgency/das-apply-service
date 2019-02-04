@@ -17,7 +17,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Applications
 
         public async Task<List<ApplicationSummaryItem>> Handle(OpenApplicationsRequest request, CancellationToken cancellationToken)
         {
-            return await _repository.GetOpenApplications();
+            return await _repository.GetOpenApplications(request.SequenceId);
         }
     }
 }

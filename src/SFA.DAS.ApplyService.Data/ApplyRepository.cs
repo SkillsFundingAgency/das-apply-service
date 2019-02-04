@@ -395,7 +395,83 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<ApplicationSummaryItem>> GetOpenApplications()
+        public async Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection
+                    .QueryAsync<ApplicationSummaryItem>(
+                        @"SELECT OrganisationName, ApplicationId, SequenceId,
+                            CASE WHEN SequenceId = 1 THEN 'Midpoint'
+                                 WHEN SequenceId = 2 THEN 'Standard'
+                                 ELSE 'Unknown'
+                            END As ApplicationType,
+                            StandardName,
+                            StandardCode,
+                            SubmittedDate,
+                            SubmissionCount,
+                            CASE WHEN SequenceId = 1 THEN Sec3Status
+		                         ELSE NULL
+	                        END As FinancialStatus,
+                            CASE WHEN SequenceId = 1 THEN SelectedFinancialGrade
+		                         ELSE NULL
+	                        END As FinancialGrade,
+	                        CASE WHEN (SequenceStatus = @sequenceStatusFeedbackAdded) THEN @sequenceStatusFeedbackAdded
+                                 WHEN (SubmissionCount > 1 AND SequenceId = 1 AND Sec1Status = @sectionStatusSubmitted AND Sec2Status = @sectionStatusSubmitted) THEN @sequenceStatusResubmitted
+                                 WHEN (SubmissionCount > 1 AND SequenceId = 2 AND Sec4Status = @sectionStatusSubmitted) THEN @sequenceStatusResubmitted
+                                 WHEN (SequenceId = 1 AND Sec1Status = Sec2Status) THEN Sec1Status
+		                         WHEN SequenceId = 2 THEN Sec4Status
+		                         ELSE @sectionStatusInProgress
+	                        END As CurrentStatus
+                        FROM (
+	                        SELECT 
+                                org.Name AS OrganisationName,
+                                appl.id AS ApplicationId,
+                                seq.SequenceId AS SequenceId,
+                                CASE WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardName')
+		                             ELSE NULL
+                                END As StandardName,
+                                CASE WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardCode')
+		                             ELSE NULL
+                                END As StandardCode,
+                                CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.LatestInitSubmissionDate')
+		                             WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.LatestStandardSubmissionDate')
+		                             ELSE NULL
+	                            END As SubmittedDate,
+                                CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount')
+		                             WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardSubmissionsCount')
+		                             ELSE 0
+	                            END As SubmissionCount,
+                                MAX(CASE WHEN sec.[SectionId] = 3 THEN JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.SelectedGrade') ELSE NULL END) AS SelectedFinancialGrade,
+                                seq.Status AS SequenceStatus,
+	                            MAX(CASE WHEN sec.[SectionId] = 1 THEN sec.[Status] ELSE NULL END) AS Sec1Status,
+	                            MAX(CASE WHEN sec.[SectionId] = 2 THEN sec.[Status] ELSE NULL END) AS Sec2Status,
+	                            MAX(CASE WHEN sec.[SectionId] = 3 THEN sec.[Status] ELSE NULL END) AS Sec3Status,
+	                            MAX(CASE WHEN sec.[SectionId] = 4 THEN sec.[Status] ELSE NULL END) AS Sec4Status
+	                        FROM Applications appl
+	                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
+	                        INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id 
+	                        INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
+	                        WHERE appl.ApplicationStatus = @applicationStatusSubmitted
+                                AND seq.SequenceId = @sequenceId
+                                AND seq.Status = @sequenceStatusSubmitted
+                                AND seq.IsActive = 1
+	                        GROUP BY seq.SequenceId, seq.Status, appl.ApplyingOrganisationId, appl.id, org.Name, appl.ApplicationData, sec.QnAData 
+                        ) ab",
+                        new
+                        {
+                            sequenceId,
+                            applicationStatusSubmitted = ApplicationStatus.Submitted,
+                            sequenceStatusSubmitted = ApplicationSequenceStatus.Submitted,
+                            sequenceStatusResubmitted = ApplicationSequenceStatus.Resubmitted,
+                            sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded,
+                            sectionStatusSubmitted = ApplicationSectionStatus.Submitted,
+                            sectionStatusInProgress = ApplicationSectionStatus.InProgress   
+                        })).ToList();
+            }
+        }
+
+        public async Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
@@ -408,16 +484,7 @@ namespace SFA.DAS.ApplyService.Data
                             END As ApplicationType,
                             SubmittedDate,
                             SubmissionCount,
-                            CASE WHEN SequenceId = 1 THEN Sec3Status
-		                         ELSE NULL
-	                        END As FinancialStatus,
-	                        CASE WHEN (SequenceStatus = @sequenceStatusFeedbackAdded) THEN @sequenceStatusFeedbackAdded
-                                 WHEN (SubmissionCount > 1 AND SequenceId = 1 AND Sec1Status = @sectionStatusSubmitted AND Sec2Status = @sectionStatusSubmitted) THEN @sequenceStatusResubmitted
-                                 WHEN (SubmissionCount > 1 AND SequenceId = 2 AND Sec4Status = @sectionStatusSubmitted) THEN @sequenceStatusResubmitted
-                                 WHEN (SequenceId = 1 AND Sec1Status = Sec2Status) THEN Sec1Status
-		                         WHEN SequenceId = 2 THEN Sec4Status
-		                         ELSE @sectionStatusInProgress
-	                        END As CurrentStatus
+                            SequenceStatus AS CurrentStatus
                         FROM (
 	                        SELECT 
                                 org.Name AS OrganisationName,
@@ -431,17 +498,12 @@ namespace SFA.DAS.ApplyService.Data
 		                             WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardSubmissionsCount')
 		                             ELSE 0
 	                            END As SubmissionCount,
-                                seq.Status AS SequenceStatus,
-	                            MAX(CASE WHEN sec.[SectionId] = 1 THEN sec.[Status] ELSE NULL END) AS Sec1Status,
-	                            MAX(CASE WHEN sec.[SectionId] = 2 THEN sec.[Status] ELSE NULL END) AS Sec2Status,
-	                            MAX(CASE WHEN sec.[SectionId] = 3 THEN sec.[Status] ELSE NULL END) AS Sec3Status,
-	                            MAX(CASE WHEN sec.[SectionId] = 4 THEN sec.[Status] ELSE NULL END) AS Sec4Status
+                                seq.Status AS SequenceStatus
 	                        FROM Applications appl
 	                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
-	                        INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id 
 	                        INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
 	                        WHERE appl.ApplicationStatus = @applicationStatusSubmitted
-                                AND seq.Status IN(@sequenceStatusSubmitted, @sequenceStatusFeedbackAdded)
+                                AND seq.Status = @sequenceStatusFeedbackAdded
                                 AND seq.IsActive = 1
 	                        GROUP BY seq.SequenceId, seq.Status, appl.ApplyingOrganisationId, appl.id, org.Name, appl.ApplicationData 
                         ) ab",
@@ -452,7 +514,7 @@ namespace SFA.DAS.ApplyService.Data
                             sequenceStatusResubmitted = ApplicationSequenceStatus.Resubmitted,
                             sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded,
                             sectionStatusSubmitted = ApplicationSectionStatus.Submitted,
-                            sectionStatusInProgress = ApplicationSectionStatus.InProgress   
+                            sectionStatusInProgress = ApplicationSectionStatus.InProgress
                         })).ToList();
             }
         }
