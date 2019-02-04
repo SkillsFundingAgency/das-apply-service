@@ -64,22 +64,33 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
         private async Task<IEnumerable<dynamic>> GetOfficerDisqualifications(string officerId)
         {
-            // TODO: Figure out what the difference between these are
             _logger.LogInformation($"Searching Companies House - Natural Officer's Disqualifications. Officer Id: {officerId}");
-            var apiResponse1 = await Get<IEnumerable<dynamic>>($"/disqualified-officers/natural/{officerId}");
+            var apiResponseNatural = await Get<DisqualificationList>($"/disqualified-officers/natural/{officerId}");
 
             _logger.LogInformation($"Searching Companies House - Corporate Officer's Disqualifications. Officer Id: {officerId}");
-            var apiResponse2 = await Get<IEnumerable<dynamic>>($"/disqualified-officers/corporate/{officerId}");
+            var apiResponseCorporate = await Get<DisqualificationList>($"/disqualified-officers/corporate/{officerId}");
 
-            return null;
+            var disqualifications = new List<Disqualification>();
+
+            if(apiResponseNatural?.disqualifications != null)
+            {
+                disqualifications.AddRange(apiResponseNatural.disqualifications);
+            }
+            if (apiResponseCorporate?.disqualifications != null)
+            {
+                disqualifications.AddRange(apiResponseCorporate.disqualifications);
+            }
+
+            return disqualifications;
+            //return Mapper.Map<IEnumerable<Disqualification>, IEnumerable<Types.CompaniesHouse.Disqualification>> (disqualifications);
         }
 
         public async Task<IEnumerable<dynamic>> GetPeopleWithSignficantControl(string companyNumber)
         {
             _logger.LogInformation($"Searching Companies House - People With Significant Control. Company Number: {companyNumber}");
-            var apiResponse = await Get<IEnumerable<dynamic>>($"/company/{companyNumber}/persons-with-significant-control");
-            return apiResponse;
-            //return Mapper.Map<IEnumerable<PeopleWithSignficantControl>, IEnumerable<Types.CompaniesHouse.PeopleWithSignficantControl>> (apiResponse);
+            var apiResponse = await Get<PersonWithSignificantControlList>($"/company/{companyNumber}/persons-with-significant-control");
+            return apiResponse.items;
+            //return Mapper.Map<IEnumerable<PersonWithSignficantControl>, IEnumerable<Types.CompaniesHouse.PersonWithSignficantControl>> (apiResponse);
         }
 
         public async Task<IEnumerable<dynamic>> GetCharges(string companyNumber)

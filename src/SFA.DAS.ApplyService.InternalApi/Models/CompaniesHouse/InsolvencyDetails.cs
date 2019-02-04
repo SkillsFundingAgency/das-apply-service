@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.InternalApi.Models.CompaniesHouse
 {
@@ -11,12 +9,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Models.CompaniesHouse
         public string type { get; set; }
     }
 
-    public class CaseLinks2
+    public class CaseLinks
     {
         public string charge { get; set; }
     }
 
-    public class Address2
+    public class PractitionerAddress
     {
         public string address_line_1 { get; set; }
         public string address_line_2 { get; set; }
@@ -25,12 +23,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Models.CompaniesHouse
         public string postal_code { get; set; }
         public string region { get; set; }
     }
-
     public class Practitioner
     {
-        public Address2 address { get; set; }
-        public DateTime appointed_on { get; set; }
-        public DateTime ceased_to_act_on { get; set; }
+        public PractitionerAddress address { get; set; }
+        public DateTime? appointed_on { get; set; }
+        public DateTime? ceased_to_act_on { get; set; }
         public string name { get; set; }
         public string role { get; set; }
     }
@@ -38,9 +35,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Models.CompaniesHouse
     public class Case
     {
         public List<Date> dates { get; set; }
-        public CaseLinks2 links { get; set; }
+        public CaseLinks links { get; set; }
         public List<string> notes { get; set; }
-        public int number { get; set; }
+        public int? number { get; set; }
         public List<Practitioner> practitioners { get; set; }
         public string type { get; set; }
     }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.ApplyService.InternalApi.Models.CompaniesHouse
 {
-    public class Address
+    public class OfficerAddress
     {
         public string address_line_1 { get; set; }
         public string address_line_2 { get; set; }
@@ -14,13 +14,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Models.CompaniesHouse
         public string postal_code { get; set; }
         public string premises { get; set; }
         public string region { get; set; }
-    }
-
-    public class DateOfBirth
-    {
-        public int day { get; set; }
-        public int month { get; set; }
-        public int year { get; set; }
     }
 
     public class FormerName
@@ -50,7 +43,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Models.CompaniesHouse
 
     public class Officer
     {
-        public Address address { get; set; }
+        public OfficerAddress address { get; set; }
         public DateTime appointed_on { get; set; }
         public string country_of_residence { get; set; }
         public DateOfBirth date_of_birth { get; set; }
@@ -61,7 +54,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Models.CompaniesHouse
         public string nationality { get; set; }
         public string occupation { get; set; }
         public string officer_role { get; set; }
-        public DateTime resigned_on { get; set; }
+        public DateTime? resigned_on { get; set; }
     }
 
 
@@ -75,6 +68,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Models.CompaniesHouse
         public string kind { get; set; }
         public int resigned_count { get; set; }
         public int start_index { get; set; }
-        public int total_results { get; set; }
+        public int? total_results { get; set; }
     }
 }
