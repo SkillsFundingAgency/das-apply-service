@@ -11,7 +11,7 @@
         </thead>
         <tbody class="govuk-table__body">
             <tr class="govuk-table__row">
-                <th class="govuk-table__header" scope="row">
+                <td class="govuk-table__cell govuk-table__cell--break-word" scope="row">
                     <a href="@Url.Action("Download", "Application", new
                     {
                         applicationId = Model.ApplicationId,
@@ -23,7 +23,7 @@
                     })">
                         @Model.Value
                     </a>
-                </th>
+                </td>
                 <td class="govuk-table__cell govuk-table__cell--numeric">
                     <a class="govuk-link" href="@Url.Action("DeleteFile", "Application", new
                     {

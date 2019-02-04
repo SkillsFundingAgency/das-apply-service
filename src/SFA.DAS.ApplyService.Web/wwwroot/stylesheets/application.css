@@ -433,6 +433,6 @@
   }
 }
 
-.govuk-summary-list__value--break-word {
+.govuk-table__cell--break-word {
   word-break: break-word;
 }
