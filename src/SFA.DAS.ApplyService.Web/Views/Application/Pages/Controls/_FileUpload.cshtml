@@ -2,8 +2,45 @@
 
 @if (!string.IsNullOrWhiteSpace(Model.Value))
 {
-    <span>@Model.Value</span>
 
+    
+
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row">
+            <dd class="govuk-summary-list__value govuk-summary-list__value--break-word">
+                <a href="@Url.Action("Download", "Application", new
+                {
+                    applicationId = Model.ApplicationId,
+                    sequenceId = Model.SequenceId,
+                    sectionId = Model.SectionId,
+                    pageId = Model.PageId,
+                    questionId = Model.QuestionId,
+                    filename = Model.Value
+                })">
+                    @Model.Value
+                </a>
+            </dd>
+            <dd class="govuk-summary-list__actions">
+                <a class="govuk-link" href="#">
+                    <a href="@Url.Action("DeleteFile", "Application", new
+                    {
+                        applicationId = Model.ApplicationId,
+                        sequenceId = Model.SequenceId,
+                        sectionId = Model.SectionId,
+                        pageId = Model.PageId,
+                        questionId = Model.QuestionId,
+                        redirectAction = Model.RedirectAction
+                    })">
+                        Remove 
+                    </a>
+                    <span class="govuk-visually-hidden"> file</span>
+                </a>
+            </dd>
+        </div>
+    </dl>
+}
+else
+{
     if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
     {
         foreach (var errorMessage in Model.ErrorMessages)
@@ -14,38 +51,13 @@
             }
         }
     }
-
-    <a href="@Url.Action("Download", "Application", new
-             {
-                 applicationId = Model.ApplicationId,
-                 sequenceId = Model.SequenceId,
-                 sectionId = Model.SectionId,
-                 pageId = Model.PageId,
-                 questionId = Model.QuestionId,
-                 filename = Model.Value
-             })">
-        @Model.Value</a>
-
-
-    <a href="@Url.Action("DeleteFile", "Application", new
-             {
-                 applicationId = Model.ApplicationId,
-                 sequenceId = Model.SequenceId,
-                 sectionId = Model.SectionId,
-                 pageId = Model.PageId,
-                 questionId = Model.QuestionId,
-                 redirectAction = Model.RedirectAction
-             })">
-        Remove file
-    </a>
-}
-else
-{
+    
     <input
         type="file"
         class="govuk-file-upload"
         sfa-validation-for-id="@Model.QuestionId"
         id="@Model.QuestionId"
         name="@Model.QuestionId"
-        accept=".pdf,application/pdf"/>
+        accept=".pdf,application/pdf"
+    />
 }
