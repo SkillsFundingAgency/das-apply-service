@@ -11,7 +11,7 @@ Post-Deployment Script Template
 */
 
 -- cleanup (for now)
-DELETE FROM [dbo].[EmailTemplates]
+--DELETE FROM [dbo].[EmailTemplates]
 
 IF NOT EXISTS( SELECT * FROM [dbo].[EmailTemplates] WHERE [TemplateId] = '2ebc498c-2544-42db-b73e-a6c381c614df')
 BEGIN
