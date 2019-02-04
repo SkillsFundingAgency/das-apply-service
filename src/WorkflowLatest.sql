@@ -1522,7 +1522,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-06-254';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-06-254', '', 'I confirm that the information to be uploaded in response to the Financial Health Assessment complies with the requirements stated in the ''Guidance for Applicants'' document.', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-06-254', '', 'I confirm that the information to be uploaded in response to the financial health assessment complies with the requirements stated in the ''Guidance for Applicants'' document.', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-06-255';
 INSERT INTO Assets
@@ -2363,7 +2363,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-28-394';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-28-394', '', 'Has your organisation ever had to repay public money?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-28-394', '', 'Repayment of public money', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-28-395';
 INSERT INTO Assets
@@ -2375,7 +2375,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-28-396';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-28-396', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-28-396', '', '<p class="govuk-body">Has your organisation ever had to repay public money?</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-28.1-397';
 INSERT INTO Assets
@@ -2459,7 +2459,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-30-410';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-30-410', '', 'Does your organisation have any outstanding or ongoing legal dispute that could prevent you from conducting end-point assessments?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-30-410', '', 'Legal dispute', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-30-411';
 INSERT INTO Assets
@@ -2471,7 +2471,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-30-412';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-30-412', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-30-412', '', '<p class="govuk-body">Does your organisation have any outstanding or ongoing legal dispute that could prevent you from conducting end-point assessments?</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-30.1-413';
 INSERT INTO Assets
@@ -2675,13 +2675,13 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-01-446';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-01-446', '', 'Upload your financial evidences', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-01-446', '', 'Upload your accounts', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-01-447';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-01-447', '', 'Upload your financial evidences', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-01-447', '', 'Upload your accounts', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-01-448';
 INSERT INTO Assets
@@ -2693,25 +2693,25 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-02-449';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-449', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-449', '', 'If you have a parent company, upload your parent company''s statutory accounts.', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-02-450';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-450', '', 'Attach the latest available accounts for the UK ultimate parent company.', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-450', '', 'Upload your parent company''s accounts (optional)', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-02-451';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-451', '', 'Attach the latest available accounts for the UK ultimate parent company', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-451', '', 'Upload your parent company''s accounts (optional)', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-02-452';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-452', '', '<p class="govuk-body">Organisations that are subject to the financial health assessment must submit their UK parent company accounts or they will fail the process.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-452', '', '', 'Live', GETUTCDATE(), 'Import')
 
 GO
 
@@ -6051,7 +6051,7 @@ VALUES
                {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select a file containing your financial evidences"
+                "ErrorMessage": "Select a file containing your accounts"
               }
             ]
           },
@@ -6066,13 +6066,7 @@ VALUES
           "Input": {
             "Type": "FileUpload",
             "Options": null,
-            "Validations": [
-               {
-                "Name": "Required",
-                "Value": null,
-                "ErrorMessage": "Select a file containg the latest available accounts for the parent company"
-              }
-            ]
+            "Validations": []
           },
           "Order": null
         }
@@ -6098,7 +6092,7 @@ VALUES
   ],
   "FinancialApplicationGrade": null
 }
-', N'Financial Health Assessment', N'Financial Health Assessment', N'Draft', N'Pages', N'')
+', N'Financial health assessment', N'Financial health assessment', N'Draft', N'Pages', N'')
 GO
 DELETE from WorkFlowSequences  where sequenceId=1
 
