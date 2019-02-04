@@ -6052,6 +6052,11 @@ VALUES
                 "Name": "Required",
                 "Value": null,
                 "ErrorMessage": "Select a file containing your accounts"
+              },
+              {
+                "Name": "FileType",
+                "Value": "pdf,application/pdf",
+                "ErrorMessage": "The selected file must be a PDF"
               }
             ]
           },
@@ -6066,7 +6071,13 @@ VALUES
           "Input": {
             "Type": "FileUpload",
             "Options": null,
-            "Validations": []
+            "Validations": [
+              {
+                "Name": "FileType",
+                "Value": "pdf,application/pdf",
+                "ErrorMessage": "The selected file must be a PDF"
+              }
+            ]
           },
           "Order": null
         }
