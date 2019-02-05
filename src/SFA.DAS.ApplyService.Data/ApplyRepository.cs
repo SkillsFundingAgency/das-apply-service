@@ -283,12 +283,12 @@ namespace SFA.DAS.ApplyService.Data
             
         }
 
-        public async Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string status, string applicationStatus)
+        public async Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string sequenceStatus, string applicationStatus)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(@"UPDATE ApplicationSequences
-                                                SET    Status = @status
+                                                SET    Status = @sequenceStatus
                                                 FROM   ApplicationSequences INNER JOIN
                                                          Applications ON ApplicationSequences.ApplicationId = Applications.Id INNER JOIN
                                                          Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
@@ -299,7 +299,47 @@ namespace SFA.DAS.ApplyService.Data
                                                 FROM            Applications INNER JOIN
                                                                 Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
                                                 WHERE  (Applications.Id = @ApplicationId)",
-                    new {applicationId, sequenceId, status, applicationStatus});
+                    new {applicationId, sequenceId, sequenceStatus, applicationStatus});
+
+
+                if (sequenceId == 1)
+                {
+                    switch (sequenceStatus)
+                    {
+                        case ApplicationSequenceStatus.FeedbackAdded:
+                            await connection.ExecuteAsync(@"UPDATE Applications
+                                                                SET ApplicationData = JSON_MODIFY(ApplicationData, '$.InitSubmissionFeedbackAddedDate', CONVERT(varchar(30), GETUTCDATE(), 126))
+                                                                WHERE  (Applications.Id = @ApplicationId);",
+                            new { applicationId });
+                            break;
+                        case ApplicationSequenceStatus.Rejected:
+                        case ApplicationSequenceStatus.Approved:
+                            await connection.ExecuteAsync(@"UPDATE Applications
+                                                    SET ApplicationData = JSON_MODIFY(ApplicationData, '$.InitSubmissionClosedDate', CONVERT(varchar(30), GETUTCDATE(), 126))
+                                                    WHERE  (Applications.Id = @ApplicationId);",
+                            new { applicationId });
+                            break;
+                    }
+                }
+                else if (sequenceId == 2)
+                {
+                    switch (sequenceStatus)
+                    {
+                        case ApplicationSequenceStatus.FeedbackAdded:
+                            await connection.ExecuteAsync(@"UPDATE Applications
+                                                                SET ApplicationData = JSON_MODIFY(ApplicationData, '$.StandardSubmissionFeedbackAddedDate', CONVERT(varchar(30), GETUTCDATE(), 126))
+                                                                WHERE  (Applications.Id = @ApplicationId);",
+                            new { applicationId });
+                            break;
+                        case ApplicationSequenceStatus.Rejected:
+                        case ApplicationSequenceStatus.Approved:
+                            await connection.ExecuteAsync(@"UPDATE Applications
+                                                    SET ApplicationData = JSON_MODIFY(ApplicationData, '$.StandardSubmissionClosedDate', CONVERT(varchar(30), GETUTCDATE(), 126))
+                                                    WHERE  (Applications.Id = @ApplicationId);",
+                            new { applicationId });
+                            break;
+                    }
+                }
             }
         }
 
@@ -314,21 +354,6 @@ namespace SFA.DAS.ApplyService.Data
                                                          Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
                                                 WHERE  (ApplicationSequences.ApplicationId = @ApplicationId) AND (ApplicationSequences.SequenceId = @SequenceId);",
                                                 new {applicationId, sequenceId});
-
-                if(sequenceId == 1)
-                {
-                    await connection.ExecuteAsync(@"UPDATE Applications
-                                                    SET ApplicationData = JSON_MODIFY(ApplicationData, '$.InitSubmissionClosedDate', CONVERT(varchar(30), GETUTCDATE(), 126))
-                                                    WHERE  (Applications.Id = @ApplicationId);",
-                    new { applicationId });
-                }
-                else if(sequenceId == 2)
-                {
-                    await connection.ExecuteAsync(@"UPDATE Applications
-                                                    SET ApplicationData = JSON_MODIFY(ApplicationData, '$.StandardSubmissionClosedDate', CONVERT(varchar(30), GETUTCDATE(), 126))
-                                                    WHERE  (Applications.Id = @ApplicationId);",
-                                                    new { applicationId });
-                }
             }
         }
 
@@ -482,7 +507,7 @@ namespace SFA.DAS.ApplyService.Data
                                  WHEN SequenceId = 2 THEN 'Standard'
                                  ELSE 'Unknown'
                             END As ApplicationType,
-                            SubmittedDate,
+                            FeedbackAddedDate,
                             SubmissionCount,
                             SequenceStatus AS CurrentStatus
                         FROM (
@@ -490,10 +515,10 @@ namespace SFA.DAS.ApplyService.Data
                                 org.Name AS OrganisationName,
                                 appl.id AS ApplicationId,
                                 seq.SequenceId AS SequenceId,
-                                CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.LatestInitSubmissionDate')
-		                             WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.LatestStandardSubmissionDate')
+                                CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.InitSubmissionFeedbackAddedDate')
+		                             WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardSubmissionFeedbackAddedDate')
 		                             ELSE NULL
-	                            END As SubmittedDate,
+	                            END As FeedbackAddedDate,
                                 CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount')
 		                             WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardSubmissionsCount')
 		                             ELSE 0

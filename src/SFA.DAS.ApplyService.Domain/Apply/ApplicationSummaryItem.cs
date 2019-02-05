@@ -11,6 +11,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public string StandardName { get; set; }
         public int? StandardCode { get; set; }
         public DateTime? SubmittedDate { get; set; }
+        public DateTime? FeedbackAddedDate { get; set; }
         public DateTime? ClosedDate { get; set; }
         public int SubmissionCount { get; set; }
         public string FinancialStatus { get; set; }
