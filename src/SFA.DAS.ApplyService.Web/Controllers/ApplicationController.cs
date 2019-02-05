@@ -164,7 +164,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, User.GetUserId());
 
-            if (section.Status != ApplicationSectionStatus.Draft)
+            if (section.Status != ApplicationSectionStatus.Draft && section.Status != ApplicationSectionStatus.Evaluated)
             {
                 return RedirectToAction("Sequence", new { applicationId = applicationId });
             }
@@ -242,7 +242,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, User.GetUserId());
 
-            if (section.Status != ApplicationSectionStatus.Draft)
+            if (section.Status != ApplicationSectionStatus.Draft && section.Status != ApplicationSectionStatus.Evaluated)
             {
                 return RedirectToAction("Sequence", new { applicationId = applicationId });
             }
@@ -327,7 +327,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, User.GetUserId());
 
-            if (section.Status != ApplicationSectionStatus.Draft)
+            if (section.Status != ApplicationSectionStatus.Draft && section.Status != ApplicationSectionStatus.Evaluated)
             {
                 return RedirectToAction("Sequence", new { applicationId = applicationId });
             }
@@ -498,7 +498,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
 
-            if (sequence.Status != ApplicationSequenceStatus.Draft)
+            if (sequence.Status != ApplicationSequenceStatus.Draft && sequence.Status != ApplicationSequenceStatus.FeedbackAdded)
             {
                 return RedirectToAction("Sequence", new { applicationId = applicationId });
             }
