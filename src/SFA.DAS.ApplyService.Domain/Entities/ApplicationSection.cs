@@ -50,6 +50,8 @@ namespace SFA.DAS.ApplyService.Domain.Entities
 
             QnAData.Pages = currentPages;
         }
+
+        public bool NotRequired { get; set; }
     }
 
     public class ApplicationSectionStatus
@@ -58,6 +60,5 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string InProgress = "In Progress";
         public const string Graded = "Graded";
         public const string Evaluated = "Evaluated";
-        public const string NotRequired = "NotRequired";
     }
 }

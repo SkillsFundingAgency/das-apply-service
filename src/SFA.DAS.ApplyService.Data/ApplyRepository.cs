@@ -111,7 +111,8 @@ namespace SFA.DAS.ApplyService.Data
                 {
                     var sections = (await connection.QueryAsync<ApplicationSection>(@"SELECT * FROM ApplicationSections 
                             WHERE ApplicationId = @ApplicationId 
-                            AND SequenceId = @SequenceId",
+                            AND SequenceId = @SequenceId
+                            AND NotRequired = 0",
                         sequence)).ToList();
 
                     sequence.Sections = sections;
@@ -184,7 +185,7 @@ namespace SFA.DAS.ApplyService.Data
             {
                 foreach (var applicationSection in sections)
                 {
-                    await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata, Status = @Status WHERE Id = @Id", applicationSection);    
+                    await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata, Status = @Status, NotRequired = @NotRequired WHERE Id = @Id", applicationSection);    
                 }
             }
         }
@@ -195,7 +196,7 @@ namespace SFA.DAS.ApplyService.Data
             {
                 foreach (var applicationSequence in sequences)
                 {
-                    await connection.ExecuteAsync(@"UPDATE ApplicationSequences SET Status = @Status, IsActive = @IsActive WHERE Id = @Id", applicationSequence);    
+                    await connection.ExecuteAsync(@"UPDATE ApplicationSequences SET Status = @Status, IsActive = @IsActive, NotRequired = @NotRequired WHERE Id = @Id", applicationSequence);    
                 }
             }
         }

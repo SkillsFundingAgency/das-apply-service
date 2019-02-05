@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -51,8 +52,16 @@ namespace SFA.DAS.ApplyService.Application.Apply
             var sequences = await _applyRepository.GetSequences(applicationId);
             
             DisableSequencesAndSectionsAsAppropriate(org, sequences, sections);
-            
-            await _applyRepository.UpdateSections(sections);
+
+            try
+            {
+                await _applyRepository.UpdateSections(sections);
+            }
+            catch (Exception e)
+            {
+                Debug.Write(e.Message);
+            }
+
             await _applyRepository.UpdateSequences(sequences);
             
             return Unit.Value;
@@ -61,58 +70,47 @@ namespace SFA.DAS.ApplyService.Application.Apply
         private void DisableSequencesAndSectionsAsAppropriate(Organisation org, List<ApplicationSequence> sequences, List<ApplicationSection> sections)
         {
             // IF IsEPAOApproved = true;
-            if (org.RoEPAOApproved)
+            if (OrganisationIsOnEPAORegister(org))
             {
-                var financials = org.OrganisationDetails.FHADetails;
-
-                if (financials.FinancialExempt.HasValue)
+                RemoveSectionsOneAndTwo(sections);
+                
+                if (FinancialAssessmentNotRequired(org.OrganisationDetails.FHADetails))
                 {
-                    if (OrgIsExemptFromFinancialAssessment(financials))
-                    {
-                        RemoveFinancialAssessmentSection(sections);
-                    }
-                    else
-                    {
-                        if (FinancialAssessmentIsDue(financials))
-                        {
-                            // remove all sequence 1 sections but 3
-                        }
-                        else
-                        {
-                            // remove all sequence 1 sections
-                            // remove sequence
-                        }
-                    }    
-                }
-                
-                
-                if (financials.FinancialDueDate.HasValue && financials.FinancialDueDate.Value > DateTime.Today 
-                 && financials.FinancialExempt.HasValue && financials.FinancialExempt.Value == false)
-                {
-                    //if !exempt && due date > today,
-                    //set Sections 1, 2, 3 as NotRequired, Sequence 1 as IsActive false & status = NotRequired, Sequence 2 as IsActive true;
-                    sections.Where(s => s.SectionId != 4).ToList().ForEach(s => s.Status = ApplicationSectionStatus.NotRequired);
-                    var stage1 = sequences.Single(seq => seq.SequenceId == SequenceId.Stage1);
-                    stage1.IsActive = false;
-                    stage1.Status = ApplicationSequenceStatus.NotRequired;
-
-                    sequences.Single(seq => seq.SequenceId == SequenceId.Stage2).IsActive = true;
-                }
-                
-                // check org Financial Due Date
-                // if exempt, set Section 3 to NotRequired
-                // if !exempt && due date > today, set Sections 1, 2, 3 as NotRequired, Sequence 1 as IsActive false & status = NotRequired, Sequence 2 as IsActive true;   
+                    RemoveSectionThree(sections);
+                    RemoveSequenceOne(sequences);
+                }   
             }
         }
 
-        private static bool FinancialAssessmentIsDue(FHADetails financials)
+        private static bool OrganisationIsOnEPAORegister(Organisation org)
         {
-            return financials.FinancialDueDate.HasValue && financials.FinancialDueDate.Value < DateTime.Today;
+            return org.RoEPAOApproved;
         }
 
-        private static bool OrgIsExemptFromFinancialAssessment(FHADetails financials)
+        private void RemoveSequenceOne(List<ApplicationSequence> sequences)
         {
-            return financials.FinancialExempt.Value;
+            var stage1 = sequences.Single(seq => seq.SequenceId == SequenceId.Stage1);
+            stage1.IsActive = false;
+            stage1.NotRequired = true;
+
+            sequences.Single(seq => seq.SequenceId == SequenceId.Stage2).IsActive = true;
         }
+
+        private void RemoveSectionThree(List<ApplicationSection> sections)
+        {
+            sections.Where(s => s.SectionId == 3).ToList().ForEach(s => s.NotRequired = true);
+        }
+
+        private void RemoveSectionsOneAndTwo(List<ApplicationSection> sections)
+        {
+            sections.Where(s => s.SectionId == 1 || s.SectionId == 2).ToList().ForEach(s => s.NotRequired = true);
+        }
+
+        private static bool FinancialAssessmentNotRequired(FHADetails financials)
+        {
+            return (financials.FinancialDueDate.HasValue && financials.FinancialDueDate.Value > DateTime.Today) 
+                   || (financials.FinancialExempt.HasValue && financials.FinancialExempt.Value);
+        }
+
     }
 }
