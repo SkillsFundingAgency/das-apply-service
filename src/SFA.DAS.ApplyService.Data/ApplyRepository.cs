@@ -481,7 +481,7 @@ namespace SFA.DAS.ApplyService.Data
                                 AND seq.SequenceId = @sequenceId
                                 AND seq.Status = @sequenceStatusSubmitted
                                 AND seq.IsActive = 1
-	                        GROUP BY seq.SequenceId, seq.Status, appl.ApplyingOrganisationId, appl.id, org.Name, appl.ApplicationData, sec.QnAData 
+	                        GROUP BY seq.SequenceId, seq.Status, appl.ApplyingOrganisationId, appl.id, org.Name, appl.ApplicationData 
                         ) ab",
                         new
                         {
