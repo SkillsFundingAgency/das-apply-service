@@ -160,9 +160,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
         public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
-            var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, User.GetUserId());
-
-            if (!IsApplicationSectionEditable(section))
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId, User.GetUserId());
+            if (!canUpdate)
             {
                 return RedirectToAction("Sequence", new { applicationId });
             }
@@ -183,9 +182,28 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return View("~/Views/Application/Pages/Index.cshtml", pageVm);
         }
 
-        private bool IsApplicationSectionEditable(ApplicationSection section)
+        private async Task<bool> CanUpdateApplication(Guid applicationId, int sequenceId, int? sectionId, Guid userId)
         {
-            return section?.Status != null && section.Status != ApplicationSectionStatus.Draft && section.Status != ApplicationSectionStatus.Evaluated;
+            bool isEditable = false;
+
+            var sequence = await _apiClient.GetSequence(applicationId, userId);
+
+            if(sequence?.Status != null)
+            {
+                isEditable = sequence.Status == ApplicationSequenceStatus.Draft || sequence.Status == ApplicationSequenceStatus.FeedbackAdded;
+            }
+
+            if(!isEditable && sectionId.HasValue)
+            {
+                var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId.Value, userId);
+
+                if (section?.Status != null)
+                {
+                    isEditable = section.Status == ApplicationSectionStatus.Draft;
+                }
+            }
+
+            return isEditable;
         }
 
         private async Task<Page> GetDataFedOptions(Page page)
@@ -243,9 +261,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/Multi")]
         public async Task<IActionResult> SaveAnswersMulti(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, string __formAction)
         {
-            var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, User.GetUserId());
-
-            if (!IsApplicationSectionEditable(section))
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId, User.GetUserId());
+            if (!canUpdate)
             {
                 return RedirectToAction("Sequence", new { applicationId });
             }
@@ -328,9 +345,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
         public async Task<IActionResult> SaveAnswers(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
-            var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, User.GetUserId());
-
-            if (!IsApplicationSectionEditable(section))
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId, User.GetUserId());
+            if (!canUpdate)
             {
                 return RedirectToAction("Sequence", new { applicationId });
             }
@@ -499,9 +515,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost("/Applications/Submit")]
         public async Task<IActionResult> Submit(Guid applicationId, int sequenceId)
         {
-            var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
-
-            if (sequence.Status != ApplicationSequenceStatus.Draft && sequence.Status != ApplicationSequenceStatus.FeedbackAdded)
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, null, User.GetUserId());
+            if (!canUpdate)
             {
                 return RedirectToAction("Sequence", new { applicationId });
             }
