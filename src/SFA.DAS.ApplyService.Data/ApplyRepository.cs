@@ -267,7 +267,7 @@ namespace SFA.DAS.ApplyService.Data
                                                 WHERE  (ApplicationSequences.ApplicationId = @ApplicationId) AND (ApplicationSequences.SequenceId = @SequenceId) AND Contacts.Id = @UserId;
                             
                                                 UPDATE ApplicationSections
-                                                SET    Status = (CASE WHEN JSON_VALUE(ApplicationSections.QnAData, '$.FinancialApplicationGrade.SelectedGrade') IN ('Excellent','Good','Satisfactory') THEN 'Graded' ELSE 'Submitted' END)
+                                                SET    Status = (CASE WHEN JSON_VALUE(ApplicationSections.QnAData, '$.FinancialApplicationGrade.SelectedGrade') IN ('Excellent','Good','Satisfactory') THEN 'Evaluated' ELSE 'Submitted' END)
                                                 FROM   ApplicationSections INNER JOIN
                                                             Applications ON ApplicationSections.ApplicationId = Applications.Id INNER JOIN
                                                             Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
@@ -280,7 +280,7 @@ namespace SFA.DAS.ApplyService.Data
                                                 WHERE  (Applications.Id = @ApplicationId) AND Contacts.Id = @UserId	",
                     new {request.ApplicationId, request.UserId, request.SequenceId, applicationdata });
             }
-            
+
         }
 
         public async Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string sequenceStatus, string applicationStatus)
