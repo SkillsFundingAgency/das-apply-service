@@ -1,15 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using MediatR;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application.Organisations;
-using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply
@@ -53,15 +50,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
             
             DisableSequencesAndSectionsAsAppropriate(org, sequences, sections);
 
-            try
-            {
-                await _applyRepository.UpdateSections(sections);
-            }
-            catch (Exception e)
-            {
-                Debug.Write(e.Message);
-            }
-
+            await _applyRepository.UpdateSections(sections);
             await _applyRepository.UpdateSequences(sequences);
             
             return Unit.Value;
