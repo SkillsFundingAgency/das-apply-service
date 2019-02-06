@@ -58,7 +58,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         private void DisableSequencesAndSectionsAsAppropriate(Organisation org, List<ApplicationSequence> sequences, List<ApplicationSection> sections)
         {
-            // IF IsEPAOApproved = true;
             if (OrganisationIsOnEPAORegister(org))
             {
                 RemoveSectionsOneAndTwo(sections);
