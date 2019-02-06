@@ -1,14 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 
-namespace SFA.DAS.ApplyService.Application.UnitTests.StartApplicationHandlerTests
+namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHandlerTests
 {
     public class When_non_epao_organisation_starts_application : StartApplicationHandlerTestsBase
     {

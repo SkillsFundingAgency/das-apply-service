@@ -58,21 +58,19 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         private void DisableSequencesAndSectionsAsAppropriate(Organisation org, List<ApplicationSequence> sequences, List<ApplicationSection> sections)
         {
-            if (OrganisationIsOnEPAORegister(org))
-            {
-                RemoveSectionsOneAndTwo(sections);
-                
-                if (FinancialAssessmentNotRequired(org.OrganisationDetails.FHADetails))
-                {
-                    RemoveSectionThree(sections);
-                    RemoveSequenceOne(sequences);
-                }   
-            }
+            if (OrganisationIsNotOnEPAORegister(org)) return;
+            
+            RemoveSectionsOneAndTwo(sections);
+
+            if (FinancialAssessmentRequired(org.OrganisationDetails.FHADetails)) return;
+            
+            RemoveSectionThree(sections);
+            RemoveSequenceOne(sequences);
         }
 
-        private static bool OrganisationIsOnEPAORegister(Organisation org)
+        private static bool OrganisationIsNotOnEPAORegister(Organisation org)
         {
-            return org.RoEPAOApproved;
+            return !org.RoEPAOApproved;
         }
 
         private void RemoveSequenceOne(List<ApplicationSequence> sequences)
@@ -94,10 +92,10 @@ namespace SFA.DAS.ApplyService.Application.Apply
             sections.Where(s => s.SectionId == 1 || s.SectionId == 2).ToList().ForEach(s => s.NotRequired = true);
         }
 
-        private static bool FinancialAssessmentNotRequired(FHADetails financials)
+        private static bool FinancialAssessmentRequired(FHADetails financials)
         {
-            return (financials.FinancialDueDate.HasValue && financials.FinancialDueDate.Value > DateTime.Today) 
-                   || (financials.FinancialExempt.HasValue && financials.FinancialExempt.Value);
+            return (financials.FinancialDueDate.HasValue && financials.FinancialDueDate.Value <= DateTime.Today) 
+                   || (financials.FinancialExempt.HasValue && !financials.FinancialExempt.Value);
         }
 
     }

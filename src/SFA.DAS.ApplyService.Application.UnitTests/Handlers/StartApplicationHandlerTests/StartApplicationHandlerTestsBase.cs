@@ -7,7 +7,7 @@ using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 
-namespace SFA.DAS.ApplyService.Application.UnitTests.StartApplicationHandlerTests
+namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHandlerTests
 {
     [TestFixture]
     public class StartApplicationHandlerTestsBase
@@ -33,7 +33,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.StartApplicationHandlerTest
             ApplyRepository.Setup(r => r.CreateApplication("EPAO", ApplyingOrganisationId, UserId, latestWorkflowId)).ReturnsAsync(applicationId);
             ApplyRepository.Setup(r => r.CopyWorkflowToApplication(applicationId, latestWorkflowId, It.IsAny<string>())).ReturnsAsync(new List<ApplicationSection>
             {
-                new ApplicationSection {SectionId = 1, QnAData = new QnAData {Pages = new List<Page>()}},
+                new ApplicationSection {SectionId = 1, QnAData = new QnAData {Pages = new List<Page>{new Page(){Title = "REPLACEME"}}}},
                 new ApplicationSection {SectionId = 2, QnAData = new QnAData {Pages = new List<Page>()}},
                 new ApplicationSection {SectionId = 3, QnAData = new QnAData {Pages = new List<Page>()}},
                 new ApplicationSection {SectionId = 4, QnAData = new QnAData {Pages = new List<Page>()}}

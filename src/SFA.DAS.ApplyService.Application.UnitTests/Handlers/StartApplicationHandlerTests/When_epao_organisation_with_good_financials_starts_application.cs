@@ -7,7 +7,7 @@ using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 
-namespace SFA.DAS.ApplyService.Application.UnitTests.StartApplicationHandlerTests
+namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHandlerTests
 {
     public class When_epao_organisation_with_good_financials_starts_application : StartApplicationHandlerTestsBase
     {
