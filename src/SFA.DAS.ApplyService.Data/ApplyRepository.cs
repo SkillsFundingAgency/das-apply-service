@@ -636,7 +636,8 @@ namespace SFA.DAS.ApplyService.Data
                             seq.SequenceId AS SequenceId,
                             sec.SectionId AS SectionId,
                             JSON_QUERY(sec.QnAData, '$.FinancialApplicationGrade') AS Grade,
-                            JSON_VALUE(appl.ApplicationData, '$.InitSubmissionFeedbackAddedDate') As FeedbackAddedDate,
+                            ISNULL(JSON_VALUE(appl.ApplicationData, '$.InitSubmissionFeedbackAddedDate'),
+								   JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.GradedDateTime')) As FeedbackAddedDate,
                             JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') As SubmissionCount,
 	                        seq.Status As CurrentStatus
 	                      FROM Applications appl
@@ -644,12 +645,14 @@ namespace SFA.DAS.ApplyService.Data
 	                      INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id
 	                      INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
 	                      WHERE seq.SequenceId = 1 AND sec.SectionId = 3 AND seq.IsActive = 1
-                            AND appl.ApplicationStatus = @applicationStatusSubmitted
-                            AND seq.Status = @sequenceStatusFeedbackAdded",
+                            AND (
+                                    seq.Status = @sequenceStatusFeedbackAdded
+                                    OR JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.SelectedGrade') = @selectedGradeInadequate
+                                )",
                         new
                         {
-                            applicationStatusSubmitted = ApplicationStatus.Submitted,
-                            sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded
+                            sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded,
+                            selectedGradeInadequate = FinancialApplicationSelectedGrade.Inadequate
                         })).ToList();
             }
         }
