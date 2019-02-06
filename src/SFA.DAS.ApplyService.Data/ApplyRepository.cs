@@ -48,7 +48,7 @@ namespace SFA.DAS.ApplyService.Data
                                                                 FROM ApplicationSections asec
                                                                 INNER JOIN Applications a ON a.Id = asec.ApplicationId
                                                                 WHERE asec.ApplicationId = @applicationId AND asec.SectionId =@sectionId AND asec.SequenceId = @sequenceId",
-                        new {applicationId, sequenceId, sectionId}));   
+                        new {applicationId, sequenceId, sectionId}));
                 }
 
                 return (await connection.QuerySingleOrDefaultAsync<ApplicationSection>(@"SELECT asec.* 
@@ -121,8 +121,8 @@ namespace SFA.DAS.ApplyService.Data
                 {
                     _logger.LogError(e,"There has been an error trying to map ApplicationSections - this is most likely caused by to invalid JSON in the QnAData of ApplicationSections and WorkflowSections");
                 }
-                
-                
+
+
                 return sequence;
             }
         }
@@ -185,7 +185,7 @@ namespace SFA.DAS.ApplyService.Data
             {
                 foreach (var applicationSection in sections)
                 {
-                    await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata, Status = @Status WHERE Id = @Id", applicationSection);    
+                    await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata, Status = @Status WHERE Id = @Id", applicationSection);
                 }
             }
         }
@@ -194,7 +194,7 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata, Status = @Status WHERE Id = @Id", section);       
+                await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata, Status = @Status WHERE Id = @Id", section);
             }
         }
 
@@ -245,13 +245,13 @@ namespace SFA.DAS.ApplyService.Data
                     {
                         await connection.ExecuteAsync(
                             "INSERT INTO Assets (Reference, Type, Text, Format, Status, CreatedAt, CreatedBy) VALUES (@reference, '', @text, '', 'Live', GETUTCDATE(), 'SpreadsheetImport')"
-                            , new {reference = asset.Key, text = cleanText});   
+                            , new {reference = asset.Key, text = cleanText});
                     }
                     catch (Exception e)
                     {
                         throw;
                     }
-                    
+
                 }
             }
         }
@@ -362,8 +362,8 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-               return (await connection.QueryAsync<ApplicationSequence>(@"SELECT * FROM ApplicationSequences WHERE ApplicationId = @applicationId",
-                    new {applicationId})).ToList();
+                return (await connection.QueryAsync<ApplicationSequence>(@"SELECT * FROM ApplicationSequences WHERE ApplicationId = @applicationId",
+                     new {applicationId})).ToList();
             }
         }
 
@@ -492,7 +492,7 @@ namespace SFA.DAS.ApplyService.Data
                             sequenceStatusResubmitted = ApplicationSequenceStatus.Resubmitted,
                             sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded,
                             sectionStatusSubmitted = ApplicationSectionStatus.Submitted,
-                            sectionStatusInProgress = ApplicationSectionStatus.InProgress   
+                            sectionStatusInProgress = ApplicationSectionStatus.InProgress
                         })).ToList();
             }
         }
@@ -610,7 +610,7 @@ namespace SFA.DAS.ApplyService.Data
 	                      INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
 	                      WHERE seq.SequenceId = 1 AND sec.SectionId = 3 AND seq.IsActive = 1
                             AND appl.ApplicationStatus = @applicationStatusSubmitted
-                            AND seq.Status IN (@sequenceStatusSubmitted, @sequenceStatusFeedbackAdded)
+                            AND seq.Status = @sequenceStatusSubmitted
                             AND sec.Status IN (@financialStatusSubmitted, @financialStatusInProgress)",
                         new
                         {
@@ -620,6 +620,36 @@ namespace SFA.DAS.ApplyService.Data
                             sequenceStatusResubmitted = ApplicationSequenceStatus.Resubmitted,
                             financialStatusSubmitted = ApplicationSectionStatus.Submitted,
                             financialStatusInProgress = ApplicationSectionStatus.InProgress
+                        })).ToList();
+            }
+        }
+
+        public async Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection
+                    .QueryAsync<FinancialApplicationSummaryItem>(
+                        @"SELECT 
+                            org.Name AS OrganisationName,
+                            appl.id AS ApplicationId,
+                            seq.SequenceId AS SequenceId,
+                            sec.SectionId AS SectionId,
+                            JSON_QUERY(sec.QnAData, '$.FinancialApplicationGrade') AS Grade,
+                            JSON_VALUE(appl.ApplicationData, '$.InitSubmissionFeedbackAddedDate') As FeedbackAddedDate,
+                            JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') As SubmissionCount,
+	                        seq.Status As CurrentStatus
+	                      FROM Applications appl
+	                      INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
+	                      INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id
+	                      INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
+	                      WHERE seq.SequenceId = 1 AND sec.SectionId = 3 AND seq.IsActive = 1
+                            AND appl.ApplicationStatus = @applicationStatusSubmitted
+                            AND seq.Status = @sequenceStatusFeedbackAdded",
+                        new
+                        {
+                            applicationStatusSubmitted = ApplicationStatus.Submitted,
+                            sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded
                         })).ToList();
             }
         }
@@ -636,7 +666,7 @@ namespace SFA.DAS.ApplyService.Data
                             seq.SequenceId AS SequenceId,
                             sec.SectionId AS SectionId,
                             JSON_QUERY(sec.QnAData, '$.FinancialApplicationGrade') AS Grade,
-                            JSON_VALUE(appl.ApplicationData, '$.LatestInitSubmissionDate') As SubmittedDate,
+                            JSON_VALUE(appl.ApplicationData, '$.InitSubmissionClosedDate') As ClosedDate,
                             JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') As SubmissionCount,
 	                        CASE WHEN (seq.Status = @sequenceStatusApproved) THEN @sequenceStatusApproved
                                  WHEN (seq.Status = @sequenceStatusRejected) THEN @sequenceStatusRejected
