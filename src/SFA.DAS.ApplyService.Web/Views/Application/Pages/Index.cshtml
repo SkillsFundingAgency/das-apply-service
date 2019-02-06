@@ -206,3 +206,23 @@
         </div>
     </div>
 </main>
+
+@section Styles {
+    <link rel="stylesheet" href="@Url.Content("~/stylesheets/dropzone.min.css")"></link>
+}
+
+@section Scripts {
+    <script src="@Url.Content("~/javascripts/dropzone.js")"></script>
+    <script type="text/javascript">
+        if (document.querySelector('.my-dropzone')) {
+            document.addEventListener("DOMContentLoaded", function(event) {
+                var myDropzone = new Dropzone(".my-dropzone", {
+                    url: "/file/post",
+                    chunking: true,
+                    maxFilesize: 20, // MB
+                    acceptedFiles: "application/pdf"
+                });
+            });
+        }
+    </script>
+}

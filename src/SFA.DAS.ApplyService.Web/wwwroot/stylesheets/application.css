@@ -436,3 +436,7 @@
 .govuk-table__cell--break-word {
   word-break: break-word;
 }
+
+.js-enabled .govuk-file-upload {
+  display: none;
+}
