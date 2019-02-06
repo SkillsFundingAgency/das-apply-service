@@ -163,5 +163,23 @@ namespace SFA.DAS.ApplyService.Data
                                                             WHERE c.Id = @UserId", new {userId});
             }
         }
+
+        public async Task<Organisation> GetOrganisationByUserId(Guid userId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var sql =
+                    "SELECT org.* " +
+                    "FROM [Organisations] org " +
+                    "INNER JOIN [Contacts] con on org.Id = con.ApplyOrganisationId " +
+                    "WHERE con.Id = @userId";
+
+                var org = await connection.QueryFirstOrDefaultAsync<Organisation>(sql, new { userId });
+                return org;
+            }
+        }
     }
 }

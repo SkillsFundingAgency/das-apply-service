@@ -45,11 +45,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var user = _sessionService.Get("LoggedInUser");
             _logger.LogInformation($"Got LoggedInUser from Session: {user}");
 
-            var applications = await _apiClient.GetApplicationsFor(User.GetUserId());
+            var userId = User.GetUserId();
+            
+            var applications = await _apiClient.GetApplicationsFor(userId);
 
             if (!applications.Any())
             {
+                var org = await _apiClient.GetOrganisationByUserId(userId);
+                if (org.RoEPAOApproved)
+                {
+                    return await StartApplication(userId);
+                }
+
                 return View("~/Views/Application/Declaration.cshtml");
+
             }
             else if (applications.Count() > 1)
             {
@@ -76,12 +85,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
         }
 
+        private async Task<IActionResult> StartApplication(Guid userId)
+        {
+            await _apiClient.StartApplication(userId);
+
+            return RedirectToAction("Applications");
+        }
+
         [HttpPost("/Applications")]
         public async Task<IActionResult> StartApplication()
         {
-            await _apiClient.StartApplication(User.GetUserId());
-
-            return RedirectToAction("Applications");
+            return await StartApplication(User.GetUserId());
         }
 
         [HttpGet("/Applications/{applicationId}/Sequence")]
@@ -123,11 +137,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             if (sequence.SequenceId == SequenceId.Stage1)
             {
                 return RedirectToAction("Sequence", new {applicationId});
-                //return View("", sequence);
             }
             else if (sequence.SequenceId == SequenceId.Stage2 && string.IsNullOrWhiteSpace(applicationData?.StandardName))
             {
-                //return RedirectToAction("Search", "Standard", new {applicationId});
+                var org = await _apiClient.GetOrganisationByUserId(User.GetUserId());
+                if (org.RoEPAOApproved)
+                {
+                    return RedirectToAction("Index", "Standard", new {applicationId});  
+                }
+
                 return View("~/Views/Application/Stage2Intro.cshtml", applicationId);
             }
             else if (sequence.SequenceId == SequenceId.Stage2)
