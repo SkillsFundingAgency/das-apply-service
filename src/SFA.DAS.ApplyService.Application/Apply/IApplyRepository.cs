@@ -25,12 +25,13 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task CreateSequence(Guid workflowId, double sequenceId, bool isActive);
         Task CreateSection(WorkflowSection section);
         Task AddAssets(Dictionary<string,string> assets);
-        Task<List<ApplicationSummaryItem>> GetOpenApplications();
+        Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceId);
+        Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications();
         Task<List<ApplicationSummaryItem>> GetClosedApplications();
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();
         Task SubmitApplicationSequence(ApplicationSubmitRequest request, ApplicationData applicationdata);
-        Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string status, string applicationStatus);
+        Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string sequenceStatus, string applicationStatus);
         Task CloseSequence(Guid applicationId, int sequenceId);
         Task<List<ApplicationSequence>> GetSequences(Guid applicationId);
         Task OpenSequence(Guid applicationId, int nextSequenceId);

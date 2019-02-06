@@ -40,10 +40,12 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public List<InitSubmission> InitSubmissions { get; set; }
         public int InitSubmissionsCount { get; set; }
         public DateTime? LatestInitSubmissionDate { get; set; }
+        public DateTime? InitSubmissionFeedbackAddedDate { get; set; }
         public DateTime? InitSubmissionClosedDate { get; set; }
         public List<StandardSubmission> StandardSubmissions { get; set; }
         public int StandardSubmissionsCount { get; set; }
         public DateTime? LatestStandardSubmissionDate { get; set; }
+        public DateTime? StandardSubmissionFeedbackAddedDate { get; set; }
         public DateTime? StandardSubmissionClosedDate { get; set; }
     }
 

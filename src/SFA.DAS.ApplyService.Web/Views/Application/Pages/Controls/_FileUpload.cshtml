@@ -2,8 +2,48 @@
 
 @if (!string.IsNullOrWhiteSpace(Model.Value))
 {
-    <span>@Model.Value</span>
-
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th class="govuk-table__header" scope="col">Uploaded file</th>
+                <th class="govuk-table__header" scope="col"></th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell govuk-table__cell--break-word" scope="row">
+                    <a href="@Url.Action("Download", "Application", new
+                    {
+                        applicationId = Model.ApplicationId,
+                        sequenceId = Model.SequenceId,
+                        sectionId = Model.SectionId,
+                        pageId = Model.PageId,
+                        questionId = Model.QuestionId,
+                        filename = Model.Value
+                    })">
+                        @Model.Value
+                    </a>
+                </td>
+                <td class="govuk-table__cell govuk-table__cell--numeric">
+                    <a class="govuk-link" href="@Url.Action("DeleteFile", "Application", new
+                    {
+                        applicationId = Model.ApplicationId,
+                        sequenceId = Model.SequenceId,
+                        sectionId = Model.SectionId,
+                        pageId = Model.PageId,
+                        questionId = Model.QuestionId,
+                        redirectAction = Model.RedirectAction
+                    })">
+                        Remove 
+                        <span class="govuk-visually-hidden"> file</span>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+}
+else
+{
     if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
     {
         foreach (var errorMessage in Model.ErrorMessages)
@@ -14,38 +54,12 @@
             }
         }
     }
-
-    <a href="@Url.Action("Download", "Application", new
-             {
-                 applicationId = Model.ApplicationId,
-                 sequenceId = Model.SequenceId,
-                 sectionId = Model.SectionId,
-                 pageId = Model.PageId,
-                 questionId = Model.QuestionId,
-                 filename = Model.Value
-             })">
-        @Model.Value</a>
-
-
-    <a href="@Url.Action("DeleteFile", "Application", new
-             {
-                 applicationId = Model.ApplicationId,
-                 sequenceId = Model.SequenceId,
-                 sectionId = Model.SectionId,
-                 pageId = Model.PageId,
-                 questionId = Model.QuestionId,
-                 redirectAction = Model.RedirectAction
-             })">
-        Remove file
-    </a>
-}
-else
-{
+    
     <input
         type="file"
         class="govuk-file-upload"
-        sfa-validation-for-id="@Model.QuestionId"
         id="@Model.QuestionId"
         name="@Model.QuestionId"
-        accept=".pdf,application/pdf"/>
+        accept=".pdf,application/pdf"
+    />
 }

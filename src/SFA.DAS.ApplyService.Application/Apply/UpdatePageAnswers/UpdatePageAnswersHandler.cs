@@ -112,38 +112,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
             nextAction.ConditionMet = false;
           }
 
-          // MFC 18/01/2019 -- MAJOR CHANGES TO THIS BIT, AND I WANT TO PRESERVE THE ORIGINAL FOR NOW TO MAKE ROLLBACK EASY IF NEEDED
-          //if (page.Next.Count() > 1)
-          //{
-          //    // Activate next page if necessary
-          //    foreach (var nextAction in page.Next)
-          //    {
-          //        if (nextAction.Condition.MustEqual == request.Answers
-          //                .Single(a => a.QuestionId == nextAction.Condition.QuestionId).Value)
-          //        {
-          //            if (nextAction.Action == "NextPage")
-          //            {
-          //                qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Active = true;
-          //                qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Visible = true;
-          //            }
-          //            nextAction.ConditionMet = true;
-          //        }
-          //        else
-          //        {
-          //            if (nextAction.Action == "NextPage")
-          //            {
-          //                qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Active = false;
-          //                qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Visible = false;
-          //            }
-          //        }
-          //    }
-          //}
-          //else
-          //{
-          //    page.Next.First().ConditionMet = true;
-          //}
-          //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
           var aConditionMet = false;
           // Activate next page if necessary
           foreach (var nextAction in page.Next)
@@ -201,6 +169,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
           }
         });
 
+        qnADataObject.FinancialApplicationGrade = null; // Remove any previous grade as it doesn't reflect the new answers
         section.QnAData = qnADataObject;
 
         await _applyRepository.SaveSection(section, request.UserId);
@@ -240,7 +209,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
             validationErrors.AddRange(errors);
           }
 
-          pageAnswers.Answers.Add(answer);
+          if (answer != null)
+          {
+            pageAnswers.Answers.Add(answer);  
+          }
         }
       }
       else
@@ -266,8 +238,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
           }
         }
 
-        pageAnswers.Answers.Add(answer);
-
+        if (answer != null)
+        {
+          pageAnswers.Answers.Add(answer);
+        }
       }
 
       return validationPassed;
