@@ -440,3 +440,23 @@
 .js-enabled .govuk-file-upload {
   display: none;
 }
+
+.dropTarget {
+  font-size: 19px;
+  font-size: 1.1875rem;
+  line-height: 1.31579;
+  color: #0b0c0c;
+  font-family: nta, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  padding: 20px;
+  height: 100px;
+  border: 2px solid #ccc;
+  background: 1px solid #fafafa;
+}
+
+#upload-progress {
+  height: 20px;
+  background: #ccc;
+}
