@@ -210,22 +210,12 @@
 @section Scripts {
     <script src="@Url.Content("~/javascripts/resumable.js")"></script>
     <script type="text/javascript">
-        //if (document.querySelector('.my-dropzone')) {
-        //    document.addEventListener("DOMContentLoaded", function(event) {
-        //        var myDropzone = new Dropzone(".my-dropzone", {
-        //            url: "/file/post",
-        //            chunking: true,
-        //            maxFilesize: 20, // MB
-        //            acceptedFiles: "application/pdf"
-        //        });
-        //    });
-        //}
 
         var r = new Resumable({
             target: 'test.html'
         });
 
-        // r.assignBrowse(document.getElementById('browseButton'));
+        r.assignBrowse(document.querySelector('.browseButton'));
         r.assignDrop(document.querySelector('.dropTarget'));
         var uploadProgress = document.querySelector('#upload-progress')
 
