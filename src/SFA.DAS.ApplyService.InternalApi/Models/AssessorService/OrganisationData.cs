@@ -16,5 +16,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Models.AssessorService
         public string Address3 { get; set; }
         public string Address4 { get; set; }
         public string Postcode { get; set; }
+        public FHADetails FHADetails { get; set; }
+    }
+
+    public class FHADetails
+    {
+        public DateTime? FinancialDueDate { get; set; }
+        public bool? FinancialExempt { get; set; }
     }
 }

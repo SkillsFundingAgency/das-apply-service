@@ -164,5 +164,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         {
             await _httpClient.PostAsJsonAsync($"/DeleteFile", new {applicationId, userId, sequenceId, sectionId, pageId, questionId});
         }
+
+        public async Task<Organisation> GetOrganisationByUserId(Guid userId)
+        {
+            return await(await _httpClient.GetAsync($"organisations/userId/{userId}")).Content.ReadAsAsync<Organisation>();
+        }
     }
 }
