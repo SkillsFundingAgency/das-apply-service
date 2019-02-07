@@ -92,8 +92,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                 new AuthenticationHeaderValue("Bearer", GetToken());
             var serializeObject = JsonConvert.SerializeObject(model);
 
-            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative),
-                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"))) ;
+            await _client.PostAsync(new Uri(uri, UriKind.Relative),
+                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")) ;
         }
 
         private string GetToken()

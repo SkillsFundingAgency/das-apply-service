@@ -41,7 +41,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         
         [HttpPost("/Account/Validate")]
         [PerformValidation]
-        public async Task<ActionResult> InviteUserValidate([FromBody]NewContact newContact)
+        public ActionResult InviteUserValidate([FromBody]NewContact newContact)
         {
             return Ok();
         }

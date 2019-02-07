@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation;
@@ -67,6 +68,20 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<ActionResult<Organisation>> GetOrganisationByEmail(string email)
         {
             var org = await _mediator.Send(new GetOrganisationByContactEmailRequest { Email = email });
+
+            if (org is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(org);
+        }
+        
+        [HttpGet("userid/{userId}")]
+
+        public async Task<ActionResult<Organisation>> GetOrganisationByUserId(Guid userId)
+        {
+            var org = await _mediator.Send(new GetOrganisationByUserIdRequest { UserId = userId });
 
             if (org is null)
             {

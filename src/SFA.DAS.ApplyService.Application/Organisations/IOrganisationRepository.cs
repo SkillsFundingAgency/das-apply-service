@@ -13,5 +13,6 @@ namespace SFA.DAS.ApplyService.Application.Organisations
         Task<Organisation> UpdateOrganisation(Organisation organisation, Guid userId);
         Task<Organisation> UpdateOrganisation(Organisation organisation);
         Task<Organisation> GetUserOrganisation(Guid userId);
+        Task<Organisation> GetOrganisationByUserId(Guid userId);
     }
 }
