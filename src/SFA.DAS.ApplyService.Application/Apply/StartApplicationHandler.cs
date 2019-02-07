@@ -1,11 +1,12 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using MediatR;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application.Organisations;
-using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply
@@ -25,7 +26,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         {
             var assets = await _applyRepository.GetAssets();
 
-            var org = await _organisationRepository.GetUserOrganisation(request.UserId);
+            var org = await _organisationRepository.GetUserOrganisation(request.UserId);         
 
             var workflowId = await _applyRepository.GetLatestWorkflow("EPAO");
             var applicationId =
@@ -45,8 +46,57 @@ namespace SFA.DAS.ApplyService.Application.Apply
                 applicationSection.QnAData = JsonConvert.DeserializeObject<QnAData>(QnADataJson);
             }
 
+            var sequences = await _applyRepository.GetSequences(applicationId);
+            
+            DisableSequencesAndSectionsAsAppropriate(org, sequences, sections);
+
             await _applyRepository.UpdateSections(sections);
+            await _applyRepository.UpdateSequences(sequences);
+            
             return Unit.Value;
         }
+
+        private void DisableSequencesAndSectionsAsAppropriate(Organisation org, List<ApplicationSequence> sequences, List<ApplicationSection> sections)
+        {
+            if (OrganisationIsNotOnEPAORegister(org)) return;
+            
+            RemoveSectionsOneAndTwo(sections);
+
+            if (FinancialAssessmentRequired(org.OrganisationDetails.FHADetails)) return;
+            
+            RemoveSectionThree(sections);
+            RemoveSequenceOne(sequences);
+        }
+
+        private static bool OrganisationIsNotOnEPAORegister(Organisation org)
+        {
+            return !org.RoEPAOApproved;
+        }
+
+        private void RemoveSequenceOne(List<ApplicationSequence> sequences)
+        {
+            var stage1 = sequences.Single(seq => seq.SequenceId == SequenceId.Stage1);
+            stage1.IsActive = false;
+            stage1.NotRequired = true;
+
+            sequences.Single(seq => seq.SequenceId == SequenceId.Stage2).IsActive = true;
+        }
+
+        private void RemoveSectionThree(List<ApplicationSection> sections)
+        {
+            sections.Where(s => s.SectionId == 3).ToList().ForEach(s => s.NotRequired = true);
+        }
+
+        private void RemoveSectionsOneAndTwo(List<ApplicationSection> sections)
+        {
+            sections.Where(s => s.SectionId == 1 || s.SectionId == 2).ToList().ForEach(s => s.NotRequired = true);
+        }
+
+        private static bool FinancialAssessmentRequired(FHADetails financials)
+        {
+            return (financials.FinancialDueDate.HasValue && financials.FinancialDueDate.Value <= DateTime.Today) 
+                   || (financials.FinancialExempt.HasValue && !financials.FinancialExempt.Value);
+        }
+
     }
 }

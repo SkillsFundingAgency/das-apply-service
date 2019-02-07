@@ -20,7 +20,7 @@ CREATE TABLE [dbo].[Contacts](
 ) 
 GO
 
-ALTER TABLE [dbo].[Contacts] WITH NOCHECK ADD CONSTRAINT [FK_Contacts_Organisations] FOREIGN KEY([ApplyOrganisationID])
+ALTER TABLE [dbo].[Contacts] ADD CONSTRAINT [FK_Contacts_Organisations] FOREIGN KEY([ApplyOrganisationID])
 REFERENCES [dbo].[Organisations] ([Id])
 GO
 

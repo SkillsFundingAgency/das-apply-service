@@ -24,7 +24,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet("Standard/{applicationId}")]
-        public async Task<IActionResult> Index(Guid applicationId)
+        public IActionResult Index(Guid applicationId)
         {
             var standardViewModel = new StandardViewModel {ApplicationId = applicationId};
             return View("~/Views/Application/Standard/FindStandard.cshtml", standardViewModel);

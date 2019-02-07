@@ -140,7 +140,9 @@ namespace SFA.DAS.ApplyService.EmailService
             var apiConfiguration = new NotificationsApiClientConfiguration
             {
                 ApiBaseUrl = config.NotificationsApiClientConfiguration.ApiBaseUrl,
+#pragma warning disable 618
                 ClientToken = config.NotificationsApiClientConfiguration.ClientToken,
+#pragma warning restore 618
                 ClientId = config.NotificationsApiClientConfiguration.ClientId,
                 ClientSecret = config.NotificationsApiClientConfiguration.ClientSecret,
                 IdentifierUri = config.NotificationsApiClientConfiguration.IdentifierUri,
