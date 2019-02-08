@@ -178,16 +178,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
         public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
-            var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, User.GetUserId());
-
-            var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, User.GetUserId());
-
-            if (section.Status != ApplicationSectionStatus.Draft)
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId);
+            if (!canUpdate)
             {
-                return RedirectToAction("Sequence", new { applicationId = applicationId });
+                return RedirectToAction("Sequence", new { applicationId });
             }
-            
-            
+
+            var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, User.GetUserId());
             page = await GetDataFedOptions(page);
 
             var returnUrl = Request.Headers["Referer"].ToString();
@@ -201,6 +198,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return View("~/Views/Application/Pages/Index.cshtml", pageVm);
+        }
+
+        private async Task<bool> CanUpdateApplication(Guid applicationId, int sequenceId)
+        {
+            bool canUpdate = false;
+
+            var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
+
+            if(sequence?.Status != null && (int)sequence.SequenceId == sequenceId)
+            {
+                canUpdate = sequence.Status == ApplicationSequenceStatus.Draft || sequence.Status == ApplicationSequenceStatus.FeedbackAdded;
+            }
+
+            return canUpdate;
         }
 
         private async Task<Page> GetDataFedOptions(Page page)
@@ -258,11 +269,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/Multi")]
         public async Task<IActionResult> SaveAnswersMulti(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, string __formAction)
         {
-            var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, User.GetUserId());
-
-            if (section.Status != ApplicationSectionStatus.Draft)
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId);
+            if (!canUpdate)
             {
-                return RedirectToAction("Sequence", new { applicationId = applicationId });
+                return RedirectToAction("Sequence", new { applicationId });
             }
             
             if (__formAction == "Add")
@@ -343,11 +353,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
         public async Task<IActionResult> SaveAnswers(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
-            var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, User.GetUserId());
-
-            if (section.Status != ApplicationSectionStatus.Draft)
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId);
+            if (!canUpdate)
             {
-                return RedirectToAction("Sequence", new { applicationId = applicationId });
+                return RedirectToAction("Sequence", new { applicationId });
             }
             
             var userId = User.GetUserId();
@@ -514,11 +523,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost("/Applications/Submit")]
         public async Task<IActionResult> Submit(Guid applicationId, int sequenceId)
         {
-            var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
-
-            if (sequence.Status != ApplicationSequenceStatus.Draft)
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId);
+            if (!canUpdate)
             {
-                return RedirectToAction("Sequence", new { applicationId = applicationId });
+                return RedirectToAction("Sequence", new { applicationId });
             }
             
             await _apiClient.Submit(applicationId, sequenceId, User.GetUserId(), User.GetEmail());

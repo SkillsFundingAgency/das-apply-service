@@ -22,11 +22,11 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task UpdateSections(List<ApplicationSection> sections);
         Task UpdateSequences(List<ApplicationSequence> sequences);
         Task SaveSection(ApplicationSection section, Guid? userId = null);
-       
-        Task<List<ApplicationSummaryItem>> GetOpenApplications();
+        Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceId);
+        Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications();
         Task<List<ApplicationSummaryItem>> GetClosedApplications();
         Task SubmitApplicationSequence(ApplicationSubmitRequest request, ApplicationData applicationdata);
-        Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string status, string applicationStatus);
+        Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string sequenceStatus, string applicationStatus);
         Task CloseSequence(Guid applicationId, int sequenceId);
         Task<List<ApplicationSequence>> GetSequences(Guid applicationId);
         Task OpenSequence(Guid applicationId, int nextSequenceId);
