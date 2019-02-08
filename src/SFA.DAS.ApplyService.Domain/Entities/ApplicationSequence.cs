@@ -7,12 +7,11 @@ namespace SFA.DAS.ApplyService.Domain.Entities
 {
     public class ApplicationSequence : EntityBase
     {
-        public Guid Id { get; set; }
         public Guid ApplicationId { get; set; }
         public SequenceId SequenceId { get; set; }
-        public string Status { get; set; }
         public bool IsActive { get; set; }
         public List<ApplicationSection> Sections { get; set; }
+        public bool NotRequired { get; set; }
     }
 
     public class ApplicationSequenceStatus

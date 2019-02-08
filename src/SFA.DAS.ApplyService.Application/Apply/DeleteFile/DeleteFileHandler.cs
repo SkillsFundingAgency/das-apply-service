@@ -57,7 +57,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.DeleteFile
             
             await _applyRepository.SaveSection(section, request.UserId);
 
-            _storageService.Delete(request.ApplicationId, request.SequenceId, request.SectionId, request.PageId,
+            await _storageService.Delete(request.ApplicationId, request.SequenceId, request.SectionId, request.PageId,
                 request.QuestionId, fileName);
             
             return Unit.Value;

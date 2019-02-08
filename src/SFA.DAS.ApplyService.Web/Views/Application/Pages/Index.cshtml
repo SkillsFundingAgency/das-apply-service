@@ -140,7 +140,7 @@
 
                                     }
 
-                                    @Html.Partial($"~/Views/Application/Pages/Controls/_{questionType}.cshtml", question)
+                                    @(await Html.PartialAsync($"~/Views/Application/Pages/Controls/_{questionType}.cshtml", question))
                                 </fieldset>
                             </div>
                         }
@@ -182,7 +182,7 @@
                                     question.ErrorMessages = Model.ErrorMessages;
                                 }
 
-                                @Html.Partial($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
+                                @(await Html.PartialAsync($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question))
                             </div>
                         }
                     }

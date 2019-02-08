@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Organisation = SFA.DAS.ApplyService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
@@ -33,7 +34,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             _logger.LogInformation($"Searching EPAO Register. Search Term: {searchTerm}");
             var apiResponse = await Get<IEnumerable<OrganisationSummary>>($"/api/ao/assessment-organisations/search/{searchTerm}");
 
-            return Mapper.Map<IEnumerable<OrganisationSummary>, IEnumerable<Types.OrganisationSearchResult>>(apiResponse);
+            var organisationSearchResults = Mapper.Map<IEnumerable<OrganisationSummary>, IEnumerable<Types.OrganisationSearchResult>>(apiResponse);
+            
+            return organisationSearchResults;
         }
 
         public async Task<Types.OrganisationSearchResult> GetOrganisationByEmail(string emailAddress)
@@ -43,7 +46,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
             return Mapper.Map<OrganisationSummary, Types.OrganisationSearchResult>(apiResponse);
         }
-
+        
         public async Task<IEnumerable<Types.OrganisationType>> GetOrgansiationTypes(bool activeOnly = true)
         {
             _logger.LogInformation($"Getting Organisation Types from EPAO Register.");
@@ -89,8 +92,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                 new AuthenticationHeaderValue("Bearer", GetToken());
             var serializeObject = JsonConvert.SerializeObject(model);
 
-            using (var response = await _client.PostAsync(new Uri(uri, UriKind.Relative),
-                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"))) ;
+            await _client.PostAsync(new Uri(uri, UriKind.Relative),
+                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")) ;
         }
 
         private string GetToken()

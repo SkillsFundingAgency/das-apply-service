@@ -49,6 +49,51 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<Organisation> GetOrganisationByApplicationId(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var sql =
+                    @"SELECT Organisations.*
+                    FROM Organisations 
+                    INNER JOIN Applications ON Applications.ApplyingOrganisationId = Organisations.Id
+                    WHERE Applications.Id = @applicationId";
+
+                var org = await connection.QuerySingleAsync<Organisation>(sql, new { applicationId });
+                
+                return org;
+            }
+        }
+
+        public async Task<Organisation> UpdateOrganisation(Organisation organisation)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                return await UpdateOrganisation(organisation, connection);
+            }
+        }
+
+        private async Task<Organisation> UpdateOrganisation(Organisation organisation, SqlConnection connection)
+        {
+            connection.Execute(
+                "UPDATE [Organisations] " +
+                "SET [UpdatedAt] = GETUTCDATE(), [UpdatedBy] = @UpdatedBy, [Name] = @Name, " +
+                "[OrganisationType] = @OrganisationType, [OrganisationUKPRN] = @OrganisationUkprn, " +
+                "[OrganisationDetails] = @OrganisationDetails, [RoEPAOApproved] = @RoEPAOApproved, [RoATPApproved] = @RoATPApproved " +
+                "WHERE [Id] = @Id",
+                new {organisation.Id, organisation.Name, organisation.OrganisationType, organisation.OrganisationUkprn, organisation.OrganisationDetails, organisation.UpdatedBy, organisation.RoEPAOApproved, organisation.RoATPApproved});
+
+            var org = await GetOrganisationByName(organisation.Name);
+
+            return org;
+        }
+
         public async Task<Organisation> UpdateOrganisation(Organisation organisation, Guid userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -56,15 +101,7 @@ namespace SFA.DAS.ApplyService.Data
                 if (connection.State != ConnectionState.Open)
                     await connection.OpenAsync();
 
-                connection.Execute(
-                    "UPDATE [Organisations] " +
-                    "SET [UpdatedAt] = GETUTCDATE(), [UpdatedBy] = @UpdatedBy, [Name] = @Name, " +
-                    "[OrganisationType] = @OrganisationType, [OrganisationUKPRN] = @OrganisationUkprn, " +
-                    "[OrganisationDetails] = @OrganisationDetails, [RoEPAOApproved] = @RoEPAOApproved, [RoATPApproved] = @RoATPApproved " +
-                    "WHERE [Id] = @Id",
-                    new { organisation.Id, organisation.Name, organisation.OrganisationType, organisation.OrganisationUkprn, organisation.OrganisationDetails, organisation.UpdatedBy, organisation.RoEPAOApproved, organisation.RoATPApproved });
-
-                var org = await GetOrganisationByName(organisation.Name);
+                var org = await UpdateOrganisation(organisation, connection);
 
                 if (org != null)
                 {
@@ -124,6 +161,24 @@ namespace SFA.DAS.ApplyService.Data
                                                             FROM Contacts c 
                                                             INNER JOIN Organisations o ON o.Id = c.ApplyOrganisationID
                                                             WHERE c.Id = @UserId", new {userId});
+            }
+        }
+
+        public async Task<Organisation> GetOrganisationByUserId(Guid userId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var sql =
+                    "SELECT org.* " +
+                    "FROM [Organisations] org " +
+                    "INNER JOIN [Contacts] con on org.Id = con.ApplyOrganisationId " +
+                    "WHERE con.Id = @userId";
+
+                var org = await connection.QueryFirstOrDefaultAsync<Organisation>(sql, new { userId });
+                return org;
             }
         }
     }
