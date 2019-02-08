@@ -39,11 +39,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var user = _sessionService.Get("LoggedInUser");
             _logger.LogInformation($"Got LoggedInUser from Session: {user}");
 
-            var applications = await _apiClient.GetApplicationsFor(User.GetUserId());
+            var userId = User.GetUserId();
+            
+            var applications = await _apiClient.GetApplicationsFor(userId);
 
             if (!applications.Any())
             {
+                var org = await _apiClient.GetOrganisationByUserId(userId);
+                if (org.RoEPAOApproved)
+                {
+                    return await StartApplication(userId);
+                }
+
                 return View("~/Views/Application/Declaration.cshtml");
+
             }
             else if (applications.Count() > 1)
             {
@@ -70,12 +79,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
         }
 
+        private async Task<IActionResult> StartApplication(Guid userId)
+        {
+            await _apiClient.StartApplication(userId);
+
+            return RedirectToAction("Applications");
+        }
+
         [HttpPost("/Applications")]
         public async Task<IActionResult> StartApplication()
         {
-            await _apiClient.StartApplication(User.GetUserId());
-
-            return RedirectToAction("Applications");
+            return await StartApplication(User.GetUserId());
         }
 
         [HttpGet("/Applications/{applicationId}/Sequence")]
@@ -117,11 +131,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             if (sequence.SequenceId == SequenceId.Stage1)
             {
                 return RedirectToAction("Sequence", new {applicationId});
-                //return View("", sequence);
             }
             else if (sequence.SequenceId == SequenceId.Stage2 && string.IsNullOrWhiteSpace(applicationData?.StandardName))
             {
-                //return RedirectToAction("Search", "Standard", new {applicationId});
+                var org = await _apiClient.GetOrganisationByUserId(User.GetUserId());
+                if (org.RoEPAOApproved)
+                {
+                    return RedirectToAction("Index", "Standard", new {applicationId});  
+                }
+
                 return View("~/Views/Application/Stage2Intro.cshtml", applicationId);
             }
             else if (sequence.SequenceId == SequenceId.Stage2)
@@ -160,16 +178,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
         public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
-            var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, User.GetUserId());
-
-            var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, User.GetUserId());
-
-            if (section.Status != ApplicationSectionStatus.Draft)
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId);
+            if (!canUpdate)
             {
-                return RedirectToAction("Sequence", new { applicationId = applicationId });
+                return RedirectToAction("Sequence", new { applicationId });
             }
-            
-            
+
+            var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, User.GetUserId());
             page = await GetDataFedOptions(page);
 
             var returnUrl = Request.Headers["Referer"].ToString();
@@ -183,6 +198,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return View("~/Views/Application/Pages/Index.cshtml", pageVm);
+        }
+
+        private async Task<bool> CanUpdateApplication(Guid applicationId, int sequenceId)
+        {
+            bool canUpdate = false;
+
+            var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
+
+            if(sequence?.Status != null && (int)sequence.SequenceId == sequenceId)
+            {
+                canUpdate = sequence.Status == ApplicationSequenceStatus.Draft || sequence.Status == ApplicationSequenceStatus.FeedbackAdded;
+            }
+
+            return canUpdate;
         }
 
         private async Task<Page> GetDataFedOptions(Page page)
@@ -240,11 +269,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/Multi")]
         public async Task<IActionResult> SaveAnswersMulti(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, string __formAction)
         {
-            var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, User.GetUserId());
-
-            if (section.Status != ApplicationSectionStatus.Draft)
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId);
+            if (!canUpdate)
             {
-                return RedirectToAction("Sequence", new { applicationId = applicationId });
+                return RedirectToAction("Sequence", new { applicationId });
             }
             
             if (__formAction == "Add")
@@ -325,11 +353,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
         public async Task<IActionResult> SaveAnswers(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
-            var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, User.GetUserId());
-
-            if (section.Status != ApplicationSectionStatus.Draft)
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId);
+            if (!canUpdate)
             {
-                return RedirectToAction("Sequence", new { applicationId = applicationId });
+                return RedirectToAction("Sequence", new { applicationId });
             }
             
             var userId = User.GetUserId();
@@ -496,11 +523,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost("/Applications/Submit")]
         public async Task<IActionResult> Submit(Guid applicationId, int sequenceId)
         {
-            var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
-
-            if (sequence.Status != ApplicationSequenceStatus.Draft)
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId);
+            if (!canUpdate)
             {
-                return RedirectToAction("Sequence", new { applicationId = applicationId });
+                return RedirectToAction("Sequence", new { applicationId });
             }
             
             await _apiClient.Submit(applicationId, sequenceId, User.GetUserId(), User.GetEmail());
