@@ -72,7 +72,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
                 .ForMember(dest => dest.Id, opt => opt.ResolveUsing(source => source.links?.officer?.appointments?.Replace("/officers/", string.Empty).Replace("/appointments", string.Empty)))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.name))
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(source => source.officer_role))
-                .ForMember(dest => dest.DateOfBirth, opt => opt.ResolveUsing(source => source.date_of_birth is null ? DateTime.MinValue : new DateTime(source.date_of_birth.day ?? 1, source.date_of_birth.month, source.date_of_birth.year)))
+                .ForMember(dest => dest.DateOfBirth, opt => opt.ResolveUsing(source => source.date_of_birth is null ? DateTime.MinValue : new DateTime(source.date_of_birth.year, source.date_of_birth.month, source.date_of_birth.day ?? 1)))
                 .ForMember(dest => dest.AppointedOn, opt => opt.MapFrom(source => source.appointed_on))
                 .ForMember(dest => dest.ResignedOn, opt => opt.MapFrom(source => source.resigned_on))
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(source => Mapper.Map<Models.CompaniesHouse.OfficerAddress, Types.CompaniesHouse.Address>(source.address)))
@@ -100,7 +100,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
         {
             CreateMap<Models.CompaniesHouse.PersonWithSignificantControl, Types.CompaniesHouse.PersonWithSignificantControl>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.name))
-                .ForMember(dest => dest.DateOfBirth, opt => opt.ResolveUsing(source => source.date_of_birth is null ? DateTime.MinValue : new DateTime(source.date_of_birth.day ?? 1, source.date_of_birth.month, source.date_of_birth.year)))
+                .ForMember(dest => dest.DateOfBirth, opt => opt.ResolveUsing(source => source.date_of_birth is null ? DateTime.MinValue : new DateTime(source.date_of_birth.year, source.date_of_birth.month, source.date_of_birth.day ?? 1)))
                 .ForMember(dest => dest.NaturesOfControl, opt => opt.MapFrom(source => source.natures_of_control))
                 .ForMember(dest => dest.NotifiedOn, opt => opt.MapFrom(source => source.notified_on))
                 .ForMember(dest => dest.CeasedOn, opt => opt.MapFrom(source => source.ceased_on))
