@@ -95,4 +95,33 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
         }
     }
 
+    public class CompaniesHousePersonWithSignificantControlProfile : Profile
+    {
+        public CompaniesHousePersonWithSignificantControlProfile()
+        {
+            CreateMap<PersonWithSignificantControl, CompaniesHouse.PersonWithSignificantControl>()
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.name))
+                .ForMember(dest => dest.DateOfBirth, opt => opt.ResolveUsing(source => source.date_of_birth is null ? DateTime.MinValue : new DateTime(source.date_of_birth.day ?? 1, source.date_of_birth.month, source.date_of_birth.year)))
+                .ForMember(dest => dest.NaturesOfControl, opt => opt.MapFrom(source => source.natures_of_control))
+                .ForMember(dest => dest.NotifiedOn, opt => opt.MapFrom(source => source.notified_on))
+                .ForMember(dest => dest.CeasedOn, opt => opt.MapFrom(source => source.ceased_on))
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(source => Mapper.Map<PersonWithSignificantControlAddress, CompaniesHouse.Address>(source.address)))
+                .ForAllOtherMembers(dest => dest.Ignore());
+        }
+    }
+
+    public class CompaniesHousePersonWithSignificantControlAddressProfile : Profile
+    {
+        public CompaniesHousePersonWithSignificantControlAddressProfile()
+        {
+            CreateMap<PersonWithSignificantControlAddress, CompaniesHouse.Address>()
+                .ForMember(dest => dest.AddressLine1, opt => opt.ResolveUsing(source => $"{source.po_box} {source.premises} {source.address_line_1}".TrimStart()))
+                .ForMember(dest => dest.AddressLine2, opt => opt.MapFrom(source => source.address_line_2))
+                .ForMember(dest => dest.City, opt => opt.MapFrom(source => source.locality))
+                .ForMember(dest => dest.County, opt => opt.MapFrom(source => source.region))
+                .ForMember(dest => dest.Country, opt => opt.MapFrom(source => source.country))
+                .ForMember(dest => dest.PostalCode, opt => opt.MapFrom(source => source.postal_code))
+                .ForAllOtherMembers(dest => dest.Ignore());
+        }
+    }
 }
