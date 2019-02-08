@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using SFA.DAS.ApplyService.InternalApi.Models.CompaniesHouse;
 using System;
 using System.Linq;
 
@@ -9,7 +8,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
     {
         public CompaniesHouseCompanyProfile()
         {
-            CreateMap<CompanyDetails, CompaniesHouse.Company>()
+            CreateMap<Models.CompaniesHouse.CompanyDetails, Types.CompaniesHouse.Company>()
                 .ForMember(dest => dest.CompanyNumber, opt => opt.MapFrom(source => source.company_number))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.company_name))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.company_status))
@@ -18,8 +17,8 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
                 .ForMember(dest => dest.IncorporatedOn, opt => opt.MapFrom(source => source.date_of_creation))
                 .ForMember(dest => dest.DissolvedOn, opt => opt.MapFrom(source => source.date_of_cessation))
                 .ForMember(dest => dest.PreviousNames, opt => opt.ResolveUsing(source => source.previous_company_names.Select(pc => pc.name)))
-                .ForMember(dest => dest.RegisteredOfficeAddress, opt => opt.MapFrom(source => Mapper.Map<RegisteredOfficeAddress, CompaniesHouse.Address>(source.registered_office_address))) 
-                .ForMember(dest => dest.Accounts, opt => opt.MapFrom(source => Mapper.Map<CompanyDetails, CompaniesHouse.Accounts>(source)))
+                .ForMember(dest => dest.RegisteredOfficeAddress, opt => opt.MapFrom(source => Mapper.Map<Models.CompaniesHouse.RegisteredOfficeAddress, Types.CompaniesHouse.Address>(source.registered_office_address))) 
+                .ForMember(dest => dest.Accounts, opt => opt.MapFrom(source => Mapper.Map<Models.CompaniesHouse.CompanyDetails, Types.CompaniesHouse.Accounts>(source)))
                 .ForAllOtherMembers(dest => dest.Ignore());
         }
     }
@@ -28,7 +27,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
     {
         public CompaniesHouseAccountsProfile()
         {
-            CreateMap<CompanyDetails, CompaniesHouse.Accounts>()
+            CreateMap<Models.CompaniesHouse.CompanyDetails, Types.CompaniesHouse.Accounts>()
                 .ForMember(dest => dest.LastConfirmationStatementDate, opt => opt.ResolveUsing(source => source.confirmation_statement.last_made_up_to))
                 .ForMember(dest => dest.LastAccountsDate, opt => opt.ResolveUsing(source => source.accounts?.last_accounts?.made_up_to))
                 .ForAllOtherMembers(dest => dest.Ignore());
@@ -39,7 +38,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
     {
         public CompaniesHouseRegisteredOfficeAddressProfile()
         {
-            CreateMap<RegisteredOfficeAddress, CompaniesHouse.Address>()
+            CreateMap<Models.CompaniesHouse.RegisteredOfficeAddress, Types.CompaniesHouse.Address>()
                 .ForMember(dest => dest.AddressLine1, opt => opt.ResolveUsing(source => $"{source.po_box} {source.premises} {source.address_line_1}".TrimStart()))
                 .ForMember(dest => dest.AddressLine2, opt => opt.MapFrom(source => source.address_line_2))
                 .ForMember(dest => dest.City, opt => opt.MapFrom(source => source.locality))
@@ -54,7 +53,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
     {
         public CompaniesHouseOfficerAddressProfile()
         {
-            CreateMap<OfficerAddress, CompaniesHouse.Address>()
+            CreateMap<Models.CompaniesHouse.OfficerAddress, Types.CompaniesHouse.Address>()
                 .ForMember(dest => dest.AddressLine1, opt => opt.ResolveUsing(source => $"{source.po_box} {source.premises} {source.address_line_1}".TrimStart()))
                 .ForMember(dest => dest.AddressLine2, opt => opt.MapFrom(source => source.address_line_2))
                 .ForMember(dest => dest.City, opt => opt.MapFrom(source => source.locality))
@@ -69,14 +68,14 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
     {
         public CompaniesHouseOfficerProfile()
         {
-            CreateMap<Officer, CompaniesHouse.Officer>()
+            CreateMap<Models.CompaniesHouse.Officer, Types.CompaniesHouse.Officer>()
                 .ForMember(dest => dest.Id, opt => opt.ResolveUsing(source => source.links?.officer?.appointments?.Replace("/officers/", string.Empty).Replace("/appointments", string.Empty)))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.name))
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(source => source.officer_role))
                 .ForMember(dest => dest.DateOfBirth, opt => opt.ResolveUsing(source => source.date_of_birth is null ? DateTime.MinValue : new DateTime(source.date_of_birth.day ?? 1, source.date_of_birth.month, source.date_of_birth.year)))
                 .ForMember(dest => dest.AppointedOn, opt => opt.MapFrom(source => source.appointed_on))
                 .ForMember(dest => dest.ResignedOn, opt => opt.MapFrom(source => source.resigned_on))
-                .ForMember(dest => dest.Address, opt => opt.MapFrom(source => Mapper.Map<OfficerAddress, CompaniesHouse.Address>(source.address)))
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(source => Mapper.Map<Models.CompaniesHouse.OfficerAddress, Types.CompaniesHouse.Address>(source.address)))
                 .ForAllOtherMembers(dest => dest.Ignore());
         }
     }
@@ -85,7 +84,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
     {
         public CompaniesHouseOfficerDisqualificationProfile()
         {
-            CreateMap<Disqualification, CompaniesHouse.OfficerDisqualification>()
+            CreateMap<Models.CompaniesHouse.Disqualification, Types.CompaniesHouse.Disqualification>()
                 .ForMember(dest => dest.DisqualifiedFrom, opt => opt.MapFrom(source => source.disqualified_from))
                 .ForMember(dest => dest.DisqualifiedUntil, opt => opt.MapFrom(source => source.disqualified_until))
                 .ForMember(dest => dest.CaseIdentifier, opt => opt.MapFrom(source => source.case_identifier))
@@ -99,13 +98,13 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
     {
         public CompaniesHousePersonWithSignificantControlProfile()
         {
-            CreateMap<PersonWithSignificantControl, CompaniesHouse.PersonWithSignificantControl>()
+            CreateMap<Models.CompaniesHouse.PersonWithSignificantControl, Types.CompaniesHouse.PersonWithSignificantControl>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.name))
                 .ForMember(dest => dest.DateOfBirth, opt => opt.ResolveUsing(source => source.date_of_birth is null ? DateTime.MinValue : new DateTime(source.date_of_birth.day ?? 1, source.date_of_birth.month, source.date_of_birth.year)))
                 .ForMember(dest => dest.NaturesOfControl, opt => opt.MapFrom(source => source.natures_of_control))
                 .ForMember(dest => dest.NotifiedOn, opt => opt.MapFrom(source => source.notified_on))
                 .ForMember(dest => dest.CeasedOn, opt => opt.MapFrom(source => source.ceased_on))
-                .ForMember(dest => dest.Address, opt => opt.MapFrom(source => Mapper.Map<PersonWithSignificantControlAddress, CompaniesHouse.Address>(source.address)))
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(source => Mapper.Map<Models.CompaniesHouse.PersonWithSignificantControlAddress, Types.CompaniesHouse.Address>(source.address)))
                 .ForAllOtherMembers(dest => dest.Ignore());
         }
     }
@@ -114,7 +113,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
     {
         public CompaniesHousePersonWithSignificantControlAddressProfile()
         {
-            CreateMap<PersonWithSignificantControlAddress, CompaniesHouse.Address>()
+            CreateMap<Models.CompaniesHouse.PersonWithSignificantControlAddress, Types.CompaniesHouse.Address>()
                 .ForMember(dest => dest.AddressLine1, opt => opt.ResolveUsing(source => $"{source.po_box} {source.premises} {source.address_line_1}".TrimStart()))
                 .ForMember(dest => dest.AddressLine2, opt => opt.MapFrom(source => source.address_line_2))
                 .ForMember(dest => dest.City, opt => opt.MapFrom(source => source.locality))

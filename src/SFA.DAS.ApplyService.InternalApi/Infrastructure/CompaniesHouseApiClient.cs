@@ -83,31 +83,23 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             await Task.CompletedTask;
         }
 
-        public async Task<dynamic> GetCompanyDetails(string companyNumber)
+        public async Task<Types.CompaniesHouse.Company> GetCompanyDetails(string companyNumber)
         {
             _logger.LogInformation($"Searching Companies House - Company Details. Company Number: {companyNumber}");
             var apiResponse = await Get<CompanyDetails>($"/company/{companyNumber}");
-            return apiResponse;
-            //return Mapper.Map<CompanyDetails, Types.CompaniesHouse.CompanyDetails> (apiResponse);
+            return Mapper.Map<CompanyDetails, Types.CompaniesHouse.Company> (apiResponse);
         }
 
-        public async Task<IEnumerable<dynamic>> GetOfficers(string companyNumber, bool activeOnly = true)
+        public async Task<IEnumerable<Types.CompaniesHouse.Officer>> GetOfficers(string companyNumber, bool activeOnly = true)
         {
             _logger.LogInformation($"Searching Companies House - Officers. Company Number: {companyNumber}");
             var apiResponse = await Get<OfficerList>($"/company/{companyNumber}/officers?items_per_page=100");
 
-            if (activeOnly)
-            {
-                return apiResponse.items.Where(i => i.resigned_on is null).ToList();
-            }
-            else
-            {
-                return apiResponse.items;
-            }
-            //return Mapper.Map<IEnumerable<Officer>, IEnumerable<Types.CompaniesHouse.Officer>> (apiResponse.items);
+            var items = activeOnly ? apiResponse.items.Where(i => i.resigned_on is null) : apiResponse.items;
+            return Mapper.Map<IEnumerable<Officer>, IEnumerable<Types.CompaniesHouse.Officer>> (items);
         }
 
-        private async Task<IEnumerable<dynamic>> GetOfficerDisqualifications(string officerId)
+        private async Task<IEnumerable<Types.CompaniesHouse.Disqualification>> GetOfficerDisqualifications(string officerId)
         {
             _logger.LogInformation($"Searching Companies House - Natural Officer's Disqualifications. Officer Id: {officerId}");
             var apiResponseNatural = await Get<DisqualificationList>($"/disqualified-officers/natural/{officerId}");
@@ -126,25 +118,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                 disqualifications.AddRange(apiResponseCorporate.disqualifications);
             }
 
-            return disqualifications;
-            //return Mapper.Map<IEnumerable<Disqualification>, IEnumerable<Types.CompaniesHouse.Disqualification>> (disqualifications);
+            return Mapper.Map<IEnumerable<Disqualification>, IEnumerable<Types.CompaniesHouse.Disqualification>> (disqualifications);
         }
 
-        public async Task<IEnumerable<dynamic>> GetPeopleWithSignficantControl(string companyNumber, bool activeOnly = true)
+        public async Task<IEnumerable<Types.CompaniesHouse.PersonWithSignificantControl>> GetPeopleWithSignificantControl(string companyNumber, bool activeOnly = true)
         {
             _logger.LogInformation($"Searching Companies House - People With Significant Control. Company Number: {companyNumber}");
             var apiResponse = await Get<PersonWithSignificantControlList>($"/company/{companyNumber}/persons-with-significant-control?items_per_page=100");
 
-            if (activeOnly)
-            {
-                return apiResponse.items.Where(i => i.ceased_on is null).ToList();
-            }
-            else
-            {
-                return apiResponse.items;
-            }
-
-            //return Mapper.Map<IEnumerable<PersonWithSignficantControl>, IEnumerable<Types.CompaniesHouse.PersonWithSignficantControl>> (apiResponse);
+            var items = activeOnly ? apiResponse.items.Where(i => i.ceased_on is null) : apiResponse.items;
+            return Mapper.Map<IEnumerable<PersonWithSignificantControl>, IEnumerable<Types.CompaniesHouse.PersonWithSignificantControl>>(items);
         }
 
         public async Task<IEnumerable<dynamic>> GetCharges(string companyNumber)
