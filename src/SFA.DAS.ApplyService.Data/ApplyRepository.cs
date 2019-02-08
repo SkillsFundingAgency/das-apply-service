@@ -88,7 +88,8 @@ namespace SFA.DAS.ApplyService.Data
                 {
                     var sections = (await connection.QueryAsync<ApplicationSection>(@"SELECT * FROM ApplicationSections 
                                         WHERE ApplicationId = @ApplicationId 
-                                        AND SequenceId = @SequenceId",
+                                        AND SequenceId = @SequenceId
+                                        AND NotRequired = 0",
                                         new { sequence.ApplicationId, sequence.SequenceId })).ToList();
 
                     sequence.Sections = sections;
