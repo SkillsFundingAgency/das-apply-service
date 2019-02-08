@@ -13,7 +13,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
 
     public class FinancialApplicationSelectedGrade
     {
-        public const string Excellent = "Excellent";
+        public const string Outstanding = "Outstanding";
         public const string Good = "Good";
         public const string Satisfactory = "Satisfactory";
         public const string Inadequate = "Inadequate";
