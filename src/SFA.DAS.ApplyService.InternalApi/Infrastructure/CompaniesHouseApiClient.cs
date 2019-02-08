@@ -73,7 +73,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             _logger.LogInformation($"Searching Companies House - Officers. Company Number: {companyNumber}");
             var apiResponse = await Get<OfficerList>($"/company/{companyNumber}/officers?items_per_page=100");
 
-            var items = activeOnly ? apiResponse.items.Where(i => i.resigned_on is null) : apiResponse.items;
+            var items = activeOnly ? apiResponse.items?.Where(i => i.resigned_on is null) : apiResponse.items;
 
             var officers = Mapper.Map<IEnumerable<Officer>, IEnumerable<Types.CompaniesHouse.Officer>> (items);
 
@@ -112,7 +112,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             _logger.LogInformation($"Searching Companies House - People With Significant Control. Company Number: {companyNumber}");
             var apiResponse = await Get<PersonWithSignificantControlList>($"/company/{companyNumber}/persons-with-significant-control?items_per_page=100");
 
-            var items = activeOnly ? apiResponse.items.Where(i => i.ceased_on is null) : apiResponse.items;
+            var items = activeOnly ? apiResponse.items?.Where(i => i.ceased_on is null) : apiResponse.items;
             return Mapper.Map<IEnumerable<PersonWithSignificantControl>, IEnumerable<Types.CompaniesHouse.PersonWithSignificantControl>>(items);
         }
 
