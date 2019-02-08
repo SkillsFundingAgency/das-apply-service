@@ -233,7 +233,11 @@ namespace SFA.DAS.ApplyService.Data
 
                 foreach(var section in sections)
                 {
-                    if (section.QnAData.Pages.Any(p => p.HasNewFeedback))
+                    if(section.Status == ApplicationSectionStatus.Draft)
+                    {
+                        section.Status = ApplicationSequenceStatus.Submitted;
+                    }
+                    else if (section.QnAData.Pages.Any(p => p.HasNewFeedback))
                     {
                         section.Status = ApplicationSequenceStatus.Submitted;
                     }
