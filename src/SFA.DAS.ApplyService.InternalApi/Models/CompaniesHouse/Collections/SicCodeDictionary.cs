@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace SFA.DAS.ApplyService.InternalApi.Models.CompaniesHouse
+namespace SFA.DAS.ApplyService.InternalApi.Models.CompaniesHouse.Collections
 {
     public class SicCodeDictionary : IReadOnlyDictionary<string, string>
     {

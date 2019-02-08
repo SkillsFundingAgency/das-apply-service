@@ -46,6 +46,43 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             }
         }
 
+        public async Task GetTheDetails(string companyNumber)
+        {
+            // Company Details
+            //Registered Address
+            //Company status
+            //Company type
+            //Nature of business <-- Sic codes
+            //Parent company <-- not getting this
+            //Incorporation date
+            // Previous company names??? date period from - to  <-- is this something we want
+
+            // Financial Accounts
+            //Year end date <-- this is in company details
+            //Abridge accounts <-- not sure if this is in company details. <-- last account date
+            //Confirmation statement <-- this is in company details
+
+
+
+            // Current Officers
+            // Name
+            // Address
+            // Date of birth <-- only month & year
+
+            // People with substantial control
+            // assuming same officer/directors details as above??
+
+            // Name of disqualified directors
+            // no easy endpoint. may have to iterate through officers
+
+            // Percentage of shares <-- not available 
+            //      "natures_of_control": [
+            //  "ownership-of-shares-25-to-50-percent-as-person"
+            //]
+
+            await Task.CompletedTask;
+        }
+
         public async Task<dynamic> GetCompanyDetails(string companyNumber)
         {
             _logger.LogInformation($"Searching Companies House - Company Details. Company Number: {companyNumber}");
@@ -54,11 +91,19 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             //return Mapper.Map<CompanyDetails, Types.CompaniesHouse.CompanyDetails> (apiResponse);
         }
 
-        public async Task<IEnumerable<dynamic>> GetOfficers(string companyNumber)
+        public async Task<IEnumerable<dynamic>> GetOfficers(string companyNumber, bool activeOnly = true)
         {
             _logger.LogInformation($"Searching Companies House - Officers. Company Number: {companyNumber}");
-            var apiResponse = await Get<OfficerList>($"/company/{companyNumber}/officers");
-            return apiResponse.items;
+            var apiResponse = await Get<OfficerList>($"/company/{companyNumber}/officers?items_per_page=100");
+
+            if (activeOnly)
+            {
+                return apiResponse.items.Where(i => i.resigned_on is null).ToList();
+            }
+            else
+            {
+                return apiResponse.items;
+            }
             //return Mapper.Map<IEnumerable<Officer>, IEnumerable<Types.CompaniesHouse.Officer>> (apiResponse.items);
         }
 
@@ -85,11 +130,20 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             //return Mapper.Map<IEnumerable<Disqualification>, IEnumerable<Types.CompaniesHouse.Disqualification>> (disqualifications);
         }
 
-        public async Task<IEnumerable<dynamic>> GetPeopleWithSignficantControl(string companyNumber)
+        public async Task<IEnumerable<dynamic>> GetPeopleWithSignficantControl(string companyNumber, bool activeOnly = true)
         {
             _logger.LogInformation($"Searching Companies House - People With Significant Control. Company Number: {companyNumber}");
-            var apiResponse = await Get<PersonWithSignificantControlList>($"/company/{companyNumber}/persons-with-significant-control");
-            return apiResponse.items;
+            var apiResponse = await Get<PersonWithSignificantControlList>($"/company/{companyNumber}/persons-with-significant-control?items_per_page=100");
+
+            if (activeOnly)
+            {
+                return apiResponse.items.Where(i => i.ceased_on is null).ToList();
+            }
+            else
+            {
+                return apiResponse.items;
+            }
+
             //return Mapper.Map<IEnumerable<PersonWithSignficantControl>, IEnumerable<Types.CompaniesHouse.PersonWithSignficantControl>> (apiResponse);
         }
 
