@@ -50,6 +50,8 @@ namespace SFA.DAS.ApplyService.Domain.Entities
 
             QnAData.Pages = currentPages;
         }
+
+        public bool NotRequired { get; set; }
     }
 
     public class ApplicationSectionStatus

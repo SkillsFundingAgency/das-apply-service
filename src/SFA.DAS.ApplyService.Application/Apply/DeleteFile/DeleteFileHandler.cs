@@ -36,12 +36,20 @@ namespace SFA.DAS.ApplyService.Application.Apply.DeleteFile
             var fileName = answer.Value;
             
             updatedAnswers.Answers.Remove(answer);
-            
+
+            var question = page.Questions.Single(q => q.QuestionId == request.QuestionId);
+
+            if (question.Input.Validations.Any(v => v.Name == "Required"))
+            {
+                page.Complete = false;
+            }
+                     
             qnaDataObject.Pages.ForEach(p =>
             {
                 if (p.PageId == page.PageId)
                 {
                     p.PageOfAnswers = page.PageOfAnswers;
+                    p.Complete = page.Complete;
                 }
             });
 
@@ -49,7 +57,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.DeleteFile
             
             await _applyRepository.SaveSection(section, request.UserId);
 
-            _storageService.Delete(request.ApplicationId, request.SequenceId, request.SectionId, request.PageId,
+            await _storageService.Delete(request.ApplicationId, request.SequenceId, request.SectionId, request.PageId,
                 request.QuestionId, fileName);
             
             return Unit.Value;

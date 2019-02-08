@@ -112,7 +112,8 @@ namespace SFA.DAS.ApplyService.Data
                 {
                     var sections = (await connection.QueryAsync<ApplicationSection>(@"SELECT * FROM ApplicationSections 
                             WHERE ApplicationId = @ApplicationId 
-                            AND SequenceId = @SequenceId",
+                            AND SequenceId = @SequenceId
+                            AND NotRequired = 0",
                         sequence)).ToList();
 
                     sequence.Sections = sections;
@@ -185,7 +186,18 @@ namespace SFA.DAS.ApplyService.Data
             {
                 foreach (var applicationSection in sections)
                 {
-                    await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata, Status = @Status WHERE Id = @Id", applicationSection);
+                    await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata, Status = @Status, NotRequired = @NotRequired WHERE Id = @Id", applicationSection);    
+                }
+            }
+        }
+        
+        public async Task UpdateSequences(List<ApplicationSequence> sequences)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                foreach (var applicationSequence in sequences)
+                {
+                    await connection.ExecuteAsync(@"UPDATE ApplicationSequences SET Status = @Status, IsActive = @IsActive, NotRequired = @NotRequired WHERE Id = @Id", applicationSequence);    
                 }
             }
         }
@@ -194,67 +206,15 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata, Status = @Status WHERE Id = @Id", section);
+                await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata, Status = @Status WHERE Id = @Id", section);       
             }
         }
 
-        public async Task<Guid> CreateNewWorkflow(string workflowType)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return await connection.QuerySingleAsync<Guid>(@"
-                                                    UPDATE Workflows SET Status = 'Deleted' WHERE Type = @workflowType;
 
-                                                    INSERT INTO Workflows 
-                                                            (Description, Version, Type, Status, CreatedAt, CreatedBy, ReferenceFormat) 
-                                                    OUTPUT INSERTED.[Id]
-                                                    VALUES  ('EPAO Workflow','1.0',@workflowType, 'Live', GETUTCDATE(), 'SpreadsheetImport', 'AAD'); ",
-                    new {workflowType});
-            }
-        }
 
-        public async Task CreateSequence(Guid workflowId, double sequenceId, bool isActive)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(
-                    "INSERT INTO WorkflowSequences (WorkflowId, SequenceId, Status, IsActive) VALUES (@workflowId, @sequenceId, 'Draft', @isActive)",
-                    new {workflowId, sequenceId, isActive});
-            }
-        }
 
-        public async Task CreateSection(WorkflowSection section)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(
-                    @"INSERT INTO WorkflowSections (WorkflowId, SequenceId, SectionId, QnAData, Title, LinkTitle, Status, DisplayType) 
-                                                            VALUES (@workflowId, @SequenceId, @SectionId, @QnAData, @Title, @LinkTitle, @Status, @DisplayType)",
-                    section);
-            }
-        }
 
-        public async Task AddAssets(Dictionary<string, string> assets)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                foreach (var asset in assets)
-                {
-                    var cleanText = asset.Value?.Replace("\n", "<br/>");
-                    try
-                    {
-                        await connection.ExecuteAsync(
-                            "INSERT INTO Assets (Reference, Type, Text, Format, Status, CreatedAt, CreatedBy) VALUES (@reference, '', @text, '', 'Live', GETUTCDATE(), 'SpreadsheetImport')"
-                            , new {reference = asset.Key, text = cleanText});
-                    }
-                    catch (Exception e)
-                    {
-                        throw;
-                    }
 
-                }
-            }
-        }
 
         public async Task SubmitApplicationSequence(ApplicationSubmitRequest request, ApplicationData applicationdata)
         {
@@ -268,7 +228,7 @@ namespace SFA.DAS.ApplyService.Data
                                                 WHERE  (ApplicationSequences.ApplicationId = @ApplicationId) AND (ApplicationSequences.SequenceId = @SequenceId) AND Contacts.Id = @UserId;
                             
                                                 UPDATE ApplicationSections
-                                                SET    Status = (CASE WHEN JSON_VALUE(ApplicationSections.QnAData, '$.FinancialApplicationGrade.SelectedGrade') IN ('Excellent','Good','Satisfactory') THEN 'Evaluated' ELSE 'Submitted' END)
+                                                SET    Status = (CASE WHEN JSON_VALUE(ApplicationSections.QnAData, '$.FinancialApplicationGrade.SelectedGrade') IN (@outstandingGrade, @goodGrade, @satisfactoryGrade) THEN 'Evaluated' ELSE 'Submitted' END)
                                                 FROM   ApplicationSections INNER JOIN
                                                             Applications ON ApplicationSections.ApplicationId = Applications.Id INNER JOIN
                                                             Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
@@ -279,7 +239,10 @@ namespace SFA.DAS.ApplyService.Data
                                                 FROM            Applications INNER JOIN
                                                                 Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
                                                 WHERE  (Applications.Id = @ApplicationId) AND Contacts.Id = @UserId	",
-                    new {request.ApplicationId, request.UserId, request.SequenceId, applicationdata });
+                    new {request.ApplicationId, request.UserId, request.SequenceId, applicationdata,
+                            outstandingGrade = FinancialApplicationSelectedGrade.Outstanding,
+                            goodGrade = FinancialApplicationSelectedGrade.Good,
+                            satisfactoryGrade = FinancialApplicationSelectedGrade.Satisfactory });
             }
 
         }
@@ -362,8 +325,8 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                return (await connection.QueryAsync<ApplicationSequence>(@"SELECT * FROM ApplicationSequences WHERE ApplicationId = @applicationId",
-                     new {applicationId})).ToList();
+               return (await connection.QueryAsync<ApplicationSequence>(@"SELECT * FROM ApplicationSequences WHERE ApplicationId = @applicationId",
+                    new {applicationId})).ToList();
             }
         }
 
@@ -492,7 +455,7 @@ namespace SFA.DAS.ApplyService.Data
                             sequenceStatusResubmitted = ApplicationSequenceStatus.Resubmitted,
                             sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded,
                             sectionStatusSubmitted = ApplicationSectionStatus.Submitted,
-                            sectionStatusInProgress = ApplicationSectionStatus.InProgress
+                            sectionStatusInProgress = ApplicationSectionStatus.InProgress   
                         })).ToList();
             }
         }
@@ -754,38 +717,30 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task ClearAssets()
+        public async Task<List<dynamic>> GetPreviousFinancialApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"DELETE FROM Assets");
+                return (await connection.QueryAsync(@"SELECT org.Name, sec.Status, appl.Id, 
+                                                JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.GradedBy') AS GradedBy, 
+	                                            JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.GradedDateTime') AS GradedDateTime,
+                                                JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.SelectedGrade') AS Grade
+                                FROM Applications appl
+                            INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
+                            INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id
+                            WHERE appl.ApplicationStatus = @applicationStatusSubmitted
+                            AND sec.SectionId = 3 
+                            AND (sec.Status = @financialStatusGraded)",
+                    new
+                    {
+                        applicationStatusSubmitted = ApplicationStatus.Submitted, 
+                        financialStatusGraded = ApplicationSectionStatus.Graded
+                    })).ToList();
             }
         }
 
-        public async Task<List<ApplicationSection>> GetApplicationSections()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                var applicationSections = (await connection.QueryAsync<ApplicationSection>(@"SELECT * FROM ApplicationSections WHERE DisplayType != 'Backup'")).ToList();
+ 
 
-                if (applicationSections.Count() != 4)
-                {
-                    throw new Exception("Expecting only four Application Sections");
-                }
-                
-                return applicationSections;
-            }
-        }
-
-        public async Task<List<WorkflowSection>> GetWorkflowSections()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                var applicationSections = (await connection.QueryAsync<WorkflowSection>(@"SELECT * FROM WorkflowSections")).ToList();
-                
-                return applicationSections;
-            }
-        }
         public async Task<int> GetNextAppReferenceSequence()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
