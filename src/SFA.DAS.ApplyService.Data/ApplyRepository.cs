@@ -660,17 +660,28 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_QUERY(sec.QnAData, '$.FinancialApplicationGrade') AS Grade,
                             JSON_VALUE(appl.ApplicationData, '$.InitSubmissionClosedDate') As ClosedDate,
                             JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') As SubmissionCount,
-	                        seq.Status As CurrentStatus
+	                        CASE WHEN (seq.Status = @sequenceStatusApproved) THEN @sequenceStatusApproved
+                                 WHEN (seq.Status = @sequenceStatusRejected) THEN @sequenceStatusRejected
+                                 ELSE sec.Status
+	                        END As CurrentStatus
 	                      FROM Applications appl
 	                      INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
 	                      INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id
 	                      INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
 	                      WHERE seq.SequenceId = 1 AND sec.SectionId = 3
-                            AND seq.Status IN (@sequenceStatusApproved, @sequenceStatusRejected)",
+                            AND (
+                                    seq.Status IN (@sequenceStatusApproved, @sequenceStatusRejected)
+                                    OR ( 
+                                            sec.Status IN (@financialStatusGraded, @financialStatusEvaluated)
+                                            AND JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.SelectedGrade') <> @selectedGradeInadequate
+                                        )
+                                )",
                         new
                         {
                             sequenceStatusApproved = ApplicationSequenceStatus.Approved,
-                            sequenceStatusRejected = ApplicationSequenceStatus.Rejected
+                            sequenceStatusRejected = ApplicationSequenceStatus.Rejected,
+                            financialStatusGraded = ApplicationSectionStatus.Graded,
+                            financialStatusEvaluated = ApplicationSectionStatus.Evaluated
                         })).ToList();
             }
         }
