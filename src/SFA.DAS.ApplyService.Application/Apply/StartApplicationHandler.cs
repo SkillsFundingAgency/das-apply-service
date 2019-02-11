@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using System.Web;
 using MediatR;
 using Newtonsoft.Json;
+using SFA.DAS.ApplyService.Application.DataFeeds;
 using SFA.DAS.ApplyService.Application.Organisations;
+using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply
@@ -15,11 +17,13 @@ namespace SFA.DAS.ApplyService.Application.Apply
     {
         private readonly IApplyRepository _applyRepository;
         private readonly IOrganisationRepository _organisationRepository;
+        private readonly IDataFeedFactory _dataFeedFactory;
 
-        public StartApplicationHandler(IApplyRepository applyRepository, IOrganisationRepository organisationRepository)
+        public StartApplicationHandler(IApplyRepository applyRepository, IOrganisationRepository organisationRepository, IDataFeedFactory dataFeedFactory)
         {
             _applyRepository = applyRepository;
             _organisationRepository = organisationRepository;
+            _dataFeedFactory = dataFeedFactory;
         }
 
         public async Task<Unit> Handle(StartApplicationRequest request, CancellationToken cancellationToken)
@@ -50,10 +54,38 @@ namespace SFA.DAS.ApplyService.Application.Apply
             
             DisableSequencesAndSectionsAsAppropriate(org, sequences, sections);
 
+            await DataFeedAnswers(sections, applicationId);
+            
             await _applyRepository.UpdateSections(sections);
             await _applyRepository.UpdateSequences(sequences);
             
             return Unit.Value;
+        }
+
+        private async Task DataFeedAnswers(List<ApplicationSection> sections, Guid applicationId)
+        {
+            foreach (var section in sections)
+            {
+                foreach (var page in section.QnAData.Pages)
+                {
+                    if (page.Questions != null)
+                    {
+                        foreach (var question in page.Questions)
+                        {
+                            if (question.DataFedAnswer != null)
+                            {
+                                var datafeed = _dataFeedFactory.GetDataField(question.DataFedAnswer.Type);
+                                var answer = await datafeed.GetAnswer(applicationId);
+                                if (answer != null)
+                                {
+                                    page.PageOfAnswers = new List<PageOfAnswers>() {new PageOfAnswers() {Answers = new List<Answer>() {new Answer() {QuestionId = question.QuestionId, Value = answer.Answer}}}};
+                                }
+                            }
+                        }
+                    }
+                   
+                }
+            }
         }
 
         private void DisableSequencesAndSectionsAsAppropriate(Organisation org, List<ApplicationSequence> sequences, List<ApplicationSection> sections)

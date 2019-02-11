@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Validation;
+using SFA.DAS.ApplyService.Application.DataFeeds;
 using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Users;
@@ -130,6 +131,7 @@ namespace SFA.DAS.ApplyService.InternalApi
                     _.ConnectImplementationsToTypesClosing(typeof(INotificationHandler<>));
 
                     _.AddAllTypesOf<IValidator>();
+                    _.AddAllTypesOf<IDataFeed>();
                 });
 
                 config.For<IMediator>().Use<Mediator>();

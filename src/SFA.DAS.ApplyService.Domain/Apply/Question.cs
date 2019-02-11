@@ -14,5 +14,13 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public int? Order { get; set; }
         public string Value { get; set; }
         public IEnumerable<dynamic> ErrorMessages { get; set; }
+        public DataFedAnswer DataFedAnswer { get; set; }
+    }
+
+    public class DataFedAnswer
+    {
+        public string Type { get; set; }
+        public bool Skipped { get; set; }
+        public bool Readonly { get; set; }
     }
 }
