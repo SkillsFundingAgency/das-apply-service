@@ -681,7 +681,8 @@ namespace SFA.DAS.ApplyService.Data
                             sequenceStatusApproved = ApplicationSequenceStatus.Approved,
                             sequenceStatusRejected = ApplicationSequenceStatus.Rejected,
                             financialStatusGraded = ApplicationSectionStatus.Graded,
-                            financialStatusEvaluated = ApplicationSectionStatus.Evaluated
+                            financialStatusEvaluated = ApplicationSectionStatus.Evaluated,
+                            selectedGradeInadequate = FinancialApplicationSelectedGrade.Inadequate
                         })).ToList();
             }
         }
