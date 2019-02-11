@@ -3,7 +3,8 @@ CREATE TABLE [dbo].[ApplicationSequences](
 	[ApplicationId] [uniqueidentifier] NOT NULL,
 	[SequenceId] [int] NOT NULL,
 	[Status] [nvarchar](50) NOT NULL,
-	[IsActive] [bit] NOT NULL DEFAULT 0
+	[IsActive] [bit] NOT NULL DEFAULT 0,
+	[NotRequired] [bit] NOT NULL DEFAULT 0
 ) ON [PRIMARY]
 GO
 
