@@ -89,7 +89,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (user == null)
             {
-                // Re-invite user.
                 return RedirectToAction("NotSetUp");
             }
             
