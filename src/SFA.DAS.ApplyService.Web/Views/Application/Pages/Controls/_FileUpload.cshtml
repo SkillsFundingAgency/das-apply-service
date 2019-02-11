@@ -63,28 +63,29 @@ else
         accept=".pdf,application/pdf"
     />
 
-    <div class="js-uploaded-container">
-        <h2 class="govuk-heading-m">Uploaded files</h2>
-        <table class="govuk-table">
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="col">File name</th>
-                    <th class="govuk-table__header" scope="col"><span class="govuk-visually-hidden-focusable">Action</span></th>
-                </tr>
-            </thead>
-            <tbody class="govuk-table__body js-uploaded-files"></tbody>
-        </table>
-        <ul class="govuk-list js-uploaded-files"></ul>
-    </div>
-
-    <div href="#" class="js-drop-target">
-        <div class="js-upload-controls">
-            <p class="govuk-body govuk-!-margin-bottom-1">Drag files here</p>
-            <p class="govuk-body govuk-!-margin-bottom-0">or <a class="js-browse-button govuk-link" href="#">choose files to upload</a></p>
+    <div class="js-file-upload">
+        <div class="js-uploaded-container">
+            <h2 class="govuk-heading-m">Uploaded files</h2>
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th class="govuk-table__header" scope="col">File name</th>
+                        <th class="govuk-table__header" scope="col"><span class="govuk-visually-hidden-focusable">Action</span></th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body js-uploaded-files"></tbody>
+            </table>
+            <ul class="govuk-list js-uploaded-files"></ul>
         </div>
-        <div class="js-upload-progress"></div>
+
+        <div href="#" class="js-drop-target">
+            <div class="js-upload-controls">
+                <p class="govuk-body govuk-!-margin-bottom-1">Drag files here</p>
+                <p class="govuk-body govuk-!-margin-bottom-0">or <a class="js-browse-button govuk-link" href="#">choose files to upload</a></p>
+            </div>
+            <div class="js-upload-progress"></div>
+        </div>
     </div>
-    
 
 
 }

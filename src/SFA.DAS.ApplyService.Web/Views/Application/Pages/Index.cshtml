@@ -119,6 +119,15 @@
                                         </h2>
                                     }
 
+                                    @if (question.Type == "FileUpload")
+                                    {
+                                        @section Scripts {
+                                            <script src="@Url.Content("~/javascripts/resumable.js")"></script>
+                                            <script src="@Url.Content("~/javascripts/das-file-uploads.js")"></script>
+                                        }
+                                    }
+
+
                                     @if (question.QuestionBodyText != null)
                                     {
                                         @Html.Raw(question.QuestionBodyText)
@@ -206,8 +215,3 @@
         </div>
     </div>
 </main>
-
-@section Scripts {
-    <script src="@Url.Content("~/javascripts/resumable.js")"></script>
-    <script src="@Url.Content("~/javascripts/das-file-uploads.js")"></script>
-}

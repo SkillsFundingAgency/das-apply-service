@@ -5,6 +5,7 @@ var r = new Resumable({
 var dropTarget = document.querySelector(".js-drop-target");
 r.assignBrowse(dropTarget);
 r.assignDrop(dropTarget);
+
 var uploadProgress = document.querySelector(".js-upload-progress");
 var uploadControls = document.querySelector(".js-upload-controls");
 var uploadedContainer = document.querySelector(".js-uploaded-container");
@@ -18,7 +19,7 @@ r.on("fileAdded", function(file, event) {
 });
 
 r.on("fileSuccess", function(file, message) {
-  // console.log(uploadedFiles);
+  // console.debug("fileSuccess", file);
 
   progressBar.finish();
   // console.log(file.fileName);
@@ -27,17 +28,22 @@ r.on("fileSuccess", function(file, message) {
   fileNameListItem.innerHTML =
     '<th class="govuk-table__header" scope="row">' +
     file.fileName +
-    '</th><td class="govuk-table__cell govuk-table__cell--numeric"><a href=#">Remove</a></td>';
+    '</th><td class="govuk-table__cell govuk-table__cell--numeric"><a class="js-remove-file" href=#">Remove</a></td>';
   uploadedFiles.appendChild(fileNameListItem);
+  uploadedContainer.style.display = "block";
+
+  // Remove file (from ui) when delete clicked
+  var deleteButtons = document.querySelectorAll(".js-remove-file");
+  deleteButtons.forEach(function(button) {
+    button.addEventListener("click", function(event) {
+      event.target.parentNode.parentNode.remove();
+      r.removeFile(file);
+    });
+  });
 });
 
 r.on("fileProgress", function(file, message) {
   progressBar.uploading(file.progress() * 100);
-});
-
-r.on("fileSuccess", function(file) {
-  // console.debug("fileSuccess", file);
-  uploadedContainer.style.display = "block";
 });
 
 r.on("complete", function() {
@@ -55,7 +61,7 @@ function ProgressBar(ele) {
   };
 
   this.uploading = function(progress) {
-    // console.log("uploading: " + Math.round(progress) + "%");
+    console.log("uploading: " + Math.round(progress) + "%");
     ele.style.width = progress + "%";
   };
 

@@ -437,8 +437,13 @@
   word-break: break-word;
 }
 
+.js-file-upload,
 .js-enabled .govuk-file-upload {
   display: none;
+}
+
+.js-enabled .js-file-upload {
+  display: block;
 }
 
 .js-drop-target {
