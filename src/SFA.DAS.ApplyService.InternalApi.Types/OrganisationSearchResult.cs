@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.ApplyService.InternalApi.Types
+﻿using System;
+
+namespace SFA.DAS.ApplyService.InternalApi.Types
 {
     public class OrganisationSearchResult
     {
@@ -26,6 +28,9 @@
         public bool RoATPApproved { get; set; }
 
         public string EasApiOrganisationType { get; set; }
+        
+        public DateTime? FinancialDueDate { get; set; }
+        public bool? FinancialExempt { get; set; }
     }
 
     public class OrganisationAddress

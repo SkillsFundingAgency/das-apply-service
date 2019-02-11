@@ -23,9 +23,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet("Review/OpenApplications")]
-        public async Task<ActionResult> OpenApplications()
+        public async Task<ActionResult> OpenApplications(int sequenceId = 1)
         {
-            var applications = await _mediator.Send(new OpenApplicationsRequest());
+            var applications = await _mediator.Send(new OpenApplicationsRequest(sequenceId));
+            return Ok(applications);
+        }
+
+        [HttpGet("Review/FeedbackAddedApplications")]
+        public async Task<ActionResult> FeedbackAddedApplications()
+        {
+            var applications = await _mediator.Send(new FeedbackAddedApplicationsRequest());
             return Ok(applications);
         }
 

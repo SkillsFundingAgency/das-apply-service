@@ -36,18 +36,12 @@ namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
             {
                 if (existingContact.SigninId == null)
                 {
-                    // They have signed up in Apply, but we have yet to receive a DfE Sign In id from DfE.
-                    // This is either because they haven't followed the link and signed up in DfE yet, or
-                    // there was a problem with the Callback from DfE.
-                    // If it was a problem with the Callback, then this extra call to InviteUser will kick off another one without
-                    // sending them another Invite email.
                     var invitationResult = await _dfeSignInService.InviteUser(request.Email, request.GivenName, request.FamilyName, existingContact.Id);
                     if (!invitationResult.IsSuccess)
                     {
                         return false;
                     }
                 }
-                // otherwise advise they already have an account (by Email)
                 await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_SIGNUP_ERROR, existingContact, new { });
             }
             

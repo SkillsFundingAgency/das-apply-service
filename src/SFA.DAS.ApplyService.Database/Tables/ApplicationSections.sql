@@ -7,7 +7,8 @@ CREATE TABLE [dbo].[ApplicationSections](
 	[Status] [nvarchar](50) NOT NULL,
 	[Title] [nvarchar](50) NOT NULL,
 	[LinkTitle] [nvarchar](50) NOT NULL,
-	[DisplayType] [nvarchar](50) NOT NULL, 
+	[DisplayType] [nvarchar](50) NOT NULL,
+	[NotRequired] [bit] NOT NULL DEFAULT 0
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
