@@ -442,7 +442,7 @@
 }
 
 .js-drop-target {
-  padding: 20px;
+  padding: 25px;
   /* height: 100px; */
   border: 2px dashed #dee0e2;
 }
@@ -452,11 +452,15 @@
 }
 
 .js-upload-progress {
-  visibility: hidden;
+  display: none;
   height: 20px;
   background: #ccc;
   -webkit-transition: width 0.2s ease-in-out;
   -moz-transition: width 0.2s ease-in-out;
   -o-transition: width 0.2s ease-in-out;
   transition: width 0.2s ease-in-out;
+}
+
+.js-uploaded-container {
+  display: none;
 }
