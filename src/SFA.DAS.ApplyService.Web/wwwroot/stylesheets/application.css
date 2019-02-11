@@ -441,25 +441,20 @@
   display: none;
 }
 
-.dropTarget {
-  font-size: 19px;
-  font-size: 1.1875rem;
-  line-height: 1.31579;
-  color: #0b0c0c;
-  font-family: nta, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-weight: 400;
+.js-drop-target {
   padding: 20px;
-  height: 100px;
-  border: 2px solid #ccc;
-  background: 1px solid #fafafa;
+  /* height: 100px; */
+  border: 2px dashed #dee0e2;
 }
 
-#upload-progress {
+.js-drop-target.dragover {
+  border: 2px dashed #005ea5;
+}
+
+.js-upload-progress {
+  visibility: hidden;
   height: 20px;
   background: #ccc;
-  margin-bottom: 10px;
   -webkit-transition: width 0.2s ease-in-out;
   -moz-transition: width 0.2s ease-in-out;
   -o-transition: width 0.2s ease-in-out;

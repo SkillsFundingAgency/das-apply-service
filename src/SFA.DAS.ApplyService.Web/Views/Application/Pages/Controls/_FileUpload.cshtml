@@ -57,15 +57,23 @@ else
     
     <input
         type="file"
-        class="govuk-file-upload js-hidden"
+        class="govuk-file-upload"
         id="@Model.QuestionId"
         name="@Model.QuestionId"
         accept=".pdf,application/pdf"
     />
 
-    <div href="#" class="dropTarget">Drag files here...</div>
-    <div id="upload-progress"></div>
-    <p class="govuk-body">or <a class="browseButton" href="#">browse for files to upload</a></p>
+    
+    <div href="#" class="js-drop-target govuk-!-margin-bottom-6">
+        <p class="govuk-body govuk-!-margin-bottom-1">Drag files here...</p>
+        <p class="govuk-body">or <a class="js-browse-button govuk-link" href="#">browse for files to upload</a></p>
+        <div class="js-upload-progress"></div>
+    </div>
+    
+    <div class="uploads">
+        <h2 class="govuk-heading-m">Uploaded files</h2>
+        <ul class="govuk-list js-uploaded-files"></ul>
+    </div>
 
 }
 
