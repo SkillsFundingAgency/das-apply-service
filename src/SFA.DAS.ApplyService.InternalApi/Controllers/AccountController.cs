@@ -29,6 +29,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [PerformValidation]
         public async Task<ActionResult> InviteUser([FromBody]NewContact newContact)
         {
+            _logger.LogInformation($"Inviting user with params: {newContact.Email} , {newContact.GivenName} , {newContact.FamilyName}");
             var successful = await _mediator.Send(new CreateAccountRequest(newContact.Email, newContact.GivenName, newContact.FamilyName));
 
             if (!successful)
