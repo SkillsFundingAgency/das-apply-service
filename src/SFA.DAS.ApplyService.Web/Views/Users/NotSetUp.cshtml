@@ -3,5 +3,8 @@
     ViewBag.Title = "title";
 }
 
-<h2>We haven't received a callback from DFE SignIn yet</h2>
-<p>Please wait 5 mins</p>
+<h1>Whoah there!</h1>
+<h2>Your account is not _quite_ set up yet, click here to try again.</h2>
+<a href="@Url.Action("SignIn", "Users" )" role="button" draggable="false" class="govuk-button govuk-!-margin-bottom-2">
+    Sign in
+</a>
