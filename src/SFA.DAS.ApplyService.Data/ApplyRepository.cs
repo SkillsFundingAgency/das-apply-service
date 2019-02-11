@@ -675,6 +675,19 @@ namespace SFA.DAS.ApplyService.Data
                     })).FirstOrDefault();
             }
         }
-        
+
+        public async Task<string> GetVersionForApplication(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<string>(@"SELECT wf.Version
+                                FROM Applications app inner join Workflows wf ON wf.Id = app.CreatedFromWorkflowId
+                                AND app.id = @applicationId",
+                    new
+                    {
+                        applicationId
+                    })).FirstOrDefault();
+            }
+        }
     }
 }
