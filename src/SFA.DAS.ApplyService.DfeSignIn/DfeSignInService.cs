@@ -51,6 +51,8 @@ namespace SFA.DAS.ApplyService.DfeSignIn
                     callback = config.DfeSignIn.CallbackUri
                 });
                 
+                _logger.LogInformation("JSON sent to DfE Invitation Service: {0}", inviteJson);
+                
                 var dfeResponse = await httpClient.PostAsync(config.DfeSignIn.ApiUri,
                     new StringContent(inviteJson, Encoding.UTF8, "application/json")
                 );
