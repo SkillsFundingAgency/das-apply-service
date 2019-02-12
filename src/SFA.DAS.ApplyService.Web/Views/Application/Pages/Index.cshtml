@@ -1,7 +1,7 @@
 @model SFA.DAS.ApplyService.Web.Controllers.PageViewModel
 
 @{
-    ViewBag.Title = @Model.Title ?? "Page not active";
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + (@Model.Title ?? "Page not active");
 }
 @*
     <noscript>
@@ -160,7 +160,7 @@
                                     }
                                 }
                             }
-                            <div class="govuk-form-group govuk-!-margin-bottom-8 @(questionHasError ? "govuk-form-group--error" : "")">
+                            <div class="govuk-form-group @(questionHasError ? "govuk-form-group--error" : "")">
                                 <label class="govuk-label govuk-label--m" for="@question.QuestionId">
                                     @Html.Raw(question.Label)
                                 </label>
