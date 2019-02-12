@@ -46,5 +46,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<string> GetWorkflowReferenceFormat(Guid requestApplicationId);
 
         Task<string> GetVersionForApplication(Guid applicationId);
+
+        Task<string> GetFieldValueFromOrganisation(Guid applicationId, string fieldName);
     }
 }
