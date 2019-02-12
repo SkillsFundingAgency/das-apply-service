@@ -394,7 +394,14 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                return await connection.QuerySingleAsync<Domain.Entities.Application>(@"SELECT * FROM Applications WHERE Id = @applicationId", new {applicationId});
+                var application = await connection.QuerySingleAsync<Domain.Entities.Application>(@"SELECT * FROM Applications WHERE Id = @applicationId", new {applicationId});
+
+                if(application != null)
+                {
+                    application.ApplyingOrganisation = await GetOrganisationForApplication(applicationId);
+                }
+
+                return application;
             }
         }
 
@@ -433,6 +440,7 @@ namespace SFA.DAS.ApplyService.Data
 	                        END As FinancialGrade,
 	                        CASE WHEN (SequenceStatus = @sequenceStatusFeedbackAdded) THEN @sequenceStatusFeedbackAdded
                                  WHEN (SubmissionCount > 1 AND SequenceId = 1 AND Sec1Status = @sectionStatusSubmitted AND Sec2Status = @sectionStatusSubmitted) THEN @sequenceStatusResubmitted
+                                 WHEN (SubmissionCount > 1 AND SequenceId = 1 AND Sec1Status = Sec2Status AND Sec3Status = @sectionStatusSubmitted) THEN @sequenceStatusResubmitted
                                  WHEN (SubmissionCount > 1 AND SequenceId = 2 AND Sec4Status = @sectionStatusSubmitted) THEN @sequenceStatusResubmitted
                                  WHEN (SequenceId = 1 AND Sec1Status = Sec2Status) THEN Sec1Status
 		                         WHEN SequenceId = 2 THEN Sec4Status
