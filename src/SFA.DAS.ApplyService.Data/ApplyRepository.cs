@@ -676,31 +676,17 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<string> GetVersionForApplication(Guid applicationId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection.QueryAsync<string>(@"SELECT wf.Version
-                                FROM Applications app inner join Workflows wf ON wf.Id = app.CreatedFromWorkflowId
-                                AND app.id = @applicationId",
-                    new
-                    {
-                        applicationId
-                    })).FirstOrDefault();
-            }
-        }
-
-        public async Task<string> GetFieldValueFromOrganisation(Guid applicationId, string fieldName)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection.QueryAsync<string>($@"select {fieldName} from organisations where id =
-	                        (select top 1 ApplyingOrganisationId from Applications app where app.id = @applicationId)",
-                    new
-                    {
-                        applicationId
-                    })).FirstOrDefault();
-            }
-        }
+        //public async Task<string> GetFieldValueFromOrganisation(Guid applicationId, string fieldName)
+        //{
+        //    using (var connection = new SqlConnection(_config.SqlConnectionString))
+        //    {
+        //        return (await connection.QueryAsync<string>($@"select {fieldName} from organisations where id =
+	       //                 (select top 1 ApplyingOrganisationId from Applications app where app.id = @applicationId)",
+        //            new
+        //            {
+        //                applicationId
+        //            })).FirstOrDefault();
+        //    }
+        //}
     }
 }

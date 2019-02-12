@@ -24,7 +24,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\SFA.DAS.ApplyService.Application\SFA.DAS.ApplyService.Application.csproj" />
-      <ProjectReference Include="..\SFA.DAS.ApplyService.Data\SFA.DAS.ApplyService.Data.csproj" />
     </ItemGroup>
 
 </Project>

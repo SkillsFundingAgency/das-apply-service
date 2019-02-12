@@ -17,12 +17,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.GetAnswers
             _answersService = answersService;
         }
 
-
         public async Task<string> Handle(GetAnswersRequest request, CancellationToken cancellationToken)
         {
-
-            return await _answersService.GetAnswers(request.QuestionIdentifier, request.ApplicationId);
-
+            return await _answersService.GetAnswersForQuestion(request.QuestionIdentifier, request.ApplicationId);
         }
     }
 }
