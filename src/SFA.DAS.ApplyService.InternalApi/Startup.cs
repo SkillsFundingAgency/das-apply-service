@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using System.Globalization;
 using System.Reflection;
 using FluentValidation.AspNetCore;
@@ -13,9 +11,6 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Application;
-using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Application.DataFeeds;
 using SFA.DAS.ApplyService.Application.Organisations;
@@ -27,7 +22,6 @@ using SFA.DAS.ApplyService.Data;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.Encryption;
-using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Storage;
 using StructureMap;
 

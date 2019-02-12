@@ -12,7 +12,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Organisation = SFA.DAS.ApplyService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {

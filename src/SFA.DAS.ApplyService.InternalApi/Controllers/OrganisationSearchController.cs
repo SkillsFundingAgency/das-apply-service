@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using SFA.DAS.ApplyService.InternalApi.Models.AssessorService;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {

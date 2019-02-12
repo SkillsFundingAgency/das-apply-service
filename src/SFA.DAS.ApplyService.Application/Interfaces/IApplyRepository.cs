@@ -1,11 +1,11 @@
-using SFA.DAS.ApplyService.Application.Apply.Submit;
-using SFA.DAS.ApplyService.Domain.Apply;
-using SFA.DAS.ApplyService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Application.Apply.Submit;
+using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Entities;
 
-namespace SFA.DAS.ApplyService.Application.Apply
+namespace SFA.DAS.ApplyService.Application.Interfaces
 {
     public interface IApplyRepository
     {

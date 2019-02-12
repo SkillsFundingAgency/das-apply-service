@@ -7,11 +7,12 @@ using System.Web;
 using MediatR;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application.DataFeeds;
+using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 
-namespace SFA.DAS.ApplyService.Application.Apply
+namespace SFA.DAS.ApplyService.Application.Apply.StartApplication
 {
     public class StartApplicationHandler : IRequestHandler<StartApplicationRequest>
     {
@@ -68,24 +69,64 @@ namespace SFA.DAS.ApplyService.Application.Apply
             {
                 foreach (var page in section.QnAData.Pages)
                 {
-                    if (page.Questions != null)
+                    if (page.Questions == null) continue;
+                    foreach (var question in page.Questions)
                     {
-                        foreach (var question in page.Questions)
+                        if (question.DataFedAnswer != null)
                         {
-                            if (question.DataFedAnswer != null)
+                            var answer = await GetDataFedAnswer(applicationId, question);
+                            if (answer != null)
                             {
-                                var datafeed = _dataFeedFactory.GetDataField(question.DataFedAnswer.Type);
-                                var answer = await datafeed.GetAnswer(applicationId);
-                                if (answer != null)
-                                {
-                                    page.PageOfAnswers = new List<PageOfAnswers>() {new PageOfAnswers() {Answers = new List<Answer>() {new Answer() {QuestionId = question.QuestionId, Value = answer.Answer}}}};
-                                }
+                                page.PageOfAnswers = new List<PageOfAnswers>() {new PageOfAnswers() {Answers = new List<Answer>() {new Answer() {QuestionId = question.QuestionId, Value = answer.Answer}}}};
                             }
                         }
+                        else
+                        {
+                            if (question.Input.Type != "ComplexRadio") continue;
+                            await DataFeedComplexRadioQuestions(applicationId, question, page);
+                        }
                     }
-                   
                 }
             }
+        }
+
+        private async Task DataFeedComplexRadioQuestions(Guid applicationId, Question question, Page page)
+        {
+            foreach (var inputOption in question.Input.Options)
+            {
+                foreach (var furtherQuestion in inputOption.FurtherQuestions)
+                {
+                    if (furtherQuestion.DataFedAnswer == null) continue;
+                    var answer = await GetDataFedAnswer(applicationId, furtherQuestion);
+                    if (answer != null)
+                    {
+                        page.PageOfAnswers = new List<PageOfAnswers>
+                        {
+                            new PageOfAnswers
+                            {
+                                Answers = new List<Answer>
+                                {
+                                    new Answer
+                                    {
+                                        QuestionId = question.QuestionId, Value = inputOption.Value
+                                    },
+                                    new Answer
+                                    {
+                                        QuestionId = furtherQuestion.QuestionId, Value = answer.Answer
+                                    }
+                                }
+                            }
+                        };
+                    }
+                }
+            }
+        }
+
+        private async Task<DataFedAnswerResult> GetDataFedAnswer(Guid applicationId, Question question)
+        {
+            var datafeed = _dataFeedFactory.GetDataField(question.DataFedAnswer.Type);
+            var answer = await datafeed.GetAnswer(applicationId);
+            return answer;
         }
 
         private void DisableSequencesAndSectionsAsAppropriate(Organisation org, List<ApplicationSequence> sequences, List<ApplicationSection> sections)

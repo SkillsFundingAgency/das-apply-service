@@ -1,7 +1,7 @@
 using System;
 using MediatR;
 
-namespace SFA.DAS.ApplyService.Application.Apply
+namespace SFA.DAS.ApplyService.Application.Apply.StartApplication
 {
     public class StartApplicationRequest : IRequest
     {

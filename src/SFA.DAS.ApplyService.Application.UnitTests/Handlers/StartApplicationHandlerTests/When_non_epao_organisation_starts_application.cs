@@ -4,7 +4,9 @@ using System.Threading;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.Application.Apply.StartApplication;
 using SFA.DAS.ApplyService.Domain.Entities;
+using StartApplicationRequest = SFA.DAS.ApplyService.Application.Apply.StartApplication.StartApplicationRequest;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHandlerTests
 {
