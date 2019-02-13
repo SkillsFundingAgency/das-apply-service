@@ -16,7 +16,7 @@ namespace SFA.DAS.ApplyService.Application.DataFeeds
         public IDataFeed GetDataField(string dataFeedName)
         {
             var dataFeed = _serviceProvider.GetServices<IDataFeed>()
-                .FirstOrDefault(v => v.GetType().Name == dataFeedName + "Validator");
+                .FirstOrDefault(v => v.GetType().Name == dataFeedName + "DataFeed");
 
             return dataFeed;
         }

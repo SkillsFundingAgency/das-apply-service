@@ -94,31 +94,35 @@ namespace SFA.DAS.ApplyService.Application.Apply.StartApplication
         {
             foreach (var inputOption in question.Input.Options)
             {
-                foreach (var furtherQuestion in inputOption.FurtherQuestions)
+                if (inputOption.FurtherQuestions != null)
                 {
-                    if (furtherQuestion.DataFedAnswer == null) continue;
-                    var answer = await GetDataFedAnswer(applicationId, furtherQuestion);
-                    if (answer != null)
+                    foreach (var furtherQuestion in inputOption.FurtherQuestions)
                     {
-                        page.PageOfAnswers = new List<PageOfAnswers>
+                        if (furtherQuestion.DataFedAnswer == null) continue;
+                        var answer = await GetDataFedAnswer(applicationId, furtherQuestion);
+                        if (answer != null)
                         {
-                            new PageOfAnswers
+                            page.PageOfAnswers = new List<PageOfAnswers>
                             {
-                                Answers = new List<Answer>
+                                new PageOfAnswers
                                 {
-                                    new Answer
+                                    Answers = new List<Answer>
                                     {
-                                        QuestionId = question.QuestionId, Value = inputOption.Value
-                                    },
-                                    new Answer
-                                    {
-                                        QuestionId = furtherQuestion.QuestionId, Value = answer.Answer
+                                        new Answer
+                                        {
+                                            QuestionId = question.QuestionId, Value = inputOption.Value
+                                        },
+                                        new Answer
+                                        {
+                                            QuestionId = furtherQuestion.QuestionId, Value = answer.Answer
+                                        }
                                     }
                                 }
-                            }
-                        };
+                            };
+                        }
                     }
                 }
+                
             }
         }
 

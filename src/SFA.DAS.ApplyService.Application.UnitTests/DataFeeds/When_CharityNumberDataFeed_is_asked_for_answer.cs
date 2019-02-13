@@ -1,6 +1,8 @@
 using System;
+using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using SFA.DAS.ApplyService.Application.DataFeeds;
 using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Domain.Entities;
 
@@ -37,7 +39,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.DataFeeds
         {
             var answer = _charityNumberDataFeed.GetAnswer(_applicationId).Result;
 
-            answer.Answer.Should().Be("9777");
+            answer.Answer.Should().Be("CHAR9777");
         }
         
         [Test]

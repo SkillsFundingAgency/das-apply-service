@@ -3356,7 +3356,10 @@ VALUES
                     },
                     "Order": null,
                     "ShortLabel": "SQ-1-SE-1-PG-5-CD-12.1-79",
-                    "QuestionBodyText": "SQ-1-SE-1-PG-5-CD-12.1-80"
+                    "QuestionBodyText": "SQ-1-SE-1-PG-5-CD-12.1-80",
+                    "DataFedAnswer":{
+                      "Type":"UkPrn"
+                    }
                   }
                 ]
               },
@@ -3751,7 +3754,10 @@ VALUES
                     },
                     "Order": null,
                     "ShortLabel": "SQ-1-SE-1-PG-9-CD-17.1-131",
-                    "QuestionBodyText": "SQ-1-SE-1-PG-9-CD-17.1-132"
+                    "QuestionBodyText": "SQ-1-SE-1-PG-9-CD-17.1-132",
+                    "DataFedAnswer": {
+                      "Type":"CompanyNumber"
+                    }
                   }
                 ]
               },
@@ -4191,7 +4197,10 @@ VALUES
                     },
                     "Order": null,
                     "ShortLabel": "SQ-1-SE-1-PG-14-CD-26.1-199",
-                    "QuestionBodyText": "SQ-1-SE-1-PG-14-CD-26.1-200"
+                    "QuestionBodyText": "SQ-1-SE-1-PG-14-CD-26.1-200",
+                    "DataFedAnswer":{
+                      "Type":"CharityNumber"
+                    }
                   }
                 ]
               },
