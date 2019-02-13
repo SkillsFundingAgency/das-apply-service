@@ -3091,7 +3091,7 @@ VALUES
         },
         {
           "QuestionId": "CD-03",
-		  "QuestionTag" : "contact-address",
+		  "QuestionTag" : "contact-address1",
           "Label": "SQ-1-SE-1-PG-3-CD-03-30",
           "ShortLabel": "SQ-1-SE-1-PG-3-CD-03-31",
           "QuestionBodyText": "SQ-1-SE-1-PG-3-CD-03-32",
@@ -9317,7 +9317,7 @@ VALUES
         "Questions": [
 		  {
             "QuestionId": "CC-40",
-			 "QuestionTag" : "company-website",
+			 "QuestionTag" : "standard-website",
             "Label": "SQ-2-SE-4-PG-30-CC-40-L-1",
             "ShortLabel": "SQ-2-SE-4-PG-30-CC-40-SL-1",
             "QuestionBodyText": "SQ-2-SE-4-PG-30-CC-40-QB-1",

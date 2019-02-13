@@ -174,6 +174,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
 
         await _applyRepository.SaveSection(section, request.UserId);
 
+
+       // MFCMFC THIS IS WHERE TO POSTING TO REGISTER LOGIC HAPPENS         
+       // first check - look in OrganisationDetails, and if source is EPAO, do nothing
+       //
         return new UpdatePageAnswersResult { Page = page, ValidationPassed = validationPassed };
       }
       else
