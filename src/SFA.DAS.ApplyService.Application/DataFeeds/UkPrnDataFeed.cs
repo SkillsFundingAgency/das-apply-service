@@ -4,11 +4,11 @@ using SFA.DAS.ApplyService.Application.Organisations;
 
 namespace SFA.DAS.ApplyService.Application.DataFeeds
 {
-    public class CompanyNumberDataFeed : IDataFeed
+    public class UkPrnDataFeed : IDataFeed
     {
         private readonly IOrganisationRepository _organisationRepository;
 
-        public CompanyNumberDataFeed(IOrganisationRepository organisationRepository)
+        public UkPrnDataFeed(IOrganisationRepository organisationRepository)
         {
             _organisationRepository = organisationRepository;
         }
@@ -20,8 +20,8 @@ namespace SFA.DAS.ApplyService.Application.DataFeeds
             {
                 throw new ArgumentException("Could not find Organisation for supplied applicationId");
             }
-
-            return new DataFedAnswerResult() {Answer = organisation?.OrganisationDetails?.CompanyNumber};
+            
+            return new DataFedAnswerResult() {Answer = organisation?.OrganisationUkprn?.ToString()};
         }
     }
 }
