@@ -58,19 +58,40 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         private void DisableSequencesAndSectionsAsAppropriate(Organisation org, List<ApplicationSequence> sequences, List<ApplicationSection> sections)
         {
-            if (OrganisationIsNotOnEPAORegister(org)) return;
-            
-            RemoveSectionsOneAndTwo(sections);
+            bool isEpao = IsOrganisationOnEPAORegister(org);
+            if (isEpao)
+            {
+                RemoveSectionsOneAndTwo(sections);
+            }
 
-            if (FinancialAssessmentRequired(org.OrganisationDetails.FHADetails)) return;
-            
-            RemoveSectionThree(sections);
-            RemoveSequenceOne(sequences);
+            bool isFinancialExempt = IsFinancialExempt(org.OrganisationDetails?.FHADetails);
+            if (isFinancialExempt)
+            {
+                RemoveSectionThree(sections);
+            }
+
+            if (isEpao && isFinancialExempt)
+            {
+                // update tests
+                RemoveSequenceOne(sequences);
+            }
         }
 
-        private static bool OrganisationIsNotOnEPAORegister(Organisation org)
+        private static bool IsOrganisationOnEPAORegister(Organisation org)
         {
-            return !org.RoEPAOApproved;
+            if (org is null) return false;
+
+            return org.RoEPAOApproved;
+        }
+
+        private static bool IsFinancialExempt(FHADetails financials)
+        {
+            if (financials is null) return false;
+
+            bool financialExempt = financials.FinancialExempt ?? false;
+            bool financialIsNotDue = (financials.FinancialDueDate?.Date ?? DateTime.MinValue) > DateTime.Today;
+
+            return financialExempt || financialIsNotDue;
         }
 
         private void RemoveSequenceOne(List<ApplicationSequence> sequences)
@@ -91,12 +112,5 @@ namespace SFA.DAS.ApplyService.Application.Apply
         {
             sections.Where(s => s.SectionId == 1 || s.SectionId == 2).ToList().ForEach(s => s.NotRequired = true);
         }
-
-        private static bool FinancialAssessmentRequired(FHADetails financials)
-        {
-            return (financials.FinancialDueDate.HasValue && financials.FinancialDueDate.Value <= DateTime.Today) 
-                   || (financials.FinancialExempt.HasValue && !financials.FinancialExempt.Value);
-        }
-
     }
 }
