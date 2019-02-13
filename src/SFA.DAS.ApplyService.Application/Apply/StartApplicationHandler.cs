@@ -72,7 +72,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
             if (isEpao && isFinancialExempt)
             {
-                // update tests
                 RemoveSequenceOne(sequences);
             }
         }
