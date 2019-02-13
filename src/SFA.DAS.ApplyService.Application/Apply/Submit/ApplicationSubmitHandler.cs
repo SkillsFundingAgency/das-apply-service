@@ -25,7 +25,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
         
         public async Task<Unit> Handle(ApplicationSubmitRequest request, CancellationToken cancellationToken)
         {
-            await UpdateApplicationSections(request);
             await SubmitApplicationSequence(request);
 
             var updatedApplication = await _applyRepository.GetApplication(request.ApplicationId);
@@ -37,27 +36,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
             await NotifyContact(contact, request.SequenceId, reference, standard);
 
             return Unit.Value;
-        }
-
-        private async Task UpdateApplicationSections(ApplicationSubmitRequest request)
-        {
-            var sections = await _applyRepository.GetSections(request.ApplicationId);
-
-            foreach (var section in sections)
-            {
-                foreach (var page in section.QnAData.Pages)
-                {
-                    if (page.HasFeedback)
-                    {
-                        foreach (var feedback in page.Feedback)
-                        {
-                            feedback.IsNew = false;
-                        }
-                    }
-                }
-            }
-
-            await _applyRepository.UpdateSections(sections);
         }
 
         private async Task SubmitApplicationSequence(ApplicationSubmitRequest request)
