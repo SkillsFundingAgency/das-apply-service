@@ -76,6 +76,11 @@ BEGIN
 END
 GO
 
+UPDATE ApplicationSections
+SET QnAData = JSON_MODIFY(QnAData, '$.FinancialApplicationGrade.SelectedGrade', 'Outstanding')
+WHERE  JSON_VALUE(QnAData, '$.FinancialApplicationGrade.SelectedGrade') = 'Excellent'
+GO
+
 -- Add the Workflows
 :r ..\WorkflowLatest.sql
 
