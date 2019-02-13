@@ -29,7 +29,7 @@ namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
             if (existingContact == null)
             {
                 var newContact = await _contactRepository.CreateContact(request.Email, request.GivenName, request.FamilyName, "DfESignIn");
-                _logger.LogInformation($"Handler Inviting user with params: {request.Email} , {request.GivenName} , {request.FamilyName}, {newContact.Id}");
+                
                 var invitationResult = await _dfeSignInService.InviteUser(request.Email, request.GivenName, request.FamilyName, newContact.Id);
                 if (!invitationResult.IsSuccess)
                 {
@@ -45,7 +45,6 @@ namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
                     // there was a problem with the Callback from DfE.
                     // If it was a problem with the Callback, then this extra call to InviteUser will kick off another one without
                     // sending them another Invite email.
-                    _logger.LogInformation($"Handler Inviting user with params: {request.Email} , {request.GivenName} , {request.FamilyName}, {existingContact.Id}");
                     var invitationResult = await _dfeSignInService.InviteUser(request.Email, request.GivenName, request.FamilyName, existingContact.Id);
                     if (!invitationResult.IsSuccess)
                     {
