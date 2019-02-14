@@ -8,6 +8,7 @@ using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Domain.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAccountHandlerTests
 {
@@ -26,7 +27,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAccountHandl
             _dfeSignInService = new Mock<IDfeSignInService>();
             _emailService = new Mock<IEmailService>();
             
-            _handler = new CreateAccountHandler(_userRepository.Object, _dfeSignInService.Object, _emailService.Object);
+            _handler = new CreateAccountHandler(_userRepository.Object, _dfeSignInService.Object, _emailService.Object, new Mock<ILogger<CreateAccountHandler>>().Object);
         }
         
         [Test]
