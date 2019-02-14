@@ -11,7 +11,7 @@ Post-Deployment Script Template
 */
 
 -- cleanup (for now)
-DELETE FROM [dbo].[EmailTemplates]
+--DELETE FROM [dbo].[EmailTemplates]
 
 IF NOT EXISTS( SELECT * FROM [dbo].[EmailTemplates] WHERE [TemplateId] = '2ebc498c-2544-42db-b73e-a6c381c614df')
 BEGIN
@@ -41,11 +41,11 @@ BEGIN
 END
 GO
 
--- test version to raj.balguri@digital.education.gov.uk
+-- test version to raj.balguri@digital.education.gov.uk live = Post16Non-CollegeFHA@Educationgovuk.onmicrosoft.com
 IF NOT EXISTS( SELECT * FROM [dbo].[EmailTemplates] WHERE [TemplateId] = 'a56c47c8-6310-4f5c-a3f6-9e996c375557')
 BEGIN
 	INSERT INTO [dbo].[EmailTemplates] ([Id], [Status], [TemplateName], [TemplateId], [Recipients], [CreatedAt], [CreatedBy])
-	VALUES (NEWID(), 'Live', 'ApplyEPAOAlertSubmission', 'a56c47c8-6310-4f5c-a3f6-9e996c375557', 'raj.balguri@digital.education.gov.uk', GETDATE(), 'System')
+	VALUES (NEWID(), 'Live', 'ApplyEPAOAlertSubmission', 'a56c47c8-6310-4f5c-a3f6-9e996c375557', 'Post16Non-CollegeFHA@Educationgovuk.onmicrosoft.com', GETDATE(), 'System')
 END
 GO
 
@@ -74,6 +74,11 @@ IF NOT EXISTS( select * from sys.sequences where object_id = object_id('AppRefSe
 BEGIN
 	CREATE SEQUENCE [dbo].[AppRefSequence]  AS [int] START WITH 100001 INCREMENT BY 1 MINVALUE 100000 MAXVALUE 2147483647 CYCLE  CACHE 
 END
+GO
+
+UPDATE ApplicationSections
+SET QnAData = JSON_MODIFY(QnAData, '$.FinancialApplicationGrade.SelectedGrade', 'Outstanding')
+WHERE  JSON_VALUE(QnAData, '$.FinancialApplicationGrade.SelectedGrade') = 'Excellent'
 GO
 
 -- Add the Workflows
