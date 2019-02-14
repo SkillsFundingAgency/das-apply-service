@@ -3347,19 +3347,16 @@ VALUES
                           "Value": null,
                           "ErrorMessage": "Enter your UKPRN"
                         },
-						{
-						  "Name": "Regex",
-                          "Value": "^[0-9]{8}$",
-                          "ErrorMessage": "Enter your UKPRN (must be 8 digits)"
-						}
+                        {
+                          "Name": "Regex",
+                                      "Value": "^[0-9]{8}$",
+                                      "ErrorMessage": "Enter your UKPRN (must be 8 digits)"
+                        }
                       ]
                     },
                     "Order": null,
                     "ShortLabel": "SQ-1-SE-1-PG-5-CD-12.1-79",
-                    "QuestionBodyText": "SQ-1-SE-1-PG-5-CD-12.1-80",
-                    "DataFedAnswer":{
-                      "Type":"UkPrn"
-                    }
+                    "QuestionBodyText": "SQ-1-SE-1-PG-5-CD-12.1-80"
                   }
                 ]
               },
@@ -3377,7 +3374,11 @@ VALUES
               }
             ]
           },
-          "Order": null
+          "Order": null,
+          "DataFedAnswer":{
+            "Type":"UkPrn",
+            "AppliesTo":"CD-12.1"
+          }
         }
       ],
       "PageOfAnswers": [],
@@ -3754,10 +3755,7 @@ VALUES
                     },
                     "Order": null,
                     "ShortLabel": "SQ-1-SE-1-PG-9-CD-17.1-131",
-                    "QuestionBodyText": "SQ-1-SE-1-PG-9-CD-17.1-132",
-                    "DataFedAnswer": {
-                      "Type":"CompanyNumber"
-                    }
+                    "QuestionBodyText": "SQ-1-SE-1-PG-9-CD-17.1-132"
                   }
                 ]
               },
@@ -3775,7 +3773,12 @@ VALUES
               }
             ]
           },
-          "Order": null
+          "Order": null,
+                    "DataFedAnswer": {
+                      "Type":"CompanyNumber",
+                      "Readonly":true,
+                      "AppliesTo":"CD-17.1"
+                    }
         }
       ],
       "PageOfAnswers": [],
@@ -4197,10 +4200,7 @@ VALUES
                     },
                     "Order": null,
                     "ShortLabel": "SQ-1-SE-1-PG-14-CD-26.1-199",
-                    "QuestionBodyText": "SQ-1-SE-1-PG-14-CD-26.1-200",
-                    "DataFedAnswer":{
-                      "Type":"CharityNumber"
-                    }
+                    "QuestionBodyText": "SQ-1-SE-1-PG-14-CD-26.1-200"
                   }
                 ]
               },
@@ -4218,7 +4218,11 @@ VALUES
               }
             ]
           },
-          "Order": null
+          "Order": null,
+                    "DataFedAnswer":{
+                      "Type":"CharityNumber",
+                      "AppliesTo":"CD-26.1"
+                    }
         }
       ],
       "PageOfAnswers": [],

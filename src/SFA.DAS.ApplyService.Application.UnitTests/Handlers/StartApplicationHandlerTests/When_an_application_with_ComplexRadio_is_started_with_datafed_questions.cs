@@ -46,11 +46,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
                                             {
                                                 new Question()
                                                 {
-                                                    QuestionId = "Q2.1",
-                                                    DataFedAnswer = new DataFedAnswer
-                                                    {
-                                                        Type = "CompanyNumber"
-                                                    }
+                                                    QuestionId = "Q2.1"
                                                 }
                                             }
                                         },
@@ -60,6 +56,11 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
                                             FurtherQuestions = new List<Question>()
                                         }
                                     }
+                                },
+                                DataFedAnswer = new DataFedAnswer
+                                {
+                                    Type = "CompanyNumber",
+                                    AppliesTo = "Q2.1"
                                 }
                             }
                         }

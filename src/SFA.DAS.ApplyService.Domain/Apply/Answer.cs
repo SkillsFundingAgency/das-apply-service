@@ -4,5 +4,6 @@ namespace SFA.DAS.ApplyService.Domain.Apply
     {
         public string QuestionId { get; set; }
         public string Value { get; set; }
+        public bool? DataFed { get; set; }
     }
 }

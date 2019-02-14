@@ -33,6 +33,11 @@ namespace SFA.DAS.ApplyService.Domain.Apply
             return allAnswers.Any(a => a.QuestionId == questionId);
         }
 
+        public Answer GetAnswerForQuestion(string questionId)
+        {
+            return PageOfAnswers.SelectMany(poa => poa.Answers).SingleOrDefault(a => a.QuestionId == questionId);
+        }
+
         public List<Feedback> Feedback { get; set; }
 
         [JsonIgnore]

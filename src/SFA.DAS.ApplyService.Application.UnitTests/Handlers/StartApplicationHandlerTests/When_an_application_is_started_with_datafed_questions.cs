@@ -41,7 +41,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
                                         DataFedAnswer = new DataFedAnswer()
                                         {
                                             Type = "CompanyNumber"
-                                        }
+                                        },
+                                        Input = new Input(){Type="Text"}
                                     }
                                 }
                             }

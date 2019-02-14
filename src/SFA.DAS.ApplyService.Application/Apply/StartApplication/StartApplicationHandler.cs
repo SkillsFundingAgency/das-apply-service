@@ -31,7 +31,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.StartApplication
         {
             var assets = await _applyRepository.GetAssets();
 
-            var org = await _organisationRepository.GetUserOrganisation(request.UserId);         
+            var org = await _organisationRepository.GetUserOrganisation(request.UserId);
 
             var workflowId = await _applyRepository.GetLatestWorkflow("EPAO");
             var applicationId =
@@ -52,14 +52,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.StartApplication
             }
 
             var sequences = await _applyRepository.GetSequences(applicationId);
-            
+
             DisableSequencesAndSectionsAsAppropriate(org, sequences, sections);
 
             await DataFeedAnswers(sections, applicationId);
-            
+
             await _applyRepository.UpdateSections(sections);
             await _applyRepository.UpdateSequences(sequences);
-            
+
             return Unit.Value;
         }
 
@@ -74,16 +74,18 @@ namespace SFA.DAS.ApplyService.Application.Apply.StartApplication
                     {
                         if (question.DataFedAnswer != null)
                         {
-                            var answer = await GetDataFedAnswer(applicationId, question);
-                            if (answer != null)
+                            if (question.Input.Type == "ComplexRadio")
                             {
-                                page.PageOfAnswers = new List<PageOfAnswers>() {new PageOfAnswers() {Answers = new List<Answer>() {new Answer() {QuestionId = question.QuestionId, Value = answer.Answer}}}};
+                                await DataFeedComplexRadioQuestions(applicationId, question, page);
                             }
-                        }
-                        else
-                        {
-                            if (question.Input.Type != "ComplexRadio") continue;
-                            await DataFeedComplexRadioQuestions(applicationId, question, page);
+                            else
+                            {
+                                var answer = await GetDataFedAnswer(applicationId, question);
+                                if (answer != null)
+                                {
+                                    page.PageOfAnswers = new List<PageOfAnswers>() {new PageOfAnswers() {Answers = new List<Answer>() {new Answer() {QuestionId = question.QuestionId, Value = answer.Answer, DataFed = true}}}};
+                                }
+                            }
                         }
                     }
                 }
@@ -92,15 +94,15 @@ namespace SFA.DAS.ApplyService.Application.Apply.StartApplication
 
         private async Task DataFeedComplexRadioQuestions(Guid applicationId, Question question, Page page)
         {
-            foreach (var inputOption in question.Input.Options)
+            var answer = await GetDataFedAnswer(applicationId, question);
+            if (answer != null)
             {
-                if (inputOption.FurtherQuestions != null)
+                foreach (var inputOption in question.Input.Options)
                 {
-                    foreach (var furtherQuestion in inputOption.FurtherQuestions)
+                    if (inputOption.FurtherQuestions != null)
                     {
-                        if (furtherQuestion.DataFedAnswer == null) continue;
-                        var answer = await GetDataFedAnswer(applicationId, furtherQuestion);
-                        if (answer != null)
+                        var dataFeedAppliesTo = inputOption.FurtherQuestions.SingleOrDefault(q => q.QuestionId == question.DataFedAnswer.AppliesTo);
+                        if (dataFeedAppliesTo != null)
                         {
                             page.PageOfAnswers = new List<PageOfAnswers>
                             {
@@ -110,11 +112,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.StartApplication
                                     {
                                         new Answer
                                         {
-                                            QuestionId = question.QuestionId, Value = inputOption.Value
+                                            QuestionId = question.QuestionId, Value = inputOption.Value, DataFed = true
                                         },
                                         new Answer
                                         {
-                                            QuestionId = furtherQuestion.QuestionId, Value = answer.Answer
+                                            QuestionId = dataFeedAppliesTo.QuestionId, Value = answer.Answer, DataFed = true
                                         }
                                     }
                                 }
@@ -122,7 +124,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.StartApplication
                         }
                     }
                 }
-                
             }
         }
 
@@ -136,11 +137,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.StartApplication
         private void DisableSequencesAndSectionsAsAppropriate(Organisation org, List<ApplicationSequence> sequences, List<ApplicationSection> sections)
         {
             if (OrganisationIsNotOnEPAORegister(org)) return;
-            
+
             RemoveSectionsOneAndTwo(sections);
 
             if (FinancialAssessmentRequired(org.OrganisationDetails.FHADetails)) return;
-            
+
             RemoveSectionThree(sections);
             RemoveSequenceOne(sequences);
         }
@@ -171,9 +172,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.StartApplication
 
         private static bool FinancialAssessmentRequired(FHADetails financials)
         {
-            return (financials.FinancialDueDate.HasValue && financials.FinancialDueDate.Value <= DateTime.Today) 
+            return (financials.FinancialDueDate.HasValue && financials.FinancialDueDate.Value <= DateTime.Today)
                    || (financials.FinancialExempt.HasValue && !financials.FinancialExempt.Value);
         }
-
     }
 }

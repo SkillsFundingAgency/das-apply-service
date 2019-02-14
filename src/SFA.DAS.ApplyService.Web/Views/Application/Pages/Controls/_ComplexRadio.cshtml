@@ -26,7 +26,7 @@
                        id="@(Model.QuestionId + (i == 0 ? "" :  "_" + i))"
                        name="@Model.QuestionId" value="@Model.Options[i].Label"
                        data-aria-controls="conditional-@(Model.QuestionId + "_" + i)"
-                       @radioChecked />
+                       @radioChecked @(Model.Disabled ? "disabled='disabled'" : "")/>
                 <label class="govuk-label govuk-radios__label" for="@(Model.QuestionId + (i == 0 ? "" :  "_" + i))">@Model.Options[i].Label</label>
             </div>
             if (Model.Options[i].FurtherQuestions != null)

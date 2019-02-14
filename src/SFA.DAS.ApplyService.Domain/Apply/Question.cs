@@ -15,6 +15,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public string Value { get; set; }
         public IEnumerable<dynamic> ErrorMessages { get; set; }
         public DataFedAnswer DataFedAnswer { get; set; }
+        public bool Disabled { get; set; }
     }
 
     public class DataFedAnswer
@@ -22,5 +23,6 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public string Type { get; set; }
         public bool Skipped { get; set; }
         public bool Readonly { get; set; }
+        public string AppliesTo { get; set; }
     }
 }

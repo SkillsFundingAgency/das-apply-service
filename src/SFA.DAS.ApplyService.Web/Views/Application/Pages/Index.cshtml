@@ -38,53 +38,52 @@
             else
             {
                 @if (!ViewData.ModelState.IsValid)
-                {
-
-                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-                        <h2 class="govuk-error-summary__title" id="error-summary-title">
-                            There is a problem
-                        </h2>
-                        <div class="govuk-error-summary__body">
-                            <ul class="govuk-list govuk-error-summary__list">
-                                @foreach (var error in Model.ErrorMessages)
-                                {
-                                    <li>
-                                        <a href="#@error.Field">@error.ErrorMessage</a>
-                                    </li>
-                                }
-                            </ul>
-                        </div>
-                    </div>
-                }
+                 {
+                     <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                         <h2 class="govuk-error-summary__title" id="error-summary-title">
+                             There is a problem
+                         </h2>
+                         <div class="govuk-error-summary__body">
+                             <ul class="govuk-list govuk-error-summary__list">
+                                 @foreach (var error in Model.ErrorMessages)
+                                 {
+                                     <li>
+                                         <a href="#@error.Field">@error.ErrorMessage</a>
+                                     </li>
+                                 }
+                             </ul>
+                         </div>
+                     </div>
+                 }
 
                 @if (Model.Questions.Count() > 1)
-                {
-                    @if (!string.IsNullOrEmpty(@Model.Title))
-                    {
-                        <h1 class="govuk-heading-xl">
-                            @Html.Raw(Model.Title)
-                        </h1>
-                    }
+                 {
+                     @if (!string.IsNullOrEmpty(@Model.Title))
+                      {
+                          <h1 class="govuk-heading-xl">
+                              @Html.Raw(Model.Title)
+                          </h1>
+                      }
 
-                    @if (!string.IsNullOrEmpty(@Model.BodyText))
-                    {
-                        @Html.Raw(Model.BodyText)
-                    }
-                }
+                     @if (!string.IsNullOrEmpty(@Model.BodyText))
+                      {
+                          @Html.Raw(Model.BodyText)
+                      }
+                 }
 
                 @if (Model.HasFeedback)
-                {
-                    <div class="govuk-inset-text">
-                        <h2 class="govuk-heading-l">Feedback</h2>
-                        @foreach (var fb in Model.Feedback)
-                        {
-                            <p class="govuk-body">@Html.Raw(fb.Message)</p>
-                        }
-                    </div>
-                }
+                 {
+                     <div class="govuk-inset-text">
+                         <h2 class="govuk-heading-l">Feedback</h2>
+                         @foreach (var fb in Model.Feedback)
+                         {
+                             <p class="govuk-body">@Html.Raw(fb.Message)</p>
+                         }
+                     </div>
+                 }
 
                 <form method="post" asp-action="SaveAnswers" asp-controller="Application" novalidate enctype="multipart/form-data">
-                    <input type="hidden" id="RedirectAction" name="RedirectAction" value="@Model.RedirectAction" />
+                    <input type="hidden" id="RedirectAction" name="RedirectAction" value="@Model.RedirectAction"/>
                     @if (Model.Questions.Count() == 1)
                     {
                         foreach (var question in Model.Questions)
@@ -131,13 +130,17 @@
                                         </span>
                                     }
 
+                                    @if (question.IsDataFed)
+                                    {
+                                        <span>This answer has been pre-filled from existing data.</span>
+                                    }
+
                                     @if (question.Type == "ComplexRadio" && (question.ErrorMessages == null || question.ErrorMessages.Count == 0))
                                     {
                                         question.ErrorMessages = Model.ErrorMessages;
                                     }
                                     @{
                                         var questionType = question.Type.Replace("DataFed_", "");
-
                                     }
 
                                     @(await Html.PartialAsync($"~/Views/Application/Pages/Controls/_{questionType}.cshtml", question))
@@ -187,20 +190,37 @@
                         }
                     }
 
-                    <button type="submit" class="govuk-button">Save and continue</button>
+                    @if (!Model.Questions.All(q => q.Disabled))
+                    {
+                        <button type="submit" class="govuk-button">Save and continue</button>
+                    }
 
-                    <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details" />
+                    <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details"/>
+                </form>
+
+
+                <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details"/>
+
+
+                <form method="post" asp-action="NextPage" asp-controller="Application"
+                      asp-route-applicationId="@Model.ApplicationId"
+                      asp-route-sequenceId="@Model.SequenceId"
+                      asp-route-sectionId="@Model.SectionId"
+                      asp-route-pageId="@Model.PageId"
+                      asp-route-redirectAction="@Model.RedirectAction">
+
+                    <button type="submit" class="govuk-button">Continue</button>
                 </form>
             }
 
             <p class="govuk-body">
                 @if (Model.RedirectAction == "Feedback")
                 {
-                    <a class="govuk-link" href="@Url.Action("Feedback", "Application", new { Model.ApplicationId })">Return to summary</a>
+                    <a class="govuk-link" href="@Url.Action("Feedback", "Application", new {Model.ApplicationId})">Return to summary</a>
                 }
                 else
                 {
-                    <a class="govuk-link" href="@Url.Action("Section", "Application", new { Model.ApplicationId, Model.SequenceId, Model.SectionId })">Return to summary</a>
+                    <a class="govuk-link" href="@Url.Action("Section", "Application", new {Model.ApplicationId, Model.SequenceId, Model.SectionId})">Return to summary</a>
                 }
             </p>
         </div>

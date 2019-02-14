@@ -22,7 +22,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public int SectionId { get; set; }
         public string PageId { get; set; }
         public string RedirectAction { get; set; }
+        public bool Disabled { get; set; }
 
+        public bool IsDataFed { get; set; }
+        
         public string DisplayAnswerValue(Answer answer)
         {
             if (Type == "Date")

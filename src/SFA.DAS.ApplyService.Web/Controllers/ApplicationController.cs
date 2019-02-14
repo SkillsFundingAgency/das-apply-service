@@ -330,6 +330,37 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
         }
 
+
+        [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/NextPage/{redirectAction}")]
+        public async Task<IActionResult> NextPage(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
+        {
+            if (redirectAction == "Feedback")
+            {
+                return RedirectToAction("Feedback", new {applicationId});
+            }
+
+            var thisPage = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, User.GetUserId());
+            if (thisPage.PageOfAnswers.Any())
+            {
+                var next = thisPage.Next.FirstOrDefault();
+                if (next == null)
+                {
+                    RedirectToAction("Section", "Application", new {applicationId, sectionId = thisPage.SectionId});
+                }
+
+                if (next.Action == "NextPage")
+                {
+                    return RedirectToAction("Page", new {applicationId, sequenceId = thisPage.SequenceId, sectionId = thisPage.SectionId, pageId = next.ReturnId, redirectAction});
+                }
+
+                return next.Action == "ReturnToSection"
+                    ? RedirectToAction("Section", "Application", new {applicationId, sectionId = next.ReturnId})
+                    : RedirectToAction("Sequence", "Application", new {applicationId});
+            }
+
+            return RedirectToAction("Page", new {applicationId, sequenceId = thisPage.SequenceId, sectionId = thisPage.SectionId, pageId = thisPage.PageId, redirectAction});
+        }
+        
         private async Task<bool> CheckIfValidationRequiredOnSaveAndContinue(Guid applicationId, int sequenceId, int sectionId,
             string pageId, List<Answer> answers, Regex inputEnteredRegex)
         {

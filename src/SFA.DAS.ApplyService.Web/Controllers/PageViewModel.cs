@@ -91,7 +91,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 SectionId = SectionId,
                 ApplicationId = ApplicationId,
                 PageId = PageId,
-                RedirectAction = RedirectAction
+                RedirectAction = RedirectAction,
+                Disabled = page.GetAnswerForQuestion(q.QuestionId) != null && page.GetAnswerForQuestion(q.QuestionId).DataFed.GetValueOrDefault() && (q.DataFedAnswer?.Readonly).GetValueOrDefault(),
+                IsDataFed = page.GetAnswerForQuestion(q.QuestionId) != null && page.GetAnswerForQuestion(q.QuestionId).DataFed.GetValueOrDefault()
             }));
 
             Feedback = page.Feedback;
@@ -110,6 +112,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     {
                         furtherQuestion.Value = answers
                             ?.SingleOrDefault(a => a?.QuestionId == furtherQuestion.QuestionId.ToString())?.Value;
+                        furtherQuestion.Disabled = question.Disabled;
                     }
                 }
             }

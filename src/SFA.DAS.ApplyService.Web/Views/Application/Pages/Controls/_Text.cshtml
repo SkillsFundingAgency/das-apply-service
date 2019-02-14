@@ -15,9 +15,16 @@
     }
 }
 
-<input class="govuk-input govuk-!-width-two-thirds @isError"
-       sfa-validation-for-id="@Model.QuestionId"
-       type="text"
-       id="@Model.QuestionId"
-       name="@Model.QuestionId"
-       value="@Model.Value" />
+@if (Model.Disabled)
+{
+    @Model.Value
+}
+else
+{
+    <input class="govuk-input govuk-!-width-two-thirds @isError"
+           sfa-validation-for-id="@Model.QuestionId"
+           type="text"
+           id="@Model.QuestionId"
+           name="@Model.QuestionId"
+           value="@Model.Value" />    
+}
