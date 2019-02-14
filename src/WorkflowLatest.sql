@@ -196,6 +196,32 @@ GO
 --   (NEWID(), 'SQ-1-SE-1-PG-3-CD-03-32', '', '', 'Live', GETUTCDATE(), 'Import')
 -- GO
 
+-- Address lookup
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-3-CD-03_address-lookup-H';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-1-PG-3-CD-03_address-lookup-H', '', '', 'Live', GETUTCDATE(), 'Import')
+GO
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-3-CD-03_address-lookup-L';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-1-PG-3-CD-03_address-lookup-L', '', 'Start typing the company name, address or postcode', 'Live', GETUTCDATE(), 'Import')
+GO
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-3-CD-03_address-lookup-SL';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-1-PG-3-CD-03_address-lookup-SL', '', '', 'Live', GETUTCDATE(), 'Import')
+GO
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-3-CD-03_address-lookup-QBT';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-1-PG-3-CD-03_address-lookup-QBT', '', '', 'Live', GETUTCDATE(), 'Import')
+GO
+
 -- Building and street
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-3-CD-03_1-29';
 INSERT INTO Assets
@@ -3297,6 +3323,25 @@ VALUES
                 "Name": "Required",
                 "Value": null,
                 "ErrorMessage": "Enter name"
+              }
+            ]
+          },
+          "Order": null
+        },
+        {
+          "QuestionId": "CD-03_address-lookup",
+          "Label": "SQ-1-SE-1-PG-3-CD-03_address-lookup-L",
+          "ShortLabel": "SQ-1-SE-1-PG-3-CD-03_address-lookup-SL",
+          "QuestionBodyText": "SQ-1-SE-1-PG-3-CD-03_address-lookup-QBT",
+          "Hint": "SQ-1-SE-1-PG-3-CD-03_address-lookup-H",
+          "Input": {
+            "Type": "AddressLookup",
+            "Options": null,
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Enter building and street"
               }
             ]
           },
