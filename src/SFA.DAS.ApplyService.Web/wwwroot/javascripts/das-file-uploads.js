@@ -1,5 +1,6 @@
 var r = new Resumable({
-  target: "test.html"
+  target: "/Upload/Chunks",
+  chunkSize: 10000
 });
 
 var dropTarget = document.querySelector(".js-drop-target");
