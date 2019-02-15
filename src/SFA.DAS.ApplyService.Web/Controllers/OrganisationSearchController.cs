@@ -141,6 +141,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (organisationSearchResult != null)
             {
+                if (organisationSearchResult.CompanyNumber != null)
+                {
+                    var isActivelyTrading = await _apiClient.IsCompanyActivelyTrading(organisationSearchResult.CompanyNumber);
+
+                    if (!isActivelyTrading)
+                    {
+                        return View("~/Views/OrganisationSearch/CompanyNotActive.cshtml", viewModel);
+                    }
+                }
+
                 viewModel.Organisations = new List<OrganisationSearchResult> { organisationSearchResult };
                 viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();
             }
@@ -175,6 +185,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (organisationSearchResult != null)
             {
+                if (organisationSearchResult.CompanyNumber != null)
+                {
+                    var isActivelyTrading = await _apiClient.IsCompanyActivelyTrading(organisationSearchResult.CompanyNumber);
+
+                    if(!isActivelyTrading)
+                    {
+                        return View("~/Views/OrganisationSearch/CompanyNotActive.cshtml", viewModel);
+                    }
+                }
+
+
                 var orgThatWasCreated = await _organisationApiClient.Create(organisationSearchResult, user.Id);
 
                 return RedirectToAction("Applications", "Application");
@@ -185,7 +206,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return View(nameof(Results), viewModel);
             }
         }
-
 
         private async Task<OrganisationSearchResult> GetOrganisation(string searchString, string name, int? ukprn, string organisationType, string postcode)
         {
@@ -221,6 +241,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 if (organisationSearchResult.OrganisationType == null)
                     organisationSearchResult.OrganisationType = organisationType;
+
+                // At this point find out if org is dormant or ceased trading???
+                if(organisationSearchResult.CompanyNumber != null)
+                {
+                    //_apiClient.IsCompanyTrading(organisationSearchResult.CompanyNumber);
+                }
             }
 
             return organisationSearchResult;

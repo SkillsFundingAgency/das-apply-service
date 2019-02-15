@@ -16,6 +16,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
                 .ForMember(dest => dest.NatureOfBusiness, opt => opt.MapFrom(source => source.sic_codes))
                 .ForMember(dest => dest.IncorporatedOn, opt => opt.MapFrom(source => source.date_of_creation))
                 .ForMember(dest => dest.DissolvedOn, opt => opt.MapFrom(source => source.date_of_cessation))
+                .ForMember(dest => dest.IsLiquidated, opt => opt.MapFrom(source => source.has_been_liquidated))
                 .ForMember(dest => dest.PreviousNames, opt => opt.ResolveUsing(source => source.previous_company_names.Select(pc => pc.name)))
                 .ForMember(dest => dest.RegisteredOfficeAddress, opt => opt.MapFrom(source => Mapper.Map<Models.CompaniesHouse.RegisteredOfficeAddress, Types.CompaniesHouse.Address>(source.registered_office_address))) 
                 .ForMember(dest => dest.Accounts, opt => opt.MapFrom(source => Mapper.Map<Models.CompaniesHouse.CompanyDetails, Types.CompaniesHouse.Accounts>(source)))
