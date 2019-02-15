@@ -75,23 +75,31 @@ namespace SFA.DAS.ApplyService.Application.Apply.StartApplication
                     {
                         if (question.DataFedAnswer != null)
                         {
-                            questionsDataFed++;
-                            if (question.Input.Type == "ComplexRadio")
+                            var answer = await GetDataFedAnswer(applicationId, question);
+                            if (answer != null)
                             {
-                                await DataFeedComplexRadioQuestions(applicationId, question, page);
-                            }
-                            else
-                            {
-                                var answer = await GetDataFedAnswer(applicationId, question);
-                                if (answer != null)
+                                questionsDataFed++;
+                                if (question.Input.Type == "ComplexRadio")
                                 {
-                                    page.PageOfAnswers = new List<PageOfAnswers>() {new PageOfAnswers()
+                                    await DataFeedComplexRadioQuestions(question, page, answer);
+                                }
+                                else
+                                {
+                                    page.PageOfAnswers = new List<PageOfAnswers>()
                                     {
-                                        Answers = new List<Answer>()
+                                        new PageOfAnswers()
                                         {
-                                            new Answer() {QuestionId = question.QuestionId, Value = answer.Answer, DataFed = true}
+                                            Answers = new List<Answer>()
+                                            {
+                                                new Answer()
+                                                {
+                                                    QuestionId = question.QuestionId, Value = answer.Answer,
+                                                    DataFed = true
+                                                }
+                                            }
                                         }
-                                    }};
+                                    };
+
                                 }
                             }
                         }
@@ -102,9 +110,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.StartApplication
             }
         }
 
-        private async Task DataFeedComplexRadioQuestions(Guid applicationId, Question question, Page page)
+        private async Task DataFeedComplexRadioQuestions(Question question, Page page, DataFedAnswerResult answer)
         {
-            var answer = await GetDataFedAnswer(applicationId, question);
             if (answer != null)
             {
                 foreach (var inputOption in question.Input.Options)
