@@ -70,10 +70,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.StartApplication
                 foreach (var page in section.QnAData.Pages)
                 {
                     if (page.Questions == null) continue;
+                    var questionsDataFed = 0;
                     foreach (var question in page.Questions)
                     {
                         if (question.DataFedAnswer != null)
                         {
+                            questionsDataFed++;
                             if (question.Input.Type == "ComplexRadio")
                             {
                                 await DataFeedComplexRadioQuestions(applicationId, question, page);
@@ -83,10 +85,18 @@ namespace SFA.DAS.ApplyService.Application.Apply.StartApplication
                                 var answer = await GetDataFedAnswer(applicationId, question);
                                 if (answer != null)
                                 {
-                                    page.PageOfAnswers = new List<PageOfAnswers>() {new PageOfAnswers() {Answers = new List<Answer>() {new Answer() {QuestionId = question.QuestionId, Value = answer.Answer, DataFed = true}}}};
+                                    page.PageOfAnswers = new List<PageOfAnswers>() {new PageOfAnswers()
+                                    {
+                                        Answers = new List<Answer>()
+                                        {
+                                            new Answer() {QuestionId = question.QuestionId, Value = answer.Answer, DataFed = true}
+                                        }
+                                    }};
                                 }
                             }
                         }
+                        
+                        page.Complete = questionsDataFed == page.Questions.Count;
                     }
                 }
             }
@@ -172,7 +182,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.StartApplication
 
         private static bool FinancialAssessmentRequired(FHADetails financials)
         {
-            return (financials.FinancialDueDate.HasValue && financials.FinancialDueDate.Value <= DateTime.Today)
+            return (financials == null ||
+                       financials.FinancialDueDate.HasValue && financials.FinancialDueDate.Value <= DateTime.Today)
                    || (financials.FinancialExempt.HasValue && !financials.FinancialExempt.Value);
         }
     }
