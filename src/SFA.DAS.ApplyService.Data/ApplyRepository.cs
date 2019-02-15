@@ -259,6 +259,7 @@ namespace SFA.DAS.ApplyService.Data
                         if (page.HasNewFeedback)
                         {
                             page.Feedback.ForEach(f => f.IsNew = false);
+                            page.Feedback.ForEach(f => f.IsCompleted = true);
                         }
                     }
                 }
