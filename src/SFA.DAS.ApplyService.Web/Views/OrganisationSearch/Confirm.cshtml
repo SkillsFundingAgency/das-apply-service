@@ -40,16 +40,10 @@
                             <p class="govuk-body">@string.Join(", ", organisation.Address?.Address1, organisation.Address?.City, organisation.Address.Postcode)</p>
                         }
 
-                        @if (organisation.TradingName != null)
+                        @if (organisation.TradingName != null || organisation.ProviderName != null)
                         {
                             <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">Trading name</p>
-                            <p class="govuk-body">@organisation.TradingName</p>
-                        }
-
-                        @if (organisation.ProviderName != null)
-                        {
-                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">Provider name</p>
-                            <p class="govuk-body">@organisation.ProviderName</p>
+                            <p class="govuk-body">@(organisation.TradingName ?? organisation.ProviderName)</p>
                         }
 
                         @if (organisationType?.TypeDescription != null)
