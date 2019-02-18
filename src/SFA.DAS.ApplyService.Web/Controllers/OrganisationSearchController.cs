@@ -241,12 +241,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 if (organisationSearchResult.OrganisationType == null)
                     organisationSearchResult.OrganisationType = organisationType;
-
-                // At this point find out if org is dormant or ceased trading???
-                if(organisationSearchResult.CompanyNumber != null)
-                {
-                    //_apiClient.IsCompanyTrading(organisationSearchResult.CompanyNumber);
-                }
             }
 
             return organisationSearchResult;
