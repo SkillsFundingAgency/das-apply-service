@@ -50,8 +50,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
             if (company != null)
             {
-                var activeTradingStatuses = new string[] { "active", "open" };
-                isTrading = activeTradingStatuses.Contains(company.Status) && company.DissolvedOn == null && company.IsLiquidated != true;
+                isTrading = "active".Equals(company.Status, StringComparison.InvariantCultureIgnoreCase) && company.DissolvedOn == null && company.IsLiquidated != true;
             }
 
             return isTrading;
