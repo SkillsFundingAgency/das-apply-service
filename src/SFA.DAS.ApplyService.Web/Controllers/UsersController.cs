@@ -41,11 +41,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var result = _createAccountValidator.Validate(vm);
 
-            foreach(var error in result.Errors)
-            {
-                ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
-            }
-
             if (!ModelState.IsValid)
             {
                 return View(vm);
