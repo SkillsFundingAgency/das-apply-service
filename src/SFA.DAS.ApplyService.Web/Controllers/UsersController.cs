@@ -39,7 +39,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAccount(CreateAccountViewModel vm)
         {
-            var result = _createAccountValidator.Validate(vm);
+            _createAccountValidator.Validate(vm);
 
             if (!ModelState.IsValid)
             {
