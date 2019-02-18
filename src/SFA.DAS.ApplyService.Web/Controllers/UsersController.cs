@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
+using SFA.DAS.ApplyService.Web.Validators;
 using SFA.DAS.ApplyService.Web.ViewModels;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
@@ -18,12 +19,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IUsersApiClient _usersApiClient;
         private readonly ISessionService _sessionService;
         private readonly ILogger<UsersController> _logger;
+        private readonly CreateAccountValidator _createAccountValidator;
 
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger)
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger, CreateAccountValidator createAccountValidator)
         {
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
             _logger = logger;
+            _createAccountValidator = createAccountValidator;
         }
         
         [HttpGet]
@@ -36,6 +39,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAccount(CreateAccountViewModel vm)
         {
+            var result = _createAccountValidator.Validate(vm);
+
+            foreach(var error in result.Errors)
+            {
+                ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(vm);

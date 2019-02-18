@@ -16,6 +16,7 @@ using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
+using SFA.DAS.ApplyService.Web.Validators;
 using StructureMap;
 
 namespace SFA.DAS.ApplyService.Web
@@ -116,6 +117,7 @@ namespace SFA.DAS.ApplyService.Web
                 config.For<IApplicationApiClient>().Use<ApplicationApiClient>();
                 config.For<OrganisationApiClient>().Use<OrganisationApiClient>();
                 config.For<OrganisationSearchApiClient>().Use<OrganisationSearchApiClient>();
+                config.For<CreateAccountValidator>().Use<CreateAccountValidator>();
                 config.Populate(services);
             });
 
