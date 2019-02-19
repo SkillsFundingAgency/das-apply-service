@@ -259,6 +259,7 @@ namespace SFA.DAS.ApplyService.Data
                         if (page.HasNewFeedback)
                         {
                             page.Feedback.ForEach(f => f.IsNew = false);
+                            page.Feedback.ForEach(f => f.IsCompleted = true);
                         }
                     }
                 }
@@ -525,19 +526,15 @@ namespace SFA.DAS.ApplyService.Data
 	                        FROM Applications appl
 	                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
 	                        INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-	                        WHERE appl.ApplicationStatus = @applicationStatusSubmitted
+	                        WHERE appl.ApplicationStatus = @applicationStatusFeedbackAdded
                                 AND seq.Status = @sequenceStatusFeedbackAdded
                                 AND seq.IsActive = 1
 	                        GROUP BY seq.SequenceId, seq.Status, appl.ApplyingOrganisationId, appl.id, org.Name, appl.ApplicationData 
                         ) ab",
                         new
                         {
-                            applicationStatusSubmitted = ApplicationStatus.Submitted,
-                            sequenceStatusSubmitted = ApplicationSequenceStatus.Submitted,
-                            sequenceStatusResubmitted = ApplicationSequenceStatus.Resubmitted,
-                            sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded,
-                            sectionStatusSubmitted = ApplicationSectionStatus.Submitted,
-                            sectionStatusInProgress = ApplicationSectionStatus.InProgress
+                            applicationStatusFeedbackAdded = ApplicationStatus.FeedbackAdded,
+                            sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded
                         })).ToList();
             }
         }
@@ -644,11 +641,16 @@ namespace SFA.DAS.ApplyService.Data
 	                      WHERE seq.SequenceId = 1 AND sec.SectionId = 3 AND seq.IsActive = 1
                             AND (
                                     seq.Status = @sequenceStatusFeedbackAdded
-                                    OR JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.SelectedGrade') = @selectedGradeInadequate
+                                    OR ( 
+                                            sec.Status IN (@financialStatusGraded, @financialStatusEvaluated)
+                                            AND JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.SelectedGrade') = @selectedGradeInadequate
+                                        )
                                 )",
                         new
                         {
                             sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded,
+                            financialStatusGraded = ApplicationSectionStatus.Graded,
+                            financialStatusEvaluated = ApplicationSectionStatus.Evaluated,
                             selectedGradeInadequate = FinancialApplicationSelectedGrade.Inadequate
                         })).ToList();
             }
