@@ -15,6 +15,7 @@ using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.Session;
+using SFA.DAS.ApplyService.Storage;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using StructureMap;
 
@@ -112,6 +113,8 @@ namespace SFA.DAS.ApplyService.Web
                     .Is(_configuration["EnvironmentName"]);
                 config.For<IDfeSignInService>().Use<DfeSignInService>();
 
+                config.For<IStorageService>().Use<StorageService>();
+                
                 config.For<IUsersApiClient>().Use<UsersApiClient>();
                 config.For<IApplicationApiClient>().Use<ApplicationApiClient>();
                 config.For<OrganisationApiClient>().Use<OrganisationApiClient>();

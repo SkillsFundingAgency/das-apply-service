@@ -11,5 +11,6 @@ namespace SFA.DAS.ApplyService.Application.Interfaces
             string filename);
 
         Task Delete(Guid applicationId, int sequenceId, int sectionId, string pageId, string questionId, string filename);
+        Task<bool> Exists(string applicationId, int sequenceId, int sectionId, string pageId, string questionId, string filename);
     }
 }

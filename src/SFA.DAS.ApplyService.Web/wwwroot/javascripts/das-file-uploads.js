@@ -1,6 +1,7 @@
 var r = new Resumable({
   target: "/Upload/Chunks",
-  chunkSize: 10000
+  chunkSize: 100000,
+  query: {applicationId: "e19b46d9-fb7b-4294-b86b-cdcca785fc33",sequenceId: 1, sectionId: 3, page: 23, questionId: "FHA-01"}
 });
 
 var dropTarget = document.querySelector(".js-drop-target");

@@ -26,7 +26,17 @@ namespace SFA.DAS.ApplyService.Storage
             
             var blob = questionFolder.GetBlockBlobReference(fileName);
             blob.Properties.ContentType = fileContentType;
-            await blob.UploadFromStreamAsync(fileStream);
+
+            try
+            {
+                await blob.UploadFromStreamAsync(fileStream);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            
 
             return fileName;
         }
@@ -53,6 +63,14 @@ namespace SFA.DAS.ApplyService.Storage
             var questionFolder = GetDirectory(applicationId.ToString(), sequenceId, sectionId, pageId, questionId, container);
             var blob = questionFolder.GetBlobReference(filename);
             await blob.DeleteAsync();   
+        }
+
+        public async Task<bool> Exists(string applicationId, int sequenceId, int sectionId, string pageId, string questionId, string filename)
+        {
+            var container = await GetContainer();
+            var questionFolder = GetDirectory(applicationId.ToString(), sequenceId, sectionId, pageId, questionId, container);
+            var blob = questionFolder.GetBlobReference(filename);
+            return await blob.ExistsAsync();
         }
 
         private async Task<CloudBlobContainer> GetContainer()
