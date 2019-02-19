@@ -89,12 +89,13 @@ namespace SFA.DAS.ApplyService.Web
                 opt.Cookie = new CookieBuilder() {Name = ".Apply.Session", HttpOnly = true};
             });
             
+            services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Apply.AntiForgery", HttpOnly = true });
 
 
-            return ConfigureIOC(services).Result;
+            return ConfigureIOC(services);
         }
         
-        private async Task<IServiceProvider> ConfigureIOC(IServiceCollection services)
+        private IServiceProvider ConfigureIOC(IServiceCollection services)
         {
             var container = new Container();
 

@@ -1,6 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Email.Consts;
 using SFA.DAS.ApplyService.Application.Interfaces;
 
@@ -11,13 +12,15 @@ namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
         private readonly IContactRepository _contactRepository;
         private readonly IDfeSignInService _dfeSignInService;
         private readonly IEmailService _emailServiceObject;
+        private readonly ILogger<CreateAccountHandler> _logger;
 
         public CreateAccountHandler(IContactRepository contactRepository, IDfeSignInService dfeSignInService,
-            IEmailService emailServiceObject)
+            IEmailService emailServiceObject, ILogger<CreateAccountHandler> logger)
         {
             _contactRepository = contactRepository;
             _dfeSignInService = dfeSignInService;
             _emailServiceObject = emailServiceObject;
+            _logger = logger;
         }
 
         public async Task<bool> Handle(CreateAccountRequest request, CancellationToken cancellationToken)
@@ -26,6 +29,7 @@ namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
             if (existingContact == null)
             {
                 var newContact = await _contactRepository.CreateContact(request.Email, request.GivenName, request.FamilyName, "DfESignIn");
+                
                 var invitationResult = await _dfeSignInService.InviteUser(request.Email, request.GivenName, request.FamilyName, newContact.Id);
                 if (!invitationResult.IsSuccess)
                 {

@@ -35,22 +35,18 @@ namespace SFA.DAS.ApplyService.InternalApi
     public class Startup
     {
         private readonly IHostingEnvironment _env;
-        private readonly ILogger<Startup> _logger;
         private readonly IConfiguration _configuration;
         private const string _serviceName = "SFA.DAS.ApplyService";
         private const string _version = "1.0";
 
         private readonly IApplyConfig _applyConfig;
 
-        public Startup(IConfiguration configuration, IHostingEnvironment env, ILogger<Startup> logger)
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             _env = env;
-            _logger = logger;
             _configuration = configuration;
-
-            _logger.LogInformation("In startup constructor.  Before GetConfig");
+            
             _applyConfig = new ConfigurationService(_env, _configuration["EnvironmentName"], _configuration["ConfigurationStorageConnectionString"], _version, _serviceName).GetConfig().GetAwaiter().GetResult();
-            _logger.LogInformation("In startup constructor.  After GetConfig");
         }
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
@@ -74,6 +70,13 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddHttpClient<ReferenceDataApiClient>("ReferenceDataApiClient", config =>
             {
                 config.BaseAddress = new Uri(_applyConfig.ReferenceDataApiAuthentication.ApiBaseAddress); //  "https://at-refdata.apprenticeships.sfa.bis.gov.uk/api"
+                config.DefaultRequestHeaders.Add("Accept", "Application/json");
+            })
+            .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+
+            services.AddHttpClient<CompaniesHouseApiClient>("CompaniesHouseApiClient", config =>
+            {
+                config.BaseAddress = new Uri(_applyConfig.CompaniesHouseApiAuthentication.ApiBaseAddress); //  "https://api.companieshouse.gov.uk"
                 config.DefaultRequestHeaders.Add("Accept", "Application/json");
             })
             .SetHandlerLifetime(TimeSpan.FromMinutes(5));

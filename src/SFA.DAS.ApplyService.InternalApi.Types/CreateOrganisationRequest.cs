@@ -13,8 +13,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types
 
         public OrganisationDetails OrganisationDetails { get; set; }
 
-        public Guid CreatedByUserId { get; set; }
-        public string CreatedBy { get; set; }
+        public Guid CreatedBy { get; set; }
         public string PrimaryContactEmail { get; set; }
     }
 
@@ -35,5 +34,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Types
         public string Address3 { get; set; }
         public string City { get; set; }
         public string Postcode { get; set; }
+        public FHADetails FHADetails { get; set; }
+    }
+
+    public class FHADetails
+    {
+        public DateTime? FinancialDueDate { get; set; }
+        public bool? FinancialExempt { get; set; }
     }
 }

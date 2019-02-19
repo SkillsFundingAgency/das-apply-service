@@ -23,6 +23,5 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public Guid ApplicationId { get; }
         public int SequenceId { get; }
         public List<ValidationErrorDetail> ErrorMessages { get; }
-        public ValidationErrorDetail TermsAndConditionsErrorMessage => ErrorMessages?.Where(err => err.Field == "terms-and-conditions").FirstOrDefault();
     }
 }

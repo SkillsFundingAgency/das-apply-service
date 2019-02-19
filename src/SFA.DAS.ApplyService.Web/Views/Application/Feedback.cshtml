@@ -2,7 +2,7 @@
 @model SFA.DAS.ApplyService.Domain.Entities.ApplicationSequence
 
 @{
-    ViewBag.Title = "title";
+    ViewBag.Title = "Feedback";
     Layout = "_Layout";
 }
 
@@ -62,7 +62,6 @@
                 <form asp-action="Submit" asp-controller="Application">
                     <input type="hidden" id="applicationId" name="applicationId" value="@Model.ApplicationId" />
                     <input type="hidden" id="sequenceId" name="sequenceId" value="@((int)Model.SequenceId)" />
-                    <input type="hidden" id="acceptedTermsAndConditions" name="acceptedTermsAndConditions" value="True" />
                     <button class="govuk-button">Submit application</button>
                 </form>
             </div>

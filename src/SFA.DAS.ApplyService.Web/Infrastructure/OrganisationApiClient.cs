@@ -4,6 +4,7 @@ using SFA.DAS.ApplyService.InternalApi.Types;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using FHADetails = SFA.DAS.ApplyService.InternalApi.Types.FHADetails;
 using OrganisationDetails = SFA.DAS.ApplyService.InternalApi.Types.OrganisationDetails;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
@@ -20,7 +21,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
         }
 
-        public async Task<Organisation> Create(OrganisationSearchResult organisation, Guid createdByUserId, string createdBy = "System")
+        public async Task<Organisation> Create(OrganisationSearchResult organisation, Guid userId)
         {
             var orgDetails = new OrganisationDetails
             {
@@ -35,7 +36,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 Address2 = organisation.Address?.Address2,
                 Address3 = organisation.Address?.Address3,
                 City = organisation.Address?.City,
-                Postcode = organisation.Address?.Postcode
+                Postcode = organisation.Address?.Postcode, 
+                FHADetails = new FHADetails()
+                {
+                    FinancialDueDate = organisation.FinancialDueDate, 
+                    FinancialExempt = organisation.FinancialExempt   
+                }
             };
 
             var request = new CreateOrganisationRequest
@@ -46,8 +52,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 RoEPAOApproved = organisation.RoEPAOApproved,
                 RoATPApproved = organisation.RoATPApproved,
                 OrganisationDetails = orgDetails,
-                CreatedByUserId = createdByUserId,
-                CreatedBy = createdBy,
+                CreatedBy = userId,
                 PrimaryContactEmail = organisation.Email
             };
 

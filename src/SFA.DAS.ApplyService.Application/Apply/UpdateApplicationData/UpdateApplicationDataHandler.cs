@@ -23,35 +23,34 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdateApplicationData
         
         public async Task<Unit> Handle(UpdateApplicationDataRequest request, CancellationToken cancellationToken)
         {
-            if (request.ApplicationData == null) return Unit.Value;
+            if (request?.ApplicationData == null) return Unit.Value;
+
             var standardAppData = JsonConvert.DeserializeObject<StandardApplicationData>(request.ApplicationData.ToString()); 
             var application = await _applyRepository.GetApplication(request.ApplicationId);
+
             //application data entry must exist in application table
-            if (application== null) return Unit.Value;
+            if (application == null || standardAppData == null) return Unit.Value;
+
             if (application?.ApplicationData == null)
-                application.ApplicationData = new ApplicationData(); 
+            {
+                application.ApplicationData = new ApplicationData();
+            }
+
             application.ApplicationData.StandardName = standardAppData.StandardName;
             application.ApplicationData.StandardCode = standardAppData.StandardCode;
 
             if (application.ApplicationData.StandardSubmissions == null)
             {
-                application.ApplicationData.StandardSubmissions = new List<StandardSubmission>
-                {
-                    new StandardSubmission
-                    {
-                        SubmittedAt = DateTime.UtcNow,
-                        SubmittedBy = standardAppData.UserEmail
-                    }
-                };
+                application.ApplicationData.StandardSubmissions = new List<StandardSubmission>();
             }
-            else
+
+            application.ApplicationData.StandardSubmissions.Add(new StandardSubmission
             {
-                application.ApplicationData.StandardSubmissions.Add(new StandardSubmission
-                {
-                    SubmittedAt = DateTime.UtcNow,
-                    SubmittedBy = ""
-                });
-            }
+                SubmittedAt = DateTime.UtcNow,
+                SubmittedBy = standardAppData.UserId,
+                SubmittedByEmail = standardAppData.UserEmail
+            });
+
             await _applyRepository.UpdateApplicationData(request.ApplicationId, application.ApplicationData);
 
             return Unit.Value;

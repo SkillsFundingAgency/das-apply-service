@@ -15,8 +15,7 @@
 
         public OrganisationDetails OrganisationDetails { get; set; }
 
-        public Guid CreatedByUserId { get; set; }
-        public string CreatedBy { get; set; }
+        public Guid CreatedBy { get; set; }
         public string PrimaryContactEmail { get; set; }
     }
 }

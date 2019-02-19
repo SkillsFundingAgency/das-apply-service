@@ -24,8 +24,8 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
 
             if (result != null)
             {
-                await _emailService.SendEmail(EmailTemplateName.APPLY_EPAO_UPDATE, request.PrimaryContactEmail, 
-                    new { contactname = request.Name });
+                //await _emailService.SendEmail(EmailTemplateName.APPLY_EPAO_UPDATE, request.PrimaryContactEmail, 
+                //    new { contactname = request.Name });
             }
 
             return result;
@@ -36,7 +36,7 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
             var organisation = new Organisation
             {
                 Status = "New",
-                CreatedBy = request.CreatedBy,
+                CreatedBy = request.CreatedBy.ToString(),
                 Name = request.Name,
                 OrganisationDetails = request.OrganisationDetails,
                 OrganisationType = request.OrganisationType,
@@ -45,7 +45,7 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
                 RoATPApproved = request.RoATPApproved
             };
 
-            return await _organisationRepository.CreateOrganisation(organisation, request.CreatedByUserId);
+            return await _organisationRepository.CreateOrganisation(organisation, request.CreatedBy);
         }
 
         private async Task<Organisation> UpdateOrganisationIfExists(CreateOrganisationRequest request)
@@ -57,12 +57,12 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
                 existingOrganisation.OrganisationDetails = request.OrganisationDetails;
                 existingOrganisation.OrganisationType = request.OrganisationType;
                 existingOrganisation.OrganisationUkprn = request.OrganisationUkprn;
-                existingOrganisation.UpdatedBy = request.CreatedBy;
+                existingOrganisation.UpdatedBy = request.CreatedBy.ToString();
 
                 if (!existingOrganisation.RoEPAOApproved) existingOrganisation.RoEPAOApproved = request.RoEPAOApproved;
                 if (!existingOrganisation.RoATPApproved) existingOrganisation.RoATPApproved = request.RoATPApproved;
 
-                return await _organisationRepository.UpdateOrganisation(existingOrganisation, request.CreatedByUserId);
+                return await _organisationRepository.UpdateOrganisation(existingOrganisation, request.CreatedBy);
             }
 
             return null;
