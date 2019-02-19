@@ -86,7 +86,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> PostSignIn()
         {
             var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
-         
+
+            if (user == null)
+            {
+                return RedirectToAction("NotSetUp");
+            }
+            
             _logger.LogInformation($"Setting LoggedInUser in Session: {user.GivenNames} {user.FamilyName}");
             
             _sessionService.Set("LoggedInUser", $"{user.GivenNames} {user.FamilyName}");
@@ -101,6 +106,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [HttpGet("/Users/SignedOut")]
         public IActionResult SignedOut()
+        {
+            return View();
+        }
+
+        public IActionResult NotSetUp()
         {
             return View();
         }

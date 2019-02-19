@@ -2,6 +2,7 @@
 using SFA.DAS.ApplyService.Application.Email.Consts;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Domain.Entities;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,6 +21,11 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
 
         public async Task<Organisation> Handle(CreateOrganisationRequest request, CancellationToken cancellationToken)
         {
+            if(request.OrganisationDetails?.FHADetails != null && IsOrganationTypeFinancialExempt(request.OrganisationType))
+            {
+                request.OrganisationDetails.FHADetails.FinancialExempt = true;
+            }
+
             var result = await UpdateOrganisationIfExists(request) ?? await CreateNewOrganisation(request);
 
             if (result != null)
@@ -66,6 +72,15 @@ namespace SFA.DAS.ApplyService.Application.Organisations.CreateOrganisation
             }
 
             return null;
+        }
+
+        private static bool IsOrganationTypeFinancialExempt(string organisationType)
+        {
+            // This is unlikely to change. Hence, after a quick discussion, decided to hard-code these than cope with external dependencies
+            return "HEI".Equals(organisationType, StringComparison.InvariantCultureIgnoreCase)
+                || "College".Equals(organisationType, StringComparison.InvariantCultureIgnoreCase)
+                || "Public Sector".Equals(organisationType, StringComparison.InvariantCultureIgnoreCase)
+                || "Academy or Free School".Equals(organisationType, StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }

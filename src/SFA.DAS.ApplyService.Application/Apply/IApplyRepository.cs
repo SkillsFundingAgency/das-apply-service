@@ -13,6 +13,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         Task<List<Domain.Entities.Application>> GetApplications(Guid userId);
         Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId,  int sectionId, Guid? userId);
+        Task<List<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid? userId);
         Task<ApplicationSequence> GetSequence(Guid applicationId, int sequenceId, Guid? userId);
         Task<ApplicationSequence> GetActiveSequence(Guid applicationId);
         Task<List<Asset>> GetAssets();
@@ -25,6 +26,9 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceId);
         Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications();
         Task<List<ApplicationSummaryItem>> GetClosedApplications();
+        Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
+        Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
+        Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();
         Task SubmitApplicationSequence(ApplicationSubmitRequest request, ApplicationData applicationdata);
         Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string sequenceStatus, string applicationStatus);
         Task CloseSequence(Guid applicationId, int sequenceId);
@@ -33,14 +37,12 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task UpdateApplicationData(Guid applicationId, ApplicationData applicationData);
         Task<Domain.Entities.Application> GetApplication(Guid requestApplicationId);
         Task UpdateApplicationStatus(Guid applicationId, string status);
-        Task<List<ApplicationSection>> GetSections(Guid applicationId);
-        Task<List<dynamic>> GetNewFinancialApplications();
+
         Task StartApplicationReview(Guid applicationId, int sectionId);
         Task StartFinancialReview(Guid applicationId);
         Task<Organisation> GetOrganisationForApplication(Guid applicationId);
 
         Task<string> CheckOrganisationStandardStatus(Guid applicationId, int standardId);
-        Task<List<dynamic>> GetPreviousFinancialApplications();
 
         Task<int> GetNextAppReferenceSequence();
         Task<string> GetWorkflowReferenceFormat(Guid requestApplicationId);

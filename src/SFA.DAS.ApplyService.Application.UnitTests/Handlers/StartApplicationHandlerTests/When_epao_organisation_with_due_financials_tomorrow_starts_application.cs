@@ -9,7 +9,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHandlerTests
 {
-    public class When_epao_organisation_with_good_financials_starts_application : StartApplicationHandlerTestsBase
+    public class When_epao_organisation_with_due_financials_tomorrow_starts_application : StartApplicationHandlerTestsBase
     {
         private void Init()
         {
@@ -18,10 +18,10 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
                 Id = ApplyingOrganisationId,
                 OrganisationType = "",
                 RoEPAOApproved = true,
-                OrganisationDetails = new OrganisationDetails() { FHADetails = new FHADetails
+                OrganisationDetails = new OrganisationDetails(){FHADetails = new FHADetails
                 {
                     FinancialExempt = false,
-                    FinancialDueDate = DateTime.Today.AddDays(4)
+                    FinancialDueDate = DateTime.Today.AddDays(1)
                 }}
             });
         }
@@ -44,11 +44,11 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
         public void Then_only_section_2_sequence_should_be_required()
         {
             Init();
-            
+
             Handler.Handle(new StartApplicationRequest(UserId), new CancellationToken()).Wait();
 
             ApplyRepository.Verify(r => r.UpdateSequences(It.Is<List<ApplicationSequence>>(
                 response => response.Any(sequence => sequence.SequenceId == SequenceId.Stage1 && sequence.NotRequired == true))));
-        }   
+        }
     }
 }

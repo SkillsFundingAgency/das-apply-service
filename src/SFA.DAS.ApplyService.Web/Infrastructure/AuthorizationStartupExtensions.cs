@@ -103,8 +103,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                             var client = context.HttpContext.RequestServices.GetRequiredService<UsersApiClient>();
                             var signInId = context.Principal.FindFirst("sub").Value;
                             var user = await client.GetUserBySignInId(signInId);
-                            var identity = new ClaimsIdentity(new List<Claim>(){new Claim("UserId", user.Id.ToString())});                      
-                            context.Principal.AddIdentity(identity);
+                            if (user != null)
+                            {
+                                var identity = new ClaimsIdentity(new List<Claim>(){new Claim("UserId", user.Id.ToString())});                      
+                                context.Principal.AddIdentity(identity);   
+                            }
                         },
                         
                         // Sometimes the auth flow fails. The most commonly observed causes for this are
