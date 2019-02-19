@@ -113,24 +113,27 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
           }
 
           var aConditionMet = false;
+          var returnIdMet = "";
           // Activate next page if necessary
           foreach (var nextAction in page.Next)
           {
             if (nextAction.Condition == null) continue;
-            if (nextAction.Condition.MustEqual == request.Answers
-                    .Single(a => a.QuestionId == nextAction.Condition.QuestionId).Value)
+            var answerValue = request.Answers.Single(a => a.QuestionId == nextAction.Condition.QuestionId).Value;
+            if (nextAction.Condition.MustEqual == answerValue)
             {
               if (nextAction.Action == "NextPage")
               {
                 qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Active = true;
                 qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Visible = true;
               }
+
+              returnIdMet = nextAction.ReturnId;
               aConditionMet = true;
               nextAction.ConditionMet = true;
             }
             else
             {
-              if (nextAction.Action == "NextPage")
+              if (nextAction.Action == "NextPage" && nextAction.ReturnId != returnIdMet)
               {
                 qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Active = false;
                 qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Visible = false;
