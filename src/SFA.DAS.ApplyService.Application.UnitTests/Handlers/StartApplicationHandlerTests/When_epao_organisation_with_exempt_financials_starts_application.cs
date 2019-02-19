@@ -9,7 +9,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHandlerTests
 {
-    public class When_epao_organisation_with_good_financials_starts_application : StartApplicationHandlerTestsBase
+    public class When_epao_organisation_with_exempt_financials_starts_application : StartApplicationHandlerTestsBase
     {
         private void Init()
         {
@@ -18,10 +18,9 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
                 Id = ApplyingOrganisationId,
                 OrganisationType = "",
                 RoEPAOApproved = true,
-                OrganisationDetails = new OrganisationDetails() { FHADetails = new FHADetails
+                OrganisationDetails = new OrganisationDetails(){FHADetails = new FHADetails
                 {
-                    FinancialExempt = false,
-                    FinancialDueDate = DateTime.Today.AddDays(4)
+                    FinancialExempt = true
                 }}
             });
         }
