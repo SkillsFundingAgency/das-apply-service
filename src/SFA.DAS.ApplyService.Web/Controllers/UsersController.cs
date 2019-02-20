@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.ViewModels;
@@ -18,7 +19,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IUsersApiClient _usersApiClient;
         private readonly ISessionService _sessionService;
         private readonly ILogger<UsersController> _logger;
-
         public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger)
         {
             _usersApiClient = usersApiClient;
@@ -86,7 +86,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> PostSignIn()
         {
             var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
-
+           
             if (user == null)
             {
                 return RedirectToAction("NotSetUp");
@@ -95,6 +95,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _logger.LogInformation($"Setting LoggedInUser in Session: {user.GivenNames} {user.FamilyName}");
             
             _sessionService.Set("LoggedInUser", $"{user.GivenNames} {user.FamilyName}");
+
+            _sessionService.Set("SignedInFromApply", User.SignedInFromApply());
 
             if (user.ApplyOrganisationId == null)
             {

@@ -17,5 +17,7 @@ namespace SFA.DAS.ApplyService.Configuration
         public CompaniesHouseApiAuthentication CompaniesHouseApiAuthentication { get; set; }
 
         public string FeedbackUrl { get; set; }
+
+        public string AssessorServiceBaseUrl { get; set; }
     }
 }

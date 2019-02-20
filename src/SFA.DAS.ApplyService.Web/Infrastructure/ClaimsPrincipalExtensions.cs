@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Security.Claims;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
@@ -26,6 +27,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             string value = principal.FindFirstValue("sub");
 
             return value;
+        }
+
+        public static bool SignedInFromApply(this ClaimsPrincipal principal)
+        {
+            return !principal.HasClaim(x => x.Type == "http://schemas.portal.com/ukprn");
         }
     }
 }

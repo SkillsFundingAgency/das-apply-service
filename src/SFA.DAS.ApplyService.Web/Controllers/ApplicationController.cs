@@ -39,6 +39,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> Applications()
         {
             var user = _sessionService.Get("LoggedInUser");
+            if (string.IsNullOrEmpty(user))
+            {
+                return RedirectToAction("PostSignIn", "Users");
+            }
+
+            //_usersApiClient.IsUserRegistered(User.GetSignInId());
             _logger.LogInformation($"Got LoggedInUser from Session: {user}");
 
             var userId = User.GetUserId();
