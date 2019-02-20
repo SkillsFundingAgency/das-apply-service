@@ -4,31 +4,44 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using SFA.DAS.ApplyService.Application.Interfaces;
+using SFA.DAS.ApplyService.Web.Infrastructure;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
-    
     public class UploadController : Controller
     {
         private readonly IStorageService _storageService;
+        private readonly ILogger<UploadController> _logger;
+        private readonly IApplicationApiClient _client;
 
-        public UploadController(IStorageService storageService)
+        public UploadController(IStorageService storageService, ILogger<UploadController> logger, IApplicationApiClient client)
         {
             _storageService = storageService;
+            _logger = logger;
+            _client = client;
         }
-        
-        
+
+
         [HttpPost]
         public async Task<IActionResult> Chunks()
         {
-            var a = HttpContext.Request;
+            var formItems = await HttpContext.Request.ReadFormAsync();
 
-            var formItems = await a.ReadFormAsync();
+            var chunkParameters = GetChunkParameters(formItems);
 
+            await SaveFile(chunkParameters);
 
-            var configuration = new ResumableConfiguration()
+            await TryAssembleFile(chunkParameters);
+
+            return Ok();
+        }
+
+        private static ChunkParameters GetChunkParameters(IFormCollection formItems)
+        {
+            return new ChunkParameters()
             {
                 Chunks = int.Parse(formItems["resumableTotalChunks"][0]),
                 ChunkNumber = int.Parse(formItems["resumableChunkNumber"][0]),
@@ -39,101 +52,100 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 PageId = formItems["page"][0],
                 QuestionId = formItems["questionId"][0],
                 FileName = formItems["resumableFilename"][0],
-                Type = formItems["resumableType"][0]
+                Type = formItems["resumableType"][0],
+                File = formItems.Files[0]
             };
-            
-            SaveFile(formItems.Files[0], configuration);
-            
-            await TryAssembleFile(configuration);
-            
-            return Ok();
         }
 
-        private void SaveFile(IFormFile fileChunk, ResumableConfiguration configuration)
+        private async Task SaveFile(ChunkParameters chunkParameters)
         {
-            var openReadStream = fileChunk.OpenReadStream();
-
             var fileStream = new MemoryStream();
+            var openReadStream = chunkParameters.File.OpenReadStream();
             openReadStream.CopyTo(fileStream);
 
             fileStream.Position = 0;
-            
-            _storageService.Store(configuration.ApplicationId, configuration.SequenceId,
-                configuration.SectionId, configuration.PageId, configuration.QuestionId,
-                $"{configuration.Identifier}_{configuration.ChunkNumber}", fileStream, fileChunk.ContentType).Wait();
+
+            await _storageService.Store(chunkParameters.ApplicationId, chunkParameters.SequenceId,
+                chunkParameters.SectionId, chunkParameters.PageId, chunkParameters.QuestionId,
+                $"{chunkParameters.Identifier}_{chunkParameters.ChunkNumber}", fileStream, chunkParameters.File.ContentType);
         }
-        
-        private async Task TryAssembleFile(ResumableConfiguration configuration)
+
+        private async Task TryAssembleFile(ChunkParameters chunkParameters)
         {
-            if (AllChunksAreHere(configuration))
+            if (await AllChunksAreHere(chunkParameters))
             {
                 // Create a single file
-                var assembledFileStream = await ConsolidateFile(configuration);
+                var assembledFileStream = await ConsolidateFile(chunkParameters);
 
                 // Rename consolidated with original name of upload
-                await _storageService.Store(configuration.ApplicationId, configuration.SequenceId,
-                    configuration.SectionId, configuration.PageId, configuration.QuestionId,
-                configuration.FileName, assembledFileStream, configuration.Type);
+                await _storageService.Store(chunkParameters.ApplicationId, chunkParameters.SequenceId,
+                    chunkParameters.SectionId, chunkParameters.PageId, chunkParameters.QuestionId,
+                    chunkParameters.FileName, assembledFileStream, chunkParameters.Type);
 
                 // Delete chunk files
-                await DeleteChunks(configuration);
+                await DeleteChunks(chunkParameters);
+
+                var userId = User.GetUserId();
+                
+                // Save file into QnA
+                await _client.UpdateFileUploadAnswer(chunkParameters.ApplicationId, chunkParameters.SequenceId, chunkParameters.SectionId, 
+                    chunkParameters.PageId, chunkParameters.QuestionId, chunkParameters.FileName, userId);
             }
         }
 
-        private async Task DeleteChunks(ResumableConfiguration configuration)
+        private async Task DeleteChunks(ChunkParameters chunkParameters)
         {
-            for (int chunkNumber = 1; chunkNumber <= configuration.Chunks; chunkNumber++)
+            for (var chunkNumber = 1; chunkNumber <= chunkParameters.Chunks; chunkNumber++)
             {
-                var chunkFileName = $"{configuration.Identifier}_{chunkNumber}";
-                await _storageService.Delete(Guid.Parse(configuration.ApplicationId), configuration.SequenceId, configuration.SectionId, configuration.PageId, configuration.QuestionId, chunkFileName);
+                var chunkFileName = $"{chunkParameters.Identifier}_{chunkNumber}";
+                _logger.LogInformation($"Deleting: {chunkFileName}");
+                if (await ChunkIsHere(chunkNumber, chunkParameters))
+                {
+                    await _storageService.Delete(Guid.Parse(chunkParameters.ApplicationId), chunkParameters.SequenceId, chunkParameters.SectionId, chunkParameters.PageId, chunkParameters.QuestionId, chunkFileName);
+                }
             }
         }
 
-        private async Task<Stream> ConsolidateFile(ResumableConfiguration configuration)
+        private async Task<Stream> ConsolidateFile(ChunkParameters chunkParameters)
         {
             // create destination memory stream
             var dest = new MemoryStream();
 
-            for (int chunkNumber = 1; chunkNumber <= configuration.Chunks; chunkNumber++)
+            for (var chunkNumber = 1; chunkNumber <= chunkParameters.Chunks; chunkNumber++)
             {
-                var chunkFileName = $"{configuration.Identifier}_{chunkNumber}";
-                var chunk = await _storageService.Retrieve(configuration.ApplicationId, configuration.SequenceId, configuration.SectionId, configuration.PageId, configuration.QuestionId, chunkFileName);
-                
+                var chunkFileName = $"{chunkParameters.Identifier}_{chunkNumber}";
+                var chunk = await _storageService.Retrieve(chunkParameters.ApplicationId, chunkParameters.SequenceId, chunkParameters.SectionId, chunkParameters.PageId, chunkParameters.QuestionId, chunkFileName);
+
                 var ms = new MemoryStream();
-                
+
                 chunk.Item2.CopyTo(ms);
-                
-                dest.Write(ms.ToArray(), 0, (int)chunk.Item2.Length);
+
+                dest.Write(ms.ToArray(), 0, (int) chunk.Item2.Length);
             }
 
             dest.Position = 0;
-            
-            return dest;
 
-            // get each file from storage in turn
-            // append stream to destination stream.
-            // set destination position to 0
-            // return stream
+            return dest;
         }
 
-        private bool AllChunksAreHere(ResumableConfiguration configuration)
+        private async Task<bool> AllChunksAreHere(ChunkParameters chunkParameters)
         {
-            for (int chunkNumber = 1; chunkNumber <= configuration.Chunks; chunkNumber++)
-                if (!ChunkIsHere(chunkNumber, configuration)) return false;
+            for (var chunkNumber = 1; chunkNumber <= chunkParameters.Chunks; chunkNumber++)
+                if (!await ChunkIsHere(chunkNumber, chunkParameters))
+                    return false;
             return true;
         }
-        
-        private bool ChunkIsHere(int chunkNumber, ResumableConfiguration configuration)
-        {
-            string fileName = $"{configuration.Identifier}_{chunkNumber}";//   GetChunkFileName(chunkNumber, identifier);
-            return _storageService.Exists(configuration.ApplicationId, configuration.SequenceId,
-                configuration.SectionId, configuration.PageId, configuration.QuestionId,
-                fileName).Result;
-        }
 
+        private async Task<bool> ChunkIsHere(int chunkNumber, ChunkParameters chunkParameters)
+        {
+            var fileName = $"{chunkParameters.Identifier}_{chunkNumber}";
+            return await _storageService.Exists(chunkParameters.ApplicationId, chunkParameters.SequenceId,
+                chunkParameters.SectionId, chunkParameters.PageId, chunkParameters.QuestionId,
+                fileName);
+        }
     }
 
-    class ResumableConfiguration
+    class ChunkParameters
     {
         public int Chunks { get; set; }
         public string Identifier { get; set; }
@@ -145,5 +157,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public string FileName { get; set; }
         public string Type { get; set; }
         public int ChunkNumber { get; set; }
+        public IFormFile File { get; set; }
     }
 }

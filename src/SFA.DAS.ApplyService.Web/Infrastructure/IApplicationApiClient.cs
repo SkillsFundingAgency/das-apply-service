@@ -53,5 +53,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<List<Option>> GetQuestionDataFedOptions(string dataEndpoint);
         Task DeleteFile(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId);
         Task<Organisation> GetOrganisationByUserId(Guid userId);
+        Task UpdateFileUploadAnswer(string applicationId, int sequenceId, int sectionId, string pageId, string questionId, string fileName, Guid userId);
     }
 }

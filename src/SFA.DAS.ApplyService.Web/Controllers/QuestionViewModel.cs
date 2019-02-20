@@ -22,6 +22,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public int SectionId { get; set; }
         public string PageId { get; set; }
         public string RedirectAction { get; set; }
+        
+        public FileUploadInfo FileUploadInfo { get; set; }
 
         public string DisplayAnswerValue(Answer answer)
         {
@@ -38,4 +40,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return answer.Value;
         }
     }
+
+
 }

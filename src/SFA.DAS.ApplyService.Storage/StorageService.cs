@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using SFA.DAS.ApplyService.Application.Interfaces;
@@ -12,10 +13,12 @@ namespace SFA.DAS.ApplyService.Storage
     public class StorageService : IStorageService
     {
         private readonly IConfigurationService _configurationService;
+        private readonly ILogger<StorageService> _logger;
 
-        public StorageService(IConfigurationService configurationService)
+        public StorageService(IConfigurationService configurationService, ILogger<StorageService> logger)
         {
             _configurationService = configurationService;
+            _logger = logger;
         }
         
         public async Task<string> Store(string applicationId, int sequenceId, int sectionId, string pageId, string questionId, string fileName, Stream fileStream, string fileContentType)
@@ -62,7 +65,15 @@ namespace SFA.DAS.ApplyService.Storage
             var container = await GetContainer();
             var questionFolder = GetDirectory(applicationId.ToString(), sequenceId, sectionId, pageId, questionId, container);
             var blob = questionFolder.GetBlobReference(filename);
-            await blob.DeleteAsync();   
+            try
+            {
+                await blob.DeleteAsync();
+            }
+            catch (StorageException e)
+            {
+                _logger.LogInformation($"Could not delete: {questionFolder} {filename}.  Error {e.Message}");
+            }
+               
         }
 
         public async Task<bool> Exists(string applicationId, int sequenceId, int sectionId, string pageId, string questionId, string filename)

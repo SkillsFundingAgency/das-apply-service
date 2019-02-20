@@ -15,4 +15,6 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public string Value { get; set; }
         public IEnumerable<dynamic> ErrorMessages { get; set; }
     }
+    
+    
 }

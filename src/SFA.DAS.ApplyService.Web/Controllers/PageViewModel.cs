@@ -91,7 +91,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 SectionId = SectionId,
                 ApplicationId = ApplicationId,
                 PageId = PageId,
-                RedirectAction = RedirectAction
+                RedirectAction = RedirectAction,
+                FileUploadInfo = new FileUploadInfo()
+                {
+                    NumberOfUploadsRequired = q.Input.FileUploadInfo?.NumberOfUploadsRequired,
+                    Uploads = GetUploads(page.PageOfAnswers)
+                }
             }));
 
             Feedback = page.Feedback;
@@ -113,6 +118,21 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     }
                 }
             }
+        }
+
+        private List<FileUpload> GetUploads(List<PageOfAnswers> pagesOfAnswers)
+        {
+            var fileUploads = new List<FileUpload>();
+
+            pagesOfAnswers.ForEach(poa =>
+            {
+                if (poa.Answers.Any())
+                {
+                    fileUploads.Add(new FileUpload(){ Id = poa.Id, Filename = poa.Answers.Single().Value});   
+                }
+            });
+            
+            return fileUploads;
         }
 
         private string GetMultipleValue(List<Answer> answers, Question question, List<ValidationErrorDetail> errorMessages)

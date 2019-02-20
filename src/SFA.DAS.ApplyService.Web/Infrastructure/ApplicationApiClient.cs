@@ -169,5 +169,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         {
             return await(await _httpClient.GetAsync($"organisations/userId/{userId}")).Content.ReadAsAsync<Organisation>();
         }
+
+        public async Task UpdateFileUploadAnswer(string applicationId, int sequenceId, int sectionId, string pageId, string questionId, string fileName, Guid userId)
+        {
+            await _httpClient.PostAsJsonAsync($"/UpdateFileAnswer", new {applicationId, sequenceId, sectionId, pageId, questionId, fileName, userId});
+        }
     }
 }
