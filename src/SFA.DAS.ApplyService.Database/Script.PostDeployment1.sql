@@ -81,6 +81,31 @@ SET QnAData = JSON_MODIFY(QnAData, '$.FinancialApplicationGrade.SelectedGrade', 
 WHERE  JSON_VALUE(QnAData, '$.FinancialApplicationGrade.SelectedGrade') = 'Excellent'
 GO
 
+-- START OF: ON-1502 Fixes - Remove once deployed to PROD
+UPDATE [ApplicationSections]
+   SET [Status] = 'Evaluated'
+ WHERE [NotRequired] = 1
+GO
+
+UPDATE [ApplicationSections]
+   SET [QnAData] = JSON_MODIFY(QnAData, '$.FinancialApplicationGrade', JSON_QUERY('{"SelectedGrade":"Exempt", "GradedDateTime":"' + CONVERT(varchar(30), GETUTCDATE(), 126) + '"}'))
+ WHERE [NotRequired] = 1 AND [SectionId] = 3
+GO
+
+UPDATE [ApplicationSequences]
+   SET [Status] = 'Approved'
+ WHERE [NotRequired] = 1 AND [SequenceId] = 1
+GO
+
+UPDATE app
+   SET app.[ApplicationData] = JSON_MODIFY(app.ApplicationData, '$.InitSubmissionClosedDate', CONVERT(varchar(30), GETUTCDATE(), 126))
+ FROM [Applications] app
+ INNER JOIN [ApplicationSequences] seq ON app.Id = seq.ApplicationId
+ WHERE seq.[NotRequired] = 1 AND seq.[SequenceId] = 1
+GO
+-- END OF: ON-1502 Fixes - Remove once deployed to PROD
+
+
 -- Add the Workflows
 :r ..\WorkflowLatest.sql
 
