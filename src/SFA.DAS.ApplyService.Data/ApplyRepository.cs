@@ -195,6 +195,16 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<List<WorkflowPageNotRequired>> GetWorkflowPagesNotRequired(string organisationType)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<WorkflowPageNotRequired>(
+                    @"SELECT * FROM WorkflowPagesNotRequired WHERE [OrganisationType] = @organisationType AND Status = 'Live'",
+                    new { organisationType })).ToList();
+            }
+        }
+
         public async Task UpdateSections(List<ApplicationSection> sections)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))

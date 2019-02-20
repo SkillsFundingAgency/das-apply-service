@@ -20,6 +20,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<Guid> CreateApplication(string applicationType, Guid applyingOrganisationId, Guid userId, Guid workflowId);
         Task<Guid> GetLatestWorkflow(string applicationType);
         Task<List<ApplicationSection>> CopyWorkflowToApplication(Guid applicationId, Guid workflowId, string organisationType);
+        Task<List<WorkflowPageNotRequired>> GetWorkflowPagesNotRequired(string organisationType);
         Task UpdateSections(List<ApplicationSection> sections);
         Task UpdateSequences(List<ApplicationSequence> sequences);
         Task SaveSection(ApplicationSection section, Guid? userId = null);
