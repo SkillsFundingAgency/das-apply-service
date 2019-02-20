@@ -39,7 +39,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public bool HasFeedback => Feedback?.Any() ?? false;
 
         [JsonIgnore]
-        public bool HasNewFeedback => HasFeedback && Feedback.Any(f => f.IsNew);
+        public bool HasNewFeedback => HasFeedback && Feedback.Any(f => f.IsNew || !f.IsCompleted);
 
         [JsonIgnore]
         public bool AllFeedbackIsCompleted => HasFeedback ? Feedback.All(f => f.IsCompleted) : true;

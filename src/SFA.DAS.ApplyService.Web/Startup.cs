@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -16,6 +17,7 @@ using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
+using SFA.DAS.ApplyService.Web.Validators;
 using StructureMap;
 
 namespace SFA.DAS.ApplyService.Web
@@ -54,7 +56,8 @@ namespace SFA.DAS.ApplyService.Web
             });
             
             services.AddMvc(options => { options.Filters.Add<PerformValidationFilter>(); })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
 
             if (_env.IsDevelopment())
             {
@@ -116,6 +119,7 @@ namespace SFA.DAS.ApplyService.Web
                 config.For<IApplicationApiClient>().Use<ApplicationApiClient>();
                 config.For<OrganisationApiClient>().Use<OrganisationApiClient>();
                 config.For<OrganisationSearchApiClient>().Use<OrganisationSearchApiClient>();
+                config.For<CreateAccountValidator>().Use<CreateAccountValidator>();
                 config.Populate(services);
             });
 
