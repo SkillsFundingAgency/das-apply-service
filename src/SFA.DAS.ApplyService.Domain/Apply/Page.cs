@@ -19,9 +19,9 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public bool Complete { get; set; }
         public bool AllowMultipleAnswers { get; set; }
         public int? Order { get; set; }
-        public bool Active { get; set; }        
-        public bool Visible { get; set; }
-        
+        public bool Active { get; set; }
+        public bool NotRequired { get; set; }
+
         public string BodyText { get; set; }
 
         public PageDetails Details { get; set; }
