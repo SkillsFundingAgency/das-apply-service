@@ -190,11 +190,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, User.GetUserId());
 
-            if(page != null && page.NotRequired)
+            if(page != null && (!page.Active || page.NotRequired))
             {
                 var nextPage = page.Next.FirstOrDefault(p => p.Condition is null);
 
-                if (nextPage?.ReturnId != null)
+                if (nextPage?.ReturnId != null && nextPage?.Action == "NextPage")
                 {
                     pageId = nextPage.ReturnId;
                     return RedirectToAction("Page", new { applicationId, sequenceId, sectionId, pageId, redirectAction });
