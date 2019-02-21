@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
@@ -19,11 +20,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IUsersApiClient _usersApiClient;
         private readonly ISessionService _sessionService;
         private readonly ILogger<UsersController> _logger;
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger)
+        private readonly IConfigurationService _config;
+
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger, IConfigurationService config)
         {
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
             _logger = logger;
+            _config = config;
         }
         
         [HttpGet]
@@ -59,13 +63,29 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public IActionResult SignOut()
         {
+            //foreach (var cookie in Request.Cookies.Keys)
+            //{
+            //    Response.Cookies.Delete(cookie);
+            //}
+
+            return SignOut(CookieAuthenticationDefaults.AuthenticationScheme,
+                OpenIdConnectDefaults.AuthenticationScheme);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> PostSignOut(bool signInScreen)
+        {
+            var isSignInFromAppy =_sessionService.Get<bool>("SignedInFromApply");
+            var applyConfig = await _config.GetConfig();
             foreach (var cookie in Request.Cookies.Keys)
             {
                 Response.Cookies.Delete(cookie);
             }
 
-            return SignOut(CookieAuthenticationDefaults.AuthenticationScheme,
-                OpenIdConnectDefaults.AuthenticationScheme);
+            if (isSignInFromAppy)
+                return signInScreen ? RedirectToAction("SignIn", "Users") : RedirectToAction("Index", "Home");
+
+            return Redirect(signInScreen ? $"{applyConfig.AssessorServiceBaseUrl}/Account/SignIn" : $"{applyConfig.AssessorServiceBaseUrl}/");
         }
 
         public IActionResult InviteSent()

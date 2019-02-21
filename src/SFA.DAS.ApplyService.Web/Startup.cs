@@ -29,7 +29,7 @@ namespace SFA.DAS.ApplyService.Web
         private readonly ILogger<Startup> _logger;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHostingEnvironment _env;
-        private IApplyConfig _configService;
+        private readonly IApplyConfig _configService;
         private const string ServiceName = "SFA.DAS.ApplyService";
         private const string Version = "1.0";
 
