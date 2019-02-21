@@ -40,12 +40,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _logger.LogInformation($"Got LoggedInUser from Session: {user}");
 
             var userId = User.GetUserId();
-            
-            var applications = await _apiClient.GetApplicationsFor(userId);
 
-            if (!applications.Any())
+            var org = await _apiClient.GetOrganisationByUserId(userId);
+            var applications = await _apiClient.GetApplicationsFor(userId);
+            
+            if(org is null)
             {
-                var org = await _apiClient.GetOrganisationByUserId(userId);
+                return RedirectToAction("Index", "OrganisationSearch");
+            }
+            else if (!applications.Any())
+            { 
                 if (org.RoEPAOApproved)
                 {
                     return await StartApplication(userId);
