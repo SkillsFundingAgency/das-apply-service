@@ -3905,7 +3905,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-1-PG-10-134"
     },
     {
@@ -3996,7 +3996,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-1-PG-11-150"
     },
     {
@@ -4063,7 +4063,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-1-PG-12-166"
     },
     {
@@ -4241,7 +4241,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-1-PG-14-190"
     },
     {
@@ -4299,7 +4299,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-1-PG-15-202"
     }
   ],
@@ -4527,7 +4527,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-19-246"
     },
 	   {
@@ -4643,7 +4643,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-19-246"
     },
 	   {
@@ -4701,7 +4701,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-19-246"
     },
     {
@@ -4779,7 +4779,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
 	{
@@ -4846,7 +4846,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
     {
@@ -5039,7 +5039,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
 	{
@@ -5117,7 +5117,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
 	  {
@@ -5195,7 +5195,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
 	{
@@ -5273,7 +5273,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
 	{
@@ -5394,7 +5394,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
 	{
@@ -5598,7 +5598,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
 	  {
@@ -5676,7 +5676,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
 	  {
@@ -5754,7 +5754,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
 	  {
@@ -5875,7 +5875,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
     {
@@ -8040,7 +8040,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
-        "NotRequiredOrgTypes": [],
+        "NotRequiredOrgTypes": ["HEI"],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
       },
 	   {
@@ -8092,7 +8092,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
-        "NotRequiredOrgTypes": [],
+        "NotRequiredOrgTypes": ["HEI"],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
       },
 	   {
@@ -8144,7 +8144,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
-        "NotRequiredOrgTypes": [],
+        "NotRequiredOrgTypes": ["HEI"],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
       },
 	   {
@@ -8196,7 +8196,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
-        "NotRequiredOrgTypes": [],
+        "NotRequiredOrgTypes": ["HEI"],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
       },
 	   {
@@ -8248,7 +8248,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
-        "NotRequiredOrgTypes": [],
+        "NotRequiredOrgTypes": ["HEI"],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
       },
 	   {
@@ -8300,7 +8300,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
-        "NotRequiredOrgTypes": [],
+        "NotRequiredOrgTypes": ["HEI"],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
       },
 	   {
@@ -8347,7 +8347,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
-        "NotRequiredOrgTypes": [],
+        "NotRequiredOrgTypes": ["HEI"],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
       },
 	  {
@@ -8394,7 +8394,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
-        "NotRequiredOrgTypes": [],
+        "NotRequiredOrgTypes": ["HEI"],
         "BodyText": "SQ-2-SE-4-PG-25-BT-1"
       },
 	  {
@@ -8441,7 +8441,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
-        "NotRequiredOrgTypes": [],
+        "NotRequiredOrgTypes": ["HEI"],
         "BodyText": "SQ-2-SE-4-PG-25-BT-1"
       },
 	  {
