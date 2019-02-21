@@ -20,7 +20,6 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public bool AllowMultipleAnswers { get; set; }
         public int? Order { get; set; }
         public bool Active { get; set; }
-        [JsonIgnore]
         public List<string> NotRequiredOrgTypes { get; set; }
         public bool NotRequired { get; set; }
 
