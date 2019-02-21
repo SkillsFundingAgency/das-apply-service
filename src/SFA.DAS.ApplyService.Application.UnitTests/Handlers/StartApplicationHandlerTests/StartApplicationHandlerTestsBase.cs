@@ -33,7 +33,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
             ApplyRepository.Setup(r => r.CreateApplication("EPAO", ApplyingOrganisationId, UserId, latestWorkflowId)).ReturnsAsync(applicationId);
             ApplyRepository.Setup(r => r.CopyWorkflowToApplication(applicationId, latestWorkflowId, It.IsAny<string>())).ReturnsAsync(new List<ApplicationSection>
             {
-                new ApplicationSection {SectionId = 1, QnAData = new QnAData {Pages = new List<Page>{new Page(){Title = "REPLACEME"}}}},
+                new ApplicationSection {SectionId = 1, QnAData = new QnAData {Pages = new List<Page>{new Page(){PageId = "1", Title = "REPLACEME"}, new Page(){PageId = "2"}}}},
                 new ApplicationSection {SectionId = 2, QnAData = new QnAData {Pages = new List<Page>()}},
                 new ApplicationSection {SectionId = 3, QnAData = new QnAData {Pages = new List<Page>()}},
                 new ApplicationSection {SectionId = 4, QnAData = new QnAData {Pages = new List<Page>()}}
@@ -43,6 +43,10 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
                 new ApplicationSequence {SequenceId = SequenceId.Stage1},
                 new ApplicationSequence {SequenceId = SequenceId.Stage2}
             });
+
+            ApplyRepository.Setup(r => r.GetWorkflowPagesNotRequired(It.IsIn("HEI"))).ReturnsAsync(new List<WorkflowPageNotRequired> { new WorkflowPageNotRequired { PageId = 2, SequenceId = 1, SectionId = 1 } });
+            ApplyRepository.Setup(r => r.GetWorkflowPagesNotRequired(It.IsNotIn("HEI"))).ReturnsAsync(new List<WorkflowPageNotRequired>());
+            
 
             OrganisationRepository = new Mock<IOrganisationRepository>();
             
