@@ -17,45 +17,34 @@
 }
 
 <div class="govuk-form-group">
-
-    @*
-    <input 
-        class="govuk-input @isError"
-        type="text"
-        id="@Model.QuestionId"
-        name="@Model.QuestionId"
-        value="@Model.Value"
-    />
-    *@
-
     <div id="postcode-lookup" class="autocomplete-wrapper"></div>
 </div>
-
 
 <div class="address-inputs">
     <div class="govuk-form-group">
         <label class="govuk-label govuk-label--m" for="address-line-1">
             Building and street
         </label>
-        <input class="govuk-input govuk-!-margin-bottom-2" type="text" id="address-line-1" name="address-line-1">
-        <input class="govuk-input" type="text" id="address-line-2" name="address-line-2">
+        <input class="govuk-input govuk-!-margin-bottom-2" type="text" id="@(Model.QuestionId)-address-line-1" name="@(Model.QuestionId)-address-line-1">
+        <input class="govuk-input" type="text" id="@(Model.QuestionId)-address-line-2" name="@(Model.QuestionId)-address-line-2">
     </div>
     <div class="govuk-form-group">
         <label class="govuk-label govuk-label--m" for="address-city">
             Town or city
         </label>
-        <input class="govuk-input govuk-!-width-two-thirds" type="text" id="address-city" name="address-city">
+        <input class="govuk-input govuk-!-width-two-thirds" type="text" id="@(Model.QuestionId)-address-city" name="@(Model.QuestionId)-address-city">
     </div>
     <div class="govuk-form-group">
         <label class="govuk-label govuk-label--m" for="address-county">
             County
         </label>
-        <input class="govuk-input govuk-!-width-two-thirds" type="text" id="address-county" name="address-county">
+        <input class="govuk-input govuk-!-width-two-thirds" type="text" id="@(Model.QuestionId)-address-county" name="@(Model.QuestionId)-address-county">
     </div>
     <div class="govuk-form-group">
         <label class="govuk-label govuk-label--m" for="address-postcode">
             Postcode
         </label>
-        <input class="govuk-input govuk-input--width-10" type="text" id="address-postcode" name="address-postcode">
+        <input class="govuk-input govuk-input--width-10" type="text" id="@(Model.QuestionId)-address-postcode" name="@(Model.QuestionId)-address-postcode">
     </div>
 </div>
+

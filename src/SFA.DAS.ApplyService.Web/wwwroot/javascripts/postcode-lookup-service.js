@@ -4,8 +4,14 @@
     var GOVUK = global.GOVUK || {};
 
     GOVUK.addressLookup = {
+        addressInputId: null,
         currentAddressData: null,
         populateResultsFn: null,
+
+        init: function(elementId) {
+            GOVUK.addressLookup.addressInputId = elementId;
+            document.querySelector(".address-inputs").style.display = "none";
+        },
 
         handleFindAndConfirm: function(query, populateResults) {
             if (populateResults) {
@@ -102,16 +108,66 @@
         },
 
         fillAddress: function(address) {
-            document.querySelector("#address-line-1").value = address.Line1;
-            document.querySelector("#address-line-2").value = address.Line2;
-            document.querySelector("#address-city").value = address.City;
-            document.querySelector("#address-county").value = address.Province;
-            document.querySelector("#address-postcode").value =
-                address.PostalCode;
+            document.querySelector(
+                "#" + GOVUK.addressLookup.addressInputId
+            ).value = "";
+            document.querySelector(
+                "#" + GOVUK.addressLookup.addressInputId + "-address-line-1"
+            ).value = address.Line1;
+            document.querySelector(
+                "#" + GOVUK.addressLookup.addressInputId + "-address-line-2"
+            ).value = address.Line2;
+            document.querySelector(
+                "#" + GOVUK.addressLookup.addressInputId + "-address-city"
+            ).value = address.City;
+            document.querySelector(
+                "#" + GOVUK.addressLookup.addressInputId + "-address-county"
+            ).value = address.Province;
+            document.querySelector(
+                "#" + GOVUK.addressLookup.addressInputId + "-address-postcode"
+            ).value = address.PostalCode;
+
+            document.querySelector("#postcode-lookup").innerText = "";
+            var addressPanel = document.createElement("div");
+            addressPanel.className = "govuk-inset-text";
+            addressPanel.innerHTML =
+                '<p class="govuk-body govuk-!-margin-bottom-0">' +
+                address.Line1 +
+                '</p><p class="govuk-body govuk-!-margin-bottom-0">' +
+                address.Line2 +
+                '</p><p class="govuk-body govuk-!-margin-bottom-0">' +
+                address.City +
+                '</p><p class="govuk-body govuk-!-margin-bottom-0">' +
+                address.Province +
+                '</p><p class="govuk-body govuk-!-margin-bottom-0">' +
+                address.PostalCode +
+                "</p>";
+            document
+                .querySelector("#postcode-lookup")
+                .appendChild(addressPanel);
+
+            var editLink = document.createElement("a");
+            editLink.className = "govuk-link";
+            editLink.href = "#edit-address";
+            editLink.innerHTML = "Edit address";
+            editLink.addEventListener("click", GOVUK.addressLookup.editAddress);
+            document.querySelector("#postcode-lookup").appendChild(editLink);
+            var editLinkWrapper = document.createElement("p");
+            editLinkWrapper.className = "govuk-body";
+            editLink.parentNode.insertBefore(editLinkWrapper, editLink);
+            editLinkWrapper.appendChild(editLink);
+        },
+
+        editAddress: function() {
+            var lookup = document.querySelector("#postcode-lookup").parentNode;
+            document.querySelector(".address-inputs").style.display = "block";
+            lookup.style.display = "none";
+            lookup.previousElementSibling.style.display = "none";
         },
 
         inputValueTemplate: function(result) {
-            return result ? result.text : null;
+            if (!result) return;
+            return result.text;
         },
         suggestionTemplate: function(result) {
             return result.description
@@ -125,16 +181,3 @@
 
     global.GOVUK = GOVUK;
 })(window);
-
-accessibleAutocomplete({
-    element: document.querySelector("#postcode-lookup"),
-    id: "CD-03_address-lookup-QID",
-    source: GOVUK.addressLookup.handleFindAndConfirm,
-    onConfirm: GOVUK.addressLookup.handleFindAndConfirm,
-    confirmOnBlur: false,
-    autoselect: false,
-    templates: {
-        inputValue: GOVUK.addressLookup.inputValueTemplate,
-        suggestion: GOVUK.addressLookup.suggestionTemplate
-    }
-});

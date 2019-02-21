@@ -193,6 +193,21 @@
                                 @section Scripts {
                                     <script src="@Url.Content("~/javascripts/accessible-autocomplete.min.js")"></script>
                                     <script src="@Url.Content("~/javascripts/postcode-lookup-service.js")"></script>
+                                    <script type="text/javascript">
+                                        window.GOVUK.addressLookup.init("@(question.QuestionId)");
+                                        accessibleAutocomplete({
+                                            element: document.querySelector("#postcode-lookup"),
+                                            id: "@(question.QuestionId)",
+                                            source: window.GOVUK.addressLookup.handleFindAndConfirm,
+                                            onConfirm: window.GOVUK.addressLookup.handleFindAndConfirm,
+                                            minLength: 2,
+                                            confirmOnBlur: false,
+                                            templates: {
+                                                inputValue: window.GOVUK.addressLookup.inputValueTemplate,
+                                                suggestion: window.GOVUK.addressLookup.suggestionTemplate
+                                            }
+                                        });
+                                    </script>
                                 }
                             }
                         }
