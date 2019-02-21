@@ -38,7 +38,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
             foreach (var applicationSection in sections)
             {
-                var pagesToMakeNotRequired = applicationSection.QnAData.Pages.Where(p => p.NotRequiredOrgTypes != null && p.NotRequiredOrgTypes.Contains(org.OrganisationType));
+                var pagesToMakeNotRequired = applicationSection.QnAData.Pages.Where(p => p.NotRequiredOrgTypes.Contains(org.OrganisationType));
 
                 foreach (var page in pagesToMakeNotRequired)
                 {
