@@ -72,7 +72,6 @@
     <Build Include="Tables\WorkflowSections.sql" />
     <Build Include="Tables\WorkflowSequences.sql" />
     <Build Include="Tables\EmailTemplates.sql" />
-    <Build Include="Tables\WorkflowPagesNotRequired.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

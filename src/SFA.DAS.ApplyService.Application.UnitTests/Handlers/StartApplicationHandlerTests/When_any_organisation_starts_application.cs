@@ -36,7 +36,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
         }
 
         [Test]
-        public void Then_QnaData_NotRequired_Pages_Should_Not_Be_Updated()
+        public void Then_All_QnaData_Pages_Should_Be_Required()
         {
             Init();
 
@@ -45,8 +45,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
             ApplyRepository.Verify(r => r.UpdateSections(It.Is<List<ApplicationSection>>(response => response.Any(
                 section =>
                     section.SectionId == 1
-                    && !section.QnAData.Pages[0].NotRequired
-                    && !section.QnAData.Pages[1].NotRequired))));
+                    && section.QnAData.Pages.All(p => !p.NotRequired)))));
         }
     }
 }

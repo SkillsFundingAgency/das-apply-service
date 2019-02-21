@@ -36,13 +36,11 @@ namespace SFA.DAS.ApplyService.Application.Apply
             var sections =
                 await _applyRepository.CopyWorkflowToApplication(applicationId, workflowId, org.OrganisationType);
 
-            var pagesNotRequired = await _applyRepository.GetWorkflowPagesNotRequired(org.OrganisationType);
-
             foreach (var applicationSection in sections)
             {
-                var pagesWeWantToMakeNotRequired = pagesNotRequired.Where(pnr => pnr.SectionId == applicationSection.SectionId).Select(prn => prn.PageId.ToString());
+                var pagesToMakeNotRequired = applicationSection.QnAData.Pages.Where(p => p.NotRequiredOrgTypes != null && p.NotRequiredOrgTypes.Contains(org.OrganisationType));
 
-                foreach(var page in applicationSection.QnAData.Pages.Where(p => pagesWeWantToMakeNotRequired.Contains(p.PageId)))
+                foreach (var page in pagesToMakeNotRequired)
                 {
                     page.NotRequired = true;
                     page.Complete = true;
