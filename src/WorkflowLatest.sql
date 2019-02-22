@@ -368,135 +368,32 @@ GO
 --   (NEWID(), 'SQ-1-SE-1-PG-4-CD-08-56', '', '', 'Live', GETUTCDATE(), 'Import')
 -- GO
 
--- Building and street
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-08_1-53';
+-- Address lookup
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-08-H';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-4-CD-08_1-53', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-1-PG-4-CD-08-H', '', '', 'Live', GETUTCDATE(), 'Import')
 GO
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-08_1-54';
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-08-L';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-4-CD-08_1-54', '', 'Building and street', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-1-PG-4-CD-08-L', '', 'Start typing the company name, address or postcode', 'Live', GETUTCDATE(), 'Import')
 GO
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-08_1-55';
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-08-SL';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-4-CD-08_1-55', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-1-PG-4-CD-08-SL', '', '', 'Live', GETUTCDATE(), 'Import')
 GO
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-08_1-56';
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-08-QBT';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-4-CD-08_1-56', '', '', 'Live', GETUTCDATE(), 'Import')
-GO
-
--- Building and street 2
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-08_2-53';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-4-CD-08_2-53', '', '', 'Live', GETUTCDATE(), 'Import')
-GO
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-08_2-54';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-4-CD-08_2-54', '', '', 'Live', GETUTCDATE(), 'Import')
-GO
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-08_2-55';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-4-CD-08_2-55', '', '', 'Live', GETUTCDATE(), 'Import')
-GO
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-08_2-56';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-4-CD-08_2-56', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-1-PG-4-CD-08-QBT', '', '', 'Live', GETUTCDATE(), 'Import')
 GO
 
--- Town and city
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-08_3-53';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-4-CD-08_3-53', '', '', 'Live', GETUTCDATE(), 'Import')
-GO
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-08_3-54';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-4-CD-08_3-54', '', 'Town and city', 'Live', GETUTCDATE(), 'Import')
-GO
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-08_3-55';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-4-CD-08_3-55', '', '', 'Live', GETUTCDATE(), 'Import')
-GO
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-08_3-56';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-4-CD-08_3-56', '', '', 'Live', GETUTCDATE(), 'Import')
-GO
-
--- County
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-08_4-53';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-4-CD-08_4-53', '', '', 'Live', GETUTCDATE(), 'Import')
-GO
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-08_4-54';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-4-CD-08_4-54', '', 'County', 'Live', GETUTCDATE(), 'Import')
-GO
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-08_4-55';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-4-CD-08_4-55', '', '', 'Live', GETUTCDATE(), 'Import')
-GO
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-08_4-56';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-4-CD-08_4-56', '', '', 'Live', GETUTCDATE(), 'Import')
-GO
-
-
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-09-57';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-4-CD-09-57', '', '', 'Live', GETUTCDATE(), 'Import')
-GO
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-09-58';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-4-CD-09-58', '', 'Postcode', 'Live', GETUTCDATE(), 'Import')
-GO
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-09-59';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-4-CD-09-59', '', '', 'Live', GETUTCDATE(), 'Import')
-GO
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-09-60';
-INSERT INTO Assets
-  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
-VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-4-CD-09-60', '', '', 'Live', GETUTCDATE(), 'Import')
-GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-10-61';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
@@ -3232,13 +3129,7 @@ VALUES
           "Input": {
             "Type": "AddressLookup",
             "Options": null,
-            "Validations": [
-              {
-                "Name": "Required",
-                "Value": null,
-                "ErrorMessage": "Enter building and street"
-              }
-            ]
+            "Validations": []
           },
           "Order": null
         },
@@ -3333,87 +3224,15 @@ VALUES
           "Order": null
         },
         {
-          "QuestionId": "CD-08_1",
-          "Label": "SQ-1-SE-1-PG-4-CD-08_1-54",
-          "ShortLabel": "SQ-1-SE-1-PG-4-CD-08_1-55",
-          "QuestionBodyText": "SQ-1-SE-1-PG-4-CD-08_1-56",
-          "Hint": "SQ-1-SE-1-PG-4-CD-08_1-53",
+          "QuestionId": "CD-08",
+          "Label": "SQ-1-SE-1-PG-4-CD-08-L",
+          "ShortLabel": "SQ-1-SE-1-PG-4-CD-08-SL",
+          "QuestionBodyText": "SQ-1-SE-1-PG-4-CD-08-QBT",
+          "Hint": "SQ-1-SE-1-PG-4-CD-08-H",
           "Input": {
-            "Type": "text",
-            "Options": null,
-            "Validations": [
-              {
-                "Name": "Required",
-                "Value": null,
-                "ErrorMessage": "Enter building and street"
-              }
-            ]
-          },
-          "Order": null
-        },
-        {
-          "QuestionId": "CD-08_2",
-          "Label": "SQ-1-SE-1-PG-4-CD-08_2-54",
-          "ShortLabel": "SQ-1-SE-1-PG-4-CD-08_2-55",
-          "QuestionBodyText": "SQ-1-SE-1-PG-4-CD-08_2-56",
-          "Hint": "SQ-1-SE-1-PG-4-CD-08_2-53",
-          "Input": {
-            "Type": "text",
+            "Type": "AddressLookup",
             "Options": null,
             "Validations": []
-          },
-          "Order": null
-        },
-        {
-          "QuestionId": "CD-08_3",
-          "Label": "SQ-1-SE-1-PG-4-CD-08_3-54",
-          "ShortLabel": "SQ-1-SE-1-PG-4-CD-08_3-55",
-          "QuestionBodyText": "SQ-1-SE-1-PG-4-CD-08_3-56",
-          "Hint": "SQ-1-SE-1-PG-4-CD-08_3-53",
-          "Input": {
-            "Type": "text",
-            "InputClasses": "govuk-!-width-two-thirds",
-            "Options": null,
-            "Validations": [
-              {
-                "Name": "Required",
-                "Value": null,
-                "ErrorMessage": "Enter town or city"
-              }
-            ]
-          },
-          "Order": null
-        },
-        {
-          "QuestionId": "CD-08_4",
-          "Label": "SQ-1-SE-1-PG-4-CD-08_4-54",
-          "ShortLabel": "SQ-1-SE-1-PG-4-CD-08_4-55",
-          "QuestionBodyText": "SQ-1-SE-1-PG-4-CD-08_4-56",
-          "Hint": "SQ-1-SE-1-PG-4-CD-08_4-53",
-          "Input": {
-            "Type": "text",
-            "InputClasses": "govuk-!-width-two-thirds",
-            "Options": null,
-            "Validations": []
-          },
-          "Order": null
-        },
-        {
-          "QuestionId": "CD-09",
-          "Label": "SQ-1-SE-1-PG-4-CD-09-58",
-          "ShortLabel": "SQ-1-SE-1-PG-4-CD-09-59",
-          "QuestionBodyText": "SQ-1-SE-1-PG-4-CD-09-60",
-          "Hint": "SQ-1-SE-1-PG-4-CD-09-57",
-          "Input": {
-            "Type": "Postcode",
-            "Options": null,
-            "Validations": [
-              {
-                "Name": "Required",
-                "Value": null,
-                "ErrorMessage": "Enter postcode"
-              }
-            ]
           },
           "Order": null
         },

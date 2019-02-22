@@ -440,6 +440,11 @@
 
 /* Postcode lookup */
 
+label[for="CD-03"],
+label[for="CD-08"] {
+    display: none;
+}
+
 .autocomplete__wrapper {
     position: relative;
     font-family: nta, Arial, sans-serif;

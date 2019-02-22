@@ -11,6 +11,8 @@
         init: function(elementId) {
             GOVUK.addressLookup.addressInputId = elementId;
             document.querySelector(".address-inputs").style.display = "none";
+            document.querySelector('[for="' + elementId + '"]').style.display =
+                "block";
         },
 
         handleFindAndConfirm: function(query, populateResults) {
