@@ -3,12 +3,17 @@
 	  @QuestionTag NVARCHAR(50)
 AS
 BEGIN 
+/* updates a question within questions or further questions with a 'QuestionTag'
+    NOTE: Null can be inserted to remove a value
+*/
+
 SET NOCOUNT ON
+
 
 DECLARE @json nvarchar(max)
 DECLARE @jsonQuestions nvarchar(max)
 
-select id  into #applicationsToProcess from applicationSections
+select [id]  into #applicationsToProcess from applicationSections
 
 declare @ApplicationIdToProcess uniqueidentifier
 

@@ -119,6 +119,11 @@ exec [Update_ApplicationSections_QuestionTags] 'CD-17', 'company-number'
 exec [Update_ApplicationSections_QuestionTags] 'CD-26', 'charity-number'
 exec [Update_ApplicationSections_QuestionTags] 'CC-31', 'delivery-areas'
 exec [Update_ApplicationSections_QuestionTags] 'CD-40', 'standard-website'
+exec [Update_ApplicationSections_QuestionTags] 'CD-03_1', 'contact-address-1'
+exec [Update_ApplicationSections_QuestionTags] 'CD-03_2', 'contact-address-2'
+exec [Update_ApplicationSections_QuestionTags] 'CD-03_3', 'contact-address-3'
+exec [Update_ApplicationSections_QuestionTags] 'CD-03_4', 'contact-address-4'
+
 -- END OF: ON-1172 remove or comment out once deployed to PROD
 
 
