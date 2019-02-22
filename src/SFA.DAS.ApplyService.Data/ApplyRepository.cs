@@ -825,18 +825,5 @@ namespace SFA.DAS.ApplyService.Data
                     })).FirstOrDefault();
             }
         }
-
-        //public async Task<string> GetFieldValueFromOrganisation(Guid applicationId, string fieldName)
-        //{
-        //    using (var connection = new SqlConnection(_config.SqlConnectionString))
-        //    {
-        //        return (await connection.QueryAsync<string>($@"select {fieldName} from organisations where id =
-	       //                 (select top 1 ApplyingOrganisationId from Applications app where app.id = @applicationId)",
-        //            new
-        //            {
-        //                applicationId
-        //            })).FirstOrDefault();
-        //    }
-        //}
     }
 }
