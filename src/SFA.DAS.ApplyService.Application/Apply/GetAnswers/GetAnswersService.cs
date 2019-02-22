@@ -19,8 +19,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.GetAnswers
 
         public async Task<string> GetAnswersForQuestion(string questionTag, Guid applicationId)
         {
-            var sections = await _applyRepository.GetSections(applicationId,1,null);
-            sections.AddRange(await _applyRepository.GetSections(applicationId, 2, null));
+            var sections = await _applyRepository.GetSections(applicationId);
+
             foreach (var section in sections)
             {
                 foreach (var qna in section.QnAData.Pages)

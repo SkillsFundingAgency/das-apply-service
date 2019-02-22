@@ -14,6 +14,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<Domain.Entities.Application>> GetApplications(Guid userId);
         Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId,  int sectionId, Guid? userId);
         Task<List<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid? userId);
+        Task<List<ApplicationSection>> GetSections(Guid applicationId);
         Task<ApplicationSequence> GetSequence(Guid applicationId, int sequenceId, Guid? userId);
         Task<ApplicationSequence> GetActiveSequence(Guid applicationId);
         Task<List<Asset>> GetAssets();
