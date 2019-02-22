@@ -7,6 +7,7 @@ using System.Web;
 using MediatR;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application.Organisations;
+using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply
@@ -98,18 +99,64 @@ namespace SFA.DAS.ApplyService.Application.Apply
             var stage1 = sequences.Single(seq => seq.SequenceId == SequenceId.Stage1);
             stage1.IsActive = false;
             stage1.NotRequired = true;
+            stage1.Status = ApplicationSequenceStatus.Approved;
+
+            SetSubmissionData(stage1.ApplicationId, stage1.SequenceId).GetAwaiter().GetResult();
 
             sequences.Single(seq => seq.SequenceId == SequenceId.Stage2).IsActive = true;
         }
 
+        private async Task SetSubmissionData(Guid applicationId, SequenceId sequenceId)
+        {
+            var application = await _applyRepository.GetApplication(applicationId);
+
+            if (application != null)
+            {
+                if(application.ApplicationData == null)
+                {
+                    application.ApplicationData = new ApplicationData();
+                }
+
+                if (sequenceId == SequenceId.Stage1)
+                {
+                    application.ApplicationData.LatestInitSubmissionDate = DateTime.UtcNow;
+                    application.ApplicationData.InitSubmissionClosedDate = DateTime.UtcNow;
+                }
+                else if (sequenceId == SequenceId.Stage2)
+                {
+                    application.ApplicationData.LatestStandardSubmissionDate = DateTime.UtcNow;
+                    application.ApplicationData.StandardSubmissionClosedDate = DateTime.UtcNow;
+                }
+
+                await _applyRepository.UpdateApplicationData(application.Id, application.ApplicationData);
+            }
+        }
+
         private void RemoveSectionThree(List<ApplicationSection> sections)
         {
-            sections.Where(s => s.SectionId == 3).ToList().ForEach(s => s.NotRequired = true);
+            foreach(var sec in sections.Where(s => s.SectionId == 3))
+            {
+                sec.NotRequired = true;
+                sec.Status = ApplicationSectionStatus.Evaluated;
+
+                var fhaGrade = sec.QnAData.FinancialApplicationGrade;
+                if (fhaGrade is null)
+                {
+                    fhaGrade = new FinancialApplicationGrade();
+                }
+
+                fhaGrade.SelectedGrade = FinancialApplicationSelectedGrade.Exempt;
+                fhaGrade.GradedDateTime = DateTime.UtcNow;
+            }
         }
 
         private void RemoveSectionsOneAndTwo(List<ApplicationSection> sections)
         {
-            sections.Where(s => s.SectionId == 1 || s.SectionId == 2).ToList().ForEach(s => s.NotRequired = true);
+            foreach (var sec in sections.Where(s => s.SectionId == 1 || s.SectionId == 2))
+            {
+                sec.NotRequired = true;
+                sec.Status = ApplicationSectionStatus.Evaluated;
+            }
         }
     }
 }

@@ -13,6 +13,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.CompaniesHouse
         public IEnumerable<string> NatureOfBusiness { get; set; } // sic codes
         public DateTime? IncorporatedOn { get; set; } // date_of_creation
         public DateTime? DissolvedOn { get; set; } // date_of_cessation
+        public bool? IsLiquidated { get; set; }
         public IEnumerable<string> PreviousNames { get; set; }
 
         public Accounts Accounts { get; set; }
