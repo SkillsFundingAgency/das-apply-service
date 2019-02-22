@@ -106,6 +106,22 @@ GO
 -- END OF: ON-1502 Fixes - Remove once deployed to PROD
 
 
+-- ON-1172 updating existing applications to include QuesstionTag against specific questions
+exec [Update_ApplicationSections_QuestionTags] 'CD-30', 'trading-name'
+exec [Update_ApplicationSections_QuestionTags] 'CD-01', 'use-trading-name'
+exec [Update_ApplicationSections_QuestionTags] 'CD-02', 'contact-name'
+exec [Update_ApplicationSections_QuestionTags] 'CD-03', 'contact-address1'
+exec [Update_ApplicationSections_QuestionTags] 'CD-04', 'contact-postcode'
+exec [Update_ApplicationSections_QuestionTags] 'CD-05', 'contact-email'
+exec [Update_ApplicationSections_QuestionTags] 'CD-06', 'contact-phone-number'
+exec [Update_ApplicationSections_QuestionTags] 'CD-12', 'company-ukprn'
+exec [Update_ApplicationSections_QuestionTags] 'CD-17', 'company-number'
+exec [Update_ApplicationSections_QuestionTags] 'CD-26', 'charity-number'
+exec [Update_ApplicationSections_QuestionTags] 'CC-31', 'delivery-areas'
+exec [Update_ApplicationSections_QuestionTags] 'CD-40', 'standard-website'
+-- END OF: ON-1172 remove or comment out once deployed to PROD
+
+
 -- Add the Workflows
 :r ..\WorkflowLatest.sql
 
