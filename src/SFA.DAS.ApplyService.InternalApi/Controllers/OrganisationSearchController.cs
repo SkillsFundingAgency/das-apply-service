@@ -17,13 +17,15 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         private readonly AssessorServiceApiClient _assessorServiceApiClient;
         private readonly ProviderRegisterApiClient _providerRegisterApiClient;
         private readonly ReferenceDataApiClient _referenceDataApiClient;
+        private readonly CompaniesHouseApiClient _companiesHouseApiClient;
 
-        public OrganisationSearchController(ILogger<OrganisationSearchController> logger, AssessorServiceApiClient assessorServiceApiClient, ProviderRegisterApiClient providerRegisterApiClient, ReferenceDataApiClient referenceDataApiClient)
+        public OrganisationSearchController(ILogger<OrganisationSearchController> logger, AssessorServiceApiClient assessorServiceApiClient, ProviderRegisterApiClient providerRegisterApiClient, ReferenceDataApiClient referenceDataApiClient, CompaniesHouseApiClient companiesHouseApiClient)
         {
             _logger = logger;
             _assessorServiceApiClient = assessorServiceApiClient;
             _providerRegisterApiClient = providerRegisterApiClient;
             _referenceDataApiClient = referenceDataApiClient;
+            _companiesHouseApiClient = companiesHouseApiClient;
         }
 
         [HttpGet("OrganisationSearch")]
@@ -435,6 +437,27 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             }
 
             return results;
+        }
+
+        [HttpGet("OrganisationSearch/{companyNumber}/isActivelyTrading")]
+        public async Task<bool> isCompanyActivelyTrading(string companyNumber)
+        {
+
+            _logger.LogInformation($"isCompanyActivelyTrading({companyNumber})");
+
+            bool result = false;
+
+            // EPAO Register
+            try
+            {
+                result = await _companiesHouseApiClient.IsCompanyActivelyTrading(companyNumber);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error from Companies House. Message: {ex.Message}");
+            }
+
+            return result;
         }
     }
 }
