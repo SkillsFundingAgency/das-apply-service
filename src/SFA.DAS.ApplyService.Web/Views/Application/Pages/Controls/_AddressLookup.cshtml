@@ -22,29 +22,58 @@
 
 <div class="address-inputs">
     <div class="govuk-form-group">
-        <label class="govuk-label govuk-label--m" for="address-line-1">
+        <label class="govuk-label govuk-label--m" for="@(Model.QuestionId)_1">
             Building and street
         </label>
-        <input class="govuk-input govuk-!-margin-bottom-2" type="text" id="@(Model.QuestionId)-address-line-1" name="@(Model.QuestionId)-address-line-1">
-        <input class="govuk-input" type="text" id="@(Model.QuestionId)-address-line-2" name="@(Model.QuestionId)-address-line-2">
+        <input
+            class="govuk-input govuk-!-margin-bottom-2"
+            type="text"
+            id="@(Model.QuestionId)_1"
+            name="@(Model.QuestionId)_1" 
+            value="@Model.Value"
+        >
+        <input 
+            class="govuk-input"
+            type="text"
+            id="@(Model.QuestionId)_2"
+            name="@(Model.QuestionId)_2" 
+            value="@Model.Value"
+        >
     </div>
     <div class="govuk-form-group">
-        <label class="govuk-label govuk-label--m" for="address-city">
+        <label class="govuk-label govuk-label--m" for="@(Model.QuestionId)_3">
             Town or city
         </label>
-        <input class="govuk-input govuk-!-width-two-thirds" type="text" id="@(Model.QuestionId)-address-city" name="@(Model.QuestionId)-address-city">
+        <input
+            class="govuk-input govuk-!-width-two-thirds"
+            type="text"
+            id="@(Model.QuestionId)_3"
+            name="@(Model.QuestionId)_3"
+            value="@Model.Value"
+        >
     </div>
     <div class="govuk-form-group">
-        <label class="govuk-label govuk-label--m" for="address-county">
+        <label class="govuk-label govuk-label--m" for="@(Model.QuestionId)_4">
             County
         </label>
-        <input class="govuk-input govuk-!-width-two-thirds" type="text" id="@(Model.QuestionId)-address-county" name="@(Model.QuestionId)-address-county">
+        <input
+            class="govuk-input govuk-!-width-two-thirds" 
+            type="text"
+            id="@(Model.QuestionId)_4"
+            name="@(Model.QuestionId)_4" 
+            value="@Model.Value"
+        >
     </div>
     <div class="govuk-form-group">
-        <label class="govuk-label govuk-label--m" for="address-postcode">
+        <label class="govuk-label govuk-label--m" for="@(Model.QuestionId)_5">
             Postcode
         </label>
-        <input class="govuk-input govuk-input--width-10" type="text" id="@(Model.QuestionId)-address-postcode" name="@(Model.QuestionId)-address-postcode">
+        <input
+            class="govuk-input govuk-input--width-10" 
+            type="text"
+            id="@(Model.QuestionId)_5"
+            name="@(Model.QuestionId)_5"
+            value="@Model.Value"
+        >
     </div>
 </div>
-

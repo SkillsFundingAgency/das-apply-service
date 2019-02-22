@@ -113,9 +113,9 @@
                                             </div>
                                         }
                                         <h2 class="govuk-label-wrapper">
-                                            <label class="govuk-label govuk-label--xl" for="@question.QuestionId">
-                                                @Html.Raw(question.Label)
-                                            </label>
+                                                <label class="govuk-label govuk-label--xl" for="@question.QuestionId">
+                                                    @Html.Raw(question.Label)
+                                                </label>
                                         </h2>
                                     }
 
@@ -161,7 +161,8 @@
                                 }
                             }
                             <div class="govuk-form-group @(questionHasError ? "govuk-form-group--error" : "")">
-                                <label class="govuk-label govuk-label--m" for="@question.QuestionId">
+                                @{ var addressLookupClass = question.Type == "AddressLookup" ? "govuk-label--address-lookup" : ""; }
+                                <label class="govuk-label govuk-label--m @addressLookupClass" for="@question.QuestionId">
                                     @Html.Raw(question.Label)
                                 </label>
 

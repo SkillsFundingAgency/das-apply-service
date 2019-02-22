@@ -9,10 +9,37 @@
         populateResultsFn: null,
 
         init: function(elementId) {
-            GOVUK.addressLookup.addressInputId = elementId;
-            document.querySelector(".address-inputs").style.display = "none";
-            document.querySelector('[for="' + elementId + '"]').style.display =
-                "block";
+            this.addressInputId = elementId;
+            // Check if we already have address data and show inputs if so.
+            if (this.addressExists(elementId)) {
+                this.displayAddressLookup("hide");
+            } else {
+                this.displayAddressLookup("show");
+            }
+        },
+
+        displayAddressLookup: function(hideOrShow) {
+            if (hideOrShow === "hide") {
+                document.querySelector(".address-inputs").style.display =
+                    "block";
+                document.querySelector(
+                    ".govuk-label--address-lookup"
+                ).style.display = "none";
+                document.querySelector(
+                    "#postcode-lookup"
+                ).parentNode.style.display = "none";
+            } else if (hideOrShow === "show") {
+                document.querySelector(".address-inputs").style.display =
+                    "none";
+                document.querySelector(
+                    ".govuk-label--address-lookup"
+                ).style.display = "block";
+                document.querySelector(
+                    "#postcode-lookup"
+                ).parentNode.style.display = "block";
+            } else {
+                return false;
+            }
         },
 
         handleFindAndConfirm: function(query, populateResults) {
@@ -109,45 +136,59 @@
             http.send(params);
         },
 
+        addressExists(elementId) {
+            // If first line of address, city and postcode are populated
+            if (
+                document.querySelector("#" + elementId + "_" + 1).value &&
+                document.querySelector("#" + elementId + "_" + 4).value &&
+                document.querySelector("#" + elementId + "_" + 5).value
+            ) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+
         fillAddress: function(address) {
+            var addressArr = [
+                address.Line1,
+                address.Line2,
+                address.City,
+                address.Province,
+                address.PostalCode
+            ];
+            var panelContent = "";
+
+            // Populate (hidden) inputs and panel content
+            addressArr.forEach(function(item, index) {
+                document.querySelector(
+                    "#" + GOVUK.addressLookup.addressInputId + "_" + (index + 1)
+                ).value = item;
+                panelContent +=
+                    '<p class="govuk-body govuk-!-margin-bottom-0">' +
+                    item +
+                    "</p>";
+            });
+
+            // Clear lookup input
             document.querySelector(
                 "#" + GOVUK.addressLookup.addressInputId
             ).value = "";
-            document.querySelector(
-                "#" + GOVUK.addressLookup.addressInputId + "-address-line-1"
-            ).value = address.Line1;
-            document.querySelector(
-                "#" + GOVUK.addressLookup.addressInputId + "-address-line-2"
-            ).value = address.Line2;
-            document.querySelector(
-                "#" + GOVUK.addressLookup.addressInputId + "-address-city"
-            ).value = address.City;
-            document.querySelector(
-                "#" + GOVUK.addressLookup.addressInputId + "-address-county"
-            ).value = address.Province;
-            document.querySelector(
-                "#" + GOVUK.addressLookup.addressInputId + "-address-postcode"
-            ).value = address.PostalCode;
 
+            // Hide label and empty postcode lookup div
+            document.querySelector(".govuk-label--address-lookup").innerText =
+                "Address";
             document.querySelector("#postcode-lookup").innerText = "";
+
+            // Create panel and populate with address
             var addressPanel = document.createElement("div");
             addressPanel.className = "govuk-inset-text";
-            addressPanel.innerHTML =
-                '<p class="govuk-body govuk-!-margin-bottom-0">' +
-                address.Line1 +
-                '</p><p class="govuk-body govuk-!-margin-bottom-0">' +
-                address.Line2 +
-                '</p><p class="govuk-body govuk-!-margin-bottom-0">' +
-                address.City +
-                '</p><p class="govuk-body govuk-!-margin-bottom-0">' +
-                address.Province +
-                '</p><p class="govuk-body govuk-!-margin-bottom-0">' +
-                address.PostalCode +
-                "</p>";
+            addressPanel.innerHTML = panelContent;
             document
                 .querySelector("#postcode-lookup")
                 .appendChild(addressPanel);
 
+            // Create link for editing
             var editLink = document.createElement("a");
             editLink.className = "govuk-link";
             editLink.href = "#edit-address";
@@ -161,10 +202,7 @@
         },
 
         editAddress: function() {
-            var lookup = document.querySelector("#postcode-lookup").parentNode;
-            document.querySelector(".address-inputs").style.display = "block";
-            lookup.style.display = "none";
-            lookup.previousElementSibling.style.display = "none";
+            GOVUK.addressLookup.displayAddressLookup("hide");
         },
 
         inputValueTemplate: function(result) {

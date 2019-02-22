@@ -440,8 +440,7 @@
 
 /* Postcode lookup */
 
-label[for="CD-03"],
-label[for="CD-08"] {
+.govuk-label--address-lookup {
     display: none;
 }
 
