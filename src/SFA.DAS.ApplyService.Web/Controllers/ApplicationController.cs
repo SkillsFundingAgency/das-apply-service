@@ -367,7 +367,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var errorMessages = new List<ValidationErrorDetail>();
             var answers = new List<Answer>();
             
-            var fileValidationPassed = FileValidationPassed(answers, page, errorMessages);
+            var fileValidationPassed = FileValidator.FileValidationPassed(answers, page, errorMessages, ModelState, HttpContext.Request.Form.Files);
             GetAnswersFromForm(answers);
 
             var updatePageResult = await _apiClient.UpdatePageAnswers(applicationId, userId, sequenceId, sectionId, pageId, answers);
