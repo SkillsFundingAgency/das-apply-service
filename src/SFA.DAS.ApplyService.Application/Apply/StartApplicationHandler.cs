@@ -147,14 +147,13 @@ namespace SFA.DAS.ApplyService.Application.Apply
                 sec.NotRequired = true;
                 sec.Status = ApplicationSectionStatus.Evaluated;
 
-                var fhaGrade = sec.QnAData.FinancialApplicationGrade;
-                if (fhaGrade is null)
+                if (sec.QnAData.FinancialApplicationGrade is null)
                 {
-                    fhaGrade = new FinancialApplicationGrade();
+                    sec.QnAData.FinancialApplicationGrade = new FinancialApplicationGrade();
                 }
 
-                fhaGrade.SelectedGrade = FinancialApplicationSelectedGrade.Exempt;
-                fhaGrade.GradedDateTime = DateTime.UtcNow;
+                sec.QnAData.FinancialApplicationGrade.SelectedGrade = FinancialApplicationSelectedGrade.Exempt;
+                sec.QnAData.FinancialApplicationGrade.GradedDateTime = DateTime.UtcNow;
             }
         }
 
