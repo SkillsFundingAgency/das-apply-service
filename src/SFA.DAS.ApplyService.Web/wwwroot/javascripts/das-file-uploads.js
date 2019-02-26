@@ -1,117 +1,103 @@
-var r = new Resumable({
-  target: "/Upload/Chunks",
-  chunkSize: 100000,
-  query: {applicationId: "30fcf089-b39f-48d4-93a1-79aa481623c1",sequenceId: 1, sectionId: 3, page: 23, questionId: "FHA-01"}
-});
+(function(global) {
+    "use strict";
 
-var dropTarget = document.querySelector(".js-drop-target");
-r.assignBrowse(dropTarget);
-r.assignDrop(dropTarget);
+    var GOVUK = global.GOVUK || {};
 
-var uploadProgress = document.querySelector(".js-upload-progress");
-var uploadControls = document.querySelector(".js-upload-controls");
-var uploadedContainer = document.querySelector(".js-uploaded-container");
-var uploadedFiles = document.querySelector(".js-uploaded-files");
+    GOVUK.fileUpload = {
+        init: function(args) {
+            var r = new Resumable(args);
+            this.handleUpload(r);
+        },
 
-var progressBar = new ProgressBar(uploadProgress);
+        handleUpload: function(r) {
+            var dropTarget = document.querySelector(".js-drop-target");
+            r.assignDrop(dropTarget);
+            r.assignBrowse(dropTarget);
 
-r.on("fileAdded", function(file, event) {
-  r.upload();
-  progressBar.fileAdded();
-});
+            var manualUploadLink = document.querySelector(".js-browse-link");
+            var uploadProgress = document.querySelector(".js-upload-progress");
+            var uploadControls = document.querySelector(".js-upload-controls");
+            var uploadedContainer = document.querySelector(
+                ".js-uploaded-container"
+            );
+            var uploadedFiles = document.querySelector(".js-uploaded-files");
 
-r.on("fileSuccess", function(file, message) {
-  // console.debug("fileSuccess", file);
+            var progressBar = new ProgressBar(uploadProgress);
 
-  progressBar.finish();
-  // console.log(file.fileName);
-  var fileNameListItem = document.createElement("tr");
-  fileNameListItem.className = "govuk-table__row";
-  fileNameListItem.innerHTML =
-    '<th class="govuk-table__header" scope="row">' +
-    file.fileName +
-    '</th><td class="govuk-table__cell govuk-table__cell--numeric"><a class="js-remove-file" href=#">Remove</a></td>';
-  uploadedFiles.appendChild(fileNameListItem);
-  uploadedContainer.style.display = "block";
+            r.on("fileAdded", function(file, event) {
+                // > 20mb
+                if (file.file.size >= 2e7) {
+                    // this.showError("fileSize", file.file.size);
+                    console.error(
+                        "Your PDF file(s) must be smaller than 20MB."
+                    );
+                    return false;
+                }
 
-  // Remove file (from ui) when delete clicked
-  var deleteButtons = document.querySelectorAll(".js-remove-file");
-  deleteButtons.forEach(function(button) {
-    button.addEventListener("click", function(event) {
-      event.target.parentNode.parentNode.remove();
-      r.removeFile(file);
-    });
-  });
-});
+                r.upload();
+                progressBar.fileAdded();
+            });
 
-r.on("fileProgress", function(file, message) {
-  progressBar.uploading(file.progress() * 100);
-});
+            r.on("fileSuccess", function(file, message) {
+                progressBar.finish();
+                var pageLink =
+                    "/Application/" +
+                    r.opts.query.applicationId +
+                    "/Sequence/" +
+                    r.opts.query.sequenceId +
+                    "/Section/" +
+                    r.opts.query.sectionId +
+                    "/Page/" +
+                    r.opts.query.page +
+                    "/Question/" +
+                    r.opts.query.questionId;
+                var fileNameListItem = document.createElement("tr");
+                fileNameListItem.className = "govuk-table__row";
+                fileNameListItem.innerHTML =
+                    '<td class="govuk-table__cell govuk-table__cell--break-word" scope="row"><a class="govuk-link" href="' +
+                    pageLink +
+                    "/" +
+                    file.fileName +
+                    '/Download" download>' +
+                    file.fileName +
+                    '</a></td><td class="govuk-table__cell govuk-table__cell--numeric"><a class="govuk-link" href="' +
+                    pageLink +
+                    '/Section/Delete">Remove</a></td>';
+                uploadedFiles.appendChild(fileNameListItem);
+                uploadedContainer.style.display = "block";
+            });
 
-r.on("complete", function() {
-  // console.debug("complete");
-  uploadProgress.style.display = "none";
-  uploadControls.style.display = "block";
-});
+            r.on("fileProgress", function(file, message) {
+                progressBar.uploading(file.progress() * 100);
+            });
 
-function ProgressBar(ele) {
-  this.fileAdded = function() {
-    // console.log("added");
-    ele.style.display = "block";
-    uploadControls.style.display = "none";
-    ele.style.width = "0%";
-  };
+            r.on("complete", function() {
+                uploadProgress.style.display = "none";
+                uploadControls.style.display = "block";
+            });
 
-  this.uploading = function(progress) {
-    console.log("uploading: " + Math.round(progress) + "%");
-    ele.style.width = progress + "%";
-  };
+            function ProgressBar(ele) {
+                this.fileAdded = function() {
+                    ele.style.display = "block";
+                    uploadControls.style.display = "none";
+                    ele.style.width = "0%";
+                };
 
-  this.finish = function() {
-    // console.log("finished");
-    ele.style.width = "100%";
-  };
-}
+                this.uploading = function(progress) {
+                    // console.log("uploading: " + Math.round(progress) + "%");
+                    ele.style.width = progress + "%";
+                };
 
-//r.on('pause', function(){
-//    $('#pause-upload-btn').find('.glyphicon').removeClass('glyphicon-pause').addClass('glyphicon-play');
-//});
-// r.on('fileProgress', function(file){
-//     console.debug('fileProgress', file);
-// });
-// r.on('fileAdded', function(file, event){
-//     r.upload();
-//     console.debug('fileAdded', event);
-// });
-// r.on('filesAdded', function(array){
-//     r.upload();
-//     console.debug('filesAdded', array);
-// });
-// r.on('fileRetry', function(file){
-//     console.debug('fileRetry', file);
-// });
-// r.on('fileError', function(file, message){
-//     console.debug('fileError', file, message);
-// });
-// r.on("fileSuccess", function(file) {
-//   console.debug("fileSuccess", file);
-// });
-// r.on('uploadStart', function(){
-//     console.debug('uploadStart');
-// });
-// r.on("complete", function() {
-//   console.debug("complete");
-// });
-// r.on('progress', function(){
-//     console.debug('progress');
-//     console.log(r.progress())
-// });
-// r.on("error", function(message, file) {
-//   console.debug("error", message, file);
-// });
-// r.on('pause', function(){
-//     console.debug('pause');
-// });
-// r.on('cancel', function(){
-//     console.debug('cancel');
-// });
+                this.finish = function() {
+                    ele.style.width = "100%";
+                };
+            }
+
+            manualUploadLink.addEventListener("click", function(event) {
+                event.preventDefault();
+            });
+        }
+    };
+
+    global.GOVUK = GOVUK;
+})(window);
