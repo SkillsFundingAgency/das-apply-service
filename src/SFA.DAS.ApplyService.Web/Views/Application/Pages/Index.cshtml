@@ -57,6 +57,15 @@
                     </div>
                 }
 
+                <div class="govuk-error-summary js-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list js-validation-errors"></ul>
+                    </div>
+                </div>
+
                 @if (Model.Questions.Count() > 1)
                 {
                     @if (!string.IsNullOrEmpty(@Model.Title))

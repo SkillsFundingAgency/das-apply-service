@@ -1,3 +1,37 @@
+function _objectSpread(target) {
+    for (var i = 1; i < arguments.length; i++) {
+        var source = arguments[i] != null ? arguments[i] : {};
+        var ownKeys = Object.keys(source);
+        if (typeof Object.getOwnPropertySymbols === "function") {
+            ownKeys = ownKeys.concat(
+                Object.getOwnPropertySymbols(source).filter(function(sym) {
+                    return Object.getOwnPropertyDescriptor(
+                        source,
+                        sym
+                    ).enumerable;
+                })
+            );
+        }
+        ownKeys.forEach(function(key) {
+            _defineProperty(target, key, source[key]);
+        });
+    }
+    return target;
+}
+function _defineProperty(obj, key, value) {
+    if (key in obj) {
+        Object.defineProperty(obj, key, {
+            value: value,
+            enumerable: true,
+            configurable: true,
+            writable: true
+        });
+    } else {
+        obj[key] = value;
+    }
+    return obj;
+}
+
 (function(global) {
     "use strict";
 
@@ -5,8 +39,36 @@
 
     GOVUK.fileUpload = {
         init: function(args) {
-            var r = new Resumable(args);
+            var that = this;
+            var r = new Resumable({
+                ...args,
+                maxFilesErrorCallback: function(files, errorCount) {
+                    that.handleError("maxFiles", files, errorCount);
+                },
+                maxFileSizeErrorCallback: function(file, errorCount) {
+                    that.handleError("fileSize", file, errorCount);
+                },
+                fileTypeErrorCallback: function(file, errorCount) {
+                    that.handleError("fileType", file, errorCount);
+                }
+            });
             this.handleUpload(r);
+        },
+
+        handleError(errorType, files, errorCount) {
+            console.log("There is an error");
+            console.log(
+                "errorType, files, errorCount:",
+                errorType,
+                files,
+                errorCount
+            );
+            var errorSummary = document.querySelector(".js-error-summary");
+            var currentErrors = document.querySelector(".js-validation-errors");
+            var error = document.createElement("li");
+            error.innerHTML = '<a href="">' + errorType + "</a>";
+            currentErrors.appendChild(error);
+            errorSummary.style.display = "block";
         },
 
         handleUpload: function(r) {
@@ -26,13 +88,13 @@
 
             r.on("fileAdded", function(file, event) {
                 // > 20mb
-                if (file.file.size >= 2e7) {
-                    // this.showError("fileSize", file.file.size);
-                    console.error(
-                        "Your PDF file(s) must be smaller than 20MB."
-                    );
-                    return false;
-                }
+                // if (file.file.size >= 2e7) {
+                //     // this.showError("fileSize", file.file.size);
+                //     console.error(
+                //         "Your PDF file(s) must be smaller than 20MB."
+                //     );
+                //     return false;
+                // }
 
                 r.upload();
                 progressBar.fileAdded();
