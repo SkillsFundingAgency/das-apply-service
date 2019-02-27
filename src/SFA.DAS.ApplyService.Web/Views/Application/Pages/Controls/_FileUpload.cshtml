@@ -79,52 +79,49 @@
                 @foreach (var uploadedFile in Model.FileUploadInfo.Uploads)
                 {
                     <tr class="govuk-table__row">
-                        <th class="govuk-table__header" scope="row">
-                            
+                        <td class="govuk-table__cell govuk-table__cell--break-word" scope="row">
+                            Razor
                             <a class="govuk-link" href="@Url.Action("Download", "Application", new
-                                                        {
-                                                            applicationId = Model.ApplicationId,
-                                                            sequenceId = Model.SequenceId,
-                                                            sectionId = Model.SectionId,
-                                                            pageId = Model.PageId,
-                                                            questionId = Model.QuestionId,
-                                                            filename = Model.Value
-                                                        })" download>
+                            {
+                                applicationId = Model.ApplicationId,
+                                sequenceId = Model.SequenceId,
+                                sectionId = Model.SectionId,
+                                pageId = Model.PageId,
+                                questionId = Model.QuestionId,
+                                filename = Model.Value
+                            })" download>
                                 @uploadedFile.Filename
                             </a>
-                        </th>
+                        </td>
                         <td class="govuk-table__cell govuk-table__cell--numeric">
                             <a class="govuk-link" href="@Url.Action("DeleteFile", "Application", new
-                                                        {
-                                                            applicationId = Model.ApplicationId,
-                                                            sequenceId = Model.SequenceId,
-                                                            sectionId = Model.SectionId,
-                                                            pageId = Model.PageId,
-                                                            questionId = Model.QuestionId,
-                                                            redirectAction = Model.RedirectAction,
-                                                            fileName = uploadedFile.Filename
-                                                        })">
-                                Remove
-                                <span class="govuk-visually-hidden"> file</span>
+                            {
+                                applicationId = Model.ApplicationId,
+                                sequenceId = Model.SequenceId,
+                                sectionId = Model.SectionId,
+                                pageId = Model.PageId,
+                                questionId = Model.QuestionId,
+                                redirectAction = Model.RedirectAction,
+                                fileName = uploadedFile.Filename
+                            })">
+                                Remove <span class="govuk-visually-hidden"> file</span>
                             </a>
                         </td>
                     </tr>
                 }
-                
-                
                 </tbody>
             </table>
             <ul class="govuk-list js-uploaded-files"></ul>
             
         </div>
 
-        <div href="#" class="js-drop-target">
+        <div href="#" class="js-drop-target govuk-!-margin-bottom-4">
             <div class="js-upload-controls">
-                <p class="govuk-body govuk-!-margin-bottom-1">Drag files here</p>
-                <p class="govuk-body govuk-!-margin-bottom-0">or <a class="js-browse-link govuk-link" href="#">choose files to upload</a></p>
+                <p class="govuk-body-l govuk-!-margin-bottom-0">Drag files here</p>
             </div>
             <div class="js-upload-progress"></div>
         </div>
+        <p class="govuk-body govuk-!-margin-bottom-0">or <a class="js-browse-link govuk-link" href="#">choose files to upload</a></p>
     </div>
 
 

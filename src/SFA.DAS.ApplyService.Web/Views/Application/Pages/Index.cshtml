@@ -127,13 +127,13 @@
                                         </h2>
                                     }
 
-                                    @*                                     @if (question.Type == "FileUpload") *@
-                                    @*                                     { *@
-                                    @*                                         @section Scripts { *@
-                                    @*                                              *@
-                                    @*                                             $1$ <script src="@Url.Content("~/javascripts/das-file-uploads.js")"></script> #1# *@
-                                    @*                                         } *@
-                                    @*                                     } *@
+                                    @*   @if (question.Type == "FileUpload") *@
+                                    @*   { *@
+                                    @*       @section Scripts { *@
+                                    @*            *@
+                                    @*           $1$ <script src="@Url.Content("~/javascripts/das-file-uploads.js")"></script> #1# *@
+                                    @*       } *@
+                                    @*   } *@
 
 
                                     @if (question.QuestionBodyText != null)

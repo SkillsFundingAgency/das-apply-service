@@ -450,11 +450,11 @@
 .js-drop-target {
     padding: 25px;
     /* height: 100px; */
-    border: 2px dashed #dee0e2;
+    border: 4px dashed #dee0e2;
 }
 
 .js-drop-target.dragover {
-    border: 2px dashed #005ea5;
+    border-color: #005ea5;
 }
 
 .js-upload-progress {
@@ -468,7 +468,7 @@
 }
 
 .js-uploaded-container {
-    display: none;
+    /* display: none; */
 }
 
 .js-error-summary {

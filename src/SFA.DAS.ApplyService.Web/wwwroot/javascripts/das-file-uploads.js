@@ -38,6 +38,11 @@ function _defineProperty(obj, key, value) {
     var GOVUK = global.GOVUK || {};
 
     GOVUK.fileUpload = {
+        uploadedFiles: document.querySelector(".js-uploaded-files"),
+        errorSummary: document.querySelector(".js-error-summary"),
+        currentErrors: document.querySelector(".js-validation-errors"),
+        dropTarget: document.querySelector(".js-drop-target"),
+
         init: function(args) {
             var that = this;
             var r = new Resumable({
@@ -52,50 +57,48 @@ function _defineProperty(obj, key, value) {
                     that.handleError("fileType", file, errorCount);
                 }
             });
-            this.handleUpload(r);
+            this.handleUpload(r, that);
         },
 
-        handleError(errorType, files, errorCount) {
-            console.log("There is an error");
-            console.log(
-                "errorType, files, errorCount:",
-                errorType,
-                files,
-                errorCount
-            );
-            var errorSummary = document.querySelector(".js-error-summary");
-            var currentErrors = document.querySelector(".js-validation-errors");
+        clearErrors: function() {
+            this.currentErrors.innerText = "";
+            this.errorSummary.style.display = "none";
+        },
+
+        handleError: function(errorType, files, errorCount) {
+            console.log(errorType);
+            this.clearErrors();
+            const errorMessage =
+                errorType === "fileType"
+                    ? "Upload must be a PDF"
+                    : errorType === "maxFiles"
+                    ? "You may only upload 1 file at once"
+                    : errorType === "fileSize"
+                    ? "File must be less than 10mb"
+                    : null;
             var error = document.createElement("li");
-            error.innerHTML = '<a href="">' + errorType + "</a>";
-            currentErrors.appendChild(error);
-            errorSummary.style.display = "block";
+            error.innerHTML = '<a href="#go-to-error">' + errorMessage + "</a>";
+            this.dropTarget.style.borderColor = "#b10e1e";
+            this.currentErrors.appendChild(error);
+            this.errorSummary.style.display = "block";
+            this.errorSummary.focus();
         },
 
-        handleUpload: function(r) {
-            var dropTarget = document.querySelector(".js-drop-target");
-            r.assignDrop(dropTarget);
-            r.assignBrowse(dropTarget);
+        handleUpload: function(r, that) {
+            r.assignDrop(that.dropTarget);
 
             var manualUploadLink = document.querySelector(".js-browse-link");
+            r.assignBrowse(manualUploadLink);
+
             var uploadProgress = document.querySelector(".js-upload-progress");
             var uploadControls = document.querySelector(".js-upload-controls");
             var uploadedContainer = document.querySelector(
                 ".js-uploaded-container"
             );
-            var uploadedFiles = document.querySelector(".js-uploaded-files");
 
             var progressBar = new ProgressBar(uploadProgress);
 
             r.on("fileAdded", function(file, event) {
-                // > 20mb
-                // if (file.file.size >= 2e7) {
-                //     // this.showError("fileSize", file.file.size);
-                //     console.error(
-                //         "Your PDF file(s) must be smaller than 20MB."
-                //     );
-                //     return false;
-                // }
-
                 r.upload();
                 progressBar.fileAdded();
             });
@@ -116,7 +119,7 @@ function _defineProperty(obj, key, value) {
                 var fileNameListItem = document.createElement("tr");
                 fileNameListItem.className = "govuk-table__row";
                 fileNameListItem.innerHTML =
-                    '<td class="govuk-table__cell govuk-table__cell--break-word" scope="row"><a class="govuk-link" href="' +
+                    '<td class="govuk-table__cell govuk-table__cell--break-word" scope="row">JavaScript <a class="govuk-link" href="' +
                     pageLink +
                     "/" +
                     file.fileName +
@@ -124,8 +127,10 @@ function _defineProperty(obj, key, value) {
                     file.fileName +
                     '</a></td><td class="govuk-table__cell govuk-table__cell--numeric"><a class="govuk-link" href="' +
                     pageLink +
-                    '/Section/Delete">Remove</a></td>';
-                uploadedFiles.appendChild(fileNameListItem);
+                    "/Filename/" +
+                    file.fileName +
+                    '/Section/Delete">Remove <span class="govuk-visually-hidden"> file</span></a></td>';
+                that.uploadedFiles.appendChild(fileNameListItem);
                 uploadedContainer.style.display = "block";
             });
 
@@ -156,7 +161,7 @@ function _defineProperty(obj, key, value) {
             }
 
             manualUploadLink.addEventListener("click", function(event) {
-                event.preventDefault();
+                // event.preventDefault();
             });
         }
     };
