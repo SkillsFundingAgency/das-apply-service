@@ -38,24 +38,23 @@
             else
             {
                 @if (!ViewData.ModelState.IsValid)
-                {
-
-                    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-                        <h2 class="govuk-error-summary__title" id="error-summary-title">
-                            There is a problem
-                        </h2>
-                        <div class="govuk-error-summary__body">
-                            <ul class="govuk-list govuk-error-summary__list">
-                                @foreach (var error in Model.ErrorMessages)
-                                {
-                                    <li>
-                                        <a href="#@error.Field">@error.ErrorMessage</a>
-                                    </li>
-                                }
-                            </ul>
-                        </div>
-                    </div>
-                }
+                 {
+                     <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                         <h2 class="govuk-error-summary__title" id="error-summary-title">
+                             There is a problem
+                         </h2>
+                         <div class="govuk-error-summary__body">
+                             <ul class="govuk-list govuk-error-summary__list">
+                                 @foreach (var error in Model.ErrorMessages)
+                                 {
+                                     <li>
+                                         <a href="#@error.Field">@error.ErrorMessage</a>
+                                     </li>
+                                 }
+                             </ul>
+                         </div>
+                     </div>
+                 }
 
                 <div class="govuk-error-summary js-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
                     <h2 class="govuk-error-summary__title" id="error-summary-title">
@@ -67,33 +66,33 @@
                 </div>
 
                 @if (Model.Questions.Count() > 1)
-                {
-                    @if (!string.IsNullOrEmpty(@Model.Title))
-                    {
-                        <h1 class="govuk-heading-xl">
-                            @Html.Raw(Model.Title)
-                        </h1>
-                    }
+                 {
+                     @if (!string.IsNullOrEmpty(@Model.Title))
+                      {
+                          <h1 class="govuk-heading-xl">
+                              @Html.Raw(Model.Title)
+                          </h1>
+                      }
 
-                    @if (!string.IsNullOrEmpty(@Model.BodyText))
-                    {
-                        @Html.Raw(Model.BodyText)
-                    }
-                }
+                     @if (!string.IsNullOrEmpty(@Model.BodyText))
+                      {
+                          @Html.Raw(Model.BodyText)
+                      }
+                 }
 
                 @if (Model.HasFeedback)
-                {
-                    <div class="govuk-inset-text">
-                        <h2 class="govuk-heading-l">Feedback</h2>
-                        @foreach (var fb in Model.Feedback)
-                        {
-                            <p class="govuk-body">@Html.Raw(fb.Message)</p>
-                        }
-                    </div>
-                }
+                 {
+                     <div class="govuk-inset-text">
+                         <h2 class="govuk-heading-l">Feedback</h2>
+                         @foreach (var fb in Model.Feedback)
+                         {
+                             <p class="govuk-body">@Html.Raw(fb.Message)</p>
+                         }
+                     </div>
+                 }
 
                 <form method="post" asp-action="SaveAnswers" asp-controller="Application" novalidate enctype="multipart/form-data">
-                    <input type="hidden" id="RedirectAction" name="RedirectAction" value="@Model.RedirectAction" />
+                    <input type="hidden" id="RedirectAction" name="RedirectAction" value="@Model.RedirectAction"/>
                     @if (Model.Questions.Count() == 1)
                     {
                         foreach (var question in Model.Questions)
@@ -128,13 +127,13 @@
                                         </h2>
                                     }
 
-@*                                     @if (question.Type == "FileUpload") *@
-@*                                     { *@
-@*                                         @section Scripts { *@
-@*                                              *@
-@*                                             $1$ <script src="@Url.Content("~/javascripts/das-file-uploads.js")"></script> #1# *@
-@*                                         } *@
-@*                                     } *@
+                                    @*                                     @if (question.Type == "FileUpload") *@
+                                    @*                                     { *@
+                                    @*                                         @section Scripts { *@
+                                    @*                                              *@
+                                    @*                                             $1$ <script src="@Url.Content("~/javascripts/das-file-uploads.js")"></script> #1# *@
+                                    @*                                         } *@
+                                    @*                                     } *@
 
 
                                     @if (question.QuestionBodyText != null)
@@ -155,7 +154,6 @@
                                     }
                                     @{
                                         var questionType = question.Type.Replace("DataFed_", "");
-
                                     }
 
                                     @(await Html.PartialAsync($"~/Views/Application/Pages/Controls/_{questionType}.cshtml", question))
@@ -205,20 +203,30 @@
                         }
                     }
 
-                    <button type="submit" class="govuk-button">Save and continue</button>
-
-                    <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details" />
+                    @if (Model.Questions.All(q => q.Type != "FileUpload"))
+                    {
+                        <button type="submit" class="govuk-button">Save and continue</button>
+                    }
                 </form>
+
+                if (Model.Questions.Any(q => q.Type == "FileUpload"))
+                {
+                    <form asp-action="NextPage" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId" asp-route-redirectAction="@Model.RedirectAction">
+                        <button type="submit" class="govuk-button">Continue</button>
+                    </form>
+                }
+
+                <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details"/>
             }
 
             <p class="govuk-body">
                 @if (Model.RedirectAction == "Feedback")
                 {
-                    <a class="govuk-link" href="@Url.Action("Feedback", "Application", new { Model.ApplicationId })">Return to summary</a>
+                    <a class="govuk-link" href="@Url.Action("Feedback", "Application", new {Model.ApplicationId})">Return to summary</a>
                 }
                 else
                 {
-                    <a class="govuk-link" href="@Url.Action("Section", "Application", new { Model.ApplicationId, Model.SequenceId, Model.SectionId })">Return to summary</a>
+                    <a class="govuk-link" href="@Url.Action("Section", "Application", new {Model.ApplicationId, Model.SequenceId, Model.SectionId})">Return to summary</a>
                 }
             </p>
         </div>

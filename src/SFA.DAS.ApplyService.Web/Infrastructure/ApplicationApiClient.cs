@@ -160,9 +160,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await(await _httpClient.GetAsync($"QuestionOptions/{dataEndpoint}")).Content.ReadAsAsync<List<Option>>();
         }
 
-        public async Task DeleteFile(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId)
+        public async Task DeleteFile(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string fileName)
         {
-            await _httpClient.PostAsJsonAsync($"/DeleteFile", new {applicationId, userId, sequenceId, sectionId, pageId, questionId});
+            await _httpClient.PostAsJsonAsync($"/DeleteFile", new {applicationId, userId, sequenceId, sectionId, pageId, questionId, fileName});
         }
 
         public async Task<Organisation> GetOrganisationByUserId(Guid userId)

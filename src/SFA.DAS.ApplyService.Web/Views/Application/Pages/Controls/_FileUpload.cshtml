@@ -1,50 +1,50 @@
 @model SFA.DAS.ApplyService.Web.Controllers.QuestionViewModel
 
-@if (!string.IsNullOrWhiteSpace(Model.Value))
-{
-    <table class="govuk-table">
-        <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-            <th class="govuk-table__header" scope="col">Uploaded file</th>
-            <th class="govuk-table__header" scope="col"></th>
-        </tr>
-        </thead>
-        <tbody class="govuk-table__body">
-        <tr class="govuk-table__row">
-            <td class="govuk-table__cell govuk-table__cell--break-word" scope="row">
-                <a class="govuk-link" href="@Url.Action("Download", "Application", new
-                         {
-                             applicationId = Model.ApplicationId,
-                             sequenceId = Model.SequenceId,
-                             sectionId = Model.SectionId,
-                             pageId = Model.PageId,
-                             questionId = Model.QuestionId,
-                             filename = Model.Value
-                         })" download>
-                    @Model.Value
-                </a>
-            </td>
-            <td class="govuk-table__cell govuk-table__cell--numeric">
-                <a class="govuk-link" href="@Url.Action("DeleteFile", "Application", new
-                                            {
-                                                applicationId = Model.ApplicationId,
-                                                sequenceId = Model.SequenceId,
-                                                sectionId = Model.SectionId,
-                                                pageId = Model.PageId,
-                                                questionId = Model.QuestionId,
-                                                redirectAction = Model.RedirectAction
-                                            })">
-                    Remove
-                    <span class="govuk-visually-hidden"> file</span>
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-}
-else
-{
-    if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
+@* @if (!string.IsNullOrWhiteSpace(Model.Value)) *@
+@* { *@
+@*     <table class="govuk-table"> *@
+@*         <thead class="govuk-table__head"> *@
+@*         <tr class="govuk-table__row"> *@
+@*             <th class="govuk-table__header" scope="col">Uploaded file</th> *@
+@*             <th class="govuk-table__header" scope="col"></th> *@
+@*         </tr> *@
+@*         </thead> *@
+@*         <tbody class="govuk-table__body"> *@
+@*         <tr class="govuk-table__row"> *@
+@*             <td class="govuk-table__cell govuk-table__cell--break-word" scope="row"> *@
+@*                  <a class="govuk-link" href="@Url.Action("Download", "Application", new *@
+@*                           { *@
+@*                               applicationId = Model.ApplicationId, *@
+@*                               sequenceId = Model.SequenceId, *@
+@*                               sectionId = Model.SectionId, *@
+@*                               pageId = Model.PageId, *@
+@*                               questionId = Model.QuestionId, *@
+@*                               filename = Model.Value *@
+@*                           })" download> *@
+@*                      @Model.Value *@
+@*                  </a> *@
+@*             </td> *@
+@*             <td class="govuk-table__cell govuk-table__cell--numeric"> *@
+@*                  <a class="govuk-link" href="@Url.Action("DeleteFile", "Application", new *@
+@*                                              { *@
+@*                                                  applicationId = Model.ApplicationId, *@
+@*                                                  sequenceId = Model.SequenceId, *@
+@*                                                  sectionId = Model.SectionId, *@
+@*                                                  pageId = Model.PageId, *@
+@*                                                  questionId = Model.QuestionId, *@
+@*                                                  redirectAction = Model.RedirectAction *@
+@*                                              })"> *@
+@*                      Remove *@
+@*                      <span class="govuk-visually-hidden"> file</span> *@
+@*                  </a> *@
+@*             </td> *@
+@*         </tr> *@
+@*         </tbody> *@
+@*     </table> *@
+@* } *@
+@* else *@
+
+    @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
     {
         foreach (var errorMessage in Model.ErrorMessages)
         {
@@ -79,9 +79,34 @@ else
                 @foreach (var uploadedFile in Model.FileUploadInfo.Uploads)
                 {
                     <tr class="govuk-table__row">
-                        <th class="govuk-table__header" scope="row"><a href="#dragdrop">@uploadedFile.Filename</a></th>
+                        <th class="govuk-table__header" scope="row">
+                            
+                            <a class="govuk-link" href="@Url.Action("Download", "Application", new
+                                                        {
+                                                            applicationId = Model.ApplicationId,
+                                                            sequenceId = Model.SequenceId,
+                                                            sectionId = Model.SectionId,
+                                                            pageId = Model.PageId,
+                                                            questionId = Model.QuestionId,
+                                                            filename = Model.Value
+                                                        })" download>
+                                @uploadedFile.Filename
+                            </a>
+                        </th>
                         <td class="govuk-table__cell govuk-table__cell--numeric">
-                            <a class="js-remove-file" href="#&quot;" data-uploadedFileId="@uploadedFile.Id">Remove</a>
+                            <a class="govuk-link" href="@Url.Action("DeleteFile", "Application", new
+                                                        {
+                                                            applicationId = Model.ApplicationId,
+                                                            sequenceId = Model.SequenceId,
+                                                            sectionId = Model.SectionId,
+                                                            pageId = Model.PageId,
+                                                            questionId = Model.QuestionId,
+                                                            redirectAction = Model.RedirectAction,
+                                                            fileName = uploadedFile.Filename
+                                                        })">
+                                Remove
+                                <span class="govuk-visually-hidden"> file</span>
+                            </a>
                         </td>
                     </tr>
                 }
@@ -101,7 +126,7 @@ else
             <div class="js-upload-progress"></div>
         </div>
     </div>
-}
+
 
 <script src="@Url.Content("~/javascripts/resumable.js")"></script>
 <script src="@Url.Content("~/javascripts/das-file-uploads.js")"></script>

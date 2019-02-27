@@ -11,8 +11,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.DeleteFile
         public int SequenceId { get; set;}
         public int SectionId { get; set;}
         public string QuestionId { get; set;}
+        public string FileName { get; set; }
 
-        public DeleteFileRequest(Guid applicationId, Guid userId, string pageId, int sequenceId, int sectionId, string questionId)
+        public DeleteFileRequest(Guid applicationId, Guid userId, string pageId, int sequenceId, int sectionId, string questionId, string fileName)
         {
             ApplicationId = applicationId;
             UserId = userId;
@@ -20,6 +21,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.DeleteFile
             SequenceId = sequenceId;
             SectionId = sectionId;
             QuestionId = questionId;
+            FileName = fileName;
         }
 
         public DeleteFileRequest()
