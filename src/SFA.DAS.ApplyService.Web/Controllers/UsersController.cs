@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
+using SFA.DAS.ApplyService.Web.Validators;
 using SFA.DAS.ApplyService.Web.ViewModels;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
@@ -18,12 +19,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IUsersApiClient _usersApiClient;
         private readonly ISessionService _sessionService;
         private readonly ILogger<UsersController> _logger;
+        private readonly CreateAccountValidator _createAccountValidator;
 
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger)
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger, CreateAccountValidator createAccountValidator)
         {
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
             _logger = logger;
+            _createAccountValidator = createAccountValidator;
         }
         
         [HttpGet]
@@ -36,6 +39,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAccount(CreateAccountViewModel vm)
         {
+            _createAccountValidator.Validate(vm);
+
             if (!ModelState.IsValid)
             {
                 return View(vm);
@@ -86,7 +91,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> PostSignIn()
         {
             var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
-         
+
+            if (user == null)
+            {
+                return RedirectToAction("NotSetUp");
+            }
+            
             _logger.LogInformation($"Setting LoggedInUser in Session: {user.GivenNames} {user.FamilyName}");
             
             _sessionService.Set("LoggedInUser", $"{user.GivenNames} {user.FamilyName}");
@@ -101,6 +111,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [HttpGet("/Users/SignedOut")]
         public IActionResult SignedOut()
+        {
+            return View();
+        }
+
+        public IActionResult NotSetUp()
         {
             return View();
         }
