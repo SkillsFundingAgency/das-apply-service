@@ -82,12 +82,6 @@ Post-Deployment Script Template
 -- GO
 
 -- Add the Workflows
-
-UPDATE [EmailTemplates]
-SET [Recipients] = 'PRA.financialhealth@education.gov.uk'
-WHERE id = '1A4B965C-63F6-4BCD-A192-9C2F194455D0'
-
-
 :r ..\WorkflowLatest.sql
 
 
