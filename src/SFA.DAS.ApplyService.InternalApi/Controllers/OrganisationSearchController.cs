@@ -18,14 +18,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         private readonly ProviderRegisterApiClient _providerRegisterApiClient;
         private readonly ReferenceDataApiClient _referenceDataApiClient;
         private readonly CompaniesHouseApiClient _companiesHouseApiClient;
+        private readonly CharityCommissionApiClient _charityCommissionApiClient;
 
-        public OrganisationSearchController(ILogger<OrganisationSearchController> logger, AssessorServiceApiClient assessorServiceApiClient, ProviderRegisterApiClient providerRegisterApiClient, ReferenceDataApiClient referenceDataApiClient, CompaniesHouseApiClient companiesHouseApiClient)
+        public OrganisationSearchController(ILogger<OrganisationSearchController> logger, AssessorServiceApiClient assessorServiceApiClient, ProviderRegisterApiClient providerRegisterApiClient, ReferenceDataApiClient referenceDataApiClient, CompaniesHouseApiClient companiesHouseApiClient, CharityCommissionApiClient charityCommissionApiClient)
         {
             _logger = logger;
             _assessorServiceApiClient = assessorServiceApiClient;
             _providerRegisterApiClient = providerRegisterApiClient;
             _referenceDataApiClient = referenceDataApiClient;
             _companiesHouseApiClient = companiesHouseApiClient;
+            _charityCommissionApiClient = charityCommissionApiClient;
         }
 
         [HttpGet("OrganisationSearch")]
