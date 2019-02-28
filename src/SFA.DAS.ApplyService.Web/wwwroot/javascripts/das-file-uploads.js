@@ -44,6 +44,8 @@ function _defineProperty(obj, key, value) {
         dropTarget: document.querySelector(".js-drop-target"),
 
         init: function(args) {
+            // console.log(args);
+
             var that = this;
             var r = new Resumable({
                 ...args,
@@ -61,12 +63,13 @@ function _defineProperty(obj, key, value) {
         },
 
         clearErrors: function() {
+            this.dropTarget.style.borderColor = "#dee0e2";
             this.currentErrors.innerText = "";
             this.errorSummary.style.display = "none";
         },
 
         handleError: function(errorType, files, errorCount) {
-            console.log(errorType);
+            // console.log(errorType);
             this.clearErrors();
             const errorMessage =
                 errorType === "fileType"
@@ -75,6 +78,8 @@ function _defineProperty(obj, key, value) {
                     ? "You may only upload 1 file at once"
                     : errorType === "fileSize"
                     ? "File must be less than 10mb"
+                    : errorType === "maxTotalFiles"
+                    ? "You may only upload 1 file"
                     : null;
             var error = document.createElement("li");
             error.innerHTML = '<a href="#go-to-error">' + errorMessage + "</a>";
@@ -97,8 +102,21 @@ function _defineProperty(obj, key, value) {
             );
 
             var progressBar = new ProgressBar(uploadProgress);
+            var totalFilesUploaded = that.uploadedFiles.children.length;
 
             r.on("fileAdded", function(file, event) {
+                that.clearErrors();
+                // console.log("maxFiles: ", r.opts.maxFiles);
+                // console.log("maxTotalFiles: ", r.opts.query.maxTotalFiles);
+                // console.log("totalFilesUploaded: ", totalFilesUploaded);
+
+                // checkNumbeOfExistingFilesUploaded is not more than r.opts.query.maxTotalFiles
+                totalFilesUploaded = that.uploadedFiles.children.length;
+                if (totalFilesUploaded >= r.opts.query.maxTotalFiles) {
+                    that.handleError("maxTotalFiles", file);
+                    return false;
+                }
+
                 r.upload();
                 progressBar.fileAdded();
             });
@@ -159,10 +177,6 @@ function _defineProperty(obj, key, value) {
                     ele.style.width = "100%";
                 };
             }
-
-            manualUploadLink.addEventListener("click", function(event) {
-                // event.preventDefault();
-            });
         }
     };
 

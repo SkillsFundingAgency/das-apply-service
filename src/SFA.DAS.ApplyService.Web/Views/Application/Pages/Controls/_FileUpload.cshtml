@@ -64,15 +64,15 @@
 
     <div class="js-file-upload">
         <div class="js-uploaded-container">
-            <h2 class="govuk-heading-m">Uploaded files</h2>
+            <!-- <h2 class="govuk-heading-m">Uploaded files</h2> -->
             <table class="govuk-table">
                 <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
+                <!-- <tr class="govuk-table__row">
                     <th class="govuk-table__header" scope="col">File name</th>
                     <th class="govuk-table__header" scope="col">
                         <span class="govuk-visually-hidden-focusable">Action</span>
                     </th>
-                </tr>
+                </tr> -->
                 </thead>
                 <tbody class="govuk-table__body js-uploaded-files">
                 
@@ -121,7 +121,7 @@
             </div>
             <div class="js-upload-progress"></div>
         </div>
-        <p class="govuk-body govuk-!-margin-bottom-0">or <a class="js-browse-link govuk-link" href="#">choose files to upload</a></p>
+        <p class="govuk-body govuk-!-margin-bottom-0">or <a class="js-browse-link govuk-link" href="#/choose-files-to-upload">choose files to upload</a></p>
     </div>
 
 
@@ -137,10 +137,10 @@
             sequenceId: @Model.SequenceId,
             sectionId: @Model.SectionId,
             page: @Model.PageId,
-            questionId: "@Model.QuestionId"
+            questionId: "@Model.QuestionId",
+            maxTotalFiles: @( Model.FileUploadInfo.NumberOfUploadsRequired == null ? "1" : Model.FileUploadInfo.NumberOfUploadsRequired.ToString())
         },
-        // maxFiles: @( Model.FileUploadInfo.NumberOfUploadsRequired == null ? "undefined" : Model.FileUploadInfo.NumberOfUploadsRequired.ToString()),
-        maxFiles: 1,
+        maxFiles: 1, // Thid is the maximum number of concurrent uploads
         maxFileSize: 1e7, // 10mb
         fileType: [
             "application/pdf"
