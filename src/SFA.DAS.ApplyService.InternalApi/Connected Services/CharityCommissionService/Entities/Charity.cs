@@ -21,6 +21,15 @@ namespace CharityCommissionService
         }
 
         [XmlIgnore]
+        public string Type
+        {
+            get
+            {
+                return LastRegistrationEvent?.CharityEventTypeNameEnglish;
+            }
+        }
+
+        [XmlIgnore]
         public DateTime? RegistrationDate
         {
             get

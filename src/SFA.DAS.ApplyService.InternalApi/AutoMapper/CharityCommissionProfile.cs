@@ -11,6 +11,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
                 .ForMember(dest => dest.CompanyNumber, opt => opt.MapFrom(source => source.RegisteredCompanyNumber))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.CharityName.Trim()))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(source => source.Type))
                 .ForMember(dest => dest.NatureOfBusiness, opt => opt.MapFrom(source => source.NatureOfBusiness))
                 .ForMember(dest => dest.IncorporatedOn, opt => opt.MapFrom(source => source.RegistrationDate))
                 .ForMember(dest => dest.DissolvedOn, opt => opt.MapFrom(source => source.RegistrationRemovalDate))

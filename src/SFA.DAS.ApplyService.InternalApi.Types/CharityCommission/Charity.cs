@@ -9,6 +9,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.CharityCommission
         public string CompanyNumber { get; set; }
         public string Name { get; set; }
         public string Status { get; set; }
+        public string Type { get; set; }
 
         public Address RegisteredOfficeAddress { get; set; }
 
