@@ -27,11 +27,11 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
         public CharityCommissionAddressProfile()
         {
             CreateMap<CharityCommissionService.Address, Types.CharityCommission.Address>()
+                .BeforeMap((source, dest) => dest.Country = "United Kingdom")
                 .ForMember(dest => dest.AddressLine1, opt => opt.MapFrom(source => source.Line1))
-                .ForMember(dest => dest.AddressLine2, opt => opt.MapFrom(source => source.Line2))
-                .ForMember(dest => dest.City, opt => opt.MapFrom(source => source.Line3)) // not sure what line 3 is
+                .ForMember(dest => dest.AddressLine2, opt => opt.MapFrom(source => string.IsNullOrEmpty(source.Line3) ? null : source.Line2)) // sometimes city is on line 2
+                .ForMember(dest => dest.City, opt => opt.MapFrom(source => source.Line3 ?? source.Line2)) // cope for when it is on line 2, instead of line 3
                 .ForMember(dest => dest.County, opt => opt.MapFrom(source => source.Line4)) // not sure what line 4 is
-                .ForMember(dest => dest.Country, opt => opt.MapFrom(source => source.Line5)) // not sure what line 5 is
                 .ForMember(dest => dest.PostalCode, opt => opt.MapFrom(source => source.Postcode))
                 .ForAllOtherMembers(dest => dest.Ignore());
         }
