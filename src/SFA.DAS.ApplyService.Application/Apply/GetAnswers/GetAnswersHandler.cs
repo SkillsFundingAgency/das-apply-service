@@ -8,7 +8,7 @@ using MediatR;
 
 namespace SFA.DAS.ApplyService.Application.Apply.GetAnswers
 {
-    public class GetAnswersHandler : IRequestHandler<GetAnswersRequest, string>
+    public class GetAnswersHandler : IRequestHandler<GetAnswersRequest, GetAnswersResponse>
     {
         private readonly IGetAnswersService _answersService;
 
@@ -17,9 +17,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.GetAnswers
             _answersService = answersService;
         }
 
-        public async Task<string> Handle(GetAnswersRequest request, CancellationToken cancellationToken)
+        public async Task<GetAnswersResponse> Handle(GetAnswersRequest request, CancellationToken cancellationToken)
         {
-            return await _answersService.GetAnswersForQuestion(request.QuestionIdentifier, request.ApplicationId);
+            var answer = await _answersService.GetAnswersForQuestion(request.QuestionIdentifier, request.ApplicationId);
+
+            return new GetAnswersResponse {Answer=answer};
         }
     }
 }

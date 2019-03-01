@@ -43,7 +43,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet("Answer/{QuestionIdentifier}/{applicationId}")]
-        public async Task<ActionResult<string>> GetAnswer(Guid applicationId, string questionIdentifier)
+        public async Task<ActionResult<GetAnswersResponse>> GetAnswer(Guid applicationId, string questionIdentifier)
         {
             return await _mediator.Send(new GetAnswersRequest(applicationId, questionIdentifier));
         }
