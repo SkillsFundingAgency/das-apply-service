@@ -1,24 +1,19 @@
 ﻿using System;
-using System.Xml;
+using System.Globalization;
 using System.Xml.Serialization;
 
 namespace CharityCommissionService
 {
     public partial class RegistrationHistory
     {
+        private readonly string[] expectedDateFormats = new string[] { @"dd/MM/yyyy", @"dd/MM/yyyy HH:mm:ss" };
+
         [XmlIgnore]
         public DateTime? RegistrationDateTime
         {
             get
             {
-                try
-                {
-                    return XmlConvert.ToDateTime(this.registrationDateField, new string[] { @"dd/MM/yyyy", @"dd/MM/yyyy HH:mm:ss"});
-                }
-                catch
-                {
-                    return null;
-                }
+                return DateTime.TryParseExact(registrationDateField, expectedDateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out var date) ? date : default(DateTime?);
             }
         }
 
@@ -27,14 +22,7 @@ namespace CharityCommissionService
         {
             get
             {
-                try
-                {
-                    return XmlConvert.ToDateTime(this.registrationRemovalDateField, new string[] { @"dd/MM/yyyy", @"dd/MM/yyyy HH:mm:ss" });
-                }
-                catch
-                {
-                    return null;
-                }
+                return DateTime.TryParseExact(registrationRemovalDateField, expectedDateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out var date) ? date : default(DateTime?);
             }
         }
     }
