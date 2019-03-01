@@ -4,9 +4,9 @@
     {
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
-        public string City { get; set; } // address_line_3 ??
-        public string County { get; set; } // address_line_4 ??
-        public string Country { get; set; } // // address_line_5 ??
+        public string City { get; set; }
+        public string County { get; set; }
+        public string Country { get; set; }
         public string PostalCode { get; set; }
     }
 }
