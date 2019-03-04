@@ -32,7 +32,7 @@ namespace SFA.DAS.ApplyService.DfeSignIn
            
             
             var client = new HttpClient();
-            var disco = client.GetDiscoveryDocumentAsync("https://localhost:5001").Result;
+            var disco = client.GetDiscoveryDocumentAsync("http://localhost:5000").Result;
             if (disco.IsError)
             {
                 Console.WriteLine(disco.Error);
