@@ -93,7 +93,16 @@
                             <tr class="govuk-table__row">
                                 @foreach (var answer in answerPage.Answers)
                                 {
-                                    <td class="govuk-table__cell">@Model.Questions.Single(q => q.QuestionId == answer.QuestionId).DisplayAnswerValue(answer)</td>
+                                    <td class="govuk-table__cell">
+                                        @if (Model.Questions.Single(q => q.QuestionId == answer.QuestionId).Type == "Date")
+                                        {
+                                            @Model.Questions.Single(q => q.QuestionId == answer.QuestionId).DisplayAnswerValue(answer)
+                                        }
+                                        else
+                                        {
+                                            @Model.Questions.Single(q => q.QuestionId == answer.QuestionId).DisplayAnswerValue(answer)
+                                        }
+                                    </td>
                                 }
                                 <td class="govuk-table__cell">
                                     <form asp-action="DeleteAnswer" asp-controller="Application">
