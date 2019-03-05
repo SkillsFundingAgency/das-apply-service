@@ -6,12 +6,12 @@ namespace SFA.DAS.ApplyService.Domain.Extensions
     {
         public static string ToSfaShortDateString(this DateTime time)
         {
-            return time.ToString("dd MMMM yyyy");
+            return time.ToString("d MMMM yyyy");
         }
 
         public static string ToSfaShortDateString(this DateTime? time)
         {
-            return time?.ToString("dd MMMM yyyy") ?? string.Empty;
+            return time?.ToString("d MMMM yyyy") ?? string.Empty;
         }
     }
 }
