@@ -48,7 +48,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             
             var inviteSuccess = await _usersApiClient.InviteUser(vm);
 
-            TempData["NewAccount"] = JsonConvert.SerializeObject(vm);
+            _sessionService.Set("NewAccount", vm);
 
             return inviteSuccess ? RedirectToAction("InviteSent") : RedirectToAction("Error", "Home");
             
@@ -75,14 +75,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public IActionResult InviteSent()
         {
-            CreateAccountViewModel viewModel;
-            if (TempData["NewAccount"] is null)
+            var viewModel = _sessionService.Get<CreateAccountViewModel>("NewAccount");
+
+            if (viewModel?.Email is null)
             {
-                viewModel = new CreateAccountViewModel() {Email = "[email placeholder]"};
-            }
-            else
-            {
-                viewModel =  JsonConvert.DeserializeObject<CreateAccountViewModel>(TempData["NewAccount"].ToString());    
+                RedirectToAction("CreateAccount");
             }
             
             return View(viewModel);
