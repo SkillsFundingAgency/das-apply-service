@@ -1,5 +1,6 @@
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Newtonsoft.Json;
@@ -21,11 +22,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
         private readonly HttpClient _client;
         private readonly ILogger<AssessorServiceApiClient> _logger;
         private readonly IApplyConfig _config;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
-        public AssessorServiceApiClient(HttpClient client, ILogger<AssessorServiceApiClient> logger, IConfigurationService configurationService)
+        public AssessorServiceApiClient(HttpClient client, ILogger<AssessorServiceApiClient> logger, IConfigurationService configurationService, IHostingEnvironment hostingEnvironment)
         {
             _client = client;
             _logger = logger;
+            _hostingEnvironment = hostingEnvironment;
             _config = configurationService.GetConfig().Result;
         }
 
@@ -98,6 +101,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
         private string GetToken()
         {
+            if (_hostingEnvironment.IsDevelopment())
+                return string.Empty;
+
             var tenantId = _config.AssessorServiceApiAuthentication.TenantId;
             var clientId = _config.AssessorServiceApiAuthentication.ClientId;
             var clientSecret = _config.AssessorServiceApiAuthentication.ClientSecret;
