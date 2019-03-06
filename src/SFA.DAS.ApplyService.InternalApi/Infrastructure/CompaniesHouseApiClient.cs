@@ -42,6 +42,20 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             return company;
         }
 
+        public async Task<bool> IsCompanyActivelyTrading(string companyNumber)
+        {
+            var isTrading = false;
+
+            var company = await GetCompanyDetails(companyNumber);
+
+            if (company != null)
+            {
+                isTrading = "active".Equals(company.Status, StringComparison.InvariantCultureIgnoreCase) && company.DissolvedOn == null && company.IsLiquidated != true;
+            }
+
+            return isTrading;
+        }
+
         #region HTTP Request Helpers
         private AuthenticationHeaderValue GetBasicAuthHeader()
         {
