@@ -33,7 +33,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 var month = dateparts[1];
                 var year = dateparts[2];
 
-                return $"{day}/{month}/{year}";
+                var dateResult = $"{day}/{month}/{year}";
+
+                DateTime res;
+                return DateTime.TryParse(dateResult, out res) ? res.ToString("d MMMM yyyy") : dateResult;
             }
             return answer.Value;
         }
