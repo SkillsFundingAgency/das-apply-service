@@ -75,14 +75,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> PostSignOut(bool signInScreen)
         {
-            var isSignInFromAppy =_sessionService.Get<bool>("SignedInFromApply");
+            var isSignInFromApply =_sessionService.Get<bool>("SignedInFromApply");
             var applyConfig = await _config.GetConfig();
             foreach (var cookie in Request.Cookies.Keys)
             {
                 Response.Cookies.Delete(cookie);
             }
 
-            if (isSignInFromAppy)
+            if (isSignInFromApply)
                 return signInScreen ? RedirectToAction("SignIn", "Users") : RedirectToAction("Index", "Home");
 
             return Redirect(signInScreen ? $"{applyConfig.AssessorServiceBaseUrl}/Account/SignIn" : $"{applyConfig.AssessorServiceBaseUrl}/");

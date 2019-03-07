@@ -118,7 +118,7 @@
 </div>
 
 <div class="govuk-width-container">
-    @if (User.Identity.IsAuthenticated && !SessionService.Get<bool>("SignedInFromApply"))
+    @if (User.Identity.IsAuthenticated && !SessionService.Get<bool>("SignedInFromApply") && SessionService.Get<bool>("UserRegWithEPAO"))
     {
         
          var config = await @Config.GetConfig();

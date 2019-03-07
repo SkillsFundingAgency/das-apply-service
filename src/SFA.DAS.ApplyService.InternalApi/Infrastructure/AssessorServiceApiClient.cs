@@ -1,5 +1,6 @@
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Newtonsoft.Json;
@@ -29,6 +30,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
         {
             _client = client;
             _logger = logger;
+            _hostingEnvironment = hostingEnvironment;
             _config = configurationService.GetConfig().Result;
             _hostingEnvironment = hostingEnvironment;
         }

@@ -39,12 +39,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> Applications()
         {
             var user = _sessionService.Get("LoggedInUser");
-            if (string.IsNullOrEmpty(user))
-            {
-                return RedirectToAction("PostSignIn", "Users");
-            }
 
-            //_usersApiClient.IsUserRegistered(User.GetSignInId());
+            if (!await ValidateUser(user))
+                RedirectToAction("PostSignIn", "Users");
+
             _logger.LogInformation($"Got LoggedInUser from Session: {user}");
 
             var userId = User.GetUserId();
@@ -86,6 +84,51 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("SequenceSignPost", new {applicationId = application.Id});
             }
         }
+
+        private async Task<bool> ValidateUser(string user)
+        {
+            try
+            {
+                //Check if user is associated with registered EPAO
+                //The result of this will be used to determine if common menu is shown
+                var ukPrn = await _userService.GetClaim(
+                    "http://schemas.portal.com/ukprn");
+                if (!string.IsNullOrEmpty(ukPrn))
+                    _sessionService.Set("UserRegWithEPAO", true);
+            }
+            catch (ArgumentException)
+            {
+                //Ignore
+            }
+
+            // User is already set so return valid otherwise continue
+            if (!string.IsNullOrEmpty(user))
+                return true;
+
+            //Attempt to extract variable from claim incase called from Accessor
+            try
+            {
+                var givenName = await _userService.GetClaim("given_name");
+                var familyName = await _userService.GetClaim("family_name");
+                //May have empty strings
+                if (!string.IsNullOrEmpty(givenName) && !string.IsNullOrEmpty(familyName))
+                    _sessionService.Set("LoggedInUser", $"{givenName} {familyName}");
+                else
+                {
+                    //Claims where empty and user was null so redirect to postsignin
+                    return false;
+                }
+            }
+            catch (ArgumentException)
+            {
+                //One of the Claims where null so redirect to postsignin
+                return false;
+            }
+
+           
+            return true;
+        }
+
 
         private async Task<IActionResult> StartApplication(Guid userId)
         {
