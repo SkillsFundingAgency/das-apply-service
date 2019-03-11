@@ -52,7 +52,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             if (!applications.Any())
             {
                 var org = await _apiClient.GetOrganisationByUserId(userId);
-                if (org.RoEPAOApproved)
+                if (org != null && org.RoEPAOApproved)
                 {
                     return await StartApplication(userId);
                 }
