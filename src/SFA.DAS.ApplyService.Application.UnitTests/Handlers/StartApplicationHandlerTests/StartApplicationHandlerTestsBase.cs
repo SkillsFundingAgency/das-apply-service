@@ -1,11 +1,11 @@
-using System;
-using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
+using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHandlerTests
 {
@@ -17,7 +17,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
         protected Mock<IOrganisationRepository> OrganisationRepository;
         protected StartApplicationHandler Handler;
         protected Guid ApplyingOrganisationId;
-        
+
         [SetUp]
         public void Setup()
         {
@@ -33,7 +33,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
             ApplyRepository.Setup(r => r.CreateApplication("EPAO", ApplyingOrganisationId, UserId, latestWorkflowId)).ReturnsAsync(applicationId);
             ApplyRepository.Setup(r => r.CopyWorkflowToApplication(applicationId, latestWorkflowId, It.IsAny<string>())).ReturnsAsync(new List<ApplicationSection>
             {
-                new ApplicationSection {SectionId = 1, QnAData = new QnAData {Pages = new List<Page>{new Page(){Title = "REPLACEME"}}}},
+                new ApplicationSection {SectionId = 1, QnAData = new QnAData {Pages = new List<Page>{new Page(){PageId = "1", Title = "REPLACEME"}, new Page() { PageId = "2", NotRequiredOrgTypes = new List<string> { "HEI" } } }}},
                 new ApplicationSection {SectionId = 2, QnAData = new QnAData {Pages = new List<Page>()}},
                 new ApplicationSection {SectionId = 3, QnAData = new QnAData {Pages = new List<Page>()}},
                 new ApplicationSection {SectionId = 4, QnAData = new QnAData {Pages = new List<Page>()}}
@@ -45,8 +45,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
             });
 
             OrganisationRepository = new Mock<IOrganisationRepository>();
-            
-            
+
             Handler = new StartApplicationHandler(ApplyRepository.Object, OrganisationRepository.Object);
         }
     }

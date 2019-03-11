@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.CheckOrganisationStandardStatus;
 using SFA.DAS.ApplyService.Application.Apply.DeleteAnswer;
+using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Application.Apply.GetOrganisationForApplication;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
@@ -39,6 +40,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<ActionResult<Domain.Entities.Application>> GetApplication(Guid applicationId)
         {
             return await _mediator.Send(new GetApplicationRequest(applicationId));
+        }
+
+        [HttpGet("Answer/{QuestionIdentifier}/{applicationId}")]
+        public async Task<ActionResult<GetAnswersResponse>> GetAnswer(Guid applicationId, string questionIdentifier)
+        {
+            return await _mediator.Send(new GetAnswersRequest(applicationId, questionIdentifier));
         }
 
         [HttpGet("Applications/{userId}")]

@@ -124,7 +124,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
               if (nextAction.Action == "NextPage")
               {
                 qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Active = true;
-                qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Visible = true;
               }
 
               returnIdMet = nextAction.ReturnId;
@@ -136,7 +135,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
               if (nextAction.Action == "NextPage" && nextAction.ReturnId != returnIdMet)
               {
                 qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Active = false;
-                qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Visible = false;
               }
             }
           }

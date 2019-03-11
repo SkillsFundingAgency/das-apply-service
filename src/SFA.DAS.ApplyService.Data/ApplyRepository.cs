@@ -90,6 +90,27 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<List<ApplicationSection>> GetSections(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                try
+                {
+
+                        return (await connection.QueryAsync<ApplicationSection>(@"SELECT asec.* 
+                                                                FROM ApplicationSections asec
+                                                                INNER JOIN Applications a ON a.Id = asec.ApplicationId
+                                                                WHERE asec.ApplicationId = @applicationId AND asec.NotRequired = 0",
+                            new { applicationId })).ToList();
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "There has been an error trying to map ApplicationSections for the Application - this is most likely caused by to invalid JSON in the QnAData of ApplicationSections and WorkflowSections");
+                    return null;
+                }
+            }
+        }
+
 
         public async Task<ApplicationSequence> GetSequence(Guid applicationId, int sequenceId, Guid? userId)
         {
@@ -804,6 +825,5 @@ namespace SFA.DAS.ApplyService.Data
                     })).FirstOrDefault();
             }
         }
-        
     }
 }
