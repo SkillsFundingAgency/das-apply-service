@@ -132,7 +132,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             _logger.LogInformation($"API ImportWorkflow > After post to Internal API");
         }
 
-        //MFCMFC
         public async Task UpdateApplicationData<T>(T applicationData, Guid applicationId)
         {
             await _httpClient.PostAsJsonAsync($"/Application/{applicationId}/UpdateApplicationData", applicationData);
