@@ -12,18 +12,12 @@
         <div class="govuk-grid-column-full">
 
             <div class="govuk-form-group">
-                <h1 class="govuk-heading-xl">Are you sure?</h1>
-
+                <h1 class="govuk-heading-xl govuk-!-margin-bottom-2">This company is no longer active</h1>
                 <h2 class="govuk-heading-l">@(Model.Name)</h2>
-
-                <p class="govuk-body">This company is no longer active.</p>
-
                 <p class="govuk-body">You must select an active company.</p>
-
             </div>
-
             <p class="govuk-body">
-                <a class="govuk-link" asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString">Back to search results</a>
+                <a class="govuk-link" asp-action="Index" asp-controller="OrganisationSearch">Search again</a>
             </p>
         </div>
     </div>
