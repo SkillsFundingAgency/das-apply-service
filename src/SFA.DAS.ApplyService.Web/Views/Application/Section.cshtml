@@ -26,7 +26,7 @@ else
                 <ul class="app-task-list">
                     <li>
                         <ul class="app-task-list__items app-task-list__items--no-number">
-                            @foreach (var pg in Model.QnAData.Pages.Where(p => p.Active))
+                            @foreach (var pg in Model.QnAData.Pages.Where(p => p.Active && !p.NotRequired))
                             {
                                 <li class="app-task-list__item">
                                     <a class="govuk-link app-task-list__task-name" 

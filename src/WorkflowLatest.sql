@@ -3001,6 +3001,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
       "BodyText": "SQ-1-SE-1-PG-1-2"
     },
     {
@@ -3059,6 +3060,7 @@ VALUES
       "Visible": false,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
       "BodyText": "SQ-1-SE-1-PG-2-10"
     },
     {
@@ -3191,6 +3193,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
       "BodyText": "SQ-1-SE-1-PG-3-22"
     },
     {
@@ -3318,6 +3321,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
       "BodyText": "SQ-1-SE-1-PG-4-46"
     },
     {
@@ -3401,6 +3405,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
       "BodyText": "SQ-1-SE-1-PG-5-70"
     },
     {
@@ -3497,6 +3502,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
       "BodyText": "SQ-1-SE-1-PG-6-82"
     },
     {
@@ -3574,6 +3580,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
       "BodyText": "SQ-1-SE-1-PG-7-98"
     },
     {
@@ -3719,6 +3726,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
       "BodyText": "SQ-1-SE-1-PG-8-110"
     },
     {
@@ -3809,6 +3817,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
       "BodyText": "SQ-1-SE-1-PG-9-122"
     },
     {
@@ -3905,6 +3914,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-1-PG-10-134"
     },
     {
@@ -3995,6 +4005,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-1-PG-11-150"
     },
     {
@@ -4061,6 +4072,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-1-PG-12-166"
     },
     {
@@ -4155,6 +4167,7 @@ VALUES
       "Visible": false,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
       "BodyText": "SQ-1-SE-1-PG-13-174"
     },
     {
@@ -4238,6 +4251,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-1-PG-14-190"
     },
     {
@@ -4295,6 +4309,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-1-PG-15-202"
     }
   ],
@@ -4377,6 +4392,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
       "BodyText": "SQ-1-SE-2-PG-15-214"
     },
     {
@@ -4459,6 +4475,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
       "BodyText": "SQ-1-SE-2-PG-18-234"
     },
 	  {
@@ -4520,6 +4537,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-19-246"
     },
 	   {
@@ -4577,6 +4595,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
       "BodyText": "SQ-1-SE-2-PG-19-246"
     },
 	   {
@@ -4634,6 +4653,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-19-246"
     },
 	   {
@@ -4691,6 +4711,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-19-246"
     },
     {
@@ -4768,6 +4789,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
 	{
@@ -4834,6 +4856,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
     {
@@ -4948,6 +4971,7 @@ VALUES
       "Visible": false,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
       "BodyText": "SQ-1-SE-2-PG-20.1-298"
     },
 	{
@@ -5025,6 +5049,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
 	{
@@ -5102,6 +5127,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
 	  {
@@ -5179,6 +5205,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
 	{
@@ -5256,6 +5283,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
 	{
@@ -5376,6 +5404,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
 	{
@@ -5477,6 +5506,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
 	{
@@ -5578,6 +5608,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
 	  {
@@ -5655,6 +5686,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
 	  {
@@ -5732,6 +5764,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
 	  {
@@ -5852,6 +5885,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": ["HEI"],
       "BodyText": "SQ-1-SE-2-PG-20-282"
     },
     {
@@ -5909,6 +5943,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
       "BodyText": "SQ-1-SE-2-PG-22-426"
     },
     {
@@ -5966,6 +6001,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
       "BodyText": "SQ-1-SE-2-PG-22-426"
     },
     {
@@ -6023,6 +6059,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
       "BodyText": "SQ-1-SE-2-PG-22-426"
     }
   ],
@@ -6108,6 +6145,7 @@ VALUES
       "Visible": true,
       "Feedback": null,
       "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
       "BodyText": "SQ-1-SE-3-PG-23-442"
     }
   ],
@@ -7653,6 +7691,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
       },
 	   {
@@ -7704,6 +7743,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
       },
 	   {
@@ -7755,6 +7795,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
       },
 	   {
@@ -7806,6 +7847,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
       },
 	   {
@@ -7852,6 +7894,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
       },
 	   {
@@ -7903,6 +7946,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
       },
 	   {
@@ -7954,6 +7998,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
       },
 	   {
@@ -8005,6 +8050,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": ["HEI"],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
       },
 	   {
@@ -8056,6 +8102,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": ["HEI"],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
       },
 	   {
@@ -8107,6 +8154,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": ["HEI"],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
       },
 	   {
@@ -8158,6 +8206,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": ["HEI"],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
       },
 	   {
@@ -8209,6 +8258,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": ["HEI"],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
       },
 	   {
@@ -8260,6 +8310,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": ["HEI"],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
       },
 	   {
@@ -8306,6 +8357,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": ["HEI"],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
       },
 	  {
@@ -8352,6 +8404,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": ["HEI"],
         "BodyText": "SQ-2-SE-4-PG-25-BT-1"
       },
 	  {
@@ -8398,6 +8451,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": ["HEI"],
         "BodyText": "SQ-2-SE-4-PG-25-BT-1"
       },
 	  {
@@ -8444,6 +8498,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-26-BT-1"
       },
 	  {
@@ -8490,6 +8545,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-26-BT-1"
       },
 	  {
@@ -8536,6 +8592,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-26-BT-1"
       },
 	  {
@@ -8582,6 +8639,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-27-BT-1"
       },
 	  {
@@ -8628,6 +8686,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-27-BT-1"
       },
 	  {
@@ -8674,6 +8733,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-27-BT-1"
       },
 	  {
@@ -8720,6 +8780,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-28-BT-1"
       },
 	  {
@@ -8797,6 +8858,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-28-BT-1"
       },
 	  {
@@ -8843,6 +8905,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-28-BT-1"
       },
 	  {
@@ -8889,6 +8952,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-28-BT-1"
       },
 	  {
@@ -8937,6 +9001,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-28-BT-1"
       },
 	  {
@@ -8983,6 +9048,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-28-BT-1"
       },
 	  {
@@ -9029,6 +9095,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-28-BT-1"
       },
 	  {
@@ -9075,6 +9142,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-29-BT-1"
       },
 	  {
@@ -9121,6 +9189,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-29-BT-1"
       },
 	  {
@@ -9167,6 +9236,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-29-BT-1"
       },
 	  {
@@ -9213,6 +9283,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-29-BT-1"
       },
 	  {
@@ -9259,6 +9330,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-29-BT-1"
       },
 	  {
@@ -9305,6 +9377,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-29-BT-1"
       },
 	  {
@@ -9346,6 +9419,7 @@ VALUES
         "Visible": true,
         "Feedback": null,
         "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-30-BT-1"
       }
     ],
