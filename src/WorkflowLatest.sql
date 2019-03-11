@@ -2922,6 +2922,7 @@ VALUES
       "Questions": [
         {
           "QuestionId": "CD-30",
+		  "QuestionTag": "trading-name",
           "Label": "SQ-1-SE-1-PG-1-CD-30-6",
           "ShortLabel": "SQ-1-SE-1-PG-1-CD-30-7",
           "QuestionBodyText": "SQ-1-SE-1-PG-1-CD-30-8",
@@ -3013,6 +3014,7 @@ VALUES
       "Questions": [
         {
           "QuestionId": "CD-01",
+		  "QuestionTag" : "use-trading-name",                                                       
           "Label": "SQ-1-SE-1-PG-2-CD-01-14",
           "ShortLabel": "SQ-1-SE-1-PG-2-CD-01-15",
           "QuestionBodyText": "SQ-1-SE-1-PG-2-CD-01-16",
@@ -3071,6 +3073,7 @@ VALUES
       "Questions": [
         {
           "QuestionId": "CD-02",
+		  "QuestionTag" : "contact-name",
           "Label": "SQ-1-SE-1-PG-3-CD-02-26",
           "ShortLabel": "SQ-1-SE-1-PG-3-CD-02-27",
           "QuestionBodyText": "SQ-1-SE-1-PG-3-CD-02-28",
@@ -3090,6 +3093,7 @@ VALUES
         },
         {
           "QuestionId": "CD-03",
+		  "QuestionTag" : "contact-address",
           "Label": "SQ-1-SE-1-PG-3-CD-03-30",
           "ShortLabel": "SQ-1-SE-1-PG-3-CD-03-31",
           "QuestionBodyText": "SQ-1-SE-1-PG-3-CD-03-32",
@@ -3109,6 +3113,7 @@ VALUES
         },
         {
           "QuestionId": "CD-04",
+		  "QuestionTag" : "contact-postcode",
           "Label": "SQ-1-SE-1-PG-3-CD-04-34",
           "ShortLabel": "SQ-1-SE-1-PG-3-CD-04-35",
           "QuestionBodyText": "SQ-1-SE-1-PG-3-CD-04-36",
@@ -3128,6 +3133,7 @@ VALUES
         },
         {
           "QuestionId": "CD-05",
+		  "QuestionTag" : "contact-email",
           "Label": "SQ-1-SE-1-PG-3-CD-05-38",
           "ShortLabel": "SQ-1-SE-1-PG-3-CD-05-39",
           "QuestionBodyText": "SQ-1-SE-1-PG-3-CD-05-40",
@@ -3152,6 +3158,7 @@ VALUES
         },
         {
           "QuestionId": "CD-06",
+		  "QuestionTag" : "contact-phone-number",
           "Label": "SQ-1-SE-1-PG-3-CD-06-42",
           "ShortLabel": "SQ-1-SE-1-PG-3-CD-06-43",
           "QuestionBodyText": "SQ-1-SE-1-PG-3-CD-06-44",
@@ -3327,6 +3334,7 @@ VALUES
       "Questions": [
         {
           "QuestionId": "CD-12",
+		  "QuestionTag" : "company-ukprn",
           "Label": "SQ-1-SE-1-PG-5-CD-12-74",
           "ShortLabel": "SQ-1-SE-1-PG-5-CD-12-75",
           "QuestionBodyText": "SQ-1-SE-1-PG-5-CD-12-76",
@@ -3731,6 +3739,7 @@ VALUES
       "Questions": [
         {
           "QuestionId": "CD-17",
+		  "QuestionTag" : "company-number", 
           "Label": "SQ-1-SE-1-PG-9-CD-17-126",
           "ShortLabel": "SQ-1-SE-1-PG-9-CD-17-127",
           "QuestionBodyText": "SQ-1-SE-1-PG-9-CD-17-128",
@@ -4171,6 +4180,7 @@ VALUES
       "Questions": [
         {
           "QuestionId": "CD-26",
+		  "QuestionTag" : "charity-number", 	  
           "Label": "SQ-1-SE-1-PG-14-CD-26-194",
           "ShortLabel": "SQ-1-SE-1-PG-14-CD-26-195",
           "QuestionBodyText": "SQ-1-SE-1-PG-14-CD-26-196",
@@ -8955,6 +8965,7 @@ VALUES
         "Questions": [
 		  {
             "QuestionId": "CC-31",
+			"QuestionTag": "delivery-areas",
             "Label": "SQ-2-SE-4-PG-28-CC-31-L-1",
             "ShortLabel": "SQ-2-SE-4-PG-28-CC-31-SL-1",
             "QuestionBodyText": "SQ-2-SE-4-PG-28-CC-31-QB-1",
@@ -9379,6 +9390,7 @@ VALUES
         "Questions": [
 		  {
             "QuestionId": "CC-40",
+			 "QuestionTag" : "standard-website",
             "Label": "SQ-2-SE-4-PG-30-CC-40-L-1",
             "ShortLabel": "SQ-2-SE-4-PG-30-CC-40-SL-1",
             "QuestionBodyText": "SQ-2-SE-4-PG-30-CC-40-QB-1",
