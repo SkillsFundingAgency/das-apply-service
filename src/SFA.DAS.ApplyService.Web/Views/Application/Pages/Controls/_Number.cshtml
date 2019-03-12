@@ -1,6 +1,9 @@
 @model dynamic
 
-@{ var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : ""; }
+@{
+    var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
+    var inputClasses = Model.InputClasses != null ? Model.InputClasses : "";
+}
 
 @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
 {
@@ -12,8 +15,12 @@
         }
     }
 }
-<input class="govuk-input govuk-!-width-two-thirds @isError"
-       sfa-validation-for-id="@Model.QuestionId"
-       type="number" id="@Model.QuestionId"
-       name="@Model.QuestionId"
-       value="@Model.Value" />
+
+<input
+    class="govuk-input @inputClasses @isError"
+    type="number"
+    id="@Model.QuestionId"
+    name="@Model.QuestionId"
+    value="@Model.Value"
+    pattern="[0-9]*"
+/>
