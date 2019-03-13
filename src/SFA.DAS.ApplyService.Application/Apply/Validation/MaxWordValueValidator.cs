@@ -5,7 +5,7 @@ using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Validation
 {
-    public class MaxWordValueValidator: IValidator
+    public class MaxWordCountValidator : IValidator
     {
         public ValidationDefinition ValidationDefinition { get; set; }
         public List<KeyValuePair<string, string>> Validate(Question question, Answer answer)
@@ -21,7 +21,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
             {
                 while (index < text.Length && !char.IsWhiteSpace(text[index]))
                     index++;
-                    wordCount++;
+                wordCount++;
                 while (index < text.Length && char.IsWhiteSpace(text[index]))
                     index++;
             }
