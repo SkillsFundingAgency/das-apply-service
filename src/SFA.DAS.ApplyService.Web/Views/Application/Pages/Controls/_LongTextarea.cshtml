@@ -13,10 +13,18 @@
     }
 }
 
-<textarea 
-    class="govuk-textarea govuk-!-margin-bottom-0 @isError"
-    id="@Model.QuestionId"
-    name="@Model.QuestionId"
-    rows="12"
-    aria-describedby="@Model.Label"
->@Model.Value</textarea>
+<div class="govuk-character-count" data-module="character-count" data-maxwords="500">
+  <div class="govuk-form-group">
+    <textarea 
+      class="govuk-textarea govuk-!-margin-bottom-0 @isError js-character-count "
+      id="@Model.QuestionId"
+      name="@Model.QuestionId"
+      rows="12"
+      aria-describedby="@Model.Label"
+      maxlength="10000"
+    >@Model.Value</textarea>
+  </div>
+  <span id="@Model.QuestionId-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
+    You can enter up to 500 words
+  </span>
+</div>
