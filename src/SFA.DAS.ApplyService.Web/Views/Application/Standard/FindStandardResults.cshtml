@@ -25,18 +25,18 @@
                 <div class="govuk-form-group">
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th class="govuk-table__header" scope="col">Name</th>
-                            <th class="govuk-table__header" scope="col">Standard ID</th>
-                            <th class="govuk-table__header" scope="col"></th>
-                        </tr>
+                            <tr class="govuk-table__row">
+                                <th class="govuk-table__header" scope="col">Name</th>
+                                <th class="govuk-table__header" scope="col">Standard ID</th>
+                                <th class="govuk-table__header" scope="col"></th>
+                            </tr>
                         </thead>
                         <tbody>
                             @foreach (var result in Model.Results.OrderBy(x => x.Title))
                             {
                                 <tr class="govuk-table__row">
                                     <td class="govuk-table__cell" data-label="Name">@result.Title</td>
-                                    <td class="govuk-table__cell" data-label="ID">@result.StandardId</td>
+                                    <td class="govuk-table__cell" data-label="ID">@result.ReferenceNumber</td>
                                     <td class="govuk-table__cell govuk-table__cell--numeric">
                                         <a href="/standard/@Model.ApplicationId/confirm-standard/@result.StandardId" class="govuk-link">Apply for standard</a>
                                     </td>
