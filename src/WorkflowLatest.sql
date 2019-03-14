@@ -8660,7 +8660,7 @@ VALUES
                 {
                   "Name": "MaxWordCount",
                   "Value": 500,
-                  "ErrorMessage": "You must use 500 words or fewer"
+                  "ErrorMessage": "How you continuously improve the quality of your assessment practice must be 500 words or less"
                 }
               ]
             },
@@ -8712,7 +8712,7 @@ VALUES
                         {
                           "Name": "MaxWordCount",
                           "Value": 500,
-                          "ErrorMessage": "You must use 500 words or fewer"
+                          "ErrorMessage": "Evidence of engagement with trailblazers and employers must be 500 words or less"
                         }
                       ]
             },
@@ -8764,7 +8764,7 @@ VALUES
                         {
                           "Name": "MaxWordCount",
                           "Value": 500,
-                          "ErrorMessage": "You must use 500 words or fewer"
+                          "ErrorMessage": "Details of membership to professional organisations must be 500 words or less"
                         }
                       ]
             },
@@ -8912,7 +8912,7 @@ VALUES
                         {
                           "Name": "MaxWordCount",
                           "Value": 500,
-                          "ErrorMessage": "You must use 500 words or fewer"
+                          "ErrorMessage": "How the volume of end-point assessments be achieved must be 500 words or less"
                         }
                       ]
             },
@@ -8964,7 +8964,7 @@ VALUES
                         {
                           "Name": "MaxWordCount",
                           "Value": 500,
-                          "ErrorMessage": "You must use 500 words or fewer"
+                          "ErrorMessage": "How you recruit and train assessors must be 500 words or less"
                         }
                       ]
             },
@@ -9016,7 +9016,7 @@ VALUES
                         {
                           "Name": "MaxWordCount",
                           "Value": 500,
-                          "ErrorMessage": "You must use 500 words or fewer"
+                          "ErrorMessage": "Details of experience, skills and qualifications must be 500 words or less"
                         }
                       ]
             },
@@ -9068,7 +9068,7 @@ VALUES
                         {
                           "Name": "MaxWordCount",
                           "Value": 500,
-                          "ErrorMessage": "You must use 500 words or fewer"
+                          "ErrorMessage": "How occupational expertise is maintained must be 500 words or less"
                         }
                       ]
             },
@@ -9120,7 +9120,7 @@ VALUES
                         {
                           "Name": "MaxWordCount",
                           "Value": 500,
-                          "ErrorMessage": "You must use 500 words or fewer"
+                          "ErrorMessage": "How you will conduct an end-point assessment must be 500 words or less"
                         }
                       ]
             },
@@ -9250,7 +9250,7 @@ VALUES
                 {
                   "Name": "MaxWordCount",
                   "Value": 500,
-                  "ErrorMessage": "You must use 500 words or fewer"
+                  "ErrorMessage": "How you will engage with employers and training organisations must be 500 words or less"
                 }
               ]
             },
@@ -9302,7 +9302,7 @@ VALUES
                 {
                   "Name": "MaxWordCount",
                   "Value": 500,
-                  "ErrorMessage": "You must use 500 words or fewer"
+                  "ErrorMessage": "How you will manage any potential conflict of interest must be 500 words or less"
                 }
               ]
             },
@@ -9403,7 +9403,7 @@ VALUES
                 {
                   "Name": "MaxWordCount",
                   "Value": 500,
-                  "ErrorMessage": "You must use 500 words or fewer"
+                  "ErrorMessage": "How you will conduct end-point assessments must be 500 words or less"
                 }
               ]
             },
@@ -9455,7 +9455,7 @@ VALUES
                 {
                   "Name": "MaxWordCount",
                   "Value": 500,
-                  "ErrorMessage": "You must use 500 words or fewer"
+                  "ErrorMessage": "How you will develop and maintain the required resources and assessment tools must be 500 words or less"
                 }
               ]
             },
@@ -9507,7 +9507,7 @@ VALUES
                 {
                   "Name": "MaxWordCount",
                   "Value": 500,
-                  "ErrorMessage": "You must use 500 words or fewer"
+                  "ErrorMessage": "Details of the secure IT infrastructure must be 500 words or less"
                 }
               ]
             },
@@ -9559,7 +9559,7 @@ VALUES
                 {
                   "Name": "MaxWordCount",
                   "Value": 500,
-                  "ErrorMessage": "You must use 500 words or fewer"
+                  "ErrorMessage": "Details of processes in place for administration of assessments must be 500 words or less"
                 }
               ]
             },
@@ -9611,7 +9611,7 @@ VALUES
                 {
                   "Name": "MaxWordCount",
                   "Value": 500,
-                  "ErrorMessage": "You must use 500 words or fewer"
+                  "ErrorMessage": "Strategies in place for development of assessment products and tools must be 500 words or less"
                 }
               ]
             },
@@ -9663,7 +9663,7 @@ VALUES
                 {
                   "Name": "MaxWordCount",
                   "Value": 500,
-                  "ErrorMessage": "You must use 500 words or fewer"
+                  "ErrorMessage": "The actions you will take and the processes you will implement must be 500 words or less"
                 }
               ]
             },
@@ -9715,7 +9715,7 @@ VALUES
                 {
                   "Name": "MaxWordCount",
                   "Value": 500,
-                  "ErrorMessage": "You must use 500 words or fewer"
+                  "ErrorMessage": "Details of how you collate and confirm assessment outcomes must be 500 words or less"
                 }
               ]
             },
@@ -9767,7 +9767,7 @@ VALUES
                 {
                   "Name": "MaxWordCount",
                   "Value": 500,
-                  "ErrorMessage": "You must use 500 words or fewer"
+                  "ErrorMessage": "Details of the processes in place for recording and issuing assessment results and certificates must be 500 words or less"
                 }
               ]
             },
