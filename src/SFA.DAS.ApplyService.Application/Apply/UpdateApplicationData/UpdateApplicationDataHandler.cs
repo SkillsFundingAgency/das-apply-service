@@ -39,22 +39,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdateApplicationData
             application.ApplicationData.StandardName = standardAppData.StandardName;
             application.ApplicationData.StandardCode = standardAppData.StandardCode;
 
-            if (application.ApplicationData.StandardSubmissions == null)
-            {
-                application.ApplicationData.StandardSubmissions = new List<StandardSubmission>();
-            }
-
-            var submission = new StandardSubmission
-            {
-                SubmittedAt = DateTime.UtcNow,
-                SubmittedBy = standardAppData.UserId,
-                SubmittedByEmail = standardAppData.UserEmail
-            };
-
-            application.ApplicationData.StandardSubmissions.Add(submission);
-            application.ApplicationData.StandardSubmissionsCount = application.ApplicationData.StandardSubmissions.Count;
-            application.ApplicationData.LatestStandardSubmissionDate = submission.SubmittedAt;
-
             await _applyRepository.UpdateApplicationData(request.ApplicationId, application.ApplicationData);
 
             return Unit.Value;

@@ -156,6 +156,10 @@ namespace SFA.DAS.ApplyService.InternalApi
                 config.For<IDfeSignInService>().Use<DfeSignInService>();
                 config.For<IEmailService>().Use<EmailService.EmailService>();
 
+                // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
+                config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>();
+                config.For<CharityCommissionApiClient>().Use<CharityCommissionApiClient>();
+                // End of SOAP Services
 
                 config.For<IKeyProvider>().Use<PlaceholderKeyProvider>();
                 config.For<IStorageService>().Use<StorageService>();
