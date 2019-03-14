@@ -18,6 +18,7 @@ namespace SFA.DAS.ApplyService.Configuration
         ReferenceDataApiAuthentication ReferenceDataApiAuthentication { get; set; }
 
         CompaniesHouseApiAuthentication CompaniesHouseApiAuthentication { get; set; }
+        CharityCommissionApiAuthentication CharityCommissionApiAuthentication { get; set; }
 
         string FeedbackUrl { get; set; }
     }
