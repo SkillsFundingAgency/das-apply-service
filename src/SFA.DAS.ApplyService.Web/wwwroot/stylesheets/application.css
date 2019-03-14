@@ -437,3 +437,13 @@
 .govuk-table__cell--break-word {
     word-break: break-word;
 }
+
+.govuk-character-count {
+    margin-bottom: 0;
+}
+
+@media (min-width: 40.0625em) {
+    .govuk-character-count {
+        margin-bottom: 0;
+    }
+}
