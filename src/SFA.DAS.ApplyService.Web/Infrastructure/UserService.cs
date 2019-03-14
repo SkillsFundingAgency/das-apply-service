@@ -47,7 +47,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             var identity = new ClaimsIdentity(new List<Claim>() {new Claim("UserId", user.Id.ToString())});
             _contextAccessor.HttpContext.User.AddIdentity(identity);
             await _contextAccessor.HttpContext.SignInAsync(_contextAccessor.HttpContext.User);
-            
+
             _sessionService.Set("LoggedInUser", $"{user.GivenNames} {user.FamilyName}");
         }
     }

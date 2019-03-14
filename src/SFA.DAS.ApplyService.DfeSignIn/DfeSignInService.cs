@@ -32,7 +32,7 @@ namespace SFA.DAS.ApplyService.DfeSignIn
            
             
             var client = new HttpClient();
-            var disco = client.GetDiscoveryDocumentAsync("http://localhost:5000").Result;
+            var disco = await client.GetDiscoveryDocumentAsync("https://localhost:5001");
             if (disco.IsError)
             {
                 Console.WriteLine(disco.Error);
@@ -78,9 +78,9 @@ namespace SFA.DAS.ApplyService.DfeSignIn
                     callback = config.DfeSignIn.CallbackUri
                 });
                 
-                var response = httpClient.PostAsync(config.DfeSignIn.ApiUri,
+                var response = await httpClient.PostAsync(config.DfeSignIn.ApiUri,
                     new StringContent(inviteJson, Encoding.UTF8, "application/json")
-                ).Result;
+                );
             
             
 //                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt);

@@ -20,14 +20,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IUsersApiClient _usersApiClient;
         private readonly ISessionService _sessionService;
         private readonly ILogger<UsersController> _logger;
-        private readonly IConfigurationService _config;
 
         public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger, IConfigurationService config)
         {
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
             _logger = logger;
-            _config = config;
         }
         
         [HttpGet]

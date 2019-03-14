@@ -7,6 +7,7 @@ using NLog;
 using SFA.DAS.ApplyService.Application.Users.ApproveContact;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Application.Users.GetContact;
+using SFA.DAS.ApplyService.Application.Users.UpdateContactIdAndSignInId;
 using SFA.DAS.ApplyService.Application.Users.UpdateSignInId;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
@@ -29,7 +30,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [PerformValidation]
         public async Task<ActionResult> InviteUser([FromBody]NewContact newContact)
         {
-            var successful = await _mediator.Send(new CreateAccountRequest(newContact.Email, newContact.GivenName, newContact.FamilyName));
+            var successful = await _mediator.Send(new CreateAccountRequest(newContact.Email, newContact.GivenName, newContact.FamilyName, newContact.FromAssessor));
 
             if (!successful)
             {
@@ -72,6 +73,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             }
 
             return Ok();
+        }
+
+        [HttpPut("/Account/")]
+        public async Task UpdateContactWithSignInId([FromBody] AddContactSignInId addContactSignInId)
+        {
+            await _mediator.Send(new UpdateContactIdAndSignInIdRequest(Guid.Parse(addContactSignInId.SignInId),
+                Guid.Parse(addContactSignInId.ContactId), addContactSignInId.Email, addContactSignInId.UpdatedBy));
         }
     }
 }

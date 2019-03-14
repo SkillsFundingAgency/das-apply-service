@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -28,12 +29,17 @@ namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
             var existingContact = await _contactRepository.GetContact(request.Email);
             if (existingContact == null)
             {
-                var newContact = await _contactRepository.CreateContact(request.Email, request.GivenName, request.FamilyName, "DfESignIn");
-                
-                var invitationResult = await _dfeSignInService.InviteUser(request.Email, request.GivenName, request.FamilyName, newContact.Id);
-                if (!invitationResult.IsSuccess)
+                var newContact = await _contactRepository.CreateContact(request.Email, request.GivenName, request.FamilyName, request.FromAssessor ? "AssessorSignIn":"DfESignIn");
+
+                if (!request.FromAssessor)
                 {
-                    return false;
+                    var invitationResult = await _dfeSignInService.InviteUser(request.Email, request.GivenName,
+                        request.FamilyName, newContact.Id);
+                    if (!invitationResult.IsSuccess)
+                    {
+                        return false;
+
+                    }
                 }
             }
             else

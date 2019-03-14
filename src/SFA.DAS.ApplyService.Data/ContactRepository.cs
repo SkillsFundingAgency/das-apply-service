@@ -59,6 +59,16 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task UpdateContactIdAndSignInId(Guid contactId, Guid signInId, string email, string updatedBy)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(
+                    @"UPDATE Contacts SET Id = @contactId, SignInId = @signInId, UpdatedAt = GETUTCDATE(), UpdatedBy = @updatedBy, Status = 'Live' WHERE Email = @email",
+                    new { contactId, signInId, email, updatedBy });
+            }
+        }
+
         public async Task UpdateApplyOrganisationId(Guid contactId, Guid applyOrganisationId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -87,6 +97,15 @@ namespace SFA.DAS.ApplyService.Data
             {
                 return (await connection.QueryAsync<Contact>(@"SELECT * FROM Contacts 
                                                     WHERE Id = @userId", new { userId })).FirstOrDefault();
+            }
+        }
+
+        public async Task<Contact> GetContactByEmail(string email)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<Contact>(@"SELECT * FROM Contacts 
+                                                    WHERE Email = @email", new { email })).FirstOrDefault();
             }
         }
     }
