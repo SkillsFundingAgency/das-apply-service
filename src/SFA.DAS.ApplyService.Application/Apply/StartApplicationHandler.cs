@@ -38,6 +38,14 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
             foreach (var applicationSection in sections)
             {
+                var pagesToMakeNotRequired = applicationSection.QnAData.Pages.Where(p => p.NotRequiredOrgTypes != null && p.NotRequiredOrgTypes.Contains(org.OrganisationType));
+
+                foreach (var page in pagesToMakeNotRequired)
+                {
+                    page.NotRequired = true;
+                    page.Complete = true;
+                }
+
                 string QnADataJson = JsonConvert.SerializeObject(applicationSection.QnAData);
                 foreach (var asset in assets)
                 {
@@ -139,14 +147,13 @@ namespace SFA.DAS.ApplyService.Application.Apply
                 sec.NotRequired = true;
                 sec.Status = ApplicationSectionStatus.Evaluated;
 
-                var fhaGrade = sec.QnAData.FinancialApplicationGrade;
-                if (fhaGrade is null)
+                if (sec.QnAData.FinancialApplicationGrade is null)
                 {
-                    fhaGrade = new FinancialApplicationGrade();
+                    sec.QnAData.FinancialApplicationGrade = new FinancialApplicationGrade();
                 }
 
-                fhaGrade.SelectedGrade = FinancialApplicationSelectedGrade.Exempt;
-                fhaGrade.GradedDateTime = DateTime.UtcNow;
+                sec.QnAData.FinancialApplicationGrade.SelectedGrade = FinancialApplicationSelectedGrade.Exempt;
+                sec.QnAData.FinancialApplicationGrade.GradedDateTime = DateTime.UtcNow;
             }
         }
 
