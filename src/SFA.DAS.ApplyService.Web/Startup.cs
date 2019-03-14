@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Logging;
 using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Configuration;
@@ -44,6 +45,8 @@ namespace SFA.DAS.ApplyService.Web
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            IdentityModelEventSource.ShowPII = true;
+        
             ConfigureAuth(services);
             
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });

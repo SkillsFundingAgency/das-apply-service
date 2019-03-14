@@ -57,35 +57,19 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public IActionResult SignIn()
         {
             return Challenge(new AuthenticationProperties() {RedirectUri = Url.Action("PostSignIn", "Users")},
-                OpenIdConnectDefaults.AuthenticationScheme);
+                "oidc");
         }
         
         [HttpGet]
         public IActionResult SignOut()
         {
-            //foreach (var cookie in Request.Cookies.Keys)
-            //{
-            //    Response.Cookies.Delete(cookie);
-            //}
-
-            return SignOut(CookieAuthenticationDefaults.AuthenticationScheme,
-                OpenIdConnectDefaults.AuthenticationScheme);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> PostSignOut(bool signInScreen)
-        {
-            var isSignInFromApply =_sessionService.Get<bool>("SignedInFromApply");
-            var applyConfig = await _config.GetConfig();
             foreach (var cookie in Request.Cookies.Keys)
             {
                 Response.Cookies.Delete(cookie);
             }
 
-            if (isSignInFromApply)
-                return signInScreen ? RedirectToAction("SignIn", "Users") : RedirectToAction("Index", "Home");
-
-            return Redirect(signInScreen ? $"{applyConfig.AssessorServiceBaseUrl}/Account/SignIn" : $"{applyConfig.AssessorServiceBaseUrl}/");
+            return SignOut("Cookies",
+                "oidc");
         }
 
         public IActionResult InviteSent()
@@ -115,8 +99,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _logger.LogInformation($"Setting LoggedInUser in Session: {user.GivenNames} {user.FamilyName}");
             
             _sessionService.Set("LoggedInUser", $"{user.GivenNames} {user.FamilyName}");
-
-            _sessionService.Set("SignedInFromApply", User.SignedInFromApply());
 
             if (user.ApplyOrganisationId == null)
             {
