@@ -29,6 +29,11 @@ namespace SFA.DAS.ApplyService.InternalApi
                 cfg.AddProfile<CompaniesHouseOfficerDisqualificationProfile>();
                 cfg.AddProfile<CompaniesHousePersonWithSignificantControlProfile>();
                 cfg.AddProfile<CompaniesHousePersonWithSignificantControlAddressProfile>();
+
+                cfg.AddProfile<CharityCommissionProfile>();
+                cfg.AddProfile<CharityCommissionAddressProfile>();
+                cfg.AddProfile<CharityCommissionAccountsProfile>();
+                cfg.AddProfile<CharityCommissionTrusteeProfile>();
             });
 
             Mapper.AssertConfigurationIsValid();
