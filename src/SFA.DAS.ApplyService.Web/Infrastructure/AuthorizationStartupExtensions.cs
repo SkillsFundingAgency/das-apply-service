@@ -20,40 +20,33 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         {
             services.AddAuthentication(options =>
                 {
-                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                    options.DefaultScheme = "Cookies";
+                    options.DefaultChallengeScheme = "oidc";
                 })
-                .AddCookie(options => { 
-                    options.Cookie.Name = ".Apply.Cookies";
-                    options.Cookie.HttpOnly = true;
-                })
-                .AddOpenIdConnect(options =>
+                .AddCookie("Cookies")
+                .AddOpenIdConnect("oidc", options =>
                 {
-                    options.CorrelationCookie = new CookieBuilder()
-                    {
-                        Name = ".Apply.Correlation.", 
-                        HttpOnly = true,
-                        SameSite = SameSiteMode.None,
-                        SecurePolicy = CookieSecurePolicy.SameAsRequest
-                    };
-                    
-                    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    options.MetadataAddress = applyConfig.DfeSignIn.MetadataAddress;
+//                    options.CorrelationCookie = new CookieBuilder()
+//                    {
+//                        Name = ".Apply.Correlation.", 
+//                        HttpOnly = true,
+//                        SameSite = SameSiteMode.None,
+//                        SecurePolicy = CookieSecurePolicy.SameAsRequest
+//                    };
+
+                    options.SignInScheme = "Cookies";
+
+                    options.Authority = applyConfig.DfeSignIn.MetadataAddress;
+                    options.RequireHttpsMetadata = false;
 
                     options.ClientId = applyConfig.DfeSignIn.ClientId;
                     
-                    options.ClientSecret = applyConfig.DfeSignIn.ClientSecret;
-                    options.ResponseType = OpenIdConnectResponseType.Code;
-                    options.GetClaimsFromUserInfoEndpoint = true;
 
-                    options.UseTokenLifetime = true;
+                    options.SaveTokens = true;
+                    options.GetClaimsFromUserInfoEndpoint = true;
 
                     options.Scope.Clear();
                     options.Scope.Add("openid");
-                    options.Scope.Add("email");
-                    options.Scope.Add("profile");
-
-                    options.Scope.Add("offline_access");
 
                     options.SaveTokens = true;
                     //options.CallbackPath = new PathString(Configuration["auth:oidc:callbackPath"]);
