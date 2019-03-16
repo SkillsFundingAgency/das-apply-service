@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using IdentityModel.Client;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -25,22 +26,40 @@ namespace SFA.DAS.ApplyService.DfeSignIn
             _logger = logger;
         }
         
-        public async Task<InviteUserResponse> InviteUser(string email, string givenName, string familyName, Guid userId)
+                public async Task<InviteUserResponse> InviteUser(string email, string givenName, string familyName, Guid userId)
         {
             var config = await _configurationService.GetConfig();
            
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.DfeSignIn.ApiClientSecret));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            
+            var client = new HttpClient();
+            var disco = client.GetDiscoveryDocumentAsync(config.DfeSignIn.MetadataAddress).Result;
+            if (disco.IsError)
+            {
+                Console.WriteLine(disco.Error);
+            }
+            
+            // request token
+            var tokenResponse = client.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
+            {
+                Address = disco.TokenEndpoint,
 
-            var token = new JwtSecurityToken(issuer: config.DfeSignIn.ClientId, audience: "signin.education.gov.uk",
-                signingCredentials: creds);
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+                ClientId = "client",
+                ClientSecret = config.DfeSignIn.ApiClientSecret,
+                Scope = "api1"
+            }).Result;
 
+            if (tokenResponse.IsError)
+            {
+                Console.WriteLine(tokenResponse.Error);
+            }
+
+            Console.WriteLine(tokenResponse.Json);
+            
             using (var httpClient = new HttpClient())
             {
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
-                httpClient.DefaultRequestHeaders.Add("Accept", "application/json");  
+                httpClient.SetBearerToken(tokenResponse.AccessToken);
 
+            
                 var inviteJson = JsonConvert.SerializeObject(new
                 {
                     sourceId = userId.ToString(),
@@ -51,19 +70,37 @@ namespace SFA.DAS.ApplyService.DfeSignIn
                     callback = config.DfeSignIn.CallbackUri
                 });
                 
-                var dfeResponse = await httpClient.PostAsync(config.DfeSignIn.ApiUri,
+                var response = httpClient.PostAsync(config.DfeSignIn.ApiUri,
                     new StringContent(inviteJson, Encoding.UTF8, "application/json")
-                );
-
-                var content = await dfeResponse.Content.ReadAsStringAsync();
+                ).Result;
+            
+            
+//                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
+//                httpClient.DefaultRequestHeaders.Add("Accept", "application/json");  
+//
+//                var inviteJson = JsonConvert.SerializeObject(new
+//                {
+//                    sourceId = userId.ToString(),
+//                    given_name = givenName,
+//                    family_name = familyName,
+//                    email = email,
+//                    userRedirect = config.DfeSignIn.RedirectUri,
+//                    callback = config.DfeSignIn.CallbackUri
+//                });
+//                
+//                var dfeResponse = await httpClient.PostAsync(config.DfeSignIn.ApiUri,
+//                    new StringContent(inviteJson, Encoding.UTF8, "application/json")
+//                );
+//
+                var content = await response.Content.ReadAsStringAsync();
                 
                 _logger.LogInformation("Returned from DfE Invitation Service. Status Code: {0}. Message: {0}",
-                    (int) dfeResponse.StatusCode, content);
+                    (int) response.StatusCode, content);
                 
-                if (!dfeResponse.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode)
                 {
                     _logger.LogError("Error from DfE Invitation Service. Status Code: {0}. Message: {0}",
-                        (int) dfeResponse.StatusCode, content);
+                        (int) response.StatusCode, content);
                     return new InviteUserResponse() {IsSuccess = false};
                 }
                 
