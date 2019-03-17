@@ -18,6 +18,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     {
         public static void AddDfeSignInAuthorization(this IServiceCollection services, IApplyConfig applyConfig, ILogger logger)
         {
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            
             services.AddAuthentication(options =>
                 {
                     options.DefaultScheme = "Cookies";
@@ -48,24 +50,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                     options.Scope.Clear();
                     options.Scope.Add("openid");
 
-                    options.SaveTokens = true;
-                    //options.CallbackPath = new PathString(Configuration["auth:oidc:callbackPath"]);
-                    options.SignedOutCallbackPath = new PathString("/SignedOut");
-                    options.SignedOutRedirectUri = applyConfig.DfeSignIn.SignOutRedirectUri;// "https://localhost:6016/Users/LoggedOut";
-                    
-                    options.SecurityTokenValidator = new JwtSecurityTokenHandler
-                    {
-                        InboundClaimTypeMap = new Dictionary<string, string>(),
-                        TokenLifetimeInMinutes = 20,
-                        SetDefaultTimesOnTokenCreation = true,
-                    };
-                    options.ProtocolValidator = new OpenIdConnectProtocolValidator
-                    {
-                        RequireSub = true,
-                        RequireStateValidation = false,
-                        NonceLifetime = TimeSpan.FromMinutes(15),
-                        RequireNonce = false
-                    };
+
                     
                     options.DisableTelemetry = true;
                     options.Events = new OpenIdConnectEvents

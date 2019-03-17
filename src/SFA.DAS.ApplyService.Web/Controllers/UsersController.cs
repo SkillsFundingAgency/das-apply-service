@@ -58,7 +58,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public IActionResult SignIn()
         {
             return Challenge(new AuthenticationProperties() {RedirectUri = Url.Action("PostSignIn", "Users")},
-                OpenIdConnectDefaults.AuthenticationScheme);
+                "oidc");
         }
         
         [HttpGet]
@@ -70,7 +70,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return SignOut(CookieAuthenticationDefaults.AuthenticationScheme,
-                OpenIdConnectDefaults.AuthenticationScheme);
+                "oidc");
         }
 
         public IActionResult InviteSent()
