@@ -1,4 +1,5 @@
-﻿@using SFA.DAS.ApplyService.Configuration
+﻿@using NPOI.HSSF.Record
+@using SFA.DAS.ApplyService.Configuration
 @using SFA.DAS.ApplyService.Session
 @inject ISessionService SessionService
 @inject IConfigurationService Config
@@ -71,10 +72,19 @@
             </a>
         </div>
         <div class="govuk-header__content">
-            <a href="/" class="govuk-header__link govuk-header__link--service-name">
-                Apply to the register of end-point assessment organisations
-            </a>
-        </div>
+            @if (!SessionService.Get<bool>("LoggedInFromAssessor"))
+            {
+                <a href="/" class="govuk-header__link govuk-header__link--service-name">
+                    Apply to the register of end-point assessment organisations
+                </a>
+            }
+            else
+            {
+                <a href="/" class="govuk-header__link govuk-header__link--service-name">
+                    Record apprentice end-point assessment grades
+                </a>
+            }
+            </div>
     </div>
 </header>
 

@@ -169,5 +169,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         {
             return await(await _httpClient.GetAsync($"organisations/userId/{userId}")).Content.ReadAsAsync<Organisation>();
         }
+
+        public async Task<Organisation> GetOrganisationByUkprn(string ukprn)
+        {
+            return await (await _httpClient.GetAsync($"organisations/ukprn/{ukprn}")).Content.ReadAsAsync<Organisation>();
+        }
     }
 }

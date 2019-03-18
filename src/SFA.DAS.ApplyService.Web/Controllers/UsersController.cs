@@ -20,12 +20,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IUsersApiClient _usersApiClient;
         private readonly ISessionService _sessionService;
         private readonly ILogger<UsersController> _logger;
+        private readonly IConfigurationService _config;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger, IConfigurationService config)
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger, IConfigurationService config, IHttpContextAccessor contextAccessor)
         {
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
             _logger = logger;
+            _config = config;
+            _contextAccessor = contextAccessor;
         }
         
         [HttpGet]
@@ -59,15 +63,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
         
         [HttpGet]
-        public IActionResult SignOut()
+        public async Task<IActionResult> SignOut()
         {
+            if (!string.IsNullOrEmpty(_contextAccessor.HttpContext.User.FindFirstValue("display_name")))
+            {
+                return Redirect($"{(await _config.GetConfig()).AssessorServiceBaseUrl}/Account/SignOut");
+            }
             foreach (var cookie in Request.Cookies.Keys)
             {
                 Response.Cookies.Delete(cookie);
             }
 
+
             return SignOut("Cookies",
-                "oidc");
+               "oidc");
         }
 
         public IActionResult InviteSent()

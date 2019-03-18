@@ -108,5 +108,17 @@ namespace SFA.DAS.ApplyService.Data
                                                     WHERE Email = @email", new { email })).FirstOrDefault();
             }
         }
+
+        public async Task<bool> UpdateContactOrgId(Guid contactId, Guid orgId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                int rowsAffected = await connection.ExecuteAsync(
+                    @"UPDATE Contacts SET ApplyOrganisationID = @orgId, UpdatedAt = GETUTCDATE(), UpdatedBy = 'System' WHERE Id = @contactId",
+                    new { orgId, contactId });
+
+                return rowsAffected > 0;
+            }
+        }
     }
 }

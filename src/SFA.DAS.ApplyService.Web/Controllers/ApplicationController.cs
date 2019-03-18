@@ -40,7 +40,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var user = _sessionService.Get("LoggedInUser");
 
-            if (!await ValidateUser(user))
+            if (!await _userService.ValidateUser(user))
                 RedirectToAction("PostSignIn", "Users");
 
             _logger.LogInformation($"Got LoggedInUser from Session: {user}");
@@ -54,84 +54,47 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 var org = await _apiClient.GetOrganisationByUserId(userId);
                 if (org != null && org.RoEPAOApproved)
                 {
-                    return await StartApplication(userId);
+                      return await StartApplication(userId);
+                }
+
+                if (org == null)
+                {
+                    if (await _userService.AssociateOrgFromClaimWithUser())
+                        return await StartApplication(userId);
                 }
 
                 return View("~/Views/Application/Declaration.cshtml");
 
             }
-            else if (applications.Count() > 1)
+
+            if (applications.Count() > 1)
             {
                 return View(applications);
             }
-            else
+
+            var application = applications.First();
+
+            if (application.ApplicationStatus == ApplicationStatus.FeedbackAdded)
             {
-                var application = applications.First();
-
-                if (application.ApplicationStatus == ApplicationStatus.FeedbackAdded)
-                {
-                    return View("~/Views/Application/FeedbackIntro.cshtml", application.Id);
-                }
-                else if (application.ApplicationStatus == ApplicationStatus.Rejected)
-                {
-                    return View(applications);
-                }
-                else if (application.ApplicationStatus == ApplicationStatus.Approved)
-                {
-                    return View(applications);
-                }
-
-                return RedirectToAction("SequenceSignPost", new {applicationId = application.Id});
+                return View("~/Views/Application/FeedbackIntro.cshtml", application.Id);
             }
+
+            if (application.ApplicationStatus == ApplicationStatus.Rejected)
+            {
+                return View(applications);
+            }
+
+            if (application.ApplicationStatus == ApplicationStatus.Approved)
+            {
+                return View(applications);
+            }
+
+            return RedirectToAction("SequenceSignPost", new {applicationId = application.Id});
         }
-
-        private async Task<bool> ValidateUser(string user)
-        {
-            try
-            {
-                //Check if user is associated with registered EPAO
-                //The result of this will be used to determine if common menu is shown
-                var ukPrn = await _userService.GetClaim(
-                    "http://schemas.portal.com/ukprn");
-                if (!string.IsNullOrEmpty(ukPrn))
-                    _sessionService.Set("UserRegWithEPAO", true);
-            }
-            catch (ArgumentException)
-            {
-                //Ignore
-            }
-
-            // User is already set so return valid otherwise continue
-            if (!string.IsNullOrEmpty(user))
-                return true;
-
-            //Attempt to extract variable from claim incase called from Accessor
-            try
-            {
-                var givenName = await _userService.GetClaim("given_name");
-                var familyName = await _userService.GetClaim("family_name");
-                //May have empty strings
-                if (!string.IsNullOrEmpty(givenName) && !string.IsNullOrEmpty(familyName))
-                    _sessionService.Set("LoggedInUser", $"{givenName} {familyName}");
-                else
-                {
-                    //Claims where empty and user was null so redirect to postsignin
-                    return false;
-                }
-            }
-            catch (ArgumentException)
-            {
-                //One of the Claims where null so redirect to postsignin
-                return false;
-            }
-
-           
-            return true;
-        }
-
 
         private async Task<IActionResult> StartApplication(Guid userId)
         {
+
             await _apiClient.StartApplication(userId);
 
             return RedirectToAction("Applications");

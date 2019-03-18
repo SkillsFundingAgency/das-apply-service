@@ -46,40 +46,34 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             
                     options.Scope.Clear();
                     options.Scope.Add("openid");
-                    
-//                    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-//                    options.MetadataAddress = applyConfig.DfeSignIn.MetadataAddress;
-//
-//                    options.ClientId = applyConfig.DfeSignIn.ClientId;
-//                    
-//                    
-//                    options.GetClaimsFromUserInfoEndpoint = true;
-//
-//                    options.UseTokenLifetime = true;
-//
-//                    options.Scope.Clear();
-//                    options.Scope.Add("openid");
-//
-//                    options.SaveTokens = true;
-//                    //options.CallbackPath = new PathString(Configuration["auth:oidc:callbackPath"]);
-//                    options.SignedOutCallbackPath = new PathString("/SignedOut");
-//                    options.SignedOutRedirectUri = applyConfig.DfeSignIn.SignOutRedirectUri;// "https://localhost:6016/Users/LoggedOut";
-//                    
-//                    options.SecurityTokenValidator = new JwtSecurityTokenHandler
-//                    {
-//                        InboundClaimTypeMap = new Dictionary<string, string>(),
-//                        TokenLifetimeInMinutes = 20,
-//                        SetDefaultTimesOnTokenCreation = true,
-//                    };
-//                    options.ProtocolValidator = new OpenIdConnectProtocolValidator
-//                    {
-//                        RequireSub = true,
-//                        RequireStateValidation = false,
-//                        NonceLifetime = TimeSpan.FromMinutes(15),
-//                        RequireNonce = false
-//                    };
-//                    
-//                    options.DisableTelemetry = true;
+
+                    //                    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    //                    options.MetadataAddress = applyConfig.DfeSignIn.MetadataAddress;
+                    //
+                    //                    options.ClientId = applyConfig.DfeSignIn.ClientId;
+                    //                    
+                    //                    
+                    //                    options.GetClaimsFromUserInfoEndpoint = true;
+                    //
+                    //                    options.UseTokenLifetime = true;
+                    //
+                    //                    options.Scope.Clear();
+                    //                    options.Scope.Add("openid");
+                    //
+                    //                    options.SaveTokens = true;
+                    //                    //options.CallbackPath = new PathString(Configuration["auth:oidc:callbackPath"]);
+                    //                    options.SignedOutCallbackPath = new PathString("/SignedOut");
+                    //                    options.SignedOutRedirectUri = applyConfig.DfeSignIn.SignOutRedirectUri;// "https://localhost:6016/Users/LoggedOut";
+                    //                    
+                    //                    options.SecurityTokenValidator = new JwtSecurityTokenHandler
+                    //                    {
+                    //                        InboundClaimTypeMap = new Dictionary<string, string>(),
+                    //                        TokenLifetimeInMinutes = 20,
+                    //                        SetDefaultTimesOnTokenCreation = true,
+                    //                    };
+                 
+                    //                    
+                    //                    options.DisableTelemetry = true;
                     options.Events = new OpenIdConnectEvents
                     {
                         // Sometimes, problems in the OIDC provider (such as session timeouts)

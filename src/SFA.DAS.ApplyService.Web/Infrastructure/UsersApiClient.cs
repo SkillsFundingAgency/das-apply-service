@@ -18,6 +18,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         Task<bool> ApproveUser(Guid userId);
         Task Callback(DfeSignInCallback callback);
+        Task AssociateOrganisationWithUser(Guid contactId, Guid organisationId);
     }
 
     public class UsersApiClient : IUsersApiClient
@@ -62,6 +63,16 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task Callback(DfeSignInCallback callback)
         {
             await HttpClient.PostAsJsonAsync($"/Account/Callback", callback);
+        }
+
+        public async Task AssociateOrganisationWithUser(Guid contactId, Guid organisationId)
+        {
+            await HttpClient.PutAsJsonAsync($"/Account/UpdateContactWithOrgId", new UpdateContactOrgId
+            {
+                ContactId=contactId,
+                OrganisationId=organisationId
+            } );
+            
         }
     }
 }

@@ -8,6 +8,7 @@ using SFA.DAS.ApplyService.Application.Users.ApproveContact;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Application.Users.GetContact;
 using SFA.DAS.ApplyService.Application.Users.UpdateContactIdAndSignInId;
+using SFA.DAS.ApplyService.Application.Users.UpdateContactOrgId;
 using SFA.DAS.ApplyService.Application.Users.UpdateSignInId;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
@@ -80,6 +81,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             await _mediator.Send(new UpdateContactIdAndSignInIdRequest(Guid.Parse(addContactSignInId.SignInId),
                 Guid.Parse(addContactSignInId.ContactId), addContactSignInId.Email, addContactSignInId.UpdatedBy));
+        }
+
+        [HttpPut("/Account/UpdateContactWithOrgId")]
+        public async Task UpdateContactWithOrgId([FromBody] UpdateContactOrgId updateContactOrgId)
+        {
+            await _mediator.Send(new UpdateContactOrgdRequest(updateContactOrgId.ContactId,
+                updateContactOrgId.OrganisationId));
         }
     }
 }

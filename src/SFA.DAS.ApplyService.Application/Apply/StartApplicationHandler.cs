@@ -15,7 +15,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
     {
         private readonly IApplyRepository _applyRepository;
         private readonly IOrganisationRepository _organisationRepository;
-
         public StartApplicationHandler(IApplyRepository applyRepository, IOrganisationRepository organisationRepository)
         {
             _applyRepository = applyRepository;
@@ -26,7 +25,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         {
             var assets = await _applyRepository.GetAssets();
 
-            var org = await _organisationRepository.GetUserOrganisation(request.UserId);         
+            var org = await _organisationRepository.GetUserOrganisation(request.UserId);
 
             var workflowId = await _applyRepository.GetLatestWorkflow("EPAO");
             var applicationId =
