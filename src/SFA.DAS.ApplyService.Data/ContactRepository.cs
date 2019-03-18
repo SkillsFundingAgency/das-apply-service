@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -87,6 +88,25 @@ namespace SFA.DAS.ApplyService.Data
             {
                 return (await connection.QueryAsync<Contact>(@"SELECT * FROM Contacts 
                                                     WHERE Id = @userId", new { userId })).FirstOrDefault();
+            }
+        }
+
+        public async Task<List<Contact>> GetUsersToMigrate()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<Contact>(@"SELECT * FROM Contacts 
+                                                    WHERE SigninType = 'DfESignIn'")).ToList();
+            }
+        }
+
+        public async Task UpdateMigratedContact(Guid contactId, Guid signInId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(
+                    @"UPDATE Contacts SET SigninId = @signinId, SigninType = 'ASLogin', UpdatedAt = GETUTCDATE(), UpdatedBy = 'Migrate' WHERE Id = @contactId",
+                    new { contactId, signInId });
             }
         }
     }
