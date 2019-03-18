@@ -38,14 +38,10 @@
                     <p class="govuk-body">Search using either the:</p>
                     <ul class="govuk-list govuk-list--bullet">
                         <li>organisation name</li>
-                        <li>UK provider reference number (UKPRN)</li>
                         <li>end point assessor organisation identification number (EPAO ID)</li>
                         <li>company number</li>
                         <li>charity number</li>
                     </ul>
-                    <span id="search-string-hint" class="govuk-hint">
-                        A UKPRN consists of 8 numbers.<br />An EPAO ID consists of 3 letters and 4 numbers.
-                    </span>
                     @if (!ViewData.ModelState.IsValid || showErrors)
                     {
                         <span id="search-string-error" class="govuk-error-message">
