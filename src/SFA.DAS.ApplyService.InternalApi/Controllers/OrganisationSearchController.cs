@@ -56,46 +56,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return regex.Match(organisationIdToCheck).Success;
         }
 
-        private bool IsValidUkprn(string stringToCheck, out int ukprn)
-        {
-            if (!int.TryParse(stringToCheck, out ukprn))
-            {
-                return false;
-            }
-
-            return ukprn >= 10000000 && ukprn <= 99999999;
-        }
-
-        private async Task<IEnumerable<OrganisationSearchResult>> OrganisationSearchByUkprn(int ukprn)
-        {
-            IEnumerable<OrganisationSearchResult> epaoResults = await GetEpaoRegisterResults(ukprn.ToString());
-            IEnumerable<OrganisationSearchResult> providerResults = null;
-            IEnumerable<OrganisationSearchResult> referenceResults = null;
-
-            var providerRegisterNames = new List<string>();
-            if (epaoResults?.Count() == 1)
-            {
-                providerRegisterNames.Add(epaoResults.First().TradingName);
-                providerRegisterNames.Add(epaoResults.First().LegalName);
-            }
-            providerResults = await GetProviderRegisterResults(null, providerRegisterNames, ukprn);
-
-            // If you try to search Reference Data API by UKPRN it interprets this as Company Number so must use actual name instead
-            var referenceDataApiNames = new List<string> (providerRegisterNames);
-            if (providerResults?.Count() == 1)
-            {
-                referenceDataApiNames.Add(providerResults.First().ProviderName);
-            }
-            referenceResults = await GetReferenceDataResults(null, referenceDataApiNames, ukprn);
-
-            var results = new List<OrganisationSearchResult>();
-            if (epaoResults != null) results.AddRange(epaoResults);
-            if (providerResults != null) results.AddRange(providerResults);
-            if (referenceResults != null) results.AddRange(referenceResults);
-
-            return Dedupe(results);
-        }
-
         private async Task<IEnumerable<OrganisationSearchResult>> OrganisationSearchByEpao(string epaoId)
         {
             IEnumerable<OrganisationSearchResult> epaoResults = await GetEpaoRegisterResults(epaoId);
