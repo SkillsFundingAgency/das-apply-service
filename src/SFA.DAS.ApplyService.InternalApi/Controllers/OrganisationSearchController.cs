@@ -38,27 +38,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             {
                 return new List<OrganisationSearchResult>();
             }
-
-            if (IsValidEpaOrganisationId(searchTerm))
+            else if (IsValidEpaOrganisationId(searchTerm))
             {
                 _logger.LogInformation($@"Searching Organisations based on EPAO ID: [{searchTerm}]");
                 return await OrganisationSearchByEpao(searchTerm);
             }
-
-            // NOTE: This is required because there are occasions where charity or company number can be interpreted as a ukprn
-            var results = new List<OrganisationSearchResult>();
-            if (IsValidUkprn(searchTerm, out var ukprn))
+            else
             {
-                _logger.LogInformation($@"Searching Organisations based on UKPRN: [{searchTerm}]");
-                var resultFromUkprn = await OrganisationSearchByUkprn(ukprn);
-                if (resultFromUkprn != null) results.AddRange(resultFromUkprn);
+                _logger.LogInformation($@"Searching Organisations based on name or charity number or company number wildcard: [{searchTerm}]");
+                return await OrganisationSearchByNameOrCharityNumberOrCompanyNumber(searchTerm);
             }
-
-            _logger.LogInformation($@"Searching Organisations based on name or charity number or company number wildcard: [{searchTerm}]");
-            var resultFromName = await OrganisationSearchByNameOrCharityNumberOrCompanyNumber(searchTerm);
-            if (resultFromName != null) results.AddRange(resultFromName);
-
-            return Dedupe(results);
         }
 
         private bool IsValidEpaOrganisationId(string organisationIdToCheck)
