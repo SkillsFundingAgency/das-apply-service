@@ -24,7 +24,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var mediator = new Mock<IMediator>();
             mediator.Setup(m => m.Send(It.IsAny<CreateAccountRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
-            var accountController = new AccountController(mediator.Object, new Mock<ILogger<AccountController>>().Object, new Mock<IContactRepository>().Object, new Mock<IApplyConfig>().Object);
+            var accountController = new AccountController(mediator.Object, new Mock<ILogger<AccountController>>().Object, new Mock<IContactRepository>().Object, new Mock<IConfigurationService>().Object);
 
             var result = await accountController.InviteUser(new NewContact()
                 {Email = "email@email.com", FamilyName = "Jones", GivenName = "Fred"});
