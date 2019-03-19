@@ -8,6 +8,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Validators.MaxWordCountVali
     [TestFixture]
     public class When_Validate_called
     {
+        [TestCase("", 10, true)]
         [TestCase("Mary had a little lamb", 10, true)]
         [TestCase("    Mary  had   a   little lamb ", 10, true)]
         [TestCase("Mary had a little lamb, its fleece was white as snow", 10, false)]
