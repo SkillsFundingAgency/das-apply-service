@@ -25,9 +25,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly CreateAccountValidator _createAccountValidator;
 
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger, IConfigurationService config, IHttpContextAccessor contextAccessor)
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger, CreateAccountValidator createAccountValidator)
-        {
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger, IConfigurationService config, IHttpContextAccessor contextAccessor, CreateAccountValidator createAccountValidator)
+        { 
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
             _logger = logger;
@@ -87,16 +86,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public IActionResult InviteSent()
         {
-            CreateAccountViewModel viewModel;
-            if (TempData["NewAccount"] is null)
+            var viewModel = _sessionService.Get<CreateAccountViewModel>("NewAccount");
+
+            if (viewModel?.Email is null)
             {
-                viewModel = new CreateAccountViewModel() {Email = "[email placeholder]"};
+                RedirectToAction("CreateAccount");
             }
-            else
-            {
-                viewModel =  JsonConvert.DeserializeObject<CreateAccountViewModel>(TempData["NewAccount"].ToString());    
-            }
-            
+
             return View(viewModel);
         }
 
