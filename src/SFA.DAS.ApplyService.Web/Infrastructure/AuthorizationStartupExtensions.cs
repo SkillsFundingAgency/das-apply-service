@@ -25,7 +25,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                     options.DefaultScheme = "Cookies";
                     options.DefaultChallengeScheme = "oidc";
                 })
-                .AddCookie("Cookies")
+                .AddCookie("Cookies", options =>
+                {
+                    options.SlidingExpiration = true;
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
+                })
                 .AddOpenIdConnect("oidc", options =>
                 {
 //                    options.CorrelationCookie = new CookieBuilder()
