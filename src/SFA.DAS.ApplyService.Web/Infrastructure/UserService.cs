@@ -105,7 +105,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                     if (contact != null)
                     {
                         var orgFromUkprn = await _apiClient.GetOrganisationByUkprn(ukPrn);
-                        await _usersApiClient.AssociateOrganisationWithUser(contact.Id, orgFromUkprn.Id);
+                        if(orgFromUkprn != null)
+                            await _usersApiClient.AssociateOrganisationWithUser(contact.Id, orgFromUkprn.Id);
+                        else
+                            return false;
 
                         return true;
                     }
