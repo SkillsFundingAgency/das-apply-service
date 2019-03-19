@@ -28,10 +28,5 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
             return value;
         }
-
-        public static bool SignedInFromApply(this ClaimsPrincipal principal)
-        {
-            return !principal.HasClaim(x => x.Type == "http://schemas.portal.com/ukprn");
-        }
     }
 }

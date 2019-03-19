@@ -50,7 +50,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                     var ukPrn = await GetClaim(
                         "http://schemas.portal.com/ukprn");
                     if (!string.IsNullOrEmpty(ukPrn))
-                        _sessionService.Set("UserRegWithEPAO", true);
+                        SetUserIsRegWithEpao(true);
                 }
             }
             catch (ArgumentException)
@@ -118,6 +118,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
 
             return false;
+        }
+
+        public void SetUserIsRegWithEpao(bool flag)
+        {
+            _sessionService.Set("UserRegWithEPAO", flag);
         }
     }
 }
