@@ -46,7 +46,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _logger.LogInformation($"Got LoggedInUser from Session: {user}");
 
             var userId = User.GetUserId();
-            
+
+            var org = await _apiClient.GetOrganisationByUserId(userId);
             var applications = await _apiClient.GetApplicationsFor(userId);
 
             var org = await _apiClient.GetOrganisationByUserId(userId);
@@ -204,6 +205,22 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, User.GetUserId());
+
+            if(page != null && (!page.Active || page.NotRequired))
+            {
+                var nextPage = page.Next.FirstOrDefault(p => p.Condition is null);
+
+                if (nextPage?.ReturnId != null && nextPage?.Action == "NextPage")
+                {
+                    pageId = nextPage.ReturnId;
+                    return RedirectToAction("Page", new { applicationId, sequenceId, sectionId, pageId, redirectAction });
+                }
+                else
+                {
+                    return RedirectToAction("Section", new { applicationId, sequenceId, sectionId });
+                }
+            }
+
             page = await GetDataFedOptions(page);
 
             var returnUrl = Request.Headers["Referer"].ToString();
@@ -386,7 +403,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var errorMessages = new List<ValidationErrorDetail>();
             var answers = new List<Answer>();
             
-            var fileValidationPassed = FileValidationPassed(answers, page, errorMessages);
+            var fileValidationPassed = FileValidator.FileValidationPassed(answers, page, errorMessages, ModelState, HttpContext.Request.Form.Files);
             GetAnswersFromForm(answers);
 
             var updatePageResult = await _apiClient.UpdatePageAnswers(applicationId, userId, sequenceId, sectionId, pageId, answers);

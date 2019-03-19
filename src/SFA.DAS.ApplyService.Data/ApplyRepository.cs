@@ -90,6 +90,27 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<List<ApplicationSection>> GetSections(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                try
+                {
+
+                        return (await connection.QueryAsync<ApplicationSection>(@"SELECT asec.* 
+                                                                FROM ApplicationSections asec
+                                                                INNER JOIN Applications a ON a.Id = asec.ApplicationId
+                                                                WHERE asec.ApplicationId = @applicationId AND asec.NotRequired = 0",
+                            new { applicationId })).ToList();
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "There has been an error trying to map ApplicationSections for the Application - this is most likely caused by to invalid JSON in the QnAData of ApplicationSections and WorkflowSections");
+                    return null;
+                }
+            }
+        }
+
 
         public async Task<ApplicationSequence> GetSequence(Guid applicationId, int sequenceId, Guid? userId)
         {
@@ -259,6 +280,7 @@ namespace SFA.DAS.ApplyService.Data
                         if (page.HasNewFeedback)
                         {
                             page.Feedback.ForEach(f => f.IsNew = false);
+                            page.Feedback.ForEach(f => f.IsCompleted = true);
                         }
                     }
                 }
@@ -525,19 +547,15 @@ namespace SFA.DAS.ApplyService.Data
 	                        FROM Applications appl
 	                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
 	                        INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-	                        WHERE appl.ApplicationStatus = @applicationStatusSubmitted
+	                        WHERE appl.ApplicationStatus = @applicationStatusFeedbackAdded
                                 AND seq.Status = @sequenceStatusFeedbackAdded
                                 AND seq.IsActive = 1
 	                        GROUP BY seq.SequenceId, seq.Status, appl.ApplyingOrganisationId, appl.id, org.Name, appl.ApplicationData 
                         ) ab",
                         new
                         {
-                            applicationStatusSubmitted = ApplicationStatus.Submitted,
-                            sequenceStatusSubmitted = ApplicationSequenceStatus.Submitted,
-                            sequenceStatusResubmitted = ApplicationSequenceStatus.Resubmitted,
-                            sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded,
-                            sectionStatusSubmitted = ApplicationSectionStatus.Submitted,
-                            sectionStatusInProgress = ApplicationSectionStatus.InProgress
+                            applicationStatusFeedbackAdded = ApplicationStatus.FeedbackAdded,
+                            sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded
                         })).ToList();
             }
         }
@@ -644,11 +662,16 @@ namespace SFA.DAS.ApplyService.Data
 	                      WHERE seq.SequenceId = 1 AND sec.SectionId = 3 AND seq.IsActive = 1
                             AND (
                                     seq.Status = @sequenceStatusFeedbackAdded
-                                    OR JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.SelectedGrade') = @selectedGradeInadequate
+                                    OR ( 
+                                            sec.Status IN (@financialStatusGraded, @financialStatusEvaluated)
+                                            AND JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.SelectedGrade') = @selectedGradeInadequate
+                                        )
                                 )",
                         new
                         {
                             sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded,
+                            financialStatusGraded = ApplicationSectionStatus.Graded,
+                            financialStatusEvaluated = ApplicationSectionStatus.Evaluated,
                             selectedGradeInadequate = FinancialApplicationSelectedGrade.Inadequate
                         })).ToList();
             }
@@ -802,6 +825,5 @@ namespace SFA.DAS.ApplyService.Data
                     })).FirstOrDefault();
             }
         }
-        
     }
 }

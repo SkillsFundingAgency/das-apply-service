@@ -11,6 +11,7 @@ using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
+using SFA.DAS.ApplyService.Web.Validators;
 using SFA.DAS.ApplyService.Web.ViewModels;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
@@ -22,14 +23,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly ILogger<UsersController> _logger;
         private readonly IConfigurationService _config;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly CreateAccountValidator _createAccountValidator;
 
         public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger, IConfigurationService config, IHttpContextAccessor contextAccessor)
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger, CreateAccountValidator createAccountValidator)
         {
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
             _logger = logger;
             _config = config;
             _contextAccessor = contextAccessor;
+            _createAccountValidator = createAccountValidator;
         }
         
         [HttpGet]
@@ -42,6 +46,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAccount(CreateAccountViewModel vm)
         {
+            _createAccountValidator.Validate(vm);
+
             if (!ModelState.IsValid)
             {
                 return View(vm);
@@ -49,7 +55,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             
             var inviteSuccess = await _usersApiClient.InviteUser(vm);
 
-            TempData["NewAccount"] = JsonConvert.SerializeObject(vm);
+            _sessionService.Set("NewAccount", vm);
 
             return inviteSuccess ? RedirectToAction("InviteSent") : RedirectToAction("Error", "Home");
             
