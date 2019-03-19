@@ -15,16 +15,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
             if (string.IsNullOrEmpty(text))
                 return errors;
 
-            int wordCount = 0, index = 0;
-
-            while (index < text.Length)
-            {
-                while (index < text.Length && !char.IsWhiteSpace(text[index]))
-                    index++;
-                wordCount++;
-                while (index < text.Length && char.IsWhiteSpace(text[index]))
-                    index++;
-            }
+            var wordCount = text.Split(new[]{" "}, StringSplitOptions.RemoveEmptyEntries).Length;
 
             if (wordCount > (long)ValidationDefinition.Value)
             {
