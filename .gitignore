@@ -272,3 +272,6 @@ src/Tools/PhantomJS/tools/phantomjs/ChangeLog
 # Minified css and js
 src/SFA.DAS.ApplyService.Web/wwwroot/stylesheets/application.min.css
 src/SFA.DAS.ApplyService.Web/wwwroot/javascripts/application.min.js
+
+# Developer appsettings
+*.developer.json
