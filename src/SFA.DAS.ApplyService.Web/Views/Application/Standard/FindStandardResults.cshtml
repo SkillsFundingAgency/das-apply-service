@@ -28,19 +28,21 @@
                             <tr class="govuk-table__row">
                                 <th class="govuk-table__header" scope="col">Name</th>
                                 <th class="govuk-table__header" scope="col">Reference</th>
+                                <th class="govuk-table__header" scope="col">Level</th>
                                 <th class="govuk-table__header" scope="col"></th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var result in Model.Results.OrderBy(x => x.Title))
                             {
-                                <tr class="govuk-table__row">
-                                    <td class="govuk-table__cell" data-label="Name">@result.Title</td>
-                                    <td class="govuk-table__cell" data-label="Reference">@result.ReferenceNumber</td>
-                                    <td class="govuk-table__cell govuk-table__cell--numeric">
-                                        <a href="/standard/@Model.ApplicationId/confirm-standard/@result.StandardId" class="govuk-link">Apply for standard</a>
-                                    </td>
-                                </tr>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell" data-label="Name">@result.Title</td>
+                                <td class="govuk-table__cell" data-label="Reference">@result.ReferenceNumber</td>
+                                <td class="govuk-table__cell govuk-table__cell--numeric" data-label="Level">@result.StandardData?.Level</td>
+                                <td class="govuk-table__cell govuk-table__cell--numeric">
+                                    <a href="/standard/@Model.ApplicationId/confirm-standard/@result.StandardId" class="govuk-link">Apply for standard</a>
+                                </td>
+                            </tr>
                             }
                         </tbody>
                     </table>
