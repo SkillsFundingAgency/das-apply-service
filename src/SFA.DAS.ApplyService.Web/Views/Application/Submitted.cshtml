@@ -16,7 +16,12 @@
                         <div class="govuk-!-margin-bottom-4">
                             <span class="govuk-!-font-size-24">Standard applied for</span>
                             <br />
-                                <strong>@Model.StandardName</strong>
+                            <strong>@($"{Model.StandardName} ({Model.StandardReference})")</strong>
+                            @if (Model.StandardLevel != null)
+                            {
+                            <br />
+                            <strong>Level: @Model.StandardLevel</strong>
+                            }
                         </div>
                     }
                     @if (!string.IsNullOrEmpty(Model.ReferenceNumber))

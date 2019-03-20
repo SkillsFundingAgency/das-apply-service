@@ -121,22 +121,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
 
-            StandardApplicationData applicationData = null;
-
-            if (application.ApplicationData != null)
-            {
-                applicationData = new StandardApplicationData
-                {
-                    StandardName = application.ApplicationData.StandardName
-                };
-            }
-
             // Only go to search if application hasn't got a selected standard?
             if (sequence.SequenceId == SequenceId.Stage1)
             {
                 return RedirectToAction("Sequence", new {applicationId});
             }
-            else if (sequence.SequenceId == SequenceId.Stage2 && string.IsNullOrWhiteSpace(applicationData?.StandardName))
+            else if (sequence.SequenceId == SequenceId.Stage2 && string.IsNullOrWhiteSpace(application.ApplicationData?.StandardName))
             {
                 var org = await _apiClient.GetOrganisationByUserId(User.GetUserId());
                 if (org.RoEPAOApproved)
@@ -578,7 +568,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 ReferenceNumber = application.ApplicationData.ReferenceNumber,
                 FeedbackUrl = config.FeedbackUrl,
-                StandardName = application?.ApplicationData?.StandardName
+                StandardName = application?.ApplicationData?.StandardName,
+                StandardReference = application?.ApplicationData?.StandardReference,
+                StandardLevel = application?.ApplicationData?.StandardLevel
             });
         }
     }

@@ -80,7 +80,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 new StandardApplicationData
                 {
                     StandardName = model.SelectedStandard?.Title,
-                    StandardCode = standardCode,
+                    StandardCode = model.SelectedStandard?.StandardId ?? standardCode,
+                    StandardReference = model.SelectedStandard?.ReferenceNumber,
+                    StandardLevel = model.SelectedStandard?.StandardData?.Level,
                     UserId = User.GetUserId(),
                     UserEmail = User.GetEmail()
                 };
