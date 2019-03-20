@@ -35,7 +35,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAccountHandl
         {
             _handler.Handle(new CreateAccountRequest("name@email.com", "James", "Jones"), new CancellationToken());
             
-            _userRepository.Verify(r => r.CreateContact("name@email.com", "James", "Jones", "DfESignIn"));
+            _userRepository.Verify(r => r.CreateContact("name@email.com", "James", "Jones", "ASLogin"));
         }
 
         [Test]
@@ -44,7 +44,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAccountHandl
             _userRepository.Setup(r => r.GetContact("name@email.com")).ReturnsAsync(new Contact());
             _handler.Handle(new CreateAccountRequest("name@email.com", "James", "Jones"), new CancellationToken());
             
-            _userRepository.Verify(r => r.CreateContact("name@email.com", "James", "Jones", "DfESignIn"), Times.Never);
+            _userRepository.Verify(r => r.CreateContact("name@email.com", "James", "Jones", "ASLogin"), Times.Never);
         }
 
         [Test]
@@ -52,7 +52,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAccountHandl
         {
             var newUserId = Guid.NewGuid();
 
-            _userRepository.Setup(r => r.CreateContact("name@email.com", "James", "Jones", "DfESignIn"))
+            _userRepository.Setup(r => r.CreateContact("name@email.com", "James", "Jones", "ASLogin"))
                 .ReturnsAsync(new Contact() {Id = newUserId});
             
             _handler.Handle(new CreateAccountRequest("name@email.com", "James", "Jones"), new CancellationToken());
@@ -68,7 +68,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAccountHandl
             
             var newUserId = Guid.NewGuid();
 
-            _userRepository.Setup(r => r.CreateContact("name@email.com", "James", "Jones", "DfESignIn"))
+            _userRepository.Setup(r => r.CreateContact("name@email.com", "James", "Jones", "ASLogin"))
                 .ReturnsAsync(new Contact() {Id = newUserId});
             
             var result = _handler.Handle(new CreateAccountRequest("name@email.com", "James", "Jones"), new CancellationToken()).Result;
