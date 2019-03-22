@@ -27,8 +27,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 })
                 .AddCookie("Cookies", options =>
                 {
+                    options.Cookie.Name = ".Apply.Cookies";
                     options.SlidingExpiration = true;
-                    options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
+                    options.ExpireTimeSpan = TimeSpan.FromHours(1);
                 })
                 .AddOpenIdConnect("oidc", options =>
                 {
