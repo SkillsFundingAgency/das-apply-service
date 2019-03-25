@@ -66,6 +66,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 {
                     if (await _userService.AssociateOrgFromClaimWithUser())
                         return await StartApplication(userId);
+
+                    return RedirectToAction("Index", "OrganisationSearch");
                 }
 
                 return View("~/Views/Application/Declaration.cshtml");
