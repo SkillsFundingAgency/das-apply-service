@@ -1,6 +1,7 @@
 @model SFA.DAS.ApplyService.Web.ViewModels.CreateAccountViewModel
 @{
-ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Get set up as a user";
+  var isError = !ViewData.ModelState.IsValid;
+  ViewBag.Title = (isError ? "Error: " : "") + "Get set up as a user";
 }
 
 <a class="govuk-back-link" asp-controller="Home" asp-action="Index">Back</a>
@@ -28,34 +29,39 @@ ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Get set up as
                 }
 
                 <div class="govuk-form-group" sfa-validation-for="GivenName" sfa-validationerror-class="govuk-form-group--error">
-                    <label class="govuk-label" for="GivenName">
+                    <label class="govuk-label govuk-label--m" for="GivenName">
                         First name
                     </label>
-                    <span class="govuk-error-message" asp-validation-for="GivenName"></span>
-                    <input class="govuk-input govuk-input--width-20" id="GivenName" name="GivenName" type="text"
-                        asp-for="GivenName" aria-describedby="first-name-hint" sfa-validation-for="GivenName"
-                        sfa-validationerror-class="govuk-input--error" />
+                    @if (isError)
+                    {
+                      <span class="govuk-error-message" asp-validation-for="GivenName"></span>
+                    }
+                    <input class="govuk-input govuk-!-width-two-thirds" id="GivenName" name="GivenName" type="text" asp-for="GivenName" sfa-validation-for="GivenName" sfa-validationerror-class="govuk-input--error" autocomplete="given-name" spellcheck="false" />
                 </div>
 
                 <div class="govuk-form-group" sfa-validation-for="FamilyName" sfa-validationerror-class="govuk-form-group--error">
-                    <label class="govuk-label" for="FamilyName">
+                    <label class="govuk-label govuk-label--m" for="FamilyName">
                         Last name
                     </label>
-                    <span class="govuk-error-message" asp-validation-for="FamilyName"></span>
-                    <input class="govuk-input govuk-input--width-20" id="FamilyName" name="FamilyName" type="text"
-                        asp-for="FamilyName" aria-describedby="last-name-hint" sfa-validation-for="FamilyName"
-                        sfa-validationerror-class="govuk-input--error" />
+                    @if (isError)
+                    {
+                      <span class="govuk-error-message" asp-validation-for="FamilyName"></span>
+                    }
+                    <input class="govuk-input govuk-!-width-two-thirds" id="FamilyName" name="FamilyName" type="text" asp-for="FamilyName" sfa-validation-for="FamilyName" sfa-validationerror-class="govuk-input--error" autocomplete="family-name" spellcheck="false" />
                 </div>
 
                 <div class="govuk-form-group" sfa-validation-for="Email" sfa-validationerror-class="govuk-form-group--error">
-                    <label class="govuk-label" for="Email">
-                        Email
+                    <label class="govuk-label govuk-label--m" for="Email">
+                        Email address
                     </label>
                     <span id="email-hint" class="govuk-hint">
-                        We'll send you a security code by email
+                        We'll send you an email to confirm your identity
                     </span>
-                    <span class="govuk-error-message" asp-validation-for="Email"></span>
-                    <input class="govuk-input govuk-input--width-20" id="Email" name="Email" type="text" asp-for="Email"
+                    @if (isError)
+                    {
+                      <span class="govuk-error-message" asp-validation-for="Email"></span>
+                    }
+                    <input class="govuk-input" id="Email" name="Email" type="text" asp-for="Email"
                         aria-describedby="email-hint" sfa-validation-for="FamilyName" sfa-validationerror-class="govuk-input--error" />
                 </div>
 
