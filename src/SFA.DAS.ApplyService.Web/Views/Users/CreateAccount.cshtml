@@ -33,7 +33,7 @@ ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Get set up as
                     </label>
                     <span class="govuk-error-message" asp-validation-for="GivenName"></span>
                     <input class="govuk-input govuk-input--width-20" id="GivenName" name="GivenName" type="text"
-                        asp-for="GivenName" aria-describedby="first-name-hint" sfa-validation-for="GivenName"
+                        asp-for="GivenName" sfa-validation-for="GivenName"
                         sfa-validationerror-class="govuk-input--error" />
                 </div>
 
@@ -43,7 +43,7 @@ ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + "Get set up as
                     </label>
                     <span class="govuk-error-message" asp-validation-for="FamilyName"></span>
                     <input class="govuk-input govuk-input--width-20" id="FamilyName" name="FamilyName" type="text"
-                        asp-for="FamilyName" aria-describedby="last-name-hint" sfa-validation-for="FamilyName"
+                        asp-for="FamilyName" sfa-validation-for="FamilyName"
                         sfa-validationerror-class="govuk-input--error" />
                 </div>
 
