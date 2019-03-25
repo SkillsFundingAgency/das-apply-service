@@ -18,6 +18,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         Task<bool> ApproveUser(Guid userId);
         Task Callback(DfeSignInCallback callback);
+        Task MigrateUsers();
     }
 
     public class UsersApiClient : IUsersApiClient
@@ -62,6 +63,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task Callback(DfeSignInCallback callback)
         {
             await HttpClient.PostAsJsonAsync($"/Account/Callback", callback);
+        }
+
+        public async Task MigrateUsers()
+        {
+            await HttpClient.PostAsync("/Account/MigrateUsers", new StringContent(""));
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Entities;
 
@@ -14,5 +15,7 @@ namespace SFA.DAS.ApplyService.Application.Users
         Task<bool> UpdateIsApproved(Guid contactId, bool isApproved);
 
         Task<Contact> GetContact(Guid userId);
+        Task<List<Contact>> GetUsersToMigrate();
+        Task UpdateMigratedContact(Guid contactId, Guid signInId);
     }
 }
