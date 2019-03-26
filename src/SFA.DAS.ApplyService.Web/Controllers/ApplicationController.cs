@@ -573,7 +573,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             else
             {
                 // unable to submit
-                return RedirectToAction("Sequence", new { applicationId });
+                return RedirectToAction("NotSubmitted", new { applicationId });
             }
         }
 
@@ -600,7 +600,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var config = await _configService.GetConfig();
             return View("~/Views/Application/Submitted.cshtml", new SubmittedViewModel
             {
-                ReferenceNumber = application.ApplicationData.ReferenceNumber,
+                ReferenceNumber = application?.ApplicationData?.ReferenceNumber,
+                FeedbackUrl = config.FeedbackUrl,
+                StandardName = application?.ApplicationData?.StandardName
+            });
+        }
+
+        [HttpGet("/Application/{applicationId}/NotSubmitted")]
+        public async Task<IActionResult> NotSubmitted(Guid applicationId)
+        {
+            var application = await _apiClient.GetApplication(applicationId);
+            var config = await _configService.GetConfig();
+            return View("~/Views/Application/NotSubmitted.cshtml", new SubmittedViewModel
+            {
+                ReferenceNumber = application?.ApplicationData?.ReferenceNumber,
                 FeedbackUrl = config.FeedbackUrl,
                 StandardName = application?.ApplicationData?.StandardName
             });
