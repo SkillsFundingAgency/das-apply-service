@@ -63,31 +63,42 @@ namespace SFA.DAS.ApplyService.Web
             
             services.AddMvc(options => { options.Filters.Add<PerformValidationFilter>(); })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
-            var redis = ConnectionMultiplexer.Connect("localhost");
             
-            services.AddDataProtection()
-                .PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")
-                .SetApplicationName("AssessorApply");
-
             
             if (_env.IsDevelopment())
             {
+                var redis = ConnectionMultiplexer.Connect(
+                    $"{_configService.SessionRedisConnectionString}");
+
+                services.AddDataProtection()
+                    .PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")
+                    .SetApplicationName("AssessorApply");
+
                 services.AddDistributedMemoryCache();
             }
             else
             {
                 try
                 {
-                    services.AddDistributedRedisCache(options => { options.Configuration = _configService.SessionRedisConnectionString; });
+                    var redis = ConnectionMultiplexer.Connect(
+                        $"{_configService.SessionRedisConnectionString},DefaultDatabase=1");
+
+                    services.AddDataProtection()
+                        .PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")
+                        .SetApplicationName("AssessorApply");
+                    services.AddDistributedRedisCache(options =>
+                    {
+                        options.Configuration = $"{_configService.SessionRedisConnectionString},DefaultDatabase=0";
+                    });
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, $"Error setting redis for session.  Conn: {_configService.SessionRedisConnectionString}");
+                    _logger.LogError(e,
+                        $"Error setting redis for session.  Conn: {_configService.SessionRedisConnectionString}");
                     throw;
                 }
             }
-            
+
             services.AddSession(opt =>
             {
                 opt.IdleTimeout = TimeSpan.FromHours(1);
