@@ -126,6 +126,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> SequenceSignPost(Guid applicationId)
         {
             var application = await _apiClient.GetApplication(applicationId);
+            if(application is null)
+            {
+                return RedirectToAction("Applications");
+            }
+
             if (application.ApplicationStatus == ApplicationStatus.Approved)
             {
                 return View("~/Views/Application/Approved.cshtml", application);

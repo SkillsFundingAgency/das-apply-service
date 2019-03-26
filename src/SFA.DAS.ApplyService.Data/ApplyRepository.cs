@@ -149,7 +149,7 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                var sequence = await connection.QueryFirstAsync<ApplicationSequence>(@"SELECT seq.* 
+                var sequence = await connection.QueryFirstOrDefaultAsync<ApplicationSequence>(@"SELECT seq.* 
                             FROM ApplicationSequences seq
                             INNER JOIN Applications a ON a.Id = seq.ApplicationId
                             WHERE seq.ApplicationId = @applicationId 
@@ -250,9 +250,11 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                var orgId = await connection.QuerySingleAsync<Guid>(@"SELECT ApplyingOrganisationId
+                var orgId = await connection.QuerySingleOrDefaultAsync<Guid>(@"SELECT ApplyingOrganisationId
                                                                       FROM Applications
                                                                       WHERE Id = @ApplicationId", new { request.ApplicationId });
+
+                if (orgId == default(Guid)) return false;
 
                 // Prevent submission if non-EPAO Organisation and another user has an application in progress
                 var otherAppsInProgress = await connection.QueryAsync<Domain.Entities.Application>(@"
@@ -447,7 +449,7 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                var application = await connection.QuerySingleAsync<Domain.Entities.Application>(@"SELECT * FROM Applications WHERE Id = @applicationId", new {applicationId});
+                var application = await connection.QuerySingleOrDefaultAsync<Domain.Entities.Application>(@"SELECT * FROM Applications WHERE Id = @applicationId", new {applicationId});
 
                 if(application != null)
                 {
