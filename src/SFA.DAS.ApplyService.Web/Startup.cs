@@ -74,7 +74,10 @@ namespace SFA.DAS.ApplyService.Web
                     .PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")
                     .SetApplicationName("AssessorApply");
 
-                services.AddDistributedMemoryCache();
+                services.AddDistributedRedisCache(options =>
+                {
+                    options.Configuration = $"{_configService.SessionRedisConnectionString}";
+                });
             }
             else
             {
