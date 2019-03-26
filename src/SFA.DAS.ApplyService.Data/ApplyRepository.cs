@@ -246,6 +246,37 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<bool> CanSubmitApplication(ApplicationSubmitRequest request)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var orgId = await connection.QuerySingleAsync<Guid>(@"SELECT ApplyingOrganisationId
+                                                                      FROM Applications
+                                                                      WHERE Id = @ApplicationId", new { request.ApplicationId });
+
+                // Prevent submission if non-EPAO Organisation and another user has an application in progress
+                var otherAppsInProgress = await connection.QueryAsync<Domain.Entities.Application>(@"
+                                                        SELECT a.*
+                                                        FROM Applications a
+                                                        INNER JOIN Organisations o ON o.Id = a.ApplyingOrganisationId
+                                                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = a.Id
+                                                        WHERE a.ApplyingOrganisationId = @orgId AND a.CreatedBy <> @UserId
+                                                        AND a.ApplicationStatus NOT IN (@approvedStatus, @rejectedStatus)
+                                                        AND o.RoEPAOApproved = 0 AND seq.IsActive = 1
+                                                        AND (seq.SequenceId = 2 OR (seq.SequenceId = 1 AND seq.Status = @seqSubmittedStatus))",
+                                                        new
+                                                        {
+                                                            orgId,
+                                                            request.UserId,
+                                                            approvedStatus = ApplicationStatus.Approved,
+                                                            rejectedStatus = ApplicationStatus.Rejected,
+                                                            seqSubmittedStatus = ApplicationSequenceStatus.Submitted,
+                                                        });
+
+                return !otherAppsInProgress.Any();
+            }
+        }
+
         public async Task SubmitApplicationSequence(ApplicationSubmitRequest request, ApplicationData applicationdata)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))

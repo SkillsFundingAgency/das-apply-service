@@ -565,9 +565,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return RedirectToAction("Sequence", new { applicationId });
             }
-            
-            await _apiClient.Submit(applicationId, sequenceId, User.GetUserId(), User.GetEmail());
-            return RedirectToAction("Submitted", new {applicationId});
+
+            if (await _apiClient.Submit(applicationId, sequenceId, User.GetUserId(), User.GetEmail()))
+            {
+                return RedirectToAction("Submitted", new { applicationId });
+            }
+            else
+            {
+                // unable to submit
+                return RedirectToAction("Sequence", new { applicationId });
+            }
         }
 
         [HttpPost("/Application/DeleteAnswer")]
