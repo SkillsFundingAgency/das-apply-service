@@ -75,19 +75,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAccountHandl
 
             result.Should().Be(false);
         }
-        
-        [Test]
-        public void And_AndErrorIsReturnedForAnExistingUser_FromDfeService_ReturnFalse()
-        {
-            _dfeSignInService.Setup(dfe => dfe.InviteUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>()))
-                .ReturnsAsync(new InviteUserResponse() {IsSuccess = false});
-            
-            _userRepository.Setup(r => r.GetContact("name@email.com")).ReturnsAsync(new Contact());
-            
-            var result = _handler.Handle(new CreateAccountRequest("name@email.com", "James", "Jones"), new CancellationToken()).Result;
-
-            result.Should().Be(false);
-        }
+       
 
         [Test]
         public void AdviseExistingContactByEmail()
