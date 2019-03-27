@@ -262,6 +262,7 @@ namespace SFA.DAS.ApplyService.Data
                                                         FROM Applications a
                                                         INNER JOIN Organisations o ON o.Id = a.ApplyingOrganisationId
                                                         INNER JOIN ApplicationSequences seq ON seq.ApplicationId = a.Id
+                                                        INNER JOIN con ON a.ApplyingOrganisationId = con.ApplyOrganisationID
                                                         WHERE a.ApplyingOrganisationId = @orgId AND a.CreatedBy <> @UserId
                                                         AND a.ApplicationStatus NOT IN (@approvedStatus, @rejectedStatus)
                                                         AND o.RoEPAOApproved = 0 AND seq.IsActive = 1
