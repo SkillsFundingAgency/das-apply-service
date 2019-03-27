@@ -4700,89 +4700,6 @@ VALUES
       "Next": [
         {
           "Action": "NextPage",
-          "ReturnId": "18",
-          "Condition": null,
-          "ConditionMet": false
-        }
-      ],
-      "Complete": false,
-      "AllowMultipleAnswers": false,
-      "Order": null,
-      "Active": true,
-      "Visible": true,
-      "Feedback": null,
-      "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
-      "BodyText": "SQ-1-SE-2-PG-15-214"
-    },
-    {
-      "PageId": "18",
-      "SequenceId": "1",
-      "SectionId": "2",
-      "Title": "SQ-1-SE-2-PG-18-233",
-      "LinkTitle": "SQ-1-SE-2-PG-18-LT-1",
-      "InfoText": "SQ-1-SE-2-PG-18-235",
-      "Questions": [
-        {
-          "QuestionId": "W_DEL-04",
-          "Label": "SQ-1-SE-2-PG-18-W_DEL-04-238",
-          "ShortLabel": "SQ-1-SE-2-PG-18-W_DEL-04-239",
-          "QuestionBodyText": "SQ-1-SE-2-PG-18-W_DEL-04-240",
-          "Hint": "SQ-1-SE-2-PG-18-W_DEL-04-237",
-          "Input": {
-            "Type": "ComplexRadio",
-            "Options": [
-              {
-                "Label": "Yes",
-                "Value": "Yes",
-                "FurtherQuestions": null
-              },
-              {
-                "Label": "No",
-                "Value": "No",
-                "FurtherQuestions": [
-                  {
-                    "QuestionId": "W_DEL-04.1",
-                    "Label": "SQ-1-SE-2-PG-18-W_DEL-04.1-242",
-                    "ShortLabel": "SQ-1-SE-2-PG-18-W_DEL-04.1-243",
-                    "Hint": "SQ-1-SE-2-PG-18-W_DEL-04.1-241",
-                    "Input": {
-                      "Type": "Date",
-                      "Options": null,
-                      "Validations": [
-                        {
-                          "Name": "Required",
-                          "Value": null,
-                          "ErrorMessage": "Enter a date"
-                        },
-                        {
-                          "Name":"Date",
-                          "Value":"",
-                          "ErrorMessage": "Date must be correct"
-                        }
-                      ]
-                    },
-                    "Order": null,
-                    "QuestionBodyText": "SQ-1-SE-2-PG-18-W_DEL-04.1-244"
-                  }
-                ]
-              }
-            ],
-            "Validations": [
-              {
-                "Name": "Required",
-                "Value": null,
-                "ErrorMessage": "Select yes if you can start an end-point assessment on the day you join the register"
-              }
-            ]
-          },
-          "Order": null
-        }
-      ],
-      "PageOfAnswers": [],
-      "Next": [
-        {
-          "Action": "NextPage",
           "ReturnId": "193",
           "Condition": null,
           "ConditionMet": false
@@ -4796,7 +4713,7 @@ VALUES
       "Feedback": null,
       "HasFeedback": false,
       "NotRequiredOrgTypes": [],
-      "BodyText": "SQ-1-SE-2-PG-18-234"
+      "BodyText": "SQ-1-SE-2-PG-15-214"
     },
 	  {
       "PageId": "193",
@@ -8104,7 +8021,7 @@ VALUES
         "Next": [
           {
             "Action": "NextPage",
-			"ReturnId": "27",
+			"ReturnId": "18",
             "Condition": null,
             "ConditionMet": false
           }
@@ -8119,6 +8036,89 @@ VALUES
         "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
       },
+	   {
+        "PageId": "18",
+        "SequenceId": "2",
+        "SectionId": "4",
+        "Title": "SQ-1-SE-2-PG-18-233",
+        "LinkTitle": "SQ-1-SE-2-PG-18-LT-1",
+        "InfoText": "SQ-1-SE-2-PG-18-235",
+        "Questions": [
+          {
+            "QuestionId": "W_DEL-04",
+            "Label": "SQ-1-SE-2-PG-18-W_DEL-04-238",
+            "ShortLabel": "SQ-1-SE-2-PG-18-W_DEL-04-239",
+            "QuestionBodyText": "SQ-1-SE-2-PG-18-W_DEL-04-240",
+            "Hint": "SQ-1-SE-2-PG-18-W_DEL-04-237",
+            "Input": {
+              "Type": "ComplexRadio",
+              "Options": [
+                {
+                  "Label": "Yes",
+                  "Value": "Yes",
+                  "FurtherQuestions": null
+                },
+                {
+                  "Label": "No",
+                  "Value": "No",
+                  "FurtherQuestions": [
+                    {
+                      "QuestionId": "W_DEL-04.1",
+                      "Label": "SQ-1-SE-2-PG-18-W_DEL-04.1-242",
+                      "ShortLabel": "SQ-1-SE-2-PG-18-W_DEL-04.1-243",
+                      "Hint": "SQ-1-SE-2-PG-18-W_DEL-04.1-241",
+                      "Input": {
+                        "Type": "Date",
+                        "Options": null,
+                        "Validations": [
+                          {
+                            "Name": "Required",
+                            "Value": null,
+                            "ErrorMessage": "Enter a date"
+                          },
+                          {
+                            "Name":"Date",
+                            "Value":"",
+                            "ErrorMessage": "Date must be correct"
+                          }
+                        ]
+                      },
+                      "Order": null,
+                      "QuestionBodyText": "SQ-1-SE-2-PG-18-W_DEL-04.1-244"
+                    }
+                  ]
+                }
+              ],
+              "Validations": [
+                {
+                  "Name": "Required",
+                  "Value": null,
+                  "ErrorMessage": "Select yes if you can start an end-point assessment on the day you join the register"
+                }
+              ]
+            },
+            "Order": null
+          }
+        ],
+        "PageOfAnswers": [],
+        "Next": [
+          {
+            "Action": "NextPage",
+			"ReturnId": "27",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+        "Complete": false,
+        "AllowMultipleAnswers": false,
+        "Order": null,
+        "Active": true,
+        "Visible": true,
+        "Feedback": null,
+        "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
+        "BodyText": "SQ-1-SE-2-PG-18-234"
+      },	  
 	   {
         "PageId": "27",
         "SequenceId": "2",
