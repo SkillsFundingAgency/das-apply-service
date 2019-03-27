@@ -72,18 +72,9 @@
             </a>
         </div>
         <div class="govuk-header__content">
-            @if (!SessionService.Get<bool>("LoggedInFromAssessor"))
-            {
-                <a href="/" class="govuk-header__link govuk-header__link--service-name">
-                    Apply to the register of end-point assessment organisations
-                </a>
-            }
-            else
-            {
-                <a href="/" class="govuk-header__link govuk-header__link--service-name">
-                    Apprenticeship assessment service
-                </a>
-            }
+            <a href="/" class="govuk-header__link govuk-header__link--service-name">
+                Apprenticeship assessment service
+            </a>
         </div>
     </div>
 </header>
