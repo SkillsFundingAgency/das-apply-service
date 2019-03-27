@@ -41,7 +41,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                         SecurePolicy = CookieSecurePolicy.SameAsRequest
                     };
                     
-                    options.MetadataAddress = applyConfig.DfeSignIn.MetadataAddress;
+                    options.Authority = applyConfig.DfeSignIn.MetadataAddress;
                     options.RequireHttpsMetadata = false;
                     options.ClientId = applyConfig.DfeSignIn.ClientId;
                     options.SaveTokens = true;
