@@ -171,6 +171,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
         });
 
         qnADataObject.FinancialApplicationGrade = null; // Remove any previous grade as it doesn't reflect the new answers
+
+        if (qnADataObject.Pages.Any(p => p.HasNewFeedback) && qnADataObject.Pages.All(p => p.AllFeedbackIsCompleted))
+        {
+            qnADataObject.RequestedFeedbackAnswered = true;
+        }
+
         section.QnAData = qnADataObject;
 
         await _applyRepository.SaveSection(section, request.UserId);
