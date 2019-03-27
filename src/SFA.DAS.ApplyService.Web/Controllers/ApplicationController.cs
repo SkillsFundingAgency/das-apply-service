@@ -174,12 +174,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet("/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}")]
         public async Task<IActionResult> Section(Guid applicationId, int sequenceId, int sectionId)
         {
-            var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, User.GetUserId());
-
-            if (section.Status != ApplicationSectionStatus.Draft)
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId);
+            if (!canUpdate)
             {
-                return RedirectToAction("Sequence", new { applicationId = applicationId });
+                return RedirectToAction("Sequence", new { applicationId });
             }
+
+            var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, User.GetUserId());
 
             switch(section?.DisplayType)
             {
