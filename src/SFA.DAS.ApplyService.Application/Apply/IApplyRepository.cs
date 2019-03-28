@@ -39,6 +39,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task UpdateApplicationData(Guid applicationId, ApplicationData applicationData);
         Task<Domain.Entities.Application> GetApplication(Guid requestApplicationId);
         Task UpdateApplicationStatus(Guid applicationId, string status);
+        Task DeleteRelatedApplications(Guid applicationId);
 
         Task StartApplicationReview(Guid applicationId, int sectionId);
         Task StartFinancialReview(Guid applicationId);

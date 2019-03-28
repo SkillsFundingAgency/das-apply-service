@@ -470,32 +470,31 @@ namespace SFA.DAS.ApplyService.Data
                                                 FROM Applications
                                                 INNER JOIN Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
                                                 WHERE  (Applications.Id = @ApplicationId)", new {applicationId, status});
+            }
+        }
 
-                if(status == ApplicationStatus.Approved)
+        public async Task DeleteRelatedApplications(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var inProgressRelatedApplications = await connection.QueryAsync<Domain.Entities.Application>(@"SELECT a.* FROM Applications a
+                                                                                                    INNER JOIN Contacts ON a.ApplyingOrganisationId = Contacts.ApplyOrganisationID
+                                                                                                    WHERE a.ApplyingOrganisationId = (SELECT ApplyingOrganisationId FROM Applications WHERE Applications.Id = @applicationId)
+                                                                                                    AND a.Id <> @applicationId
+                                                                                                    AND a.ApplicationStatus NOT IN (@approvedStatus, @rejectedStatus)",
+                                                                                            new { applicationId, approvedStatus = ApplicationStatus.Approved, rejectedStatus = ApplicationStatus.Rejected });
+
+                // For now Reject them (and add deleted information)
+                foreach (var app in inProgressRelatedApplications)
                 {
-                    // Was it an initial application (i.e all sequences are required, and thus, not on EPAO Register)?
-                    if ((await GetSequences(applicationId)).All(seq => !seq.NotRequired))
-                    {
-                        // Reject (or soft delete?) all other in-progress applications
-                        var relatedApplications = await connection.QueryAsync<Domain.Entities.Application>(@"SELECT a.* FROM Applications a
-                                                                                                        INNER JOIN Contacts ON a.ApplyingOrganisationId = Contacts.ApplyOrganisationID
-                                                                                                        WHERE a.ApplyingOrganisationId = (SELECT ApplyingOrganisationId FROM Applications WHERE Applications.Id = @applicationId)
-                                                                                                        AND a.Id <> @applicationId
-                                                                                                        AND a.ApplicationStatus NOT IN (@approvedStatus, @rejectedStatus)",
-                                                                                                        new { applicationId, approvedStatus = ApplicationStatus.Approved, rejectedStatus = ApplicationStatus.Rejected });
+                    await connection.ExecuteAsync(@"UPDATE ApplicationSequences
+                                                        SET  IsActive = 0, Status = @rejectedStatus
+                                                        WHERE  ApplicationSequences.ApplicationId = @applicationId;
 
-                        foreach(var app in relatedApplications)
-                        {
-                            await connection.ExecuteAsync(@"UPDATE ApplicationSequences
-                                                            SET  IsActive = 0, Status = @rejectedStatus
-                                                            WHERE  ApplicationSequences.ApplicationId = @applicationId;
-
-                                                            UPDATE Applications
-                                                            SET  ApplicationStatus = @rejectedSequenceStatus, DeletedAt = GETUTCDATE(), DeletedBy = 'System'
-                                                            WHERE  Applications.Id = @applicationId;",
-                                                            new { applicationId = app.Id, rejectedStatus = ApplicationStatus.Rejected, rejectedSequenceStatus = ApplicationSequenceStatus.Rejected });
-                        }
-                    }
+                                                        UPDATE Applications
+                                                        SET  ApplicationStatus = @rejectedSequenceStatus, DeletedAt = GETUTCDATE(), DeletedBy = 'System'
+                                                        WHERE  Applications.Id = @applicationId;",
+                                                    new { applicationId = app.Id, rejectedStatus = ApplicationStatus.Rejected, rejectedSequenceStatus = ApplicationSequenceStatus.Rejected });
                 }
             }
         }
