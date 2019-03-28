@@ -50,7 +50,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                     var ukPrn = await GetClaim(
                         "http://schemas.portal.com/ukprn");
                     if (!string.IsNullOrEmpty(ukPrn))
-                        SetUserIsRegWithEpao(true);
+                    {
+                        _sessionService.Set("UserRegWithEPAO", true);
+                    }
                 }
             }
             catch (ArgumentException)
@@ -69,10 +71,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 if (!string.IsNullOrEmpty(await GetClaim("display_name")))
                 {
                     var displayName = await GetClaim("display_name");
-                    //_sessionService.Set("LoggedInFromAssessor",true);
                     //May have empty strings
                     if (!string.IsNullOrEmpty(displayName))
+                    {
                         _sessionService.Set("LoggedInUser", displayName);
+                    }
                     else
                     {
                         _logger.LogInformation("Claims where empty and user was null so redirecting to postsignin");
@@ -122,10 +125,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
             return false;
         }
-
-        public void SetUserIsRegWithEpao(bool flag)
-        {
-            _sessionService.Set("UserRegWithEPAO", flag);
-        }
+       
     }
 }

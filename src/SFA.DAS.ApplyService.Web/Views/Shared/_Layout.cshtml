@@ -118,10 +118,10 @@
 </div>
 
 <div class="govuk-width-container">
-    @if (User.Identity.IsAuthenticated && SessionService.Get<bool>("UserRegWithEPAO"))
+    @if (User.Identity.IsAuthenticated && @SessionService.Get<bool>("UserRegWithEPAO"))
     {
-        
-         var config = await @Config.GetConfig();
+
+        var config = await @Config.GetConfig();
 
         <div class="grid-row">
             <div class="column-full">

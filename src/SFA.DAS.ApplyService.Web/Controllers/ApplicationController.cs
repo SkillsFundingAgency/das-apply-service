@@ -49,11 +49,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var org = await _apiClient.GetOrganisationByUserId(userId);
             var applications = await _apiClient.GetApplicationsFor(userId);
-            
-            if (org != null && org.RoEPAOApproved)
-                _userService.SetUserIsRegWithEpao(true);
-            else
-                _userService.SetUserIsRegWithEpao(false);
 
             if (!applications.Any())
             {
