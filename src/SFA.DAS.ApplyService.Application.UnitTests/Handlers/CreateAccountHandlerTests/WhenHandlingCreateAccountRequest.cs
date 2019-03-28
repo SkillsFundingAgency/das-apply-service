@@ -75,26 +75,15 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAccountHandl
 
             result.Should().Be(false);
         }
-       
 
         [Test]
-        public void AdviseExistingContactByEmail()
-        {
-            _userRepository.Setup(r => r.GetContact("name@email.com")).ReturnsAsync(new Contact(){SigninId = Guid.NewGuid()});
-            
-            _handler.Handle(new CreateAccountRequest("name@email.com", "James", "Jones"), new CancellationToken());
-
-            _emailService.Verify(e => e.SendEmailToContact(EmailTemplateName.APPLY_SIGNUP_ERROR, It.IsAny<Contact>(), It.IsAny<object>()));
-        }
-
-        [Test]
-        public void ThenAnExistingUserIsNotInvitedToDfeSignin()
+        public void ThenAnExistingUserIsInvitedToDfeSignin()
         {
             _userRepository.Setup(r => r.GetContact("name@email.com")).ReturnsAsync(new Contact{SigninId = Guid.NewGuid()});
             
             _handler.Handle(new CreateAccountRequest("name@email.com", "James", "Jones"), new CancellationToken());
 
-            _dfeSignInService.Verify(s => s.InviteUser("name@email.com", "James", "Jones", It.IsAny<Guid>()), Times.Never);
+            _dfeSignInService.Verify(s => s.InviteUser("name@email.com", "James", "Jones", It.IsAny<Guid>()));
         }
 
 
