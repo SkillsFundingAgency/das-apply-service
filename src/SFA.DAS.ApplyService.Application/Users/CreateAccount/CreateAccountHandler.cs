@@ -40,7 +40,6 @@ namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
                         if (invitationResult.UserExists)
                         {
                             await _contactRepository.UpdateSignInId(newContact.Id, invitationResult.ExistingUserId);
-                            //await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_SIGNUP_ERROR, existingContact, new { });
                             return true;
                         }
                         return false;
@@ -49,6 +48,20 @@ namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
             }
             else
             {
+                if (!request.FromAssessor)
+                {
+                    var invitationResult = await _dfeSignInService.InviteUser(request.Email, request.GivenName,
+                        request.FamilyName, existingContact.Id);
+                    if (!invitationResult.IsSuccess)
+                    {
+                        if (invitationResult.UserExists)
+                        {
+                            await _contactRepository.UpdateSignInId(existingContact.Id, invitationResult.ExistingUserId);
+                            return true;
+                        }
+                        return false;
+                    }
+                }
 //                if (existingContact.SigninId == null)
 //                {
                     // They have signed up in Apply, but we have yet to receive a DfE Sign In id from DfE.
@@ -63,7 +76,7 @@ namespace SFA.DAS.ApplyService.Application.Users.CreateAccount
 //                    }
                 //}
                 // otherwise advise they already have an account (by Email)
-                await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_SIGNUP_ERROR, existingContact, new { });
+                //await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_SIGNUP_ERROR, existingContact, new { });
             }
             
             return true;
