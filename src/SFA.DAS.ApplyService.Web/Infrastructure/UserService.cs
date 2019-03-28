@@ -69,7 +69,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 if (!string.IsNullOrEmpty(await GetClaim("display_name")))
                 {
                     var displayName = await GetClaim("display_name");
-                    _sessionService.Set("LoggedInFromAssessor",true);
+                    //_sessionService.Set("LoggedInFromAssessor",true);
                     //May have empty strings
                     if (!string.IsNullOrEmpty(displayName))
                         _sessionService.Set("LoggedInUser", displayName);
