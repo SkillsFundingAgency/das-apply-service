@@ -10,6 +10,6 @@ namespace SFA.DAS.ApplyService.Application.Interfaces
         }
         public bool IsSuccess { get; set; }
         public bool UserExists { get; set; }
-        public Guid ExistingUserId { get; set; }
+        public Guid? ExistingUserId { get; set; }
     }
 }

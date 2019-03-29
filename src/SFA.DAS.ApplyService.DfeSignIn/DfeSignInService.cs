@@ -70,13 +70,8 @@ namespace SFA.DAS.ApplyService.DfeSignIn
             
             
                 var content = await response.Content.ReadAsStringAsync();
-                var settings = new JsonSerializerSettings
-                {
-                    NullValueHandling = NullValueHandling.Ignore,
-                    MissingMemberHandling = MissingMemberHandling.Ignore
-                };
 
-                var responseObject = JsonConvert.DeserializeObject<CreateInvitationResponse>(content, settings);
+                var responseObject = JsonConvert.DeserializeObject<CreateInvitationResponse>(content);
                 
                 _logger.LogInformation("Returned from DfE Invitation Service. Status Code: {0}. Message: {0}",
                     (int) response.StatusCode, content);
@@ -97,7 +92,7 @@ namespace SFA.DAS.ApplyService.DfeSignIn
             public string Message { get; set; }
             public bool Invited { get; set; }
             public Guid InvitationId { get; set; }
-            public Guid ExistingUserId { get; set; }
+            public Guid? ExistingUserId { get; set; }
         }
     }
 }
