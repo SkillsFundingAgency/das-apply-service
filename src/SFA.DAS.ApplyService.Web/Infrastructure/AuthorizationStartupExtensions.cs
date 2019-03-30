@@ -28,7 +28,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .AddCookie("Cookies", options =>
                 {
                     options.Cookie.Name = ".Assessors.Cookies";
-                    options.Cookie.Domain = ".apprenticeships.education.gov.uk";
+                  //  options.Cookie.Domain = ".apprenticeships.education.gov.uk";
                     options.Cookie.HttpOnly = true;
                     options.SlidingExpiration = true;
                     options.ExpireTimeSpan = TimeSpan.FromHours(1);

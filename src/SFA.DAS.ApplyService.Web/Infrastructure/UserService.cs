@@ -47,9 +47,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 {
                     //Check if user is associated with registered EPAO
                     //The result of this will be used to determine if common menu is shown
-                    var ukPrn = await GetClaim(
-                        "http://schemas.portal.com/ukprn");
-                    if (!string.IsNullOrEmpty(ukPrn))
+                    var orgName = await GetClaim(
+                        "http://schemas.portal.com/orgname");
+                    if (!string.IsNullOrEmpty(orgName))
                     {
                         _sessionService.Set("UserRegWithEPAO", true);
                     }
@@ -99,15 +99,15 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             //if so try associating the registered org with existing user
             try
             {
-                var ukPrn = await GetClaim(
-                    "http://schemas.portal.com/ukprn");
-                if (!string.IsNullOrEmpty(ukPrn))
+                var orgName = await GetClaim(
+                    "http://schemas.portal.com/orgname");
+                if (!string.IsNullOrEmpty(orgName))
                 {
                     var signInId = await GetClaim("sub");
                     var contact = await _usersApiClient.GetUserBySignInId(signInId);
                     if (contact != null)
                     {
-                        var orgFromUkprn = await _apiClient.GetOrganisationByUkprn(ukPrn);
+                        var orgFromUkprn = await _apiClient.GetOrganisationByName(orgName);
                         if(orgFromUkprn != null)
                             await _usersApiClient.AssociateOrganisationWithUser(contact.Id, orgFromUkprn.Id);
                         else

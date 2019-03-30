@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -172,6 +174,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task<Organisation> GetOrganisationByUkprn(string ukprn)
         {
             return await (await _httpClient.GetAsync($"organisations/ukprn/{ukprn}")).Content.ReadAsAsync<Organisation>();
+        }
+        public async Task<Organisation> GetOrganisationByName(string name)
+        {
+            return await (await _httpClient.GetAsync($"organisations/name/{WebUtility.UrlEncode(name)}")).Content.ReadAsAsync<Organisation>();
         }
     }
 }
