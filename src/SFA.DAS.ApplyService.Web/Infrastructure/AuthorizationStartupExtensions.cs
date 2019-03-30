@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using SFA.DAS.ApplyService.Configuration;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
@@ -28,7 +25,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .AddCookie("Cookies", options =>
                 {
                     options.Cookie.Name = ".Assessors.Cookies";
-                  //  options.Cookie.Domain = ".apprenticeships.education.gov.uk";
+                    options.Cookie.Domain = ".apprenticeships.education.gov.uk";
                     options.Cookie.HttpOnly = true;
                     options.SlidingExpiration = true;
                     options.ExpireTimeSpan = TimeSpan.FromHours(1);

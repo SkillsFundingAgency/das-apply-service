@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Session;
@@ -107,7 +104,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                     var contact = await _usersApiClient.GetUserBySignInId(signInId);
                     if (contact != null)
                     {
-                        var orgFromUkprn = await _apiClient.GetOrganisationByName(orgName);
+                        var orgFromUkprn = await _apiClient.GetOrganisationByName(orgName); 
                         if(orgFromUkprn != null)
                             await _usersApiClient.AssociateOrganisationWithUser(contact.Id, orgFromUkprn.Id);
                         else
