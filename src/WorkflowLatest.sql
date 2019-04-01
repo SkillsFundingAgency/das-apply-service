@@ -8046,6 +8046,7 @@ VALUES
         "Questions": [
           {
             "QuestionId": "W_DEL-04",
+			"QuestionTag": "effective-from",
             "Label": "SQ-1-SE-2-PG-18-W_DEL-04-238",
             "ShortLabel": "SQ-1-SE-2-PG-18-W_DEL-04-239",
             "QuestionBodyText": "SQ-1-SE-2-PG-18-W_DEL-04-240",
