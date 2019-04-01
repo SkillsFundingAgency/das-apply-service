@@ -64,11 +64,10 @@ namespace SFA.DAS.ApplyService.Web
             services.AddMvc(options => { options.Filters.Add<PerformValidationFilter>(); })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             
-            
             if (_env.IsDevelopment())
             {
                 services.AddDataProtection()
-                    .PersistKeysToFileSystem(new DirectoryInfo(@"c:\keys"))
+                    .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "keys")))
                     .SetApplicationName("AssessorApply");
 
                 services.AddDistributedMemoryCache();
