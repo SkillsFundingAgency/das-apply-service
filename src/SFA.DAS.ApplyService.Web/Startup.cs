@@ -153,7 +153,7 @@ namespace SFA.DAS.ApplyService.Web
             var configService = new ConfigurationService(_hostingEnvironment, _configuration["EnvironmentName"],
                 _configuration["ConfigurationStorageConnectionString"], "1.0", "SFA.DAS.ApplyService");
             
-            services.AddDfeSignInAuthorization(configService.GetConfig().Result, _logger);
+            services.AddDfeSignInAuthorization(configService.GetConfig().Result, _logger, _hostingEnvironment);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILogger<Startup> logger)
