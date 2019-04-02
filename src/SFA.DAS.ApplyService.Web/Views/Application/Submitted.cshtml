@@ -9,14 +9,23 @@
         <div class="govuk-grid-column-two-thirds">
 
             <div class="govuk-panel govuk-panel--confirmation">
-                <h1 class="govuk-panel__title">Application submitted</h1>
+                <h1 class="govuk-panel__title">
+                    @if (string.IsNullOrEmpty(Model.StandardName))
+                    {
+                        <text>Stage 1 of your application has been submitted</text>
+                    }
+                    else
+                    {
+                        <text>Stage 2 of your application has been submitted</text>
+                    }
+                </h1>
                 <div class="govuk-panel__body">
                     @if (!string.IsNullOrEmpty(Model.StandardName))
                     {
                         <div class="govuk-!-margin-bottom-4">
                             <span class="govuk-!-font-size-24">Standard applied for</span>
                             <br />
-                                <strong>@Model.StandardName</strong>
+                            <strong>@Model.StandardName</strong>
                         </div>
                     }
                     @if (!string.IsNullOrEmpty(Model.ReferenceNumber))
@@ -34,7 +43,7 @@
 
             <h3 class="govuk-heading-m">What happens next</h3>
 
-            <p class="govuk-body">We will review your application and let you know the outcome.</p>
+            <p class="govuk-body">We will email the outcome to you within 2 weeks.</p>
 
             <p class="govuk-body">
                 <a href="@Model.FeedbackUrl" target="_blank" class="govuk-link">What did you think of this service?</a>
