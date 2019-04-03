@@ -6,7 +6,7 @@ using SFA.DAS.ApplyService.Session;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    public class UserService
+    public class UserService : IUserService
     {
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly UsersApiClient _usersApiClient;
@@ -122,6 +122,14 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
             return false;
         }
-       
+
+        public async Task<Guid> GetUserId()
+        {
+            var value = await GetClaim("UserId");
+
+            Guid.TryParse(value, out var userId);
+
+            return userId;
+        }
     }
 }
