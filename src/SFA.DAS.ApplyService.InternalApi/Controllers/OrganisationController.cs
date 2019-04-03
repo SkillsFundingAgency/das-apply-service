@@ -103,5 +103,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             return Ok(org);
         }
+
+        [HttpPost("{applicationId}/{contactId}/{endPointAssessorOrganisationId}/RoEpaoApproved/{roEpaoApprovedFlag}")]
+        public async Task UpdateRoEpaoApprovedFlag(Guid applicationId, Guid contactId,string endPointAssessorOrganisationId, bool roEpaoApprovedFlag)
+        {
+            await _mediator.Send(new UpdateRoEpaoApprovedFlagRequest(applicationId, contactId, endPointAssessorOrganisationId, roEpaoApprovedFlag));
+        }
     }
 }
