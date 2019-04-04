@@ -2928,7 +2928,20 @@ INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
   (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-452', '', '', 'Live', GETUTCDATE(), 'Import')
+GO
 
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-23-DT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-23-DT-1', '', 'Help with accounts', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-23-DB-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-23-DB-1', '', '<h3 class="govuk-heading-m">Sole trader and partnerships</h3><p class="govuk-body">Trading for more than 12 months</p><ul class="govuk-list govuk-list--bullet"><li>submit management accounts (profit and loss or income and expenditure account, balance sheet and relevant notes to the accounts)</li></ul><p class="govuk-body">Trading for more than 3 months but less than 12</p><ul class="govuk-list govuk-list--bullet"><li>submit management accounts and a forecast for your first 12 months of trading</li></ul><h3 class="govuk-heading-m">All other organisations</h3><p class="govuk-body">Trading for more than 12 months</p><ul class="govuk-list govuk-list--bullet"><li>submit your full <a class="govuk-link" target="_blank" href="https://www.gov.uk/annual-accounts">statutory accounts</a> including notes</li></ul><p class="govuk-body">Trading for more than 3 months but less than 12</p><ul class="govuk-list govuk-list--bullet"><li>submit management accounts and a forecast for your first 12 months of trading</li></ul><h3 class="govuk-heading-m">Subsidiary organisation</h3><p class="govuk-body">Trading for more than 12 months</p><ul class="govuk-list govuk-list--bullet"><li>submit your parent company''s statutory accounts and your statutory accounts</li></ul><p class="govuk-body">Trading for more than 3 months but less than 12</p><ul class="govuk-list govuk-list--bullet"><li>submit your parent company''s statutory accounts, your management accounts and a forecast for your first 12 months of trading</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-15-LT-1';
@@ -6404,6 +6417,10 @@ VALUES
       "Title": "SQ-1-SE-3-PG-23-441",
       "LinkTitle": "SQ-1-SE-3-PG-23-444",
       "InfoText": "SQ-1-SE-3-PG-23-443",
+      "Details": {
+        "Title": "SQ-1-SE-2-PG-23-DT-1",
+        "Body": "SQ-1-SE-2-PG-23-DB-1"
+      },
       "Questions": [
         {
           "QuestionId": "FHA-01",
