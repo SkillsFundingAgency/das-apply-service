@@ -130,7 +130,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-3-22';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-3-22', '', '<p class="govuk-body">This information will be published on the Register of end point assessment organisations and will be made available to the public.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-1-PG-3-22', '', '<p class="govuk-body">This information will be published on the Register of end-point assessment organisations and will be made available to the public.</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-3-23';
 INSERT INTO Assets
@@ -1210,7 +1210,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-12-166';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-12-166', '', '<p class="govuk-body">Has any director, or any other person with significant control of your organisation, had one or more of the following?</p><ul class="govuk-list govuk-list--bullet"><li>Un-discharged bankruptcy</li><li>Composition with creditors</li><li>Any form of dispute</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-1-PG-12-166', '', '<p class="govuk-body">Have any directors, or any other person with significant control of your organisation, had one or more of the following?</p><ul class="govuk-list govuk-list--bullet"><li>Un-discharged bankruptcy</li><li>Composition with creditors</li><li>Any form of dispute</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-12-167';
 INSERT INTO Assets
@@ -1426,7 +1426,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-15-202';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-15-202', '', '<p class="govuk-body">Has any director, or any other person with significant control of your organisation, been removed from the charities commission or appear on the register of removed trustees?</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-1-PG-15-202', '', '<p class="govuk-body">Have any directors, or any other person with significant control of your organisation, been removed from the charities commission or appear on the register of removed trustees?</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-15-203';
 INSERT INTO Assets
@@ -1666,13 +1666,13 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-18-W_DEL-04.1-242';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-18-W_DEL-04.1-242', '', 'When will you be ready to do your first assessments?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-18-W_DEL-04.1-242', '', 'When will you be ready to do your first assessment?', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-18-W_DEL-04.1-243';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-18-W_DEL-04.1-243', '', 'When will you be ready to do your first assessments?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-18-W_DEL-04.1-243', '', 'When will you be ready to do your first assessment?', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-18-W_DEL-04.1-244';
 INSERT INTO Assets
@@ -1822,7 +1822,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-09-268';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-09-268', '', '<p class="govuk-body">Has any person of significant control (PSC) in the last 5 years, been convicted of:</p><ul class="govuk-list govuk-list--bullet"><li>any offence under sections 44 to 46 of the Serious Crime Act 2007 which relates to an offence covered by subparagraph (f)</li><li>conspiracy within the meaning of section 1 or 1A of the Criminal Law Act 1977</li><li>conspiracy within article 9 or 9A of the criminal attempts and conspiracy (Northern Ireland) order 1983, relating to participation in a criminal organisation</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-09-268', '', '<p class="govuk-body">Has any person of significant control (PSC) in the last 5 years been convicted of:</p><ul class="govuk-list govuk-list--bullet"><li>any offence under sections 44 to 46 of the Serious Crime Act 2007 which relates to an offence covered by subparagraph (f)</li><li>conspiracy within the meaning of section 1 or 1A of the Criminal Law Act 1977</li><li>conspiracy within article 9 or 9A of the criminal attempts and conspiracy (Northern Ireland) order 1983, relating to participation in a criminal organisation</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-10-269';
 INSERT INTO Assets
@@ -1846,7 +1846,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-10-272';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-10-272', '', '<p class="govuk-body">Has any person of significant control (PSC) in the last 5 years, been convicted of fraud affecting European communities, including:</p><ul class="govuk-list govuk-list--bullet"><li>the common law offence of cheating the Revenue (HMRC)</li><li>the common law offence of conspiracy to defraud</li><li>fraud or theft within the meaning of the Theft Act 1968, the Theft Act (Northern Ireland) 1969, the Theft Act 1978 or the Theft (Northern Ireland) Order 1978</li><li>fraudulent trading within the meaning of section 458 of the Companies Act 1985, article 451 of the Companies (Northern Ireland) Order 1986 or section 993 of the Companies Act 2006</li><li>fraudulent evasion within the meaning of section 170 of the Customs and Excise Management Act 1979 or section 72 of the Value Added Tax Act 1994</li><li>an offence in connection with taxation in the European Union within the meaning of section 71 of the Criminal Justice Act 1993</li><li>destroying, defacing or concealing of documents or procuring the execution of a valuable security within the meaning of section 20 of the Theft Act 1968 or section 19 of the Theft Act (Northern Ireland) 1969</li><li>fraud within the meaning of section 2, 3 or 4 of the Fraud Act 2006</li><li>the possession of articles for use in frauds within the meaning of section 6 of the Fraud Act 2006, or the making, adapting, supplying or offering to supply articles for use in frauds within the meaning of section 7 of that Act</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-10-272', '', '<p class="govuk-body">Has any person of significant control (PSC) in the last 5 years been convicted of fraud affecting European communities, including:</p><ul class="govuk-list govuk-list--bullet"><li>the common law offence of cheating the Revenue (HMRC)</li><li>the common law offence of conspiracy to defraud</li><li>fraud or theft within the meaning of the Theft Act 1968, the Theft Act (Northern Ireland) 1969, the Theft Act 1978 or the Theft (Northern Ireland) Order 1978</li><li>fraudulent trading within the meaning of section 458 of the Companies Act 1985, article 451 of the Companies (Northern Ireland) Order 1986 or section 993 of the Companies Act 2006</li><li>fraudulent evasion within the meaning of section 170 of the Customs and Excise Management Act 1979 or section 72 of the Value Added Tax Act 1994</li><li>an offence in connection with taxation in the European Union within the meaning of section 71 of the Criminal Justice Act 1993</li><li>destroying, defacing or concealing of documents or procuring the execution of a valuable security within the meaning of section 20 of the Theft Act 1968 or section 19 of the Theft Act (Northern Ireland) 1969</li><li>fraud within the meaning of section 2, 3 or 4 of the Fraud Act 2006</li><li>the possession of articles for use in frauds within the meaning of section 6 of the Fraud Act 2006, or the making, adapting, supplying or offering to supply articles for use in frauds within the meaning of section 7 of that Act</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-11-273';
 INSERT INTO Assets
@@ -1894,7 +1894,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-12-280';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-12-280', '', '<p class="govuk-body">Has any person of significant control (PSC) in the last 5 years, been convicted of:</p><ul class="govuk-list govuk-list--bullet"><li>money laundering within the meaning of sections 340(11) and 415 of the Proceeds of Crime Act 2002</li><li>an offence in connection with the proceeds of criminal conduct within the meaning of section 93A, 93B or 93C of the Criminal Justice Act 1988 or article 45, 46 or 47 of the Proceeds of Crime (Northern Ireland) Order 1996</li><li>an offence under section 4 of the Asylum and Immigration (Treatment of Claimants etc) Act 2004</li><li>an offence under section 59A of the Sexual Offences Act 2003</li><li>an offence under section 71 of the Coroners and Justice Act 2009</li><li>an offence in connection with the proceeds of drug trafficking within the meaning of section 49, 50 and 51 of the Drug Trafficking Act 1994</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-12-280', '', '<p class="govuk-body">Has any person of significant control (PSC) in the last 5 years been convicted of:</p><ul class="govuk-list govuk-list--bullet"><li>money laundering within the meaning of sections 340(11) and 415 of the Proceeds of Crime Act 2002</li><li>an offence in connection with the proceeds of criminal conduct within the meaning of section 93A, 93B or 93C of the Criminal Justice Act 1988 or article 45, 46 or 47 of the Proceeds of Crime (Northern Ireland) Order 1996</li><li>an offence under section 4 of the Asylum and Immigration (Treatment of Claimants etc) Act 2004</li><li>an offence under section 59A of the Sexual Offences Act 2003</li><li>an offence under section 71 of the Coroners and Justice Act 2009</li><li>an offence in connection with the proceeds of drug trafficking within the meaning of section 49, 50 and 51 of the Drug Trafficking Act 1994</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-281';
 INSERT INTO Assets
@@ -1954,7 +1954,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-13.1-290';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-13.1-290', '', 'Provide details whether you''ve paid, or have entered into a binding arrangement with a view to paying, including, where applicable, any accrued interest and/or fines.', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-13.1-290', '', 'Provide details whether you''ve paid, or have entered into a binding arrangement with a view to paying, including, where applicable, any accrued interest and/or fines', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-13.1-291';
 INSERT INTO Assets
@@ -1991,7 +1991,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-14-296';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-14-296', '', '<p class="govuk-body">In the past 3 years has your organisation or partner organisations been:</p><ul class="govuk-list govuk-list--bullet"><li>made bankrupt</li><li>subject of insolvency</li><li>winding-up proceedings</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-14-296', '', '<p class="govuk-body">In the past 3 years has your organisation or partner organisation:</p><ul class="govuk-list govuk-list--bullet"><li>been made bankrupt</li><li>been the subject of insolvency</li><li>started winding-up proceedings</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20.1-297';
 INSERT INTO Assets
@@ -2159,7 +2159,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-21-324';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-21-324', '', '<p class="govuk-body">Confirm whether your organisation or any of your partner organisations is in:</p><ul class="govuk-list govuk-list--bullet"><li>voluntary administration or company voluntary arrangement</li><li>compulsory winding up</li><li>receivership</li><li>composition with creditors</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-21-324', '', '<p class="govuk-body">Confirm whether your organisation or any partner organisation are in:</p><ul class="govuk-list govuk-list--bullet"><li>voluntary administration or company voluntary arrangement</li><li>compulsory winding up</li><li>receivership</li><li>composition with creditors</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-21.1-325';
 INSERT INTO Assets
@@ -2207,7 +2207,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-22-332';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-22-332', '', '<p class="govuk-body">Has your organisation or partner organisations tax returns on or after the 1 October 2013:</p><ul class="govuk-list govuk-list--bullet"><li>been found to be incorrect as of 1 April 2013</li><li>resulted in a criminal conviction for tax-related offences which are unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-22-332', '', '<p class="govuk-body">Have your organisation or partner organisation''s tax returns on or after the 1 October 2013:</p><ul class="govuk-list govuk-list--bullet"><li>been found to be incorrect as of 1 April 2013</li><li>resulted in a criminal conviction for tax-related offences which are unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-22.1-333';
 INSERT INTO Assets
@@ -2255,7 +2255,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-23-340';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-23-340', '', '<p class="govuk-body">Has your organisation or your partner organisations tax returns between 1 October 2012 and 1 April 2013 been:</p><ul class="govuk-list govuk-list--bullet"><li>successfully challenged by HMRC under the general anti-abuse rule (GAAR) or the Halifax abuse principle</li><li>challenged by a tax authority in the jurisdiction your organisation is based with rules or legislation similar to GAAR or Halifax</li><li>resulted in criminal convictions for tax-related offences which are unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-23-340', '', '<p class="govuk-body">Has your organisation or your partner organisation tax returns between 1 October 2012 and 1 April 2013:</p><ul class="govuk-list govuk-list--bullet"><li>been successfully challenged by HMRC under the general anti-abuse rule (GAAR) or the Halifax abuse principle</li><li>been challenged by a tax authority in the jurisdiction your organisation is based with rules or legislation similar to GAAR or Halifax</li><li>resulted in criminal convictions for tax-related offences which are unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-23.1-341';
 INSERT INTO Assets
@@ -2303,7 +2303,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-24-348';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-24-348', '', '<p class="govuk-body">Has your organisation had any contract for the delivery of services withdrawn within the last 3 financial years?</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-24-348', '', '<p class="govuk-body">Has your organisation had any contracts for the delivery of services withdrawn within the last 3 financial years?</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-24.1-349';
 INSERT INTO Assets
@@ -2507,13 +2507,13 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-27-382';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27-382', '', 'Directions and sanctions', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27-382', '', 'Direction and sanctions', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-27-383';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27-383', '', 'Directions and sanctions', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27-383', '', 'Direction and sanctions', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-27-384';
 INSERT INTO Assets
@@ -2928,7 +2928,20 @@ INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
   (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-452', '', '', 'Live', GETUTCDATE(), 'Import')
+GO
 
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-23-DT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-23-DT-1', '', 'Help with accounts', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-23-DB-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-23-DB-1', '', '<h3 class="govuk-heading-m">Sole trader and partnerships</h3><p class="govuk-body">Trading for more than 12 months</p><ul class="govuk-list govuk-list--bullet"><li>submit management accounts (profit and loss or income and expenditure account, balance sheet and relevant notes to the accounts)</li></ul><p class="govuk-body">Trading for more than 3 months but less than 12</p><ul class="govuk-list govuk-list--bullet"><li>submit management accounts and a forecast for your first 12 months of trading</li></ul><h3 class="govuk-heading-m">All other organisations</h3><p class="govuk-body">Trading for more than 12 months</p><ul class="govuk-list govuk-list--bullet"><li>submit your full <a class="govuk-link" target="_blank" href="https://www.gov.uk/annual-accounts">statutory accounts</a> including notes</li></ul><p class="govuk-body">Trading for more than 3 months but less than 12</p><ul class="govuk-list govuk-list--bullet"><li>submit management accounts and a forecast for your first 12 months of trading</li></ul><h3 class="govuk-heading-m">Subsidiary organisation</h3><p class="govuk-body">Trading for more than 12 months</p><ul class="govuk-list govuk-list--bullet"><li>submit your parent company''s statutory accounts and your statutory accounts</li></ul><p class="govuk-body">Trading for more than 3 months but less than 12</p><ul class="govuk-list govuk-list--bullet"><li>submit your parent company''s statutory accounts, your management accounts and a forecast for your first 12 months of trading</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-15-LT-1';
@@ -3057,7 +3070,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-208-LT-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-208-LT-1', '', 'Directions and sanctions', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-208-LT-1', '', 'Direction and sanctions', 'Live', GETUTCDATE(), 'Import')
 GO
 
 
@@ -6404,6 +6417,10 @@ VALUES
       "Title": "SQ-1-SE-3-PG-23-441",
       "LinkTitle": "SQ-1-SE-3-PG-23-444",
       "InfoText": "SQ-1-SE-3-PG-23-443",
+      "Details": {
+        "Title": "SQ-1-SE-2-PG-23-DT-1",
+        "Body": "SQ-1-SE-2-PG-23-DB-1"
+      },
       "Questions": [
         {
           "QuestionId": "FHA-01",
