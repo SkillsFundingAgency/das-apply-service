@@ -90,5 +90,18 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             return Ok(org);
         }
+
+        [HttpGet("ukprn/{ukprn}")]
+        public async Task<ActionResult<Organisation>> GetOrganisationByUkprn(string ukprn)
+        {
+            var org = await _mediator.Send(new GetOrganisationByUkprnRequest { Ukprn = ukprn });
+
+            if (org is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(org);
+        }
     }
 }

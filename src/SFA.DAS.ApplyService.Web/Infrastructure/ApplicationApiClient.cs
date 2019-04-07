@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply.Download;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
@@ -14,7 +13,6 @@ using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types;
-using SFA.DAS.ApplyService.Web.ViewModels;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
@@ -132,7 +130,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             _logger.LogInformation($"API ImportWorkflow > After post to Internal API");
         }
 
-        //MFCMFC
         public async Task UpdateApplicationData<T>(T applicationData, Guid applicationId)
         {
             await _httpClient.PostAsJsonAsync($"/Application/{applicationId}/UpdateApplicationData", applicationData);
@@ -173,6 +170,15 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task UpdateFileUploadAnswer(string applicationId, int sequenceId, int sectionId, string pageId, string questionId, string fileName, Guid userId)
         {
             await _httpClient.PostAsJsonAsync($"/UpdateFileAnswer", new {applicationId, sequenceId, sectionId, pageId, questionId, fileName, userId});
+        }
+
+        public async Task<Organisation> GetOrganisationByUkprn(string ukprn)
+        {
+            return await (await _httpClient.GetAsync($"organisations/ukprn/{ukprn}")).Content.ReadAsAsync<Organisation>();
+        }
+        public async Task<Organisation> GetOrganisationByName(string name)
+        {
+            return await (await _httpClient.GetAsync($"organisations/name/{WebUtility.UrlEncode(name)}")).Content.ReadAsAsync<Organisation>();
         }
     }
 }

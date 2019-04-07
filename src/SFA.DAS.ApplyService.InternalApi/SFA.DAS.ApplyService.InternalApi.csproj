@@ -11,7 +11,7 @@
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="7.0.1" />
         <PackageReference Include="FluentValidation.AspNetCore">
-          <Version>8.0.100</Version>
+          <Version>8.1.2</Version>
         </PackageReference>
         <PackageReference Include="MediatR">
           <Version>5.1.0</Version>
@@ -21,6 +21,7 @@
         </PackageReference>
         <PackageReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="3.19.8" />
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
         <PackageReference Include="StructureMap">
           <Version>4.6.1</Version>
         </PackageReference>
@@ -31,6 +32,10 @@
         <PackageReference Include="Microsoft.ApplicationInsights.NLogTarget" Version="2.6.4" />
         <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.3.0" />
         <PackageReference Include="NLog.Web.AspNetCore" Version="4.5.4" />
+        <PackageReference Include="System.ServiceModel.Duplex" Version="4.4.*" />
+        <PackageReference Include="System.ServiceModel.Http" Version="4.4.*" />
+        <PackageReference Include="System.ServiceModel.NetTcp" Version="4.4.*" />
+        <PackageReference Include="System.ServiceModel.Security" Version="4.4.*" />
     </ItemGroup>
 
     <ItemGroup>
@@ -48,5 +53,9 @@
       <ProjectReference Include="..\SFA.DAS.ApplyService.Encryption\SFA.DAS.ApplyService.Encryption.csproj" />
       <ProjectReference Include="..\SFA.DAS.ApplyService.InternalApi.Types\SFA.DAS.ApplyService.InternalApi.Types.csproj" />
       <ProjectReference Include="..\SFA.DAS.ApplyService.Storage\SFA.DAS.ApplyService.Storage.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <WCFMetadata Include="Connected Services" />
     </ItemGroup>
 </Project>

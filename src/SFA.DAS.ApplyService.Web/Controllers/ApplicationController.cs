@@ -24,63 +24,79 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly ILogger<ApplicationController> _logger;
         private readonly ISessionService _sessionService;
         private readonly IConfigurationService _configService;
+        private readonly UserService _userService;
 
-        public ApplicationController(IApplicationApiClient apiClient, ILogger<ApplicationController> logger, ISessionService sessionService, IConfigurationService configService)
+        public ApplicationController(IApplicationApiClient apiClient, ILogger<ApplicationController> logger, ISessionService sessionService, IConfigurationService configService, UserService userService)
         {
             _apiClient = apiClient;
             _logger = logger;
             _sessionService = sessionService;
             _configService = configService;
+            _userService = userService;
         }
 
         [HttpGet("/Applications")]
         public async Task<IActionResult> Applications()
         {
             var user = _sessionService.Get("LoggedInUser");
+
+            if (!await _userService.ValidateUser(user))
+                RedirectToAction("PostSignIn", "Users");
+
             _logger.LogInformation($"Got LoggedInUser from Session: {user}");
 
             var userId = User.GetUserId();
-            
+
+            var org = await _apiClient.GetOrganisationByUserId(userId);
             var applications = await _apiClient.GetApplicationsFor(userId);
 
             if (!applications.Any())
             {
-                var org = await _apiClient.GetOrganisationByUserId(userId);
-                if (org.RoEPAOApproved)
+                if (org != null && org.RoEPAOApproved)
                 {
-                    return await StartApplication(userId);
+                      return await StartApplication(userId);
+                }
+
+                if (org == null)
+                {
+                    if (await _userService.AssociateOrgFromClaimWithUser())
+                        return await StartApplication(userId);
+
+                    return RedirectToAction("Index", "OrganisationSearch");
                 }
 
                 return View("~/Views/Application/Declaration.cshtml");
 
             }
-            else if (applications.Count() > 1)
+
+            if (applications.Count() > 1)
             {
                 return View(applications);
             }
-            else
+
+            var application = applications.First();
+
+            if (application.ApplicationStatus == ApplicationStatus.FeedbackAdded)
             {
-                var application = applications.First();
-
-                if (application.ApplicationStatus == ApplicationStatus.FeedbackAdded)
-                {
-                    return View("~/Views/Application/FeedbackIntro.cshtml", application.Id);
-                }
-                else if (application.ApplicationStatus == ApplicationStatus.Rejected)
-                {
-                    return View(applications);
-                }
-                else if (application.ApplicationStatus == ApplicationStatus.Approved)
-                {
-                    return View(applications);
-                }
-
-                return RedirectToAction("SequenceSignPost", new {applicationId = application.Id});
+                return View("~/Views/Application/FeedbackIntro.cshtml", application.Id);
             }
+
+            if (application.ApplicationStatus == ApplicationStatus.Rejected)
+            {
+                return View(applications);
+            }
+
+            if (application.ApplicationStatus == ApplicationStatus.Approved)
+            {
+                return View(applications);
+            }
+
+            return RedirectToAction("SequenceSignPost", new {applicationId = application.Id});
         }
 
         private async Task<IActionResult> StartApplication(Guid userId)
         {
+
             await _apiClient.StartApplication(userId);
 
             return RedirectToAction("Applications");
@@ -185,6 +201,22 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, User.GetUserId());
+
+            if(page != null && (!page.Active || page.NotRequired))
+            {
+                var nextPage = page.Next.FirstOrDefault(p => p.Condition is null);
+
+                if (nextPage?.ReturnId != null && nextPage?.Action == "NextPage")
+                {
+                    pageId = nextPage.ReturnId;
+                    return RedirectToAction("Page", new { applicationId, sequenceId, sectionId, pageId, redirectAction });
+                }
+                else
+                {
+                    return RedirectToAction("Section", new { applicationId, sequenceId, sectionId });
+                }
+            }
+
             page = await GetDataFedOptions(page);
 
             var returnUrl = Request.Headers["Referer"].ToString();
@@ -367,7 +399,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var errorMessages = new List<ValidationErrorDetail>();
             var answers = new List<Answer>();
             
-            var fileValidationPassed = FileValidationPassed(answers, page, errorMessages);
+            var fileValidationPassed = FileValidator.FileValidationPassed(answers, page, errorMessages, ModelState, HttpContext.Request.Form.Files);
             GetAnswersFromForm(answers);
 
             var updatePageResult = await _apiClient.UpdatePageAnswers(applicationId, userId, sequenceId, sectionId, pageId, answers);

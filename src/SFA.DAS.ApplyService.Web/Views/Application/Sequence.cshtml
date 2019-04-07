@@ -7,7 +7,8 @@
     Layout = "_Layout";
 }
 
-<a asp-action="Applications" asp-controller="Application" class="govuk-back-link">Back to application selection</a>
+@* Commenting out the below until we actually need it.. will need logic if (applications > 1) {} *@
+@* <a asp-action="Applications" asp-controller="Application" class="govuk-back-link">Back to application selection</a> *@
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -43,41 +44,42 @@
                     </div>
                 </div>
             }
-
-            <ul class="govuk-list">
-                @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionId))
-                {
-                    <li>
-                        <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
-                            @applicationSection.LinkTitle
-                        </h2>
-                        <span id="company-details-hint" class="govuk-hint">
-                            @applicationSection.PagesComplete of @applicationSection.PagesActive questions completed
-                        </span>
-                        @if (Model.Status != ApplicationSequenceStatus.Submitted)
-                        {
-                            <a class="govuk-link" href="@Url.Action("Section", "Application", new {applicationSection.ApplicationId, applicationSection.SequenceId, applicationSection.SectionId})">
-                                Go to @applicationSection.LinkTitle.ToLower()
-                            </a>
-                        }
-                    </li>
-                    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-                }
-            </ul>
-
-            @if (Model.Sections.Sum(m => m.PagesComplete) == Model.Sections.Sum(m => m.PagesActive) && Model.Status != ApplicationSequenceStatus.Submitted)
+            else
             {
-                <form asp-action="Submit" asp-controller="Application">
-                    <input type="hidden" id="applicationId" name="applicationId" value="@Model.ApplicationId" />
-                    <input type="hidden" id="sequenceId" name="sequenceId" value="@Model.SequenceId" />
-                    <div class="govuk-form-group">
-                        <button type="submit" class="govuk-button">
-                            Continue
-                        </button>
-                    </div>
-                </form>
-            }
+                <ul class="govuk-list">
+                    @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionId))
+                    {
+                        <li>
+                            <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
+                                @applicationSection.LinkTitle
+                            </h2>
+                            <span id="company-details-hint" class="govuk-hint">
+                                @applicationSection.PagesComplete of @applicationSection.PagesActive questions completed
+                            </span>
+                            @if (Model.Status != ApplicationSequenceStatus.Submitted)
+                            {
+                                <a class="govuk-link" href="@Url.Action("Section", "Application", new { applicationSection.ApplicationId, applicationSection.SequenceId, applicationSection.SectionId })">
+                                    Go to @applicationSection.LinkTitle.ToLower()
+                                </a>
+                            }
+                        </li>
+                        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+                    }
+                </ul>
 
+                @if (Model.Sections.Sum(m => m.PagesComplete) == Model.Sections.Sum(m => m.PagesActive) && Model.Status != ApplicationSequenceStatus.Submitted)
+                {
+                    <form asp-action="Submit" asp-controller="Application">
+                        <input type="hidden" id="applicationId" name="applicationId" value="@Model.ApplicationId" />
+                        <input type="hidden" id="sequenceId" name="sequenceId" value="@Model.SequenceId" />
+                        <div class="govuk-form-group">
+                            <button type="submit" class="govuk-button">
+                                Continue
+                            </button>
+                        </div>
+                    </form>
+                }
+            }
         </div>
     </div>
 </main>

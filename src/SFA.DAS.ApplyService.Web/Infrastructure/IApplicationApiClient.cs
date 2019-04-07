@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using SFA.DAS.ApplyService.Application.Apply.Download;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 using SFA.DAS.ApplyService.Application.Apply.Upload;
@@ -54,5 +51,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task DeleteFile(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string fileName);
         Task<Organisation> GetOrganisationByUserId(Guid userId);
         Task UpdateFileUploadAnswer(string applicationId, int sequenceId, int sectionId, string pageId, string questionId, string fileName, Guid userId);
+        Task<Organisation> GetOrganisationByUkprn(string ukprn);
+        Task<Organisation> GetOrganisationByName(string name);
+
     }
 }

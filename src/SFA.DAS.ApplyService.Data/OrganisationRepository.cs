@@ -181,5 +181,22 @@ namespace SFA.DAS.ApplyService.Data
                 return org;
             }
         }
+
+        public async Task<Organisation> GetOrganisationByUkprn(string ukprn)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var sql =
+                    "SELECT * " +
+                    "FROM Organisations " +
+                    "WHERE OrganisationUKPRN = @ukprn";
+
+                var org = await connection.QueryFirstOrDefaultAsync<Organisation>(sql, new { ukprn });
+                return org;
+            }
+        }
     }
 }
