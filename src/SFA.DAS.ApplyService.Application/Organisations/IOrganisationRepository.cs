@@ -15,5 +15,7 @@ namespace SFA.DAS.ApplyService.Application.Organisations
         Task<Organisation> GetUserOrganisation(Guid userId);
         Task<Organisation> GetOrganisationByUserId(Guid userId);
         Task<Organisation> GetOrganisationByUkprn(string ukprn);
+        Task<Organisation> CreateOrganisation(Organisation organisation);
+        Task<Organisation> UpdateOrganisation(Guid organisationId, Guid userId);
     }
 }

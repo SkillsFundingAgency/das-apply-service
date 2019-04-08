@@ -26,9 +26,30 @@ namespace SFA.DAS.ApplyService.Data
             {
                 await connection.ExecuteAsync(@"INSERT INTO Contacts (Email, GivenNames, FamilyName, SignInType, CreatedAt, CreatedBy, Status, IsApproved) 
                                                      VALUES (@email, @givenName, @familyName, @signInType, @createdAt, @email, 'New', 0)",
-                    new {email, givenName, familyName, signInType, createdAt = DateTime.UtcNow});
+                    new { email, givenName, familyName, signInType, createdAt = DateTime.UtcNow });
 
-                return await GetContact(email);   
+
+                return await GetContact(email);
+            }
+        }
+
+        public async Task<Contact> CreateContact(Contact contact, Guid organisationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                contact.CreatedBy = contact.CreatedBy ?? contact.Email;
+                await connection.ExecuteAsync(
+                    @"INSERT INTO Contacts (Id, Email, GivenNames, FamilyName, SigninId, SignInType, ApplyOrganisationID, 
+                                                Status, IsApproved, CreatedAt, CreatedBy) 
+                                        VALUES (@Id, @Email, @GivenNames, @FamilyName,@SigninId, @SignInType,@organisationId,@Status,@IsApproved, @CreatedAt, @CreatedBy)",
+                    new
+                    {
+                        contact.Id, contact.Email, contact.GivenNames, contact.FamilyName, contact.SigninId,
+                        contact.SigninType, organisationId, contact.Status, contact.IsApproved, contact.CreatedAt,
+                        contact.CreatedBy
+                    });
+
+                return await GetContactBySignInId(contact.Id);
             }
         }
 
