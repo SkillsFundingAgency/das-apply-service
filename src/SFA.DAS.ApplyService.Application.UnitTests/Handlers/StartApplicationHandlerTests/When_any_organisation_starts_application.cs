@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
@@ -46,6 +48,17 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
                 section =>
                     section.SectionId == 1
                     && section.QnAData.Pages.All(p => !p.NotRequired)))));
+        }
+
+        [Test]
+        public async Task Then_ApplicationId_is_returned()
+        {
+            Init();
+
+            var result = await Handler.Handle(new StartApplicationRequest(UserId), CancellationToken.None);
+
+            result.Should().BeOfType<StartApplicationResponse>();
+            result.As<StartApplicationResponse>().ApplicationId.Should().Be(ApplicationId);
         }
     }
 }

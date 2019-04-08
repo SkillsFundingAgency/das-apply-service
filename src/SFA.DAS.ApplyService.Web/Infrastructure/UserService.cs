@@ -1,15 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Session;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    public class UserService
+    public class UserService : IUserService
     {
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly UsersApiClient _usersApiClient;
@@ -47,10 +44,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 {
                     //Check if user is associated with registered EPAO
                     //The result of this will be used to determine if common menu is shown
-                    var ukPrn = await GetClaim(
-                        "http://schemas.portal.com/ukprn");
-                    if (!string.IsNullOrEmpty(ukPrn))
-                        SetUserIsRegWithEpao(true);
+                    var orgName = await GetClaim(
+                        "http://schemas.portal.com/orgname");
+                    if (!string.IsNullOrEmpty(orgName))
+                    {
+                        _sessionService.Set("UserRegWithEPAO", true);
+                    }
                 }
             }
             catch (ArgumentException)
@@ -69,10 +68,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 if (!string.IsNullOrEmpty(await GetClaim("display_name")))
                 {
                     var displayName = await GetClaim("display_name");
-                    _sessionService.Set("LoggedInFromAssessor",true);
                     //May have empty strings
                     if (!string.IsNullOrEmpty(displayName))
+                    {
                         _sessionService.Set("LoggedInUser", displayName);
+                    }
                     else
                     {
                         _logger.LogInformation("Claims where empty and user was null so redirecting to postsignin");
@@ -96,15 +96,15 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             //if so try associating the registered org with existing user
             try
             {
-                var ukPrn = await GetClaim(
-                    "http://schemas.portal.com/ukprn");
-                if (!string.IsNullOrEmpty(ukPrn))
+                var orgName = await GetClaim(
+                    "http://schemas.portal.com/orgname");
+                if (!string.IsNullOrEmpty(orgName))
                 {
                     var signInId = await GetClaim("sub");
                     var contact = await _usersApiClient.GetUserBySignInId(signInId);
                     if (contact != null)
                     {
-                        var orgFromUkprn = await _apiClient.GetOrganisationByUkprn(ukPrn);
+                        var orgFromUkprn = await _apiClient.GetOrganisationByName(orgName); 
                         if(orgFromUkprn != null)
                             await _usersApiClient.AssociateOrganisationWithUser(contact.Id, orgFromUkprn.Id);
                         else
@@ -123,9 +123,13 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return false;
         }
 
-        public void SetUserIsRegWithEpao(bool flag)
+        public async Task<Guid> GetUserId()
         {
-            _sessionService.Set("UserRegWithEPAO", flag);
+            var value = await GetClaim("UserId");
+
+            Guid.TryParse(value, out var userId);
+
+            return userId;
         }
     }
 }

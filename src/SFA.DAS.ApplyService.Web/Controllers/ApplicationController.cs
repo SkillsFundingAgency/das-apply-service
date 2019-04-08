@@ -24,9 +24,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly ILogger<ApplicationController> _logger;
         private readonly ISessionService _sessionService;
         private readonly IConfigurationService _configService;
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
 
-        public ApplicationController(IApplicationApiClient apiClient, ILogger<ApplicationController> logger, ISessionService sessionService, IConfigurationService configService, UserService userService)
+        public ApplicationController(IApplicationApiClient apiClient, ILogger<ApplicationController> logger, ISessionService sessionService, IConfigurationService configService, IUserService userService)
         {
             _apiClient = apiClient;
             _logger = logger;
@@ -49,11 +49,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var org = await _apiClient.GetOrganisationByUserId(userId);
             var applications = await _apiClient.GetApplicationsFor(userId);
-            
-            if (org != null && org.RoEPAOApproved)
-                _userService.SetUserIsRegWithEpao(true);
-            else
-                _userService.SetUserIsRegWithEpao(false);
 
             if (!applications.Any())
             {
@@ -101,7 +96,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private async Task<IActionResult> StartApplication(Guid userId)
         {
-
             await _apiClient.StartApplication(userId);
 
             return RedirectToAction("Applications");
@@ -110,7 +104,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost("/Applications")]
         public async Task<IActionResult> StartApplication()
         {
-            return await StartApplication(User.GetUserId());
+            var response = await _apiClient.StartApplication(await _userService.GetUserId());
+
+            return RedirectToAction("SequenceSignPost", new {applicationId = response.ApplicationId});
         }
 
         [HttpGet("/Applications/{applicationId}/Sequence")]
