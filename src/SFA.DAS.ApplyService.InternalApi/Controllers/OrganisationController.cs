@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -54,7 +55,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("name/{name}")]
         public async Task<ActionResult<Organisation>> GetOrganisationByName(string name)
         {
-            var org = await _mediator.Send(new GetOrganisationByNameRequest { Name = name });
+            var org = await _mediator.Send(new GetOrganisationByNameRequest { Name = WebUtility.UrlDecode(name) });
 
             if (org is null)
             {
@@ -102,6 +103,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             }
 
             return Ok(org);
+        }
+
+        [HttpPost("{applicationId}/{contactId}/{endPointAssessorOrganisationId}/RoEpaoApproved/{roEpaoApprovedFlag}")]
+        public async Task UpdateRoEpaoApprovedFlag(Guid applicationId, Guid contactId,string endPointAssessorOrganisationId, bool roEpaoApprovedFlag)
+        {
+            await _mediator.Send(new UpdateRoEpaoApprovedFlagRequest(applicationId, contactId, endPointAssessorOrganisationId, roEpaoApprovedFlag));
         }
     }
 }

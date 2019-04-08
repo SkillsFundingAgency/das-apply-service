@@ -3,20 +3,18 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using SFA.DAS.ApplyService.Configuration;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     public static class AuthorizationStartupExtensions
     {
-        public static void AddDfeSignInAuthorization(this IServiceCollection services, IApplyConfig applyConfig, ILogger logger)
+        public static void AddDfeSignInAuthorization(this IServiceCollection services, IApplyConfig applyConfig, ILogger logger, IHostingEnvironment env)
         {
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             
@@ -27,7 +25,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 })
                 .AddCookie("Cookies", options =>
                 {
-                    options.Cookie.Name = ".Assessor.Cookies";
+                    options.Cookie.Name = ".Assessors.Cookies";
+                    if (!env.IsDevelopment())
+                    {
+                        options.Cookie.Domain = ".apprenticeships.education.gov.uk";   
+                    }
+                    options.Cookie.HttpOnly = true;
                     options.SlidingExpiration = true;
                     options.ExpireTimeSpan = TimeSpan.FromHours(1);
                 })
@@ -41,7 +44,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                         SecurePolicy = CookieSecurePolicy.SameAsRequest
                     };
                     
-                    options.MetadataAddress = applyConfig.DfeSignIn.MetadataAddress;
+                    options.Authority = applyConfig.DfeSignIn.MetadataAddress;
                     options.RequireHttpsMetadata = false;
                     options.ClientId = applyConfig.DfeSignIn.ClientId;
                     options.SaveTokens = true;

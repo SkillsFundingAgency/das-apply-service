@@ -50,7 +50,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task UpdateSignInId(Guid contactId, Guid signInId)
+        public async Task UpdateSignInId(Guid contactId, Guid? signInId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {

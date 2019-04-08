@@ -4,7 +4,7 @@
 @inject ISessionService SessionService
 @inject IConfigurationService Config
 <!DOCTYPE html>
-<html class="govuk-template ">
+<html lang="en" class="govuk-template ">
 <head>
     <environment exclude="Development">
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-120145707-1"></script>
@@ -72,19 +72,10 @@
             </a>
         </div>
         <div class="govuk-header__content">
-            @if (!SessionService.Get<bool>("LoggedInFromAssessor"))
-            {
-                <a href="/" class="govuk-header__link govuk-header__link--service-name">
-                    Apply to the register of end-point assessment organisations
-                </a>
-            }
-            else
-            {
-                <a href="/" class="govuk-header__link govuk-header__link--service-name">
-                    Apprenticeship assessment service
-                </a>
-            }
-            </div>
+            <a href="/" class="govuk-header__link govuk-header__link--service-name">
+                Apprenticeship assessment service
+            </a>
+        </div>
     </div>
 </header>
 
@@ -127,10 +118,10 @@
 </div>
 
 <div class="govuk-width-container">
-    @if (User.Identity.IsAuthenticated && SessionService.Get<bool>("UserRegWithEPAO"))
+    @if (User.Identity.IsAuthenticated && @SessionService.Get<bool>("UserRegWithEPAO"))
     {
-        
-         var config = await @Config.GetConfig();
+
+        var config = await @Config.GetConfig();
 
         <div class="grid-row">
             <div class="column-full">

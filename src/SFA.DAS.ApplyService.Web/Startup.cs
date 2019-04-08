@@ -64,20 +64,13 @@ namespace SFA.DAS.ApplyService.Web
             services.AddMvc(options => { options.Filters.Add<PerformValidationFilter>(); })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             
-            
             if (_env.IsDevelopment())
             {
-                var redis = ConnectionMultiplexer.Connect(
-                    $"{_configService.SessionRedisConnectionString}");
-
                 services.AddDataProtection()
-                    .PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")
+                    .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "keys")))
                     .SetApplicationName("AssessorApply");
 
-                services.AddDistributedRedisCache(options =>
-                {
-                    options.Configuration = $"{_configService.SessionRedisConnectionString}";
-                });
+                services.AddDistributedMemoryCache();
             }
             else
             {
@@ -105,7 +98,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddSession(opt =>
             {
                 opt.IdleTimeout = TimeSpan.FromHours(1);
-                opt.Cookie = new CookieBuilder() {Name = ".Apply.Session", HttpOnly = true};
+                opt.Cookie = new CookieBuilder() {Name = ".Assessors.Session", HttpOnly = true};
             });
             
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Apply.AntiForgery", HttpOnly = true });
@@ -159,7 +152,7 @@ namespace SFA.DAS.ApplyService.Web
             var configService = new ConfigurationService(_hostingEnvironment, _configuration["EnvironmentName"],
                 _configuration["ConfigurationStorageConnectionString"], "1.0", "SFA.DAS.ApplyService");
             
-            services.AddDfeSignInAuthorization(configService.GetConfig().Result, _logger);
+            services.AddDfeSignInAuthorization(configService.GetConfig().Result, _logger, _hostingEnvironment);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILogger<Startup> logger)

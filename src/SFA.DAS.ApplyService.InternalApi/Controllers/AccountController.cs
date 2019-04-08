@@ -124,7 +124,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             return Ok();
         }
-        
+
+        [HttpGet("/Account/Contact/{contactId:Guid}")]
+        public async Task<ActionResult<Contact>> GetByContactId(Guid contactId)
+        {
+           return  await _mediator.Send(new GetContactByIdRequest(contactId));
+        }
+
+
         public class MigrateUserResult
         {
             public Guid NewUserId { get; set; }
