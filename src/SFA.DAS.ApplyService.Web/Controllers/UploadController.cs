@@ -26,15 +26,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Chunks()
+        public IActionResult Chunks()
         {
-            var formItems = await HttpContext.Request.ReadFormAsync();
+            var formItems = HttpContext.Request.ReadFormAsync().Result;
 
             var chunkParameters = GetChunkParameters(formItems);
 
-            await SaveFile(chunkParameters);
+            SaveFile(chunkParameters);
 
-            await TryAssembleFile(chunkParameters);
+            TryAssembleFile(chunkParameters);
 
             return Ok();
         }
@@ -57,7 +57,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             };
         }
 
-        private async Task SaveFile(ChunkParameters chunkParameters)
+        private void SaveFile(ChunkParameters chunkParameters)
         {
             var fileStream = new MemoryStream();
             var openReadStream = chunkParameters.File.OpenReadStream();
@@ -65,48 +65,48 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             fileStream.Position = 0;
 
-            await _storageService.Store(chunkParameters.ApplicationId, chunkParameters.SequenceId,
+            _storageService.Store(chunkParameters.ApplicationId, chunkParameters.SequenceId,
                 chunkParameters.SectionId, chunkParameters.PageId, chunkParameters.QuestionId,
-                $"{chunkParameters.Identifier}_{chunkParameters.ChunkNumber}", fileStream, chunkParameters.File.ContentType);
+                $"{chunkParameters.Identifier}_{chunkParameters.ChunkNumber}", fileStream, chunkParameters.File.ContentType).Wait();
         }
 
-        private async Task TryAssembleFile(ChunkParameters chunkParameters)
+        private void TryAssembleFile(ChunkParameters chunkParameters)
         {
-            if (await AllChunksAreHere(chunkParameters))
+            if (AllChunksAreHere(chunkParameters))
             {
                 // Create a single file
-                var assembledFileStream = await ConsolidateFile(chunkParameters);
+                var assembledFileStream = ConsolidateFile(chunkParameters);
 
                 // Rename consolidated with original name of upload
-                await _storageService.Store(chunkParameters.ApplicationId, chunkParameters.SequenceId,
+                _storageService.Store(chunkParameters.ApplicationId, chunkParameters.SequenceId,
                     chunkParameters.SectionId, chunkParameters.PageId, chunkParameters.QuestionId,
                     chunkParameters.FileName, assembledFileStream, chunkParameters.Type);
 
                 // Delete chunk files
-                await DeleteChunks(chunkParameters);
+                DeleteChunks(chunkParameters);
 
                 var userId = User.GetUserId();
                 
                 // Save file into QnA
-                await _client.UpdateFileUploadAnswer(chunkParameters.ApplicationId, chunkParameters.SequenceId, chunkParameters.SectionId, 
+                _client.UpdateFileUploadAnswer(chunkParameters.ApplicationId, chunkParameters.SequenceId, chunkParameters.SectionId, 
                     chunkParameters.PageId, chunkParameters.QuestionId, chunkParameters.FileName, userId);
             }
         }
 
-        private async Task DeleteChunks(ChunkParameters chunkParameters)
+        private void DeleteChunks(ChunkParameters chunkParameters)
         {
             for (var chunkNumber = 1; chunkNumber <= chunkParameters.Chunks; chunkNumber++)
             {
                 var chunkFileName = $"{chunkParameters.Identifier}_{chunkNumber}";
                 _logger.LogInformation($"Deleting: {chunkFileName}");
-                if (await ChunkIsHere(chunkNumber, chunkParameters))
+                if (ChunkIsHere(chunkNumber, chunkParameters))
                 {
-                    await _storageService.Delete(Guid.Parse(chunkParameters.ApplicationId), chunkParameters.SequenceId, chunkParameters.SectionId, chunkParameters.PageId, chunkParameters.QuestionId, chunkFileName);
+                    _storageService.Delete(Guid.Parse(chunkParameters.ApplicationId), chunkParameters.SequenceId, chunkParameters.SectionId, chunkParameters.PageId, chunkParameters.QuestionId, chunkFileName);
                 }
             }
         }
 
-        private async Task<Stream> ConsolidateFile(ChunkParameters chunkParameters)
+        private Stream ConsolidateFile(ChunkParameters chunkParameters)
         {
             // create destination memory stream
             var dest = new MemoryStream();
@@ -114,7 +114,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             for (var chunkNumber = 1; chunkNumber <= chunkParameters.Chunks; chunkNumber++)
             {
                 var chunkFileName = $"{chunkParameters.Identifier}_{chunkNumber}";
-                var chunk = await _storageService.Retrieve(chunkParameters.ApplicationId, chunkParameters.SequenceId, chunkParameters.SectionId, chunkParameters.PageId, chunkParameters.QuestionId, chunkFileName);
+                var chunk = _storageService.Retrieve(chunkParameters.ApplicationId, chunkParameters.SequenceId, chunkParameters.SectionId, chunkParameters.PageId, chunkParameters.QuestionId, chunkFileName).Result;
 
                 var ms = new MemoryStream();
 
@@ -128,20 +128,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return dest;
         }
 
-        private async Task<bool> AllChunksAreHere(ChunkParameters chunkParameters)
+        private bool AllChunksAreHere(ChunkParameters chunkParameters)
         {
             for (var chunkNumber = 1; chunkNumber <= chunkParameters.Chunks; chunkNumber++)
-                if (!await ChunkIsHere(chunkNumber, chunkParameters))
+                if (!ChunkIsHere(chunkNumber, chunkParameters))
                     return false;
             return true;
         }
 
-        private async Task<bool> ChunkIsHere(int chunkNumber, ChunkParameters chunkParameters)
+        private bool ChunkIsHere(int chunkNumber, ChunkParameters chunkParameters)
         {
             var fileName = $"{chunkParameters.Identifier}_{chunkNumber}";
-            return await _storageService.Exists(chunkParameters.ApplicationId, chunkParameters.SequenceId,
+            return _storageService.Exists(chunkParameters.ApplicationId, chunkParameters.SequenceId,
                 chunkParameters.SectionId, chunkParameters.PageId, chunkParameters.QuestionId,
-                fileName);
+                fileName).Result;
         }
     }
 

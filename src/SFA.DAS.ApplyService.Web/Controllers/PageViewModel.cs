@@ -127,10 +127,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             pagesOfAnswers.ForEach(poa =>
             {
-                if (poa.Answers.Any())
+                poa.Answers.ForEach(a =>
                 {
-                    fileUploads.Add(new FileUpload(){ Id = poa.Id, Filename = poa.Answers.Single().Value});   
-                }
+                    fileUploads.Add(new FileUpload(){ Id = a.Id, Filename = a.Value});
+                });
             });
             
             return fileUploads;

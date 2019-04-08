@@ -38,9 +38,26 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdateFileAnswer
             page.DisplayType = section.DisplayType;
             var existingAnswers = page.PageOfAnswers;
 
-            var qnADataObject = section.QnAData;
+            PageOfAnswers pageOfanswers;
+            if (!existingAnswers.Any())
+            {
+                pageOfanswers = new PageOfAnswers {Id = Guid.NewGuid()};
+                existingAnswers.Add(pageOfanswers);
+            }
+            else
+            {
+                pageOfanswers = existingAnswers.First();
+            }
             
-            existingAnswers.Add(new PageOfAnswers() {Id = Guid.NewGuid(), Answers = new List<Answer>() {new Answer() {QuestionId = request.QuestionId, Value = request.FileName}}});
+            var qnADataObject = section.QnAData;
+            pageOfanswers.Answers.Add(
+                new Answer()
+                {
+                    Id = Guid.NewGuid(),
+                    QuestionId = request.QuestionId,
+                    Value = request.FileName
+                }
+            );
             
             qnADataObject.Pages.ForEach(p =>
             {

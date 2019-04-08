@@ -131,7 +131,8 @@
   GOVUK.fileUpload.init({
         target: "/Upload/Chunks",
         testChunks: false,
-        chunkSize: 100000,
+        chunkSize: 1000000,
+        simultaneousUploads : 1,
         query: {
             applicationId: "@Model.ApplicationId",
             sequenceId: @Model.SequenceId,
@@ -140,7 +141,7 @@
             questionId: "@Model.QuestionId",
             maxTotalFiles: @( Model.FileUploadInfo.NumberOfUploadsRequired == null ? "1" : Model.FileUploadInfo.NumberOfUploadsRequired.ToString())
         },
-        maxFiles: 1, // Thid is the maximum number of concurrent uploads
+        maxFiles: 3, // Thid is the maximum number of concurrent uploads
         maxFileSize: 1e7, // 10mb
         fileType: [
             "application/pdf"
