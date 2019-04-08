@@ -6849,7 +6849,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-56-LT-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-56-LT-1', '', 'Collation & confirmation of assessment outcomes', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-56-LT-1', '', 'Collation and confirmation of assessment outcomes', 'Live', GETUTCDATE(), 'Import')
 
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-57-LT-1';
@@ -7058,7 +7058,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-07-QB-1';   -- Row P
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-07-QB-1', '','<p class="govuk-body">Upload your PDF conflict of interest policy document</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-07-QB-1', '','<p class="govuk-body">Upload a PDF of your prevent agenda policy</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-07-H-1';   -- Row AA
 INSERT INTO Assets
@@ -7384,7 +7384,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-26-CC-21-L-1';  -- Row L
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-26-CC-21-L-1', '', 'What''s the volume of end-point assessments you can deliver?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-26-CC-21-L-1', '', 'How many end-point assessments do you expect to conduct annually?', 'Live', GETUTCDATE(), 'Import')
 
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-26-CC-21-SL-1'; -- Row J
@@ -7456,7 +7456,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-27-CC-23-QB-1';   -- Row P
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-27-CC-23-QB-1', '',N'<p class="govuk-body">All assessors must be qualified to undertake assessments in line with the requirements laid out in the assessment plan.</p><p class="govuk-body">They must have expertise and experience in designing and developing assessment products and tools where this is a requirement of the assessment plan</p>',  'Live', GETUTCDATE(), 'I	mport')
+  (NEWID(), 'SQ-2-SE-4-PG-27-CC-23-QB-1', '',N'<p class="govuk-body">All assessors must be qualified to undertake assessments in line with the requirements laid out in the assessment plan.</p><p class="govuk-body">They must have expertise and experience in designing and developing assessment products and tools where this is a requirement of the assessment plan.</p>',  'Live', GETUTCDATE(), 'I	mport')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-27-CC-23-H-1';   -- Row AA
 INSERT INTO Assets
@@ -7485,7 +7485,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-27-CC-24-QB-1';   -- Row P
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-27-CC-24-QB-1', '',N'<p class="govuk-body">You need to give examples of how, when and where the assessor has demonstrated their capability. Assessors must have current and relevant occupational and assessment experience. Give details, evidence and context for this experience of current and future assessors.</p>',  'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-27-CC-24-QB-1', '',N'<p class="govuk-body">You need to give examples of how, when and where the assessor have demonstrated their capability. Assessors must have current and relevant occupational and assessment experience. Give details, evidence and context of this experience for all assessors.</p>',  'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-27-CC-24-H-1';   -- Row AA
 INSERT INTO Assets
@@ -7897,14 +7897,14 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-29-CC-38-SL-1'; -- Row J
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-29-CC-38-SL-1', '', 'Collation & confirmation of assessment outcomes'	,'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-29-CC-38-SL-1', '', 'Collation and confirmation of assessment outcomes'	,'Live', GETUTCDATE(), 'Import')
 
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-29-CC-38-L-1';  -- Row L
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-29-CC-38-L-1', '', 'Collation & confirmation of assessment outcomes', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-29-CC-38-L-1', '', 'Collation and confirmation of assessment outcomes', 'Live', GETUTCDATE(), 'Import')
 
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-29-CC-38-QB-1';   -- Row P
