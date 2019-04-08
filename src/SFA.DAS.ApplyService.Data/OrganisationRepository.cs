@@ -49,6 +49,26 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<Organisation> CreateOrganisation(Organisation organisation)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                connection.Execute(
+                    "INSERT INTO [Organisations] ([Id],[Name],[OrganisationType],[OrganisationUKPRN], " +
+                    "[OrganisationDetails],[Status],[CreatedAt],[CreatedBy],[RoEPAOApproved],[RoATPApproved]) " +
+                    "VALUES (NEWID(), @Name, REPLACE(@OrganisationType, ' ', ''), @OrganisationUkprn, @OrganisationDetails, 'New', GETUTCDATE(), @CreatedBy, @RoEPAOApproved, @RoATPApproved)",
+                    new { organisation.Name, organisation.OrganisationType, organisation.OrganisationUkprn, organisation.OrganisationDetails, organisation.CreatedBy, organisation.RoEPAOApproved, organisation.RoATPApproved });
+
+                var org = await GetOrganisationByName(organisation.Name);
+                return org;
+            }
+        }
+
+
+
         public async Task<Organisation> GetOrganisationByApplicationId(Guid applicationId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -116,6 +136,25 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<Organisation> UpdateOrganisation(Guid organisationId, Guid userId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+                connection.Execute(
+                    "UPDATE [Organisations] " +
+                    "SET CreatedBy = @userId" +
+                    "WHERE [Id] = @organisationId",
+                    new { userId, organisationId });
+
+                var org = await GetOrganisationByUserId(userId);
+
+
+                return org;
+            }
+        }
+
         public async Task<Organisation> GetOrganisationByName(string name)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -178,6 +217,23 @@ namespace SFA.DAS.ApplyService.Data
                     "WHERE con.Id = @userId";
 
                 var org = await connection.QueryFirstOrDefaultAsync<Organisation>(sql, new { userId });
+                return org;
+            }
+        }
+
+        public async Task<Organisation> GetOrganisationByUkprn(string ukprn)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                var sql =
+                    "SELECT * " +
+                    "FROM Organisations " +
+                    "WHERE OrganisationUKPRN = @ukprn";
+
+                var org = await connection.QueryFirstOrDefaultAsync<Organisation>(sql, new { ukprn });
                 return org;
             }
         }

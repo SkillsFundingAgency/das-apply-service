@@ -1,3 +1,5 @@
+using System;
+
 namespace SFA.DAS.ApplyService.Application.Interfaces
 {
     public class InviteUserResponse
@@ -7,5 +9,7 @@ namespace SFA.DAS.ApplyService.Application.Interfaces
             IsSuccess = true;
         }
         public bool IsSuccess { get; set; }
+        public bool UserExists { get; set; }
+        public Guid? ExistingUserId { get; set; }
     }
 }

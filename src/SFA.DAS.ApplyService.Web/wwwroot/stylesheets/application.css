@@ -447,3 +447,117 @@
         margin-bottom: 0;
     }
 }
+
+/* Navigation menu */
+
+.app-navigation {
+    border-bottom: 1px solid #bfc1c3;
+    font-family: "nta", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 20px;
+}
+
+@media print {
+    .app-navigation {
+        font-family: sans-serif;
+    }
+}
+
+@media (min-width: 40.0625em) {
+    .app-navigation {
+        font-size: 19px;
+        line-height: 25px;
+    }
+}
+
+@media (max-width: 641px) {
+    .app-navigation__list > li {
+        content: "";
+        clear: both;
+        float: left;
+        width: 100%;
+    }
+
+    .app-navigation__list > li:hover {
+        background-color: #2b8cc4;
+    }
+
+    .app-navigation__list > li:hover a {
+        color: #ffffff !important;
+    }
+
+    .app-navigation__list > li.app-navigation--current-page > a {
+        background-color: #005ea5 !important;
+        color: #ffffff !important;
+    }
+
+    .app-navigation__list > li.app-navigation--current-page a:hover {
+        background-color: #2b8cc4;
+    }
+}
+
+@media print {
+    .app-navigation {
+        font-size: 14pt;
+        line-height: 1.15;
+    }
+}
+
+.app-navigation__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.app-navigation__list > li {
+    box-sizing: border-box;
+    height: 53px;
+    line-height: 53px;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+@media (min-width: 311px) {
+    .app-navigation__list > li {
+        float: left;
+    }
+}
+
+.app-navigation__list > li:hover {
+    border-bottom: 4px solid #2b8cc4;
+}
+
+.app-navigation__list > li.app-navigation--current-page {
+    border-bottom: 4px solid #005ea5 !important;
+}
+
+.app-navigation__list > li.app-navigation--current-page a:hover {
+    color: #005ea5;
+}
+
+.app-navigation__list > li a {
+    font-weight: 700;
+    display: block;
+    padding: 0;
+    color: #005ea5;
+    text-decoration: none;
+}
+
+@media (min-width: 311px) {
+    .app-navigation__list > li a {
+        padding: 0 15px;
+    }
+}
+
+.app-navigation__list > li a:visited {
+    color: #005ea5;
+}
+
+.app-navigation__list > li a:hover,
+.app-navigation__list > li a:focus {
+    color: #2b8cc4;
+    background-color: inherit;
+}

@@ -3,20 +3,18 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using SFA.DAS.ApplyService.Configuration;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     public static class AuthorizationStartupExtensions
     {
-        public static void AddDfeSignInAuthorization(this IServiceCollection services, IApplyConfig applyConfig, ILogger logger)
+        public static void AddDfeSignInAuthorization(this IServiceCollection services, IApplyConfig applyConfig, ILogger logger, IHostingEnvironment env)
         {
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
             
@@ -27,37 +25,34 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 })
                 .AddCookie("Cookies", options =>
                 {
-                    options.Cookie.Name = ".Apply.Cookies";
+                    options.Cookie.Name = ".Assessors.Cookies";
+                    if (!env.IsDevelopment())
+                    {
+                        options.Cookie.Domain = ".apprenticeships.education.gov.uk";   
+                    }
+                    options.Cookie.HttpOnly = true;
                     options.SlidingExpiration = true;
                     options.ExpireTimeSpan = TimeSpan.FromHours(1);
                 })
                 .AddOpenIdConnect("oidc", options =>
                 {
-//                    options.CorrelationCookie = new CookieBuilder()
-//                    {
-//                        Name = ".Apply.Correlation.", 
-//                        HttpOnly = true,
-//                        SameSite = SameSiteMode.None,
-//                        SecurePolicy = CookieSecurePolicy.SameAsRequest
-//                    };
-
-                    options.SignInScheme = "Cookies";
-
+                    options.CorrelationCookie = new CookieBuilder()
+                    {
+                        Name = ".Assessor.Correlation.", 
+                        HttpOnly = true,
+                        SameSite = SameSiteMode.None,
+                        SecurePolicy = CookieSecurePolicy.SameAsRequest
+                    };
+                    
                     options.Authority = applyConfig.DfeSignIn.MetadataAddress;
                     options.RequireHttpsMetadata = false;
-
                     options.ClientId = applyConfig.DfeSignIn.ClientId;
-                    
-
                     options.SaveTokens = true;
-                    options.GetClaimsFromUserInfoEndpoint = true;
-
+            
                     options.Scope.Clear();
                     options.Scope.Add("openid");
 
-
-                    
-                    options.DisableTelemetry = true;
+                 
                     options.Events = new OpenIdConnectEvents
                     {
                         // Sometimes, problems in the OIDC provider (such as session timeouts)
