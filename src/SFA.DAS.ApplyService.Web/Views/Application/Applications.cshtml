@@ -14,7 +14,7 @@
             <table class="govuk-table">
                 <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th class="govuk-table__header" scope="col">Application</th>
+                    <th class="govuk-table__header" scope="col">Standard</th>
                     <!-- <th class="govuk-table__header" scope="col">Application ID</th> -->
                     <th class="govuk-table__header govuk-table__header--numeric" scope="col">Status</th>
                     <th class="govuk-table__header govuk-table__header--numeric" scope="col">Action</th>
@@ -25,12 +25,11 @@
                 @foreach (var application in Model)
                 {
                     <tr>
-                        <th class="govuk-table__header" scope="row">@application.CreatedAt.ToLongDateString()</th>
+                        <th class="govuk-table__header" scope="row">
+                            <a class="govuk-link" href="@Url.Action("SequenceSignPost", "Application", new {applicationId = application.Id})">@application.ApplicationData?.StandardName</a>
+                        </th>
                         <!-- <td class="govuk-table__cell">@application.Id</td> -->
                         <td class="govuk-table__cell govuk-table__cell--numeric">@application.ApplicationStatus</td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">
-                            <a class="govuk-link" href="@Url.Action("SequenceSignPost", "Application", new {applicationId = application.Id})">View</a>
-                        </td>
                     </tr>
                 }
                 </tbody>
