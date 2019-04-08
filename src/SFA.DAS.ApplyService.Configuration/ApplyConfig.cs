@@ -18,5 +18,7 @@ namespace SFA.DAS.ApplyService.Configuration
         public CharityCommissionApiAuthentication CharityCommissionApiAuthentication { get; set; }
 
         public string FeedbackUrl { get; set; }
+
+        public string AssessorServiceBaseUrl { get; set; }
     }
 }

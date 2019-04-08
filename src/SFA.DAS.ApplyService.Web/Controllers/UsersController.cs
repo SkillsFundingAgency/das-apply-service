@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Validators;
@@ -19,13 +21,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IUsersApiClient _usersApiClient;
         private readonly ISessionService _sessionService;
         private readonly ILogger<UsersController> _logger;
+        private readonly IConfigurationService _config;
+        private readonly IHttpContextAccessor _contextAccessor;
         private readonly CreateAccountValidator _createAccountValidator;
 
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger, CreateAccountValidator createAccountValidator)
-        {
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger, IConfigurationService config, IHttpContextAccessor contextAccessor, CreateAccountValidator createAccountValidator)
+        { 
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
             _logger = logger;
+            _config = config;
+            _contextAccessor = contextAccessor;
             _createAccountValidator = createAccountValidator;
         }
         
@@ -62,15 +68,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
         
         [HttpGet]
-        public IActionResult SignOut()
+        public async Task<IActionResult> SignOut()
         {
+            if (!string.IsNullOrEmpty(_contextAccessor.HttpContext.User.FindFirstValue("display_name")))
+            {
+                return Redirect($"{(await _config.GetConfig()).AssessorServiceBaseUrl}/Account/SignOut");
+            }
             foreach (var cookie in Request.Cookies.Keys)
             {
                 Response.Cookies.Delete(cookie);
             }
 
-            return SignOut(CookieAuthenticationDefaults.AuthenticationScheme,
-                "oidc");
+
+            return SignOut("Cookies",
+               "oidc");
         }
 
         public IActionResult InviteSent()
@@ -81,14 +92,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 RedirectToAction("CreateAccount");
             }
-            
+
             return View(viewModel);
         }
 
         public async Task<IActionResult> PostSignIn()
         {
             var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
-
+           
             if (user == null)
             {
                 return RedirectToAction("NotSetUp");

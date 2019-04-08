@@ -9,6 +9,8 @@ using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Application.Users.ApproveContact;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Application.Users.GetContact;
+using SFA.DAS.ApplyService.Application.Users.UpdateContactIdAndSignInId;
+using SFA.DAS.ApplyService.Application.Users.UpdateContactOrgId;
 using SFA.DAS.ApplyService.Application.Users.UpdateSignInId;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -36,7 +38,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [PerformValidation]
         public async Task<ActionResult> InviteUser([FromBody]NewContact newContact)
         {
-            var successful = await _mediator.Send(new CreateAccountRequest(newContact.Email, newContact.GivenName, newContact.FamilyName));
+            var successful = await _mediator.Send(new CreateAccountRequest(newContact.Email, newContact.GivenName, newContact.FamilyName, newContact.FromAssessor));
 
             if (!successful)
             {
@@ -81,6 +83,20 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return Ok();
         }
 
+        [HttpPut("/Account/")]
+        public async Task UpdateContactWithSignInId([FromBody] AddContactSignInId addContactSignInId)
+        {
+            await _mediator.Send(new UpdateContactIdAndSignInIdRequest(Guid.Parse(addContactSignInId.SignInId),
+                Guid.Parse(addContactSignInId.ContactId), addContactSignInId.Email, addContactSignInId.UpdatedBy));
+        }
+
+        [HttpPut("/Account/UpdateContactWithOrgId")]
+        public async Task UpdateContactWithOrgId([FromBody] UpdateContactOrgId updateContactOrgId)
+        {
+            await _mediator.Send(new UpdateContactOrgdRequest(updateContactOrgId.ContactId,
+                updateContactOrgId.OrganisationId));
+        }
+
         [HttpPost("/Account/MigrateUsers")]
         public async Task<ActionResult> MigrateUsers()
         {
@@ -108,7 +124,23 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             return Ok();
         }
-        
+
+        [HttpGet("/Account/Contact/{contactId:Guid}")]
+        public async Task<ActionResult<Contact>> GetByContactId(Guid contactId)
+        {
+           return  await _mediator.Send(new GetContactByIdRequest(contactId));
+        }
+
+        [HttpPost("/Account/MigrateContactAndOrgs")]
+        public async Task<ActionResult> MigrateContactAndOrgs([FromBody]
+            MigrateContactOrganisation migrateContactOrganisation)
+        {
+            await _mediator.Send(new MigrateContactOrganisationRequest(migrateContactOrganisation.contact,
+                migrateContactOrganisation.organisation));
+
+            return Ok();
+        }
+
         public class MigrateUserResult
         {
             public Guid NewUserId { get; set; }

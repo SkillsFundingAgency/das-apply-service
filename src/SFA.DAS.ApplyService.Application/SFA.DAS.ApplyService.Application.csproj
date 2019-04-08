@@ -27,5 +27,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\SFA.DAS.ApplyService.Domain\SFA.DAS.ApplyService.Domain.csproj" />
+      <ProjectReference Include="..\SFA.DAS.ApplyService.InternalApi.Types\SFA.DAS.ApplyService.InternalApi.Types.csproj" />
     </ItemGroup>
 </Project>
