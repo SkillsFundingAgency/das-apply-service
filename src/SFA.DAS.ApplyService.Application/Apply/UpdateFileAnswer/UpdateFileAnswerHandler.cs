@@ -23,17 +23,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdateFileAnswer
             var section = await _applyRepository.GetSection(request.ApplicationId, request.SequenceId, request.SectionId,
                 request.UserId);
 
-            //            var entity = await _applyRepository.GetEntity(request.ApplicationId, request.UserId);
-            //            var workflow = entity.QnAWorkflow;
-            //
-            //            var sequence = workflow.GetSequenceContainingPage(request.PageId);
-            //            var section = sequence.Sections.Single(s => s.Pages.Any(p => p.PageId == request.PageId));
-            //
-            //            if (!sequence.Active)
-            //            {
-            //                throw new BadRequestException("Sequence not active");
-            //            }
-            //
             var page = section.QnAData.Pages.Single(p => p.PageId == request.PageId);
             page.DisplayType = section.DisplayType;
             var existingAnswers = page.PageOfAnswers;
