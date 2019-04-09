@@ -134,4 +134,7 @@ exec [Update_ApplicationSections_QuestionTags] 'CD-03_4', 'contact-address-4'
 -- Add the Workflows
 :r ..\WorkflowLatest.sql
 
+-- FHA-02 Update
+:r ..\FHA-2Update.sql
+
 
