@@ -16,7 +16,7 @@
                 <tr class="govuk-table__row">
                     <th class="govuk-table__header" scope="col">Standard</th>
                     <!-- <th class="govuk-table__header" scope="col">Application ID</th> -->
-                    <th class="govuk-table__header govuk-table__header--numeric" scope="col">Reference</th>
+                    <th class="govuk-table__header govuk-table__header--numeric" scope="col">Standard Code</th>
                     <th class="govuk-table__header govuk-table__header--numeric" scope="col">Status</th>
                 </tr>
                 </thead>
@@ -29,7 +29,7 @@
                             <a class="govuk-link" href="@Url.Action("SequenceSignPost", "Application", new {applicationId = application.Id})">@(application.ApplicationData?.StandardName ?? "View")</a>
                         </th>
                         <!-- <td class="govuk-table__cell">@application.Id</td> -->
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@application.ApplicationData?.ReferenceNumber</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@application.ApplicationData?.StandardCode</td>
                         <td class="govuk-table__cell govuk-table__cell--numeric">@application.ApplicationStatus</td>
                     </tr>
                 }
