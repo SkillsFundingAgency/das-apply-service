@@ -127,7 +127,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             pagesOfAnswers.ForEach(poa =>
             {
-                poa.Answers.ForEach(a =>
+                poa.Answers.Where(a => !string.IsNullOrWhiteSpace(a.Value)).ToList().ForEach(a =>
                 {
                     fileUploads.Add(new FileUpload(){ Id = a.Id, Filename = a.Value});
                 });
