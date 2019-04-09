@@ -85,9 +85,9 @@
         <div class="govuk-width-container">
             <div class="das-user-panel__content">
                 <span class="govuk-body-s das-user-panel__item das-user-panel__item--grow">
-                    @if (@SessionService.Get("LoggedInUserOrganisation") != null)
+                    @if (@SessionService.Get("OrganisationName") != null)
                     {
-                    <span class="govuk-!-font-weight-bold">@SessionService.Get("LoggedInUserOrganisation")</span>
+                    <span class="govuk-!-font-weight-bold">@SessionService.Get("OrganisationName")</span>
                     }
                     <span>Signed in as </span>
                     <span>@SessionService.Get("LoggedInUser")</span>

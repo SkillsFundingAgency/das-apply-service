@@ -120,8 +120,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 if (org != null)
                 {
-                    _logger.LogInformation($"Setting LoggedInUserOrganisation in Session: {org.Name}");
-                    _sessionService.Set("LoggedInUserOrganisation", $"{org.Name}");
+                    _logger.LogInformation($"Setting OrganisationName in Session: {org.Name}");
+                    _sessionService.Set("OrganisationName", $"{org.Name}");
                 }
             }
             

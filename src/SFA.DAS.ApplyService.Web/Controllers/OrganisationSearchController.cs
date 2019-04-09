@@ -202,7 +202,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 if (orgThatWasCreated != null)
                 {
-                    _sessionService.Set("LoggedInUserOrganisation", $"{orgThatWasCreated.Name}");
+                    _sessionService.Set("OrganisationName", $"{orgThatWasCreated.Name}");
                 }
 
                 return RedirectToAction("Applications", "Application");
