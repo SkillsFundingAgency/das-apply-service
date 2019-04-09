@@ -94,9 +94,9 @@
             sectionId: @Model.SectionId,
             page: @Model.PageId,
             questionId: "@Model.QuestionId",
-            maxTotalFiles: @( Model.FileUploadInfo.NumberOfUploadsRequired == null ? "1" : Model.FileUploadInfo.NumberOfUploadsRequired.ToString())
+            maxTotalFiles: @( Model.FileUploadInfo.MaximumNumberOfUploads == null ? "1" : Model.FileUploadInfo.MaximumNumberOfUploads.ToString())
         },
-        maxFiles: @( Model.FileUploadInfo.NumberOfUploadsRequired == null ? "1" : Model.FileUploadInfo.NumberOfUploadsRequired.ToString()),
+        maxFiles: @( Model.FileUploadInfo.MaximumNumberOfUploads == null ? "1" : Model.FileUploadInfo.MaximumNumberOfUploads.ToString()),
         maxFileSize: 1e7, // 10mb
         fileType: [
             "application/pdf"
