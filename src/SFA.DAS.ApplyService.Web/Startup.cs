@@ -18,6 +18,7 @@ using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.DfeSignIn;
+using SFA.DAS.ApplyService.Encryption;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Storage;
 using SFA.DAS.ApplyService.Web.Infrastructure;
@@ -143,6 +144,7 @@ namespace SFA.DAS.ApplyService.Web
                 config.For<OrganisationSearchApiClient>().Use<OrganisationSearchApiClient>();
                 config.For<CreateAccountValidator>().Use<CreateAccountValidator>();
                 config.For<UserService>().Use<UserService>();
+                config.For<IKeyProvider>().Use<PlaceholderKeyProvider>();
                 config.Populate(services);
             });
 

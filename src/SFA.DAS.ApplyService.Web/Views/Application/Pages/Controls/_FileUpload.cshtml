@@ -80,7 +80,6 @@
                 {
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell govuk-table__cell--break-word" scope="row">
-                            Razor
                             <a class="govuk-link" href="@Url.Action("Download", "Application", new
                             {
                                 applicationId = Model.ApplicationId,
@@ -88,7 +87,7 @@
                                 sectionId = Model.SectionId,
                                 pageId = Model.PageId,
                                 questionId = Model.QuestionId,
-                                filename = Model.Value
+                                filename = @uploadedFile.Filename
                             })" download>
                                 @uploadedFile.Filename
                             </a>
@@ -141,7 +140,7 @@
             questionId: "@Model.QuestionId",
             maxTotalFiles: @( Model.FileUploadInfo.NumberOfUploadsRequired == null ? "1" : Model.FileUploadInfo.NumberOfUploadsRequired.ToString())
         },
-        maxFiles: 3, // Thid is the maximum number of concurrent uploads
+        maxFiles: @( Model.FileUploadInfo.NumberOfUploadsRequired == null ? "1" : Model.FileUploadInfo.NumberOfUploadsRequired.ToString()),
         maxFileSize: 1e7, // 10mb
         fileType: [
             "application/pdf"

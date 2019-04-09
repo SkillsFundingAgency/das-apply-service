@@ -41,7 +41,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdateFileAnswer
             PageOfAnswers pageOfanswers;
             if (!existingAnswers.Any())
             {
-                pageOfanswers = new PageOfAnswers {Id = Guid.NewGuid()};
+                pageOfanswers = new PageOfAnswers {Id = Guid.NewGuid(), Answers = new List<Answer>()};
                 existingAnswers.Add(pageOfanswers);
             }
             else
@@ -58,6 +58,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdateFileAnswer
                     Value = request.FileName
                 }
             );
+            
+            var question = page.Questions.Single(q => q.QuestionId == request.QuestionId);
+            if (question.Input.Validations.Any(v => v.Name == "Required") && 
+                (question.Input.FileUploadInfo.NumberOfUploadsRequired != null && question.Input.FileUploadInfo.NumberOfUploadsRequired.Value == pageOfanswers.Answers.Count))
+            {
+                page.Complete = true;
+            }
             
             qnADataObject.Pages.ForEach(p =>
             {

@@ -101,7 +101,7 @@
                 var fileNameListItem = document.createElement("tr");
                 fileNameListItem.className = "govuk-table__row";
                 fileNameListItem.innerHTML =
-                    '<td class="govuk-table__cell govuk-table__cell--break-word" scope="row">JavaScript <a class="govuk-link" href="' +
+                    '<td class="govuk-table__cell govuk-table__cell--break-word" scope="row"><a class="govuk-link" href="' +
                     pageLink +
                     "/" +
                     file.fileName +

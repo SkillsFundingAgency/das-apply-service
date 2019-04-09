@@ -16,12 +16,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IStorageService _storageService;
         private readonly ILogger<UploadController> _logger;
         private readonly IApplicationApiClient _client;
+        private readonly IEncryptionService _encryptionService;
 
-        public UploadController(IStorageService storageService, ILogger<UploadController> logger, IApplicationApiClient client)
+        public UploadController(IStorageService storageService, ILogger<UploadController> logger, IApplicationApiClient client, IEncryptionService encryptionService)
         {
             _storageService = storageService;
             _logger = logger;
             _client = client;
+            _encryptionService = encryptionService;
         }
 
 
@@ -77,10 +79,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 // Create a single file
                 var assembledFileStream = ConsolidateFile(chunkParameters);
 
+                var encryptedFileStream = _encryptionService.Encrypt(assembledFileStream).Result;
+                
                 // Rename consolidated with original name of upload
                 _storageService.Store(chunkParameters.ApplicationId, chunkParameters.SequenceId,
                     chunkParameters.SectionId, chunkParameters.PageId, chunkParameters.QuestionId,
-                    chunkParameters.FileName, assembledFileStream, chunkParameters.Type);
+                    chunkParameters.FileName, encryptedFileStream, chunkParameters.Type);
 
                 // Delete chunk files
                 DeleteChunks(chunkParameters);
