@@ -26,7 +26,7 @@
                 {
                     <tr>
                         <th class="govuk-table__header" scope="row">
-                            <a class="govuk-link" href="@Url.Action("SequenceSignPost", "Application", new {applicationId = application.Id})">@application.ApplicationData?.StandardName</a>
+                            <a class="govuk-link" href="@Url.Action("SequenceSignPost", "Application", new {applicationId = application.Id})">@(application.ApplicationData?.StandardName ?? "View")</a>
                         </th>
                         <!-- <td class="govuk-table__cell">@application.Id</td> -->
                         <td class="govuk-table__cell govuk-table__cell--numeric">@application.ApplicationData?.ReferenceNumber</td>
