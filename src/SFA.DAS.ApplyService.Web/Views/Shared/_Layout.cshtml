@@ -85,11 +85,10 @@
         <div class="govuk-width-container">
             <div class="das-user-panel__content">
                 <span class="govuk-body-s das-user-panel__item das-user-panel__item--grow">
-                    @*
-                    If we have access to the applying org. include it here
-                    <span class="govuk-!-font-weight-bold">Applying organisation</span>
-                    <span class="govuk-visually-hidden">Signed in as </span>
-                    *@
+                    @if (@SessionService.Get("LoggedInUserOrganisation") != null)
+                    {
+                    <span class="govuk-!-font-weight-bold">@SessionService.Get("LoggedInUserOrganisation")</span>
+                    }
                     <span>Signed in as </span>
                     <span>@SessionService.Get("LoggedInUser")</span>
                 </span>

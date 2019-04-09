@@ -41,7 +41,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var user = _sessionService.Get("LoggedInUser");
 
             if (!await _userService.ValidateUser(user))
-                RedirectToAction("PostSignIn", "Users");
+                return RedirectToAction("PostSignIn", "Users");
 
             _logger.LogInformation($"Got LoggedInUser from Session: {user}");
 

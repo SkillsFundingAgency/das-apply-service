@@ -200,6 +200,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 var orgThatWasCreated = await _organisationApiClient.Create(organisationSearchResult, user.Id);
 
+                if (orgThatWasCreated != null)
+                {
+                    _sessionService.Set("LoggedInUserOrganisation", $"{orgThatWasCreated.Name}");
+                }
+
                 return RedirectToAction("Applications", "Application");
             }
             else

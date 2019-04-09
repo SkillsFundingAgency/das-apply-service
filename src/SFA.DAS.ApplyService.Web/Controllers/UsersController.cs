@@ -19,15 +19,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     public class UsersController : Controller
     {
         private readonly IUsersApiClient _usersApiClient;
+        private readonly IApplicationApiClient _applicationApiClient;
         private readonly ISessionService _sessionService;
         private readonly ILogger<UsersController> _logger;
         private readonly IConfigurationService _config;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly CreateAccountValidator _createAccountValidator;
 
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger, IConfigurationService config, IHttpContextAccessor contextAccessor, CreateAccountValidator createAccountValidator)
+        public UsersController(IUsersApiClient usersApiClient, IApplicationApiClient applicationApiClient, ISessionService sessionService, ILogger<UsersController> logger, IConfigurationService config, IHttpContextAccessor contextAccessor, CreateAccountValidator createAccountValidator)
         { 
             _usersApiClient = usersApiClient;
+            _applicationApiClient = applicationApiClient;
             _sessionService = sessionService;
             _logger = logger;
             _config = config;
@@ -100,18 +102,27 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
            
-            if (user == null)
+            if (user is null)
             {
                 return RedirectToAction("NotSetUp");
             }
             
-            _logger.LogInformation($"Setting LoggedInUser in Session: {user.GivenNames} {user.FamilyName}");
-            
+            _logger.LogInformation($"Setting LoggedInUser in Session: {user.GivenNames} {user.FamilyName}");         
             _sessionService.Set("LoggedInUser", $"{user.GivenNames} {user.FamilyName}");
 
-            if (user.ApplyOrganisationId == null)
+            if (user.ApplyOrganisationId is null)
             {
                 return RedirectToAction("Index", "OrganisationSearch");
+            }
+            else
+            {
+                var org = await _applicationApiClient.GetOrganisationByUserId(user.Id);
+
+                if (org != null)
+                {
+                    _logger.LogInformation($"Setting LoggedInUserOrganisation in Session: {org.Name}");
+                    _sessionService.Set("LoggedInUserOrganisation", $"{org.Name}");
+                }
             }
             
             return RedirectToAction("Applications", "Application");
