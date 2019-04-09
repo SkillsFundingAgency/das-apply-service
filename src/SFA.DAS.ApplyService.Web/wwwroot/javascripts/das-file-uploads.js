@@ -121,6 +121,11 @@
             });
 
             r.on("complete", function() {
+                totalFilesUploaded = that.uploadedFiles.children.length;
+                if (totalFilesUploaded >= r.opts.query.maxTotalFiles) {
+                    that.dropTarget.style.display = "none";
+                    manualUploadLink.parentElement.style.display = "none";
+                }
                 uploadProgress.style.display = "none";
                 uploadControls.style.display = "block";
             });
