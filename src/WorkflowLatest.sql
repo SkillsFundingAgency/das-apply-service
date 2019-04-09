@@ -6428,25 +6428,6 @@ VALUES
             ]
           },
           "Order": null
-        },
-        {
-          "QuestionId": "FHA-02",
-          "Label": "SQ-1-SE-3-PG-23-FHA-02-450",
-          "ShortLabel": "SQ-1-SE-3-PG-23-FHA-02-451",
-          "QuestionBodyText": "SQ-1-SE-3-PG-23-FHA-02-452",
-          "Hint": "SQ-1-SE-3-PG-23-FHA-02-449",
-          "Input": {
-            "Type": "FileUpload",
-            "Options": null,
-            "Validations": [
-              {
-                "Name": "FileType",
-                "Value": "pdf,application/pdf",
-                "ErrorMessage": "The selected file must be a PDF"
-              }
-            ]
-          },
-          "Order": null
         }
       ],
       "PageOfAnswers": [],
