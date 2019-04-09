@@ -79,6 +79,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
             var standard = application.ApplicationData?.StandardName ?? string.Empty;
             var reference = application.ApplicationData?.ReferenceNumber ?? string.Empty;
             var config = await _configurationService.GetConfig();
+            var assessorSignInPage = $"{config.AssessorServiceBaseUrl}/Account/SignIn";
 
             if (sequenceId == 1)
             {
@@ -88,7 +89,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
                 {
                     var contactToNotify = await _contactRepository.GetContact(lastInitSubmission.SubmittedBy);
                     await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_UPDATE, contactToNotify, 
-                        new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.GivenNames, LoginLink = config.SignInPage });
+                        new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.GivenNames, LoginLink = assessorSignInPage });
                 }
             }
             else if (sequenceId == 2)
@@ -99,7 +100,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
                 {
                     var contactToNotify = await _contactRepository.GetContact(lastStandardSubmission.SubmittedBy);
                     await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_RESPONSE, contactToNotify, 
-                        new {ServiceName=SERVICE_NAME,ServiceTeam=SERVICE_TEAM, Contact= contactToNotify.GivenNames, standard, LoginLink = config.SignInPage });
+                        new {ServiceName=SERVICE_NAME,ServiceTeam=SERVICE_TEAM, Contact= contactToNotify.GivenNames, standard, LoginLink = assessorSignInPage });
                 }
             }
         }

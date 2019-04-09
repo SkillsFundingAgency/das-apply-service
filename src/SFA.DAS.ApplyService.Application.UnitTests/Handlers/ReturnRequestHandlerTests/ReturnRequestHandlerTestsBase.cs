@@ -42,7 +42,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.ReturnRequestHandl
             ConfigService = new Mock<IConfigurationService>();
             ConfigService.Setup(x => x.GetConfig()).ReturnsAsync(new ApplyConfig
             {
-                SignInPage = "https://host/signinpage"
+                AssessorServiceBaseUrl = "https://host/signinpage"
             });
 
             EmailService = new Mock<IEmailService>();
