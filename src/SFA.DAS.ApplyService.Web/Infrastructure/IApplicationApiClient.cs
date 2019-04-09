@@ -14,15 +14,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     public interface IApplicationApiClient
     {
-        //Task<Page> GetPage(Guid applicationId, string pageId, Guid userId);
-
-//        Task<UpdatePageAnswersResult> UpdatePageAnswers(Guid applicationId, Guid userId, string pageId,
-//            List<Answer> answers);
-
-        //Task<Sequence> GetSequence(Guid applicationId, string sequenceId, Guid userId);
-
-        //Task<List<Section>> GetSections(Guid applicationId, Guid userId);
-
         Task<List<Domain.Entities.Application>> GetApplicationsFor(Guid userId);
 
         Task<UploadResult> Upload(Guid applicationId, string userId, int sequenceId, int sectionId, string pageId, IFormFileCollection files);

@@ -49,8 +49,6 @@ namespace SFA.DAS.ApplyService.Web
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            IdentityModelEventSource.ShowPII = true;
-        
             ConfigureAuth(services);
             
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
@@ -64,8 +62,8 @@ namespace SFA.DAS.ApplyService.Web
             });
             
             services.AddMvc(options => { options.Filters.Add<PerformValidationFilter>(); })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
             if (_env.IsDevelopment())
             {
                 services.AddDataProtection()

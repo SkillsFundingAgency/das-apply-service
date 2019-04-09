@@ -30,24 +30,24 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public bool HasFeedback { get; set; }
 
-        public List<Feedback> Feedback { get; set; }
-
+        public List<Feedback> Feedback { get; set; }      
+        
         public string LinkTitle { get; set; }
 
         public string PageId { get; set; }
         public string Title { get; set; }
 
         public string DisplayType { get; set; }
-
+        
         public List<QuestionViewModel> Questions { get; set; }
         public string SequenceId { get; set; }
         public int SectionId { get; set; }
 
         public List<PageOfAnswers> PageOfAnswers { get; set; }
         public string BodyText { get; set; }
-
+        
         public PageDetails Details { get; set; }
-
+        
         public string RedirectAction { get; set; }
         public string ReturnUrl { get; set; }
 
@@ -68,8 +68,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 PageOfAnswers = page.PageOfAnswers;
             }
-
-            SectionId = int.Parse((string)page.SectionId);
+            
+            SectionId = int.Parse((string) page.SectionId);
 
             var questions = page.Questions;
             var answers = page.PageOfAnswers.FirstOrDefault()?.Answers;
