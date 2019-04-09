@@ -33,7 +33,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<Contact> CreateContact(Contact contact, Guid organisationId)
+        public async Task<Contact> CreateContact(Contact contact, Guid? organisationId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
