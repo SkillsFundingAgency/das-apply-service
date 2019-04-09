@@ -96,6 +96,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 FileUploadInfo = new FileUploadInfo()
                 {
                     NumberOfUploadsRequired = q.Input.FileUploadInfo?.NumberOfUploadsRequired,
+                    MaximumNumberOfUploads = q.Input.FileUploadInfo?.MaximumNumberOfUploads,
                     Uploads = GetUploads(page.PageOfAnswers)
                 }
             }));

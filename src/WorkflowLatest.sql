@@ -6425,7 +6425,11 @@ VALUES
                 "Value": "pdf,application/pdf",
                 "ErrorMessage": "The selected file must be a PDF"
               }
-            ]
+            ],
+            "FileUploadInfo":{
+              "NumberOfUploadsRequired": 1,
+              "MaximumNumberOfUploads": 2
+            }
           },
           "Order": null
         }

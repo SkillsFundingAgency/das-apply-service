@@ -24,6 +24,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
     public class FileUploadInfo
     {
         public int? NumberOfUploadsRequired { get; set; }
+        public int? MaximumNumberOfUploads { get; set; }
         public List<FileUpload> Uploads { get; set; }
     }
 

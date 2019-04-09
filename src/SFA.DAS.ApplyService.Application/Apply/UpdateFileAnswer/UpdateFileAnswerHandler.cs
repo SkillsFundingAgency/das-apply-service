@@ -49,10 +49,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdateFileAnswer
             );
             
             var question = page.Questions.Single(q => q.QuestionId == request.QuestionId);
-            if (question.Input.Validations.Any(v => v.Name == "Required") && 
-                (question.Input.FileUploadInfo.NumberOfUploadsRequired != null && question.Input.FileUploadInfo.NumberOfUploadsRequired.Value == pageOfanswers.Answers.Count))
+            if (question.Input.Validations.Any(v => v.Name == "Required"))
             {
-                page.Complete = true;
+                if (question.Input.FileUploadInfo.NumberOfUploadsRequired == null)
+                {
+                    page.Complete = true;    
+                }
+                else if(question.Input.FileUploadInfo.NumberOfUploadsRequired.Value == pageOfanswers.Answers.Count)
+                {
+                    page.Complete = true;
+                }
             }
             
             qnADataObject.Pages.ForEach(p =>
