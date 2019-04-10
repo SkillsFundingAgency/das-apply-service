@@ -93,14 +93,14 @@
             sequenceId: @Model.SequenceId,
             sectionId: @Model.SectionId,
             page: @Model.PageId,
-            questionId: "@Model.QuestionId",
-            maxTotalFiles: @( Model.FileUploadInfo.MaximumNumberOfUploads == null ? "1" : Model.FileUploadInfo.MaximumNumberOfUploads.ToString())
+            questionId: "@Model.QuestionId"
         },
         maxFiles: @( Model.FileUploadInfo.MaximumNumberOfUploads == null ? "1" : Model.FileUploadInfo.MaximumNumberOfUploads.ToString()),
         maxFileSize: 1e7, // 10mb
         fileType: [
             "application/pdf"
-        ]
-
+        ],
+        maxTotalFiles: @( Model.FileUploadInfo.MaximumNumberOfUploads == null ? "1" : Model.FileUploadInfo.MaximumNumberOfUploads.ToString()),
+        existingFiles: []
     })
 </script>

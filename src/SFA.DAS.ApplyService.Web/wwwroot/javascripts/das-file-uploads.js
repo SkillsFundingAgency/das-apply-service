@@ -8,6 +8,7 @@
         errorSummary: document.querySelector(".js-error-summary"),
         currentErrors: document.querySelector(".js-validation-errors"),
         dropTarget: document.querySelector(".js-drop-target"),
+        jsExistingFiles: [],
 
         init: function(args) {
             var that = this;
@@ -33,17 +34,18 @@
         },
 
         handleError: function(errorType, files, errorCount) {
-            // console.log(errorType);
             this.clearErrors();
             const errorMessage =
                 errorType === "fileType"
                     ? "Upload must be a PDF"
                     : errorType === "maxFiles"
-                    ? "You may only upload 1 file at once"
+                    ? "You have exceeded the maximum number of files"
                     : errorType === "fileSize"
                     ? "File must be less than 10mb"
                     : errorType === "maxTotalFiles"
-                    ? "You may only upload 1 file"
+                    ? "You have exceeded the maximum number of files"
+                    : errorType === "sameFilename"
+                    ? "Files must not have the same filename"
                     : null;
             var error = document.createElement("li");
             error.innerHTML = '<a href="#go-to-error">' + errorMessage + "</a>";
@@ -66,23 +68,37 @@
             );
 
             var progressBar = new ProgressBar(uploadProgress);
-            var totalFilesUploaded = that.uploadedFiles.children.length;
+
+            hideControls(
+                that.uploadedFiles.children.length,
+                r.opts.maxTotalFiles
+            );
 
             r.on("fileAdded", function(file, event) {
-                that.clearErrors();
-                // console.log("maxFiles: ", r.opts.maxFiles);
-                // console.log("maxTotalFiles: ", r.opts.query.maxTotalFiles);
-                // console.log("totalFilesUploaded: ", totalFilesUploaded);
-
-                // checkNumbeOfExistingFilesUploaded is not more than r.opts.query.maxTotalFiles
-                totalFilesUploaded = that.uploadedFiles.children.length;
-                if (totalFilesUploaded >= r.opts.query.maxTotalFiles) {
-                    that.handleError("maxTotalFiles", file);
+                if (r.opts.existingFiles.indexOf(file.fileName) !== -1) {
+                    that.handleError("sameFilename");
+                    r.cancel();
                     return false;
                 }
 
+                that.clearErrors();
                 r.upload();
                 progressBar.fileAdded();
+            });
+
+            r.on("filesAdded", function(_, arraySkipped) {
+                var skippedFiles = arraySkipped.map(function(skippedFile) {
+                    return skippedFile.name;
+                });
+                var duplicateFiles = that.jsExistingFiles.some(function(file) {
+                    return skippedFiles.indexOf(file) !== -1;
+                });
+
+                if (duplicateFiles) {
+                    that.handleError("sameFilename");
+                    r.cancel();
+                    return false;
+                }
             });
 
             r.on("fileSuccess", function(file, message) {
@@ -113,6 +129,7 @@
                     file.fileName +
                     '/Section/Delete">Remove <span class="govuk-visually-hidden"> file</span></a></td>';
                 that.uploadedFiles.appendChild(fileNameListItem);
+                that.jsExistingFiles.push(file.fileName);
                 uploadedContainer.style.display = "block";
             });
 
@@ -121,11 +138,10 @@
             });
 
             r.on("complete", function() {
-                totalFilesUploaded = that.uploadedFiles.children.length;
-                if (totalFilesUploaded >= r.opts.query.maxTotalFiles) {
-                    that.dropTarget.style.display = "none";
-                    manualUploadLink.parentElement.style.display = "none";
-                }
+                hideControls(
+                    that.uploadedFiles.children.length,
+                    r.opts.maxTotalFiles
+                );
                 uploadProgress.style.display = "none";
                 uploadControls.style.display = "block";
             });
@@ -138,13 +154,19 @@
                 };
 
                 this.uploading = function(progress) {
-                    // console.log("uploading: " + Math.round(progress) + "%");
                     ele.style.width = progress + "%";
                 };
 
                 this.finish = function() {
                     ele.style.width = "100%";
                 };
+            }
+
+            function hideControls(filesUploaded, maxTotal) {
+                if (filesUploaded >= maxTotal) {
+                    that.dropTarget.style.display = "none";
+                    manualUploadLink.parentElement.style.display = "none";
+                }
             }
         }
     };
