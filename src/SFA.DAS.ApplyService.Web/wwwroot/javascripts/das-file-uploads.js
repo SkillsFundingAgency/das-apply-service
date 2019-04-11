@@ -66,6 +66,7 @@
             var uploadedContainer = document.querySelector(
                 ".js-uploaded-container"
             );
+            var uploadsTable = document.querySelector(".js-file-upload-table");
 
             var progressBar = new ProgressBar(uploadProgress);
 
@@ -131,6 +132,7 @@
                 that.uploadedFiles.appendChild(fileNameListItem);
                 that.jsExistingFiles.push(file.fileName);
                 uploadedContainer.style.display = "block";
+                uploadsTable.classList.remove("govuk-visually-hidden");
             });
 
             r.on("fileProgress", function(file, message) {

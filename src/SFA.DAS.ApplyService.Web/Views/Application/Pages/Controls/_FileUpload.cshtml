@@ -1,83 +1,85 @@
 @model SFA.DAS.ApplyService.Web.Controllers.QuestionViewModel
 
 @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
+{
+    foreach (var errorMessage in Model.ErrorMessages)
     {
-        foreach (var errorMessage in Model.ErrorMessages)
+        if (errorMessage.Field == Model.QuestionId)
         {
-            if (errorMessage.Field == Model.QuestionId)
-            {
-                <span class="govuk-error-message">@errorMessage.ErrorMessage</span>
-            }
+            <span class="govuk-error-message">@errorMessage.ErrorMessage</span>
         }
     }
+}
 
-    <input
-        type="file"
-        class="govuk-file-upload"
-        id="@Model.QuestionId"
-        name="@Model.QuestionId"
-        accept=".pdf,application/pdf"/>
+<input
+    type="file"
+    class="govuk-file-upload"
+    id="@Model.QuestionId"
+    name="@Model.QuestionId"
+    accept=".pdf,application/pdf"
+/>
 
-    <div class="js-file-upload">
-        <div class="js-uploaded-container">
-            <!-- <h2 class="govuk-heading-m">Uploaded files</h2> -->
-            <table class="govuk-table">
-                <thead class="govuk-table__head">
-                <!-- <tr class="govuk-table__row">
+@{ var existingFiles = Model.FileUploadInfo.Uploads.Count() > 0 ? "" : "govuk-visually-hidden"; }
+
+<div class="js-file-upload">
+    <div class="js-uploaded-container">
+        <table class="js-file-upload-table govuk-table @existingFiles">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
                     <th class="govuk-table__header" scope="col">File name</th>
                     <th class="govuk-table__header" scope="col">
                         <span class="govuk-visually-hidden-focusable">Action</span>
                     </th>
-                </tr> -->
-                </thead>
-                <tbody class="govuk-table__body js-uploaded-files">
-                
-                @foreach (var uploadedFile in Model.FileUploadInfo.Uploads)
-                {
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__cell govuk-table__cell--break-word" scope="row">
-                            <a class="govuk-link" href="@Url.Action("Download", "Application", new
-                            {
-                                applicationId = Model.ApplicationId,
-                                sequenceId = Model.SequenceId,
-                                sectionId = Model.SectionId,
-                                pageId = Model.PageId,
-                                questionId = Model.QuestionId,
-                                filename = @uploadedFile.Filename
-                            })" download>
-                                @uploadedFile.Filename
-                            </a>
-                        </td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">
-                            <a class="govuk-link" href="@Url.Action("DeleteFile", "Application", new
-                            {
-                                applicationId = Model.ApplicationId,
-                                sequenceId = Model.SequenceId,
-                                sectionId = Model.SectionId,
-                                pageId = Model.PageId,
-                                questionId = Model.QuestionId,
-                                redirectAction = Model.RedirectAction,
-                                fileName = uploadedFile.Filename
-                            })">
-                                Remove <span class="govuk-visually-hidden"> file</span>
-                            </a>
-                        </td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-            <ul class="govuk-list js-uploaded-files"></ul>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body js-uploaded-files">
             
-        </div>
-
-        <div href="#" class="js-drop-target govuk-!-margin-bottom-4">
-            <div class="js-upload-controls">
-                <p class="govuk-body-l govuk-!-margin-bottom-0">Drag files here</p>
-            </div>
-            <div class="js-upload-progress"></div>
-        </div>
-        <p class="govuk-body govuk-!-margin-bottom-0">or <a class="js-browse-link govuk-link" href="#/choose-files-to-upload">choose files to upload</a></p>
+            @foreach (var uploadedFile in Model.FileUploadInfo.Uploads)
+            {
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell govuk-table__cell--break-word" scope="row">
+                        <a class="govuk-link" href="@Url.Action("Download", "Application", new
+                        {
+                            applicationId = Model.ApplicationId,
+                            sequenceId = Model.SequenceId,
+                            sectionId = Model.SectionId,
+                            pageId = Model.PageId,
+                            questionId = Model.QuestionId,
+                            filename = @uploadedFile.Filename
+                        })" download>
+                            @uploadedFile.Filename
+                        </a>
+                    </td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">
+                        <a class="govuk-link" href="@Url.Action("DeleteFile", "Application", new
+                        {
+                            applicationId = Model.ApplicationId,
+                            sequenceId = Model.SequenceId,
+                            sectionId = Model.SectionId,
+                            pageId = Model.PageId,
+                            questionId = Model.QuestionId,
+                            redirectAction = Model.RedirectAction,
+                            fileName = uploadedFile.Filename
+                        })">
+                            Remove <span class="govuk-visually-hidden"> file</span>
+                        </a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+        <ul class="govuk-list js-uploaded-files"></ul>
+        
     </div>
+
+    <div href="#" class="js-drop-target govuk-!-margin-bottom-4">
+        <div class="js-upload-controls">
+            <p class="govuk-body-l govuk-!-margin-bottom-0">Drag files here</p>
+        </div>
+        <div class="js-upload-progress"></div>
+    </div>
+    <p class="govuk-body govuk-!-margin-bottom-0">or <a class="js-browse-link govuk-link" href="#/choose-files-to-upload">choose files to upload</a></p>
+</div>
 
 
 <script src="@Url.Content("~/javascripts/resumable.js")"></script>
