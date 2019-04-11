@@ -2885,7 +2885,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-01-445';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-01-445', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-01-445', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-01-446';
 INSERT INTO Assets
@@ -2909,7 +2909,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-02-449';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-449', '', 'If you have a parent company, upload your parent company''s statutory accounts.', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-449', '', 'If you have a parent company, upload your parent company''s statutory accounts. The PDF file must be smaller than 5MB.', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-02-450';
 INSERT INTO Assets
@@ -6923,7 +6923,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-02-H-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-02-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-02-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 3
 GO
@@ -6951,7 +6951,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-03-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-03-H-1', '', 'If you are providing any form of training or consultancy, you must have public liability insurance.', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-03-H-1', '', 'If you are providing any form of training or consultancy, you must have public liability insurance. The PDF file must be smaller than 5MB.', 'Live', GETUTCDATE(), 'Import')
 
 
 -- page 24 question 4
@@ -6980,7 +6980,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-04-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-04-H-1', '', 'If you are providing any form of training or consultancy, you must have professional indemnity insurance.', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-04-H-1', '', 'If you are providing any form of training or consultancy, you must have professional indemnity insurance. The PDF file must be smaller than 5MB.', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 5
 GO
@@ -7008,7 +7008,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-05-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-05-H-1', '', 'If you have any employees, you must have employers liability insurance. ', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-05-H-1', '', 'If you have any employees, you must have employers liability insurance. The PDF file must be smaller than 5MB.', 'Live', GETUTCDATE(), 'Import')
 
   -- page 24 question 6
 GO
@@ -7036,7 +7036,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-06-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-06-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-06-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 7
 GO
@@ -7064,7 +7064,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-07-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-07-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-07-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
   -- page 24 question 8
 GO
@@ -7092,7 +7092,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-08-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-08-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-08-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 9
 GO
@@ -7120,7 +7120,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-09-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-09-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-09-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 10
 GO
@@ -7148,7 +7148,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-10-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-10-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-10-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 11
 GO
@@ -7176,7 +7176,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-11-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-11-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-11-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
   -- page 24 question 12
 GO
@@ -7204,7 +7204,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-12-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-12-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-12-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
   -- page 24 question 13
 GO
@@ -7232,7 +7232,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-13-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-13-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-13-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
   
 
   -- page 24 question 14
