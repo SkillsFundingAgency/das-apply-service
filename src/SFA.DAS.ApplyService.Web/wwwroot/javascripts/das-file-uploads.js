@@ -13,6 +13,9 @@
         init: function(args) {
             var that = this;
 
+            var hintText = document.querySelector(".govuk-hint");
+            hintText.innerText = hintText.innerText.replace(/5MB/gi, "10MB");
+
             args["maxFilesErrorCallback"] = function(files, errorCount) {
                 that.handleError("maxFiles", files, errorCount);
             };
@@ -62,12 +65,8 @@
             r.assignBrowse(manualUploadLink);
 
             var uploadProgress = document.querySelector(".js-upload-progress");
-            var uploadControls = document.querySelector(".js-upload-controls");
-            var uploadedContainer = document.querySelector(
-                ".js-uploaded-container"
-            );
+            var dropText = document.querySelector(".js-drop-text");
             var uploadsTable = document.querySelector(".js-file-upload-table");
-
             var progressBar = new ProgressBar(uploadProgress);
 
             hideControls(
@@ -131,7 +130,6 @@
                     '/Section/Delete">Remove <span class="govuk-visually-hidden"> file</span></a></td>';
                 that.uploadedFiles.appendChild(fileNameListItem);
                 that.jsExistingFiles.push(file.fileName);
-                uploadedContainer.style.display = "block";
                 uploadsTable.classList.remove("govuk-visually-hidden");
             });
 
@@ -145,13 +143,13 @@
                     r.opts.maxTotalFiles
                 );
                 uploadProgress.style.display = "none";
-                uploadControls.style.display = "block";
+                dropText.style.display = "block";
             });
 
             function ProgressBar(ele) {
                 this.fileAdded = function() {
                     ele.style.display = "block";
-                    uploadControls.style.display = "none";
+                    dropText.style.display = "none";
                     ele.style.width = "0%";
                 };
 
