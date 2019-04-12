@@ -104,9 +104,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                     var contact = await _usersApiClient.GetUserBySignInId(signInId);
                     if (contact != null)
                     {
-                        var orgFromUkprn = await _apiClient.GetOrganisationByName(orgName); 
-                        if(orgFromUkprn != null)
-                            await _usersApiClient.AssociateOrganisationWithUser(contact.Id, orgFromUkprn.Id);
+                        var orgFromName = await _apiClient.GetOrganisationByName(orgName); 
+                        if(orgFromName != null)
+                            await _usersApiClient.AssociateOrganisationWithUser(contact.Id, orgFromName.Id);
                         else
                             return false;
 

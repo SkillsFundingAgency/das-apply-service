@@ -20,6 +20,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task Callback(DfeSignInCallback callback);
         Task AssociateOrganisationWithUser(Guid contactId, Guid organisationId);
         Task MigrateUsers();
+        Task MigrateContactAndOrgs(MigrateContactOrganisation migrateContactOrganisation);
     }
 
     public class UsersApiClient : IUsersApiClient
@@ -78,7 +79,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 ContactId=contactId,
                 OrganisationId=organisationId
             } );
-            
+        }
+
+        public async Task MigrateContactAndOrgs(MigrateContactOrganisation migrateContactOrganisation)
+        {
+            await HttpClient.PostAsJsonAsync($"/Account/MigrateContactAndOrgs", migrateContactOrganisation);
         }
     }
 }

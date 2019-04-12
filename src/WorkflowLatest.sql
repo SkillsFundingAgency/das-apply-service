@@ -2885,7 +2885,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-01-445';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-01-445', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-01-445', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-01-446';
 INSERT INTO Assets
@@ -2909,7 +2909,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-02-449';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-449', '', 'If you have a parent company, upload your parent company''s statutory accounts.', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-449', '', 'If you have a parent company, upload your parent company''s statutory accounts. The PDF file must be smaller than 5MB.', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-02-450';
 INSERT INTO Assets
@@ -4713,89 +4713,6 @@ VALUES
       "Next": [
         {
           "Action": "NextPage",
-          "ReturnId": "18",
-          "Condition": null,
-          "ConditionMet": false
-        }
-      ],
-      "Complete": false,
-      "AllowMultipleAnswers": false,
-      "Order": null,
-      "Active": true,
-      "Visible": true,
-      "Feedback": null,
-      "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
-      "BodyText": "SQ-1-SE-2-PG-15-214"
-    },
-    {
-      "PageId": "18",
-      "SequenceId": "1",
-      "SectionId": "2",
-      "Title": "SQ-1-SE-2-PG-18-233",
-      "LinkTitle": "SQ-1-SE-2-PG-18-LT-1",
-      "InfoText": "SQ-1-SE-2-PG-18-235",
-      "Questions": [
-        {
-          "QuestionId": "W_DEL-04",
-          "Label": "SQ-1-SE-2-PG-18-W_DEL-04-238",
-          "ShortLabel": "SQ-1-SE-2-PG-18-W_DEL-04-239",
-          "QuestionBodyText": "SQ-1-SE-2-PG-18-W_DEL-04-240",
-          "Hint": "SQ-1-SE-2-PG-18-W_DEL-04-237",
-          "Input": {
-            "Type": "ComplexRadio",
-            "Options": [
-              {
-                "Label": "Yes",
-                "Value": "Yes",
-                "FurtherQuestions": null
-              },
-              {
-                "Label": "No",
-                "Value": "No",
-                "FurtherQuestions": [
-                  {
-                    "QuestionId": "W_DEL-04.1",
-                    "Label": "SQ-1-SE-2-PG-18-W_DEL-04.1-242",
-                    "ShortLabel": "SQ-1-SE-2-PG-18-W_DEL-04.1-243",
-                    "Hint": "SQ-1-SE-2-PG-18-W_DEL-04.1-241",
-                    "Input": {
-                      "Type": "Date",
-                      "Options": null,
-                      "Validations": [
-                        {
-                          "Name": "Required",
-                          "Value": null,
-                          "ErrorMessage": "Enter a date"
-                        },
-                        {
-                          "Name":"Date",
-                          "Value":"",
-                          "ErrorMessage": "Date must be correct"
-                        }
-                      ]
-                    },
-                    "Order": null,
-                    "QuestionBodyText": "SQ-1-SE-2-PG-18-W_DEL-04.1-244"
-                  }
-                ]
-              }
-            ],
-            "Validations": [
-              {
-                "Name": "Required",
-                "Value": null,
-                "ErrorMessage": "Select yes if you can start an end-point assessment on the day you join the register"
-              }
-            ]
-          },
-          "Order": null
-        }
-      ],
-      "PageOfAnswers": [],
-      "Next": [
-        {
-          "Action": "NextPage",
           "ReturnId": "193",
           "Condition": null,
           "ConditionMet": false
@@ -4809,7 +4726,7 @@ VALUES
       "Feedback": null,
       "HasFeedback": false,
       "NotRequiredOrgTypes": [],
-      "BodyText": "SQ-1-SE-2-PG-18-234"
+      "BodyText": "SQ-1-SE-2-PG-15-214"
     },
 	  {
       "PageId": "193",
@@ -6923,7 +6840,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-02-H-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-02-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-02-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 3
 GO
@@ -6951,7 +6868,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-03-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-03-H-1', '', 'If you are providing any form of training or consultancy, you must have public liability insurance.', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-03-H-1', '', 'If you are providing any form of training or consultancy, you must have public liability insurance. The PDF file must be smaller than 5MB.', 'Live', GETUTCDATE(), 'Import')
 
 
 -- page 24 question 4
@@ -6980,7 +6897,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-04-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-04-H-1', '', 'If you are providing any form of training or consultancy, you must have professional indemnity insurance.', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-04-H-1', '', 'If you are providing any form of training or consultancy, you must have professional indemnity insurance. The PDF file must be smaller than 5MB.', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 5
 GO
@@ -7008,7 +6925,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-05-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-05-H-1', '', 'If you have any employees, you must have employers liability insurance. ', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-05-H-1', '', 'If you have any employees, you must have employers liability insurance. The PDF file must be smaller than 5MB.', 'Live', GETUTCDATE(), 'Import')
 
   -- page 24 question 6
 GO
@@ -7036,7 +6953,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-06-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-06-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-06-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 7
 GO
@@ -7064,7 +6981,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-07-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-07-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-07-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
   -- page 24 question 8
 GO
@@ -7092,7 +7009,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-08-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-08-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-08-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 9
 GO
@@ -7120,7 +7037,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-09-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-09-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-09-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 10
 GO
@@ -7148,7 +7065,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-10-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-10-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-10-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 11
 GO
@@ -7176,7 +7093,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-11-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-11-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-11-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
   -- page 24 question 12
 GO
@@ -7204,7 +7121,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-12-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-12-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-12-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
   -- page 24 question 13
 GO
@@ -7232,7 +7149,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-13-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-13-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-13-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
   
 
   -- page 24 question 14
@@ -8135,7 +8052,7 @@ VALUES
         "HasFeedback": false,
         "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
-      },
+      },	  
 	   {
         "PageId": "27",
         "SequenceId": "2",
@@ -9328,8 +9245,8 @@ VALUES
         "PageOfAnswers": [],
         "Next": [
           {
-             "Action": "NextPage",
-            "ReturnId": "50",
+            "Action": "NextPage",
+            "ReturnId": "18",
             "Condition": null,
             "ConditionMet": false
           }
@@ -9343,6 +9260,90 @@ VALUES
         "HasFeedback": false,
         "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-28-BT-1"
+      },
+	  {
+        "PageId": "18",
+        "SequenceId": "2",
+        "SectionId": "4",
+        "Title": "SQ-2-SE-4-PG-28-T-1",
+        "LinkTitle": "SQ-1-SE-2-PG-18-LT-1",
+        "InfoText": "SQ-1-SE-2-PG-18-235",
+        "Questions": [
+          {
+            "QuestionId": "W_DEL-04",
+			"QuestionTag": "effective-from",
+            "Label": "SQ-1-SE-2-PG-18-W_DEL-04-238",
+            "ShortLabel": "SQ-1-SE-2-PG-18-W_DEL-04-239",
+            "QuestionBodyText": "SQ-1-SE-2-PG-18-W_DEL-04-240",
+            "Hint": "SQ-1-SE-2-PG-18-W_DEL-04-237",
+            "Input": {
+              "Type": "ComplexRadio",
+              "Options": [
+                {
+                  "Label": "Yes",
+                  "Value": "Yes",
+                  "FurtherQuestions": null
+                },
+                {
+                  "Label": "No",
+                  "Value": "No",
+                  "FurtherQuestions": [
+                    {
+                      "QuestionId": "W_DEL-04.1",
+                      "Label": "SQ-1-SE-2-PG-18-W_DEL-04.1-242",
+                      "ShortLabel": "SQ-1-SE-2-PG-18-W_DEL-04.1-243",
+                      "Hint": "SQ-1-SE-2-PG-18-W_DEL-04.1-241",
+                      "Input": {
+                        "Type": "Date",
+                        "Options": null,
+                        "Validations": [
+                          {
+                            "Name": "Required",
+                            "Value": null,
+                            "ErrorMessage": "Enter a date"
+                          },
+                          {
+                            "Name":"Date",
+                            "Value":"",
+                            "ErrorMessage": "Date must be correct"
+                          }
+                        ]
+                      },
+                      "Order": null,
+                      "QuestionBodyText": "SQ-1-SE-2-PG-18-W_DEL-04.1-244"
+                    }
+                  ]
+                }
+              ],
+              "Validations": [
+                {
+                  "Name": "Required",
+                  "Value": null,
+                  "ErrorMessage": "Select yes if you can start an end-point assessment on the day you join the register"
+                }
+              ]
+            },
+            "Order": null
+          }
+        ],
+        "PageOfAnswers": [],
+        "Next": [
+          {
+            "Action": "NextPage",
+			"ReturnId": "50",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+        "Complete": false,
+        "AllowMultipleAnswers": false,
+        "Order": null,
+        "Active": true,
+        "Visible": true,
+        "Feedback": null,
+        "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
+        "BodyText": "SQ-1-SE-2-PG-18-234"
       },
 	  {
         "PageId": "50",
