@@ -7444,7 +7444,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-26-L-1';  -- Row L
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-28-CC-26-L-1', '', 'How will you conduct an end-point assessment for this standard?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-26-L-1', '', 'How will you deliver an end-point assessment for this standard?', 'Live', GETUTCDATE(), 'Import')
 
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-26-SL-1'; -- Row J
@@ -7635,7 +7635,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-32-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-28-CC-32-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-32-H-1', '', 'As a minimum this should cover where the assessment will take place, how long you expect it to take and who will be doing the assessment?', 'Live', GETUTCDATE(), 'Import')
 
   -- page 28 question 33
 GO
@@ -9049,12 +9049,12 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Enter how you will conduct an end-point assessment for this standard"
+                          "ErrorMessage": "Enter how you will deliver an end-point assessment for this standard"
                         },
                         {
                           "Name": "MaxWordCount",
                           "Value": 500,
-                          "ErrorMessage": "How you will conduct an end-point assessment must be 500 words or less"
+                          "ErrorMessage": "How you will deliver an end-point assessment must be 500 words or less"
                         }
                       ]
             },
