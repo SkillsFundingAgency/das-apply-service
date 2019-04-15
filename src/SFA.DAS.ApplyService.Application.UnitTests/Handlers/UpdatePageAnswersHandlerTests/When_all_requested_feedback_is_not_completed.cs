@@ -63,7 +63,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
                 }), new CancellationToken()).Wait();
 
 
-            ApplyRepository.Verify(r => r.SaveSection(It.Is<ApplicationSection>(section => !section.QnAData.RequestedFeedbackAnswered), UserId));
+            ApplyRepository.Verify(r => r.SaveSection(It.Is<ApplicationSection>(section => !section.QnAData.RequestedFeedbackAnswered.Value), UserId));
         }
     }
 }

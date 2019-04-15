@@ -50,7 +50,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.AddFeedbackHandler
             await _handler.Handle(new AddFeedbackRequest(Guid.Empty, 1, 1, pageId, feedback), new CancellationToken());
 
             _applyRepository.Verify(r => r.UpdateSections(
-                It.Is<List<ApplicationSection>>(sections => !sections[0].QnAData.RequestedFeedbackAnswered)
+                It.Is<List<ApplicationSection>>(sections => !sections[0].QnAData.RequestedFeedbackAnswered.Value)
                 ));
         }
     }

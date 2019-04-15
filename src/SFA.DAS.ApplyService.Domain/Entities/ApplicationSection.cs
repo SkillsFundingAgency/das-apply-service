@@ -8,7 +8,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
 {
     public class QnAData
     {
-        public bool RequestedFeedbackAnswered { get; set; }
+        public bool? RequestedFeedbackAnswered { get; set; }
         public List<Page> Pages { get; set; }
         public FinancialApplicationGrade FinancialApplicationGrade { get; set; }
     }
