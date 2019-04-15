@@ -32,10 +32,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
 
         public async Task<Unit> Handle(ReturnRequest request, CancellationToken cancellationToken)
         {
-            // There will probably be some sort of decision of notifications here based on what status the Application
-            // is being set to.  But for now I'm just setting it and forgetting.
-            var sequence = await _applyRepository.GetActiveSequence(request.ApplicationId);
-
             if (request.RequestReturnType == "ReturnWithFeedback")
             {
                 await _applyRepository.UpdateSequenceStatus(request.ApplicationId, request.SequenceId,
@@ -48,9 +44,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
 
                 await _applyRepository.CloseSequence(request.ApplicationId, request.SequenceId);
 
-                var nextSequence =
-                    (await _applyRepository.GetSequences(request.ApplicationId))
-                    .FirstOrDefault(seq => (int)seq.SequenceId == request.SequenceId + 1);
+                var sequences = await _applyRepository.GetSequences(request.ApplicationId);
+                var nextSequence = sequences.FirstOrDefault(seq => (int)seq.SequenceId == request.SequenceId + 1);
 
                 if (nextSequence != null)
                 {
@@ -58,8 +53,15 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
                 }
                 else
                 {
-                    // this is the last sequence, so approve the whole application
+                    // This is the last sequence, so approve the whole application
                     await _applyRepository.UpdateApplicationStatus(request.ApplicationId, ApplicationStatus.Approved);
+
+                    // Delete any related applications if this one was an initial application
+                    // (i.e all sequences are required, and thus, not on EPAO Register)
+                    if (sequences.All(seq => !seq.NotRequired))
+                    {
+                        await _applyRepository.DeleteRelatedApplications(request.ApplicationId);
+                    }
                 }
             }
             else
