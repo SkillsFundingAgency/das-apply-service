@@ -31,9 +31,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpPost("Application/Start")]
-        public async Task Start([FromBody] StartApplyRequest request)
+        public async Task<ActionResult<StartApplicationResponse>> Start([FromBody] StartApplyRequest request)
         {
-            await _mediator.Send(new StartApplicationRequest(request.UserId));
+            return await _mediator.Send(new StartApplicationRequest(request.UserId));
         }
 
         [HttpGet("Application/{applicationId}")]
@@ -109,10 +109,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
 
         [HttpPost("/Applications/Submit")]
-        public async Task<ActionResult> Submit([FromBody] ApplicationSubmitRequest request)
+        public async Task<ActionResult<bool>> Submit([FromBody] ApplicationSubmitRequest request)
         {
-            await _mediator.Send(request);
-            return Ok();
+            var submitted = await _mediator.Send(request);
+            return submitted;
         }
 
         [HttpPost("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/DeleteAnswer/{answerId}")]

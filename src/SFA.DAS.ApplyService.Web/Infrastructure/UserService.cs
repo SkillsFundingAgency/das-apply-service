@@ -6,7 +6,7 @@ using SFA.DAS.ApplyService.Session;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    public class UserService
+    public class UserService : IUserService
     {
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly UsersApiClient _usersApiClient;
@@ -104,9 +104,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                     var contact = await _usersApiClient.GetUserBySignInId(signInId);
                     if (contact != null)
                     {
-                        var orgFromUkprn = await _apiClient.GetOrganisationByName(orgName); 
-                        if(orgFromUkprn != null)
-                            await _usersApiClient.AssociateOrganisationWithUser(contact.Id, orgFromUkprn.Id);
+                        var orgFromName = await _apiClient.GetOrganisationByName(orgName); 
+                        if(orgFromName != null)
+                            await _usersApiClient.AssociateOrganisationWithUser(contact.Id, orgFromName.Id);
                         else
                             return false;
 
@@ -122,6 +122,14 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
             return false;
         }
-       
+
+        public async Task<Guid> GetUserId()
+        {
+            var value = await GetClaim("UserId");
+
+            Guid.TryParse(value, out var userId);
+
+            return userId;
+        }
     }
 }

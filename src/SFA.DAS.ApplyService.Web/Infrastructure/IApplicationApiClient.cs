@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Download;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 using SFA.DAS.ApplyService.Application.Apply.Upload;
@@ -28,8 +29,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<UpdatePageAnswersResult> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId, int sectionId,
             string pageId, List<Answer> answers);
 
-        Task StartApplication(Guid userId);
-        Task Submit(Guid applicationId, int sequenceId, Guid userId, string userEmail);
+        Task<StartApplicationResponse> StartApplication(Guid userId);
+        Task<bool> Submit(Guid applicationId, int sequenceId, Guid userId, string userEmail);
         Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, Guid userId);
         Task ImportWorkflow(IFormFile file);
         Task UpdateApplicationData<T>(T applicationData, Guid applicationId);

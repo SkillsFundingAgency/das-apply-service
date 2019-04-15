@@ -12,7 +12,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply
 {
-    public class StartApplicationHandler : IRequestHandler<StartApplicationRequest>
+    public class StartApplicationHandler : IRequestHandler<StartApplicationRequest, StartApplicationResponse>
     {
         private readonly IApplyRepository _applyRepository;
         private readonly IOrganisationRepository _organisationRepository;
@@ -22,7 +22,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
             _organisationRepository = organisationRepository;
         }
 
-        public async Task<Unit> Handle(StartApplicationRequest request, CancellationToken cancellationToken)
+        public async Task<StartApplicationResponse> Handle(StartApplicationRequest request, CancellationToken cancellationToken)
         {
             var assets = await _applyRepository.GetAssets();
 
@@ -60,8 +60,8 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
             await _applyRepository.UpdateSections(sections);
             await _applyRepository.UpdateSequences(sequences);
-            
-            return Unit.Value;
+
+            return new StartApplicationResponse() {ApplicationId = applicationId};
         }
 
         private void DisableSequencesAndSectionsAsAppropriate(Organisation org, List<ApplicationSequence> sequences, List<ApplicationSection> sections)

@@ -12,11 +12,11 @@ CREATE TABLE [dbo].[Organisations](
    RoEPAOApproved [bit] NOT NULL DEFAULT 0, -- set when this organisation is fully approved,  as RoEPAO  
    RoATPApproved [bit] NOT NULL DEFAULT 0, -- set when this organisation is fully approved, as RoATP 
    CreatedAt	Datetime2(7)	NOT NULL,	--Date / Time that the record was created
-   CreatedBy	[nvarchar](120)	NOT NULL,	--Username (staff or ApplyContact)
+   CreatedBy	[nvarchar](256)	NOT NULL,	--Username (staff or ApplyContact)
    UpdatedAt	Datetime2(7)		NULL,	--Date / Time of the last update
-   UpdatedBy	[nvarchar](120)	NULL,	--Username (staff or ApplyContact)
+   UpdatedBy	[nvarchar](256)	NULL,	--Username (staff or ApplyContact)
    DeletedAt	Datetime2(7)		NULL,	--Date / Time of the soft delete
-   DeletedBy	[nvarchar](120)	NULL	--Username (staff or ApplyContact)
+   DeletedBy	[nvarchar](256)	NULL	--Username (staff or ApplyContact)
     CONSTRAINT [PK_Organisations] PRIMARY KEY ([Id]),
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO

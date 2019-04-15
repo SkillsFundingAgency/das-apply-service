@@ -30,6 +30,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string Address3 { get; set; }
         public string City { get; set; }
         public string Postcode { get; set; }
+        public string EndPointAssessmentOrgId { get; set; }
         public FHADetails FHADetails { get; set; }
     }
 

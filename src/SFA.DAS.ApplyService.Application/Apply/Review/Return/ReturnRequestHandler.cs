@@ -2,9 +2,9 @@ using MediatR;
 using SFA.DAS.ApplyService.Application.Email.Consts;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Users;
+using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,20 +16,22 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
         private readonly IApplyRepository _applyRepository;
         private readonly IEmailService _emailServiceObject;
         private readonly IContactRepository _contactRepository;
+        private readonly IConfigurationService _configurationService;
 
-        public ReturnRequestHandler(IApplyRepository applyRepository, IContactRepository contactRepository, IEmailService emailServiceObject)
+        private const string SERVICE_NAME = "Apprenticeship assessment service";
+        private const string SERVICE_TEAM = "Apprenticeship assessment service team";
+
+        public ReturnRequestHandler(IApplyRepository applyRepository, IContactRepository contactRepository, 
+            IEmailService emailServiceObject, IConfigurationService configurationService)
         {
             _applyRepository = applyRepository;
             _emailServiceObject = emailServiceObject;
             _contactRepository = contactRepository;
+            _configurationService = configurationService;
         }
 
         public async Task<Unit> Handle(ReturnRequest request, CancellationToken cancellationToken)
         {
-            // There will probably be some sort of decision of notifications here based on what status the Application
-            // is being set to.  But for now I'm just setting it and forgetting.
-            var sequence = await _applyRepository.GetActiveSequence(request.ApplicationId);
-
             if (request.RequestReturnType == "ReturnWithFeedback")
             {
                 await _applyRepository.UpdateSequenceStatus(request.ApplicationId, request.SequenceId,
@@ -42,9 +44,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
 
                 await _applyRepository.CloseSequence(request.ApplicationId, request.SequenceId);
 
-                var nextSequence =
-                    (await _applyRepository.GetSequences(request.ApplicationId))
-                    .FirstOrDefault(seq => (int)seq.SequenceId == request.SequenceId + 1);
+                var sequences = await _applyRepository.GetSequences(request.ApplicationId);
+                var nextSequence = sequences.FirstOrDefault(seq => (int)seq.SequenceId == request.SequenceId + 1);
 
                 if (nextSequence != null)
                 {
@@ -52,8 +53,15 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
                 }
                 else
                 {
-                    // this is the last sequence, so approve the whole application
+                    // This is the last sequence, so approve the whole application
                     await _applyRepository.UpdateApplicationStatus(request.ApplicationId, ApplicationStatus.Approved);
+
+                    // Delete any related applications if this one was an initial application
+                    // (i.e all sequences are required, and thus, not on EPAO Register)
+                    if (sequences.All(seq => !seq.NotRequired))
+                    {
+                        await _applyRepository.DeleteRelatedApplications(request.ApplicationId);
+                    }
                 }
             }
             else
@@ -72,6 +80,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
             var application = await _applyRepository.GetApplication(applicationId);
             var standard = application.ApplicationData?.StandardName ?? string.Empty;
             var reference = application.ApplicationData?.ReferenceNumber ?? string.Empty;
+            var config = await _configurationService.GetConfig();
+            var assessorSignInPage = $"{config.AssessorServiceBaseUrl}/Account/SignIn";
 
             if (sequenceId == 1)
             {
@@ -80,7 +90,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
                 if (lastInitSubmission != null)
                 {
                     var contactToNotify = await _contactRepository.GetContact(lastInitSubmission.SubmittedBy);
-                    await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_UPDATE, contactToNotify, new { reference });
+                    await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_UPDATE, contactToNotify, 
+                        new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.GivenNames, LoginLink = assessorSignInPage });
                 }
             }
             else if (sequenceId == 2)
@@ -90,7 +101,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
                 if (lastStandardSubmission != null)
                 {
                     var contactToNotify = await _contactRepository.GetContact(lastStandardSubmission.SubmittedBy);
-                    await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_RESPONSE, contactToNotify, new { reference, standard });
+                    await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_RESPONSE, contactToNotify, 
+                        new {ServiceName=SERVICE_NAME,ServiceTeam=SERVICE_TEAM, Contact= contactToNotify.GivenNames, standard, LoginLink = assessorSignInPage });
                 }
             }
         }

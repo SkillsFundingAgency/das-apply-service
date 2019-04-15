@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Download;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 using SFA.DAS.ApplyService.Application.Apply.Upload;
@@ -97,14 +98,18 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .ReadAsAsync<UpdatePageAnswersResult>();
         }
 
-        public async Task StartApplication(Guid userId)
+        public async Task<StartApplicationResponse> StartApplication(Guid userId)
         {
-            await _httpClient.PostAsJsonAsync("/Application/Start", new {userId});
+            var httpResponse = await _httpClient.PostAsJsonAsync("/Application/Start", new {userId});
+            var startApplicationResponse = await httpResponse.Content.ReadAsAsync<StartApplicationResponse>();
+            return startApplicationResponse;
         }
 
-        public async Task Submit(Guid applicationId, int sequenceId, Guid userId, string userEmail)
+        public async Task<bool> Submit(Guid applicationId, int sequenceId, Guid userId, string userEmail)
         {
-            await _httpClient.PostAsJsonAsync("/Applications/Submit", new {applicationId, sequenceId, userId, userEmail });
+            return await (await _httpClient.PostAsJsonAsync(
+                    "/Applications/Submit", new {applicationId, sequenceId, userId, userEmail })).Content
+                    .ReadAsAsync<bool>();
         }
 
         public async Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId,

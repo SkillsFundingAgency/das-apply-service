@@ -81,6 +81,19 @@ Post-Deployment Script Template
 -- WHERE  JSON_VALUE(QnAData, '$.FinancialApplicationGrade.SelectedGrade') = 'Excellent'
 -- GO
 
+
+IF NOT EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'ApplyEPAOUpdate')
+BEGIN
+INSERT EmailTemplates ([Id],[TemplateName],[TemplateId],[CreatedAt]) 
+VALUES (NEWID(), N'ApplyEPAOUpdate', N'ffe63c0d-b2b0-461f-b99a-73105d7d5fa3', GETDATE())
+END
+
+IF NOT EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'ApplyEPAOResponse')
+BEGIN
+INSERT EmailTemplates ([Id],[TemplateName],[TemplateId],[CreatedAt]) 
+VALUES (NEWID(), N'ApplyEPAOResponse', N'84174eab-f3c1-4274-8670-2fb5b21cbd77', GETDATE())
+END
+
 -- START OF: ON-1502 Fixes - Remove once deployed to PROD
 UPDATE [ApplicationSections]
    SET [Status] = 'Evaluated'

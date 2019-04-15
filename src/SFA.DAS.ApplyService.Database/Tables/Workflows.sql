@@ -5,11 +5,11 @@ CREATE TABLE [dbo].[Workflows](
 	[Type] [nvarchar](10) NOT NULL,
 	[Status] [nvarchar](20) NOT NULL,
 	[CreatedAt] [datetime2](7) NOT NULL,
-	[CreatedBy] [nvarchar](120) NOT NULL,
+	[CreatedBy] [nvarchar](256) NOT NULL,
 	[UpdatedAt] [datetime2](7) NULL,
-	[UpdatedBy] [nvarchar](120) NULL,
+	[UpdatedBy] [nvarchar](256) NULL,
 	[DeletedAt] [datetime2](7) NULL,
-	[DeletedBy] [nvarchar](120) NULL,
+	[DeletedBy] [nvarchar](256) NULL,
  [ReferenceFormat] NVARCHAR(10) NULL, 
     CONSTRAINT [PK_Workflows] PRIMARY KEY CLUSTERED 
 (
