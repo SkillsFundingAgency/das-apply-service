@@ -85,23 +85,22 @@
         <div class="govuk-width-container">
             <div class="das-user-panel__content">
                 <div class="govuk-body-s das-user-panel__item das-user-panel__item--grow">
-                    @if (@SessionService.Get("OrganisationName") != null)
-                    {
-                        <p class="govuk-!-font-weight-bold govuk-!-margin-top-0 govuk-!-margin-bottom-0">@SessionService.Get("OrganisationName")</p>
-                    }
                     <p class="govuk-!-margin-top-0 govuk-!-margin-bottom-0 das-no-wrap">
                         <span class="govuk-visually-hidden">Signed in as </span>
                         @SessionService.Get("LoggedInUser")
                     </p>
+                    @if (@SessionService.Get("OrganisationName") != null)
+                    {
+                        <p class="govuk-!-font-weight-bold govuk-!-margin-top-0 govuk-!-margin-bottom-0">@SessionService.Get("OrganisationName")</p>
+                    }
                 </div>
                 <div>
-
-                <span class="govuk-body-s das-user-panel__item">
-                    <a class="govuk-link govuk-link--white" asp-controller="Home" asp-action="ContactUs">Contact us</a>
-                </span>
-                <span class="govuk-body-s das-user-panel__item">
-                    <a class="govuk-link govuk-link--white" href="@Url.Action("SignOut","Users")">Sign out</a>
-                </span>
+                    <span class="govuk-body-s das-user-panel__item">
+                        <a class="govuk-link govuk-link--white" asp-controller="Home" asp-action="ContactUs">Contact us</a>
+                    </span>
+                    <span class="govuk-body-s das-user-panel__item">
+                        <a class="govuk-link govuk-link--white" href="@Url.Action("SignOut","Users")">Sign out</a>
+                    </span>
                 </div>
             </div>
         </div>
