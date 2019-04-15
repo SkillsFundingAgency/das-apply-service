@@ -43,7 +43,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                         SameSite = SameSiteMode.None,
                         SecurePolicy = CookieSecurePolicy.SameAsRequest
                     };
-                    
+
                     options.Authority = applyConfig.DfeSignIn.MetadataAddress;
                     options.RequireHttpsMetadata = false;
                     options.ClientId = applyConfig.DfeSignIn.ClientId;
@@ -51,6 +51,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             
                     options.Scope.Clear();
                     options.Scope.Add("openid");
+                    options.Scope.Add("profile");
 
                  
                     options.Events = new OpenIdConnectEvents
