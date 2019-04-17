@@ -109,10 +109,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
 
         [HttpPost("/Applications/Submit")]
-        public async Task<ActionResult<bool>> Submit([FromBody] ApplicationSubmitRequest request)
+        public async Task<ActionResult> Submit([FromBody] ApplicationSubmitRequest request)
         {
-            var submitted = await _mediator.Send(request);
-            return submitted;
+            await _mediator.Send(request);
+            return Ok();
         }
 
         [HttpPost("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/DeleteAnswer/{answerId}")]
