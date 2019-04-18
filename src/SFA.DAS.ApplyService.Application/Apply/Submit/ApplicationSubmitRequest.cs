@@ -3,7 +3,7 @@ using MediatR;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Submit
 {
-    public class ApplicationSubmitRequest : IRequest
+    public class ApplicationSubmitRequest : IRequest<bool>
     {
         public int SequenceId { get; set; }
         public Guid ApplicationId { get; set; }
