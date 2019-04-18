@@ -34,7 +34,7 @@ namespace SFA.DAS.ApplyService.Data
             {
                 return (await connection.QueryAsync<Domain.Entities.Application>(@"SELECT a.* FROM Contacts c
                                                     INNER JOIN Applications a ON a.ApplyingOrganisationId = c.ApplyOrganisationID
-                                                    WHERE c.Id = @userId", new {userId})).ToList();
+                                                    WHERE c.Id = @userId AND a.CreatedBy = @userId", new {userId})).ToList();
             }
         }
 
