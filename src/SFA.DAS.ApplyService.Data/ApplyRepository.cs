@@ -530,6 +530,8 @@ namespace SFA.DAS.ApplyService.Data
                                  WHEN SequenceId = 2 THEN 'Standard'
                                  ELSE 'Unknown'
                             END As ApplicationType,
+                            StandardName,
+                            StandardCode,
                             FeedbackAddedDate,
                             SubmissionCount,
                             SequenceStatus AS CurrentStatus
@@ -538,6 +540,12 @@ namespace SFA.DAS.ApplyService.Data
                                 org.Name AS OrganisationName,
                                 appl.id AS ApplicationId,
                                 seq.SequenceId AS SequenceId,
+                                CASE WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardName')
+		                             ELSE NULL
+                                END As StandardName,
+                                CASE WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardCode')
+		                             ELSE NULL
+                                END As StandardCode,
                                 CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.InitSubmissionFeedbackAddedDate')
 		                             WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardSubmissionFeedbackAddedDate')
 		                             ELSE NULL
@@ -574,6 +582,8 @@ namespace SFA.DAS.ApplyService.Data
                                  WHEN SequenceId = 2 THEN 'Standard'
                                  ELSE 'Unknown'
                             END As ApplicationType,
+                            StandardName,
+                            StandardCode,
                             ClosedDate,
                             SubmissionCount,
                             SequenceStatus As CurrentStatus
@@ -582,6 +592,12 @@ namespace SFA.DAS.ApplyService.Data
                                 org.Name AS OrganisationName,
                                 appl.id AS ApplicationId,
                                 seq.SequenceId AS SequenceId,
+                            CASE WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardName')
+		                            ELSE NULL
+                            END As StandardName,
+                            CASE WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardCode')
+		                            ELSE NULL
+                            END As StandardCode,
                             CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.InitSubmissionClosedDate')
 		                         WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardSubmissionClosedDate')
 		                         ELSE NULL
