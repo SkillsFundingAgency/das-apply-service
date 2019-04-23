@@ -17,6 +17,7 @@ using SFA.DAS.ApplyService.InternalApi.Types;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.StartApplication;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
