@@ -116,7 +116,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
             catch (ArgumentException)
             {
-                _logger.LogInformation("Faild to retrieve ukprn request from Assessor so just carry on.");
+                _logger.LogInformation("Faild to retrieve organisation from Assessor so just carry on for now.");
                 //Ignore and just fall through
             }
 
@@ -130,6 +130,24 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             Guid.TryParse(value, out var userId);
 
             return userId;
+        }
+
+        public async Task<Guid> GetSignInId()
+        {
+
+            var signInId = Guid.Empty;
+            try
+            {
+                var value = await GetClaim("sub");
+                Guid.TryParse(value, out signInId);
+
+            }
+            catch (ArgumentException e)
+            {
+                //Ignore should have beem already logged in getclaim
+            }
+
+            return signInId;
         }
     }
 }
