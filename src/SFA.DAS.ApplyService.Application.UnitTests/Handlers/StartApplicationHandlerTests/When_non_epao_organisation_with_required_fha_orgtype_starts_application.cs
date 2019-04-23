@@ -10,15 +10,22 @@ using StartApplicationRequest = SFA.DAS.ApplyService.Application.Apply.StartAppl
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHandlerTests
 {
-    public class When_non_epao_organisation_starts_application : StartApplicationHandlerTestsBase
+    public class When_non_epao_organisation_with_required_fha_orgtype_starts_application : StartApplicationHandlerTestsBase
     {
         private void Init()
         {
             OrganisationRepository.Setup(r => r.GetUserOrganisation(UserId)).ReturnsAsync(new Organisation
             {
                 Id = ApplyingOrganisationId,
-                OrganisationType = "",
-                RoEPAOApproved = false
+                OrganisationType = "Trade Body", // Trade Body IS NOT FinancialExempt
+                RoEPAOApproved = false,
+                OrganisationDetails = new OrganisationDetails()
+                {
+                    FHADetails = new FHADetails
+                    {
+                        FinancialExempt = false
+                    }
+                }
             });
         }
         

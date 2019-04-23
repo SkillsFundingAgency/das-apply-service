@@ -14,10 +14,26 @@ namespace SFA.DAS.ApplyService.InternalApi
                 cfg.AddProfile<AssessorServiceOrganisationProfile>();
                 cfg.AddProfile<AssessorServiceOrganisationAddressProfile>();
                 cfg.AddProfile<AssessorServiceOrganisationTypeProfile>();
+
                 cfg.AddProfile<ProviderRegisterOrganisationProfile>();
                 cfg.AddProfile<ProviderRegisterOrganisationAddressProfile>();
+
                 cfg.AddProfile<ReferenceDataOrganisationProfile>();
                 cfg.AddProfile<ReferenceDataOrganisationAddressProfile>();
+
+                cfg.AddProfile<CompaniesHouseCompanyProfile>();
+                cfg.AddProfile<CompaniesHouseAccountsProfile>();
+                cfg.AddProfile<CompaniesHouseRegisteredOfficeAddressProfile>();
+                cfg.AddProfile<CompaniesHouseOfficerAddressProfile>();
+                cfg.AddProfile<CompaniesHouseOfficerProfile>();
+                cfg.AddProfile<CompaniesHouseOfficerDisqualificationProfile>();
+                cfg.AddProfile<CompaniesHousePersonWithSignificantControlProfile>();
+                cfg.AddProfile<CompaniesHousePersonWithSignificantControlAddressProfile>();
+
+                cfg.AddProfile<CharityCommissionProfile>();
+                cfg.AddProfile<CharityCommissionAddressProfile>();
+                cfg.AddProfile<CharityCommissionAccountsProfile>();
+                cfg.AddProfile<CharityCommissionTrusteeProfile>();
             });
 
             Mapper.AssertConfigurationIsValid();

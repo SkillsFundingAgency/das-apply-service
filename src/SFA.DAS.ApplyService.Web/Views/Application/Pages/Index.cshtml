@@ -1,7 +1,7 @@
 @model SFA.DAS.ApplyService.Web.Controllers.PageViewModel
 
 @{
-    ViewBag.Title = @Model.Title ?? "Page not active";
+    ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + (@Model.Title ?? "Page not active");
 }
 @*
     <noscript>

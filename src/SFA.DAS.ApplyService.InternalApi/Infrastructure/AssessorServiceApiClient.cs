@@ -1,5 +1,6 @@
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Newtonsoft.Json;
@@ -12,6 +13,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Organisation = SFA.DAS.ApplyService.Domain.Entities.Organisation;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
@@ -20,21 +23,26 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
         private readonly HttpClient _client;
         private readonly ILogger<AssessorServiceApiClient> _logger;
         private readonly IApplyConfig _config;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
-        public AssessorServiceApiClient(HttpClient client, ILogger<AssessorServiceApiClient> logger, IConfigurationService configurationService)
+        public AssessorServiceApiClient(HttpClient client, ILogger<AssessorServiceApiClient> logger,
+            IConfigurationService configurationService, IHostingEnvironment hostingEnvironment)
         {
             _client = client;
             _logger = logger;
             _config = configurationService.GetConfig().Result;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public async Task<IEnumerable<Types.OrganisationSearchResult>> SearchOrgansiation(string searchTerm)
         {
             _logger.LogInformation($"Searching EPAO Register. Search Term: {searchTerm}");
-            var apiResponse = await Get<IEnumerable<OrganisationSummary>>($"/api/ao/assessment-organisations/search/{searchTerm}");
+            var apiResponse =
+                await Get<IEnumerable<OrganisationSummary>>($"/api/ao/assessment-organisations/search/{searchTerm}");
 
-            var organisationSearchResults = Mapper.Map<IEnumerable<OrganisationSummary>, IEnumerable<Types.OrganisationSearchResult>>(apiResponse);
-            
+            var organisationSearchResults =
+                Mapper.Map<IEnumerable<OrganisationSummary>, IEnumerable<Types.OrganisationSearchResult>>(apiResponse);
+
             return organisationSearchResults;
         }
 
@@ -45,18 +53,22 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
             return Mapper.Map<OrganisationSummary, Types.OrganisationSearchResult>(apiResponse);
         }
-        
+
         public async Task<IEnumerable<Types.OrganisationType>> GetOrgansiationTypes(bool activeOnly = true)
         {
             _logger.LogInformation($"Getting Organisation Types from EPAO Register.");
-            var apiResponse = await Get<IEnumerable<Models.AssessorService.OrganisationType>>($"/api/ao/organisation-types");
+            var apiResponse =
+                await Get<IEnumerable<Models.AssessorService.OrganisationType>>($"/api/ao/organisation-types");
 
-            if(activeOnly)
+            if (activeOnly)
             {
-                apiResponse = apiResponse.Where(ot => "Live".Equals(ot.Status, StringComparison.InvariantCultureIgnoreCase));
+                apiResponse = apiResponse.Where(ot =>
+                    "Live".Equals(ot.Status, StringComparison.InvariantCultureIgnoreCase));
             }
 
-            return Mapper.Map<IEnumerable<Models.AssessorService.OrganisationType>, IEnumerable<Types.OrganisationType>>(apiResponse);
+            return Mapper
+                .Map<IEnumerable<Models.AssessorService.OrganisationType>, IEnumerable<Types.OrganisationType>>(
+                    apiResponse);
         }
 
         public async Task<IEnumerable<DeliveryArea>> GetDeliveryAreas()
@@ -71,7 +83,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
         {
             _logger.LogInformation($"Gathering Standards from EPAO Register.");
             await Post($"/api/ao/update-standards", new GatherStandardsRequest());
-            var apiResponse = await Get<IEnumerable<StandardCollation>>($"/api/ao/assessment-organisations/collated-standards");
+            var apiResponse =
+                await Get<IEnumerable<StandardCollation>>($"/api/ao/assessment-organisations/collated-standards");
             return apiResponse;
         }
 
@@ -92,11 +105,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             var serializeObject = JsonConvert.SerializeObject(model);
 
             await _client.PostAsync(new Uri(uri, UriKind.Relative),
-                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")) ;
+                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"));
         }
 
         private string GetToken()
         {
+            if (_hostingEnvironment.IsDevelopment())
+                return string.Empty;
+
             var tenantId = _config.AssessorServiceApiAuthentication.TenantId;
             var clientId = _config.AssessorServiceApiAuthentication.ClientId;
             var clientSecret = _config.AssessorServiceApiAuthentication.ClientSecret;

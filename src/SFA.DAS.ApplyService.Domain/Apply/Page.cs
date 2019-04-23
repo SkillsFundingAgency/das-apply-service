@@ -19,9 +19,10 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public bool Complete { get; set; }
         public bool AllowMultipleAnswers { get; set; }
         public int? Order { get; set; }
-        public bool Active { get; set; }        
-        public bool Visible { get; set; }
-        
+        public bool Active { get; set; }
+        public List<string> NotRequiredOrgTypes { get; set; }
+        public bool NotRequired { get; set; }
+
         public string BodyText { get; set; }
 
         public PageDetails Details { get; set; }
@@ -44,7 +45,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public bool HasFeedback => Feedback?.Any() ?? false;
 
         [JsonIgnore]
-        public bool HasNewFeedback => HasFeedback && Feedback.Any(f => f.IsNew);
+        public bool HasNewFeedback => HasFeedback && Feedback.Any(f => f.IsNew || !f.IsCompleted);
 
         [JsonIgnore]
         public bool AllFeedbackIsCompleted => HasFeedback ? Feedback.All(f => f.IsCompleted) : true;

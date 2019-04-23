@@ -6,7 +6,7 @@
     var pageTitle = "";
     var isSamePage = false;
     var nextPageTitle = "";
-    var pagesToCheck = Model.QnAData.Pages.Where(p => p.Active).ToList();
+    var pagesToCheck = Model.QnAData.Pages.Where(p => p.Active && !p.NotRequired).ToList();
 }
 
 <a href="@Url.Action("Sequence", "Application", new {applicationId = Model.ApplicationId})" class="govuk-back-link">Back to application overview</a>
@@ -15,7 +15,7 @@
         <div class="govuk-grid-column-two-thirds">
             @if (Model == null)
             {
-                <h1 class="govuk-heading-xl">Sequence not active</h1>
+                <h1 class="govuk-heading-xl">Section not active</h1>
             }
             else
             {
@@ -23,13 +23,13 @@
                 <ul class="govuk-list">
                     <li>
                         <ul class="app-task-list govuk-!-margin-bottom-7">
-                            @for (var i = 0; i < pagesToCheck.Count; i++)
+                            @for (var i=0; i < pagesToCheck.Count; i++)
                             {
                                 var pg = pagesToCheck[i];
                                 isSamePage = pageTitle == pg.Title;
                                 pageTitle = pg.Title;
                                 nextPageTitle = "";
-                                if (i < pagesToCheck.Count - 1)
+                                if (i < pagesToCheck.Count-1)
                                 {
                                     nextPageTitle = (pagesToCheck[i + 1]).Title;
                                 }
@@ -38,7 +38,7 @@
                                 {
                                     <h2 class="govuk-heading-m">@Html.Raw(pg.Title)</h2>
                                 }
-
+                           
                                 <li class="app-task-list__item">
                                     <a class="govuk-link app-task-list__task-name"
                                        href="@Url.Action("Page", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pg.PageId, redirectAction = "Section"})">

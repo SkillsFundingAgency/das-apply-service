@@ -50,6 +50,7 @@ namespace SFA.DAS.ApplyService.InternalApi.IntegrationTests
             }).CreateClient(new WebApplicationFactoryClientOptions() {AllowAutoRedirect = false});
         }
         
+        [Ignore("Potentially obsolete")]
         [Test]
         public async Task ThenOkIsReturned()
         {

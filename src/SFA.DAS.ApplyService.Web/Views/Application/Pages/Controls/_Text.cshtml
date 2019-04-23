@@ -2,6 +2,7 @@
 
 @{
     var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
+    var inputClasses = Model.InputClasses != null ? Model.InputClasses : "";
 }
 
 @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
@@ -21,10 +22,11 @@
 }
 else
 {
-    <input class="govuk-input govuk-!-width-two-thirds @isError"
+    <input class="govuk-input @inputClasses @isError"
            sfa-validation-for-id="@Model.QuestionId"
            type="text"
            id="@Model.QuestionId"
            name="@Model.QuestionId"
-           value="@Model.Value" />    
+           value="@Model.Value"
+           maxlength="10000" />    
 }

@@ -7,8 +7,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
+using SFA.DAS.ApplyService.Web.Validators;
 using SFA.DAS.ApplyService.Web.ViewModels;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
@@ -18,12 +21,18 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IUsersApiClient _usersApiClient;
         private readonly ISessionService _sessionService;
         private readonly ILogger<UsersController> _logger;
+        private readonly IConfigurationService _config;
+        private readonly IHttpContextAccessor _contextAccessor;
+        private readonly CreateAccountValidator _createAccountValidator;
 
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger)
-        {
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger, IConfigurationService config, IHttpContextAccessor contextAccessor, CreateAccountValidator createAccountValidator)
+        { 
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
             _logger = logger;
+            _config = config;
+            _contextAccessor = contextAccessor;
+            _createAccountValidator = createAccountValidator;
         }
         
         [HttpGet]
@@ -36,6 +45,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAccount(CreateAccountViewModel vm)
         {
+            _createAccountValidator.Validate(vm);
+
             if (!ModelState.IsValid)
             {
                 return View(vm);
@@ -43,7 +54,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             
             var inviteSuccess = await _usersApiClient.InviteUser(vm);
 
-            TempData["NewAccount"] = JsonConvert.SerializeObject(vm);
+            _sessionService.Set("NewAccount", vm);
 
             return inviteSuccess ? RedirectToAction("InviteSent") : RedirectToAction("Error", "Home");
             
@@ -53,40 +64,47 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public IActionResult SignIn()
         {
             return Challenge(new AuthenticationProperties() {RedirectUri = Url.Action("PostSignIn", "Users")},
-                OpenIdConnectDefaults.AuthenticationScheme);
+                "oidc");
         }
         
         [HttpGet]
-        public IActionResult SignOut()
+        public async Task<IActionResult> SignOut()
         {
+            if (!string.IsNullOrEmpty(_contextAccessor.HttpContext.User.FindFirstValue("display_name")))
+            {
+                return Redirect($"{(await _config.GetConfig()).AssessorServiceBaseUrl}/Account/SignOut");
+            }
             foreach (var cookie in Request.Cookies.Keys)
             {
                 Response.Cookies.Delete(cookie);
             }
 
-            return SignOut(CookieAuthenticationDefaults.AuthenticationScheme,
-                OpenIdConnectDefaults.AuthenticationScheme);
+
+            return SignOut("Cookies",
+               "oidc");
         }
 
         public IActionResult InviteSent()
         {
-            CreateAccountViewModel viewModel;
-            if (TempData["NewAccount"] is null)
+            var viewModel = _sessionService.Get<CreateAccountViewModel>("NewAccount");
+
+            if (viewModel?.Email is null)
             {
-                viewModel = new CreateAccountViewModel() {Email = "[email placeholder]"};
+                RedirectToAction("CreateAccount");
             }
-            else
-            {
-                viewModel =  JsonConvert.DeserializeObject<CreateAccountViewModel>(TempData["NewAccount"].ToString());    
-            }
-            
+
             return View(viewModel);
         }
 
         public async Task<IActionResult> PostSignIn()
         {
             var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
-         
+           
+            if (user == null)
+            {
+                return RedirectToAction("NotSetUp");
+            }
+            
             _logger.LogInformation($"Setting LoggedInUser in Session: {user.GivenNames} {user.FamilyName}");
             
             _sessionService.Set("LoggedInUser", $"{user.GivenNames} {user.FamilyName}");
@@ -101,6 +119,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [HttpGet("/Users/SignedOut")]
         public IActionResult SignedOut()
+        {
+            return View();
+        }
+
+        public IActionResult NotSetUp()
         {
             return View();
         }

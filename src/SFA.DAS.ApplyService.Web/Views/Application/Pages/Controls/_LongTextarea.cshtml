@@ -1,0 +1,28 @@
+@model dynamic
+
+@{ var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : ""; }
+
+@if (Model.ErrorMessages!=null && Model.ErrorMessages.Count > 0)
+{
+    foreach (var errorMessage in Model.ErrorMessages)
+    {
+        if (errorMessage.Field == Model.QuestionId)
+        {
+            <span class="govuk-error-message">@errorMessage.ErrorMessage</span>
+        }
+    }
+}
+
+<div class="govuk-character-count" data-module="character-count" data-maxwords="500">
+  <textarea 
+    class="govuk-textarea @isError js-character-count "
+    id="@Model.QuestionId"
+    name="@Model.QuestionId"
+    rows="12"
+    aria-describedby="@Model.Label"
+    maxlength="10000"
+  >@Model.Value</textarea>
+  <span id="@Model.QuestionId-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
+    You can enter up to 500 words
+  </span>
+</div>

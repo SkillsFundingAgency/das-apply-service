@@ -9,9 +9,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
+    [Authorize]
     public class OrganisationSearchController : Controller
     {
         private readonly IUsersApiClient _usersApiClient;
@@ -141,6 +143,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (organisationSearchResult != null)
             {
+                if (organisationSearchResult.CompanyNumber != null)
+                {
+                    var isActivelyTrading = await _apiClient.IsCompanyActivelyTrading(organisationSearchResult.CompanyNumber);
+
+                    if (!isActivelyTrading)
+                    {
+                        return View("~/Views/OrganisationSearch/CompanyNotActive.cshtml", viewModel);
+                    }
+                }
+
                 viewModel.Organisations = new List<OrganisationSearchResult> { organisationSearchResult };
                 viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();
             }
@@ -175,6 +187,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (organisationSearchResult != null)
             {
+                if (organisationSearchResult.CompanyNumber != null)
+                {
+                    var isActivelyTrading = await _apiClient.IsCompanyActivelyTrading(organisationSearchResult.CompanyNumber);
+
+                    if(!isActivelyTrading)
+                    {
+                        return View("~/Views/OrganisationSearch/CompanyNotActive.cshtml", viewModel);
+                    }
+                }
+
+
                 var orgThatWasCreated = await _organisationApiClient.Create(organisationSearchResult, user.Id);
 
                 return RedirectToAction("Applications", "Application");
@@ -185,7 +208,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return View(nameof(Results), viewModel);
             }
         }
-
 
         private async Task<OrganisationSearchResult> GetOrganisation(string searchString, string name, int? ukprn, string organisationType, string postcode)
         {

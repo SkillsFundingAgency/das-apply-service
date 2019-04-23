@@ -36,6 +36,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Feedback
             page.Feedback.Add(request.Feedback);
 
             section.UpdatePage(page);
+            section.QnAData.RequestedFeedbackAnswered = false;
             
             await _applyRepository.UpdateSections(new List<ApplicationSection> {section});
             

@@ -14,8 +14,12 @@
 }
 
 
-<input class="govuk-input govuk-!-width-two-thirds @isError"
-       sfa-validation-for-id="@Model.QuestionId"
-       type="email" id="@Model.QuestionId"
-       name="@Model.QuestionId"
-       value="@Model.Value" />
+<input
+    class="govuk-input govuk-!-width-two-thirds @isError"
+    type="email"
+    id="@Model.QuestionId"
+    name="@Model.QuestionId"
+    value="@Model.Value"
+    autocomplete="email"
+    maxlength="320"
+/>

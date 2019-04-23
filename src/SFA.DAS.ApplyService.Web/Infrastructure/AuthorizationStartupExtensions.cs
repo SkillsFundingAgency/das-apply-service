@@ -3,78 +3,57 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using SFA.DAS.ApplyService.Configuration;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     public static class AuthorizationStartupExtensions
     {
-        public static void AddDfeSignInAuthorization(this IServiceCollection services, IApplyConfig applyConfig, ILogger logger)
+        public static void AddDfeSignInAuthorization(this IServiceCollection services, IApplyConfig applyConfig, ILogger logger, IHostingEnvironment env)
         {
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            
             services.AddAuthentication(options =>
                 {
-                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                    options.DefaultScheme = "Cookies";
+                    options.DefaultChallengeScheme = "oidc";
                 })
-                .AddCookie(options => { 
-                    options.Cookie.Name = ".Apply.Cookies";
+                .AddCookie("Cookies", options =>
+                {
+                    options.Cookie.Name = ".Assessors.Cookies";
+                    if (!env.IsDevelopment())
+                    {
+                        options.Cookie.Domain = ".apprenticeships.education.gov.uk";   
+                    }
                     options.Cookie.HttpOnly = true;
+                    options.SlidingExpiration = true;
+                    options.ExpireTimeSpan = TimeSpan.FromHours(1);
                 })
-                .AddOpenIdConnect(options =>
+                .AddOpenIdConnect("oidc", options =>
                 {
                     options.CorrelationCookie = new CookieBuilder()
                     {
-                        Name = ".Apply.Correlation.", 
+                        Name = ".Assessor.Correlation.", 
                         HttpOnly = true,
                         SameSite = SameSiteMode.None,
                         SecurePolicy = CookieSecurePolicy.SameAsRequest
                     };
-                    
-                    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                    options.MetadataAddress = applyConfig.DfeSignIn.MetadataAddress;
 
+                    options.Authority = applyConfig.DfeSignIn.MetadataAddress;
+                    options.RequireHttpsMetadata = false;
                     options.ClientId = applyConfig.DfeSignIn.ClientId;
-                    
-                    options.ClientSecret = applyConfig.DfeSignIn.ClientSecret;
-                    options.ResponseType = OpenIdConnectResponseType.Code;
-                    options.GetClaimsFromUserInfoEndpoint = true;
-
-                    options.UseTokenLifetime = true;
-
+                    options.SaveTokens = true;
+            
                     options.Scope.Clear();
                     options.Scope.Add("openid");
-                    options.Scope.Add("email");
                     options.Scope.Add("profile");
 
-                    options.Scope.Add("offline_access");
-
-                    options.SaveTokens = true;
-                    //options.CallbackPath = new PathString(Configuration["auth:oidc:callbackPath"]);
-                    options.SignedOutCallbackPath = new PathString("/SignedOut");
-                    options.SignedOutRedirectUri = applyConfig.DfeSignIn.SignOutRedirectUri;// "https://localhost:6016/Users/LoggedOut";
-                    
-                    options.SecurityTokenValidator = new JwtSecurityTokenHandler
-                    {
-                        InboundClaimTypeMap = new Dictionary<string, string>(),
-                        TokenLifetimeInMinutes = 20,
-                        SetDefaultTimesOnTokenCreation = true,
-                    };
-                    options.ProtocolValidator = new OpenIdConnectProtocolValidator
-                    {
-                        RequireSub = true,
-                        RequireStateValidation = false,
-                        NonceLifetime = TimeSpan.FromMinutes(15),
-                        RequireNonce = false
-                    };
-                    
-                    options.DisableTelemetry = true;
+                 
                     options.Events = new OpenIdConnectEvents
                     {
                         // Sometimes, problems in the OIDC provider (such as session timeouts)
@@ -103,8 +82,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                             var client = context.HttpContext.RequestServices.GetRequiredService<UsersApiClient>();
                             var signInId = context.Principal.FindFirst("sub").Value;
                             var user = await client.GetUserBySignInId(signInId);
-                            var identity = new ClaimsIdentity(new List<Claim>(){new Claim("UserId", user.Id.ToString())});                      
-                            context.Principal.AddIdentity(identity);
+                            if (user != null)
+                            {
+                                var identity = new ClaimsIdentity(new List<Claim>(){new Claim("UserId", user.Id.ToString())});                      
+                                context.Principal.AddIdentity(identity);   
+                            }
                         },
                         
                         // Sometimes the auth flow fails. The most commonly observed causes for this are

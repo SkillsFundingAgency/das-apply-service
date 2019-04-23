@@ -13,9 +13,11 @@
     }
 }
 
-<input class="govuk-input govuk-!-width-two-thirds @isError"
-       sfa-validation-for-id="@Model.QuestionId"
-       type="text"
-       id="@Model.QuestionId"
-       name="@Model.QuestionId"
-       value="@Model.Value" />
+<input 
+    class="govuk-input govuk-input--width-10 @isError"
+    type="text"
+    id="@Model.QuestionId"
+    name="@Model.QuestionId"
+    value="@Model.Value"
+    maxlength="10"
+/>
