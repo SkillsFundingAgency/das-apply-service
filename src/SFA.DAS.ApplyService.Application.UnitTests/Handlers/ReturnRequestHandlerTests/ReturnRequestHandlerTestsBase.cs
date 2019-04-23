@@ -4,6 +4,7 @@ using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Review.Return;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Users;
+using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.ReturnRequestHandl
         protected Mock<IApplyRepository> ApplyRepository;
         protected Mock<IContactRepository> ContactRepository;
         protected Mock<IEmailService> EmailService;
+        protected Mock<IConfigurationService> ConfigService;
         protected ReturnRequestHandler Handler;
 
         [SetUp]
@@ -37,9 +39,15 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.ReturnRequestHandl
             ContactRepository = new Mock<IContactRepository>();
             ContactRepository.Setup(r => r.GetContact(It.IsAny<Guid>())).ReturnsAsync(new Contact());
 
+            ConfigService = new Mock<IConfigurationService>();
+            ConfigService.Setup(x => x.GetConfig()).ReturnsAsync(new ApplyConfig
+            {
+                AssessorServiceBaseUrl = "https://host/signinpage"
+            });
+
             EmailService = new Mock<IEmailService>();
 
-            Handler = new ReturnRequestHandler(ApplyRepository.Object, ContactRepository.Object, EmailService.Object);
+            Handler = new ReturnRequestHandler(ApplyRepository.Object, ContactRepository.Object, EmailService.Object,ConfigService.Object);
         }
     }
 }

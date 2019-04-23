@@ -22,17 +22,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     {
         private readonly IApplicationApiClient _apiClient;
         private readonly ILogger<ApplicationController> _logger;
+        private readonly IUsersApiClient _usersApiClient;
         private readonly ISessionService _sessionService;
         private readonly IConfigurationService _configService;
         private readonly IUserService _userService;
 
-        public ApplicationController(IApplicationApiClient apiClient, ILogger<ApplicationController> logger, ISessionService sessionService, IConfigurationService configService, IUserService userService)
+        public ApplicationController(IApplicationApiClient apiClient, ILogger<ApplicationController> logger,
+            ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient)
         {
             _apiClient = apiClient;
             _logger = logger;
             _sessionService = sessionService;
             _configService = configService;
             _userService = userService;
+            _usersApiClient = usersApiClient;
         }
 
         [HttpGet("/Applications")]
@@ -44,8 +47,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("PostSignIn", "Users");
 
             _logger.LogInformation($"Got LoggedInUser from Session: {user}");
-
-            var userId = User.GetUserId();
+            
+            var applyUser = await _usersApiClient.GetUserBySignInId((await _userService.GetSignInId()).ToString());
+            var userId = applyUser?.Id ?? Guid.Empty;
 
             var org = await _apiClient.GetOrganisationByUserId(userId);
             var applications = await _apiClient.GetApplicationsFor(userId);
@@ -170,12 +174,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet("/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}")]
         public async Task<IActionResult> Section(Guid applicationId, int sequenceId, int sectionId)
         {
-            var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, User.GetUserId());
-
-            if (section.Status != ApplicationSectionStatus.Draft)
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId);
+            if (!canUpdate)
             {
-                return RedirectToAction("Sequence", new { applicationId = applicationId });
+                return RedirectToAction("Sequence", new { applicationId });
             }
+
+            var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, User.GetUserId());
 
             switch(section?.DisplayType)
             {

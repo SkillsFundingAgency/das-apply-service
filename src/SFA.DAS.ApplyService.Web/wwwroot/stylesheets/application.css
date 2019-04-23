@@ -438,12 +438,19 @@
     word-break: break-word;
 }
 
-/*Navigation menu*/
+.govuk-character-count {
+    margin-bottom: 0;
+}
+
+@media (min-width: 40.0625em) {
+    .govuk-character-count {
+        margin-bottom: 0;
+    }
+}
+
+/* Navigation menu */
 
 .app-navigation {
-    /* padding-right: 15px;
-  padding-left: 15px;
-  background-color: #f8f8f8; */
     border-bottom: 1px solid #bfc1c3;
     font-family: "nta", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
