@@ -32,7 +32,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers.ApplicationControllerTe
                 Mock.Of<ILogger<ApplicationController>>(), 
                 Mock.Of<ISessionService>(), 
                 Mock.Of<IConfigurationService>(), 
-                userService.Object);
+                userService.Object,
+                Mock.Of<IUsersApiClient>());
 
             var result = await controller.StartApplication();
             result.Should().BeOfType<RedirectToActionResult>();

@@ -10,5 +10,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<bool> ValidateUser(string user);
         Task<bool> AssociateOrgFromClaimWithUser();
         Task<Guid> GetUserId();
+        Task<Guid> GetSignInId();
     }
 }

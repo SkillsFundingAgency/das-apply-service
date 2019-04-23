@@ -281,6 +281,7 @@ namespace SFA.DAS.ApplyService.Data
                         {
                             page.Feedback.ForEach(f => f.IsNew = false);
                             page.Feedback.ForEach(f => f.IsCompleted = true);
+                            section.QnAData.RequestedFeedbackAnswered = true;
                         }
                     }
                 }
@@ -464,6 +465,7 @@ namespace SFA.DAS.ApplyService.Data
                                  WHEN (SubmissionCount > 1 AND SequenceId = 1 AND Sec1Status = @sectionStatusSubmitted AND Sec2Status = @sectionStatusSubmitted) THEN @sequenceStatusResubmitted
                                  WHEN (SubmissionCount > 1 AND SequenceId = 1 AND Sec1Status = Sec2Status AND Sec3Status = @sectionStatusSubmitted) THEN @sequenceStatusResubmitted
                                  WHEN (SubmissionCount > 1 AND SequenceId = 2 AND Sec4Status = @sectionStatusSubmitted) THEN @sequenceStatusResubmitted
+                                 WHEN (SubmissionCount > 1 AND RequestedFeedbackAnswered = 'true') THEN @sequenceStatusResubmitted
                                  WHEN (SequenceId = 1 AND Sec1Status = Sec2Status) THEN Sec1Status
 		                         WHEN SequenceId = 2 THEN Sec4Status
 		                         ELSE @sectionStatusInProgress
@@ -492,7 +494,8 @@ namespace SFA.DAS.ApplyService.Data
 	                            MAX(CASE WHEN sec.[SectionId] = 1 THEN sec.[Status] ELSE NULL END) AS Sec1Status,
 	                            MAX(CASE WHEN sec.[SectionId] = 2 THEN sec.[Status] ELSE NULL END) AS Sec2Status,
 	                            MAX(CASE WHEN sec.[SectionId] = 3 THEN sec.[Status] ELSE NULL END) AS Sec3Status,
-	                            MAX(CASE WHEN sec.[SectionId] = 4 THEN sec.[Status] ELSE NULL END) AS Sec4Status
+	                            MAX(CASE WHEN sec.[SectionId] = 4 THEN sec.[Status] ELSE NULL END) AS Sec4Status,
+                                MAX(JSON_VALUE(sec.QnAData, '$.RequestedFeedbackAnswered')) AS RequestedFeedbackAnswered
 	                        FROM Applications appl
 	                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
 	                        INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id 
@@ -617,6 +620,7 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') As SubmissionCount,
 	                        CASE WHEN (seq.Status = @sequenceStatusFeedbackAdded) THEN @sequenceStatusFeedbackAdded
                                  WHEN (JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') > 1 AND sec.Status = @financialStatusSubmitted) THEN @sequenceStatusResubmitted
+                                 WHEN (JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') > 1 AND JSON_VALUE(sec.QnAData, '$.RequestedFeedbackAnswered') = 1) THEN @sequenceStatusResubmitted
                                  ELSE sec.Status
 	                        END As CurrentStatus
 	                      FROM Applications appl
