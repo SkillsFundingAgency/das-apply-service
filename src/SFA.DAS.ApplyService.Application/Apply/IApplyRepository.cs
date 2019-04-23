@@ -30,7 +30,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();
-        Task<bool> CanSubmitApplication(ApplicationSubmitRequest request);
         Task SubmitApplicationSequence(ApplicationSubmitRequest request, ApplicationData applicationdata);
         Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string sequenceStatus, string applicationStatus);
         Task CloseSequence(Guid applicationId, int sequenceId);
@@ -39,7 +38,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task UpdateApplicationData(Guid applicationId, ApplicationData applicationData);
         Task<Domain.Entities.Application> GetApplication(Guid requestApplicationId);
         Task UpdateApplicationStatus(Guid applicationId, string status);
-        Task DeleteRelatedApplications(Guid applicationId);
 
         Task StartApplicationReview(Guid applicationId, int sectionId);
         Task StartFinancialReview(Guid applicationId);

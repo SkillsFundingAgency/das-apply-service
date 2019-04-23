@@ -27,7 +27,6 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.ApplicationSubmitH
             ApplyRepository.Setup(r => r.GetNextAppReferenceSequence()).ReturnsAsync(1);
             ApplyRepository.Setup(r => r.GetWorkflowReferenceFormat(It.IsAny<Guid>())).ReturnsAsync("AAD");
             ApplyRepository.Setup(r => r.GetApplication(It.IsAny<Guid>())).ReturnsAsync(application);
-            ApplyRepository.Setup(r => r.CanSubmitApplication(It.IsAny<ApplicationSubmitRequest>())).ReturnsAsync(true);
 
             ContactRepository = new Mock<IContactRepository>();
             ContactRepository.Setup(r => r.GetContact(It.IsAny<string>())).ReturnsAsync(new Contact());
