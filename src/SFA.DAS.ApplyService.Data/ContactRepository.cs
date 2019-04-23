@@ -26,9 +26,30 @@ namespace SFA.DAS.ApplyService.Data
             {
                 await connection.ExecuteAsync(@"INSERT INTO Contacts (Email, GivenNames, FamilyName, SignInType, CreatedAt, CreatedBy, Status, IsApproved) 
                                                      VALUES (@email, @givenName, @familyName, @signInType, @createdAt, @email, 'New', 0)",
-                    new {email, givenName, familyName, signInType, createdAt = DateTime.UtcNow});
+                    new { email, givenName, familyName, signInType, createdAt = DateTime.UtcNow });
 
-                return await GetContact(email);   
+
+                return await GetContact(email);
+            }
+        }
+
+        public async Task<Contact> CreateContact(Contact contact, Guid? organisationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                contact.CreatedBy = contact.CreatedBy ?? contact.Email;
+                await connection.ExecuteAsync(
+                    @"INSERT INTO Contacts (Id, Email, GivenNames, FamilyName, SigninId, SignInType, ApplyOrganisationID, 
+                                                Status, IsApproved, CreatedAt, CreatedBy) 
+                                        VALUES (@Id, @Email, @GivenNames, @FamilyName,@SigninId, @SignInType,@organisationId,@Status,@IsApproved, @CreatedAt, @CreatedBy)",
+                    new
+                    {
+                        contact.Id, contact.Email, contact.GivenNames, contact.FamilyName, contact.SigninId,
+                        contact.SigninType, organisationId, contact.Status, contact.IsApproved, contact.CreatedAt,
+                        contact.CreatedBy
+                    });
+
+                return await GetContactBySignInId(contact.Id);
             }
         }
 
@@ -50,13 +71,23 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task UpdateSignInId(Guid contactId, Guid signInId)
+        public async Task UpdateSignInId(Guid contactId, Guid? signInId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(
                     @"UPDATE Contacts SET SignInId = @signInId, UpdatedAt = GETUTCDATE(), UpdatedBy = 'dfeSignIn', Status = 'Live' WHERE Id = @contactId",
                     new {contactId, signInId});
+            }
+        }
+
+        public async Task UpdateContactIdAndSignInId(Guid contactId, Guid signInId, string email, string updatedBy)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(
+                    @"UPDATE Contacts SET Id = @contactId, SignInId = @signInId, UpdatedAt = GETUTCDATE(), UpdatedBy = @updatedBy, Status = 'Live' WHERE Email = @email",
+                    new { contactId, signInId, email, updatedBy });
             }
         }
 
@@ -88,6 +119,27 @@ namespace SFA.DAS.ApplyService.Data
             {
                 return (await connection.QueryAsync<Contact>(@"SELECT * FROM Contacts 
                                                     WHERE Id = @userId", new { userId })).FirstOrDefault();
+            }
+        }
+
+        public async Task<Contact> GetContactByEmail(string email)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<Contact>(@"SELECT * FROM Contacts 
+                                                    WHERE Email = @email", new { email })).FirstOrDefault();
+            }
+        }
+
+        public async Task<bool> UpdateContactOrgId(Guid contactId, Guid orgId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                int rowsAffected = await connection.ExecuteAsync(
+                    @"UPDATE Contacts SET ApplyOrganisationID = @orgId, UpdatedAt = GETUTCDATE(), UpdatedBy = 'System' WHERE Id = @contactId",
+                    new { orgId, contactId });
+
+                return rowsAffected > 0;
             }
         }
 

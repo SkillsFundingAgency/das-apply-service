@@ -130,7 +130,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-3-22';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-3-22', '', '<p class="govuk-body">This information will be published on the Register of end point assessment organisations and will be made available to the public.</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-1-PG-3-22', '', '<p class="govuk-body">This information will be published on the Register of end-point assessment organisations and will be made available to the public.</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-3-23';
 INSERT INTO Assets
@@ -1210,7 +1210,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-12-166';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-12-166', '', '<p class="govuk-body">Has any director, or any other person with significant control of your organisation, had one or more of the following?</p><ul class="govuk-list govuk-list--bullet"><li>Un-discharged bankruptcy</li><li>Composition with creditors</li><li>Any form of dispute</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-1-PG-12-166', '', '<p class="govuk-body">Have any directors, or any other person with significant control of your organisation, had one or more of the following?</p><ul class="govuk-list govuk-list--bullet"><li>Un-discharged bankruptcy</li><li>Composition with creditors</li><li>Any form of dispute</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-12-167';
 INSERT INTO Assets
@@ -1426,7 +1426,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-15-202';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-15-202', '', '<p class="govuk-body">Has any director, or any other person with significant control of your organisation, been removed from the charities commission or appear on the register of removed trustees?</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-1-PG-15-202', '', '<p class="govuk-body">Have any directors, or any other person with significant control of your organisation, been removed from the charities commission or appear on the register of removed trustees?</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-15-203';
 INSERT INTO Assets
@@ -1666,13 +1666,13 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-18-W_DEL-04.1-242';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-18-W_DEL-04.1-242', '', 'When will you be ready to do your first assessments?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-18-W_DEL-04.1-242', '', 'When will you be ready to do your first assessment?', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-18-W_DEL-04.1-243';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-18-W_DEL-04.1-243', '', 'When will you be ready to do your first assessments?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-18-W_DEL-04.1-243', '', 'When will you be ready to do your first assessment?', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-18-W_DEL-04.1-244';
 INSERT INTO Assets
@@ -1822,7 +1822,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-09-268';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-09-268', '', '<p class="govuk-body">Has any person of significant control (PSC) in the last 5 years, been convicted of:</p><ul class="govuk-list govuk-list--bullet"><li>any offence under sections 44 to 46 of the Serious Crime Act 2007 which relates to an offence covered by subparagraph (f)</li><li>conspiracy within the meaning of section 1 or 1A of the Criminal Law Act 1977</li><li>conspiracy within article 9 or 9A of the criminal attempts and conspiracy (Northern Ireland) order 1983, relating to participation in a criminal organisation</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-09-268', '', '<p class="govuk-body">Has any person of significant control (PSC) in the last 5 years been convicted of:</p><ul class="govuk-list govuk-list--bullet"><li>any offence under sections 44 to 46 of the Serious Crime Act 2007 which relates to an offence covered by subparagraph (f)</li><li>conspiracy within the meaning of section 1 or 1A of the Criminal Law Act 1977</li><li>conspiracy within article 9 or 9A of the criminal attempts and conspiracy (Northern Ireland) order 1983, relating to participation in a criminal organisation</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-10-269';
 INSERT INTO Assets
@@ -1846,7 +1846,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-10-272';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-10-272', '', '<p class="govuk-body">Has any person of significant control (PSC) in the last 5 years, been convicted of fraud affecting European communities, including:</p><ul class="govuk-list govuk-list--bullet"><li>the common law offence of cheating the Revenue (HMRC)</li><li>the common law offence of conspiracy to defraud</li><li>fraud or theft within the meaning of the Theft Act 1968, the Theft Act (Northern Ireland) 1969, the Theft Act 1978 or the Theft (Northern Ireland) Order 1978</li><li>fraudulent trading within the meaning of section 458 of the Companies Act 1985, article 451 of the Companies (Northern Ireland) Order 1986 or section 993 of the Companies Act 2006</li><li>fraudulent evasion within the meaning of section 170 of the Customs and Excise Management Act 1979 or section 72 of the Value Added Tax Act 1994</li><li>an offence in connection with taxation in the European Union within the meaning of section 71 of the Criminal Justice Act 1993</li><li>destroying, defacing or concealing of documents or procuring the execution of a valuable security within the meaning of section 20 of the Theft Act 1968 or section 19 of the Theft Act (Northern Ireland) 1969</li><li>fraud within the meaning of section 2, 3 or 4 of the Fraud Act 2006</li><li>the possession of articles for use in frauds within the meaning of section 6 of the Fraud Act 2006, or the making, adapting, supplying or offering to supply articles for use in frauds within the meaning of section 7 of that Act</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-10-272', '', '<p class="govuk-body">Has any person of significant control (PSC) in the last 5 years been convicted of fraud affecting European communities, including:</p><ul class="govuk-list govuk-list--bullet"><li>the common law offence of cheating the Revenue (HMRC)</li><li>the common law offence of conspiracy to defraud</li><li>fraud or theft within the meaning of the Theft Act 1968, the Theft Act (Northern Ireland) 1969, the Theft Act 1978 or the Theft (Northern Ireland) Order 1978</li><li>fraudulent trading within the meaning of section 458 of the Companies Act 1985, article 451 of the Companies (Northern Ireland) Order 1986 or section 993 of the Companies Act 2006</li><li>fraudulent evasion within the meaning of section 170 of the Customs and Excise Management Act 1979 or section 72 of the Value Added Tax Act 1994</li><li>an offence in connection with taxation in the European Union within the meaning of section 71 of the Criminal Justice Act 1993</li><li>destroying, defacing or concealing of documents or procuring the execution of a valuable security within the meaning of section 20 of the Theft Act 1968 or section 19 of the Theft Act (Northern Ireland) 1969</li><li>fraud within the meaning of section 2, 3 or 4 of the Fraud Act 2006</li><li>the possession of articles for use in frauds within the meaning of section 6 of the Fraud Act 2006, or the making, adapting, supplying or offering to supply articles for use in frauds within the meaning of section 7 of that Act</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-11-273';
 INSERT INTO Assets
@@ -1894,7 +1894,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-19-M_DEL-12-280';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-12-280', '', '<p class="govuk-body">Has any person of significant control (PSC) in the last 5 years, been convicted of:</p><ul class="govuk-list govuk-list--bullet"><li>money laundering within the meaning of sections 340(11) and 415 of the Proceeds of Crime Act 2002</li><li>an offence in connection with the proceeds of criminal conduct within the meaning of section 93A, 93B or 93C of the Criminal Justice Act 1988 or article 45, 46 or 47 of the Proceeds of Crime (Northern Ireland) Order 1996</li><li>an offence under section 4 of the Asylum and Immigration (Treatment of Claimants etc) Act 2004</li><li>an offence under section 59A of the Sexual Offences Act 2003</li><li>an offence under section 71 of the Coroners and Justice Act 2009</li><li>an offence in connection with the proceeds of drug trafficking within the meaning of section 49, 50 and 51 of the Drug Trafficking Act 1994</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-19-M_DEL-12-280', '', '<p class="govuk-body">Has any person of significant control (PSC) in the last 5 years been convicted of:</p><ul class="govuk-list govuk-list--bullet"><li>money laundering within the meaning of sections 340(11) and 415 of the Proceeds of Crime Act 2002</li><li>an offence in connection with the proceeds of criminal conduct within the meaning of section 93A, 93B or 93C of the Criminal Justice Act 1988 or article 45, 46 or 47 of the Proceeds of Crime (Northern Ireland) Order 1996</li><li>an offence under section 4 of the Asylum and Immigration (Treatment of Claimants etc) Act 2004</li><li>an offence under section 59A of the Sexual Offences Act 2003</li><li>an offence under section 71 of the Coroners and Justice Act 2009</li><li>an offence in connection with the proceeds of drug trafficking within the meaning of section 49, 50 and 51 of the Drug Trafficking Act 1994</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-281';
 INSERT INTO Assets
@@ -1954,7 +1954,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-13.1-290';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-13.1-290', '', 'Provide details whether you''ve paid, or have entered into a binding arrangement with a view to paying, including, where applicable, any accrued interest and/or fines.', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-13.1-290', '', 'Provide details whether you''ve paid, or have entered into a binding arrangement with a view to paying, including, where applicable, any accrued interest and/or fines', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-13.1-291';
 INSERT INTO Assets
@@ -1991,7 +1991,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20-D_DEL-14-296';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-14-296', '', '<p class="govuk-body">In the past 3 years has your organisation or partner organisations been:</p><ul class="govuk-list govuk-list--bullet"><li>made bankrupt</li><li>subject of insolvency</li><li>winding-up proceedings</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-20-D_DEL-14-296', '', '<p class="govuk-body">In the past 3 years has your organisation or partner organisation:</p><ul class="govuk-list govuk-list--bullet"><li>been made bankrupt</li><li>been the subject of insolvency</li><li>started winding-up proceedings</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-20.1-297';
 INSERT INTO Assets
@@ -2159,7 +2159,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-21-324';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-21-324', '', '<p class="govuk-body">Confirm whether your organisation or any of your partner organisations is in:</p><ul class="govuk-list govuk-list--bullet"><li>voluntary administration or company voluntary arrangement</li><li>compulsory winding up</li><li>receivership</li><li>composition with creditors</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-21-324', '', '<p class="govuk-body">Confirm whether your organisation or any partner organisation are in:</p><ul class="govuk-list govuk-list--bullet"><li>voluntary administration or company voluntary arrangement</li><li>compulsory winding up</li><li>receivership</li><li>composition with creditors</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-21.1-325';
 INSERT INTO Assets
@@ -2207,7 +2207,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-22-332';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-22-332', '', '<p class="govuk-body">Has your organisation or partner organisations tax returns on or after the 1 October 2013:</p><ul class="govuk-list govuk-list--bullet"><li>been found to be incorrect as of 1 April 2013</li><li>resulted in a criminal conviction for tax-related offences which are unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-22-332', '', '<p class="govuk-body">Have your organisation or partner organisation''s tax returns on or after the 1 October 2013:</p><ul class="govuk-list govuk-list--bullet"><li>been found to be incorrect as of 1 April 2013</li><li>resulted in a criminal conviction for tax-related offences which are unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-22.1-333';
 INSERT INTO Assets
@@ -2255,7 +2255,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-23-340';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-23-340', '', '<p class="govuk-body">Has your organisation or your partner organisations tax returns between 1 October 2012 and 1 April 2013 been:</p><ul class="govuk-list govuk-list--bullet"><li>successfully challenged by HMRC under the general anti-abuse rule (GAAR) or the Halifax abuse principle</li><li>challenged by a tax authority in the jurisdiction your organisation is based with rules or legislation similar to GAAR or Halifax</li><li>resulted in criminal convictions for tax-related offences which are unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-23-340', '', '<p class="govuk-body">Has your organisation or your partner organisation tax returns between 1 October 2012 and 1 April 2013:</p><ul class="govuk-list govuk-list--bullet"><li>been successfully challenged by HMRC under the general anti-abuse rule (GAAR) or the Halifax abuse principle</li><li>been challenged by a tax authority in the jurisdiction your organisation is based with rules or legislation similar to GAAR or Halifax</li><li>resulted in criminal convictions for tax-related offences which are unspent, or to a civil penalty for fraud or evasion</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-23.1-341';
 INSERT INTO Assets
@@ -2303,7 +2303,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-24-348';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-24-348', '', '<p class="govuk-body">Has your organisation had any contract for the delivery of services withdrawn within the last 3 financial years?</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-24-348', '', '<p class="govuk-body">Has your organisation had any contracts for the delivery of services withdrawn within the last 3 financial years?</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-24.1-349';
 INSERT INTO Assets
@@ -2507,13 +2507,13 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-27-382';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27-382', '', 'Directions and sanctions', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27-382', '', 'Direction and sanctions', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-27-383';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27-383', '', 'Directions and sanctions', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-21-A_DEL-27-383', '', 'Direction and sanctions', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-21-A_DEL-27-384';
 INSERT INTO Assets
@@ -2885,7 +2885,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-01-445';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-01-445', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-01-445', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-01-446';
 INSERT INTO Assets
@@ -2909,7 +2909,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-02-449';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-449', '', 'If you have a parent company, upload your parent company''s statutory accounts.', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-449', '', 'If you have a parent company, upload your parent company''s statutory accounts. The PDF file must be smaller than 5MB.', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-02-450';
 INSERT INTO Assets
@@ -2928,7 +2928,20 @@ INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
   (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-452', '', '', 'Live', GETUTCDATE(), 'Import')
+GO
 
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-23-DT-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-23-DT-1', '', 'Help with accounts', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-23-DB-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-2-PG-23-DB-1', '', '<h3 class="govuk-heading-m">Sole trader and partnerships</h3><p class="govuk-body">Trading for more than 12 months</p><ul class="govuk-list govuk-list--bullet"><li>submit management accounts (profit and loss or income and expenditure account, balance sheet and relevant notes to the accounts)</li></ul><p class="govuk-body">Trading for more than 3 months but less than 12</p><ul class="govuk-list govuk-list--bullet"><li>submit management accounts and a forecast for your first 12 months of trading</li></ul><h3 class="govuk-heading-m">All other organisations</h3><p class="govuk-body">Trading for more than 12 months</p><ul class="govuk-list govuk-list--bullet"><li>submit your full <a class="govuk-link" target="_blank" href="https://www.gov.uk/annual-accounts">statutory accounts</a> including notes</li></ul><p class="govuk-body">Trading for more than 3 months but less than 12</p><ul class="govuk-list govuk-list--bullet"><li>submit management accounts and a forecast for your first 12 months of trading</li></ul><h3 class="govuk-heading-m">Subsidiary organisation</h3><p class="govuk-body">Trading for more than 12 months</p><ul class="govuk-list govuk-list--bullet"><li>submit your parent company''s statutory accounts and your statutory accounts</li></ul><p class="govuk-body">Trading for more than 3 months but less than 12</p><ul class="govuk-list govuk-list--bullet"><li>submit your parent company''s statutory accounts, your management accounts and a forecast for your first 12 months of trading</li></ul>', 'Live', GETUTCDATE(), 'Import')
 GO
 
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-15-LT-1';
@@ -3057,7 +3070,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-2-PG-208-LT-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-2-PG-208-LT-1', '', 'Directions and sanctions', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-2-PG-208-LT-1', '', 'Direction and sanctions', 'Live', GETUTCDATE(), 'Import')
 GO
 
 
@@ -4700,89 +4713,6 @@ VALUES
       "Next": [
         {
           "Action": "NextPage",
-          "ReturnId": "18",
-          "Condition": null,
-          "ConditionMet": false
-        }
-      ],
-      "Complete": false,
-      "AllowMultipleAnswers": false,
-      "Order": null,
-      "Active": true,
-      "Visible": true,
-      "Feedback": null,
-      "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
-      "BodyText": "SQ-1-SE-2-PG-15-214"
-    },
-    {
-      "PageId": "18",
-      "SequenceId": "1",
-      "SectionId": "2",
-      "Title": "SQ-1-SE-2-PG-18-233",
-      "LinkTitle": "SQ-1-SE-2-PG-18-LT-1",
-      "InfoText": "SQ-1-SE-2-PG-18-235",
-      "Questions": [
-        {
-          "QuestionId": "W_DEL-04",
-          "Label": "SQ-1-SE-2-PG-18-W_DEL-04-238",
-          "ShortLabel": "SQ-1-SE-2-PG-18-W_DEL-04-239",
-          "QuestionBodyText": "SQ-1-SE-2-PG-18-W_DEL-04-240",
-          "Hint": "SQ-1-SE-2-PG-18-W_DEL-04-237",
-          "Input": {
-            "Type": "ComplexRadio",
-            "Options": [
-              {
-                "Label": "Yes",
-                "Value": "Yes",
-                "FurtherQuestions": null
-              },
-              {
-                "Label": "No",
-                "Value": "No",
-                "FurtherQuestions": [
-                  {
-                    "QuestionId": "W_DEL-04.1",
-                    "Label": "SQ-1-SE-2-PG-18-W_DEL-04.1-242",
-                    "ShortLabel": "SQ-1-SE-2-PG-18-W_DEL-04.1-243",
-                    "Hint": "SQ-1-SE-2-PG-18-W_DEL-04.1-241",
-                    "Input": {
-                      "Type": "Date",
-                      "Options": null,
-                      "Validations": [
-                        {
-                          "Name": "Required",
-                          "Value": null,
-                          "ErrorMessage": "Enter a date"
-                        },
-                        {
-                          "Name":"Date",
-                          "Value":"",
-                          "ErrorMessage": "Date must be correct"
-                        }
-                      ]
-                    },
-                    "Order": null,
-                    "QuestionBodyText": "SQ-1-SE-2-PG-18-W_DEL-04.1-244"
-                  }
-                ]
-              }
-            ],
-            "Validations": [
-              {
-                "Name": "Required",
-                "Value": null,
-                "ErrorMessage": "Select yes if you can start an end-point assessment on the day you join the register"
-              }
-            ]
-          },
-          "Order": null
-        }
-      ],
-      "PageOfAnswers": [],
-      "Next": [
-        {
-          "Action": "NextPage",
           "ReturnId": "193",
           "Condition": null,
           "ConditionMet": false
@@ -4796,7 +4726,7 @@ VALUES
       "Feedback": null,
       "HasFeedback": false,
       "NotRequiredOrgTypes": [],
-      "BodyText": "SQ-1-SE-2-PG-18-234"
+      "BodyText": "SQ-1-SE-2-PG-15-214"
     },
 	  {
       "PageId": "193",
@@ -6404,6 +6334,10 @@ VALUES
       "Title": "SQ-1-SE-3-PG-23-441",
       "LinkTitle": "SQ-1-SE-3-PG-23-444",
       "InfoText": "SQ-1-SE-3-PG-23-443",
+      "Details": {
+        "Title": "SQ-1-SE-2-PG-23-DT-1",
+        "Body": "SQ-1-SE-2-PG-23-DB-1"
+      },
       "Questions": [
         {
           "QuestionId": "FHA-01",
@@ -6832,7 +6766,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-56-LT-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-56-LT-1', '', 'Collation & confirmation of assessment outcomes', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-56-LT-1', '', 'Collation and confirmation of assessment outcomes', 'Live', GETUTCDATE(), 'Import')
 
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-57-LT-1';
@@ -6906,7 +6840,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-02-H-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-02-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-02-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 3
 GO
@@ -6934,7 +6868,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-03-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-03-H-1', '', 'If you are providing any form of training or consultancy, you must have public liability insurance.', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-03-H-1', '', 'If you are providing any form of training or consultancy, you must have public liability insurance. The PDF file must be smaller than 5MB.', 'Live', GETUTCDATE(), 'Import')
 
 
 -- page 24 question 4
@@ -6963,7 +6897,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-04-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-04-H-1', '', 'If you are providing any form of training or consultancy, you must have professional indemnity insurance.', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-04-H-1', '', 'If you are providing any form of training or consultancy, you must have professional indemnity insurance. The PDF file must be smaller than 5MB.', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 5
 GO
@@ -6991,7 +6925,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-05-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-05-H-1', '', 'If you have any employees, you must have employers liability insurance. ', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-05-H-1', '', 'If you have any employees, you must have employers liability insurance. The PDF file must be smaller than 5MB.', 'Live', GETUTCDATE(), 'Import')
 
   -- page 24 question 6
 GO
@@ -7019,7 +6953,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-06-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-06-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-06-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 7
 GO
@@ -7041,13 +6975,13 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-07-QB-1';   -- Row P
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-07-QB-1', '','<p class="govuk-body">Upload your PDF conflict of interest policy document</p>', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-07-QB-1', '','<p class="govuk-body">Upload a PDF of your prevent agenda policy</p>', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-07-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-07-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-07-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
   -- page 24 question 8
 GO
@@ -7075,7 +7009,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-08-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-08-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-08-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 9
 GO
@@ -7103,7 +7037,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-09-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-09-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-09-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 10
 GO
@@ -7131,7 +7065,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-10-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-10-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-10-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 11
 GO
@@ -7159,7 +7093,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-11-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-11-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-11-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
   -- page 24 question 12
 GO
@@ -7187,7 +7121,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-12-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-12-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-12-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
   -- page 24 question 13
 GO
@@ -7215,7 +7149,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-13-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-13-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-13-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
   
 
   -- page 24 question 14
@@ -7367,7 +7301,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-26-CC-21-L-1';  -- Row L
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-26-CC-21-L-1', '', 'What''s the volume of end-point assessments you can deliver?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-26-CC-21-L-1', '', 'How many end-point assessments do you expect to conduct annually?', 'Live', GETUTCDATE(), 'Import')
 
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-26-CC-21-SL-1'; -- Row J
@@ -7439,7 +7373,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-27-CC-23-QB-1';   -- Row P
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-27-CC-23-QB-1', '',N'<p class="govuk-body">All assessors must be qualified to undertake assessments in line with the requirements laid out in the assessment plan.</p><p class="govuk-body">They must have expertise and experience in designing and developing assessment products and tools where this is a requirement of the assessment plan</p>',  'Live', GETUTCDATE(), 'I	mport')
+  (NEWID(), 'SQ-2-SE-4-PG-27-CC-23-QB-1', '',N'<p class="govuk-body">All assessors must be qualified to undertake assessments in line with the requirements laid out in the assessment plan.</p><p class="govuk-body">They must have expertise and experience in designing and developing assessment products and tools where this is a requirement of the assessment plan.</p>',  'Live', GETUTCDATE(), 'I	mport')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-27-CC-23-H-1';   -- Row AA
 INSERT INTO Assets
@@ -7468,7 +7402,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-27-CC-24-QB-1';   -- Row P
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-27-CC-24-QB-1', '',N'<p class="govuk-body">You need to give examples of how, when and where the assessor has demonstrated their capability. Assessors must have current and relevant occupational and assessment experience. Give details, evidence and context for this experience of current and future assessors.</p>',  'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-27-CC-24-QB-1', '',N'<p class="govuk-body">You need to give examples of how, when and where the assessor have demonstrated their capability. Assessors must have current and relevant occupational and assessment experience. Give details, evidence and context of this experience for all assessors.</p>',  'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-27-CC-24-H-1';   -- Row AA
 INSERT INTO Assets
@@ -7510,7 +7444,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-26-L-1';  -- Row L
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-28-CC-26-L-1', '', 'How will you conduct an end-point assessment for this standard?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-26-L-1', '', 'How will you deliver an end-point assessment for this standard?', 'Live', GETUTCDATE(), 'Import')
 
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-26-SL-1'; -- Row J
@@ -7701,7 +7635,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-32-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-28-CC-32-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-32-H-1', '', 'As a minimum this should cover where the assessment will take place, how long you expect it to take and who will be doing the assessment?', 'Live', GETUTCDATE(), 'Import')
 
   -- page 28 question 33
 GO
@@ -7880,14 +7814,14 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-29-CC-38-SL-1'; -- Row J
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-29-CC-38-SL-1', '', 'Collation & confirmation of assessment outcomes'	,'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-29-CC-38-SL-1', '', 'Collation and confirmation of assessment outcomes'	,'Live', GETUTCDATE(), 'Import')
 
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-29-CC-38-L-1';  -- Row L
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-29-CC-38-L-1', '', 'Collation & confirmation of assessment outcomes', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-29-CC-38-L-1', '', 'Collation and confirmation of assessment outcomes', 'Live', GETUTCDATE(), 'Import')
 
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-29-CC-38-QB-1';   -- Row P
@@ -8118,7 +8052,7 @@ VALUES
         "HasFeedback": false,
         "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
-      },
+      },	  
 	   {
         "PageId": "27",
         "SequenceId": "2",
@@ -8656,6 +8590,11 @@ VALUES
                   "Name": "Required",
                   "Value": null,
                   "ErrorMessage": "Enter how you continuously improve the quality of your assessment practice"
+                },
+                {
+                  "Name": "MaxWordCount",
+                  "Value": 500,
+                  "ErrorMessage": "How you continuously improve the quality of your assessment practice must be 500 words or less"
                 }
               ]
             },
@@ -8703,6 +8642,11 @@ VALUES
                           "Name": "Required",
                           "Value": null,
                           "ErrorMessage": "Enter your evidence of engagement with trailblazers and employers"
+                        },
+                        {
+                          "Name": "MaxWordCount",
+                          "Value": 500,
+                          "ErrorMessage": "Evidence of engagement with trailblazers and employers must be 500 words or less"
                         }
                       ]
             },
@@ -8750,6 +8694,11 @@ VALUES
                           "Name": "Required",
                           "Value": null,
                           "ErrorMessage": "Enter details of membership to professional organisations"
+                        },
+                        {
+                          "Name": "MaxWordCount",
+                          "Value": 500,
+                          "ErrorMessage": "Details of membership to professional organisations must be 500 words or less"
                         }
                       ]
             },
@@ -8893,6 +8842,11 @@ VALUES
                           "Name": "Required",
                           "Value": null,
                           "ErrorMessage": "Enter how the volume of end-point assessments be achieved"
+                        },
+                        {
+                          "Name": "MaxWordCount",
+                          "Value": 500,
+                          "ErrorMessage": "How the volume of end-point assessments be achieved must be 500 words or less"
                         }
                       ]
             },
@@ -8940,6 +8894,11 @@ VALUES
                           "Name": "Required",
                           "Value": null,
                           "ErrorMessage": "Enter how you recruit and train assessors"
+                        },
+                        {
+                          "Name": "MaxWordCount",
+                          "Value": 500,
+                          "ErrorMessage": "How you recruit and train assessors must be 500 words or less"
                         }
                       ]
             },
@@ -8987,6 +8946,11 @@ VALUES
                           "Name": "Required",
                           "Value": null,
                           "ErrorMessage": "Enter the experience, skills and qualifications your assessors have"
+                        },
+                        {
+                          "Name": "MaxWordCount",
+                          "Value": 500,
+                          "ErrorMessage": "Details of experience, skills and qualifications must be 500 words or less"
                         }
                       ]
             },
@@ -9034,6 +8998,11 @@ VALUES
                           "Name": "Required",
                           "Value": null,
                           "ErrorMessage": "Enter how you ensure your assessors'' occupational expertise is maintained"
+                        },
+                        {
+                          "Name": "MaxWordCount",
+                          "Value": 500,
+                          "ErrorMessage": "How occupational expertise is maintained must be 500 words or less"
                         }
                       ]
             },
@@ -9080,7 +9049,12 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Enter how you will conduct an end-point assessment for this standard"
+                          "ErrorMessage": "Enter how you will deliver an end-point assessment for this standard"
+                        },
+                        {
+                          "Name": "MaxWordCount",
+                          "Value": 500,
+                          "ErrorMessage": "How you will deliver an end-point assessment must be 500 words or less"
                         }
                       ]
             },
@@ -9206,6 +9180,11 @@ VALUES
                   "Name": "Required",
                   "Value": null,
                   "ErrorMessage": "Enter how you will engage with employers and training organisations"
+                },
+                {
+                  "Name": "MaxWordCount",
+                  "Value": 500,
+                  "ErrorMessage": "How you will engage with employers and training organisations must be 500 words or less"
                 }
               ]
             },
@@ -9253,6 +9232,11 @@ VALUES
                   "Name": "Required",
                   "Value": null,
                   "ErrorMessage": "Enter how you will manage any potential conflict of interest"
+                },
+                {
+                  "Name": "MaxWordCount",
+                  "Value": 500,
+                  "ErrorMessage": "How you will manage any potential conflict of interest must be 500 words or less"
                 }
               ]
             },
@@ -9311,8 +9295,8 @@ VALUES
         "PageOfAnswers": [],
         "Next": [
           {
-             "Action": "NextPage",
-            "ReturnId": "50",
+            "Action": "NextPage",
+            "ReturnId": "18",
             "Condition": null,
             "ConditionMet": false
           }
@@ -9326,6 +9310,90 @@ VALUES
         "HasFeedback": false,
         "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-28-BT-1"
+      },
+	  {
+        "PageId": "18",
+        "SequenceId": "2",
+        "SectionId": "4",
+        "Title": "SQ-2-SE-4-PG-28-T-1",
+        "LinkTitle": "SQ-1-SE-2-PG-18-LT-1",
+        "InfoText": "SQ-1-SE-2-PG-18-235",
+        "Questions": [
+          {
+            "QuestionId": "W_DEL-04",
+			"QuestionTag": "effective-from",
+            "Label": "SQ-1-SE-2-PG-18-W_DEL-04-238",
+            "ShortLabel": "SQ-1-SE-2-PG-18-W_DEL-04-239",
+            "QuestionBodyText": "SQ-1-SE-2-PG-18-W_DEL-04-240",
+            "Hint": "SQ-1-SE-2-PG-18-W_DEL-04-237",
+            "Input": {
+              "Type": "ComplexRadio",
+              "Options": [
+                {
+                  "Label": "Yes",
+                  "Value": "Yes",
+                  "FurtherQuestions": null
+                },
+                {
+                  "Label": "No",
+                  "Value": "No",
+                  "FurtherQuestions": [
+                    {
+                      "QuestionId": "W_DEL-04.1",
+                      "Label": "SQ-1-SE-2-PG-18-W_DEL-04.1-242",
+                      "ShortLabel": "SQ-1-SE-2-PG-18-W_DEL-04.1-243",
+                      "Hint": "SQ-1-SE-2-PG-18-W_DEL-04.1-241",
+                      "Input": {
+                        "Type": "Date",
+                        "Options": null,
+                        "Validations": [
+                          {
+                            "Name": "Required",
+                            "Value": null,
+                            "ErrorMessage": "Enter a date"
+                          },
+                          {
+                            "Name":"Date",
+                            "Value":"",
+                            "ErrorMessage": "Date must be correct"
+                          }
+                        ]
+                      },
+                      "Order": null,
+                      "QuestionBodyText": "SQ-1-SE-2-PG-18-W_DEL-04.1-244"
+                    }
+                  ]
+                }
+              ],
+              "Validations": [
+                {
+                  "Name": "Required",
+                  "Value": null,
+                  "ErrorMessage": "Select yes if you can start an end-point assessment on the day you join the register"
+                }
+              ]
+            },
+            "Order": null
+          }
+        ],
+        "PageOfAnswers": [],
+        "Next": [
+          {
+            "Action": "NextPage",
+			"ReturnId": "50",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+        "Complete": false,
+        "AllowMultipleAnswers": false,
+        "Order": null,
+        "Active": true,
+        "Visible": true,
+        "Feedback": null,
+        "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
+        "BodyText": "SQ-1-SE-2-PG-18-234"
       },
 	  {
         "PageId": "50",
@@ -9349,6 +9417,11 @@ VALUES
                   "Name": "Required",
                   "Value": null,
                   "ErrorMessage": "Enter how you will conduct end-point assessments"
+                },
+                {
+                  "Name": "MaxWordCount",
+                  "Value": 500,
+                  "ErrorMessage": "How you will conduct end-point assessments must be 500 words or less"
                 }
               ]
             },
@@ -9396,6 +9469,11 @@ VALUES
                   "Name": "Required",
                   "Value": null,
                   "ErrorMessage": "Enter how you will develop and maintain the required resources and assessment tools"
+                },
+                {
+                  "Name": "MaxWordCount",
+                  "Value": 500,
+                  "ErrorMessage": "How you will develop and maintain the required resources and assessment tools must be 500 words or less"
                 }
               ]
             },
@@ -9443,6 +9521,11 @@ VALUES
                   "Name": "Required",
                   "Value": null,
                   "ErrorMessage": "Enter details of the secure IT infrastructure you will implement"
+                },
+                {
+                  "Name": "MaxWordCount",
+                  "Value": 500,
+                  "ErrorMessage": "Details of the secure IT infrastructure must be 500 words or less"
                 }
               ]
             },
@@ -9490,6 +9573,11 @@ VALUES
                   "Name": "Required",
                   "Value": null,
                   "ErrorMessage": "Enter details of processes in place for administration of assessments"
+                },
+                {
+                  "Name": "MaxWordCount",
+                  "Value": 500,
+                  "ErrorMessage": "Details of processes in place for administration of assessments must be 500 words or less"
                 }
               ]
             },
@@ -9537,6 +9625,11 @@ VALUES
                   "Name": "Required",
                   "Value": null,
                   "ErrorMessage": "Enter the strategies in place for development of assessment products and tools"
+                },
+                {
+                  "Name": "MaxWordCount",
+                  "Value": 500,
+                  "ErrorMessage": "Strategies in place for development of assessment products and tools must be 500 words or less"
                 }
               ]
             },
@@ -9584,6 +9677,11 @@ VALUES
                   "Name": "Required",
                   "Value": null,
                   "ErrorMessage": "Enter the actions you will take and the processes you will implement"
+                },
+                {
+                  "Name": "MaxWordCount",
+                  "Value": 500,
+                  "ErrorMessage": "The actions you will take and the processes you will implement must be 500 words or less"
                 }
               ]
             },
@@ -9631,6 +9729,11 @@ VALUES
                   "Name": "Required",
                   "Value": null,
                   "ErrorMessage": "Enter details of how you collate and confirm assessment outcomes to employers, training providers and apprentices"
+                },
+                {
+                  "Name": "MaxWordCount",
+                  "Value": 500,
+                  "ErrorMessage": "Details of how you collate and confirm assessment outcomes must be 500 words or less"
                 }
               ]
             },
@@ -9678,6 +9781,11 @@ VALUES
                   "Name": "Required",
                   "Value": null,
                   "ErrorMessage": "Enter details of the processes in place for recording and issuing assessment results and certificates"
+                },
+                {
+                  "Name": "MaxWordCount",
+                  "Value": 500,
+                  "ErrorMessage": "Details of the processes in place for recording and issuing assessment results and certificates must be 500 words or less"
                 }
               ]
             },
