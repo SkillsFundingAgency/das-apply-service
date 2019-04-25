@@ -14,21 +14,21 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             _usersApiClient = usersApiClient;
         }
-
-        [HttpPost("/MigrateUsers")]
-        public async Task<IActionResult> MigrateUsers()
-        {
-            await _usersApiClient.MigrateUsers();
-            return Ok();
-        }
-
-
-        [HttpPost("/MigrateContactAndOrgs")]
-        public async Task<IActionResult> MigrateContactAndOrgs([FromBody]MigrateContactOrganisation migrateContactOrganisation)
-        {
-            await _usersApiClient.MigrateContactAndOrgs(migrateContactOrganisation);
-            return Ok();
-        }
+//
+//        [HttpPost("/MigrateUsers")]
+//        public async Task<IActionResult> MigrateUsers()
+//        {
+//            await _usersApiClient.MigrateUsers();
+//            return Ok();
+//        }
+//
+//
+//        [HttpPost("/MigrateContactAndOrgs")]
+//        public async Task<IActionResult> MigrateContactAndOrgs([FromBody]MigrateContactOrganisation migrateContactOrganisation)
+//        {
+//            await _usersApiClient.MigrateContactAndOrgs(migrateContactOrganisation);
+//            return Ok();
+//        }
 
        
     }
