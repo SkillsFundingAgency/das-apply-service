@@ -40,7 +40,7 @@
                         <span id="search-string-error" class="govuk-error-message">Enter 2 or more characters to search</span>
                     }
 
-                    <input class="govuk-input govuk-input--width-20 ui-autocomplete-input @(!ViewData.ModelState.IsValid || showErrors ? "govuk-input--error" : "")" id="standard-name" name="StandardToFind" asp-for="@Model.StandardToFind"type="text" value="" autocomplete="off" maxlength="10000">
+                    <input class="govuk-input govuk-input--width-20 ui-autocomplete-input @(!ViewData.ModelState.IsValid || showErrors ? "govuk-input--error" : "")" id="standard-name" name="StandardToFind" asp-for="@Model.StandardToFind"type="text" value="" autocomplete="off">
                 </div>
 
                 @*
