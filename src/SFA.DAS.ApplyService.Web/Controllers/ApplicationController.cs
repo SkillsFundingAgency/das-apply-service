@@ -22,17 +22,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     {
         private readonly IApplicationApiClient _apiClient;
         private readonly ILogger<ApplicationController> _logger;
+        private readonly IUsersApiClient _usersApiClient;
         private readonly ISessionService _sessionService;
         private readonly IConfigurationService _configService;
         private readonly IUserService _userService;
 
-        public ApplicationController(IApplicationApiClient apiClient, ILogger<ApplicationController> logger, ISessionService sessionService, IConfigurationService configService, IUserService userService)
+        public ApplicationController(IApplicationApiClient apiClient, ILogger<ApplicationController> logger,
+            ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient)
         {
             _apiClient = apiClient;
             _logger = logger;
             _sessionService = sessionService;
             _configService = configService;
             _userService = userService;
+            _usersApiClient = usersApiClient;
         }
 
         [HttpGet("/Applications")]
@@ -44,8 +47,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 RedirectToAction("PostSignIn", "Users");
 
             _logger.LogInformation($"Got LoggedInUser from Session: {user}");
-
-            var userId = User.GetUserId();
+            
+            var applyUser = await _usersApiClient.GetUserBySignInId((await _userService.GetSignInId()).ToString());
+            var userId = applyUser?.Id ?? Guid.Empty;
 
             var org = await _apiClient.GetOrganisationByUserId(userId);
             var applications = await _apiClient.GetApplicationsFor(userId);
@@ -122,11 +126,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> SequenceSignPost(Guid applicationId)
         {
             var application = await _apiClient.GetApplication(applicationId);
-            if(application is null)
-            {
-                return RedirectToAction("Applications");
-            }
-
             if (application.ApplicationStatus == ApplicationStatus.Approved)
             {
                 return View("~/Views/Application/Approved.cshtml", application);
@@ -567,16 +566,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return RedirectToAction("Sequence", new { applicationId });
             }
-
-            if (await _apiClient.Submit(applicationId, sequenceId, User.GetUserId(), User.GetEmail()))
-            {
-                return RedirectToAction("Submitted", new { applicationId });
-            }
-            else
-            {
-                // unable to submit
-                return RedirectToAction("NotSubmitted", new { applicationId });
-            }
+            
+            await _apiClient.Submit(applicationId, sequenceId, User.GetUserId(), User.GetEmail());
+            return RedirectToAction("Submitted", new {applicationId});
         }
 
         [HttpPost("/Application/DeleteAnswer")]
@@ -602,20 +594,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var config = await _configService.GetConfig();
             return View("~/Views/Application/Submitted.cshtml", new SubmittedViewModel
             {
-                ReferenceNumber = application?.ApplicationData?.ReferenceNumber,
-                FeedbackUrl = config.FeedbackUrl,
-                StandardName = application?.ApplicationData?.StandardName
-            });
-        }
-
-        [HttpGet("/Application/{applicationId}/NotSubmitted")]
-        public async Task<IActionResult> NotSubmitted(Guid applicationId)
-        {
-            var application = await _apiClient.GetApplication(applicationId);
-            var config = await _configService.GetConfig();
-            return View("~/Views/Application/NotSubmitted.cshtml", new SubmittedViewModel
-            {
-                ReferenceNumber = application?.ApplicationData?.ReferenceNumber,
+                ReferenceNumber = application.ApplicationData.ReferenceNumber,
                 FeedbackUrl = config.FeedbackUrl,
                 StandardName = application?.ApplicationData?.StandardName
             });
