@@ -57,7 +57,7 @@
                 }
             </ol>
 
-            @if (Model.Sections.All(m => m.QnAData.RequestedFeedbackAnswered ?? true))
+            @if (Model.Sections.All(m => m.QnAData.RequestedFeedbackAnswered ?? m.QnAData.Pages.All(p => p.AllFeedbackIsCompleted)))
             {
                 <div>
                     <form asp-action="Submit" asp-controller="Application">
