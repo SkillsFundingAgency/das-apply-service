@@ -12,7 +12,7 @@ INSERT INTO Assets
 VALUES
   (NEWID(), 'SQ-1-SE-1-PG-1-2', '', '', 'Live', GETUTCDATE(), 'Import')
 GO
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-1-3'; 
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-1-3';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES

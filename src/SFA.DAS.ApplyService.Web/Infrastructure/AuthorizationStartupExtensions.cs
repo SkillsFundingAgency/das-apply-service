@@ -84,17 +84,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                             var user = await client.GetUserBySignInId(signInId);
                             if (user != null)
                             {
-                                if (user.Status == "Deleted")
-                                {
-                                    // Redirect to access denied page. 
-                                    context.Response.Redirect("/Home/AccessDenied");
-                                    context.HandleResponse();
-                                }
-                                
                                 var identity = new ClaimsIdentity(new List<Claim>(){new Claim("UserId", user.Id.ToString())});                      
                                 context.Principal.AddIdentity(identity);   
                             }
-                            
                         },
                         
                         // Sometimes the auth flow fails. The most commonly observed causes for this are
