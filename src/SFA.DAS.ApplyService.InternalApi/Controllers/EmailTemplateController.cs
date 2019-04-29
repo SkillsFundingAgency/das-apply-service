@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Email.GetEmailTemplate;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
     [Route("emailTemplates/")]
+    [Authorize]
     public class EmailTemplateController : Controller
     {
         private readonly IMediator _mediator;

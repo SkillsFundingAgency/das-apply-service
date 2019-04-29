@@ -18,9 +18,11 @@ using SFA.DAS.ApplyService.InternalApi.Types;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
+    [Authorize]    
     public class ApplicationController : Controller
     {
         private readonly IMediator _mediator;
