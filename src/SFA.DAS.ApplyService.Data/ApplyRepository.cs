@@ -478,7 +478,7 @@ namespace SFA.DAS.ApplyService.Data
                                 CASE WHEN seq.SequenceId = 1 THEN NULL
 		                             ELSE JSON_VALUE(appl.ApplicationData, '$.StandardName')
                                 END As StandardName,
-                                CASE WHEN seq.SequenceId = ` THEN NULL
+                                CASE WHEN seq.SequenceId = 1 THEN NULL
 		                             ELSE JSON_VALUE(appl.ApplicationData, '$.StandardCode')
                                 END As StandardCode,
                                 CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.LatestInitSubmissionDate')
