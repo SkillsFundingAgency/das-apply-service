@@ -15,7 +15,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
         private readonly List<string> _controllersThatDoNotRequireAuthorize = new List<string>()
         {
-            "PingController", "AccountController", "HomeController", "UsersController", "MigrateUsersController"
+            "PingController", "AccountController", "HomeController", "UsersController"
         };
 
         [Test]
