@@ -117,12 +117,10 @@
         </div>
     </div>
     
-
-
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-
-            <form method="post" asp-action="SaveAnswersMulti" asp-controller="Application" novalidate enctype="multipart/form-data">
+            @* no action is specified for the form, post back to the get url to preserve the page hierarchy parameters *@
+            <form method="post" novalidate enctype="multipart/form-data">
                 <input type="hidden" id="RedirectAction" name="RedirectAction" value="@Model.RedirectAction" />
                 @if (Model.Questions.Count() == 1)
                 {
@@ -185,6 +183,7 @@
                         </div>
                     }
                 }
+
                 <div class="govuk-form-group">
                     <button type="submit" class="govuk-button govuk-button--looks-like-link" name="__formAction" value="Add">Save and add another</button>
                 </div>

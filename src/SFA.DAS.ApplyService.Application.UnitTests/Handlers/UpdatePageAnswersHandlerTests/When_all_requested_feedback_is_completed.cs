@@ -60,7 +60,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
                 new List<Answer>()
                 {
                     new Answer() {QuestionId = "Q1", Value = "QuestionAnswer"}
-                }), new CancellationToken()).Wait();
+                },
+                true), new CancellationToken()).Wait();
 
 
             ApplyRepository.Verify(r => r.SaveSection(It.Is<ApplicationSection>(section => section.QnAData.RequestedFeedbackAnswered.Value), UserId));

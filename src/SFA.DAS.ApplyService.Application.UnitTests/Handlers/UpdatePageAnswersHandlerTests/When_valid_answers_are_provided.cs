@@ -19,7 +19,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
                 new List<Answer>()
                 {
                     new Answer() {QuestionId = "Q1", Value = "QuestionAnswer"}
-                }), new CancellationToken()).Wait();
+                },
+                true), new CancellationToken()).Wait();
 
 
             ApplyRepository.Verify(r => r.SaveSection(It.Is<ApplicationSection>(section => section.QnAData.Pages[0].PageOfAnswers[0].Answers[0].QuestionId == "Q1"
@@ -33,7 +34,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
                 new List<Answer>()
                 {
                     new Answer() {QuestionId = "Q1", Value = "QuestionAnswer"}
-                }), new CancellationToken()).Result;
+                },
+                false), new CancellationToken()).Result;
 
             result.Page.Next[0].ConditionMet.Should().BeTrue();
             result.Page.Next[0].Action.Should().Be("NextPage");
@@ -55,7 +57,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
                 new List<Answer>()
                 {
                     answer
-                }), new CancellationToken()).Wait();
+                },
+                false), new CancellationToken()).Wait();
 
             ValidatorFactory.Verify(v=>v.Build(It.Is<Question>(question => question.QuestionId == "Q1")));
             validator.Verify(v => v.Validate(It.Is<Question>(question => question.QuestionId == "Q1"), answer));
