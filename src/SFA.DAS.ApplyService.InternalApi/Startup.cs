@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -89,7 +90,14 @@ namespace SFA.DAS.ApplyService.InternalApi
                 options.RequestCultureProviders.Clear();
             });
             
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+            
+            IMvcBuilder mvcBuilder;
+            if (_env.IsDevelopment())
+                mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
+            else
+                mvcBuilder = services.AddMvc();
+
+            mvcBuilder.SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
             
             services.AddDistributedMemoryCache();
