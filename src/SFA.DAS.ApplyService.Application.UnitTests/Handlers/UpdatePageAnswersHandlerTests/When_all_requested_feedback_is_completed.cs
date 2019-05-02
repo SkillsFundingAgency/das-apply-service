@@ -10,9 +10,11 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
 {
     public class When_all_requested_feedback_is_completed : UpdatePageAnswersHandlerTestBase
     {
-        [SetUp]
-        public void SetupFeedback()
+        public override void Arrange()
         {
+            base.Arrange();
+
+            // the QnAData is replaced for these tests
             ApplyRepository.Setup(r => r.GetSection(ApplicationId, 1, 1, UserId)).ReturnsAsync(new ApplicationSection()
             {
                 QnAData = new QnAData()
@@ -51,6 +53,10 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
                     }
                 }
             });
+
+            AnswerQ1 = new Answer() { QuestionId = "Q1", Value = "QuestionAnswer" };
+
+            Validator.Setup(v => v.Validate(It.IsAny<Question>(), It.Is<Answer>(p => p.QuestionId == AnswerQ1.QuestionId))).Returns(new List<KeyValuePair<string, string>>());
         }
 
         [Test]
@@ -59,7 +65,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
             Handler.Handle(new UpdatePageAnswersRequest(ApplicationId, UserId, 1, 1, "1",
                 new List<Answer>()
                 {
-                    new Answer() {QuestionId = "Q1", Value = "QuestionAnswer"}
+                    AnswerQ1
                 },
                 true), new CancellationToken()).Wait();
 
