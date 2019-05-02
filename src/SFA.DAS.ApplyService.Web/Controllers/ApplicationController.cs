@@ -303,17 +303,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 question.ShortLabel = question.Label?.Replace($"[{placeholderString}]", standardName);
             }     
          }
-
-        /// <summary>
-        /// Checks if answers must be validated
-        /// </summary>
-        /// <param name="applicationId">The application identifier.</param>
-        /// <param name="sequenceId">The sequence identifier.</param>
-        /// <param name="sectionId">The section identifier.</param>
-        /// <param name="pageId">The page identifier.</param>
-        /// <param name="answers">The answers.</param>
-        /// <param name="inputEnteredRegex">The input entered regex which determines if an answer has been entered.</param>
-        /// <returns>True when any answer has been entered or no previous answers have been entered for a multi answer page; False otherwise.</returns>
+       
         private async Task<bool> CheckIfAnswersMustBeValidated(Guid applicationId, int sequenceId, int sectionId,
             string pageId, List<Answer> answers, Regex inputEnteredRegex)
         {
