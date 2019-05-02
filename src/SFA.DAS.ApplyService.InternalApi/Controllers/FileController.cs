@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.DeleteFile;
 using SFA.DAS.ApplyService.Application.Apply.Download;
@@ -9,7 +8,6 @@ using SFA.DAS.ApplyService.Application.Apply.Upload;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
-    [Authorize]
     public class FileController : Controller
     {
         private readonly IMediator _mediator;

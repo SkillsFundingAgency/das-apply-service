@@ -9,11 +9,9 @@ using SFA.DAS.ApplyService.Application.Organisations.UpdateOrganisation;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
-    [Authorize]
     [Route("organisations/")]
     public class OrganisationController : Controller
     {
