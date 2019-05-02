@@ -7,12 +7,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.ApplyService.InternalApi.Models.AssessorService;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
-    [Authorize]
     public class OrganisationSearchController : Controller
     {
         private readonly ILogger<OrganisationSearchController> _logger;
