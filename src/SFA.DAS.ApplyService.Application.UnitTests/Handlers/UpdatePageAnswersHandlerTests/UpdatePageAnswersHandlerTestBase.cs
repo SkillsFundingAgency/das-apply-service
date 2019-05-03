@@ -43,7 +43,9 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
                                     Input = new Input {Type = "Text"}
                                 }
                             },
-                            PageOfAnswers = new List<PageOfAnswers>(),
+                            PageOfAnswers = new List<PageOfAnswers> {
+                                new PageOfAnswers { Answers = new List<Answer> { new Answer { QuestionId = "Q1", Value = "" } }  }
+                            },
                             Next = new List<Next>()
                             {
                                 new Next(){Action = "NextPage", ReturnId = "2"}
