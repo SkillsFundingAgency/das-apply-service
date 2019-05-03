@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Validation
@@ -29,10 +30,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
                 return errorMessages;
             }
 
-
-            if (DateTime.TryParse($"{day}/{month}/{year}", out _)) return errorMessages;
-            
-            errorMessages.Add(new KeyValuePair<string, string>(question.QuestionId, ValidationDefinition.ErrorMessage));
+            var formatStrings = new string[] { "d/M/yy", "dd/M/yyyy", "d/MM/yy", "d/MM/yyyy", "dd/M/yy", "dd/M/yyyy", "dd/MM/yy", "dd/MM/yyyy" };
+            if (!DateTime.TryParseExact($"{day}/{month}/{year}", formatStrings, null, DateTimeStyles.None, out _))
+            {
+                errorMessages.Add(new KeyValuePair<string, string>(question.QuestionId, ValidationDefinition.ErrorMessage));
+            }
+ 
             return errorMessages;
         }
     }
