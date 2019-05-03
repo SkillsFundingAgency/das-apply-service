@@ -194,7 +194,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
         List<KeyValuePair<string, string>> validationErrors,
         PageOfAnswers pageAnswers, List<PageOfAnswers> pagePageOfAnswers)
     {
-
       if (question.Input.Type == "FileUpload")
       {
         var answer = request.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
@@ -225,6 +224,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
       else
       {
         var answer = request.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
+        var existingAnswer = pagePageOfAnswers.SelectMany(poa => poa.Answers).FirstOrDefault(a => a.QuestionId == question.QuestionId);
+
+        if (existingAnswer?.Value == answer?.Value)
+        {
+            validationPassed = false;
+            validationErrors.Add(new KeyValuePair<string, string>(question.QuestionId, "Unable to save as you have not updated your answer"));
+        }
 
         var validators = _validatorFactory.Build(question);
         foreach (var validator in validators)
