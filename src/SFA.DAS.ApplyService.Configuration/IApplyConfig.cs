@@ -23,5 +23,8 @@ namespace SFA.DAS.ApplyService.Configuration
         string FeedbackUrl { get; set; }
         string AssessorServiceBaseUrl { get; set; }
 
+        RoatpApiAuthentication RoatpApiAuthentication { get; set; }
+
+        UkrlpApiAuthentication UkrlpApiAuthentication { get; set; }
     }
 }
