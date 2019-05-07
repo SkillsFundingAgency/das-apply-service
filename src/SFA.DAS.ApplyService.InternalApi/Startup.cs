@@ -116,10 +116,11 @@ namespace SFA.DAS.ApplyService.InternalApi
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-//                app.UseHsts();
-//                app.UseHttpsRedirection();
+                app.UseHsts();
+                app.UseHttpsRedirection();
             }
             app.UseRequestLocalization();
+            app.UseSecurityHeaders();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
