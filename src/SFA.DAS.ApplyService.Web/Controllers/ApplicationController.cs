@@ -571,9 +571,52 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return RedirectToAction("Sequence", new { applicationId });
             }
-            
+
+            var activeSequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
+            var errors = ValidateSubmit(activeSequence);
+            if (errors.Any())
+            {
+                var sequenceVm = new SequenceViewModel(activeSequence, applicationId, errors);
+
+                if (activeSequence.Status == ApplicationSequenceStatus.FeedbackAdded)
+                {
+                    return View("~/Views/Application/Feedback.cshtml", sequenceVm);
+                }
+                else
+                {
+                    return View("~/Views/Application/Sequence.cshtml", sequenceVm);
+                }
+            }
+
             await _apiClient.Submit(applicationId, sequenceId, User.GetUserId(), User.GetEmail());
             return RedirectToAction("Submitted", new {applicationId});
+        }
+
+        private List<ValidationErrorDetail> ValidateSubmit(ApplicationSequence sequence)
+        {
+            var validationErrors = new List<ValidationErrorDetail>();
+
+            if (sequence?.Sections is null)
+            {
+                var validationError = new ValidationErrorDetail(string.Empty, $"Cannot submit empty sequence");
+                validationErrors.Add(validationError);
+            }
+            else
+            {
+                foreach(var sectionQuestionsNotYetCompleted in sequence.Sections.Where(sec => sec.PagesComplete != sec.PagesActive))
+                {
+                    var validationError = new ValidationErrorDetail(sectionQuestionsNotYetCompleted.Id.ToString(), $"You need to complete {sectionQuestionsNotYetCompleted.LinkTitle.ToLower()}");
+                    validationErrors.Add(validationError);
+                }
+
+                foreach(var sectionFeedbackNotYetCompleted in sequence.Sections.Where(sec => sec.QnAData.RequestedFeedbackAnswered is false || sec.QnAData.Pages.Any(p => !p.AllFeedbackIsCompleted)))
+                {
+                    var validationError = new ValidationErrorDetail(sectionFeedbackNotYetCompleted.Id.ToString(), $"You need to complete {sectionFeedbackNotYetCompleted.LinkTitle.ToLower()}");
+                    validationErrors.Add(validationError);
+                }
+            }
+
+            return validationErrors;
         }
 
         [HttpPost("/Application/DeleteAnswer")]
@@ -588,8 +631,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> Feedback(Guid applicationId)
         {
             var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
-
-            return View("~/Views/Application/Feedback.cshtml", sequence);
+            var sequenceVm = new SequenceViewModel(sequence, applicationId, null);
+            return View("~/Views/Application/Feedback.cshtml", sequenceVm);
         }
 
         [HttpGet("/Application/{applicationId}/Submitted")]
