@@ -112,6 +112,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            // ON-1818 do not pre-select OrganisationType
+            // NOTE: ModelState overrides viewModel
+            viewModel.OrganisationType = null;
+            var orgTypeModelState = ModelState[nameof(viewModel.OrganisationType)];
+            if (orgTypeModelState != null)
+            {
+                orgTypeModelState.RawValue = viewModel.OrganisationType;
+                orgTypeModelState.Errors.Clear();
+            }
+
             viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();
             return View(viewModel);
         }
