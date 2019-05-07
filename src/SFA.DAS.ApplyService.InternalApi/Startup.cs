@@ -4,8 +4,10 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Reflection;
+using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -52,6 +54,24 @@ namespace SFA.DAS.ApplyService.InternalApi
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication(o =>
+                {
+                    o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(o =>
+                {
+                    o.Authority = $"https://login.microsoftonline.com/{_applyConfig.ApiAuthentication.TenantId}"; 
+                    o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                    {
+                        RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                        ValidAudiences = new List<string>
+                        {
+                            _applyConfig.ApiAuthentication.Audience,
+                            _applyConfig.ApiAuthentication.ClientId
+                        }
+                    };
+                });    
+            
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
 
             services.AddHttpClient<AssessorServiceApiClient>("AssessorServiceApiClient", config =>

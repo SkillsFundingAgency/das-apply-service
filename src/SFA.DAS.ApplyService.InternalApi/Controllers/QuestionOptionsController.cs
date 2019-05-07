@@ -1,12 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
+    [Authorize]
     public class QuestionOptionsController : Controller
     {
         private readonly AssessorServiceApiClient _assessorServiceApiClient;
