@@ -12,17 +12,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
         {
             var errorMessages = new List<KeyValuePair<string, string>>();
 
-            var dateparts = answer.Value.Split(new[]{","}, StringSplitOptions.RemoveEmptyEntries);
-
-            if (dateparts.Length != 3)
+            var dateParts = answer.Value.Split(new[]{","}, StringSplitOptions.RemoveEmptyEntries);
+            if (dateParts.Length != 3)
             {
                 errorMessages.Add(new KeyValuePair<string, string>(question.QuestionId, ValidationDefinition.ErrorMessage));
                 return errorMessages;
             }
             
-            var day = dateparts[0];
-            var month = dateparts[1];
-            var year = dateparts[2];
+            var day = dateParts[0];
+            var month = dateParts[1];
+            var year = dateParts[2];
 
             if (string.IsNullOrWhiteSpace(day) || string.IsNullOrWhiteSpace(month) || string.IsNullOrWhiteSpace(year))
             {
@@ -30,12 +29,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
                 return errorMessages;
             }
 
-            var formatStrings = new string[] { "d/M/yy", "dd/M/yyyy", "d/MM/yy", "d/MM/yyyy", "dd/M/yy", "dd/M/yyyy", "dd/MM/yy", "dd/MM/yyyy" };
+            var formatStrings = new string[] { "d/M/yyyy" };
             if (!DateTime.TryParseExact($"{day}/{month}/{year}", formatStrings, null, DateTimeStyles.None, out _))
             {
                 errorMessages.Add(new KeyValuePair<string, string>(question.QuestionId, ValidationDefinition.ErrorMessage));
             }
- 
+
             return errorMessages;
         }
     }
