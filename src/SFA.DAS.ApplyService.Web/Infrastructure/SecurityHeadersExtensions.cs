@@ -11,7 +11,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 context.Response.Headers.Add("X-Frame-Options", "SAMEORIGIN");
                 context.Response.Headers.Add("X-XSS-Protection", "1; mode=block");
                 context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-                context.Response.Headers.Add("Content-Security-Policy", "default-src 'self'; font-src *;img-src * data:; script-src *; style-src *;");
+                context.Response.Headers.Add("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline'; font-src 'self' data:;");
                 context.Response.Headers.Add("Referrer-Policy", "strict-origin");
                 await next();
             });
