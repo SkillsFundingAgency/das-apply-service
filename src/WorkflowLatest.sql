@@ -2885,7 +2885,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-01-445';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-01-445', '', 'The PDF file(s) must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-01-445', '', 'You can upload up to 5 PDF files. Each file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-01-446';
 INSERT INTO Assets
@@ -6362,7 +6362,7 @@ VALUES
             ],
             "FileUploadInfo":{
               "NumberOfUploadsRequired": 1,
-              "MaximumNumberOfUploads": 2
+              "MaximumNumberOfUploads": 5
             }
           },
           "Order": null
