@@ -98,11 +98,14 @@ namespace SFA.DAS.ApplyService.Web
             services.AddSession(opt =>
             {
                 opt.IdleTimeout = TimeSpan.FromHours(1);
-                opt.Cookie = new CookieBuilder() {Name = ".Assessors.Session", HttpOnly = true};
+                opt.Cookie = new CookieBuilder()
+                {
+                    Name = ".Assessors.Session",
+                    HttpOnly = true
+                };
             });
             
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Apply.AntiForgery", HttpOnly = true });
-
 
             return ConfigureIOC(services);
         }
