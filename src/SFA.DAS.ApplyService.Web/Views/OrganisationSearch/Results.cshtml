@@ -55,7 +55,7 @@
                         {
                             <tr class="govuk-table__row govuk-table__row--no-top-padding-on-first-child">
                                 <td class="govuk-table__cell govuk-!-padding-bottom-4">
-                                    <form method="post" asp-action="@(result.OrganisationType != null ? "Confirm" : "Type")" asp-controller="OrganisationSearch" novalidate>
+                                    <form method="post" asp-action="@(result.RoEPAOApproved ? "Confirm" : "Type")" asp-controller="OrganisationSearch" novalidate>
                                         <input asp-for="SearchString" type="hidden" />
                                         <input asp-for="Name" value="@result.Name" type="hidden" />
                                         <input asp-for="Ukprn" value="@result.Ukprn" type="hidden" />
