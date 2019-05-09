@@ -44,7 +44,7 @@
                     : errorType === "maxFiles"
                     ? "You have exceeded the maximum number of files"
                     : errorType === "fileSize"
-                    ? "File must be less than 10mb"
+                    ? "File must be less than 10MB"
                     : errorType === "maxTotalFiles"
                     ? "You have exceeded the maximum number of files"
                     : errorType === "sameFilename"
@@ -134,6 +134,7 @@
             });
 
             r.on("fileProgress", function(file, message) {
+                // submitButton.disabled = true;
                 progressBar.uploading(file.progress() * 100);
             });
 
@@ -142,6 +143,7 @@
                     that.uploadedFiles.children.length,
                     r.opts.maxTotalFiles
                 );
+                // submitButton.disabled = false;
                 uploadProgress.style.display = "none";
                 dropText.style.display = "block";
             });

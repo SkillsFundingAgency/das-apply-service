@@ -212,7 +212,7 @@
                 if (Model.Questions.Any(q => q.Type == "FileUpload"))
                 {
                     <form asp-action="NextPage" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId" asp-route-redirectAction="@Model.RedirectAction">
-                        <button type="submit" class="govuk-button">Continue</button>
+                        <button type="submit" class="govuk-button js-file-upload-submit">Continue</button>
                     </form>
                 }
 
