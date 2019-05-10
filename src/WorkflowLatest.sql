@@ -2885,7 +2885,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-01-445';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-01-445', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-01-445', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-01-446';
 INSERT INTO Assets
@@ -2909,7 +2909,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-02-449';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-449', '', 'If you have a parent company, upload your parent company''s statutory accounts.', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-3-PG-23-FHA-02-449', '', 'If you have a parent company, upload your parent company''s statutory accounts. The PDF file must be smaller than 5MB.', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-3-PG-23-FHA-02-450';
 INSERT INTO Assets
@@ -4713,89 +4713,6 @@ VALUES
       "Next": [
         {
           "Action": "NextPage",
-          "ReturnId": "18",
-          "Condition": null,
-          "ConditionMet": false
-        }
-      ],
-      "Complete": false,
-      "AllowMultipleAnswers": false,
-      "Order": null,
-      "Active": true,
-      "Visible": true,
-      "Feedback": null,
-      "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
-      "BodyText": "SQ-1-SE-2-PG-15-214"
-    },
-    {
-      "PageId": "18",
-      "SequenceId": "1",
-      "SectionId": "2",
-      "Title": "SQ-1-SE-2-PG-18-233",
-      "LinkTitle": "SQ-1-SE-2-PG-18-LT-1",
-      "InfoText": "SQ-1-SE-2-PG-18-235",
-      "Questions": [
-        {
-          "QuestionId": "W_DEL-04",
-          "Label": "SQ-1-SE-2-PG-18-W_DEL-04-238",
-          "ShortLabel": "SQ-1-SE-2-PG-18-W_DEL-04-239",
-          "QuestionBodyText": "SQ-1-SE-2-PG-18-W_DEL-04-240",
-          "Hint": "SQ-1-SE-2-PG-18-W_DEL-04-237",
-          "Input": {
-            "Type": "ComplexRadio",
-            "Options": [
-              {
-                "Label": "Yes",
-                "Value": "Yes",
-                "FurtherQuestions": null
-              },
-              {
-                "Label": "No",
-                "Value": "No",
-                "FurtherQuestions": [
-                  {
-                    "QuestionId": "W_DEL-04.1",
-                    "Label": "SQ-1-SE-2-PG-18-W_DEL-04.1-242",
-                    "ShortLabel": "SQ-1-SE-2-PG-18-W_DEL-04.1-243",
-                    "Hint": "SQ-1-SE-2-PG-18-W_DEL-04.1-241",
-                    "Input": {
-                      "Type": "Date",
-                      "Options": null,
-                      "Validations": [
-                        {
-                          "Name": "Required",
-                          "Value": null,
-                          "ErrorMessage": "Enter a date"
-                        },
-                        {
-                          "Name":"Date",
-                          "Value":"",
-                          "ErrorMessage": "Date must be correct"
-                        }
-                      ]
-                    },
-                    "Order": null,
-                    "QuestionBodyText": "SQ-1-SE-2-PG-18-W_DEL-04.1-244"
-                  }
-                ]
-              }
-            ],
-            "Validations": [
-              {
-                "Name": "Required",
-                "Value": null,
-                "ErrorMessage": "Select yes if you can start an end-point assessment on the day you join the register"
-              }
-            ]
-          },
-          "Order": null
-        }
-      ],
-      "PageOfAnswers": [],
-      "Next": [
-        {
-          "Action": "NextPage",
           "ReturnId": "193",
           "Condition": null,
           "ConditionMet": false
@@ -4809,7 +4726,7 @@ VALUES
       "Feedback": null,
       "HasFeedback": false,
       "NotRequiredOrgTypes": [],
-      "BodyText": "SQ-1-SE-2-PG-18-234"
+      "BodyText": "SQ-1-SE-2-PG-15-214"
     },
 	  {
       "PageId": "193",
@@ -6923,7 +6840,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-02-H-1';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-02-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-02-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 3
 GO
@@ -6951,7 +6868,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-03-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-03-H-1', '', 'If you are providing any form of training or consultancy, you must have public liability insurance.', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-03-H-1', '', 'If you are providing any form of training or consultancy, you must have public liability insurance. The PDF file must be smaller than 5MB.', 'Live', GETUTCDATE(), 'Import')
 
 
 -- page 24 question 4
@@ -6980,7 +6897,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-04-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-04-H-1', '', 'If you are providing any form of training or consultancy, you must have professional indemnity insurance.', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-04-H-1', '', 'If you are providing any form of training or consultancy, you must have professional indemnity insurance. The PDF file must be smaller than 5MB.', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 5
 GO
@@ -7008,7 +6925,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-05-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-05-H-1', '', 'If you have any employees, you must have employers liability insurance. ', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-05-H-1', '', 'If you have any employees, you must have employers liability insurance. The PDF file must be smaller than 5MB.', 'Live', GETUTCDATE(), 'Import')
 
   -- page 24 question 6
 GO
@@ -7036,7 +6953,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-06-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-06-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-06-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 7
 GO
@@ -7064,7 +6981,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-07-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-07-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-07-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
   -- page 24 question 8
 GO
@@ -7092,7 +7009,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-08-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-08-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-08-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 9
 GO
@@ -7120,7 +7037,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-09-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-09-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-09-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 10
 GO
@@ -7148,7 +7065,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-10-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-10-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-10-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
 -- page 24 question 11
 GO
@@ -7176,7 +7093,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-11-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-11-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-11-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
   -- page 24 question 12
 GO
@@ -7204,7 +7121,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-12-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-12-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-12-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
 
   -- page 24 question 13
 GO
@@ -7232,7 +7149,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-24-CC-13-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-24-CC-13-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-24-CC-13-H-1', '', 'The PDF file must be smaller than 5MB', 'Live', GETUTCDATE(), 'Import')
   
 
   -- page 24 question 14
@@ -7527,7 +7444,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-26-L-1';  -- Row L
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-28-CC-26-L-1', '', 'How will you conduct an end-point assessment for this standard?', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-26-L-1', '', 'How will you deliver an end-point assessment for this standard?', 'Live', GETUTCDATE(), 'Import')
 
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-26-SL-1'; -- Row J
@@ -7718,7 +7635,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-32-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-28-CC-32-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-32-H-1', '', 'As a minimum this should cover where the assessment will take place, how long you expect it to take and who will be doing the assessment?', 'Live', GETUTCDATE(), 'Import')
 
   -- page 28 question 33
 GO
@@ -8135,7 +8052,7 @@ VALUES
         "HasFeedback": false,
         "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-24-BT-1"
-      },
+      },	  
 	   {
         "PageId": "27",
         "SequenceId": "2",
@@ -8673,6 +8590,11 @@ VALUES
                   "Name": "Required",
                   "Value": null,
                   "ErrorMessage": "Enter how you continuously improve the quality of your assessment practice"
+                },
+                {
+                  "Name": "MaxWordCount",
+                  "Value": 500,
+                  "ErrorMessage": "How you continuously improve the quality of your assessment practice must be 500 words or less"
                 }
               ]
             },
@@ -8720,6 +8642,11 @@ VALUES
                           "Name": "Required",
                           "Value": null,
                           "ErrorMessage": "Enter your evidence of engagement with trailblazers and employers"
+                        },
+                        {
+                          "Name": "MaxWordCount",
+                          "Value": 500,
+                          "ErrorMessage": "Evidence of engagement with trailblazers and employers must be 500 words or less"
                         }
                       ]
             },
@@ -8767,6 +8694,11 @@ VALUES
                           "Name": "Required",
                           "Value": null,
                           "ErrorMessage": "Enter details of membership to professional organisations"
+                        },
+                        {
+                          "Name": "MaxWordCount",
+                          "Value": 500,
+                          "ErrorMessage": "Details of membership to professional organisations must be 500 words or less"
                         }
                       ]
             },
@@ -8910,6 +8842,11 @@ VALUES
                           "Name": "Required",
                           "Value": null,
                           "ErrorMessage": "Enter how the volume of end-point assessments be achieved"
+                        },
+                        {
+                          "Name": "MaxWordCount",
+                          "Value": 500,
+                          "ErrorMessage": "How the volume of end-point assessments be achieved must be 500 words or less"
                         }
                       ]
             },
@@ -8957,6 +8894,11 @@ VALUES
                           "Name": "Required",
                           "Value": null,
                           "ErrorMessage": "Enter how you recruit and train assessors"
+                        },
+                        {
+                          "Name": "MaxWordCount",
+                          "Value": 500,
+                          "ErrorMessage": "How you recruit and train assessors must be 500 words or less"
                         }
                       ]
             },
@@ -9004,6 +8946,11 @@ VALUES
                           "Name": "Required",
                           "Value": null,
                           "ErrorMessage": "Enter the experience, skills and qualifications your assessors have"
+                        },
+                        {
+                          "Name": "MaxWordCount",
+                          "Value": 500,
+                          "ErrorMessage": "Details of experience, skills and qualifications must be 500 words or less"
                         }
                       ]
             },
@@ -9051,6 +8998,11 @@ VALUES
                           "Name": "Required",
                           "Value": null,
                           "ErrorMessage": "Enter how you ensure your assessors'' occupational expertise is maintained"
+                        },
+                        {
+                          "Name": "MaxWordCount",
+                          "Value": 500,
+                          "ErrorMessage": "How occupational expertise is maintained must be 500 words or less"
                         }
                       ]
             },
@@ -9097,7 +9049,12 @@ VALUES
                         {
                           "Name": "Required",
                           "Value": null,
-                          "ErrorMessage": "Enter how you will conduct an end-point assessment for this standard"
+                          "ErrorMessage": "Enter how you will deliver an end-point assessment for this standard"
+                        },
+                        {
+                          "Name": "MaxWordCount",
+                          "Value": 500,
+                          "ErrorMessage": "How you will deliver an end-point assessment must be 500 words or less"
                         }
                       ]
             },
@@ -9223,6 +9180,11 @@ VALUES
                   "Name": "Required",
                   "Value": null,
                   "ErrorMessage": "Enter how you will engage with employers and training organisations"
+                },
+                {
+                  "Name": "MaxWordCount",
+                  "Value": 500,
+                  "ErrorMessage": "How you will engage with employers and training organisations must be 500 words or less"
                 }
               ]
             },
@@ -9270,6 +9232,11 @@ VALUES
                   "Name": "Required",
                   "Value": null,
                   "ErrorMessage": "Enter how you will manage any potential conflict of interest"
+                },
+                {
+                  "Name": "MaxWordCount",
+                  "Value": 500,
+                  "ErrorMessage": "How you will manage any potential conflict of interest must be 500 words or less"
                 }
               ]
             },
@@ -9328,8 +9295,8 @@ VALUES
         "PageOfAnswers": [],
         "Next": [
           {
-             "Action": "NextPage",
-            "ReturnId": "50",
+            "Action": "NextPage",
+            "ReturnId": "18",
             "Condition": null,
             "ConditionMet": false
           }
@@ -9343,6 +9310,90 @@ VALUES
         "HasFeedback": false,
         "NotRequiredOrgTypes": [],
         "BodyText": "SQ-2-SE-4-PG-28-BT-1"
+      },
+	  {
+        "PageId": "18",
+        "SequenceId": "2",
+        "SectionId": "4",
+        "Title": "SQ-2-SE-4-PG-28-T-1",
+        "LinkTitle": "SQ-1-SE-2-PG-18-LT-1",
+        "InfoText": "SQ-1-SE-2-PG-18-235",
+        "Questions": [
+          {
+            "QuestionId": "W_DEL-04",
+			"QuestionTag": "effective-from",
+            "Label": "SQ-1-SE-2-PG-18-W_DEL-04-238",
+            "ShortLabel": "SQ-1-SE-2-PG-18-W_DEL-04-239",
+            "QuestionBodyText": "SQ-1-SE-2-PG-18-W_DEL-04-240",
+            "Hint": "SQ-1-SE-2-PG-18-W_DEL-04-237",
+            "Input": {
+              "Type": "ComplexRadio",
+              "Options": [
+                {
+                  "Label": "Yes",
+                  "Value": "Yes",
+                  "FurtherQuestions": null
+                },
+                {
+                  "Label": "No",
+                  "Value": "No",
+                  "FurtherQuestions": [
+                    {
+                      "QuestionId": "W_DEL-04.1",
+                      "Label": "SQ-1-SE-2-PG-18-W_DEL-04.1-242",
+                      "ShortLabel": "SQ-1-SE-2-PG-18-W_DEL-04.1-243",
+                      "Hint": "SQ-1-SE-2-PG-18-W_DEL-04.1-241",
+                      "Input": {
+                        "Type": "Date",
+                        "Options": null,
+                        "Validations": [
+                          {
+                            "Name": "Required",
+                            "Value": null,
+                            "ErrorMessage": "Enter a date"
+                          },
+                          {
+                            "Name":"Date",
+                            "Value":"",
+                            "ErrorMessage": "Date must be correct"
+                          }
+                        ]
+                      },
+                      "Order": null,
+                      "QuestionBodyText": "SQ-1-SE-2-PG-18-W_DEL-04.1-244"
+                    }
+                  ]
+                }
+              ],
+              "Validations": [
+                {
+                  "Name": "Required",
+                  "Value": null,
+                  "ErrorMessage": "Select yes if you can start an end-point assessment on the day you join the register"
+                }
+              ]
+            },
+            "Order": null
+          }
+        ],
+        "PageOfAnswers": [],
+        "Next": [
+          {
+            "Action": "NextPage",
+			"ReturnId": "50",
+            "Condition": null,
+            "ConditionMet": false
+          }
+        ],
+        "Complete": false,
+        "AllowMultipleAnswers": false,
+        "Order": null,
+        "Active": true,
+        "Visible": true,
+        "Feedback": null,
+        "HasFeedback": false,
+        "NotRequiredOrgTypes": [],
+        "BodyText": "SQ-1-SE-2-PG-18-234"
       },
 	  {
         "PageId": "50",
@@ -9366,6 +9417,11 @@ VALUES
                   "Name": "Required",
                   "Value": null,
                   "ErrorMessage": "Enter how you will conduct end-point assessments"
+                },
+                {
+                  "Name": "MaxWordCount",
+                  "Value": 500,
+                  "ErrorMessage": "How you will conduct end-point assessments must be 500 words or less"
                 }
               ]
             },
@@ -9413,6 +9469,11 @@ VALUES
                   "Name": "Required",
                   "Value": null,
                   "ErrorMessage": "Enter how you will develop and maintain the required resources and assessment tools"
+                },
+                {
+                  "Name": "MaxWordCount",
+                  "Value": 500,
+                  "ErrorMessage": "How you will develop and maintain the required resources and assessment tools must be 500 words or less"
                 }
               ]
             },
@@ -9460,6 +9521,11 @@ VALUES
                   "Name": "Required",
                   "Value": null,
                   "ErrorMessage": "Enter details of the secure IT infrastructure you will implement"
+                },
+                {
+                  "Name": "MaxWordCount",
+                  "Value": 500,
+                  "ErrorMessage": "Details of the secure IT infrastructure must be 500 words or less"
                 }
               ]
             },
@@ -9507,6 +9573,11 @@ VALUES
                   "Name": "Required",
                   "Value": null,
                   "ErrorMessage": "Enter details of processes in place for administration of assessments"
+                },
+                {
+                  "Name": "MaxWordCount",
+                  "Value": 500,
+                  "ErrorMessage": "Details of processes in place for administration of assessments must be 500 words or less"
                 }
               ]
             },
@@ -9554,6 +9625,11 @@ VALUES
                   "Name": "Required",
                   "Value": null,
                   "ErrorMessage": "Enter the strategies in place for development of assessment products and tools"
+                },
+                {
+                  "Name": "MaxWordCount",
+                  "Value": 500,
+                  "ErrorMessage": "Strategies in place for development of assessment products and tools must be 500 words or less"
                 }
               ]
             },
@@ -9601,6 +9677,11 @@ VALUES
                   "Name": "Required",
                   "Value": null,
                   "ErrorMessage": "Enter the actions you will take and the processes you will implement"
+                },
+                {
+                  "Name": "MaxWordCount",
+                  "Value": 500,
+                  "ErrorMessage": "The actions you will take and the processes you will implement must be 500 words or less"
                 }
               ]
             },
@@ -9648,6 +9729,11 @@ VALUES
                   "Name": "Required",
                   "Value": null,
                   "ErrorMessage": "Enter details of how you collate and confirm assessment outcomes to employers, training providers and apprentices"
+                },
+                {
+                  "Name": "MaxWordCount",
+                  "Value": 500,
+                  "ErrorMessage": "Details of how you collate and confirm assessment outcomes must be 500 words or less"
                 }
               ]
             },
@@ -9695,6 +9781,11 @@ VALUES
                   "Name": "Required",
                   "Value": null,
                   "ErrorMessage": "Enter details of the processes in place for recording and issuing assessment results and certificates"
+                },
+                {
+                  "Name": "MaxWordCount",
+                  "Value": 500,
+                  "ErrorMessage": "Details of the processes in place for recording and issuing assessment results and certificates must be 500 words or less"
                 }
               ]
             },

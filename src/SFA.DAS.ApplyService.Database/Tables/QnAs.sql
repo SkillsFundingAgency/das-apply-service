@@ -7,11 +7,11 @@ CREATE TABLE [dbo].[QnAs](
    [Data]	[nvarchar](max)	NULL,	-- The QnA data JSON object, containing structure of workflow and questions
    Status	[nvarchar](	20)	NOT NULL,	-- 'draft' is being created or edited (and cannot be used),  'live' is live , 'deleted' is no longer to be used
    CreatedAt	Datetime2(7)	NOT NULL,	--Date / Time that the record was created
-   CreatedBy	[nvarchar](120)	NOT NULL,	--Username (staff)
+   CreatedBy	[nvarchar](256)	NOT NULL,	--Username (staff)
    UpdatedAt	Datetime2(7)		NULL,	--Date / Time of the last update
-   UpdatedBy	[nvarchar](120)	NULL,	--Username (staff)
+   UpdatedBy	[nvarchar](256)	NULL,	--Username (staff)
    DeletedAt	Datetime2(7)		NULL,	--Date / Time of the soft delete
-   DeletedBy	[nvarchar](120)	NULL	--Username (staff)
+   DeletedBy	[nvarchar](256)	NULL	--Username (staff)
     CONSTRAINT [PK_QnAs] PRIMARY KEY ([Id]),
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO

@@ -6,13 +6,13 @@ CREATE TABLE [dbo].[Entities](
    QnAData	[nvarchar](max)	NOT NULL,	-- QnA Data JSON Object 
    Status	[nvarchar](	20)	NOT NULL,	-- 'new', 'inprogress', 'completed', 'withdrawn', 'deleted' 
    CreatedAt	Datetime2(7)	NOT NULL,	--Date / Time that the record was created
-   CreatedBy	[nvarchar](120)	NOT NULL,	--Username (staff or ApplyContact)
+   CreatedBy	[nvarchar](256)	NOT NULL,	--Username (staff or ApplyContact)
    UpdatedAt	Datetime2(7)		NULL,	--Date / Time of the last update
-   UpdatedBy	[nvarchar](120)	NULL,	--Username (staff or ApplyContact)
+   UpdatedBy	[nvarchar](256)	NULL,	--Username (staff or ApplyContact)
    WithdrawnAt	Datetime2(7)		NULL,	--Date / Time of the Application is withdrawn
-   WithdrawnBy	[nvarchar](120)	NULL,	--Username (staff or ApplyContact)
+   WithdrawnBy	[nvarchar](256)	NULL,	--Username (staff or ApplyContact)
    DeletedAt	Datetime2(7)		NULL,	--Date / Time of the soft delete
-   DeletedBy	[nvarchar](120)	NULL	--Username (staff or ApplyContact)
+   DeletedBy	[nvarchar](256)	NULL	--Username (staff or ApplyContact)
     CONSTRAINT [PK_Entities] PRIMARY KEY ([Id]),
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
