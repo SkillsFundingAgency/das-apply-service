@@ -636,7 +636,7 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') As SubmissionCount,
 	                        CASE WHEN (seq.Status = @sequenceStatusFeedbackAdded) THEN @sequenceStatusFeedbackAdded
                                  WHEN (JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') > 1 AND sec.Status = @financialStatusSubmitted) THEN @sequenceStatusResubmitted
-                                 WHEN (JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') > 1 AND JSON_VALUE(sec.QnAData, '$.RequestedFeedbackAnswered') = 1) THEN @sequenceStatusResubmitted
+                                 WHEN (JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') > 1 AND JSON_VALUE(sec.QnAData, '$.RequestedFeedbackAnswered') = 'true') THEN @sequenceStatusResubmitted
                                  ELSE sec.Status
 	                        END As CurrentStatus
 	                      FROM Applications appl
