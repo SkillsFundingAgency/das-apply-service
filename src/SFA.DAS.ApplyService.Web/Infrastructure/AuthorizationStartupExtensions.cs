@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -83,6 +84,13 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                             var user = await client.GetUserBySignInId(signInId);
                             if (user != null)
                             {
+                                var primaryIdentity = context.Principal.Identities.FirstOrDefault();
+                                if (primaryIdentity != null && string.IsNullOrEmpty(primaryIdentity.Name))
+                                {
+                                    primaryIdentity.AddClaim(new Claim(ClaimTypes.Name, $"{user.GivenNames} {user.FamilyName}"));
+                                    // Note: In future, may want to consider populating the other Claims, such as Email
+                                }
+
                                 var identity = new ClaimsIdentity(new List<Claim>(){new Claim("UserId", user.Id.ToString())});                      
                                 context.Principal.AddIdentity(identity);   
                             }
