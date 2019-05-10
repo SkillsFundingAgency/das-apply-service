@@ -70,18 +70,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> SignOut()
         {
-            if (!string.IsNullOrEmpty(_contextAccessor.HttpContext.User.FindFirstValue("display_name")))
+            _contextAccessor.HttpContext.Session.Clear();
+            foreach (var cookie in _contextAccessor.HttpContext.Request.Cookies.Keys)
             {
-                return Redirect($"{(await _config.GetConfig()).AssessorServiceBaseUrl}/Account/SignOut");
-            }
-            foreach (var cookie in Request.Cookies.Keys)
-            {
-                Response.Cookies.Delete(cookie);
+                _contextAccessor.HttpContext.Response.Cookies.Delete(cookie);
             }
 
-
-            return SignOut("Cookies",
-               "oidc");
+            if (string.IsNullOrEmpty(_contextAccessor.HttpContext.User.FindFirstValue("display_name")))
+                return SignOut("Cookies", "oidc");
+            
+            var assessorServiceBaseUrl = (await _config.GetConfig()).AssessorServiceBaseUrl;
+            return Redirect($"{assessorServiceBaseUrl}/Account/SignOut");
         }
 
         public IActionResult InviteSent()
