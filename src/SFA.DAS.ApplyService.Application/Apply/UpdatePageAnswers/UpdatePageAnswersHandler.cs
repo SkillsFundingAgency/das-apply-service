@@ -108,7 +108,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
       if (!atLeastOneAnswerChanged)
       {
         validationPassed = false;
-        validationErrors.Add(new KeyValuePair<string, string>(page.Questions[0].QuestionId, "Unable to save as you have not updated your answer"));
+        foreach (var question in page.Questions)
+        {
+            validationErrors.Add(new KeyValuePair<string, string>(question.QuestionId, "Unable to save as you have not updated your answer"));
+        }
       }
 
       if (validationPassed)
