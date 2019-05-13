@@ -101,6 +101,8 @@ namespace SFA.DAS.ApplyService.Web
                 opt.Cookie = new CookieBuilder() {Name = ".Assessors.Session", HttpOnly = true};
             });
             
+            services.AddSingleton<Microsoft.AspNetCore.Mvc.ViewFeatures.IHtmlGenerator,CacheOverrideHtmlGenerator>();
+            
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Apply.AntiForgery", HttpOnly = true });
 
 
@@ -172,6 +174,7 @@ namespace SFA.DAS.ApplyService.Web
             app.UseSession();
             app.UseAuthentication();
             app.UseRequestLocalization();
+            app.UseSecurityHeaders();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

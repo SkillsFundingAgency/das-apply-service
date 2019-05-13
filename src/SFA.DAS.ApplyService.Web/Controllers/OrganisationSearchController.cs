@@ -112,6 +112,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            // ON-1818 do not pre-select OrganisationType
+            // NOTE: ModelState overrides viewModel
+            viewModel.OrganisationType = null;
+            var orgTypeModelState = ModelState[nameof(viewModel.OrganisationType)];
+            if (orgTypeModelState != null)
+            {
+                orgTypeModelState.RawValue = viewModel.OrganisationType;
+                orgTypeModelState.Errors.Clear();
+            }
+
             viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();
             return View(viewModel);
         }
@@ -229,7 +239,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 sr.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
 
             // filter organisation type
-            searchResults = searchResults.Where(sr =>
+            searchResults = searchResults.Where(sr => 
+                sr.RoATPApproved ||
                 sr.OrganisationType != null
                     ? sr.OrganisationType.Equals(organisationType, StringComparison.InvariantCultureIgnoreCase)
                     : true);
@@ -246,7 +257,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (organisationSearchResult != null)
             {
-                if (organisationSearchResult.OrganisationType == null)
+                if (organisationSearchResult.RoATPApproved || organisationSearchResult.OrganisationType == null)
                     organisationSearchResult.OrganisationType = organisationType;
             }
 
