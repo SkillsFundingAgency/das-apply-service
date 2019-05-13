@@ -66,6 +66,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
       var validationPassed = true;
       var validationErrors = new List<KeyValuePair<string, string>>();
 
+      var atLeastOneAnswerChanged = page.Questions.Any(q => q.Input.Type == "FileUpload");
+
       foreach (var question in page.Questions)
       {
         validationPassed = ProcessAnswer(request, question, validationPassed, validationErrors, pageAnswers, existingAnswers);
@@ -73,6 +75,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
         // Need to get all answers from Input.Options.FurtherQuestions
 
         var answer = request.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
+        var existingAnswer = existingAnswers.SelectMany(poa => poa.Answers).FirstOrDefault(a => a.QuestionId == question.QuestionId);
+        atLeastOneAnswerChanged = atLeastOneAnswerChanged ? true : existingAnswer?.Value != answer?.Value;
 
         if (question.Input.Options != null)
         {
@@ -82,17 +86,29 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
             {
               if (option.FurtherQuestions != null)
               {
+                var atLeastOneFutherQuestionAnswerChanged = page.Questions.Any(q => q.Input.Type == "FileUpload");
+
                 foreach (var furtherQuestion in option.FurtherQuestions)
                 {
                   //var fq = JsonConvert.DeserializeObject<Question>(furtherQuestion.ToString());
+                  validationPassed = ProcessAnswer(request, furtherQuestion, validationPassed, validationErrors, pageAnswers, existingAnswers);
 
-                  validationPassed = ProcessAnswer(request, furtherQuestion, validationPassed, validationErrors,
-                      pageAnswers, existingAnswers);
+                  var futherAnswer = request.Answers.FirstOrDefault(a => a.QuestionId == furtherQuestion.QuestionId);
+                  var existingFutherAnswer = existingAnswers.SelectMany(poa => poa.Answers).FirstOrDefault(a => a.QuestionId == furtherQuestion.QuestionId);
+                  atLeastOneFutherQuestionAnswerChanged = atLeastOneFutherQuestionAnswerChanged ? true : futherAnswer?.Value != existingFutherAnswer?.Value;
                 }
+
+                atLeastOneAnswerChanged = atLeastOneAnswerChanged ? true : atLeastOneFutherQuestionAnswerChanged;
               }
             }
           }
         }
+      }
+
+      if (!atLeastOneAnswerChanged)
+      {
+        validationPassed = false;
+        validationErrors.Add(new KeyValuePair<string, string>(page.Questions[0].QuestionId, "Unable to save as you have not updated your answer"));
       }
 
       if (validationPassed)
@@ -224,13 +240,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
       else
       {
         var answer = request.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
-        var existingAnswer = pagePageOfAnswers.SelectMany(poa => poa.Answers).FirstOrDefault(a => a.QuestionId == question.QuestionId);
-
-        if (existingAnswer?.Value == answer?.Value)
-        {
-            validationPassed = false;
-            validationErrors.Add(new KeyValuePair<string, string>(question.QuestionId, "Unable to save as you have not updated your answer"));
-        }
 
         var validators = _validatorFactory.Build(question);
         foreach (var validator in validators)
