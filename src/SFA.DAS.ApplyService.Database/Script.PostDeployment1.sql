@@ -96,6 +96,10 @@ INSERT EmailTemplates ([Id],[TemplateName],[TemplateId],[CreatedAt])
 VALUES (NEWID(), N'ApplyEPAOResponse', N'84174eab-f3c1-4274-8670-2fb5b21cbd77', GETDATE())  
 END
 
+UPDATE EmailTemplates
+SET [TemplateId] = 'f7ca95a9-54fb-4f5f-8a88-840445f98c8b'
+WHERE [TemplateName] = 'EPAOUserApproveRequest'
+
 -- START OF: ON-1502 Fixes - Remove once deployed to PROD
 /*
 UPDATE [ApplicationSections]
