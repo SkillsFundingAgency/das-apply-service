@@ -100,6 +100,10 @@ UPDATE EmailTemplates
 SET [TemplateId] = 'f7ca95a9-54fb-4f5f-8a88-840445f98c8b'
 WHERE [TemplateName] = 'EPAOUserApproveRequest'
 
+UPDATE EMailTemplates
+SET [TemplateId] = '68506adb-7e17-45c9-ad54-45ef9a2cad15'
+WHERE [TemplateName] = 'EPAOUserApproveConfirm'
+
 -- START OF: ON-1502 Fixes - Remove once deployed to PROD
 /*
 UPDATE [ApplicationSections]
