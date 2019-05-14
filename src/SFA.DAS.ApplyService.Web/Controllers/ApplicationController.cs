@@ -41,7 +41,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet("/Applications")]
         public async Task<IActionResult> Applications()
         {
-            var user = _sessionService.Get("LoggedInUser");
+            var user = User.Identity.Name;
 
             if (!await _userService.ValidateUser(user))
                 return RedirectToAction("PostSignIn", "Users");

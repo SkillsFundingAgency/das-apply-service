@@ -65,19 +65,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             //Attempt to extract variable from claim incase called from Accessor
             try
             {
-                if (!string.IsNullOrEmpty(await GetClaim("display_name")))
+                if (string.IsNullOrEmpty(await GetClaim("display_name")))
                 {
-                    var displayName = await GetClaim("display_name");
-                    //May have empty strings
-                    if (!string.IsNullOrEmpty(displayName))
-                    {
-                        _sessionService.Set("LoggedInUser", displayName);
-                    }
-                    else
-                    {
-                        _logger.LogInformation("Claims where empty and user was null so redirecting to postsignin");
-                        return false;
-                    }
+                    _logger.LogInformation("Claims where empty and user was null so redirecting to postsignin");
+                    return false;
                 }
             }
             catch (ArgumentException e)

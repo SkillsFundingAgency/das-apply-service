@@ -105,11 +105,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return RedirectToAction("NotSetUp");
             }
-            
-            _logger.LogInformation($"Setting LoggedInUser in Session: {user.GivenNames} {user.FamilyName}");         
-            _sessionService.Set("LoggedInUser", $"{user.GivenNames} {user.FamilyName}");
-
-            if (user.ApplyOrganisationId is null)
+            else if (user.ApplyOrganisationId is null)
             {
                 return RedirectToAction("Index", "OrganisationSearch");
             }

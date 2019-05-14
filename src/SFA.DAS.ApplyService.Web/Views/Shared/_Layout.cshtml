@@ -79,7 +79,7 @@
     </div>
 </header>
 
-@if (@SessionService.Get("LoggedInUser") != null)
+@if (User.Identity.IsAuthenticated)
 {
     <div class="das-user-panel">
         <div class="govuk-width-container">
@@ -87,7 +87,7 @@
                 <div class="govuk-body-s das-user-panel__item das-user-panel__item--grow">
                     <p class="govuk-!-margin-top-0 govuk-!-margin-bottom-0 das-no-wrap">
                         <span class="govuk-visually-hidden">Signed in as </span>
-                        @SessionService.Get("LoggedInUser")
+                        <span class="nowrap">@User.Identity.Name</span>
                     </p>
                     @if (@SessionService.Get("OrganisationName") != null)
                     {
