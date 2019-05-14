@@ -48,6 +48,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                         "http://schemas.portal.com/orgname");
                     if (!string.IsNullOrEmpty(orgName))
                     {
+                        _sessionService.Set("OrganisationName", orgName);
                         _sessionService.Set("UserRegWithEPAO", true);
                     }
                 }
@@ -62,7 +63,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             if (!string.IsNullOrEmpty(user))
                 return true;
 
-            //Attempt to extract variable from claim incase called from Accessor
+            //Attempt to extract variable from claim incase called from Assessor
             try
             {
                 if (string.IsNullOrEmpty(await GetClaim("display_name")))
