@@ -100,13 +100,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpPost("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
-        public async Task<ActionResult<UpdatePageAnswersResult>> Page(string applicationId, string userId, int sequenceId, int sectionId, string pageId, [FromBody] List<Answer> answers)
+        public async Task<ActionResult<UpdatePageAnswersResult>> Page(string applicationId, string userId, int sequenceId, int sectionId, string pageId, [FromBody] PageApplyRequest request)
         {
-            var updatedPage = await _mediator.Send(new UpdatePageAnswersRequest(Guid.Parse(applicationId), Guid.Parse(userId), sequenceId, sectionId, pageId, answers));
+            var updatedPage = await _mediator.Send(
+                new UpdatePageAnswersRequest(Guid.Parse(applicationId), Guid.Parse(userId), sequenceId, sectionId, pageId, request.Answers, request.SaveNewAnswers));
             return updatedPage;
         }
-
-
 
         [HttpPost("/Applications/Submit")]
         public async Task<ActionResult> Submit([FromBody] ApplicationSubmitRequest request)

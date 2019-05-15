@@ -90,11 +90,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         }
 
         public async Task<UpdatePageAnswersResult> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId,
-            int sectionId, string pageId, List<Answer> answers)
+            int sectionId, string pageId, List<Answer> answers, bool saveNewAnswers)
         {
             return await (await _httpClient.PostAsJsonAsync(
                     $"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}",
-                    answers)).Content
+                    new { answers, saveNewAnswers })).Content
                 .ReadAsAsync<UpdatePageAnswersResult>();
         }
 
