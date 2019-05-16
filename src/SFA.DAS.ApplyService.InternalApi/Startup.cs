@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Logging;
 using SFA.DAS.ApplyService.Application;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Validation;
@@ -54,6 +55,10 @@ namespace SFA.DAS.ApplyService.InternalApi
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+
+            IdentityModelEventSource.ShowPII = true;
+            
+        
             services.AddAuthentication(o =>
                 {
                     o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
