@@ -75,6 +75,21 @@ namespace SFA.DAS.ApplyService.InternalApi
                             _applyConfig.ApiAuthentication.ClientId
                         }
                     };
+                    o.Events = new JwtBearerEvents()
+                    {
+                        OnMessageReceived = c =>
+                        {
+                            
+                            return Task.CompletedTask;
+                        },
+                        OnTokenValidated = c =>
+                        {
+                            return Task.CompletedTask;
+                        }, OnAuthenticationFailed = c =>
+                        {
+                            return Task.CompletedTask;
+                        }
+                    };
                 });    
             
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
@@ -117,9 +132,9 @@ namespace SFA.DAS.ApplyService.InternalApi
             
             
             IMvcBuilder mvcBuilder;
-            if (_env.IsDevelopment())
-                mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
-            else
+//            if (_env.IsDevelopment())
+//                mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
+//            else
                 mvcBuilder = services.AddMvc();
 
             mvcBuilder.SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
@@ -145,6 +160,9 @@ namespace SFA.DAS.ApplyService.InternalApi
 //                app.UseHttpsRedirection();
             }
             app.UseRequestLocalization();
+
+            app.UseAuthentication();
+            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
