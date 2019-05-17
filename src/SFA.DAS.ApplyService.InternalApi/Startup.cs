@@ -132,9 +132,9 @@ namespace SFA.DAS.ApplyService.InternalApi
             
             
             IMvcBuilder mvcBuilder;
-//            if (_env.IsDevelopment())
-//                mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
-//            else
+            if (_env.IsDevelopment())
+                mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
+            else
                 mvcBuilder = services.AddMvc();
 
             mvcBuilder.SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
