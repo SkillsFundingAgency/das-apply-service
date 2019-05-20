@@ -85,7 +85,16 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
                                 }
                             },
                         },
-                        PageOfAnswers = new List<PageOfAnswers>(),
+                        PageOfAnswers = new List<PageOfAnswers>
+                        {
+                            new PageOfAnswers {
+                                Answers = new List<Answer>
+                                {
+                                    new Answer { QuestionId = "Q1", Value = "Yes" },
+                                    new Answer { QuestionId = "Q1.1", Value = "SomeAnswer" }
+                                }
+                            }
+                        },
                         Next = new List<Next>()
                         {
                             new Next

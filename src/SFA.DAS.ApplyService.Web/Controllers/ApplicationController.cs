@@ -137,6 +137,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return View("~/Views/Application/Rejected.cshtml", application);
             }
 
+            if (application.ApplicationStatus == ApplicationStatus.FeedbackAdded)
+            {
+                return View("~/Views/Application/FeedbackIntro.cshtml", application.Id);
+            }
+
             var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
 
             StandardApplicationData applicationData = null;
