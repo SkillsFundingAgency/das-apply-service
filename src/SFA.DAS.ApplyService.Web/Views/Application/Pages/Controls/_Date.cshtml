@@ -20,11 +20,11 @@
 <div class="govuk-date-input" id="dob">
     <div class="govuk-date-input__item">
         <div class="govuk-form-group">
-            <label class="govuk-label govuk-date-input__label" for="@(Model.QuestionId + "_Day")">Day</label>
+            <label class="govuk-label govuk-date-input__label" for="@(Model.QuestionId)">Day</label>
             <input 
                 value="@(string.IsNullOrWhiteSpace(Model.Value?.ToString()) ? "" : Model.Value?.ToString().Split(',')[0])"
                 class="govuk-input govuk-date-input__input govuk-input--width-2 @isError"
-                id="@(Model.QuestionId + "_Day")"
+                id="@(Model.QuestionId)"
                 name="@Model.QuestionId"
                 type="number"
                 pattern="[0-9]*" 
