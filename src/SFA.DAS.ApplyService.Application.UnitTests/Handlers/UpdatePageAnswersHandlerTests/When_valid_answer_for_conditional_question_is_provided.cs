@@ -16,7 +16,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
         public void Then_page_is_returned_with_first_next_condition_met()
         {
             AnswerQ1 = new Answer() { QuestionId = "Q1", Value = "Yes" };
-            AnswerQ1Dot1 = new Answer() { QuestionId = "Q1.1", Value = "SomeAnswer" };
+            AnswerQ1Dot1 = new Answer() { QuestionId = "Q1.1", Value = "SomeNewAnswer" };
 
             Validator.Setup(v => v.Validate(It.IsAny<Question>(), It.Is<Answer>(p => p.QuestionId == AnswerQ1.QuestionId)))
                 .Returns
