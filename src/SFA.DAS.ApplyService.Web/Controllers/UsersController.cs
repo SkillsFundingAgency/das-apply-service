@@ -110,7 +110,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (user.ApplyOrganisationId == null)
             {
-                return RedirectToAction("Index", "OrganisationSearch");
+                return RedirectToAction("SelectApplicationRoute", "RoatpApplicationPreamble");
             }
             
             return RedirectToAction("Applications", "Application");

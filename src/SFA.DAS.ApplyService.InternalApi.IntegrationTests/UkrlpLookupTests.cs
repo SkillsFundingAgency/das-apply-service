@@ -3,22 +3,20 @@
 namespace SFA.DAS.ApplyService.InternalApi.IntegrationTests
 {
     using System.Linq;
+    using System.Net.Http;
     using Configuration;
     using FluentAssertions;
     using Infrastructure;
-    using Microsoft.EntityFrameworkCore.Internal;
     using Microsoft.Extensions.Logging;
     using Moq;
     using NUnit.Framework;
     using SFA.DAS.ApplyService.InternalApi.AutoMapper;
-    using UKRLP;
 
     [TestFixture]
     public class UkrlpLookupTests
     {
         private Mock<ILogger<UkrlpApiClient>> _logger;
-        private Mock<IApplyConfig> _config;
-        private ProviderQueryPortType _service;
+        private Mock<IConfigurationService> _config;
 
         [SetUp]
         public void Before_each_test()
@@ -38,24 +36,28 @@ namespace SFA.DAS.ApplyService.InternalApi.IntegrationTests
             Mapper.AssertConfigurationIsValid();
 
             _logger = new Mock<ILogger<UkrlpApiClient>>();
-            _config = new Mock<IApplyConfig>();
+            _config = new Mock<IConfigurationService>();
             var apiConfig = new UkrlpApiAuthentication
             {
                 QueryId = "2",
                 StakeholderId = "2",
                 ApiBaseAddress = "http://webservices.ukrlp.co.uk/UkrlpProviderQueryWS5/ProviderQueryServiceV5"
             };
-            _config.SetupGet(x => x.UkrlpApiAuthentication).Returns(apiConfig);
+            var applyConfig = new Mock<IApplyConfig>();
 
-            _service = new ProviderQueryPortTypeClient();
+            applyConfig.SetupGet(x => x.UkrlpApiAuthentication).Returns(apiConfig);
+
+            _config.Setup(x => x.GetConfig()).ReturnsAsync(applyConfig.Object);
+
         }
 
         [Test]
         public void Matching_UKPRN_returns_single_result()
         {
             var ukprn = 10012385;
-            
-            var client = new UkrlpApiClient(_service, _logger.Object, _config.Object);
+
+            var client = new UkrlpApiClient(_logger.Object, _config.Object, new HttpClient(),
+                new UkrlpSoapSerializer());
 
             var result = client.GetTrainingProviderByUkprn(ukprn).GetAwaiter().GetResult();
 
@@ -77,7 +79,8 @@ namespace SFA.DAS.ApplyService.InternalApi.IntegrationTests
         {
             var ukprn = 99998888;
 
-            var client = new UkrlpApiClient(_service, _logger.Object, _config.Object);
+            var client = new UkrlpApiClient(_logger.Object, _config.Object, new HttpClient(),
+                new UkrlpSoapSerializer());
 
             var result = client.GetTrainingProviderByUkprn(ukprn).GetAwaiter().GetResult();
 
@@ -90,7 +93,8 @@ namespace SFA.DAS.ApplyService.InternalApi.IntegrationTests
         {
             var ukprn = 10019227;
 
-            var client = new UkrlpApiClient(_service, _logger.Object, _config.Object);
+            var client = new UkrlpApiClient(_logger.Object, _config.Object, new HttpClient(),
+                new UkrlpSoapSerializer());
 
             var result = client.GetTrainingProviderByUkprn(ukprn).GetAwaiter().GetResult();
 

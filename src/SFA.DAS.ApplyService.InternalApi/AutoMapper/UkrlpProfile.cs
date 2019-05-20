@@ -3,18 +3,17 @@
 namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
 {
     using SFA.DAS.ApplyService.InternalApi.Models.Ukrlp;
-    using UKRLP;
     
     public class UkrlpProviderDetailsProfile : Profile
     {
         public UkrlpProviderDetailsProfile()
         {
-            CreateMap<ProviderRecordStructure, ProviderDetails>()
+            CreateMap<MatchingProviderRecords, ProviderDetails>()
                 .ForMember(dest => dest.UKPRN,
                     opt => opt.MapFrom(source => source.UnitedKingdomProviderReferenceNumber))
                 .ForMember(dest => dest.ProviderName, opt => opt.MapFrom(source => source.ProviderName))
                 .ForMember(dest => dest.ProviderStatus, opt => opt.MapFrom(source => source.ProviderStatus))
-                .ForMember(dest => dest.ContactDetails, opt => opt.MapFrom(source => source.ProviderContact))
+                .ForMember(dest => dest.ContactDetails, opt => opt.MapFrom(source => source.ProviderContacts))
                 .ForMember(dest => dest.VerificationDate, opt => opt.MapFrom(source => source.ProviderVerificationDate))
                 .ForMember(dest => dest.ProviderAliases, opt => opt.MapFrom(source => source.ProviderAliases))
                 .ForMember(dest => dest.VerificationDetails, opt => opt.MapFrom(source => source.VerificationDetails));
@@ -54,7 +53,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
     {
         public UkrlpContactAddressProfile()
         {
-            CreateMap<AddressStructure, ContactAddress>()
+            CreateMap<ProviderContactAddress, ContactAddress>()
                 .ForMember(dest => dest.Address1, opt => opt.MapFrom(source => source.Address1))
                 .ForMember(dest => dest.Address2, opt => opt.MapFrom(source => source.Address2))
                 .ForMember(dest => dest.Address3, opt => opt.MapFrom(source => source.Address3))
@@ -68,7 +67,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
     {
         public UkrlpContactPersonalDetailsProfile()
         {
-            CreateMap<PersonNameStructure, ContactPersonalDetails>()
+            CreateMap<ContactPersonalDetailsStructure, ContactPersonalDetails>()
                 .ForMember(dest => dest.PersonNameTitle, opt => opt.MapFrom(source => source.PersonNameTitle))
                 .ForMember(dest => dest.PersonGivenName, opt => opt.MapFrom(source => source.PersonGivenName))
                 .ForMember(dest => dest.PersonFamilyName, opt => opt.MapFrom(source => source.PersonFamilyName))
@@ -83,7 +82,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
             CreateMap<VerificationDetailsStructure, VerificationDetails>()
                 .ForMember(dest => dest.VerificationAuthority,
                     opt => opt.MapFrom(source => source.VerificationAuthority))
-                .ForMember(dest => dest.VerificationId, opt => opt.MapFrom(source => source.VerificationID));
+                .ForMember(dest => dest.VerificationId, opt => opt.MapFrom(source => source.VerificationId));
         }
     }
 }

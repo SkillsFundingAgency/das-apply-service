@@ -7,9 +7,9 @@
     {
         private readonly IApplyConfig _configuration;
 
-        public RoatpTokenService(IApplyConfig configuration)
+        public RoatpTokenService(IConfigurationService configurationService)
         {
-            _configuration = configuration;
+            _configuration = configurationService.GetConfig().Result;
         }
 
         public string GetToken()

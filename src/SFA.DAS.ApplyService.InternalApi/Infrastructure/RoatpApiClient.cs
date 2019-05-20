@@ -6,6 +6,7 @@
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
     using Configuration;
+    using Domain.Roatp;
     using Microsoft.Extensions.Logging;
     using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
 
@@ -16,10 +17,10 @@
         private readonly IRoatpTokenService _tokenService;
         private string _baseAddress;
 
-        public RoatpApiClient(HttpClient client, ILogger<RoatpApiClient> logger, IApplyConfig config, IRoatpTokenService tokenService)
+        public RoatpApiClient(HttpClient client, ILogger<RoatpApiClient> logger, IConfigurationService configurationService, IRoatpTokenService tokenService)
         {
             _logger = logger;
-            _baseAddress = config.RoatpApiAuthentication.ApiBaseAddress;
+            _baseAddress = configurationService.GetConfig().Result.RoatpApiAuthentication.ApiBaseAddress;
             _client = client;
             _tokenService = tokenService;
         }
@@ -34,11 +35,11 @@
             return apiResponse;
         }
 
-        public async Task<OrganisationReapplyStatus> GetOrganisationReapplyStatus(Guid organisationId)
+        public async Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(Guid organisationId)
         {
             _logger.LogInformation($"Looking up reapply status for organisation id {organisationId}");
 
-            var apiResponse = await Get<OrganisationReapplyStatus>(
+            var apiResponse = await Get<OrganisationRegisterStatus>(
                 $"{_baseAddress}/api/v1/organisation/reapply-status?&organisationId={organisationId}");
 
             return apiResponse;
