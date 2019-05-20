@@ -90,7 +90,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                                     var furtherAnswer = newAnswers.FirstOrDefault(a => a.QuestionId == furtherQuestion.QuestionId);
                                     var existingFutherAnswer = existingAnswers.SelectMany(poa => poa.Answers).FirstOrDefault(a => a.QuestionId == furtherQuestion.QuestionId);
                                     validationPassed = ProcessAnswer(furtherAnswer, furtherQuestion, validationPassed, validationErrors, pageAnswers, existingAnswers);
-                                    atLeastOneFutherQuestionAnswerChanged = atLeastOneFutherQuestionAnswerChanged ? true : futherAnswer?.Value != existingFutherAnswer?.Value;
+                                    atLeastOneFutherQuestionAnswerChanged = atLeastOneFutherQuestionAnswerChanged ? true : furtherAnswer?.Value != existingFutherAnswer?.Value;
                                 }
 
                                 atLeastOneAnswerChanged = atLeastOneAnswerChanged ? true : atLeastOneFutherQuestionAnswerChanged;
