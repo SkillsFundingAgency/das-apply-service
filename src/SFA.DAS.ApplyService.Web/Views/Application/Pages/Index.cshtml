@@ -83,7 +83,8 @@
                     </div>
                 }
 
-                <form method="post" asp-action="SaveAnswers" asp-controller="Application" novalidate enctype="multipart/form-data">
+                @* no action is specified for the form, post back to the get url to preserve the page hierarchy parameters *@
+                <form method="post" novalidate enctype="multipart/form-data">
                     <input type="hidden" id="RedirectAction" name="RedirectAction" value="@Model.RedirectAction" />
                     @if (Model.Questions.Count() == 1)
                     {

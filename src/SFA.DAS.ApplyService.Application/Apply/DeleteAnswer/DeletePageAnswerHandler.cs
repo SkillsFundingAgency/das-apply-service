@@ -29,6 +29,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.DeleteAnswer
 
             page.PageOfAnswers.Remove(answerPage);
 
+            if (!page.PageOfAnswers.Any())
+            {
+                page.Complete = false;
+            }
+
             section.QnAData.Pages = pages;
 
             await _applyRepository.UpdateSections(new List<ApplicationSection> {section});
