@@ -720,6 +720,7 @@ namespace SFA.DAS.ApplyService.Data
 	                      INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id
 	                      INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
 	                      WHERE seq.SequenceId = 1 AND sec.SectionId = 3 AND seq.NotRequired = 0
+	                        AND JSON_QUERY(sec.QnAData, '$.FinancialApplicationGrade') IS NOT NULL						  
                             AND (
                                     seq.Status IN (@sequenceStatusApproved, @sequenceStatusRejected)
                                     OR ( 
