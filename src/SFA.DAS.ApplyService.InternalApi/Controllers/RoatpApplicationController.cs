@@ -7,7 +7,6 @@
     using Infrastructure;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
-    using Models.Roatp;
     using SFA.DAS.ApplyService.Domain.Roatp;
 
     public class RoatpApplicationController : Controller
@@ -39,10 +38,10 @@
 
             if (response.DuplicateFound)
             {
-                var reapplyStatus = await _apiClient.GetOrganisationRegisterStatus(response.DuplicateOrganisationId);
-                reapplyStatus.ExistingUKPRN = response.DuplicateFound;
+                var registerStatus = await _apiClient.GetOrganisationRegisterStatus(response.DuplicateOrganisationId);
+                registerStatus.ExistingUKPRN = response.DuplicateFound;
 
-                return Ok(reapplyStatus);
+                return Ok(registerStatus);
             }
 
             return Ok(new OrganisationRegisterStatus {ExistingUKPRN = false});

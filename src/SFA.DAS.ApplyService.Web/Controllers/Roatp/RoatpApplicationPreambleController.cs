@@ -76,9 +76,7 @@
 
                 return View("~/Views/Roatp/EnterApplicationUkprn.cshtml", model);
             }
-
-            var registerStatus = await _roatpApiClient.UkprnOnRegister(ukprn);
-
+            
             var matchingResults = await _ukrlpApiClient.GetTrainingProviderByUkprn(ukprn);
 
             if (matchingResults.Any())
@@ -87,6 +85,8 @@
                 applicationDetails.UkrlpLookupDetails = matchingResults.FirstOrDefault();
 
                 _sessionService.Set(ApplicationDetailsKey, applicationDetails);
+
+                var registerStatus = await _roatpApiClient.UkprnOnRegister(ukprn);
 
                 if (registerStatus.ExistingUKPRN)
                 {
