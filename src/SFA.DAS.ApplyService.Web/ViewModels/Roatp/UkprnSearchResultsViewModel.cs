@@ -14,10 +14,11 @@
             set
             {
                 _providerDetails = value;
-                if (_providerDetails == null || _providerDetails.ContactDetails == null)
+                if (_providerDetails?.ContactDetails == null)
                 {
                     return;
                 }
+
                 var legalContact = _providerDetails.ContactDetails.FirstOrDefault(x => x.ContactType == "L");
                 if (legalContact != null)
                 {

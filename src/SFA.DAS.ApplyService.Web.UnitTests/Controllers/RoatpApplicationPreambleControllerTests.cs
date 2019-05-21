@@ -42,9 +42,9 @@
         {
             var applicationRoutes = new List<ApplicationRoute>
             {
-                new ApplicationRoute { Id = 1, RouteName = "Main provider" },
-                new ApplicationRoute { Id = 2, RouteName = "Employer provider" },
-                new ApplicationRoute { Id = 3, RouteName = "Supporting provider" }
+                new ApplicationRoute { Id = ApplicationRoute.MainProviderApplicationRoute, RouteName = "Main provider" },
+                new ApplicationRoute { Id = ApplicationRoute.EmployerProviderApplicationRoute, RouteName = "Employer provider" },
+                new ApplicationRoute { Id = ApplicationRoute.SupportingProviderApplicationRoute, RouteName = "Supporting provider" }
             };
 
             _roatpApiClient.Setup(x => x.GetApplicationRoutes()).ReturnsAsync(applicationRoutes);
@@ -75,9 +75,9 @@
         {
             var applicationRoutes = new List<ApplicationRoute>
             {
-                new ApplicationRoute { Id = 1, RouteName = "Main provider" },
-                new ApplicationRoute { Id = 2, RouteName = "Employer provider" },
-                new ApplicationRoute { Id = 3, RouteName = "Supporting provider" }
+                new ApplicationRoute { Id = ApplicationRoute.MainProviderApplicationRoute, RouteName = "Main provider" },
+                new ApplicationRoute { Id = ApplicationRoute.EmployerProviderApplicationRoute, RouteName = "Employer provider" },
+                new ApplicationRoute { Id = ApplicationRoute.SupportingProviderApplicationRoute, RouteName = "Supporting provider" }
             };
 
             _roatpApiClient.Setup(x => x.GetApplicationRoutes()).ReturnsAsync(applicationRoutes);

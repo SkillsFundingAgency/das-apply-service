@@ -29,7 +29,7 @@
         {
             var hostingEnvironment = new Mock<IHostingEnvironment>();
             _config = new ConfigurationService(hostingEnvironment.Object, "LOCAL", ConnectionString, Version,
-                ServiceName); //.GetConfig().GetAwaiter().GetResult();
+                ServiceName);
 
             _config.GetConfig().GetAwaiter().GetResult().RoatpApiAuthentication.ApiBaseAddress = RoatpApiBaseAddress;
 
