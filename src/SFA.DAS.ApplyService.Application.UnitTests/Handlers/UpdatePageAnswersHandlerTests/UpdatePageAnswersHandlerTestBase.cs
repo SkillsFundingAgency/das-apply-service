@@ -27,7 +27,6 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
         protected Answer AnswerQ4;
         protected Answer AnswerQ5;
 
-        protected string SectionStatus;
         protected QnAData QnAData;
 
         [SetUp]

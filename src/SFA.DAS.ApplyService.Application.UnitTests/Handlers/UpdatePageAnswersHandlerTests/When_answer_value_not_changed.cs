@@ -16,13 +16,12 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
         [Test]
         public void Then_validation_succeeds_if_application_is_still_in_draft()
         {
-            SectionStatus = ApplicationSectionStatus.Draft;
             AnswerQ1 = new Answer() { QuestionId = "Q1", Value = "Yes" };
             AnswerQ1Dot1 = new Answer() { QuestionId = "Q1.1", Value = "SomeAnswer" };
 
             ApplyRepository.Setup(r => r.GetSection(ApplicationId, 1, 1, UserId)).ReturnsAsync(new ApplicationSection()
             {
-                Status = SectionStatus,
+                Status = ApplicationSectionStatus.Draft,
                 QnAData = QnAData
             });
 
@@ -58,13 +57,12 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
         [Test]
         public void Then_validation_fail_if_application_is_not_still_in_draft()
         {
-            SectionStatus = ApplicationSectionStatus.Evaluated;
             AnswerQ1 = new Answer() { QuestionId = "Q1", Value = "Yes" };
             AnswerQ1Dot1 = new Answer() { QuestionId = "Q1.1", Value = "SomeAnswer" };
 
             ApplyRepository.Setup(r => r.GetSection(ApplicationId, 1, 1, UserId)).ReturnsAsync(new ApplicationSection()
             {
-                Status = SectionStatus,
+                Status = ApplicationSectionStatus.Evaluated,
                 QnAData = QnAData
             });
 
