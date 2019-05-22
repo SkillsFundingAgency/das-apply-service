@@ -220,6 +220,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
         ApplyRepository = new Mock<IApplyRepository>();
             ApplyRepository.Setup(r => r.GetSection(ApplicationId, 1, 1, UserId)).ReturnsAsync(new ApplicationSection()
             {
+                Status = ApplicationSectionStatus.Draft,
                 QnAData = QnAData
             });
               

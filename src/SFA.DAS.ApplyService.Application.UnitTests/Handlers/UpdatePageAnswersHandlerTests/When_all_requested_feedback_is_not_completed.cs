@@ -16,6 +16,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
 
             ApplyRepository.Setup(r => r.GetSection(ApplicationId, 1, 1, UserId)).ReturnsAsync(new ApplicationSection()
             {
+                Status = ApplicationSectionStatus.Evaluated,
                 QnAData = new QnAData()
                 {
                     Pages = new List<Page>

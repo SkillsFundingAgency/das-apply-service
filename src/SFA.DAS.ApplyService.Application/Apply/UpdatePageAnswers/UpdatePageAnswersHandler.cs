@@ -100,16 +100,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                 }
             }
 
-            if (!atLeastOneAnswerChanged)
+            if (validationPassed && !atLeastOneAnswerChanged && section.Status == Domain.Entities.ApplicationSectionStatus.Evaluated)
             {
-                validationPassed = false;
                 foreach (var question in page.Questions)
                 {
                     validationErrors.Add(new KeyValuePair<string, string>(question.QuestionId, "Unable to save as you have not updated your answer"));
                 }
             }
-
-            if (validationPassed)
+            else if (validationPassed)
             {
                 if (page.HasFeedback)
                 {
