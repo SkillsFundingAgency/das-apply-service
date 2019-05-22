@@ -18,10 +18,8 @@
         {
             get
             {
-                var companiesHouseVerification = VerificationDetails.FirstOrDefault(x =>
+                return VerificationDetails.Any(x =>
                     x.VerificationAuthority == VerificationAuthorities.CompaniesHouseAuthority);
-
-                return companiesHouseVerification != null;
             }
         }
 
@@ -29,10 +27,8 @@
         {
             get
             {
-                var charityCommissionVerification = VerificationDetails.FirstOrDefault(x =>
+                return VerificationDetails.Any(x =>
                     x.VerificationAuthority == VerificationAuthorities.CharityCommissionAuthority);
-
-                return charityCommissionVerification != null;
             }
         }
 
