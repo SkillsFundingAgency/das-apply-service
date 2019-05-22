@@ -15,6 +15,7 @@
     using ViewModels.Roatp;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using SFA.DAS.ApplyService.Domain.Ukrlp;
+    using SFA.DAS.ApplyService.InternalApi.Types.CompaniesHouse;
 
     [TestFixture]
     public class RoatpApplicationPreambleControllerTests
@@ -23,6 +24,8 @@
         private Mock<IRoatpApiClient> _roatpApiClient;
         private Mock<IUkrlpApiClient> _ukrlpApiClient;
         private Mock<ISessionService> _sessionService;
+        private Mock<ICompaniesHouseApiClient> _companiesHouseApiClient;
+        private Mock<ICharityCommissionApiClient> _charityCommissionApiClient;
 
         private RoatpApplicationPreambleController _controller;
 
@@ -33,8 +36,12 @@
             _roatpApiClient = new Mock<IRoatpApiClient>();
             _ukrlpApiClient = new Mock<IUkrlpApiClient>();
             _sessionService = new Mock<ISessionService>();
+            _companiesHouseApiClient = new Mock<ICompaniesHouseApiClient>();
+            _charityCommissionApiClient = new Mock<ICharityCommissionApiClient>();
 
-            _controller = new RoatpApplicationPreambleController(_logger.Object, _roatpApiClient.Object, _ukrlpApiClient.Object, _sessionService.Object);
+            _controller = new RoatpApplicationPreambleController(_logger.Object, _roatpApiClient.Object, _ukrlpApiClient.Object, 
+                                                                 _sessionService.Object, _companiesHouseApiClient.Object,
+                                                                 _charityCommissionApiClient.Object);
         }
 
         [Test]
@@ -310,6 +317,142 @@
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.ActionName.Should().Be("UkprnFound");
+        }
+
+        [Test]
+        public void UKPRN_is_verified_against_companies_house()
+        {
+            var providerDetails = new ProviderDetails
+            {
+                UKPRN = "10001000",
+                ProviderName = "Test Provider",
+                VerificationDetails = new List<VerificationDetails>
+                {
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CompaniesHouseAuthority,
+                        VerificationId = "12345678"
+                    }
+                }
+            };
+    
+            var applicationDetails = new ApplicationDetails
+            {
+                ApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute,
+                UkrlpLookupDetails = providerDetails
+            };
+
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(new Company()).Verifiable();
+            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<string>())).Verifiable();
+
+            var result = _controller.UkprnFound().GetAwaiter().GetResult();
+            
+            _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Once);
+            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<string>()), Times.Never);
+        }
+
+        [Test]
+        public void UKPRN_is_verified_against_charity_commission()
+        {
+            var providerDetails = new ProviderDetails
+            {
+                UKPRN = "10001000",
+                ProviderName = "Test Provider",
+                VerificationDetails = new List<VerificationDetails>
+                {
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CharityCommissionAuthority,
+                        VerificationId = "12345678"
+                    }
+                }
+            };
+       
+            var applicationDetails = new ApplicationDetails
+            {
+                ApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute,
+                UkrlpLookupDetails = providerDetails
+            };
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+            
+            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(new Company()).Verifiable();
+            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<string>())).Verifiable();
+
+            var result = _controller.UkprnFound().GetAwaiter().GetResult();
+
+            _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Never);
+            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<string>()), Times.Once);
+        }
+
+        [Test]
+        public void UKPRN_is_verified_against_companies_house_and_charity_commission()
+        {
+            var providerDetails = new ProviderDetails
+            {
+                UKPRN = "10001000",
+                ProviderName = "Test Provider",
+                VerificationDetails = new List<VerificationDetails>
+                {
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CompaniesHouseAuthority,
+                        VerificationId = "12345678"
+                    },
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CharityCommissionAuthority,
+                        VerificationId = "0123456"
+                    }
+                }
+            };
+        
+            var applicationDetails = new ApplicationDetails
+            {
+                ApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute,
+                UkrlpLookupDetails = providerDetails
+            };
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+
+            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(new Company()).Verifiable();
+            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<string>())).Verifiable();
+
+            var result = _controller.UkprnFound().GetAwaiter().GetResult();
+
+            _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Once);
+            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<string>()), Times.Once);
+        }
+
+        [Test]
+        public void UKPRN_is_not_verified_against_a_recognised_source()
+        {
+            var providerDetails = new ProviderDetails
+            {
+                UKPRN = "10001000",
+                ProviderName = "Test Provider",
+                VerificationDetails = new List<VerificationDetails>
+                {
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = "Word of mouth",
+                        VerificationId = "Y"
+                    }
+                }
+            };
+        
+            var applicationDetails = new ApplicationDetails
+            {
+                ApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute,
+                UkrlpLookupDetails = providerDetails
+            };
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(new Company()).Verifiable();
+            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<string>())).Verifiable();
+
+            var result = _controller.UkprnFound().GetAwaiter().GetResult();
+
+            _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Never);
+            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<string>()), Times.Never);
         }
     }
 }

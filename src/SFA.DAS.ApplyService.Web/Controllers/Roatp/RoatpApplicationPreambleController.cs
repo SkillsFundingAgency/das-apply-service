@@ -6,6 +6,7 @@
     using SFA.DAS.ApplyService.Web.Infrastructure;
     using System.Threading.Tasks;
     using Domain.Roatp;
+    using Domain.Ukrlp;
     using Session;
     using ViewModels.Roatp;
     using Validators;
@@ -18,16 +19,21 @@
         private IRoatpApiClient _roatpApiClient;
         private IUkrlpApiClient _ukrlpApiClient;
         private ISessionService _sessionService;
+        private ICompaniesHouseApiClient _companiesHouseApiClient;
+        private ICharityCommissionApiClient _charityCommissionApiClient;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
 
         public RoatpApplicationPreambleController(ILogger<RoatpApplicationPreambleController> logger, IRoatpApiClient roatpApiClient, 
-                                                  IUkrlpApiClient ukrlpApiClient, ISessionService sessionService)
+                                                  IUkrlpApiClient ukrlpApiClient, ISessionService sessionService, 
+                                                  ICompaniesHouseApiClient companiesHouseApiClient, ICharityCommissionApiClient charityCommissionApiClient)
         {
             _logger = logger;
             _roatpApiClient = roatpApiClient;
             _ukrlpApiClient = ukrlpApiClient;
             _sessionService = sessionService;
+            _companiesHouseApiClient = companiesHouseApiClient;
+            _charityCommissionApiClient = charityCommissionApiClient;
         }
 
         [Route("select-application-route")]
@@ -117,6 +123,26 @@
         public async Task<IActionResult> UkprnFound()
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+            var providerDetails = applicationDetails.UkrlpLookupDetails;
+
+            if (providerDetails.VerifiedByCompaniesHouse)
+            {
+                var companiesHouseVerification = providerDetails.VerificationDetails.FirstOrDefault(x =>
+                        x.VerificationAuthority == VerificationAuthorities.CompaniesHouseAuthority);
+
+                // Implementation of lookup and storage in story APR-448
+                var companyDetails = _companiesHouseApiClient.GetCompanyDetails(companiesHouseVerification.VerificationId);
+            }
+
+            if (applicationDetails.UkrlpLookupDetails.VerifiedbyCharityCommission)
+            {
+                var charityCommissionVerification = providerDetails.VerificationDetails.FirstOrDefault(x =>
+                    x.VerificationAuthority == VerificationAuthorities.CharityCommissionAuthority);
+
+                // Implementation of lookup and storage in story APR-449
+                var charityDetails =
+                    _charityCommissionApiClient.GetCharityDetails(charityCommissionVerification.VerificationId);
+            }
 
             var viewModel = new UkprnSearchResultsViewModel
             {
