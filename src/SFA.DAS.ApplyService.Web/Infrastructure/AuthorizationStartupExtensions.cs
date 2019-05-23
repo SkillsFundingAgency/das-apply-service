@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -17,24 +18,26 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public static void AddDfeSignInAuthorization(this IServiceCollection services, IApplyConfig applyConfig, ILogger logger, IHostingEnvironment env)
         {
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-            
+
             services.AddAuthentication(options =>
                 {
-                    options.DefaultScheme = "Cookies";
-                    options.DefaultChallengeScheme = "oidc";
+                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
                 })
-                .AddCookie("Cookies", options =>
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
                     options.Cookie.Name = ".Assessors.Cookies";
+                    options.Cookie.HttpOnly = true;
+
                     if (!env.IsDevelopment())
                     {
                         options.Cookie.Domain = ".apprenticeships.education.gov.uk";   
                     }
-                    options.Cookie.HttpOnly = true;
-                    options.SlidingExpiration = true;
-                    options.ExpireTimeSpan = TimeSpan.FromHours(1);
+                    
+                    options.SlidingExpiration = true; 
+                    options.ExpireTimeSpan = TimeSpan.FromHours(1);                    
                 })
-                .AddOpenIdConnect("oidc", options =>
+                .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
                 {
                     options.CorrelationCookie = new CookieBuilder()
                     {
@@ -84,9 +87,17 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                             var user = await client.GetUserBySignInId(signInId);
                             if (user != null)
                             {
+                                if (user.Status == "Deleted")
+                                {
+                                    // Redirect to access denied page. 
+                                    context.Response.Redirect("/Home/AccessDenied");
+                                    context.HandleResponse();
+                                }
+                                
                                 var identity = new ClaimsIdentity(new List<Claim>(){new Claim("UserId", user.Id.ToString())});                      
                                 context.Principal.AddIdentity(identity);   
                             }
+                            
                         },
                         
                         // Sometimes the auth flow fails. The most commonly observed causes for this are

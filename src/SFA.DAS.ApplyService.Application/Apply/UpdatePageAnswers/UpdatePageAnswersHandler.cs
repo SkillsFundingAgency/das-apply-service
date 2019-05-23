@@ -4,291 +4,268 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Newtonsoft.Json;
-using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Domain.Apply;
-using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
 {
-  public class UpdatePageAnswersHandler : IRequestHandler<UpdatePageAnswersRequest, UpdatePageAnswersResult>
-  {
-    private readonly IApplyRepository _applyRepository;
-    private readonly IValidatorFactory _validatorFactory;
-
-    public UpdatePageAnswersHandler(IApplyRepository applyRepository, IValidatorFactory validatorFactory)
+    public class UpdatePageAnswersHandler : IRequestHandler<UpdatePageAnswersRequest, UpdatePageAnswersResult>
     {
-      _applyRepository = applyRepository;
-      _validatorFactory = validatorFactory;
-    }
+        private readonly IApplyRepository _applyRepository;
+        private readonly IValidatorFactory _validatorFactory;
 
-    public async Task<UpdatePageAnswersResult> Handle(UpdatePageAnswersRequest request, CancellationToken cancellationToken)
-    {
-      var section = await _applyRepository.GetSection(request.ApplicationId, request.SequenceId, request.SectionId,
-          request.UserId);
-
-      //            var entity = await _applyRepository.GetEntity(request.ApplicationId, request.UserId);
-      //            var workflow = entity.QnAWorkflow;
-      //
-      //            var sequence = workflow.GetSequenceContainingPage(request.PageId);
-      //            var section = sequence.Sections.Single(s => s.Pages.Any(p => p.PageId == request.PageId));
-      //
-      //            if (!sequence.Active)
-      //            {
-      //                throw new BadRequestException("Sequence not active");
-      //            }
-      //
-      var page = section.QnAData.Pages.Single(p => p.PageId == request.PageId);
-      page.DisplayType = section.DisplayType;
-      var existingAnswers = page.PageOfAnswers.Select(poa => new PageOfAnswers { Answers = poa.Answers }).ToList();
-
-      //var pages = section.Pages;
-      var qnADataObject = section.QnAData;
-
-      PageOfAnswers pageAnswers;
-      if (!page.AllowMultipleAnswers)
-      {
-        page.PageOfAnswers = new List<PageOfAnswers>();
-        pageAnswers = new PageOfAnswers() { Answers = new List<Answer>() };
-        page.PageOfAnswers.Add(pageAnswers);
-      }
-      else
-      {
-        if (page.PageOfAnswers == null)
+        public UpdatePageAnswersHandler(IApplyRepository applyRepository, IValidatorFactory validatorFactory)
         {
-          page.PageOfAnswers = new List<PageOfAnswers>();
+            _applyRepository = applyRepository;
+            _validatorFactory = validatorFactory;
         }
-        pageAnswers = new PageOfAnswers() { Answers = new List<Answer>(), Id = Guid.NewGuid() };
-        page.PageOfAnswers.Add(pageAnswers);
-      }
 
-      var validationPassed = true;
-      var validationErrors = new List<KeyValuePair<string, string>>();
-
-      foreach (var question in page.Questions)
-      {
-        validationPassed = ProcessAnswer(request, question, validationPassed, validationErrors, pageAnswers, existingAnswers);
-        // IF Question is type ComplexRadio
-        // Need to get all answers from Input.Options.FurtherQuestions
-
-        var answer = request.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
-
-        if (question.Input.Options != null)
+        public async Task<UpdatePageAnswersResult> Handle(UpdatePageAnswersRequest request, CancellationToken cancellationToken)
         {
-          foreach (var option in question.Input.Options)
-          {
-            if (answer?.Value == option.Value.ToString())
+            var section = await _applyRepository.GetSection(request.ApplicationId, request.SequenceId, request.SectionId,
+                request.UserId);
+
+            var page = section.QnAData.Pages.Single(p => p.PageId == request.PageId);
+            page.DisplayType = section.DisplayType;
+
+            var newAnswers = new List<Answer>();
+            var existingAnswers = page.PageOfAnswers.Select(poa => new PageOfAnswers { Answers = poa.Answers }).ToList();
+
+            var qnADataObject = section.QnAData;
+
+            PageOfAnswers pageAnswers = new PageOfAnswers() { Answers = new List<Answer>(), Id = Guid.NewGuid() }; 
+            if (!page.AllowMultipleAnswers)
             {
-              if (option.FurtherQuestions != null)
-              {
-                foreach (var furtherQuestion in option.FurtherQuestions)
-                {
-                  //var fq = JsonConvert.DeserializeObject<Question>(furtherQuestion.ToString());
-
-                  validationPassed = ProcessAnswer(request, furtherQuestion, validationPassed, validationErrors,
-                      pageAnswers, existingAnswers);
-                }
-              }
-            }
-          }
-        }
-      }
-
-      if (validationPassed)
-      {
-        if (page.HasFeedback)
-        {
-          page.Feedback.ForEach(f => f.IsCompleted = true);
-        }
-        page.Complete = true;
-
-        //MarkSequenceAsCompleteIfAllPagesComplete(sequence, workflow.Sequences);
-
-        if (page.Next.Count() > 1)
-        {
-          foreach (var nextAction in page.Next)
-          {
-            nextAction.ConditionMet = false;
-          }
-
-          var aConditionMet = false;
-          var returnIdMet = "";
-          // Activate next page if necessary
-          foreach (var nextAction in page.Next)
-          {
-            if (nextAction.Condition == null) continue;
-            var answerValue = request.Answers.Single(a => a.QuestionId == nextAction.Condition.QuestionId).Value;
-            if (nextAction.Condition.MustEqual == answerValue)
-            {
-              if (nextAction.Action == "NextPage")
-              {
-                qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Active = true;
-              }
-
-              returnIdMet = nextAction.ReturnId;
-              aConditionMet = true;
-              nextAction.ConditionMet = true;
+                page.PageOfAnswers = new List<PageOfAnswers>();
+                newAnswers.AddRange(request.Answers);
+                page.PageOfAnswers.Add(pageAnswers);
             }
             else
             {
-              if (nextAction.Action == "NextPage" && nextAction.ReturnId != returnIdMet)
-              {
-                qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Active = false;
-              }
+                if (page.PageOfAnswers == null)
+                {
+                    page.PageOfAnswers = new List<PageOfAnswers>();
+                }
+                
+                if (!request.SaveNewAnswers && existingAnswers.Any())
+                {
+                    // work with the first pre-existing answers, answers have no order so if they are
+                    // branching answers with contradictory conditions then the branch will be
+                    // non-deterministic when validating existing answers
+                    newAnswers.AddRange(existingAnswers.First().Answers);
+                }
+                else
+                {
+                    // work with the new answers and retain them in the first / additional page of answers
+                    newAnswers.AddRange(request.Answers);
+                    page.PageOfAnswers.Add(pageAnswers);
+                }                
             }
-          }
 
-          // if not set elsewhere, then a null condition must be the one met
-          if (!aConditionMet)
-          {
-            foreach (var nextAction in page.Next)
+            var validationPassed = true;
+            var validationErrors = new List<KeyValuePair<string, string>>();
+
+            var atLeastOneAnswerChanged = page.Questions.Any(q => q.Input.Type == "FileUpload");
+
+            foreach (var question in page.Questions)
             {
-              if (nextAction.Condition == null)
-              {
-                nextAction.ConditionMet = true;
-                break;
-              }
+                var answer = newAnswers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
+                var existingAnswer = existingAnswers.SelectMany(poa => poa.Answers).FirstOrDefault(a => a.QuestionId == question.QuestionId);
+
+                atLeastOneAnswerChanged = atLeastOneAnswerChanged ? true : existingAnswer?.Value != answer?.Value;
+                validationPassed = ProcessAnswer(answer, question, validationPassed, validationErrors, pageAnswers, existingAnswers);
+                
+                if (question.Input.Options != null)
+                {
+                    foreach (var option in question.Input.Options)
+                    {
+                        if (answer?.Value == option.Value.ToString())
+                        {
+                            if (option.FurtherQuestions != null)
+                            {
+                                var atLeastOneFutherQuestionAnswerChanged = page.Questions.Any(q => q.Input.Type == "FileUpload");
+
+                                foreach (var furtherQuestion in option.FurtherQuestions)
+                                {
+                                    var furtherAnswer = newAnswers.FirstOrDefault(a => a.QuestionId == furtherQuestion.QuestionId);
+                                    var existingFutherAnswer = existingAnswers.SelectMany(poa => poa.Answers).FirstOrDefault(a => a.QuestionId == furtherQuestion.QuestionId);
+                                    validationPassed = ProcessAnswer(furtherAnswer, furtherQuestion, validationPassed, validationErrors, pageAnswers, existingAnswers);
+                                    atLeastOneFutherQuestionAnswerChanged = atLeastOneFutherQuestionAnswerChanged ? true : furtherAnswer?.Value != existingFutherAnswer?.Value;
+                                }
+
+                                atLeastOneAnswerChanged = atLeastOneAnswerChanged ? true : atLeastOneFutherQuestionAnswerChanged;
+                            }
+                        }
+                    }
+                }
             }
-          }
-        }
-        else
-        {
-          page.Next.First().ConditionMet = true;
-        }
 
-
-        //                section.QnAData = workflow;
-
-        qnADataObject.Pages.ForEach(p =>
-        {
-          if (p.PageId == request.PageId)
-          {
-            p.Complete = page.Complete;
-            p.PageOfAnswers = page.PageOfAnswers;
-            p.Feedback = page.Feedback;
-          }
-        });
-
-        qnADataObject.FinancialApplicationGrade = null; // Remove any previous grade as it doesn't reflect the new answers
-
-        if (qnADataObject.Pages.Any(p => p.HasNewFeedback))
-        {
-            qnADataObject.RequestedFeedbackAnswered = qnADataObject.Pages.All(p => p.AllFeedbackIsCompleted);
-        }
-
-        section.QnAData = qnADataObject;
-
-        await _applyRepository.SaveSection(section, request.UserId);
-
-        return new UpdatePageAnswersResult { Page = page, ValidationPassed = validationPassed };
-      }
-      else
-      {
-        return new UpdatePageAnswersResult
-        { Page = page, ValidationPassed = validationPassed, ValidationErrors = validationErrors };
-      }
-    }
-
-    private bool ProcessAnswer(UpdatePageAnswersRequest request, Question question, bool validationPassed,
-        List<KeyValuePair<string, string>> validationErrors,
-        PageOfAnswers pageAnswers, List<PageOfAnswers> pagePageOfAnswers)
-    {
-      if (question.Input.Type == "FileUpload")
-      {
-        var answer = request.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
-        if (ExistingUpload(question.QuestionId, pagePageOfAnswers) && (answer == null || answer.Value == ""))
-        {
-          var existingAnswer = pagePageOfAnswers.SelectMany(poa => poa.Answers).Single(a => a.QuestionId == question.QuestionId);
-          pageAnswers.Answers.Add(existingAnswer);
-        }
-        else
-        {
-          var validators = _validatorFactory.Build(question);
-          foreach (var validator in validators)
-          {
-            var errors = validator.Validate(question, answer);
-
-            if (!errors.Any()) continue;
-
-            validationPassed = false;
-            validationErrors.AddRange(errors);
-          }
-
-          if (answer != null)
-          {
-            pageAnswers.Answers.Add(answer);  
-          }
-        }
-      }
-      else
-      {
-        var answer = request.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
-        var existingAnswer = pagePageOfAnswers.SelectMany(poa => poa.Answers).FirstOrDefault(a => a.QuestionId == question.QuestionId);
-
-        if (existingAnswer?.Value == answer?.Value)
-        {
-            validationPassed = false;
-            validationErrors.Add(new KeyValuePair<string, string>(question.QuestionId, "Unable to save as you have not updated your answer"));
-        }
-
-        var validators = _validatorFactory.Build(question);
-        foreach (var validator in validators)
-        {
-          var errors = validator.Validate(question, answer);
-
-          if (errors.Any())
-          {
-            validationPassed = false;
-            validationErrors.AddRange(errors);
-          }
-          else
-          {
-            if (question.Input.Type == "Checkbox" && answer.Value == "on")
+            if (validationPassed && !atLeastOneAnswerChanged && section.Status == Domain.Entities.ApplicationSectionStatus.Evaluated)
             {
-              answer.Value = "Yes";
+                foreach (var question in page.Questions)
+                {
+                    validationErrors.Add(new KeyValuePair<string, string>(question.QuestionId, "Unable to save as you have not updated your answer"));
+                }
             }
-          }
+            else if (validationPassed)
+            {
+                if (page.HasFeedback)
+                {
+                    page.Feedback.ForEach(f => f.IsCompleted = true);
+                }
+
+                // the page is always complete if validation passes
+                page.Complete = true;
+
+                if (page.Next.Count() > 1)
+                {
+                    foreach (var nextAction in page.Next)
+                    {
+                        nextAction.ConditionMet = false;
+                    }
+
+                    var returnIdConditionMet = string.Empty;
+
+                    // for pages with branching conditions then next page will be activated or deactivated
+                    // depending on whether the condition has been met by the answer being validated
+                    foreach (var nextAction in page.Next)
+                    {
+                        // ignore an action with no condition as these do not activate pages
+                        if (nextAction.Condition == null) continue;
+
+                        var answerValue = newAnswers.Single(a => a.QuestionId == nextAction.Condition.QuestionId).Value;
+                        if (nextAction.Condition.MustEqual == answerValue)
+                        {
+                            if (nextAction.Action == "NextPage")
+                            {
+                                qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Active = true;
+                            }
+
+                            returnIdConditionMet = nextAction.ReturnId;
+                            nextAction.ConditionMet = true;
+                        }
+                        else
+                        {
+                            // if a condition has not been met and the next page is not the same page
+                            // as a previously met condition (handles OR conditions) then deactivate the page 
+                            if (nextAction.Action == "NextPage" && nextAction.ReturnId != returnIdConditionMet)
+                            {
+                                qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Active = false;
+                            }
+                        }
+                    }
+
+                    // when no conditional page has been met then the first non-conditional page will be met by default
+                    if (!page.Next.Any(p => p.ConditionMet))
+                    {
+                        var nullCondition = page.Next.FirstOrDefault(p => p.Condition == null);
+                        if (nullCondition != null)
+                        {
+                            nullCondition.ConditionMet = true;
+                        }
+                    }
+                }
+                else if (page.Next.Count() == 1)
+                {
+                    // assumption is that all pages have at least one condition
+                    page.Next.First().ConditionMet = true;
+                }
+
+                qnADataObject.Pages.ForEach(p =>
+                {
+                    if (p.PageId == request.PageId)
+                    {
+                        p.Complete = page.Complete;
+                        p.PageOfAnswers = page.PageOfAnswers;
+                        p.Feedback = page.Feedback;
+                    }
+                });
+
+                // remove any previous grade as it would be based on previous answers
+                qnADataObject.FinancialApplicationGrade = null;
+
+                if (qnADataObject.Pages.Any(p => p.HasNewFeedback))
+                {
+                    qnADataObject.RequestedFeedbackAnswered =
+                        qnADataObject.Pages.All(p => p.AllFeedbackIsCompleted);
+                }
+
+                section.QnAData = qnADataObject;
+
+                await _applyRepository.SaveSection(section, request.UserId);
+
+                return new UpdatePageAnswersResult
+                    {Page = page, ValidationPassed = true};
+            }
+
+            return new UpdatePageAnswersResult
+                { Page = page, ValidationPassed = false, ValidationErrors = validationErrors };
+            
         }
 
-        if (answer != null)
+        private bool ProcessAnswer(Answer answer, Question question, bool validationPassed,
+            List<KeyValuePair<string, string>> validationErrors,
+            PageOfAnswers pageAnswers, List<PageOfAnswers> pagePageOfAnswers)
         {
-          pageAnswers.Answers.Add(answer);
+            if (question.Input.Type == "FileUpload")
+            {
+                if (ExistingUpload(question.QuestionId, pagePageOfAnswers) && (answer == null || answer.Value == ""))
+                {
+                    var existingAnswer = pagePageOfAnswers.SelectMany(poa => poa.Answers).Single(a => a.QuestionId == question.QuestionId);
+                    pageAnswers.Answers.Add(existingAnswer);
+                }
+                else
+                {
+                    var validators = _validatorFactory.Build(question);
+                    foreach (var validator in validators)
+                    {
+                        var errors = validator.Validate(question, answer);
+
+                        if (!errors.Any()) continue;
+
+                        validationPassed = false;
+                        validationErrors.AddRange(errors);
+                    }
+
+                    if (answer != null)
+                    {
+                        pageAnswers.Answers.Add(answer);
+                    }
+                }
+            }
+            else
+            {
+                var validators = _validatorFactory.Build(question);
+                foreach (var validator in validators)
+                {
+                    var errors = validator.Validate(question, answer);
+
+                    if (errors.Any())
+                    {
+                        validationPassed = false;
+                        validationErrors.AddRange(errors);
+                    }
+                    else
+                    {
+                        if (question.Input.Type == "Checkbox" && answer.Value == "on")
+                        {
+                            answer.Value = "Yes";
+                        }
+                    }
+                }
+
+                if (answer != null)
+                {
+                    pageAnswers.Answers.Add(answer);
+                }
+            }
+
+            return validationPassed;
         }
-      }
 
-      return validationPassed;
+        private static bool ExistingUpload(string questionId, List<PageOfAnswers> pagePageOfAnswers)
+        {
+            return pagePageOfAnswers.Any(poa => poa.Answers.Any(a => a.QuestionId == questionId && a.Value != ""));
+        }
     }
-
-    private static bool ExistingUpload(string questionId, List<PageOfAnswers> pagePageOfAnswers)
-    {
-      return pagePageOfAnswers.Any(poa => poa.Answers.Any(a => a.QuestionId == questionId && a.Value != ""));
-    }
-
-    //        private static void MarkSequenceAsCompleteIfAllPagesComplete(ApplicationSequence sequence, List<Sequence> workflow)
-    //        {
-    //            sequence.Complete = sequence.Sections.SelectMany(s => s.Pages).All(p => p.Complete);
-    //
-    //            if (!sequence.Complete) return;
-    //
-    //            var nextSequences = sequence.NextSequences;
-    //            foreach (var nextSequence in nextSequences)
-    //            {
-    //                if (nextSequence.Condition != null)
-    //                {
-    //                    var answers = sequence.Sections.SelectMany(s => s.Pages).SelectMany(p => p.PageOfAnswers[0].Answers).ToList();
-    //                    if (answers.Any(a =>
-    //                        a.QuestionId == nextSequence.Condition.QuestionId &&
-    //                        a.Value == nextSequence.Condition.MustEqual))
-    //                    {
-    //                        workflow.Single(w => w.SequenceId == nextSequence.NextSequenceId).Active = true;
-    //                    }
-    //                }
-    //                else
-    //                {
-    //                    workflow.Single(w => w.SequenceId == nextSequence.NextSequenceId).Active = true;
-    //                }
-    //            }
-    //        }
-  }
 }
