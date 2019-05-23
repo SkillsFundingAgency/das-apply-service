@@ -53,6 +53,14 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task RemoveContactFromOrganisation(Guid contactId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync("UPDATE Contacts SET ApplyOrganisationId = NULL, Status = 'New' WHERE Id = @contactId", new {contactId});
+            }
+        }
+
         public async Task<Contact> GetContact(string email)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
