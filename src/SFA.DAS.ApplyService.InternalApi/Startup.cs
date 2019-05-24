@@ -172,7 +172,6 @@ namespace SFA.DAS.ApplyService.InternalApi
                 config.For<IUkrlpSoapSerializer>().Use<UkrlpSoapSerializer>();
                 config.For<IRoatpApiClient>().Use<RoatpApiClient>();
                 config.For<IRoatpTokenService>().Use<RoatpTokenService>();
-
                 config.For<IKeyProvider>().Use<PlaceholderKeyProvider>();
                 config.For<IStorageService>().Use<StorageService>();
                 

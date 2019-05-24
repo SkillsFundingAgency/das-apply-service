@@ -159,6 +159,8 @@ namespace SFA.DAS.ApplyService.Web
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILogger<Startup> logger)
         {
+            MappingStartup.AddMappings();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

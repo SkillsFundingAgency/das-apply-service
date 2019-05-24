@@ -1,9 +1,10 @@
-﻿using SFA.DAS.ApplyService.InternalApi.Types.CompaniesHouse;
+﻿using SFA.DAS.ApplyService.Domain.CompaniesHouse;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     public interface ICompaniesHouseApiClient
     {
-        Company GetCompanyDetails(string companiesHouseNumber);
+        Task<CompaniesHouseSummary> GetCompanyDetails(string companiesHouseNumber);
     }
 }

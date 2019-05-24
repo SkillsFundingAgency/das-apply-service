@@ -5,13 +5,14 @@
     using Microsoft.Extensions.Logging;
     using SFA.DAS.ApplyService.Web.Infrastructure;
     using System.Threading.Tasks;
+    using Domain.CompaniesHouse;
     using Domain.Roatp;
     using Domain.Ukrlp;
     using Session;
     using ViewModels.Roatp;
     using Validators;
     using Microsoft.AspNetCore.Authorization;
-
+   
     [Authorize]
     public class RoatpApplicationPreambleController : Controller
     {
@@ -23,7 +24,7 @@
         private ICharityCommissionApiClient _charityCommissionApiClient;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
-
+       
         public RoatpApplicationPreambleController(ILogger<RoatpApplicationPreambleController> logger, IRoatpApiClient roatpApiClient, 
                                                   IUkrlpApiClient ukrlpApiClient, ISessionService sessionService, 
                                                   ICompaniesHouseApiClient companiesHouseApiClient, ICharityCommissionApiClient charityCommissionApiClient)
@@ -124,14 +125,19 @@
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
             var providerDetails = applicationDetails.UkrlpLookupDetails;
+            CompaniesHouseSummary companyDetails = null;
 
             if (providerDetails.VerifiedByCompaniesHouse)
             {
                 var companiesHouseVerification = providerDetails.VerificationDetails.FirstOrDefault(x =>
                         x.VerificationAuthority == VerificationAuthorities.CompaniesHouseAuthority);
 
-                // Implementation of lookup and storage in story APR-448
-                var companyDetails = _companiesHouseApiClient.GetCompanyDetails(companiesHouseVerification.VerificationId);
+                companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companiesHouseVerification.VerificationId);
+
+                if (companyDetails.Status.ToLower() != CompaniesHouseSummary.CompanyStatusActive)
+                {
+                    return RedirectToAction("CompanyNotActive");
+                }
             }
 
             if (applicationDetails.UkrlpLookupDetails.VerifiedbyCharityCommission)
@@ -148,9 +154,10 @@
             {
                 ProviderDetails = applicationDetails.UkrlpLookupDetails,
                 ApplicationRouteId = applicationDetails.ApplicationRouteId,
-                UKPRN = applicationDetails.UkrlpLookupDetails.UKPRN
+                UKPRN = applicationDetails.UkrlpLookupDetails.UKPRN,
+                CompaniesHouseInformation = companyDetails
             };
-
+            
             return View("~/Views/Roatp/UkprnFound.cshtml", viewModel);
         }
 
@@ -180,6 +187,20 @@
             };
 
             return View("~/Views/Roatp/UkprnActive.cshtml", viewModel);
+        }
+
+        [Route("company-not-active")]
+        public async Task<IActionResult> CompanyNotActive()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var viewModel = new UkprnSearchResultsViewModel
+            {
+                ApplicationRouteId = applicationDetails.ApplicationRouteId,
+                UKPRN = applicationDetails.UKPRN.ToString()
+            };
+
+            return View("~/Views/Roatp/CompanyNotActive.cshtml", viewModel);
         }
     }
 }

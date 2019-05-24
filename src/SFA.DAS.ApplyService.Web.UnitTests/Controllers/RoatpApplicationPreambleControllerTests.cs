@@ -1,5 +1,6 @@
 ﻿namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
+    using System;
     using Domain.Roatp;
     using Microsoft.Extensions.Logging;
     using Moq;
@@ -15,7 +16,8 @@
     using ViewModels.Roatp;
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using SFA.DAS.ApplyService.Domain.Ukrlp;
-    using SFA.DAS.ApplyService.InternalApi.Types.CompaniesHouse;
+    using System.Threading.Tasks;
+    using SFA.DAS.ApplyService.Domain.CompaniesHouse;
 
     [TestFixture]
     public class RoatpApplicationPreambleControllerTests
@@ -28,6 +30,8 @@
         private Mock<ICharityCommissionApiClient> _charityCommissionApiClient;
 
         private RoatpApplicationPreambleController _controller;
+
+        private CompaniesHouseSummary _activeCompany;
 
         [SetUp]
         public void Before_each_test()
@@ -42,6 +46,33 @@
             _controller = new RoatpApplicationPreambleController(_logger.Object, _roatpApiClient.Object, _ukrlpApiClient.Object, 
                                                                  _sessionService.Object, _companiesHouseApiClient.Object,
                                                                  _charityCommissionApiClient.Object);
+            _activeCompany = new CompaniesHouseSummary
+            {
+                CompanyNumber = "12345678",
+                CompanyType = "ltd",
+                Directors = new List<DirectorInformation>
+                {
+                    new DirectorInformation
+                    {
+                        Id = "1234",
+                        DateOfBirth = new DateTime(1948, 11, 1),
+                        AppointedDate = new DateTime(1960, 12, 12),
+                        ResignedDate = null,
+                        Name = "Mr A Director"
+                    }
+                },
+                PersonsSignificationControl = new List<PersonSignificantControlInformation>
+                {
+                    new PersonSignificantControlInformation
+                    {
+                        Id = "1234",
+                        DateOfBirth = new DateTime(1948, 11, 1),
+                        Name = "Mr A Director"
+                    }
+                },
+                IncorporationDate = new DateTime(1960, 12, 12),
+                Status = "active"
+            };
         }
 
         [Test]
@@ -343,7 +374,7 @@
             };
 
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
-            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(new Company()).Verifiable();
+            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(Task.FromResult(_activeCompany)).Verifiable();
             _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<string>())).Verifiable();
 
             var result = _controller.UkprnFound().GetAwaiter().GetResult();
@@ -376,7 +407,7 @@
             };
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
             
-            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(new Company()).Verifiable();
+            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(Task.FromResult(_activeCompany)).Verifiable();
             _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<string>())).Verifiable();
 
             var result = _controller.UkprnFound().GetAwaiter().GetResult();
@@ -414,7 +445,7 @@
             };
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
 
-            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(new Company()).Verifiable();
+            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(Task.FromResult(_activeCompany)).Verifiable();
             _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<string>())).Verifiable();
 
             var result = _controller.UkprnFound().GetAwaiter().GetResult();
@@ -423,6 +454,46 @@
             _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<string>()), Times.Once);
         }
 
+        [Test]
+        public void UKPRN_is_verified_against_companies_house_but_company_not_active()
+        {
+            var providerDetails = new ProviderDetails
+            {
+                UKPRN = "10001000",
+                ProviderName = "Test Provider",
+                VerificationDetails = new List<VerificationDetails>
+                {
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CompaniesHouseAuthority,
+                        VerificationId = "12345678"
+                    }
+                }
+            };
+
+            var applicationDetails = new ApplicationDetails
+            {
+                ApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute,
+                UkrlpLookupDetails = providerDetails
+            };
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+
+            var inactiveCompany = new CompaniesHouseSummary
+            {
+                Status = "liquidation"
+            };
+            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(Task.FromResult(inactiveCompany)).Verifiable();
+            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<string>())).Verifiable();
+
+            var result = _controller.UkprnFound().GetAwaiter().GetResult();
+            result.Should().BeOfType<RedirectToActionResult>();
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("CompanyNotActive");
+
+            _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Once);
+            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<string>()), Times.Never);
+        }
+        
         [Test]
         public void UKPRN_is_not_verified_against_a_recognised_source()
         {
@@ -446,7 +517,7 @@
                 UkrlpLookupDetails = providerDetails
             };
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
-            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(new Company()).Verifiable();
+            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(Task.FromResult(new CompaniesHouseSummary())).Verifiable();
             _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<string>())).Verifiable();
 
             var result = _controller.UkprnFound().GetAwaiter().GetResult();
@@ -454,5 +525,6 @@
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Never);
             _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<string>()), Times.Never);
         }
+
     }
 }

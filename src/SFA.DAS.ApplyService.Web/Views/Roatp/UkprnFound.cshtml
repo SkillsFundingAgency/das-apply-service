@@ -19,7 +19,7 @@
 
             <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">UKPRN</p>
             <p class="govuk-body">@Model.ProviderDetails.UKPRN</p>
-            
+
             @if (Model.LegalContactDetails != null && !String.IsNullOrWhiteSpace(Model.LegalContactDetails.ContactAddress.Address1))
             {
                 <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">Contact address</p>
@@ -50,13 +50,13 @@
                     }
                 </p>
             }
-            
+
             @if (Model.LegalContactDetails != null && !String.IsNullOrWhiteSpace(Model.LegalContactDetails.ContactTelephone1))
             {
                 <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">Contact number</p>
                 <p class="govuk-body">@Model.LegalContactDetails.ContactTelephone1</p>
             }
-            
+
             @if (Model.LegalContactDetails != null && !String.IsNullOrWhiteSpace(Model.LegalContactDetails.ContactWebsiteAddress))
             {
                 <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">Website</p>
@@ -73,6 +73,53 @@
             {
                 <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">Verification authority</p>
                 <p class="govuk-body">@Model.ProviderDetails.VerificationDetails[0].VerificationAuthority</p>
+            }
+
+            @if (Model.ProviderDetails.VerifiedByCompaniesHouse)
+            {
+                <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">Companies House Number</p>
+                <p class="govuk-body">@Model.CompaniesHouseInformation.CompanyNumber</p>
+
+                <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">Company type</p>
+                <p class="govuk-body">@Model.CompaniesHouseInformation.CompanyTypeDescription</p>
+
+                @if (Model.CompaniesHouseInformation.IncorporationDate.HasValue)
+                 {
+                     <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">Incorporation date</p>
+                     <p class="govuk-body">@Model.CompaniesHouseInformation.IncorporationDate.Value.ToString("dd MMM yyyy")</p>
+                 }
+                @if (Model.CompaniesHouseInformation.Directors.Count > 0)
+                {
+                    <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">Active Directors</p>
+                    <table class="govuk-body">
+                        @foreach (var director in Model.CompaniesHouseInformation.Directors)
+                        {
+                            <tr>
+                                <td style="padding-right: 50px;">@director.Name</td>
+                                @if (director.DateOfBirth.HasValue)
+                                {
+                                    <td>Date of birth @director.DateOfBirth.Value.ToString("MMM yyyy")</td>
+                                }
+                            </tr>
+                        }
+                    </table>
+                }
+                @if (Model.CompaniesHouseInformation.PersonsSignificationControl.Count > 0)
+                {
+                    <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">Persons of significant control</p>
+                    <table class="govuk-body">
+                        @foreach (var psc in Model.CompaniesHouseInformation.PersonsSignificationControl)
+                        {
+                            <tr>
+                                <td style="padding-right: 50px;">@psc.Name</td>
+                                @if (psc.DateOfBirth.HasValue)
+                                {
+                                    <td>Date of birth @psc.DateOfBirth.Value.ToString("MMM yyyy")</td>
+                                }
+                            </tr>
+                        }
+                    </table>
+                }
             }
         </div>
     </main>
