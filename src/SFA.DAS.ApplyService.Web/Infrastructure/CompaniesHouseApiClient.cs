@@ -7,10 +7,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     using System;
     using System.Net.Http;
     using System.Threading.Tasks;
-    using Application.Apply.Review.Return;
     using Configuration;
-    using Microsoft.AspNetCore.Mvc.Internal;
-    using SFA.DAS.ApplyService.Domain;
     using SFA.DAS.ApplyService.Domain.CompaniesHouse;
 
     public class CompaniesHouseApiClient : ICompaniesHouseApiClient

@@ -1,5 +1,6 @@
 ﻿namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
+    using System;
     using System.Linq;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -8,6 +9,7 @@
     using Domain.CompaniesHouse;
     using Domain.Roatp;
     using Domain.Ukrlp;
+    using InternalApi.Types.CharityCommission;
     using Session;
     using ViewModels.Roatp;
     using Validators;
@@ -126,6 +128,7 @@
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
             var providerDetails = applicationDetails.UkrlpLookupDetails;
             CompaniesHouseSummary companyDetails = null;
+            Charity charityDetails = null;
 
             if (providerDetails.VerifiedByCompaniesHouse)
             {
@@ -145,9 +148,21 @@
                 var charityCommissionVerification = providerDetails.VerificationDetails.FirstOrDefault(x =>
                     x.VerificationAuthority == VerificationAuthorities.CharityCommissionAuthority);
 
-                // Implementation of lookup and storage in story APR-449
-                var charityDetails =
-                    _charityCommissionApiClient.GetCharityDetails(charityCommissionVerification.VerificationId);
+                int charityNumber;
+                string verificationId = charityCommissionVerification.VerificationId;
+                if (verificationId.Contains("-"))
+                {
+                    verificationId = verificationId.Substring(0, verificationId.IndexOf("-"));
+                }
+
+                charityNumber = Convert.ToInt32(verificationId);
+                
+                charityDetails = await _charityCommissionApiClient.GetCharityDetails(charityNumber);
+
+                if (!charityDetails.IsActivelyTrading)
+                {
+                    return RedirectToAction("CharityNotActive");
+                }
             }
 
             var viewModel = new UkprnSearchResultsViewModel
@@ -155,7 +170,8 @@
                 ProviderDetails = applicationDetails.UkrlpLookupDetails,
                 ApplicationRouteId = applicationDetails.ApplicationRouteId,
                 UKPRN = applicationDetails.UkrlpLookupDetails.UKPRN,
-                CompaniesHouseInformation = companyDetails
+                CompaniesHouseInformation = companyDetails,
+                CharityCommissionInformation = charityDetails
             };
             
             return View("~/Views/Roatp/UkprnFound.cshtml", viewModel);
