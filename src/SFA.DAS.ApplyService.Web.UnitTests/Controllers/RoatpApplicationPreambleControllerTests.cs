@@ -201,7 +201,13 @@
             var noResults = new List<ProviderDetails>();
             _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<long>())).ReturnsAsync(noResults);
 
-            var applicationDetails = new ApplicationDetails { ApplicationRouteId =  ApplicationRoute.MainProviderApplicationRoute };
+            var applicationDetails = new ApplicationDetails
+            {
+                ApplicationRoute = new ApplicationRoute
+                {
+                    Id = ApplicationRoute.MainProviderApplicationRoute, RouteName = "Main provider"
+                }
+            };
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
 
@@ -231,7 +237,14 @@
             };
             _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<long>())).ReturnsAsync(matchingResult);
 
-            var applicationDetails = new ApplicationDetails { ApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute };
+            var applicationDetails = new ApplicationDetails
+            {
+                ApplicationRoute = new ApplicationRoute
+                {
+                    Id = ApplicationRoute.MainProviderApplicationRoute,
+                    RouteName = "Main provider"
+                }
+            };
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
 
@@ -269,7 +282,14 @@
             };
             _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<long>())).ReturnsAsync(matchingResult);
 
-            var applicationDetails = new ApplicationDetails { ApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute };
+            var applicationDetails = new ApplicationDetails
+            {
+                ApplicationRoute = new ApplicationRoute
+                {
+                    Id = ApplicationRoute.MainProviderApplicationRoute,
+                    RouteName = "Main provider"
+                }
+            };
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
 
@@ -307,7 +327,14 @@
             };
             _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<long>())).ReturnsAsync(matchingResult);
 
-            var applicationDetails = new ApplicationDetails { ApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute };
+            var applicationDetails = new ApplicationDetails
+            {
+                ApplicationRoute = new ApplicationRoute
+                {
+                    Id = ApplicationRoute.MainProviderApplicationRoute,
+                    RouteName = "Main provider"
+                }
+            };
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
 
@@ -345,7 +372,14 @@
             };
             _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<long>())).ReturnsAsync(matchingResult);
 
-            var applicationDetails = new ApplicationDetails { ApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute };
+            var applicationDetails = new ApplicationDetails
+            {
+                ApplicationRoute = new ApplicationRoute
+                {
+                    Id = ApplicationRoute.MainProviderApplicationRoute,
+                    RouteName = "Main provider"
+                }
+            };
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
 
@@ -384,13 +418,17 @@
                     }
                 }
             };
-    
+            
             var applicationDetails = new ApplicationDetails
             {
-                ApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute,
+                ApplicationRoute = new ApplicationRoute
+                {
+                    Id = ApplicationRoute.MainProviderApplicationRoute,
+                    RouteName = "Main provider"
+                },
                 UkrlpLookupDetails = providerDetails
             };
-
+       
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(Task.FromResult(_activeCompany)).Verifiable();
             _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
@@ -417,10 +455,14 @@
                     }
                 }
             };
-       
+
             var applicationDetails = new ApplicationDetails
             {
-                ApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute,
+                ApplicationRoute = new ApplicationRoute
+                {
+                    Id = ApplicationRoute.MainProviderApplicationRoute,
+                    RouteName = "Main provider"
+                },
                 UkrlpLookupDetails = providerDetails
             };
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
@@ -455,10 +497,14 @@
                     }
                 }
             };
-        
+
             var applicationDetails = new ApplicationDetails
             {
-                ApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute,
+                ApplicationRoute = new ApplicationRoute
+                {
+                    Id = ApplicationRoute.MainProviderApplicationRoute,
+                    RouteName = "Main provider"
+                },
                 UkrlpLookupDetails = providerDetails
             };
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
@@ -491,7 +537,11 @@
 
             var applicationDetails = new ApplicationDetails
             {
-                ApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute,
+                ApplicationRoute = new ApplicationRoute
+                {
+                    Id = ApplicationRoute.MainProviderApplicationRoute,
+                    RouteName = "Main provider"
+                },
                 UkrlpLookupDetails = providerDetails
             };
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
@@ -531,7 +581,11 @@
 
             var applicationDetails = new ApplicationDetails
             {
-                ApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute,
+                ApplicationRoute = new ApplicationRoute
+                {
+                    Id = ApplicationRoute.MainProviderApplicationRoute,
+                    RouteName = "Main provider"
+                },
                 UkrlpLookupDetails = providerDetails
             };
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
@@ -570,10 +624,14 @@
                     }
                 }
             };
-        
+
             var applicationDetails = new ApplicationDetails
             {
-                ApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute,
+                ApplicationRoute = new ApplicationRoute
+                {
+                    Id = ApplicationRoute.MainProviderApplicationRoute,
+                    RouteName = "Main provider"
+                },
                 UkrlpLookupDetails = providerDetails
             };
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);

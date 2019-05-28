@@ -55,16 +55,16 @@
         [Route("enter-your-ukprn")]
         public async Task<IActionResult> EnterApplicationUkprn(SelectApplicationRouteViewModel model)
         {
+            model.ApplicationRoutes = await _roatpApiClient.GetApplicationRoutes();
+
             if (!ModelState.IsValid)
             {
-                model.ApplicationRoutes = await _roatpApiClient.GetApplicationRoutes();
-
                 return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
             }
 
             var applicationDetails = new ApplicationDetails
             {
-                ApplicationRouteId = model.ApplicationRouteId
+                ApplicationRoute = model.ApplicationRoutes.FirstOrDefault(x => x.Id == model.ApplicationRouteId)
             };
 
             _sessionService.Set(ApplicationDetailsKey, applicationDetails);
@@ -99,7 +99,7 @@
 
                 if (registerStatus.ExistingUKPRN)
                 {
-                    if (registerStatus.ProviderTypeId != applicationDetails.ApplicationRouteId
+                    if (registerStatus.ProviderTypeId != applicationDetails.ApplicationRoute.Id
                         || registerStatus.StatusId == OrganisationRegisterStatus.RemovedStatus)
                     {
                         return RedirectToAction("UkprnFound");
@@ -168,7 +168,7 @@
             var viewModel = new UkprnSearchResultsViewModel
             {
                 ProviderDetails = applicationDetails.UkrlpLookupDetails,
-                ApplicationRouteId = applicationDetails.ApplicationRouteId,
+                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
                 UKPRN = applicationDetails.UkrlpLookupDetails.UKPRN,
                 CompaniesHouseInformation = companyDetails,
                 CharityCommissionInformation = charityDetails
@@ -184,7 +184,7 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
-                ApplicationRouteId = applicationDetails.ApplicationRouteId,
+                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
                 UKPRN = applicationDetails.UKPRN.ToString()
             };
 
@@ -198,7 +198,7 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
-                ApplicationRouteId = applicationDetails.ApplicationRouteId,
+                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
                 UKPRN = applicationDetails.UKPRN.ToString()
             };
 
@@ -212,7 +212,7 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
-                ApplicationRouteId = applicationDetails.ApplicationRouteId,
+                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
                 UKPRN = applicationDetails.UKPRN.ToString()
             };
 

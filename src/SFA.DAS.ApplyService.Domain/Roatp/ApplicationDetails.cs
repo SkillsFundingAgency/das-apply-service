@@ -5,7 +5,7 @@
 
     public class ApplicationDetails
     {
-        public int ApplicationRouteId { get; set; }
+        public ApplicationRoute ApplicationRoute { get; set; }
         public ProviderDetails UkrlpLookupDetails { get; set; }
         public long UKPRN { get; set; }
         public CompaniesHouseSummary CompanySummary { get; set; }
