@@ -218,5 +218,19 @@
 
             return View("~/Views/Roatp/CompanyNotActive.cshtml", viewModel);
         }
+
+        [Route("charity-not-active")]
+        public async Task<IActionResult> CharityNotActive()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var viewModel = new UkprnSearchResultsViewModel
+            {
+                ApplicationRouteId = applicationDetails.ApplicationRouteId,
+                UKPRN = applicationDetails.UKPRN.ToString()
+            };
+
+            return View("~/Views/Roatp/CharityNotActive.cshtml", viewModel);
+        }
     }
 }
