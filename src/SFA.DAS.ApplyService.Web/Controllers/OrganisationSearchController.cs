@@ -262,7 +262,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private List<OrganisationSearchResult> OrderOrganisationByLiveStatus(OrganisationSearchViewModel viewModel)
         {
-            return viewModel.Organisations?.OrderByDescending(x => x.OrganisationIsAlive).ToList();
+            return viewModel.Organisations?.OrderByDescending(x => x.OrganisationIsLive).ToList();
         }
     }
 }

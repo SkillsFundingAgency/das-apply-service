@@ -316,7 +316,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                         EasApiOrganisationType = group.Select(g => g.EasApiOrganisationType).FirstOrDefault(EasApiOrganisationType => !string.IsNullOrWhiteSpace(EasApiOrganisationType)),
                         FinancialDueDate = group.Select(g => g.FinancialDueDate).FirstOrDefault(FinancialDueDate => FinancialDueDate != null),
                         FinancialExempt = group.Select(g => g.FinancialExempt).FirstOrDefault(FinancialExempt => FinancialExempt != null),
-                        OrganisationIsAlive = group.Select(g => g.OrganisationIsAlive).FirstOrDefault(OrganisationIsAlive => OrganisationIsAlive)
+                        OrganisationIsLive = group.Select(g => g.OrganisationIsLive).FirstOrDefault(OrganisationIsAlive => OrganisationIsAlive)
                     }
                 );
 
@@ -340,7 +340,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                         EasApiOrganisationType = group.Select(g => g.EasApiOrganisationType).FirstOrDefault(EasApiOrganisationType => !string.IsNullOrWhiteSpace(EasApiOrganisationType)),
                         FinancialDueDate = group.Select(g => g.FinancialDueDate).FirstOrDefault(FinancialDueDate => FinancialDueDate != null),
                         FinancialExempt = group.Select(g => g.FinancialExempt).FirstOrDefault(FinancialExempt => FinancialExempt != null),
-                        OrganisationIsAlive = group.Select(g => g.OrganisationIsAlive).FirstOrDefault(OrganisationIsAlive => OrganisationIsAlive)
+                        OrganisationIsLive = group.Select(g => g.OrganisationIsLive).FirstOrDefault(OrganisationIsAlive => OrganisationIsAlive)
                     }
                 );
 
@@ -364,7 +364,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                         EasApiOrganisationType = group.Select(g => g.EasApiOrganisationType).FirstOrDefault(EasApiOrganisationType => !string.IsNullOrWhiteSpace(EasApiOrganisationType)),
                         FinancialDueDate = group.Select(g => g.FinancialDueDate).FirstOrDefault(FinancialDueDate => FinancialDueDate != null),
                         FinancialExempt = group.Select(g => g.FinancialExempt).FirstOrDefault(FinancialExempt => FinancialExempt != null),
-                        OrganisationIsAlive = group.Select(g => g.OrganisationIsAlive).FirstOrDefault(OrganisationIsAlive => OrganisationIsAlive)
+                        OrganisationIsLive = group.Select(g => g.OrganisationIsLive).FirstOrDefault(OrganisationIsAlive => OrganisationIsAlive)
                     }
                 );
 
@@ -388,7 +388,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                         EasApiOrganisationType = group.Select(g => g.EasApiOrganisationType).FirstOrDefault(EasApiOrganisationType => !string.IsNullOrWhiteSpace(EasApiOrganisationType)),
                         FinancialDueDate = group.Select(g => g.FinancialDueDate).FirstOrDefault(FinancialDueDate => FinancialDueDate != null),
                         FinancialExempt = group.Select(g => g.FinancialExempt).FirstOrDefault(FinancialExempt => FinancialExempt != null),
-                        OrganisationIsAlive = group.Select(g => g.OrganisationIsAlive).FirstOrDefault(OrganisationIsAlive => OrganisationIsAlive)
+                        OrganisationIsLive = group.Select(g => g.OrganisationIsLive).FirstOrDefault(OrganisationIsLive => OrganisationIsLive)
                     }
                 );
 
