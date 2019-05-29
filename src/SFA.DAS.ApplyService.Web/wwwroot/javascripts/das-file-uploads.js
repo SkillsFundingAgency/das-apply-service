@@ -11,6 +11,7 @@
         jsExistingFiles: [],
 
         init: function(args) {
+            
             var that = this;
 
             var hintText = document.querySelector(".govuk-hint");
@@ -51,7 +52,7 @@
                     ? "Files must not have the same filename"
                     : null;
             var error = document.createElement("li");
-            error.innerHTML = '<a href="#go-to-error">' + errorMessage + "</a>";
+            error.innerHTML = '<a href="#choose-file">' + errorMessage + "</a>";
             this.dropTarget.style.borderColor = "#b10e1e";
             this.currentErrors.appendChild(error);
             this.errorSummary.style.display = "block";
@@ -75,7 +76,12 @@
             );
 
             r.on("fileAdded", function(file, event) {
-                if (r.opts.existingFiles.indexOf(file.fileName) !== -1) {
+
+                var existingFileNames = r.opts.existingFiles.map(function(existingFile) {
+                    return existingFile.filename
+                })
+
+                if (existingFileNames.indexOf(file.fileName) !== -1) {
                     that.handleError("sameFilename");
                     r.cancel();
                     return false;

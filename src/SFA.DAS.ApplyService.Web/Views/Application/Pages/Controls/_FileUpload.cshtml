@@ -74,7 +74,7 @@
         </div>
         <div class="js-upload-progress"></div>
     </div>
-    <p class="govuk-body govuk-!-margin-bottom-0 govuk-!-margin-top-2">or <a class="js-browse-link govuk-link" href="#/choose-files-to-upload">choose files to upload</a></p>
+    <p class="govuk-body govuk-!-margin-bottom-0 govuk-!-margin-top-2">or <a class="js-browse-link govuk-link" id="choose-file" href="#/choose-files-to-upload">choose files to upload</a></p>
 </div>
 
 
@@ -99,6 +99,6 @@
             "application/pdf"
         ],
         maxTotalFiles: @( Model.FileUploadInfo.MaximumNumberOfUploads == null ? "1" : Model.FileUploadInfo.MaximumNumberOfUploads.ToString()),
-        existingFiles: []
+        existingFiles: @Json.Serialize(Model.FileUploadInfo.Uploads)
     })
 </script>
