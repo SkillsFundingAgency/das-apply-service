@@ -54,15 +54,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             return Mapper.Map<OrganisationSummary, Types.OrganisationSearchResult>(apiResponse);
         }
 
-        public async Task<Types.OrganisationSearchResult> Get(string ukprn)
-        {
-            _logger.LogInformation($"Searching EPAO Register for. Ukprn: {ukprn}");
-            var apiResponse = await Get<OrganisationSummary>($"/api/ao/assessment-organisations/ukprn/{ukprn}");
-
-            return Mapper.Map<OrganisationSummary, Types.OrganisationSearchResult>(apiResponse);
-        
-        }
-
         public async Task<IEnumerable<Types.OrganisationType>> GetOrgansiationTypes(bool activeOnly = true)
         {
             _logger.LogInformation($"Getting Organisation Types from EPAO Register.");
