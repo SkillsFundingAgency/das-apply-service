@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using System;
 
 namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
 {
@@ -21,6 +22,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
                 .ForMember(dest => dest.CharityNumber, opt => opt.ResolveUsing(source => source.OrganisationData?.CharityNumber))
                 .ForMember(dest => dest.FinancialDueDate, opt => opt.ResolveUsing(source => source.OrganisationData?.FHADetails?.FinancialDueDate))
                 .ForMember(dest => dest.FinancialExempt, opt => opt.ResolveUsing(source => source.OrganisationData?.FHADetails?.FinancialExempt))
+                .ForMember(dest => dest.OrganisationIsAlive, opt => opt.ResolveUsing(source => source.Status.Equals("Live", StringComparison.CurrentCultureIgnoreCase)?true:false))
                 .ForAllOtherMembers(dest => dest.Ignore());
         }
     }

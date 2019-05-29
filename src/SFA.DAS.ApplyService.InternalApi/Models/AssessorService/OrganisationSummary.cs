@@ -6,7 +6,7 @@
         public string Name { get; set; }
         public int? Ukprn { get; set; }
         public string Email { get; set; }
-
+        public string Status { get; set; }
         public OrganisationData OrganisationData { get; set; }
 
         public string OrganisationType { get; set; }

@@ -98,6 +98,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             viewModel.Organisations = await _apiClient.SearchOrganisation(viewModel.SearchString);
+            viewModel.Organisations = OrderOrganisationByLiveStatus(viewModel);
 
             return View(viewModel);
         }
@@ -257,6 +258,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return organisationSearchResult;
+        }
+
+        private List<OrganisationSearchResult> OrderOrganisationByLiveStatus(OrganisationSearchViewModel viewModel)
+        {
+            return viewModel.Organisations?.OrderByDescending(x => x.OrganisationIsAlive).ToList();
         }
     }
 }

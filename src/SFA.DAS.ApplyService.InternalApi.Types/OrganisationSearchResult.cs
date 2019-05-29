@@ -31,6 +31,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Types
         
         public DateTime? FinancialDueDate { get; set; }
         public bool? FinancialExempt { get; set; }
+
+        public bool OrganisationIsAlive { get; set; }
     }
 
     public class OrganisationAddress
