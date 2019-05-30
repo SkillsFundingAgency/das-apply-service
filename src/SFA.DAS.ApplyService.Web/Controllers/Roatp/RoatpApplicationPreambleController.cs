@@ -155,7 +155,11 @@
                     verificationId = verificationId.Substring(0, verificationId.IndexOf("-"));
                 }
 
-                charityNumber = Convert.ToInt32(verificationId);
+                bool isValidCharityNumber = int.TryParse(verificationId, out charityNumber);
+                if (!isValidCharityNumber)
+                {
+                    return RedirectToAction("CharityNotFound");
+                }
                 
                 charityDetails = await _charityCommissionApiClient.GetCharityDetails(charityNumber);
 
@@ -231,6 +235,20 @@
             };
 
             return View("~/Views/Roatp/CharityNotActive.cshtml", viewModel);
+        }
+
+        [Route("charity-not-found")]
+        public async Task<IActionResult> CharityNotFound()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var viewModel = new UkprnSearchResultsViewModel
+            {
+                ApplicationRouteId = applicationDetails.ApplicationRouteId,
+                UKPRN = applicationDetails.UKPRN.ToString()
+            };
+
+            return View("~/Views/Roatp/CharityNotFound.cshtml", viewModel);
         }
     }
 }
