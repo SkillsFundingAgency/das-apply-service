@@ -137,7 +137,8 @@
 
                 companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companiesHouseVerification.VerificationId);
 
-                if (companyDetails.Status.ToLower() != CompaniesHouseSummary.CompanyStatusActive)
+                if (String.IsNullOrWhiteSpace(companyDetails.Status) 
+                    || companyDetails.Status.ToLower() != CompaniesHouseSummary.CompanyStatusActive)
                 {
                     return RedirectToAction("CompanyNotActive");
                 }

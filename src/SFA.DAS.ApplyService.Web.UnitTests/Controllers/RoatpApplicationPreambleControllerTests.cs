@@ -472,8 +472,10 @@
             _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Once);
         }
 
-        [Test]
-        public void UKPRN_is_verified_against_companies_house_but_company_not_active()
+        [TestCase("liquidation")]
+        [TestCase(null)]
+        [TestCase("")]
+        public void UKPRN_is_verified_against_companies_house_but_company_not_active(string status)
         {
             var providerDetails = new ProviderDetails
             {
@@ -498,7 +500,7 @@
 
             var inactiveCompany = new CompaniesHouseSummary
             {
-                Status = "liquidation"
+                Status = status
             };
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(Task.FromResult(inactiveCompany)).Verifiable();
             _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
