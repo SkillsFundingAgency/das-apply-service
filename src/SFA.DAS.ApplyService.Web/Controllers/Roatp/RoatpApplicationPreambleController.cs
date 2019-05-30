@@ -226,11 +226,19 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
-                ApplicationRouteId = applicationDetails.ApplicationRouteId,
+                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
                 UKPRN = applicationDetails.UKPRN.ToString()
             };
 
             return View("~/Views/Roatp/CharityNotActive.cshtml", viewModel);
+        }
+
+        [Route("start-application")]
+        public async Task<IActionResult> StartApplication()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            return null;        // redirect to start
         }
     }
 }
