@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
+﻿using AutoMapper;
+
+namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
     using System;
     using Domain.Roatp;
@@ -19,6 +21,7 @@
     using System.Threading.Tasks;
     using InternalApi.Types.CharityCommission;
     using SFA.DAS.ApplyService.Domain.CompaniesHouse;
+    using SFA.DAS.ApplyService.Web.AutoMapper;
 
     [TestFixture]
     public class RoatpApplicationPreambleControllerTests
@@ -86,9 +89,9 @@
             {
                 Status = "registered",
                 CharityNumber = "12345678",
-                Trustees = new List<Trustee>
+                Trustees = new List<InternalApi.Types.CharityCommission.Trustee>
                 {
-                    new Trustee
+                    new InternalApi.Types.CharityCommission.Trustee
                     {
                         Id = 1,
                         Name = "MR A TRUSTEE"
@@ -97,6 +100,19 @@
                 IncorporatedOn = new DateTime(2019, 1, 1),
                 DissolvedOn = null
             };
+
+            Mapper.Reset();
+
+            Mapper.Initialize(cfg =>
+            {
+                cfg.AddProfile<CompaniesHouseSummaryProfile>();
+                cfg.AddProfile<DirectorInformationProfile>();
+                cfg.AddProfile<PersonSignificantControlInformationProfile>();
+                cfg.AddProfile<CharityCommissionProfile>();
+                cfg.AddProfile<CharityTrusteeProfile>();
+            });
+
+            Mapper.AssertConfigurationIsValid();
         }
 
         [Test]

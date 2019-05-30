@@ -6,6 +6,7 @@
     using Microsoft.Extensions.Logging;
     using SFA.DAS.ApplyService.Web.Infrastructure;
     using System.Threading.Tasks;
+    using Domain.CharityCommission;
     using Domain.CompaniesHouse;
     using Domain.Roatp;
     using Domain.Ukrlp;
@@ -151,6 +152,8 @@
                 {
                     return RedirectToAction("CompanyNotActive");
                 }
+
+                applicationDetails.CompanySummary = companyDetails;
             }
 
             if (applicationDetails.UkrlpLookupDetails.VerifiedbyCharityCommission)
@@ -177,15 +180,19 @@
                 {
                     return RedirectToAction("CharityNotActive");
                 }
+
+                applicationDetails.CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails);
             }
+
+            _sessionService.Set(ApplicationDetailsKey, applicationDetails);
 
             var viewModel = new UkprnSearchResultsViewModel
             {
                 ProviderDetails = applicationDetails.UkrlpLookupDetails,
                 ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
                 UKPRN = applicationDetails.UkrlpLookupDetails.UKPRN,
-                CompaniesHouseInformation = companyDetails,
-                CharityCommissionInformation = charityDetails
+                CompaniesHouseInformation = applicationDetails.CompanySummary,
+                CharityCommissionInformation = applicationDetails.CharitySummary
             };
             
             return View("~/Views/Roatp/UkprnFound.cshtml", viewModel);
