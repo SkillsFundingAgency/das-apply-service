@@ -9,12 +9,14 @@
     using Domain.CompaniesHouse;
     using Domain.Roatp;
     using Domain.Ukrlp;
+    using global::AutoMapper;
     using InternalApi.Types.CharityCommission;
     using Session;
     using ViewModels.Roatp;
     using Validators;
     using Microsoft.AspNetCore.Authorization;
-   
+    using SFA.DAS.ApplyService.InternalApi.Types;
+
     [Authorize]
     public class RoatpApplicationPreambleController : Controller
     {
@@ -24,12 +26,17 @@
         private ISessionService _sessionService;
         private ICompaniesHouseApiClient _companiesHouseApiClient;
         private ICharityCommissionApiClient _charityCommissionApiClient;
+        private IOrganisationApiClient _organisationApiClient;
+        private readonly IUsersApiClient _usersApiClient;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
        
         public RoatpApplicationPreambleController(ILogger<RoatpApplicationPreambleController> logger, IRoatpApiClient roatpApiClient, 
                                                   IUkrlpApiClient ukrlpApiClient, ISessionService sessionService, 
-                                                  ICompaniesHouseApiClient companiesHouseApiClient, ICharityCommissionApiClient charityCommissionApiClient)
+                                                  ICompaniesHouseApiClient companiesHouseApiClient, 
+                                                  ICharityCommissionApiClient charityCommissionApiClient,
+                                                  IOrganisationApiClient organisationApiClient,
+                                                  IUsersApiClient usersApiClient)
         {
             _logger = logger;
             _roatpApiClient = roatpApiClient;
@@ -37,6 +44,8 @@
             _sessionService = sessionService;
             _companiesHouseApiClient = companiesHouseApiClient;
             _charityCommissionApiClient = charityCommissionApiClient;
+            _organisationApiClient = organisationApiClient;
+            _usersApiClient = usersApiClient;
         }
 
         [Route("select-application-route")]
@@ -236,15 +245,6 @@
 
             return View("~/Views/Roatp/CharityNotActive.cshtml", viewModel);
         }
-
-
-        [Route("start-application")]
-        public async Task<IActionResult> StartApplication()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            return null;        // redirect to start
-		}
 		
         [Route("charity-not-found")]
         public async Task<IActionResult> CharityNotFound()
@@ -253,11 +253,28 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
-                ApplicationRouteId = applicationDetails.ApplicationRouteId,
+                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
                 UKPRN = applicationDetails.UKPRN.ToString()
             };
 
             return View("~/Views/Roatp/CharityNotFound.cshtml", viewModel);
         }
+
+        [Route("start-application")]
+        public async Task<IActionResult> StartApplication()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
+
+            applicationDetails.CreatedBy = user.Id;
+
+            var createOrganisationRequest = Mapper.Map<CreateOrganisationRequest>(applicationDetails);
+            
+            var organisation = await _organisationApiClient.Create(createOrganisationRequest, user.Id);
+
+            return null;        // redirect to start
+		}
+
     }
 }

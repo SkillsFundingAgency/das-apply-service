@@ -9,7 +9,7 @@ using OrganisationDetails = SFA.DAS.ApplyService.InternalApi.Types.OrganisationD
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    public class OrganisationApiClient
+    public class OrganisationApiClient : IOrganisationApiClient
     {
         private static readonly HttpClient _httpClient = new HttpClient();
 
@@ -56,6 +56,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 PrimaryContactEmail = organisation.Email
             };
 
+            return await Create(request, userId);
+        }
+
+        public async Task<Organisation> Create(CreateOrganisationRequest request, Guid userId)
+        {
             return await (await _httpClient.PostAsJsonAsync($"/Organisations", request)).Content
                 .ReadAsAsync<Organisation>();
         }

@@ -29,6 +29,8 @@
         private Mock<ISessionService> _sessionService;
         private Mock<ICompaniesHouseApiClient> _companiesHouseApiClient;
         private Mock<ICharityCommissionApiClient> _charityCommissionApiClient;
+        private Mock<IOrganisationApiClient> _organisationApiClient;
+        private Mock<IUsersApiClient> _usersApiClient;
 
         private RoatpApplicationPreambleController _controller;
 
@@ -44,10 +46,14 @@
             _sessionService = new Mock<ISessionService>();
             _companiesHouseApiClient = new Mock<ICompaniesHouseApiClient>();
             _charityCommissionApiClient = new Mock<ICharityCommissionApiClient>();
+            _organisationApiClient = new Mock<IOrganisationApiClient>();
+            _usersApiClient = new Mock<IUsersApiClient>();
 
             _controller = new RoatpApplicationPreambleController(_logger.Object, _roatpApiClient.Object, _ukrlpApiClient.Object, 
                                                                  _sessionService.Object, _companiesHouseApiClient.Object,
-                                                                 _charityCommissionApiClient.Object);
+                                                                 _charityCommissionApiClient.Object,
+                                                                 _organisationApiClient.Object,
+                                                                 _usersApiClient.Object);
             _activeCompany = new CompaniesHouseSummary
             {
                 CompanyNumber = "12345678",
@@ -626,7 +632,11 @@
 
             var applicationDetails = new ApplicationDetails
             {
-                ApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute,
+                ApplicationRoute = new ApplicationRoute
+                {
+                    Id = ApplicationRoute.MainProviderApplicationRoute,
+                    RouteName = "Main provider"
+                },
                 UkrlpLookupDetails = providerDetails
             };
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);

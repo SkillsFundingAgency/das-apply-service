@@ -32,6 +32,11 @@
             }
         }
 
+        public ProviderContact PrimaryContactDetails
+        {
+            get { return ContactDetails.FirstOrDefault(x => x.ContactType == "L"); }
+        }
+
     }
 
     public class ProviderContact

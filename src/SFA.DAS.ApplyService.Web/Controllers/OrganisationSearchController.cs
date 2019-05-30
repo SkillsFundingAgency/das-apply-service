@@ -17,11 +17,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     public class OrganisationSearchController : Controller
     {
         private readonly IUsersApiClient _usersApiClient;
-        private readonly OrganisationApiClient _organisationApiClient;
+        private readonly IOrganisationApiClient _organisationApiClient;
         private readonly OrganisationSearchApiClient _apiClient;
         private readonly ISessionService _sessionService;
 
-        public OrganisationSearchController(IUsersApiClient usersApiClient, OrganisationApiClient organisationApiClient,
+        public OrganisationSearchController(IUsersApiClient usersApiClient, IOrganisationApiClient organisationApiClient,
             OrganisationSearchApiClient apiClient, ISessionService sessionService)
         {
             _usersApiClient = usersApiClient;
