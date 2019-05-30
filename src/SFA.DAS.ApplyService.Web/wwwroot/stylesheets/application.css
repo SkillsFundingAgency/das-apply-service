@@ -468,7 +468,9 @@
     word-break: break-word;
 }
 
-.govuk-table__cell, .govuk-table__header, .govuk-table__header--no-bottom-border {
+.govuk-table__cell
+.govuk-table__header
+.govuk-table__header--no-bottom-border {
     border-bottom: 0;
 }
 

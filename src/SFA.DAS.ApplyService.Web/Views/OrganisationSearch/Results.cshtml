@@ -52,7 +52,7 @@
                         @foreach (var result in Model.Organisations)
                         {
                             <tr class="govuk-table__row govuk-table__row--no-top-padding-on-first-child">
-                                <td class="govuk-table__cell .govuk-table__header--no-bottom-border">
+                                <td class="govuk-table__header--no-bottom-border">
                                     <form method="post" asp-action="@(result.RoEPAOApproved ? "Confirm" : "Type")" asp-controller="OrganisationSearch" novalidate>
                                         <input asp-for="SearchString" type="hidden" />
                                         <input asp-for="Name" value="@result.Name" type="hidden" />
