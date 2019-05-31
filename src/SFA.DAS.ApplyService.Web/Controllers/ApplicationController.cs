@@ -546,19 +546,23 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 var validationError = new ValidationErrorDetail(string.Empty, $"Cannot submit empty sequence");
                 validationErrors.Add(validationError);
             }
-            else
+            else if (sequence.Sections.Where(sec => sec.PagesComplete != sec.PagesActive).Any())
             {
-                foreach(var sectionQuestionsNotYetCompleted in sequence.Sections.Where(sec => sec.PagesComplete != sec.PagesActive))
-                {
-                    var validationError = new ValidationErrorDetail(sectionQuestionsNotYetCompleted.Id.ToString(), $"You need to complete {sectionQuestionsNotYetCompleted.LinkTitle.ToLower()}");
-                    validationErrors.Add(validationError);
-                }
+                var errorMessage = sequence.SequenceId is SequenceId.Stage2 ?
+                                    "You need to answer all questions before you can submit your application to assess a standard" :
+                                    "You need to answer all questions in all sections before you can submit your application";
 
-                foreach(var sectionFeedbackNotYetCompleted in sequence.Sections.Where(sec => sec.QnAData.RequestedFeedbackAnswered is false || sec.QnAData.Pages.Any(p => !p.AllFeedbackIsCompleted)))
-                {
-                    var validationError = new ValidationErrorDetail(sectionFeedbackNotYetCompleted.Id.ToString(), $"You need to complete {sectionFeedbackNotYetCompleted.LinkTitle.ToLower()}");
-                    validationErrors.Add(validationError);
-                }
+                var validationError = new ValidationErrorDetail(string.Empty, errorMessage);
+                validationErrors.Add(validationError);
+            }
+            else if(sequence.Sections.Where(sec => sec.QnAData.RequestedFeedbackAnswered is false || sec.QnAData.Pages.Any(p => !p.AllFeedbackIsCompleted)).Any())
+            {
+                var errorMessage = sequence.SequenceId is SequenceId.Stage2 ?
+                                    "You need to answer all feedback before you can submit your application to assess a standard" :
+                                    "You need to answer all feedback in all sections before you can submit your application";
+
+                var validationError = new ValidationErrorDetail(string.Empty, errorMessage);
+                validationErrors.Add(validationError);
             }
 
             return validationErrors;
