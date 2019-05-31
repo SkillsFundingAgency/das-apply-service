@@ -131,6 +131,16 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<List<Contact>> GetOrganisationContacts(Guid organisationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<Contact>(@"SELECT * FROM Contacts con
+                                                    INNER JOIN Organisations org on con.ApplyOrganisationID = org.Id
+                                                    WHERE con.ApplyOrganisationID = @organisationId", new { organisationId })).ToList();
+            }
+        }
+
         public async Task<bool> UpdateContactOrgId(Guid contactId, Guid orgId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
