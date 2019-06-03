@@ -81,11 +81,11 @@ namespace SFA.DAS.ApplyService.EmailService
             }
             else if(emailTemplate is null)
             {
-                _logger.LogError($"Cannot find email template {emailTemplate}");
+                _logger.LogError($"Cannot find email template: {templateName}");
             }
             else
             {
-                _logger.LogError($"Cannot send email template {emailTemplate} to '{toAddress}'");
+                _logger.LogError($"Cannot send email template: {templateName} to: '{toAddress}'");
             }
         }
 
@@ -106,7 +106,7 @@ namespace SFA.DAS.ApplyService.EmailService
             }
             else
             {
-                _logger.LogError($"Cannot find email template {emailTemplate}");
+                _logger.LogError($"Cannot find email template: {templateName}");
             }
         }
 
