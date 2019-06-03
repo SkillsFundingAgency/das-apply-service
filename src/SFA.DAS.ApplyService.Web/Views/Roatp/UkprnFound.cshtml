@@ -79,12 +79,17 @@
             {
                 await Html.RenderPartialAsync("~/Views/Roatp/CompaniesHouseSummary.cshtml", Model.CompaniesHouseInformation);
             }
-            
+
             @if (Model.ProviderDetails.VerifiedbyCharityCommission)
             {
                 await Html.RenderPartialAsync("~/Views/Roatp/CharityCommissionSummary.cshtml", Model.CharityCommissionInformation);
             }
+
+            <p class="govuk-body">
+                <a class="govuk-link" asp-action="StartApplication" asp-controller="RoatpApplicationPreamble">Confirm details</a>
+            </p>
         </div>
+
     </main>
 
 </div>

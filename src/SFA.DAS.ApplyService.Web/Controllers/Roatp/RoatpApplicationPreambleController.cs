@@ -281,8 +281,13 @@
             
             var organisation = await _organisationApiClient.Create(createOrganisationRequest, user.Id);
 
-            return null;        // redirect to start
-		}
+            if (!user.IsApproved)
+            {
+                await _usersApiClient.ApproveUser(user.Id);
+            }
+
+            return RedirectToAction("Applications", "Application");
+        }
 
     }
 }

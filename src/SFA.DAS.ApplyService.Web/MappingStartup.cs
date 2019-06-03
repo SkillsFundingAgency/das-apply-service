@@ -16,6 +16,8 @@ namespace SFA.DAS.ApplyService.Web
                 cfg.AddProfile<PersonSignificantControlInformationProfile>();
                 cfg.AddProfile<CharityCommissionProfile>();
                 cfg.AddProfile<CharityTrusteeProfile>();
+                cfg.AddProfile<RoatpCreateOrganisationRequestProfile>();
+                cfg.AddProfile<RoatpContactAddressProfile>();
             });
 
             Mapper.AssertConfigurationIsValid();
