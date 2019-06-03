@@ -23,7 +23,7 @@ namespace SFA.DAS.ApplyService.Web.AutoMapper
                     opt => opt.MapFrom(source => source.UkrlpLookupDetails.PrimaryContactDetails.ContactEmail))
                 .ForMember(dest => dest.OrganisationDetails,
                     opt => opt.ResolveUsing(new RoatpOrganisationDetailsCustomResolver()))
-                .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(source => source.CreatedBy))
+                .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(source => source.CreatedBy))                
                 .ForAllOtherMembers(opt => opt.Ignore());
         }
     }
@@ -84,6 +84,8 @@ namespace SFA.DAS.ApplyService.Web.AutoMapper
                 PrimaryContactAddress = Mapper.Map<ContactAddress>(source.UkrlpLookupDetails?.PrimaryContactDetails),
                 VerificationDetails = source.UkrlpLookupDetails?.VerificationDetails
             };
+
+            destMember.FHADetails = new FHADetails();
 
             return destMember;
         }

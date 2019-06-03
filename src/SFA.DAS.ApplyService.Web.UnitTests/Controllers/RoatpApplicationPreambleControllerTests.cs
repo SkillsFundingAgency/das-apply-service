@@ -12,6 +12,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
     using SFA.DAS.ApplyService.Web.Infrastructure;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Security.Claims;
     using FluentAssertions;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
@@ -19,9 +20,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
     using Microsoft.AspNetCore.Mvc.ViewFeatures;
     using SFA.DAS.ApplyService.Domain.Ukrlp;
     using System.Threading.Tasks;
+    using Domain.CharityCommission;
+    using Domain.Entities;
+    using InternalApi.Types;
     using InternalApi.Types.CharityCommission;
     using SFA.DAS.ApplyService.Domain.CompaniesHouse;
     using SFA.DAS.ApplyService.Web.AutoMapper;
+    using Trustee = InternalApi.Types.CharityCommission.Trustee;
 
     [TestFixture]
     public class RoatpApplicationPreambleControllerTests
@@ -39,6 +44,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
         private CompaniesHouseSummary _activeCompany;
         private Charity _activeCharity;
+
+        private Contact _user;
+        private ApplicationDetails _applicationDetails;
+        private CreateOrganisationRequest _expectedRequest;
 
         [SetUp]
         public void Before_each_test()
@@ -89,9 +98,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             {
                 Status = "registered",
                 CharityNumber = "12345678",
-                Trustees = new List<InternalApi.Types.CharityCommission.Trustee>
+                Trustees = new List<Trustee>
                 {
-                    new InternalApi.Types.CharityCommission.Trustee
+                    new Trustee
                     {
                         Id = 1,
                         Name = "MR A TRUSTEE"
@@ -99,6 +108,111 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 },
                 IncorporatedOn = new DateTime(2019, 1, 1),
                 DissolvedOn = null
+            };
+
+            _applicationDetails = new ApplicationDetails
+            {
+                CompanySummary = null,
+                CharitySummary = null,
+                ApplicationRoute = new ApplicationRoute
+                {
+                    Id = ApplicationRoute.MainProviderApplicationRoute,
+                    RouteName = "Main provider"
+                },
+                UKPRN = 10001234,
+                UkrlpLookupDetails = new ProviderDetails
+                {
+                    ProviderName = "Provider Name",
+                    UKPRN = "10001234",
+                    ProviderAliases = new List<ProviderAlias>
+                    {
+                        new ProviderAlias
+                        {
+                            Alias = "Alias",
+                            LastUpdated = DateTime.Now
+                        }
+                    },
+                    ProviderStatus = "Active",
+                    VerificationDate = new DateTime(2019, 01, 01),
+                    ContactDetails = new List<ProviderContact>
+                    {
+                        new ProviderContact
+                        {
+                            ContactType = "L",
+                            ContactEmail = "test@test.com",
+                            LastUpdated = new DateTime(2019, 01, 01),
+                            ContactTelephone1 = "01234 567890",
+                            ContactWebsiteAddress = "www.test.com",
+                            ContactAddress = new ContactAddress
+                            {
+                                Address1 = "Address 1",
+                                Address2 = "Address 2",
+                                Address3 = "Address 3",
+                                Address4 = "Address 4",
+                                Town = "Town",
+                                PostCode = "TS1 1ST"
+                            }
+                        }
+                    }
+                }
+            };
+
+            _user = new Contact {Id = Guid.NewGuid()};
+
+            var webUser = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.Name, "test name"),
+                new Claim(ClaimTypes.NameIdentifier, "1"),
+                new Claim("custom-claim", "test claim value"),
+            }, "mock"));
+            _controller.ControllerContext.HttpContext = new DefaultHttpContext { User = webUser};
+
+            _expectedRequest = new CreateOrganisationRequest
+            {
+                CreatedBy = _user.Id,
+                Name = _applicationDetails.UkrlpLookupDetails.ProviderName,
+                OrganisationType = "TrainingProvider",
+                OrganisationUkprn = Convert.ToInt32(_applicationDetails.UkrlpLookupDetails.UKPRN),
+                RoATPApproved = false,
+                RoEPAOApproved = false,
+                PrimaryContactEmail = _applicationDetails.UkrlpLookupDetails.PrimaryContactDetails.ContactEmail,
+                OrganisationDetails = new InternalApi.Types.OrganisationDetails
+                {
+                    ProviderName = _applicationDetails.UkrlpLookupDetails.ProviderName,
+                    CompanyNumber = null,
+                    Address1 = _applicationDetails.UkrlpLookupDetails.PrimaryContactDetails.ContactAddress.Address1,
+                    Address2 = _applicationDetails.UkrlpLookupDetails.PrimaryContactDetails.ContactAddress.Address2,
+                    Address3 = _applicationDetails.UkrlpLookupDetails.PrimaryContactDetails.ContactAddress.Address3,
+                    City = _applicationDetails.UkrlpLookupDetails.PrimaryContactDetails.ContactAddress.Town,
+                    Postcode = _applicationDetails.UkrlpLookupDetails.PrimaryContactDetails.ContactAddress.PostCode,
+                    CharityCommissionDetails = null,
+                    CompaniesHouseDetails = null,
+                    CharityNumber = null,
+                    FHADetails = new InternalApi.Types.FHADetails(
+                    ),
+                    LegalName = _applicationDetails.UkrlpLookupDetails.ProviderName,
+                    TradingName = _applicationDetails.UkrlpLookupDetails.ProviderAliases.FirstOrDefault()?.Alias,
+                    OrganisationReferenceId = _applicationDetails.UkrlpLookupDetails.UKPRN,
+                    OrganisationReferenceType = "UKRLP",
+                    UKRLPDetails = new InternalApi.Types.UKRLPDetails
+                    {
+                        UKPRN = _applicationDetails.UkrlpLookupDetails.UKPRN,
+                        Alias = _applicationDetails.UkrlpLookupDetails.ProviderAliases.FirstOrDefault()?.Alias,
+                        OrganisationName = _applicationDetails.UkrlpLookupDetails.ProviderName,
+                        ContactNumber = _applicationDetails.UkrlpLookupDetails.PrimaryContactDetails.ContactTelephone1,
+                        Website = _applicationDetails.UkrlpLookupDetails.PrimaryContactDetails.ContactWebsiteAddress,
+                        PrimaryContactAddress = new ContactAddress
+                        {
+                            Address1 = _applicationDetails.UkrlpLookupDetails.PrimaryContactDetails.ContactAddress.Address1,
+                            Address2 = _applicationDetails.UkrlpLookupDetails.PrimaryContactDetails.ContactAddress.Address2,
+                            Address3 = _applicationDetails.UkrlpLookupDetails.PrimaryContactDetails.ContactAddress.Address3,
+                            Address4 = _applicationDetails.UkrlpLookupDetails.PrimaryContactDetails.ContactAddress.Address4,
+                            Town = _applicationDetails.UkrlpLookupDetails.PrimaryContactDetails.ContactAddress.Town,
+                            PostCode = _applicationDetails.UkrlpLookupDetails.PrimaryContactDetails.ContactAddress.PostCode
+                        },
+                        VerificationDetails = new List<VerificationDetails>()
+                    }
+                }
             };
 
             Mapper.Reset();
@@ -110,6 +224,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 cfg.AddProfile<PersonSignificantControlInformationProfile>();
                 cfg.AddProfile<CharityCommissionProfile>();
                 cfg.AddProfile<CharityTrusteeProfile>();
+                cfg.AddProfile<RoatpCreateOrganisationRequestProfile>();
+                cfg.AddProfile<RoatpContactAddressProfile>();
             });
 
             Mapper.AssertConfigurationIsValid();
@@ -707,5 +823,218 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
         }
 
+        [Test]
+        public void Application_details_confirmed_with_match_on_companies_house()
+        {
+            _applicationDetails.UkrlpLookupDetails.VerificationDetails = new List<VerificationDetails>
+            {
+                new VerificationDetails
+                {
+                    VerificationAuthority = "Companies House",
+                    VerificationId = "12345678"
+                }
+            };
+            _applicationDetails.CompanySummary = new CompaniesHouseSummary
+            {
+                CompanyNumber = "12345678",
+                IncorporationDate = new DateTime(2012, 01, 01),
+                CompanyType = "company_type",
+                CompanyTypeDescriptions = new Dictionary<string, string>
+                {
+                    {"company_type", "Company Type Description"}
+                },
+                Status = "Active",
+                Directors = new List<DirectorInformation>
+                {
+                    new DirectorInformation
+                    {
+                        AppointedDate = new DateTime(2012, 01, 01),
+                        DateOfBirth = new DateTime(1970, 01, 01),
+                        Id = "1",
+                        Name = "Mr A Director",
+                        ResignedDate = null
+                    },
+                    new DirectorInformation
+                    {
+                        AppointedDate = new DateTime(2014, 01, 01),
+                        DateOfBirth = new DateTime(1968, 02, 02),
+                        Id = "2",
+                        Name = "Mr A Resigned",
+                        ResignedDate = new DateTime(2018, 03, 03)
+                    }
+                },
+                PersonsSignificationControl = new List<PersonSignificantControlInformation>
+                {
+                    new PersonSignificantControlInformation
+                    {
+                        CeasedDate = null,
+                        DateOfBirth = new DateTime(1970, 01, 01),
+                        Id = "1",
+                        Name = "Mr A Director",
+                        NotifiedDate = new DateTime(2019, 01, 01)
+                    }
+                }         
+            };
+
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
+
+            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<string>())).ReturnsAsync(_user);
+            _usersApiClient.Setup(x => x.ApproveUser(It.IsAny<Guid>())).ReturnsAsync(true);
+
+            _organisationApiClient.Setup(x => x.Create(It.IsAny<CreateOrganisationRequest>(), It.IsAny<Guid>())).ReturnsAsync(new Organisation()).Verifiable();
+
+            _expectedRequest.OrganisationDetails.CompanyNumber = _applicationDetails.CompanySummary.CompanyNumber;
+
+            _expectedRequest.OrganisationDetails.UKRLPDetails.VerificationDetails.Add(new VerificationDetails
+            {
+                VerificationAuthority = "Companies House",
+                VerificationId = "12345678"
+            });
+            _expectedRequest.OrganisationDetails.CompaniesHouseDetails = new InternalApi.Types.CompaniesHouseDetails
+            {
+                IncorporationDate = _applicationDetails.CompanySummary.IncorporationDate,
+                CompanyType = _applicationDetails.CompanySummary.CompanyType,
+                Directors = new List<DirectorInformation>
+                {
+                    new DirectorInformation
+                    {
+                        AppointedDate = new DateTime(2012, 01, 01),
+                        DateOfBirth = new DateTime(1970, 01, 01),
+                        Id = "1",
+                        Name = "Mr A Director",
+                        ResignedDate = null
+                    },
+                    new DirectorInformation
+                    {
+                        AppointedDate = new DateTime(2014, 01, 01),
+                        DateOfBirth = new DateTime(1968, 02, 02),
+                        Id = "2",
+                        Name = "Mr A Resigned",
+                        ResignedDate = new DateTime(2018, 03, 03)
+                    }
+                },
+                PersonsSignificationControl = new List<PersonSignificantControlInformation>
+                {
+                    new PersonSignificantControlInformation
+                    {
+                        CeasedDate = null,
+                        DateOfBirth = new DateTime(1970, 01, 01),
+                        Id = "1",
+                        Name = "Mr A Director",
+                        NotifiedDate = new DateTime(2019, 01, 01)
+                    }
+                }
+            };
+
+            var result = _controller.StartApplication().GetAwaiter().GetResult();
+
+            _organisationApiClient.Verify(x =>
+                x.Create(It.Is<CreateOrganisationRequest>(y => y.OrganisationUkprn == _expectedRequest.OrganisationUkprn
+                                                          && y.OrganisationDetails.CompaniesHouseDetails.IncorporationDate
+                                                          == _expectedRequest.OrganisationDetails.CompaniesHouseDetails.IncorporationDate), It.IsAny<Guid>()), Times.Once);
+        }
+
+        [Test]
+        public void Application_details_confirmed_with_match_on_charity_commission()
+        {
+            _applicationDetails.UkrlpLookupDetails.VerificationDetails = new List<VerificationDetails>
+            {
+                new VerificationDetails
+                {
+                    VerificationAuthority = "Charity Commission",
+                    VerificationId = "12345678"
+                }
+            };
+            _applicationDetails.CharitySummary = new CharityCommissionSummary
+            {
+                CharityNumber = "12345678",
+                IncorporatedOn = new DateTime(2006, 01, 02),
+                Trustees = new List<Domain.CharityCommission.Trustee>
+                {
+                    new Domain.CharityCommission.Trustee
+                    {
+                        Id = "1",
+                        Name = "Mr A Trustee"
+                    },
+                    new Domain.CharityCommission.Trustee
+                    {
+                        Id = "2",
+                        Name = "Mrs B Trustworthy"
+                    }
+                }
+            };
+            
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
+
+            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<string>())).ReturnsAsync(_user);
+            _usersApiClient.Setup(x => x.ApproveUser(It.IsAny<Guid>())).ReturnsAsync(true);
+
+            _organisationApiClient.Setup(x => x.Create(It.IsAny<CreateOrganisationRequest>(), It.IsAny<Guid>())).ReturnsAsync(new Organisation()).Verifiable();
+
+            _expectedRequest.OrganisationDetails.CharityNumber = _applicationDetails.CharitySummary.CharityNumber;
+
+            _expectedRequest.OrganisationDetails.UKRLPDetails.VerificationDetails.Add(new VerificationDetails
+            {
+                VerificationAuthority = "Charity Commission",
+                VerificationId = "12345678"
+            });
+            _expectedRequest.OrganisationDetails.CharityCommissionDetails = new InternalApi.Types.CharityCommissionDetails
+            {
+                RegistrationDate = new DateTime(2006, 01, 02),
+                Trustees = new List<Domain.CharityCommission.Trustee>
+                {
+                    new Domain.CharityCommission.Trustee
+                    {
+                        Id = "1",
+                        Name = "Mr A Trustee"
+                    },
+                    new Domain.CharityCommission.Trustee
+                    {
+                        Id = "2",
+                        Name = "Mrs B Trustworthy"
+                    }
+                }           
+            };
+
+            var result = _controller.StartApplication().GetAwaiter().GetResult();
+
+            _organisationApiClient.Verify(x =>
+                x.Create(It.Is<CreateOrganisationRequest>(y => y.OrganisationUkprn == _expectedRequest.OrganisationUkprn
+                                                          && y.OrganisationDetails.CharityCommissionDetails.RegistrationDate
+                                                          == _expectedRequest.OrganisationDetails.CharityCommissionDetails.RegistrationDate), It.IsAny<Guid>()), Times.Once);
+        }
+
+        [Test]
+        public void Application_details_confirmed_with_no_recognised_verification_source()
+        {
+            _applicationDetails.UkrlpLookupDetails.VerificationDetails = new List<VerificationDetails>
+            {
+                new VerificationDetails
+                {
+                    VerificationAuthority = "National Audit Office",
+                    VerificationId = "12345678"
+                }
+            };
+            
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
+
+            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<string>())).ReturnsAsync(_user);
+            _usersApiClient.Setup(x => x.ApproveUser(It.IsAny<Guid>())).ReturnsAsync(true);
+
+            _organisationApiClient.Setup(x => x.Create(It.IsAny<CreateOrganisationRequest>(), It.IsAny<Guid>())).ReturnsAsync(new Organisation()).Verifiable();
+            
+            _expectedRequest.OrganisationDetails.UKRLPDetails.VerificationDetails.Add(new VerificationDetails
+            {
+                VerificationAuthority = "National Audit Office",
+                VerificationId = "12345678"
+            });
+            
+            var result = _controller.StartApplication().GetAwaiter().GetResult();
+
+            _organisationApiClient.Verify(x =>
+                x.Create(It.Is<CreateOrganisationRequest>(y => y.OrganisationUkprn == _expectedRequest.OrganisationUkprn
+                                                          && y.OrganisationDetails.CompaniesHouseDetails == null
+                                                          && y.OrganisationDetails.CharityCommissionDetails == null), It.IsAny<Guid>()), Times.Once);
+        }
     }
 }
