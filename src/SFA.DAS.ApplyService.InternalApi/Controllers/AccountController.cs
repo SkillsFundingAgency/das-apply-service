@@ -9,6 +9,7 @@ using NLog;
 using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Application.Users.ApproveContact;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
+using SFA.DAS.ApplyService.Application.Users.CreateNewContact;
 using SFA.DAS.ApplyService.Application.Users.GetContact;
 using SFA.DAS.ApplyService.Application.Users.RemoveContact;
 using SFA.DAS.ApplyService.Application.Users.UpdateContactIdAndSignInId;
@@ -38,6 +39,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
         [HttpPost("/Account/RemoveFromOrganisation")]
         public async Task<ActionResult> RemoveContactFromOrganisation([FromBody] RemoveContactFromOrganisationRequest request)
+        {
+            await _mediator.Send(request, CancellationToken.None);
+            return Ok();
+        }
+        
+        [HttpPost("/Account/CreateNewContact")]
+        public async Task<ActionResult> CreateNewContact([FromBody] CreateNewContactRequest request)
         {
             await _mediator.Send(request, CancellationToken.None);
             return Ok();
@@ -102,7 +110,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPut("/Account/UpdateContactWithOrgId")]
         public async Task UpdateContactWithOrgId([FromBody] UpdateContactOrgId updateContactOrgId)
         {
-            await _mediator.Send(new UpdateContactOrgdRequest(updateContactOrgId.ContactId,
+            await _mediator.Send(new UpdateContactOrganisationIdRequest(updateContactOrgId.ContactId,
                 updateContactOrgId.OrganisationId));
         }
 
