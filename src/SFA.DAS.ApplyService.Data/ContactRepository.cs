@@ -135,7 +135,7 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                return (await connection.QueryAsync<Contact>(@"SELECT * FROM Contacts con
+                return (await connection.QueryAsync<Contact>(@"SELECT con.* FROM Contacts con
                                                     INNER JOIN Organisations org on con.ApplyOrganisationID = org.Id
                                                     WHERE con.ApplyOrganisationID = @organisationId", new { organisationId })).ToList();
             }
