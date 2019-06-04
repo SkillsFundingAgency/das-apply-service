@@ -19,6 +19,7 @@ namespace SFA.DAS.ApplyService.EmailService
         private const string SYSTEM_ID = "ApplyService";
         private const string REPLY_TO_ADDRESS = "digital.apprenticeship.service@notifications.service.gov.uk";
         private const string SUBJECT = "Update on your EPAO application";
+     
 
         private readonly ILogger<EmailService> _logger;
         private readonly IConfigurationService _configurationService;
@@ -80,11 +81,11 @@ namespace SFA.DAS.ApplyService.EmailService
             }
             else if(emailTemplate is null)
             {
-                _logger.LogError($"Cannot find email template {emailTemplate}");
+                _logger.LogError($"Cannot find email template: {templateName}");
             }
             else
             {
-                _logger.LogError($"Cannot send email template {emailTemplate} to '{toAddress}'");
+                _logger.LogError($"Cannot send email template: {templateName} to: '{toAddress}'");
             }
         }
 
@@ -94,16 +95,18 @@ namespace SFA.DAS.ApplyService.EmailService
 
             if (emailTemplate != null && contact != null)
             {
+                var config = await _configurationService.GetConfig();
+                
                 var personalisationTokens = GetPersonalisationTokens(tokens);
-                personalisationTokens["contactname"] = $"{contact.GivenNames} {contact.FamilyName}";
-
+                personalisationTokens["contactname"] = $"{contact.GivenNames}";
+             
                 await SendEmailViaNotificationsApi(contact.Email, emailTemplate.TemplateId, emailTemplate.TemplateName, personalisationTokens);
 
                 await SendEmailToRecipients(emailTemplate.RecipientTemplate, tokens);
             }
             else
             {
-                _logger.LogError($"Cannot find email template {emailTemplate}");
+                _logger.LogError($"Cannot find email template: {templateName}");
             }
         }
 

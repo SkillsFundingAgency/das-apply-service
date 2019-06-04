@@ -7,11 +7,11 @@ CREATE TABLE [dbo].[Assets](
    Format	[nvarchar](200)	NULL,	-- format rules (use to be determined)
    Status	[nvarchar](	20)	NOT NULL,	--The current process status of this record, 'live' – is live on the service, 'deleted' – is no longer allowed to be used
    CreatedAt	Datetime2(7)	NOT NULL,	--Date / Time that the record was created
-   CreatedBy	[nvarchar](120)	NOT NULL,	--Username (staff)
+   CreatedBy	[nvarchar](256)	NOT NULL,	--Username (staff)
    UpdatedAt	Datetime2(7)		NULL,	--Date / Time of the last update
-   UpdatedBy	[nvarchar](120)	NULL,	--Username (staff)
+   UpdatedBy	[nvarchar](256)	NULL,	--Username (staff)
    DeletedAt	Datetime2(7)		NULL,	--Date / Time of the soft delete
-   DeletedBy	[nvarchar](120)	NULL	--Username (staff)
+   DeletedBy	[nvarchar](256)	NULL	--Username (staff)
     CONSTRAINT [PK_Assets] PRIMARY KEY ([Id]),
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO

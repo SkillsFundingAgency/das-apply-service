@@ -18,8 +18,9 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
                 Id = ApplyingOrganisationId,
                 OrganisationType = "",
                 RoEPAOApproved = true,
-                OrganisationDetails = new OrganisationDetails(){FHADetails = new FHADetails
+                OrganisationDetails = new OrganisationDetails() { FHADetails = new FHADetails
                 {
+                    FinancialExempt = false,
                     FinancialDueDate = DateTime.Today.AddDays(4)
                 }}
             });

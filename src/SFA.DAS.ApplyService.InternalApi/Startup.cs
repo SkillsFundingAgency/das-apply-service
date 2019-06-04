@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -89,7 +90,14 @@ namespace SFA.DAS.ApplyService.InternalApi
                 options.RequestCultureProviders.Clear();
             });
             
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+            
+            IMvcBuilder mvcBuilder;
+            if (_env.IsDevelopment())
+                mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
+            else
+                mvcBuilder = services.AddMvc();
+
+            mvcBuilder.SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
             
             services.AddDistributedMemoryCache();
@@ -108,10 +116,11 @@ namespace SFA.DAS.ApplyService.InternalApi
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-//                app.UseHsts();
-//                app.UseHttpsRedirection();
+                app.UseHsts();
+                app.UseHttpsRedirection();
             }
             app.UseRequestLocalization();
+            app.UseSecurityHeaders();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -156,6 +165,10 @@ namespace SFA.DAS.ApplyService.InternalApi
                 config.For<IDfeSignInService>().Use<DfeSignInService>();
                 config.For<IEmailService>().Use<EmailService.EmailService>();
 
+                // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
+                config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>();
+                config.For<CharityCommissionApiClient>().Use<CharityCommissionApiClient>();
+                // End of SOAP Services
 
                 config.For<IKeyProvider>().Use<PlaceholderKeyProvider>();
                 config.For<IStorageService>().Use<StorageService>();

@@ -9,9 +9,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
+    [Authorize]
     public class OrganisationSearchController : Controller
     {
         private readonly IUsersApiClient _usersApiClient;
@@ -110,6 +112,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            // ON-1818 do not pre-select OrganisationType
+            // NOTE: ModelState overrides viewModel
+            viewModel.OrganisationType = null;
+            var orgTypeModelState = ModelState[nameof(viewModel.OrganisationType)];
+            if (orgTypeModelState != null)
+            {
+                orgTypeModelState.RawValue = viewModel.OrganisationType;
+                orgTypeModelState.Errors.Clear();
+            }
+
             viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();
             return View(viewModel);
         }
@@ -141,6 +153,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (organisationSearchResult != null)
             {
+                if (organisationSearchResult.CompanyNumber != null)
+                {
+                    var isActivelyTrading = await _apiClient.IsCompanyActivelyTrading(organisationSearchResult.CompanyNumber);
+
+                    if (!isActivelyTrading)
+                    {
+                        return View("~/Views/OrganisationSearch/CompanyNotActive.cshtml", viewModel);
+                    }
+                }
+
                 viewModel.Organisations = new List<OrganisationSearchResult> { organisationSearchResult };
                 viewModel.OrganisationTypes = await _apiClient.GetOrganisationTypes();
             }
@@ -175,6 +197,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (organisationSearchResult != null)
             {
+                if (organisationSearchResult.CompanyNumber != null)
+                {
+                    var isActivelyTrading = await _apiClient.IsCompanyActivelyTrading(organisationSearchResult.CompanyNumber);
+
+                    if(!isActivelyTrading)
+                    {
+                        return View("~/Views/OrganisationSearch/CompanyNotActive.cshtml", viewModel);
+                    }
+                }
+
+
                 var orgThatWasCreated = await _organisationApiClient.Create(organisationSearchResult, user.Id);
 
                 return RedirectToAction("Applications", "Application");
@@ -185,7 +218,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return View(nameof(Results), viewModel);
             }
         }
-
 
         private async Task<OrganisationSearchResult> GetOrganisation(string searchString, string name, int? ukprn, string organisationType, string postcode)
         {
@@ -202,7 +234,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 sr.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
 
             // filter organisation type
-            searchResults = searchResults.Where(sr =>
+            searchResults = searchResults.Where(sr => 
+                sr.RoATPApproved ||
                 sr.OrganisationType != null
                     ? sr.OrganisationType.Equals(organisationType, StringComparison.InvariantCultureIgnoreCase)
                     : true);
@@ -219,7 +252,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (organisationSearchResult != null)
             {
-                if (organisationSearchResult.OrganisationType == null)
+                if (organisationSearchResult.RoATPApproved || organisationSearchResult.OrganisationType == null)
                     organisationSearchResult.OrganisationType = organisationType;
             }
 

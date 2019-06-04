@@ -38,11 +38,11 @@
                                     @foreach (var pg in pagesWithNewFeedback.OrderBy(p => p.PageId))
                                     {
                                         <li class="app-task-list__item">
-                                            <a aria-describedby="eligibility-completed" class="app-task-list__task-name"
+                                            <a aria-describedby="feedback-completed" class="app-task-list__task-name"
                                                href="@Url.Action("Page", "Application", new { applicationId = Model.ApplicationId, sequenceId = (int)Model.SequenceId, sectionId = sec.SectionId, pageId = pg.PageId, redirectAction = "Feedback" })">@pg.LinkTitle</a>
                                             @if (pg.AllFeedbackIsCompleted)
                                             {
-                                                <strong class="govuk-tag app-task-list__task-completed" id="completed">Completed</strong>
+                                                <strong class="govuk-tag app-task-list__task-completed" id="feedback-completed">Completed</strong>
                                             }
                                         </li>
                                     }
@@ -57,14 +57,16 @@
                 }
             </ol>
 
-            @* TODO: Should all feedback be completed before resubmitting?? *@
-            <div>
-                <form asp-action="Submit" asp-controller="Application">
-                    <input type="hidden" id="applicationId" name="applicationId" value="@Model.ApplicationId" />
-                    <input type="hidden" id="sequenceId" name="sequenceId" value="@((int)Model.SequenceId)" />
-                    <button class="govuk-button">Submit application</button>
-                </form>
-            </div>
+            @if (Model.Sections.All(m => m.QnAData.RequestedFeedbackAnswered ?? m.QnAData.Pages.All(p => p.AllFeedbackIsCompleted)))
+            {
+                <div>
+                    <form asp-action="Submit" asp-controller="Application">
+                        <input type="hidden" id="applicationId" name="applicationId" value="@Model.ApplicationId" />
+                        <input type="hidden" id="sequenceId" name="sequenceId" value="@((int)Model.SequenceId)" />
+                        <button class="govuk-button">Submit application</button>
+                    </form>
+                </div>
+            }
         </div>
     </div>
 

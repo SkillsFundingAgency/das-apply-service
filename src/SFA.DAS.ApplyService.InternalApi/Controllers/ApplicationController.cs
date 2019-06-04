@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.CheckOrganisationStandardStatus;
 using SFA.DAS.ApplyService.Application.Apply.DeleteAnswer;
+using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Application.Apply.GetOrganisationForApplication;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
@@ -30,15 +31,21 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpPost("Application/Start")]
-        public async Task Start([FromBody] StartApplyRequest request)
+        public async Task<ActionResult<StartApplicationResponse>> Start([FromBody] StartApplyRequest request)
         {
-            await _mediator.Send(new StartApplicationRequest(request.UserId));
+            return await _mediator.Send(new StartApplicationRequest(request.UserId));
         }
 
         [HttpGet("Application/{applicationId}")]
         public async Task<ActionResult<Domain.Entities.Application>> GetApplication(Guid applicationId)
         {
             return await _mediator.Send(new GetApplicationRequest(applicationId));
+        }
+
+        [HttpGet("Answer/{QuestionIdentifier}/{applicationId}")]
+        public async Task<ActionResult<GetAnswersResponse>> GetAnswer(Guid applicationId, string questionIdentifier)
+        {
+            return await _mediator.Send(new GetAnswersRequest(applicationId, questionIdentifier));
         }
 
         [HttpGet("Applications/{userId}")]
@@ -93,13 +100,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpPost("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
-        public async Task<ActionResult<UpdatePageAnswersResult>> Page(string applicationId, string userId, int sequenceId, int sectionId, string pageId, [FromBody] List<Answer> answers)
+        public async Task<ActionResult<UpdatePageAnswersResult>> Page(string applicationId, string userId, int sequenceId, int sectionId, string pageId, [FromBody] PageApplyRequest request)
         {
-            var updatedPage = await _mediator.Send(new UpdatePageAnswersRequest(Guid.Parse(applicationId), Guid.Parse(userId), sequenceId, sectionId, pageId, answers));
+            var updatedPage = await _mediator.Send(
+                new UpdatePageAnswersRequest(Guid.Parse(applicationId), Guid.Parse(userId), sequenceId, sectionId, pageId, request.Answers, request.SaveNewAnswers));
             return updatedPage;
         }
-
-
 
         [HttpPost("/Applications/Submit")]
         public async Task<ActionResult> Submit([FromBody] ApplicationSubmitRequest request)

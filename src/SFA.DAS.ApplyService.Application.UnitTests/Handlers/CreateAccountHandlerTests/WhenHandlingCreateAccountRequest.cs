@@ -35,7 +35,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAccountHandl
         {
             _handler.Handle(new CreateAccountRequest("name@email.com", "James", "Jones"), new CancellationToken());
             
-            _userRepository.Verify(r => r.CreateContact("name@email.com", "James", "Jones", "DfESignIn"));
+            _userRepository.Verify(r => r.CreateContact("name@email.com", "James", "Jones", "ASLogin"));
         }
 
         [Test]
@@ -44,7 +44,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAccountHandl
             _userRepository.Setup(r => r.GetContact("name@email.com")).ReturnsAsync(new Contact());
             _handler.Handle(new CreateAccountRequest("name@email.com", "James", "Jones"), new CancellationToken());
             
-            _userRepository.Verify(r => r.CreateContact("name@email.com", "James", "Jones", "DfESignIn"), Times.Never);
+            _userRepository.Verify(r => r.CreateContact("name@email.com", "James", "Jones", "ASLogin"), Times.Never);
         }
 
         [Test]
@@ -52,7 +52,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAccountHandl
         {
             var newUserId = Guid.NewGuid();
 
-            _userRepository.Setup(r => r.CreateContact("name@email.com", "James", "Jones", "DfESignIn"))
+            _userRepository.Setup(r => r.CreateContact("name@email.com", "James", "Jones", "ASLogin"))
                 .ReturnsAsync(new Contact() {Id = newUserId});
             
             _handler.Handle(new CreateAccountRequest("name@email.com", "James", "Jones"), new CancellationToken());
@@ -68,45 +68,22 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAccountHandl
             
             var newUserId = Guid.NewGuid();
 
-            _userRepository.Setup(r => r.CreateContact("name@email.com", "James", "Jones", "DfESignIn"))
+            _userRepository.Setup(r => r.CreateContact("name@email.com", "James", "Jones", "ASLogin"))
                 .ReturnsAsync(new Contact() {Id = newUserId});
             
             var result = _handler.Handle(new CreateAccountRequest("name@email.com", "James", "Jones"), new CancellationToken()).Result;
 
             result.Should().Be(false);
         }
-        
-        [Test]
-        public void And_AndErrorIsReturnedForAnExistingUser_FromDfeService_ReturnFalse()
-        {
-            _dfeSignInService.Setup(dfe => dfe.InviteUser(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>()))
-                .ReturnsAsync(new InviteUserResponse() {IsSuccess = false});
-            
-            _userRepository.Setup(r => r.GetContact("name@email.com")).ReturnsAsync(new Contact());
-            
-            var result = _handler.Handle(new CreateAccountRequest("name@email.com", "James", "Jones"), new CancellationToken()).Result;
-
-            result.Should().Be(false);
-        }
 
         [Test]
-        public void AdviseExistingContactByEmail()
-        {
-            _userRepository.Setup(r => r.GetContact("name@email.com")).ReturnsAsync(new Contact(){SigninId = Guid.NewGuid()});
-            
-            _handler.Handle(new CreateAccountRequest("name@email.com", "James", "Jones"), new CancellationToken());
-
-            _emailService.Verify(e => e.SendEmailToContact(EmailTemplateName.APPLY_SIGNUP_ERROR, It.IsAny<Contact>(), It.IsAny<object>()));
-        }
-
-        [Test]
-        public void ThenAnExistingUserIsNotInvitedToDfeSignin()
+        public void ThenAnExistingUserIsInvitedToDfeSignin()
         {
             _userRepository.Setup(r => r.GetContact("name@email.com")).ReturnsAsync(new Contact{SigninId = Guid.NewGuid()});
             
             _handler.Handle(new CreateAccountRequest("name@email.com", "James", "Jones"), new CancellationToken());
 
-            _dfeSignInService.Verify(s => s.InviteUser("name@email.com", "James", "Jones", It.IsAny<Guid>()), Times.Never);
+            _dfeSignInService.Verify(s => s.InviteUser("name@email.com", "James", "Jones", It.IsAny<Guid>()));
         }
 
 

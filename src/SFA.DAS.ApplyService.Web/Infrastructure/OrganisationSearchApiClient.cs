@@ -53,5 +53,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
             return types?.OrderBy(t => t.Type.Equals("Public Sector", StringComparison.InvariantCultureIgnoreCase)).AsEnumerable();
         }
+
+        public async Task<bool> IsCompanyActivelyTrading(string companyNumber)
+        {
+            return await (await _httpClient.GetAsync($"/OrganisationSearch/{companyNumber}/isActivelyTrading")).Content.ReadAsAsync<bool>();
+        }
     }
 }

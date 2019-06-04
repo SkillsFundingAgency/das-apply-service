@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Threading.Tasks;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
@@ -10,13 +13,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Logging;
 using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
+using SFA.DAS.ApplyService.Web.Validators;
 using StructureMap;
+using StackExchange.Redis;
 
 namespace SFA.DAS.ApplyService.Web
 {
@@ -26,7 +32,7 @@ namespace SFA.DAS.ApplyService.Web
         private readonly ILogger<Startup> _logger;
         private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IHostingEnvironment _env;
-        private IApplyConfig _configService;
+        private readonly IApplyConfig _configService;
         private const string ServiceName = "SFA.DAS.ApplyService";
         private const string Version = "1.0";
 
@@ -41,6 +47,8 @@ namespace SFA.DAS.ApplyService.Web
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            IdentityModelEventSource.ShowPII = true;
+        
             ConfigureAuth(services);
             
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
@@ -54,33 +62,52 @@ namespace SFA.DAS.ApplyService.Web
             });
             
             services.AddMvc(options => { options.Filters.Add<PerformValidationFilter>(); })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            
             if (_env.IsDevelopment())
             {
+                services.AddDataProtection()
+                    .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "keys")))
+                    .SetApplicationName("AssessorApply");
+
                 services.AddDistributedMemoryCache();
             }
             else
             {
                 try
                 {
-                    services.AddDistributedRedisCache(options => { options.Configuration = _configService.SessionRedisConnectionString; });
+                    var redis = ConnectionMultiplexer.Connect(
+                        $"{_configService.SessionRedisConnectionString},DefaultDatabase=1");
+
+                    services.AddDataProtection()
+                        .PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")
+                        .SetApplicationName("AssessorApply");
+                    services.AddDistributedRedisCache(options =>
+                    {
+                        options.Configuration = $"{_configService.SessionRedisConnectionString},DefaultDatabase=0";
+                    });
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, $"Error setting redis for session.  Conn: {_configService.SessionRedisConnectionString}");
+                    _logger.LogError(e,
+                        $"Error setting redis for session.  Conn: {_configService.SessionRedisConnectionString}");
                     throw;
                 }
             }
-            
+
             services.AddSession(opt =>
             {
                 opt.IdleTimeout = TimeSpan.FromHours(1);
-                opt.Cookie = new CookieBuilder() {Name = ".Apply.Session", HttpOnly = true};
+                opt.Cookie = new CookieBuilder()
+                {
+                    Name = ".Assessors.Session",
+                    HttpOnly = true
+                };
             });
             
+            services.AddSingleton<Microsoft.AspNetCore.Mvc.ViewFeatures.IHtmlGenerator,CacheOverrideHtmlGenerator>();
+            
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Apply.AntiForgery", HttpOnly = true });
-
 
             return ConfigureIOC(services);
         }
@@ -116,6 +143,8 @@ namespace SFA.DAS.ApplyService.Web
                 config.For<IApplicationApiClient>().Use<ApplicationApiClient>();
                 config.For<OrganisationApiClient>().Use<OrganisationApiClient>();
                 config.For<OrganisationSearchApiClient>().Use<OrganisationSearchApiClient>();
+                config.For<CreateAccountValidator>().Use<CreateAccountValidator>();
+                config.For<UserService>().Use<UserService>();
                 config.Populate(services);
             });
 
@@ -128,7 +157,7 @@ namespace SFA.DAS.ApplyService.Web
             var configService = new ConfigurationService(_hostingEnvironment, _configuration["EnvironmentName"],
                 _configuration["ConfigurationStorageConnectionString"], "1.0", "SFA.DAS.ApplyService");
             
-            services.AddDfeSignInAuthorization(configService.GetConfig().Result, _logger);
+            services.AddDfeSignInAuthorization(configService.GetConfig().Result, _logger, _hostingEnvironment);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILogger<Startup> logger)
@@ -148,6 +177,7 @@ namespace SFA.DAS.ApplyService.Web
             app.UseSession();
             app.UseAuthentication();
             app.UseRequestLocalization();
+            app.UseSecurityHeaders();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

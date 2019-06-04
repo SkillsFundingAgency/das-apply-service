@@ -1,11 +1,13 @@
+﻿@using NPOI.HSSF.Record
+@using SFA.DAS.ApplyService.Configuration
 @using SFA.DAS.ApplyService.Session
 @inject ISessionService SessionService
-
+@inject IConfigurationService Config
 <!DOCTYPE html>
-<html class="govuk-template ">
+<html lang="en" class="govuk-template ">
 <head>
     <environment exclude="Development">
-        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-120145707-1"></script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-120145707-1" ></script>
         <script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'UA-120145707-1');</script>
     </environment>
     <meta charset="utf-8"/>
@@ -52,6 +54,7 @@
 </environment>
 
 <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
+@{ var config = await Config.GetConfig(); }
 
 <header class="govuk-header " role="banner" data-module="header">
     <div class="govuk-header__container govuk-width-container govuk-header__container--das-epao">
@@ -72,8 +75,8 @@
             </a>
         </div>
         <div class="govuk-header__content">
-            <a href="/" class="govuk-header__link govuk-header__link--service-name">
-                Apply to the register of end-point assessment organisations
+            <a href="@config.AssessorServiceBaseUrl/" class="govuk-header__link govuk-header__link--service-name">
+                Apprenticeship assessment service
             </a>
         </div>
     </div>
@@ -111,14 +114,43 @@
                 beta
             </strong>
             <span class="govuk-phase-banner__text">
-                This is a new service – your
-                <a class="govuk-link" target="_blank" href="https://www.smartsurvey.co.uk/s/apply-banner/">feedback</a> will help us to improve it.
+                This is a new service
             </span>
         </p>
     </div>
 </div>
 
 <div class="govuk-width-container">
+    @if (User.Identity.IsAuthenticated && @SessionService.Get<bool>("UserRegWithEPAO"))
+    {
+        <div class="grid-row">
+            <div class="column-full">
+                <nav class="app-navigation govuk-clearfix">
+                    <ul class="app-navigation__list">
+                        <li>
+                            <a href="@config.AssessorServiceBaseUrl/Dashboard">Home</a>
+                        </li>
+                        <li>
+                            <a  href="@config.AssessorServiceBaseUrl/OrganisationStandards/pipelines">Pipeline</a>
+                        </li>
+                        <li>
+                            <a  href="@config.AssessorServiceBaseUrl/Search">Record a grade</a>
+                        </li>
+                        <li>
+                            <a  href="@config.AssessorServiceBaseUrl/CertificateHistory">Completed assessments</a>
+                        </li>
+                        <li  class="app-navigation--current-page">
+                            <a  href="@config.AssessorServiceBaseUrl/OrganisationStandards">Standards</a>
+                        </li>
+                        <li>
+                            <a  href="@config.AssessorServiceBaseUrl/Organisation/OrganisationDetails">Organisation details</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    }
+
     @RenderBody()
 </div>
 

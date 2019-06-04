@@ -58,6 +58,8 @@
   <ItemGroup>
     <Folder Include="Properties" />
     <Folder Include="Tables\" />
+    <Folder Include="StoredProcedures" />
+    <Folder Include="Sequences" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Assets.sql" />
@@ -72,6 +74,8 @@
     <Build Include="Tables\WorkflowSections.sql" />
     <Build Include="Tables\WorkflowSequences.sql" />
     <Build Include="Tables\EmailTemplates.sql" />
+    <Build Include="StoredProcedures\Update_ApplicationSections_QuestionTags.sql" />
+    <Build Include="Sequences\AppRefSequence.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
