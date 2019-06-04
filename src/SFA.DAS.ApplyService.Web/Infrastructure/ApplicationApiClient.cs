@@ -93,11 +93,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         }
 
         public async Task<UpdatePageAnswersResult> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId,
-            int sectionId, string pageId, List<Answer> answers)
+            int sectionId, string pageId, List<Answer> answers, bool saveNewAnswers)
         {
             return await (await _httpClient.PostAsJsonAsync(
                     $"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}",
-                    answers)).Content
+                    new { answers, saveNewAnswers })).Content
                 .ReadAsAsync<UpdatePageAnswersResult>();
         }
 
@@ -108,9 +108,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return startApplicationResponse;
         }
 
-        public async Task Submit(Guid applicationId, int sequenceId, Guid userId, string userEmail)
+        public async Task<bool> Submit(Guid applicationId, int sequenceId, Guid userId, string userEmail)
         {
-            await _httpClient.PostAsJsonAsync("/Applications/Submit", new {applicationId, sequenceId, userId, userEmail });
+            return await (await _httpClient.PostAsJsonAsync(
+                    "/Applications/Submit", new {applicationId, sequenceId, userId, userEmail })).Content
+                    .ReadAsAsync<bool>();
         }
 
         public async Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId,

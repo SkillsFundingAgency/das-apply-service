@@ -189,7 +189,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 }
             }
 
-            return results.GroupBy(r => r.Ukprn).Select(group => group.First()).ToList();
+            return results.ToList();
         }
 
         private async Task<IEnumerable<OrganisationSearchResult>> GetProviderRegisterResults(string name, IEnumerable<string> exactNames, int? ukprn)
