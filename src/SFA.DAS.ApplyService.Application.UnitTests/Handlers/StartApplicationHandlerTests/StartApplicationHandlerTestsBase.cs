@@ -27,7 +27,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
             var latestWorkflowId = Guid.NewGuid();
             ApplyingOrganisationId = Guid.NewGuid();
             ApplicationId = Guid.NewGuid();
-            ApplicationType = "EPAO";
+            ApplicationType = ApplicationTypes.EndpointAssessor;
 
             ApplyRepository = new Mock<IApplyRepository>();
 
