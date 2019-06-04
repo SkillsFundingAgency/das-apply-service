@@ -31,7 +31,9 @@
         private readonly IUsersApiClient _usersApiClient;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
-       
+
+        private const string ApplicationType = "RoATP";
+
         public RoatpApplicationPreambleController(ILogger<RoatpApplicationPreambleController> logger, IRoatpApiClient roatpApiClient, 
                                                   IUkrlpApiClient ukrlpApiClient, ISessionService sessionService, 
                                                   ICompaniesHouseApiClient companiesHouseApiClient, 
@@ -286,7 +288,7 @@
                 await _usersApiClient.ApproveUser(user.Id);
             }
 
-            return RedirectToAction("Applications", "Application");
+            return RedirectToAction("Applications", "Application", new { applicationType = ApplicationType } );
         }
 
     }

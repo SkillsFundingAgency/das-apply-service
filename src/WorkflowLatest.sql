@@ -3133,7 +3133,7 @@ begin
 	[CreatedBy] = N'Import', [UpdatedBy] = N'Import', [UpdatedAt] = GETDATE(), [ReferenceFormat] = N'AAD' where [Id] = '83b35024-8aef-440d-8f59-8c1cc459c350'
 end
 GO
-DELETE FROM WorkflowSections where SequenceId=1 and SectionId=1
+DELETE FROM WorkflowSections where SequenceId=1 and SectionId=1 and WorkflowId = '83b35024-8aef-440d-8f59-8c1cc459c350'
 
 INSERT [dbo].[WorkflowSections]
   ([Id], [WorkflowId], [SequenceId], [SectionId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType], [DisallowedOrgTypes])
@@ -4653,7 +4653,7 @@ GO
 
 
 
-DELETE from WorkflowSections where SequenceId = 1 and SectionId=2;
+DELETE from WorkflowSections where SequenceId = 1 and SectionId=2  and WorkflowId = '83b35024-8aef-440d-8f59-8c1cc459c350';
 
 INSERT [dbo].[WorkflowSections]
   ([Id], [WorkflowId], [SequenceId], [SectionId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType], [DisallowedOrgTypes])
@@ -6319,7 +6319,7 @@ VALUES
 ', N'Declarations', N'Declarations', N'Draft', N'PagesWithSections', N'')
 GO
 
-DELETE from WorkflowSections where SequenceId=1 and SectionId=3
+DELETE from WorkflowSections where SequenceId=1 and SectionId=3  and WorkflowId = '83b35024-8aef-440d-8f59-8c1cc459c350'
 GO
 INSERT [dbo].[WorkflowSections]
   ([Id], [WorkflowId], [SequenceId], [SectionId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType], [DisallowedOrgTypes])
@@ -6407,14 +6407,14 @@ VALUES
 }
 ', N'Financial health assessment', N'Financial health assessment', N'Draft', N'Pages', N'')
 GO
-DELETE from WorkFlowSequences  where sequenceId=1
+DELETE from WorkFlowSequences  where sequenceId=1 and WorkflowId = '83b35024-8aef-440d-8f59-8c1cc459c350'
 
 INSERT [dbo].[WorkflowSequences]
   ([Id], [WorkflowId], [SequenceId], [Status], [IsActive])
 VALUES
   (N'bde3cf18-b1a8-4b4b-8cdc-a26dd6e418bd', N'83b35024-8aef-440d-8f59-8c1cc459c350', 1, N'Draft', 1)
 GO
-DELETE from WorkFlowSequences  where sequenceId=2
+DELETE from WorkFlowSequences  where sequenceId=2 and WorkflowId = '83b35024-8aef-440d-8f59-8c1cc459c350'
 
 INSERT [dbo].[WorkflowSequences]
   ([Id], [WorkflowId], [SequenceId], [Status], [IsActive])
@@ -7894,7 +7894,7 @@ VALUES
   (NEWID(), 'SQ-2-SE-4-PG-30-CC-40-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
 
 GO
-DELETE FROM WorkflowSections where SequenceId = 2 and SectionId = 4
+DELETE FROM WorkflowSections where SequenceId = 2 and SectionId = 4 and WorkflowId = '83b35024-8aef-440d-8f59-8c1cc459c350'
 INSERT [dbo].[WorkflowSections]
   ([Id], [WorkflowId], [SequenceId], [SectionId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType], [DisallowedOrgTypes])
 VALUES

@@ -28,9 +28,9 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
             var org = await _organisationRepository.GetUserOrganisation(request.UserId);
 
-            var workflowId = await _applyRepository.GetLatestWorkflow("EPAO");
+            var workflowId = await _applyRepository.GetLatestWorkflow(request.ApplicationType);
             var applicationId =
-                await _applyRepository.CreateApplication("EPAO", org.Id, request.UserId, workflowId);
+                await _applyRepository.CreateApplication(request.ApplicationType, org.Id, request.UserId, workflowId);
 
             var sections =
                 await _applyRepository.CopyWorkflowToApplication(applicationId, workflowId, org.OrganisationType);
