@@ -28,9 +28,16 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<CompaniesHouseSummary> GetCompanyDetails(string companiesHouseNumber)
         {
-            var companyDetails = await(await _httpClient.GetAsync($"companies-house-lookup?companyNumber={companiesHouseNumber}")).Content.ReadAsAsync<Company>();
+            var requestMessage =
+                await _httpClient.GetAsync($"companies-house-lookup?companyNumber={companiesHouseNumber}");
+            if (requestMessage.IsSuccessStatusCode)
+            {
+                var companyDetails = await requestMessage.Content.ReadAsAsync<Company>();
 
-            return Mapper.Map<CompaniesHouseSummary>(companyDetails);
+                return Mapper.Map<CompaniesHouseSummary>(companyDetails);
+            }
+
+            return new CompaniesHouseSummary { Status = CompaniesHouseSummary.CompanyStatusNotFound };
         }
     }
 }

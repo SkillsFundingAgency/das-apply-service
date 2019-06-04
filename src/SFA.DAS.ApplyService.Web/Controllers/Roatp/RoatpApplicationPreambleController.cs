@@ -6,6 +6,7 @@
     using Microsoft.Extensions.Logging;
     using SFA.DAS.ApplyService.Web.Infrastructure;
     using System.Threading.Tasks;
+    using Domain.Apply;
     using Domain.CharityCommission;
     using Domain.CompaniesHouse;
     using Domain.Roatp;
@@ -31,8 +32,6 @@
         private readonly IUsersApiClient _usersApiClient;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
-
-        private const string ApplicationType = "RoATP";
 
         public RoatpApplicationPreambleController(ILogger<RoatpApplicationPreambleController> logger, IRoatpApiClient roatpApiClient, 
                                                   IUkrlpApiClient ukrlpApiClient, ISessionService sessionService, 
@@ -148,10 +147,14 @@
                         x.VerificationAuthority == VerificationAuthorities.CompaniesHouseAuthority);
 
                 companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companiesHouseVerification.VerificationId);
-
+                
                 if (String.IsNullOrWhiteSpace(companyDetails.Status) 
                     || companyDetails.Status.ToLower() != CompaniesHouseSummary.CompanyStatusActive)
                 {
+                    if (companyDetails.Status == CompaniesHouseSummary.CompanyStatusNotFound)
+                    {
+                        return RedirectToAction("CompanyNotFound");
+                    }
                     return RedirectToAction("CompanyNotActive");
                 }
 
@@ -242,6 +245,20 @@
             return View("~/Views/Roatp/CompanyNotActive.cshtml", viewModel);
         }
 
+        [Route("company-not-found")]
+        public async Task<IActionResult> CompanyNotFound()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var viewModel = new UkprnSearchResultsViewModel
+            {
+                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
+                UKPRN = applicationDetails.UKPRN.ToString()
+            };
+
+            return View("~/Views/Roatp/CompanyNotFound.cshtml", viewModel);
+        }
+
         [Route("charity-not-active")]
         public async Task<IActionResult> CharityNotActive()
         {
@@ -288,7 +305,7 @@
                 await _usersApiClient.ApproveUser(user.Id);
             }
 
-            return RedirectToAction("Applications", "Application", new { applicationType = ApplicationType } );
+            return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.RegisterTrainingProviders } );
         }
     }
 }

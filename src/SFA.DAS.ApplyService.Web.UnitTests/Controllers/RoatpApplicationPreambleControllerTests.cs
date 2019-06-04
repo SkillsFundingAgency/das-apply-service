@@ -703,6 +703,50 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
+        public void UKPRN_is_verified_against_companies_house_but_company_not_found()
+        {
+            var providerDetails = new ProviderDetails
+            {
+                UKPRN = "10001000",
+                ProviderName = "Test Provider",
+                VerificationDetails = new List<VerificationDetails>
+                {
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CompaniesHouseAuthority,
+                        VerificationId = "12345678"
+                    }
+                }
+            };
+
+            var applicationDetails = new ApplicationDetails
+            {
+                ApplicationRoute = new ApplicationRoute
+                {
+                    Id = ApplicationRoute.MainProviderApplicationRoute,
+                    RouteName = "Main provider"
+                },
+                UkrlpLookupDetails = providerDetails
+            };
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+
+            var companyNotFound = new CompaniesHouseSummary
+            {
+                Status = CompaniesHouseSummary.CompanyStatusNotFound
+            };
+            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(Task.FromResult(companyNotFound)).Verifiable();
+            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
+
+            var result = _controller.UkprnFound().GetAwaiter().GetResult();
+            result.Should().BeOfType<RedirectToActionResult>();
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("CompanyNotFound");
+
+            _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Once);
+            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
+        }
+
+        [Test]
         public void UKPRN_is_verified_against_charity_commission_but_charity_not_active()
         {
             var providerDetails = new ProviderDetails
