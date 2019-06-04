@@ -10,6 +10,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
@@ -37,7 +38,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (user.ApplyOrganisationId != null)
             {
-                return RedirectToAction("Applications", "Application");
+                return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.EndpointAssessor });
             }
 
             // Can get details from UkPrn?
@@ -73,7 +74,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         await _usersApiClient.ApproveUser(user.Id);
                     }
 
-                    return RedirectToAction("Applications", "Application");
+                    return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.EndpointAssessor });
                 }
             }
 
@@ -88,7 +89,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (user.ApplyOrganisationId != null)
             {
-                return RedirectToAction("Applications", "Application");
+                return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.EndpointAssessor });
             }
             else if (string.IsNullOrEmpty(viewModel.SearchString) || viewModel.SearchString.Length < 2)
             {
@@ -133,7 +134,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (user.ApplyOrganisationId != null)
             {
-                return RedirectToAction("Applications", "Application");
+                return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.EndpointAssessor });
             }
             else if (string.IsNullOrEmpty(viewModel.Name) || viewModel.SearchString.Length < 2)
             {
@@ -177,7 +178,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (user.ApplyOrganisationId != null)
             {
-                return RedirectToAction("Applications", "Application");
+                return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.EndpointAssessor });
             }
             else if (string.IsNullOrEmpty(viewModel.Name) || viewModel.SearchString.Length < 2)
             {
@@ -210,7 +211,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 var orgThatWasCreated = await _organisationApiClient.Create(organisationSearchResult, user.Id);
 
-                return RedirectToAction("Applications", "Application");
+                return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.EndpointAssessor });
             }
             else
             {
