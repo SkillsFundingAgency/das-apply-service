@@ -54,6 +54,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var org = await _apiClient.GetOrganisationByUserId(userId);
             var applications = await _apiClient.GetApplicationsFor(userId);
+            applications = applications.Where(app => app.ApplicationStatus != ApplicationStatus.Rejected).ToList();
 
             if (!applications.Any())
             {
@@ -127,6 +128,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> SequenceSignPost(Guid applicationId)
         {
             var application = await _apiClient.GetApplication(applicationId);
+            if(application is null)
+            {
+                return RedirectToAction("Applications");
+            }
+
             if (application.ApplicationStatus == ApplicationStatus.Approved)
             {
                 return View("~/Views/Application/Approved.cshtml", application);
@@ -516,9 +522,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return RedirectToAction("Sequence", new { applicationId });
             }
-            
-            await _apiClient.Submit(applicationId, sequenceId, User.GetUserId(), User.GetEmail());
-            return RedirectToAction("Submitted", new {applicationId});
+
+            if (await _apiClient.Submit(applicationId, sequenceId, User.GetUserId(), User.GetEmail()))
+            {
+                return RedirectToAction("Submitted", new { applicationId });
+            }
+            else
+            {
+                // unable to submit
+                return RedirectToAction("NotSubmitted", new { applicationId });
+            }
         }
 
         [HttpPost("/Application/DeleteAnswer")]
@@ -544,7 +557,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var config = await _configService.GetConfig();
             return View("~/Views/Application/Submitted.cshtml", new SubmittedViewModel
             {
-                ReferenceNumber = application.ApplicationData.ReferenceNumber,
+                ReferenceNumber = application?.ApplicationData?.ReferenceNumber,
+                FeedbackUrl = config.FeedbackUrl,
+                StandardName = application?.ApplicationData?.StandardName
+            });
+        }
+
+        [HttpGet("/Application/{applicationId}/NotSubmitted")]
+        public async Task<IActionResult> NotSubmitted(Guid applicationId)
+        {
+            var application = await _apiClient.GetApplication(applicationId);
+            var config = await _configService.GetConfig();
+            return View("~/Views/Application/NotSubmitted.cshtml", new SubmittedViewModel
+            {
+                ReferenceNumber = application?.ApplicationData?.ReferenceNumber,
                 FeedbackUrl = config.FeedbackUrl,
                 StandardName = application?.ApplicationData?.StandardName
             });

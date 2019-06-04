@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Submit
 {
-    public class ApplicationSubmitHandler : IRequestHandler<ApplicationSubmitRequest>
+    public class ApplicationSubmitHandler : IRequestHandler<ApplicationSubmitRequest, bool>
     {
         private readonly IApplyRepository _applyRepository;
         private readonly IContactRepository _contactRepository;
@@ -23,19 +23,24 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
             _contactRepository = contactRepository;
         }
         
-        public async Task<Unit> Handle(ApplicationSubmitRequest request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(ApplicationSubmitRequest request, CancellationToken cancellationToken)
         {
-            await SubmitApplicationSequence(request);
+            bool canSubmit = request != null && await _applyRepository.CanSubmitApplication(request);
 
-            var updatedApplication = await _applyRepository.GetApplication(request.ApplicationId);
+            if (canSubmit)
+            {
+                await SubmitApplicationSequence(request);
 
-            var contact = await _contactRepository.GetContact(request.UserEmail);
-            var reference = updatedApplication.ApplicationData.ReferenceNumber;
-            var standard = updatedApplication.ApplicationData.StandardName;
+                var updatedApplication = await _applyRepository.GetApplication(request.ApplicationId);
 
-            await NotifyContact(contact, request.SequenceId, reference, standard);
+                var contact = await _contactRepository.GetContact(request.UserEmail);
+                var reference = updatedApplication.ApplicationData.ReferenceNumber;
+                var standard = updatedApplication.ApplicationData.StandardName;
 
-            return Unit.Value;
+                await NotifyContact(contact, request.SequenceId, reference, standard);
+            }
+
+            return canSubmit;
         }
 
         private async Task SubmitApplicationSequence(ApplicationSubmitRequest request)
