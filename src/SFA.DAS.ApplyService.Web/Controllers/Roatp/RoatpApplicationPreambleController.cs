@@ -255,7 +255,7 @@
 
             return View("~/Views/Roatp/CharityNotActive.cshtml", viewModel);
         }
-		
+
         [Route("charity-not-found")]
         public async Task<IActionResult> CharityNotFound()
         {
@@ -290,6 +290,5 @@
 
             return RedirectToAction("Applications", "Application", new { applicationType = ApplicationType } );
         }
-
     }
 }
