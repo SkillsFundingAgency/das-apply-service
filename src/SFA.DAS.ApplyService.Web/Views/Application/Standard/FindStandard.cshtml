@@ -16,7 +16,7 @@
             </h2>
             <div class="govuk-error-summary__body">
                 <ul class="govuk-list govuk-error-summary__list">
-                    <li><a href="#standard-name">Enter 2 or more characters to search</a></li>
+                    <li><a href="#standard-name">Enter 3 or more characters to search</a></li>
                 </ul>
             </div>
         </div>
@@ -32,12 +32,12 @@
                     </h1>
 
                     <span id="standard-hint" class="govuk-hint">
-                        For example, financial adviser
+                        Enter 3 or more characters to search. For example, financial adviser
                     </span>
 
                     @if (!ViewData.ModelState.IsValid || showErrors)
                     {
-                        <span id="search-string-error" class="govuk-error-message">Enter 2 or more characters to search</span>
+                        <span id="search-string-error" class="govuk-error-message">Enter 3 or more characters to search</span>
                     }
 
                     <input class="govuk-input govuk-input--width-20 ui-autocomplete-input @(!ViewData.ModelState.IsValid || showErrors ? "govuk-input--error" : "")" id="standard-name" name="StandardToFind" asp-for="@Model.StandardToFind"type="text" value="" autocomplete="off" maxlength="10000">

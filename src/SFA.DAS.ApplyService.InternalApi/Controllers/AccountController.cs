@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using SFA.DAS.ApplyService.Application.Users.ApproveContact;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Application.Users.CreateNewContact;
 using SFA.DAS.ApplyService.Application.Users.GetContact;
+using SFA.DAS.ApplyService.Application.Users.GetOrganisationContacts;
 using SFA.DAS.ApplyService.Application.Users.RemoveContact;
 using SFA.DAS.ApplyService.Application.Users.UpdateContactIdAndSignInId;
 using SFA.DAS.ApplyService.Application.Users.UpdateContactOrgId;
@@ -146,6 +148,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<ActionResult<Contact>> GetByContactId(Guid contactId)
         {
            return  await _mediator.Send(new GetContactByIdRequest(contactId));
+        }
+
+        [HttpGet("/Account/Organisation/{organisationId:Guid}/Contacts")]
+        public async Task<ActionResult<List<Contact>>> GetOrganisationContacts(Guid organisationId)
+        {
+            return await _mediator.Send(new GetOrganisationContactsRequest(organisationId));
         }
 
         [HttpPost("/Account/MigrateContactAndOrgs")]
