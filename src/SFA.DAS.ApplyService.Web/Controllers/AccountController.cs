@@ -16,7 +16,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _logger = logger;
         }
 
-        public IActionResult Callback([FromBody] DfeSignInCallback callback)
+        public IActionResult Callback([FromBody] SignInCallback callback)
         {
             _apiClient.Callback(callback);
             return Ok();

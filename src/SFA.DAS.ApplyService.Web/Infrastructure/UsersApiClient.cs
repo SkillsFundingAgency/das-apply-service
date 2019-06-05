@@ -17,7 +17,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<Contact> GetUserBySignInId(string signInId);
 
         Task<bool> ApproveUser(Guid userId);
-        Task Callback(DfeSignInCallback callback);
+        Task Callback(SignInCallback callback);
         Task AssociateOrganisationWithUser(Guid contactId, Guid organisationId);
         Task MigrateUsers();
         Task MigrateContactAndOrgs(MigrateContactOrganisation migrateContactOrganisation);
@@ -62,7 +62,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return result.IsSuccessStatusCode;
         }
 
-        public async Task Callback(DfeSignInCallback callback)
+        public async Task Callback(SignInCallback callback)
         {
             await HttpClient.PostAsJsonAsync($"/Account/Callback", callback);
         }
