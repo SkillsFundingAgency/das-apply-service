@@ -9,12 +9,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     public class UserService : IUserService
     {
         private readonly IHttpContextAccessor _contextAccessor;
-        private readonly UsersApiClient _usersApiClient;
+        private readonly IUsersApiClient _usersApiClient;
         private readonly ISessionService _sessionService;
         private readonly IApplicationApiClient _apiClient;
         private readonly ILogger<UserService> _logger;
 
-        public UserService(IHttpContextAccessor contextAccessor, UsersApiClient usersApiClient, ISessionService sessionService, IApplicationApiClient apiClient, ILogger<UserService> logger)
+        public UserService(IHttpContextAccessor contextAccessor, IUsersApiClient usersApiClient, ISessionService sessionService, IApplicationApiClient apiClient, ILogger<UserService> logger)
         {
             _contextAccessor = contextAccessor;
             _usersApiClient = usersApiClient;

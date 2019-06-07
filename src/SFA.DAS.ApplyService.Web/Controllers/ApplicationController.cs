@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
-using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -336,7 +336,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private async Task<bool> CheckIfAnswersMustBeValidated(Guid applicationId, int sequenceId, int sectionId,
             string pageId, List<Answer> answers, Regex inputEnteredRegex)
         {
-            if (answers.Exists(p => inputEnteredRegex.IsMatch(p.Value) && p.QuestionId != "RedirectAction"))
+            if(answers.Exists(p => p.HasValue(inputEnteredRegex) && p.QuestionId != "RedirectAction"))
             {
                 return true;
             }
@@ -441,9 +441,31 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private void GetAnswersFromForm(List<Answer> answers)
         {
-            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__")))
+            Dictionary<string, JObject> answerValues = new Dictionary<string, JObject>();
+
+            foreach (var formVariable in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__")))
             {
-                answers.Add(new Answer() {QuestionId = keyValuePair.Key, Value = keyValuePair.Value});
+                var answerKey = formVariable.Key.Split("_Key_");
+                if (!answerValues.ContainsKey(answerKey[0]))
+                {
+                    answerValues.Add(answerKey[0], new JObject());
+                }
+
+                answerValues[answerKey[0]].Add(
+                    answerKey.Count() == 1 ? string.Empty : answerKey[1],
+                    formVariable.Value.ToString());
+            }
+
+            foreach (var answer in answerValues)
+            {
+                if(answer.Value.Count > 1)
+                {
+                    answers.Add(new Answer() { QuestionId = answer.Key, JsonValue = answer.Value });
+                }
+                else
+                {
+                    answers.Add(new Answer() { QuestionId = answer.Key, Value = answer.Value.Value<string>(string.Empty) });
+                }
             }
         }
 

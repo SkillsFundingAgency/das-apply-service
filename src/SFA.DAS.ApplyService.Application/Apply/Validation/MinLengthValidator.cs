@@ -3,20 +3,19 @@ using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Validation
 {
-    public class MinLengthValidator : IValidator
+    public class MinLengthValidator : Validator
     {
-        public ValidationDefinition ValidationDefinition { get; set; }
-        public List<KeyValuePair<string, string>> Validate(Question question, Answer answer)
+        public override List<KeyValuePair<string, string>> Validate(Answer answer)
         {
-            if (answer.Value.Length < (long)ValidationDefinition.Value)
+            var errorMessages = base.Validate(answer);
+
+            if (GetValue(answer).Length < (long)ValidationDefinition.Value)
             {
-                return new List<KeyValuePair<string, string>>
-                {
-                    new KeyValuePair<string, string>(answer.QuestionId,
-                        ValidationDefinition.ErrorMessage)
-                };
+                errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(answer),
+                        ValidationDefinition.ErrorMessage));
             }
-            return new List<KeyValuePair<string, string>>();
+
+            return errorMessages;
         }
     }
 }

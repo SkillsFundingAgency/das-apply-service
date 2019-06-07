@@ -6,14 +6,13 @@ using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Validation
 {
-    public class DateNotInFutureValidator : IValidator
+    public class DateNotInFutureValidator : Validator
     {
-        public ValidationDefinition ValidationDefinition { get; set; }
-        public List<KeyValuePair<string, string>> Validate(Question question, Answer answer)
+        public override List<KeyValuePair<string, string>> Validate(Answer answer)
         {
-            var errorMessages = new List<KeyValuePair<string, string>>();
+            var errorMessages = base.Validate(answer);
 
-            var dateParts = answer.Value.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+            var dateParts = GetValue(answer).Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
             if (dateParts.Length != 3)
             {
                 return errorMessages;
@@ -33,7 +32,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
             {
                 if (dateEntered > DateTime.Today)
                 {
-                    errorMessages.Add(new KeyValuePair<string, string>(question.QuestionId,
+                    errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(answer),
                         ValidationDefinition.ErrorMessage));
                 }
             }

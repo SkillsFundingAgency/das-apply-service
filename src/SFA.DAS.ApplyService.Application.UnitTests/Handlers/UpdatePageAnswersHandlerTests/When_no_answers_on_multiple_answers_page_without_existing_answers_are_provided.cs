@@ -20,15 +20,15 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
             AnswerQ4 = new Answer() { QuestionId = "Q4", Value = string.Empty };
             AnswerQ5 = new Answer() { QuestionId = "Q5", Value = string.Empty };
 
-            Validator.Setup(v => v.Validate(It.IsAny<Question>(), It.Is<Answer>(p => p.QuestionId == AnswerQ4.QuestionId)))
+            Validator.Setup(v => v.Validate(It.Is<Answer>(p => p.QuestionId == AnswerQ4.QuestionId)))
                 .Returns
-                ((Question question, Answer answer) => !string.IsNullOrEmpty(answer.Value)
+                ((Answer answer) => !string.IsNullOrEmpty(answer.Value)
                     ? new List<KeyValuePair<string, string>>()
                     : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(answer.QuestionId, $"{answer.QuestionId} is required") });
 
-            Validator.Setup(v => v.Validate(It.IsAny<Question>(), It.Is<Answer>(p => p.QuestionId == AnswerQ5.QuestionId)))
+            Validator.Setup(v => v.Validate(It.Is<Answer>(p => p.QuestionId == AnswerQ5.QuestionId)))
                 .Returns
-                ((Question question, Answer answer) => !string.IsNullOrEmpty(answer.Value)
+                ((Answer answer) => !string.IsNullOrEmpty(answer.Value)
                     ? new List<KeyValuePair<string, string>>()
                     : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(answer.QuestionId, $"{answer.QuestionId} is required") });
         }
@@ -77,8 +77,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
                 },
                 false), new CancellationToken()).Wait();
 
-            Validator.Verify(v => v.Validate(It.Is<Question>(question => question.QuestionId == AnswerQ4.QuestionId), AnswerQ4), Times.Once());
-            Validator.Verify(v => v.Validate(It.Is<Question>(question => question.QuestionId == AnswerQ5.QuestionId), AnswerQ5), Times.Once());
+            Validator.Verify(v => v.Validate(AnswerQ4), Times.Once());
+            Validator.Verify(v => v.Validate(AnswerQ5), Times.Once());
         }
     }
 }

@@ -25,7 +25,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Validators.MaxWordCountVali
                 }
             };
 
-            var errors = validator.Validate(new Question(), new Answer() {Value = input, QuestionId = "Q1"});
+            var errors = validator.Validate(new Answer() {Value = input, QuestionId = "Q1"});
 
             (errors.Count == 0).Should().Be(isValid);
         }

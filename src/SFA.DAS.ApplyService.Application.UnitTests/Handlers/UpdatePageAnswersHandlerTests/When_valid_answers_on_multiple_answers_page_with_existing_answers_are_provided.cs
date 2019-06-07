@@ -35,15 +35,15 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
             AnswerQ4 = new Answer() { QuestionId = "Q4", Value = "SomeNewAnswer" };
             AnswerQ5 = new Answer() { QuestionId = "Q5", Value = "SomeOtherNewAnswer" };
 
-            Validator.Setup(v => v.Validate(It.IsAny<Question>(), It.Is<Answer>(p => p.QuestionId == AnswerQ4.QuestionId)))
+            Validator.Setup(v => v.Validate(It.Is<Answer>(p => p.QuestionId == AnswerQ4.QuestionId)))
                 .Returns
-                ((Question question, Answer answer) => !string.IsNullOrEmpty(answer.Value)
+                ((Answer answer) => !string.IsNullOrEmpty(answer.Value)
                     ? new List<KeyValuePair<string, string>>()
                     : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(answer.QuestionId, $"{answer.QuestionId} is required") });
 
-            Validator.Setup(v => v.Validate(It.IsAny<Question>(), It.Is<Answer>(p => p.QuestionId == AnswerQ5.QuestionId)))
+            Validator.Setup(v => v.Validate(It.Is<Answer>(p => p.QuestionId == AnswerQ5.QuestionId)))
                 .Returns
-                ((Question question, Answer answer) => !string.IsNullOrEmpty(answer.Value)
+                ((Answer answer) => !string.IsNullOrEmpty(answer.Value)
                     ? new List<KeyValuePair<string, string>>()
                     : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(answer.QuestionId, $"{answer.QuestionId} is required") });
         }
@@ -123,10 +123,10 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
                 true), new CancellationToken()).Wait();
 
             ValidatorFactory.Verify(v => v.Build(It.Is<Question>(question => question.QuestionId == AnswerQ4.QuestionId)));
-            Validator.Verify(v => v.Validate(It.Is<Question>(question => question.QuestionId == AnswerQ4.QuestionId), AnswerQ4));
+            Validator.Verify(v => v.Validate(AnswerQ4));
 
             ValidatorFactory.Verify(v => v.Build(It.Is<Question>(question => question.QuestionId == AnswerQ5.QuestionId)));
-            Validator.Verify(v => v.Validate(It.Is<Question>(question => question.QuestionId == AnswerQ5.QuestionId), AnswerQ5));
+            Validator.Verify(v => v.Validate(AnswerQ5));
         }
 
         [Test]
@@ -140,8 +140,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
                 },
                 true), new CancellationToken()).Wait();
 
-            Validator.Verify(v => v.Validate(It.Is<Question>(question => question.QuestionId == _existingAnswerQ4.QuestionId), _existingAnswerQ4), Times.Never());
-            Validator.Verify(v => v.Validate(It.Is<Question>(question => question.QuestionId == _existingAnswerQ5.QuestionId), _existingAnswerQ5), Times.Never());
+            Validator.Verify(v => v.Validate(_existingAnswerQ4), Times.Never());
+            Validator.Verify(v => v.Validate(_existingAnswerQ5), Times.Never());
         }
     }
 }

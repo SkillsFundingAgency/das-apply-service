@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.Apply.GetAnswers
 {
-
     public class GetAnswersService : IGetAnswersService
     {
-
         private readonly IApplyRepository _applyRepository;
 
         public GetAnswersService(IApplyRepository applyRepository)
@@ -35,15 +33,15 @@ namespace SFA.DAS.ApplyService.Application.Apply.GetAnswers
                                 page.Answers.Where(x => x.QuestionId == questionId ||
                                                         x.QuestionId.Contains($"{questionId}.")).ToList();
                             {
-                                if (answers.Count == 1) return answers.First().Value;
                                 if (answers.Count < 1) continue;
+                                if (answers.Count == 1) return answers.First().ToString();
                                 var subAnswers =
                                     answers.Where(x => x.QuestionId.Contains($"{questionId}.")).ToList();
                                 return !subAnswers.Any()
-                                    ? answers.First().Value
+                                    ? answers.First().ToString()
                                     : (subAnswers.Count == 1
-                                        ? subAnswers.First().Value
-                                        : string.Join(",", subAnswers));
+                                        ? subAnswers.First().ToString()
+                                        : string.Join(",", subAnswers.Select(p => p.ToString())));
                             }
                         }
                     }

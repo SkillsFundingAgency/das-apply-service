@@ -19,15 +19,15 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
             AnswerQ1 = new Answer() { QuestionId = "Q1", Value = "Yes" };
             AnswerQ1Dot1 = new Answer() { QuestionId = "Q1.1", Value = string.Empty };
 
-            Validator.Setup(v => v.Validate(It.IsAny<Question>(), It.Is<Answer>(p => p.QuestionId == AnswerQ1.QuestionId)))
+            Validator.Setup(v => v.Validate(It.Is<Answer>(p => p.QuestionId == AnswerQ1.QuestionId)))
                 .Returns
-                ((Question question, Answer answer) => !string.IsNullOrEmpty(answer.Value)
+                ((Answer answer) => !string.IsNullOrEmpty(answer.Value)
                     ? new List<KeyValuePair<string, string>>()
                     : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(answer.QuestionId, $"{answer.QuestionId} is required") });
 
-            Validator.Setup(v => v.Validate(It.IsAny<Question>(), It.Is<Answer>(p => p.QuestionId == AnswerQ1Dot1.QuestionId)))
+            Validator.Setup(v => v.Validate(It.Is<Answer>(p => p.QuestionId == AnswerQ1Dot1.QuestionId)))
                 .Returns
-                ((Question question, Answer answer) => !string.IsNullOrEmpty(answer.Value)
+                ((Answer answer) => !string.IsNullOrEmpty(answer.Value)
                     ? new List<KeyValuePair<string, string>>()
                     : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(answer.QuestionId, $"{answer.QuestionId} is required") });
         }
@@ -77,10 +77,10 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
                 false), new CancellationToken()).Wait();
 
             ValidatorFactory.Verify(v=>v.Build(It.Is<Question>(question => question.QuestionId == "Q1")));
-            Validator.Verify(v => v.Validate(It.Is<Question>(question => question.QuestionId == "Q1"), AnswerQ1));
+            Validator.Verify(v => v.Validate(AnswerQ1));
 
             ValidatorFactory.Verify(v => v.Build(It.Is<Question>(question => question.QuestionId == "Q1.1")));
-            Validator.Verify(v => v.Validate(It.Is<Question>(question => question.QuestionId == "Q1.1"), AnswerQ1Dot1));
+            Validator.Verify(v => v.Validate(AnswerQ1Dot1));
         }
     }
 }

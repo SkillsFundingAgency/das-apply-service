@@ -20,15 +20,15 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
             AnswerQ2 = new Answer() { QuestionId = "Q2", Value = "SomeAnswer" };
             AnswerQ3 = new Answer() { QuestionId = "Q3", Value = "SomeOtherAnswer" };
 
-            Validator.Setup(v => v.Validate(It.IsAny<Question>(), It.Is<Answer>(p => p.QuestionId == AnswerQ2.QuestionId)))
+            Validator.Setup(v => v.Validate(It.Is<Answer>(p => p.QuestionId == AnswerQ2.QuestionId)))
                 .Returns
-                ((Question question, Answer answer) => !string.IsNullOrEmpty(answer.Value)
+                ((Answer answer) => !string.IsNullOrEmpty(answer.Value)
                     ? new List<KeyValuePair<string, string>>()
                     : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(answer.QuestionId, $"{answer.QuestionId} is required") });
 
-            Validator.Setup(v => v.Validate(It.IsAny<Question>(), It.Is<Answer>(p => p.QuestionId == AnswerQ3.QuestionId)))
+            Validator.Setup(v => v.Validate(It.Is<Answer>(p => p.QuestionId == AnswerQ3.QuestionId)))
                 .Returns
-                ((Question question, Answer answer) => !string.IsNullOrEmpty(answer.Value)
+                ((Answer answer) => !string.IsNullOrEmpty(answer.Value)
                     ? new List<KeyValuePair<string, string>>()
                     : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(answer.QuestionId, $"{answer.QuestionId} is required") });
         }
@@ -86,7 +86,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
                 false), new CancellationToken()).Wait();
 
             ValidatorFactory.Verify(v=>v.Build(It.Is<Question>(question => question.QuestionId == AnswerQ2.QuestionId)));
-            Validator.Verify(v => v.Validate(It.Is<Question>(question => question.QuestionId == AnswerQ2.QuestionId), AnswerQ2));
+            Validator.Verify(v => v.Validate(AnswerQ2));
         }
     }
 }

@@ -3,20 +3,18 @@ using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Validation
 {
-    public class RequiredValidator : IValidator
+    public class RequiredValidator : Validator
     {
-        public ValidationDefinition ValidationDefinition { get; set; }
-        public List<KeyValuePair<string, string>> Validate(Question question, Answer answer)
+        public override List<KeyValuePair<string, string>> Validate(Answer answer)
         {
-            if (string.IsNullOrWhiteSpace(answer?.Value))
+            var errorMessages = base.Validate(answer);
+
+            if (string.IsNullOrWhiteSpace(GetValue(answer)))
             {
-                return new List<KeyValuePair<string, string>>
-                {
-                    new KeyValuePair<string, string>(question.QuestionId,
-                        ValidationDefinition.ErrorMessage)
-                };
+                errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(answer), ValidationDefinition.ErrorMessage));
             }
-            return new List<KeyValuePair<string, string>>();
+
+            return errorMessages;
         }
     }
 }

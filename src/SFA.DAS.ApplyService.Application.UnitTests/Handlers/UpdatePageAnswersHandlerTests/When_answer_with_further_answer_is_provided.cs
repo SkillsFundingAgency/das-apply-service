@@ -20,15 +20,15 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
             AnswerQ1 = new Answer() { QuestionId = "Q1", Value = "Yes" };
             AnswerQ1Dot1 = new Answer() { QuestionId = "Q1.1", Value = "SomeNewAnswer" };
 
-            Validator.Setup(v => v.Validate(It.IsAny<Question>(), It.Is<Answer>(p => p.QuestionId == AnswerQ1.QuestionId)))
+            Validator.Setup(v => v.Validate(It.Is<Answer>(p => p.QuestionId == AnswerQ1.QuestionId)))
                 .Returns
-                ((Question question, Answer answer) => !string.IsNullOrEmpty(answer.Value)
+                ((Answer answer) => !string.IsNullOrEmpty(answer.Value)
                     ? new List<KeyValuePair<string, string>>()
                     : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(answer.QuestionId, $"{answer.QuestionId} is required") });
 
-            Validator.Setup(v => v.Validate(It.IsAny<Question>(), It.Is<Answer>(p => p.QuestionId == AnswerQ1Dot1.QuestionId)))
+            Validator.Setup(v => v.Validate(It.Is<Answer>(p => p.QuestionId == AnswerQ1Dot1.QuestionId)))
                 .Returns
-                ((Question question, Answer answer) => !string.IsNullOrEmpty(answer.Value)
+                ((Answer answer) => !string.IsNullOrEmpty(answer.Value)
                     ? new List<KeyValuePair<string, string>>()
                     : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(answer.QuestionId, $"{answer.QuestionId} is required") });
         }
@@ -47,7 +47,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
             ApplyRepository.Verify(r => r.SaveSection(It.Is<ApplicationSection>(
                 section =>
                     section.QnAData.Pages.First(p => p.PageId == "1").PageOfAnswers[0].Answers[0].QuestionId == AnswerQ1.QuestionId &&
-                    section.QnAData.Pages.First(p => p.PageId == "1").PageOfAnswers[0].Answers[0].Value == AnswerQ1.Value), UserId));
+                    (string)section.QnAData.Pages.First(p => p.PageId == "1").PageOfAnswers[0].Answers[0].Value == AnswerQ1.Value), UserId));
 
             ApplyRepository.Verify(r => r.SaveSection(It.Is<ApplicationSection>(
                 section =>
@@ -86,10 +86,10 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
                 false), new CancellationToken()).Wait();
 
             ValidatorFactory.Verify(v=>v.Build(It.Is<Question>(question => question.QuestionId == "Q1")));
-            Validator.Verify(v => v.Validate(It.Is<Question>(question => question.QuestionId == "Q1"), AnswerQ1));
+            Validator.Verify(v => v.Validate(AnswerQ1));
 
             ValidatorFactory.Verify(v => v.Build(It.Is<Question>(question => question.QuestionId == "Q1.1")));
-            Validator.Verify(v => v.Validate(It.Is<Question>(question => question.QuestionId == "Q1.1"), AnswerQ1Dot1));
+            Validator.Verify(v => v.Validate(AnswerQ1Dot1));
         }
     }
 }

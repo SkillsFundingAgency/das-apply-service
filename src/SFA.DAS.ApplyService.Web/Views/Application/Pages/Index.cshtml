@@ -97,7 +97,6 @@
                                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
                                             <h1 class="govuk-fieldset__heading">
                                                 @Html.Raw(question.Label)
-                                                @* @Html.Raw(question.QuestionId) *@
                                             </h1>
                                         </legend>
                                         if (!string.IsNullOrWhiteSpace(@Model.BodyText))
@@ -150,20 +149,9 @@
                     {
                         foreach (var question in Model.Questions)
                         {
-                            var questionHasError = false;
-                            if (Model.ErrorMessages != null)
-                            {
-                                foreach (var error in Model.ErrorMessages)
-                                {
-                                    if (error.Field == question.QuestionId)
-                                    {
-                                        questionHasError = true;
-                                    }
-                                }
-                            }
-                            <div class="govuk-form-group @(questionHasError ? "govuk-form-group--error" : "")">
-                                @{ var addressLookupClass = question.Type == "AddressLookup" ? "govuk-label--address-lookup" : ""; }
-                                <label class="govuk-label govuk-label--m @addressLookupClass" for="@question.QuestionId">
+                            <div class="govuk-form-group @(question.ErrorMessages?.Any() ?? false ? "govuk-form-group--error" : "")">
+                                @{ var addressClass = question.Type == "Address" ? "govuk-label--address-lookup" : ""; }
+                                <label class="govuk-label govuk-label--m @addressClass" for="@question.QuestionId">
                                     @Html.Raw(question.Label)
                                 </label>
 
@@ -187,7 +175,7 @@
                                 @(await Html.PartialAsync($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question))
                             </div>
 
-                            if (question.Type == "AddressLookup")
+                            @*if (question.Type == "Address")
                             {
                                 @section Styles {
                                     <link rel="stylesheet" href="@Url.Content("~/stylesheets/accessible-autocomplete.min.css")">
@@ -211,7 +199,7 @@
                                         });
                                     </script>
                                 }
-                            }
+                            }*@
                         }
                     }
 

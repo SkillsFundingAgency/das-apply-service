@@ -5,17 +5,19 @@ using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Validation
 {
-    public class EmailAddressIsValidValidator : IValidator
+    public class EmailAddressIsValidValidator : Validator
     {
-        public ValidationDefinition ValidationDefinition { get; set; }
-        public List<KeyValuePair<string, string>> Validate(Question question, Answer answer)
+        public override List<KeyValuePair<string, string>> Validate(Answer answer)
         {
-           if (string.IsNullOrEmpty(answer?.Value)) return new List<KeyValuePair<string, string>>();
+            var errorMessages = base.Validate(answer);
 
-            return !IsValidEmail(answer.Value)
-                ? new List<KeyValuePair<string, string>>
-                    {new KeyValuePair<string, string>(answer.QuestionId, ValidationDefinition.ErrorMessage)}
-                : new List<KeyValuePair<string, string>>();
+            var value = GetValue(answer);
+            if(!string.IsNullOrEmpty(value) && !IsValidEmail(value))
+            {
+                errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(answer), ValidationDefinition.ErrorMessage));
+            }
+
+            return errorMessages;
         }
 
         private static bool IsValidEmail(string email)

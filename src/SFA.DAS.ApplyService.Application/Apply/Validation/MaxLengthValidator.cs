@@ -3,18 +3,18 @@ using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Validation
 {
-    public class MaxLengthValidator : IValidator
+    public class MaxLengthValidator : Validator
     {
-        public ValidationDefinition ValidationDefinition { get; set; }
-        public List<KeyValuePair<string, string>> Validate(Question question, Answer answer)
+        public override List<KeyValuePair<string, string>> Validate(Answer answer)
         {
-            var errors = new List<KeyValuePair<string, string>>();
-            if (answer.Value.Length > (long)ValidationDefinition.Value)
+            var errorMessages = base.Validate(answer);
+
+            if (GetValue(answer).Length > (long)ValidationDefinition.Value)
             {
-                errors.Add(new KeyValuePair<string, string>(answer.QuestionId, ValidationDefinition.ErrorMessage));
+                errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(answer), ValidationDefinition.ErrorMessage));
             }
 
-            return errors;
+            return errorMessages;
         }
     }
 }
