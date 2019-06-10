@@ -10,6 +10,7 @@ using NLog;
 using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Application.Users.ApproveContact;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
+using SFA.DAS.ApplyService.Application.Users.CreateNewContact;
 using SFA.DAS.ApplyService.Application.Users.GetContact;
 using SFA.DAS.ApplyService.Application.Users.GetOrganisationContacts;
 using SFA.DAS.ApplyService.Application.Users.RemoveContact;
@@ -45,6 +46,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return Ok();
         }
         
+        [HttpPost("/Account/CreateNewContact")]
+        public async Task<ActionResult> CreateNewContact([FromBody] CreateNewContactRequest request)
+        {
+            await _mediator.Send(request, CancellationToken.None);
+            return Ok();
+        }
+        
         [HttpPost("/Account/")]
         [PerformValidation]
         public async Task<ActionResult> InviteUser([FromBody]NewContact newContact)
@@ -74,9 +82,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
         [PerformValidation]
         [HttpPost("/Account/Callback")]
-        public async Task<ActionResult> Callback([FromBody] DfeSignInCallback callback)
+        public async Task<ActionResult> Callback([FromBody] SignInCallback callback)
         {
-            _logger.LogInformation($"Received callback from DfE: Sub: {callback.Sub} SourceId: {callback.SourceId}");
+            _logger.LogInformation($"Received callback from ASLogin: Sub: {callback.Sub} SourceId: {callback.SourceId}");
             await _mediator.Send(new UpdateSignInIdRequest(Guid.Parse(callback.Sub), Guid.Parse(callback.SourceId)));
             return Ok();
         }
@@ -104,7 +112,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPut("/Account/UpdateContactWithOrgId")]
         public async Task UpdateContactWithOrgId([FromBody] UpdateContactOrgId updateContactOrgId)
         {
-            await _mediator.Send(new UpdateContactOrgdRequest(updateContactOrgId.ContactId,
+            await _mediator.Send(new UpdateContactOrganisationIdRequest(updateContactOrgId.ContactId,
                 updateContactOrgId.OrganisationId));
         }
 

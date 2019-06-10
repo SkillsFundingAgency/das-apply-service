@@ -4,16 +4,16 @@ using MediatR;
 
 namespace SFA.DAS.ApplyService.Application.Users.UpdateContactOrgId
 {
-    public class UpdateContactOrgRequestHandler : IRequestHandler<UpdateContactOrgdRequest>
+    public class UpdateContactOrganisationIdHandler : IRequestHandler<UpdateContactOrganisationIdRequest>
     {
         private readonly IContactRepository _contactRepository;
 
-        public UpdateContactOrgRequestHandler(IContactRepository contactRepository)
+        public UpdateContactOrganisationIdHandler(IContactRepository contactRepository)
         {
             _contactRepository = contactRepository;
         }
         
-        public async Task<Unit> Handle(UpdateContactOrgdRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateContactOrganisationIdRequest request, CancellationToken cancellationToken)
         {
             await _contactRepository.UpdateContactOrgId(request.ContactId, request.OrgId); 
             

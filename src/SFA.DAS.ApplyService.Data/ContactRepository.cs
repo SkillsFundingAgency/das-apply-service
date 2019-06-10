@@ -84,7 +84,7 @@ namespace SFA.DAS.ApplyService.Data
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(
-                    @"UPDATE Contacts SET SignInId = @signInId, UpdatedAt = GETUTCDATE(), UpdatedBy = 'dfeSignIn', Status = 'Live' WHERE Id = @contactId",
+                    @"UPDATE Contacts SET SignInId = @signInId, UpdatedAt = GETUTCDATE(), UpdatedBy = 'ASLogin', Status = 'Live' WHERE Id = @contactId",
                     new {contactId, signInId});
             }
         }
