@@ -14,6 +14,8 @@ namespace SFA.DAS.ApplyService.Application.Users
         Task UpdateApplyOrganisationId(Guid contactId, Guid applyOrganisationId);
         Task<bool> UpdateIsApproved(Guid contactId, bool isApproved);
 
+        Task<List<Contact>> GetOrganisationContacts(Guid organisationId);
+
         Task<Contact> GetContact(Guid userId);
         Task<List<Contact>> GetUsersToMigrate();
         Task UpdateMigratedContact(Guid contactId, Guid signInId);
