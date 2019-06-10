@@ -64,5 +64,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await (await _httpClient.PostAsJsonAsync($"/Organisations", request)).Content
                 .ReadAsAsync<Organisation>();
         }
+
+        public async Task<Organisation> GetByUser(Guid userId)
+        {
+            return await (await _httpClient.GetAsync($"Organisations/UserId/{userId}")).Content
+                .ReadAsAsync<Organisation>();
+        }
     }
 }

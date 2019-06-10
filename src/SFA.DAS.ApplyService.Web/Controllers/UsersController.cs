@@ -28,12 +28,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly CreateAccountValidator _createAccountValidator;
         private readonly IApplicationApiClient _applicationApiClient;
+        private readonly IOrganisationApiClient _organisationApiClient;
 
         private const string TrainingProviderOrganisationType = "TrainingProvider";
 
         public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger, 
                                IConfigurationService config, IHttpContextAccessor contextAccessor, 
-                               CreateAccountValidator createAccountValidator, IApplicationApiClient applicationApiClient)
+                               CreateAccountValidator createAccountValidator, IApplicationApiClient applicationApiClient,
+                               IOrganisationApiClient organisationApiClient)
         { 
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
@@ -42,6 +44,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _contextAccessor = contextAccessor;
             _createAccountValidator = createAccountValidator;
             _applicationApiClient = applicationApiClient;
+            _organisationApiClient = organisationApiClient;
         }
         
         [HttpGet]
@@ -122,9 +125,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("SelectApplicationRoute", "RoatpApplicationPreamble");
             }
 
-            var applications = await _applicationApiClient.GetApplicationsFor(user.Id);
+            var organisation = await _organisationApiClient.GetByUser(user.Id);
+
             var selectedApplicationType = ApplicationTypes.EndpointAssessor;
-            if (applications.FirstOrDefault()?.ApplyingOrganisation.OrganisationType == TrainingProviderOrganisationType)
+            if (organisation.OrganisationType == TrainingProviderOrganisationType)
             {
                 selectedApplicationType = ApplicationTypes.RegisterTrainingProviders;
             }

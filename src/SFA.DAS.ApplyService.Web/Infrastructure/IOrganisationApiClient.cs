@@ -9,5 +9,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
    {
        Task<Organisation> Create(OrganisationSearchResult organisation, Guid userId);
        Task<Organisation> Create(CreateOrganisationRequest request, Guid userId);
+       Task<Organisation> GetByUser(Guid userId);
    }
 }
