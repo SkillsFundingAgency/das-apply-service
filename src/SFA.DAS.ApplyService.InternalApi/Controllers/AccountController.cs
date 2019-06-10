@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,7 @@ using SFA.DAS.ApplyService.Application.Users.ApproveContact;
 using SFA.DAS.ApplyService.Application.Users.CreateAccount;
 using SFA.DAS.ApplyService.Application.Users.GetContact;
 using SFA.DAS.ApplyService.Application.Users.GetOrganisationContacts;
+using SFA.DAS.ApplyService.Application.Users.RemoveContact;
 using SFA.DAS.ApplyService.Application.Users.UpdateContactIdAndSignInId;
 using SFA.DAS.ApplyService.Application.Users.UpdateContactOrgId;
 using SFA.DAS.ApplyService.Application.Users.UpdateSignInId;
@@ -36,6 +38,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             _configService = configService;
         }
 
+        [HttpPost("/Account/RemoveFromOrganisation")]
+        public async Task<ActionResult> RemoveContactFromOrganisation([FromBody] RemoveContactFromOrganisationRequest request)
+        {
+            await _mediator.Send(request, CancellationToken.None);
+            return Ok();
+        }
+        
         [HttpPost("/Account/")]
         [PerformValidation]
         public async Task<ActionResult> InviteUser([FromBody]NewContact newContact)
