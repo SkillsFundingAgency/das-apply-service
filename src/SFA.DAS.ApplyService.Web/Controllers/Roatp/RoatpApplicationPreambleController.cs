@@ -158,6 +158,12 @@
                     return RedirectToAction("CompanyNotActive");
                 }
 
+                if (!IncorporationDateValidator.IsValidIncorporationDate(applicationDetails.ApplicationRoute.Id,
+                    companyDetails.IncorporationDate))
+                {
+                    return RedirectToAction("InvalidCompanyTradingHistory");
+                }
+
                 applicationDetails.CompanySummary = companyDetails;
             }
 
@@ -285,6 +291,19 @@
             };
 
             return View("~/Views/Roatp/CharityNotFound.cshtml", viewModel);
+        }
+
+        public async Task<IActionResult> InvalidCompanyTradingHistory()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var viewModel = new UkprnSearchResultsViewModel
+            {
+                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
+                UKPRN = applicationDetails.UKPRN.ToString()
+            };
+
+            return View("~/Views/Roatp/InvalidCompanyTradingHistory.cshtml", viewModel);
         }
 
         [Route("start-application")]
