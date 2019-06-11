@@ -64,7 +64,9 @@ namespace SFA.DAS.ApplyService.Domain.Apply
             }
 
             var jsonValue = new JObject(JsonValue);
-            return string.Join(",", jsonValue.Properties().Select(p => p.Value.ToString()));
+            return string.Join(", ", jsonValue.Properties().
+                Where(p => !string.IsNullOrEmpty(p.Value.ToString())).
+                Select(p => p.Value.ToString()));
         }
     }
 }

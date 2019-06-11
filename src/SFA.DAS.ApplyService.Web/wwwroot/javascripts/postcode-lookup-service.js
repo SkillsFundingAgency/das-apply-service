@@ -1,223 +1,218 @@
-(function(global) {
-    "use strict";
+(function ($) {
+    var searchContext = "";
+    var findAddressVal = $("#postcode-search").val();
 
-    var GOVUK = global.GOVUK || {};
+    var hasAddressValidationErrors = ($(".address-manual-input span.govuk-error-message").length > 0);
 
-    GOVUK.addressLookup = {
-        addressInputId: null,
-        currentAddressData: null,
-        populateResultsFn: null,
+    // when errors present from previous selection the manual input must be used
+    if (restorePreviousAddress() === true && hasAddressValidationErrors) {
+        enableEnterAddressManually();
+        return;
+    }
 
-        init: function(elementId) {
-            this.addressInputId = elementId;
-            // Check if we already have address data and show inputs if so.
-            if (this.addressExists(elementId)) {
-                this.displayAddressLookup("hide");
-            } else {
-                this.displayAddressLookup("show");
-            }
-        },
+    $("#addressLookupWrapper").removeClass("disabled");
+    $("#postcode-search").prop("disabled", false);
+     
+    $("#enterAddressManually").on("click", function (e) {
+        e.preventDefault();
+        enableEnterAddressManually();
+    });
 
-        displayAddressLookup: function(hideOrShow) {
-            if (hideOrShow === "hide") {
-                document.querySelector(".address-inputs").style.display =
-                    "block";
-                document.querySelector(
-                    ".govuk-label--address-lookup"
-                ).style.display = "none";
-                document.querySelector(
-                    "#postcode-lookup"
-                ).parentNode.style.display = "none";
-            } else if (hideOrShow === "show") {
-                document.querySelector(".address-inputs").style.display =
-                    "none";
-                document.querySelector(
-                    ".govuk-label--address-lookup"
-                ).style.display = "block";
-                document.querySelector(
-                    "#postcode-lookup"
-                ).parentNode.style.display = "block";
-            } else {
-                return false;
-            }
-        },
+    $("#postcode-search").keyup(function () {
+        findAddressVal = $(this).val();
+    });
 
-        handleFindAndConfirm: function(query, populateResults) {
-            if (populateResults) {
-                // Data being updated on keypress
-                GOVUK.addressLookup.populateResultsFn = populateResults;
-                GOVUK.addressLookup.getPcaData(
-                    "Find",
-                    query,
-                    "",
-                    populateResults
-                );
-            } else {
-                // Selection confirmed
-                const confirmedAddressData = GOVUK.addressLookup.currentAddressData.Items.filter(
-                    address => address.Text.indexOf(query.text) !== -1
-                )[0];
+    $("#postcode-search")
+        .autocomplete({
+            classes: {
+                "ui-autocomplete": "govuk-list"
+            },
+            search: function () {
+                $("#addressLoading").show();
+                $("#enterAddressManually").hide();
+            },
+            source: function (request, response) {
+                $.ajax({
+                    url:
+                        "//services.postcodeanywhere.co.uk/CapturePlus/Interactive/Find/v2.10/json3.ws",
+                    dataType: "jsonp",
+                    data: {
+                        key: "JY37-NM56-JA37-WT99",
+                        country: "GB",
+                        searchTerm: request.term,
+                        lastId: searchContext
+                    },
+                    timeout: 5000,
+                    success: function (data) {
+                        $("#postcodeServiceUnavailable").hide();
+                        $("#addressLoading").hide();
+                        $("#enterAddressManually").show();
 
-                GOVUK.addressLookup.getPcaData(
-                    confirmedAddressData.Next,
-                    confirmedAddressData.Id,
-                    confirmedAddressData.Id,
-                    GOVUK.addressLookup.populateResultsFn
-                );
-            }
-        },
+                        $("#postcode-search").one("blur", function () {
+                            $("#enterAddressManually").show();
+                            $("#addressLoading").hide();
+                        });
 
-        getPcaData: function(requestType, searchTerm, lastId, populateResults) {
-            var url =
-                "//services.postcodeanywhere.co.uk/CapturePlus/Interactive/" +
-                requestType +
-                "/v2.10/json3.ws";
-            var params = "";
-            params += "&key=" + encodeURIComponent("JY37-NM56-JA37-WT99");
+                        response(
+                            $.map(data.Items, function (suggestion) {
+                                return {
+                                    label: suggestion.Text,
+                                    value: "",
+                                    data: suggestion
+                                };
+                            })
+                        );
+                    },
+                    error: function () {
+                        $("#postcodeServiceUnavailable").show();
+                        $("#enterAddressManually").show();
+                        $("#addressLoading").hide();
+                        $("#address-details").removeClass("js-hidden");
+                    }
+                });
+            },
+            messages: {
+                noResults: function () {
+                    return "We can't find an address matching " + findAddressVal;
+                },
+                results: function (amount) {
+                    return (
+                        "We've found " +
+                        amount +
+                        (amount > 1 ? " addresses" : " address") +
+                        " that match " +
+                        findAddressVal +
+                        ". Use up and down arrow keys to navigate"
+                    );
+                }
+            },
+            select: function (event, ui) {
+                var item = ui.item.data;
 
-            if (requestType === "Find") {
-                params += "&searchTerm=" + encodeURIComponent(searchTerm);
-                params += "&lastId=" + encodeURIComponent(lastId);
-                params += "&country=" + encodeURIComponent("GB");
-                params += "&language=" + encodeURIComponent("en-gb");
-            }
+                if (item.Next == "Retrieve") {
+                    //retrieve the address
+                    retrieveAddress(item.Id);
+                    searchContext = "";
+                } else {
+                    var field = $(this);
+                    searchContext = item.Id;
 
-            if (requestType === "Retrieve") {
-                params += "&Id=" + encodeURIComponent(lastId);
-            }
+                    $("#addressLoading").show();
+                    $("#enterAddressManually").hide();
+                    $("#postcodeServiceUnavailable").hide();
 
-            var http = new XMLHttpRequest();
-            http.open("POST", url, true);
-            http.setRequestHeader(
-                "Content-type",
-                "application/x-www-form-urlencoded"
-            );
-            http.onreadystatechange = function() {
-                if (http.readyState == 4 && http.status == 200) {
-                    var response = JSON.parse(http.responseText);
-                    // Test for an error
-                    if (
-                        response.Items.length == 1 &&
-                        typeof response.Items[0].Error != "undefined"
-                    ) {
-                        // Show the error message
-                        alert(response.Items[0].Description);
+                    if (searchContext === "GBR|") {
+                        window.setTimeout(function () {
+                            field.autocomplete("search", item.Text);
+                        });
                     } else {
-                        // Check if there were any items found
-                        if (response.Items.length == 0)
-                            alert("Sorry, there were no results");
-                        else {
-                            if (requestType === "Find") {
-                                if (response.Items.length) {
-                                    GOVUK.addressLookup.currentAddressData = response;
-                                    const results = response.Items.map(
-                                        result => ({
-                                            text: result.Text,
-                                            description: result.Description
-                                        })
-                                    );
-
-                                    populateResults(results);
-                                }
-                            }
-
-                            if (requestType === "Retrieve") {
-                                // We've found the separate address parts.
-                                if (response.Items.length) {
-                                    GOVUK.addressLookup.fillAddress(
-                                        response.Items[0]
-                                    );
-                                }
-                            }
-                        }
+                        window.setTimeout(function () {
+                            field.autocomplete("search", item.Id);
+                        });
                     }
                 }
-            };
-            http.send(params);
-        },
+            },
+            focus: function (_, ui) {
+                $("#address-lookup")
+                    .find(".ui-helper-hidden-accessible")
+                    .text("To select " + ui.item.label + ", press enter");
+            },
+            autoFocus: true,
+            minLength: 1,
+            delay: 100
+        })
+        .focus(function () {
+            searchContext = "";
+        });
 
-        addressExists(elementId) {
-            // If first line of address, city and postcode are populated
-            if (
-                document.querySelector("#" + elementId + "_" + 1).value &&
-                document.querySelector("#" + elementId + "_" + 4).value &&
-                document.querySelector("#" + elementId + "_" + 5).value
-            ) {
-                return true;
-            } else {
-                return false;
+    function retrieveAddress(id) {
+        $("#addressLoading").show();
+        $("#enterAddressManually").hide();
+        $("#postcodeServiceUnavailable").hide();
+        $("#address-details").addClass("js-hidden");
+
+        $.ajax({
+            url:
+                "//services.postcodeanywhere.co.uk/CapturePlus/Interactive/Retrieve/v2.10/json3.ws",
+            dataType: "jsonp",
+            data: {
+                key: "JY37-NM56-JA37-WT99",
+                id: id
+            },
+            timeout: 5000,
+            success: function (data) {
+                if (data.Items.length) {
+                    $("#addressLoading").hide();
+                    $(".js-select-previous-address").hide();
+                    $("#enterAddressManually").show();
+                    $("#addressManualWrapper").unbind("click");
+                    populateAddress(data.Items[0]);
+                }
+            },
+            error: function () {
+                $("#postcodeServiceUnavailable").show();
+                $("#enterAddressManually").hide();
+                $("#addressLoading").hide();
+                $("#address-details").removeClass("js-hidden");
             }
-        },
+        });
+    }
 
-        fillAddress: function(address) {
-            var addressArr = [
-                address.Line1,
-                address.Line2,
-                address.City,
-                address.Province,
-                address.PostalCode
-            ];
-            var panelContent = "";
+    function populateAddress(address) {
+        var addressFields = {
+            '.address-manual-input-building-1': address.Line1,
+            '.address-manual-input-building-2': address.Line2,
+            '.address-manual-input-town-or-city': address.City,
+            '.address-manual-input-county': address.Province,
+            '.address-manual-input-postcode': address.PostalCode
+        };
 
-            // Populate (hidden) inputs and panel content
-            addressArr.forEach(function(item, index) {
-                document.querySelector(
-                    "#" + GOVUK.addressLookup.addressInputId + "_" + (index + 1)
-                ).value = item;
-                panelContent +=
-                    '<p class="govuk-body govuk-!-margin-bottom-0">' +
-                    item +
-                    "</p>";
-            });
+        $(".js-address-panel").removeClass("hidden");
+        $(".js-address-panel ul").empty();
+        $.each(addressFields, function (index, value) {
+            $(index).val(value);
+            $(".js-address-panel ul").append("<li>" + value + "</li>");
+        });
 
-            // Clear lookup input
-            document.querySelector(
-                "#" + GOVUK.addressLookup.addressInputId
-            ).value = "";
+        // populate hidden field for accessibility
+        $("#ariaAddressEntered").text(
+            "Your address has been entered into the fields below."
+        );
+    }
 
-            // Hide label and empty postcode lookup div
-            document.querySelector(".govuk-label--address-lookup").innerText =
-                "Address";
-            document.querySelector("#postcode-lookup").innerText = "";
+    function restorePreviousAddress() {
+        var hasPreviousValues = false;
 
-            // Create panel and populate with address
-            var addressPanel = document.createElement("div");
-            addressPanel.className = "govuk-inset-text";
-            addressPanel.innerHTML = panelContent;
-            document
-                .querySelector("#postcode-lookup")
-                .appendChild(addressPanel);
+        var addressFields = {
+            '.address-manual-input-building-1': '',
+            '.address-manual-input-building-2': '',
+            '.address-manual-input-town-or-city': '',
+            '.address-manual-input-county': '',
+            '.address-manual-input-postcode': ''
+        };
 
-            // Create link for editing
-            var editLink = document.createElement("a");
-            editLink.className = "govuk-link";
-            editLink.href = "#edit-address";
-            editLink.innerHTML = "Edit address";
-            editLink.addEventListener("click", GOVUK.addressLookup.editAddress);
-            document.querySelector("#postcode-lookup").appendChild(editLink);
-            var editLinkWrapper = document.createElement("p");
-            editLinkWrapper.className = "govuk-body";
-            editLink.parentNode.insertBefore(editLinkWrapper, editLink);
-            editLinkWrapper.appendChild(editLink);
-        },
+        $.each(addressFields, function (index, value) {
+            $(".js-address-panel ul").append("<li>" + $(index).val() + "</li>");
+            if (!($(index).val().length === 0)) {
+                if (!($("#postcode-search").val().length === 0)) {
+                    $("#postcode-search").val($("#postcode-search").val() + ', ');
+                }
+                $("#postcode-search").val($("#postcode-search").val() + $(index).val());
+                hasPreviousValues = true;
+            }
+        });
 
-        editAddress: function() {
-            GOVUK.addressLookup.displayAddressLookup("hide");
-        },
-
-        inputValueTemplate: function(result) {
-            if (!result) return;
-            return result.text;
-        },
-        suggestionTemplate: function(result) {
-            return result.description
-                ? result.text +
-                      ' <span class="govuk-!-font-size-14">(' +
-                      result.description +
-                      ")</span>"
-                : result.text;
+        if (hasPreviousValues) {
+            $(".js-address-panel").removeClass("hidden");
         }
-    };
 
-    global.GOVUK = GOVUK;
-})(window);
+        return hasPreviousValues;
+    }
+
+    function enableEnterAddressManually() {
+        $(".js-address-panel, #addressLookupWrapper").addClass("hidden");
+        $("#addressLookupWrapper").removeClass("hide-nojs");
+        $(".address-manual-input").removeClass("js-hidden");
+        $(".address-manual-input-focus").focus();
+    }
+})(jQuery);

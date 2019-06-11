@@ -208,7 +208,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-3-CD-03-30';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-3-CD-03-30', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-1-PG-3-CD-03-30', '', 'Address', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-3-CD-03_1-31';
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-3-CD-03-31';
@@ -382,7 +382,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-08-54';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-4-CD-08-54', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-1-PG-4-CD-08-54', '', 'Address', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-08_1-55';
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-08-55';

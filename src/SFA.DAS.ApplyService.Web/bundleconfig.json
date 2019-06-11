@@ -1,14 +1,21 @@
 ﻿[
-  {
-    "outputFileName": "wwwroot/stylesheets/application.min.css",
-    "inputFiles": ["wwwroot/stylesheets/application.css"]
-  },
-  {
-    "outputFileName": "wwwroot/javascripts/application.min.js",
-    "inputFiles": ["wwwroot/javascripts/application.js"],
-    "minify": {
-      "renameLocals": true
+    {
+        "outputFileName": "wwwroot/stylesheets/application.min.css",
+        "inputFiles": ["wwwroot/stylesheets/application.css"]
     },
-    "sourceMap": false
-  }
+    {
+        "outputFileName": "wwwroot/javascripts/application.min.js",
+        "inputFiles": [ "wwwroot/javascripts/application.js" ],
+        "minify": {
+            "renameLocals": true
+        },
+        "sourceMap": false
+    },
+    {
+        "outputFileName": "wwwroot/javascripts/postcode-lookup-service.min.js",
+        "inputFiles": [ "wwwroot/javascripts/postcode-lookup-service.js" ],
+        "minify": {
+            "renameLocals": true
+        }
+    }
 ]
