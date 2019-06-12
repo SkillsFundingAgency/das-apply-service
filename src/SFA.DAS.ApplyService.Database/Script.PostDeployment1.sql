@@ -83,26 +83,33 @@ Post-Deployment Script Template
 
 -- AB 02/04/19 When coding has been done will need to swapout the templateIds for ApplyEPAOUpdate & ApplyEPAOResponse
 -- Was acf63bea-41ff-4a45-a376-9d557c30bca0 
+IF EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'ApplyEPAOUpdate' AND TemplateId = 'acf63bea-41ff-4a45-a376-9d557c30bca0')
+BEGIN
+UPDATE EmailTemplates SET TemplateId =  'ffe63c0d-b2b0-461f-b99a-73105d7d5fa3', UpdatedAt = GETDATE(), UpdatedBy ='System'
+WHERE TemplateName = N'ApplyEPAOUpdate'
+END
+
 IF NOT EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'ApplyEPAOUpdate')
 BEGIN
-INSERT EmailTemplates ([Id],[TemplateName],[TemplateId],[CreatedAt]) 
-VALUES (NEWID(), N'ApplyEPAOUpdate', N'ffe63c0d-b2b0-461f-b99a-73105d7d5fa3', GETDATE())
+INSERT EmailTemplates ([Id], [Status], [TemplateName],[TemplateId],[CreatedAt],[CreatedBy]) 
+VALUES (NEWID(), 'Live', N'ApplyEPAOUpdate', 'ffe63c0d-b2b0-461f-b99a-73105d7d5fa3', GETDATE(), 'System')
 END
 
 -- was 2ebc498c-2544-42db-b73e-a6c381c614df
-IF NOT EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'ApplyEPAOResponse')
+IF EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'ApplyEPAOResponse' AND TemplateId = '2ebc498c-2544-42db-b73e-a6c381c614df')
 BEGIN
-INSERT EmailTemplates ([Id],[TemplateName],[TemplateId],[CreatedAt]) 
-VALUES (NEWID(), N'ApplyEPAOResponse', N'84174eab-f3c1-4274-8670-2fb5b21cbd77', GETDATE())  
+UPDATE EmailTemplates SET TemplateId =  N'84174eab-f3c1-4274-8670-2fb5b21cbd77', UpdatedAt = GETDATE(), UpdatedBy ='System'
+WHERE TemplateName = N'ApplyEPAOResponse'
 END
 
-UPDATE EmailTemplates
-SET [TemplateId] = 'f7ca95a9-54fb-4f5f-8a88-840445f98c8b'
-WHERE [TemplateName] = 'EPAOUserApproveRequest'
+IF NOT EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'ApplyEPAOResponse')
+BEGIN
+INSERT EmailTemplates ([Id], [Status],[TemplateName],[TemplateId],[CreatedAt],[CreatedBy]) 
+VALUES (NEWID(), 'Live', N'ApplyEPAOResponse', N'84174eab-f3c1-4274-8670-2fb5b21cbd77', GETDATE(), 'System')  
+END
 
-UPDATE EMailTemplates
-SET [TemplateId] = '68506adb-7e17-45c9-ad54-45ef9a2cad15'
-WHERE [TemplateName] = 'EPAOUserApproveConfirm'
+DELETE FROM EmailTemplates
+WHERE [TemplateName] IN ( 'EPAOUserApproveRequest' , 'EPAOUserApproveConfirm' )
 
 -- START OF: ON-1502 Fixes - Remove once deployed to PROD
 /*
