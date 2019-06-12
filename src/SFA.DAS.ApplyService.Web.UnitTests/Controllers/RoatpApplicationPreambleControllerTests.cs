@@ -867,6 +867,61 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
         }
 
+        [TestCase("IP123456", true)]
+        [TestCase("SP123456", true)]
+        [TestCase("IC123456", true)]
+        [TestCase("SI123456", true)]
+        [TestCase("NP123456", true)]
+        [TestCase("NV123456", true)]
+        [TestCase("RC123456", true)]
+        [TestCase("SR123456", true)]
+        [TestCase("NR123456", true)]
+        [TestCase("NO123456", true)]
+        [TestCase("SC123456", false)]
+        [TestCase("12345678", false)]
+        public void UKPRN_is_verified_against_companies_house_but_limited_information_returned(string companyNumber, bool expectedRequired)
+        {
+            var providerDetails = new ProviderDetails
+            {
+                UKPRN = "10001000",
+                ProviderName = "Test Provider",
+                VerificationDetails = new List<VerificationDetails>
+                {
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CompaniesHouseAuthority,
+                        VerificationId = companyNumber
+                    }
+                }
+            };
+            _activeCompany.CompanyNumber = companyNumber;
+
+            var applicationDetails = new ApplicationDetails
+            {
+                ApplicationRoute = new ApplicationRoute
+                {
+                    Id = ApplicationRoute.MainProviderApplicationRoute,
+                    RouteName = "Main provider"
+                },
+                UkrlpLookupDetails = providerDetails
+            };
+
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(Task.FromResult(_activeCompany)).Verifiable();
+            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
+
+            var result = _controller.UkprnFound().GetAwaiter().GetResult();
+
+            _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Once);
+            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var viewModel = viewResult.Model as UkprnSearchResultsViewModel;
+            viewModel.Should().NotBeNull();
+            viewModel.CompaniesHouseInformation.ManualEntryRequired.Should().Be(expectedRequired);
+        }
+
         [Test]
         public void Application_details_confirmed_with_match_on_companies_house()
         {

@@ -32,6 +32,9 @@
         private readonly IUsersApiClient _usersApiClient;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
+        
+        private string[] StatusOnlyCompanyNumberPrefixes = new[] { "IP", "SP", "IC", "SI", "NP", "NV", "RC", "SR", "NR", "NO" };
+
 
         public RoatpApplicationPreambleController(ILogger<RoatpApplicationPreambleController> logger, IRoatpApiClient roatpApiClient, 
                                                   IUkrlpApiClient ukrlpApiClient, ISessionService sessionService, 
@@ -147,6 +150,11 @@
                         x.VerificationAuthority == VerificationAuthorities.CompaniesHouseAuthority);
 
                 companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companiesHouseVerification.VerificationId);
+                
+                if (!CompanyReturnsFullDetails(companyDetails.CompanyNumber))
+                {
+                    companyDetails.ManualEntryRequired = true;
+                }
                 
                 if (String.IsNullOrWhiteSpace(companyDetails.Status) 
                     || companyDetails.Status.ToLower() != CompaniesHouseSummary.CompanyStatusActive)
@@ -325,6 +333,24 @@
             }
 
             return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.RegisterTrainingProviders } );
+        }
+
+        private bool CompanyReturnsFullDetails(string companyNumber)
+        {
+            if (String.IsNullOrWhiteSpace(companyNumber))
+            {
+                return false;
+            }
+
+            foreach (var prefix in StatusOnlyCompanyNumberPrefixes)
+            {
+                if (companyNumber.ToUpper().StartsWith(prefix))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }
