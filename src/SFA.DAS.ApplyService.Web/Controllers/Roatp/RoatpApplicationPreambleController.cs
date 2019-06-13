@@ -35,6 +35,7 @@
         
         private string[] StatusOnlyCompanyNumberPrefixes = new[] { "IP", "SP", "IC", "SI", "NP", "NV", "RC", "SR", "NR", "NO" };
 
+        private string[] ExcludedCharityCommissionPrefixes = new[] {"SC", "NI"};
 
         public RoatpApplicationPreambleController(ILogger<RoatpApplicationPreambleController> logger, IRoatpApiClient roatpApiClient, 
                                                   IUkrlpApiClient ukrlpApiClient, ISessionService sessionService, 
@@ -187,26 +188,29 @@
                     verificationId = verificationId.Substring(0, verificationId.IndexOf("-"));
                 }
 
-                bool isValidCharityNumber = int.TryParse(verificationId, out charityNumber);
-                if (!isValidCharityNumber)
-                {
-                    return RedirectToAction("CharityNotFound");
-                }
-                
-                charityDetails = await _charityCommissionApiClient.GetCharityDetails(charityNumber);
+                if (IsEnglandAndWalesCharityCommissionNumber(verificationId))
+                { 
+                    bool isValidCharityNumber = int.TryParse(verificationId, out charityNumber);
+                    if (!isValidCharityNumber)
+                    {
+                        return RedirectToAction("CharityNotFound");
+                    }
+                    
+                    charityDetails = await _charityCommissionApiClient.GetCharityDetails(charityNumber);
 
-                if (!charityDetails.IsActivelyTrading)
-                {
-                    return RedirectToAction("CharityNotActive");
-                }
+                    if (!charityDetails.IsActivelyTrading)
+                    {
+                        return RedirectToAction("CharityNotActive");
+                    }
 
-                if (!ProviderHistoryValidator.HasSufficientHistory(applicationDetails.ApplicationRoute.Id,
-                    charityDetails.IncorporatedOn))
-                {
-                    return RedirectToAction("InvalidCharityFormationHistory");
-                }
+                    if (!ProviderHistoryValidator.HasSufficientHistory(applicationDetails.ApplicationRoute.Id,
+                        charityDetails.IncorporatedOn))
+                    {
+                        return RedirectToAction("InvalidCharityFormationHistory");
+                    }
 
-                applicationDetails.CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails);
+                    applicationDetails.CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails);
+                }
             }
 
             _sessionService.Set(ApplicationDetailsKey, applicationDetails);
@@ -364,6 +368,24 @@
             foreach (var prefix in StatusOnlyCompanyNumberPrefixes)
             {
                 if (companyNumber.ToUpper().StartsWith(prefix))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private bool IsEnglandAndWalesCharityCommissionNumber(string charityNumber)
+        {
+            if (String.IsNullOrWhiteSpace(charityNumber))
+            {
+                return false;
+            }
+
+            foreach (var prefix in ExcludedCharityCommissionPrefixes)
+            {
+                if (charityNumber.ToUpper().StartsWith(prefix))
                 {
                     return false;
                 }

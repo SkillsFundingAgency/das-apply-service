@@ -75,14 +75,30 @@
                 <p class="govuk-body">@Model.ProviderDetails.VerificationDetails[0].VerificationAuthority</p>
             }
 
-            @if (Model.ProviderDetails.VerifiedByCompaniesHouse)
+            @if (Model.ProviderDetails.VerifiedByCompaniesHouse && Model.CompaniesHouseInformation != null)
             {
                 await Html.RenderPartialAsync("~/Views/Roatp/CompaniesHouseSummary.cshtml", Model.CompaniesHouseInformation);
             }
+            else
+            {
+                 @if (!String.IsNullOrWhiteSpace(Model.CompaniesHouseNumber))
+                 {
+                     <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">Companies House Number</p>
+                     <p class="govuk-body">@Model.CompaniesHouseNumber</p>
+                 }              
+            }
 
-            @if (Model.ProviderDetails.VerifiedbyCharityCommission)
+            @if (Model.ProviderDetails.VerifiedbyCharityCommission && Model.CharityCommissionInformation != null)
             {
                 await Html.RenderPartialAsync("~/Views/Roatp/CharityCommissionSummary.cshtml", Model.CharityCommissionInformation);
+            }
+            else
+            {
+                 @if (!String.IsNullOrWhiteSpace(Model.CharityNumber))
+                 {
+                     <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">Charity Number</p>
+                     <p class="govuk-body">@Model.CharityNumber</p>
+                 }
             }
 
             <p class="govuk-body">

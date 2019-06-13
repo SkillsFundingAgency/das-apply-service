@@ -38,7 +38,23 @@
         public string UKPRN { get; set; }
         public int ApplicationRouteId { get; set; }
 
+        public string CompaniesHouseNumber
+        {
+            get
+            {
+                return ProviderDetails.VerificationDetails.FirstOrDefault(x => x.VerificationAuthority == "Companies House")?.VerificationId;
+            }
+        }
+
         public CompaniesHouseSummary CompaniesHouseInformation { get; set; }
+
+        public string CharityNumber
+        {
+            get
+            {
+                return ProviderDetails.VerificationDetails.FirstOrDefault(x => x.VerificationAuthority == "Charity Commission")?.VerificationId;
+            }
+        }
 
         public CharityCommissionSummary CharityCommissionInformation { get; set; }
     }
