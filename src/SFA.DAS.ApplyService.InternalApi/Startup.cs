@@ -31,6 +31,7 @@ using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Storage;
 using StructureMap;
 using SFA.DAS.ApplyService.Application.Email;
+using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
 
 namespace SFA.DAS.ApplyService.InternalApi
 {
@@ -157,6 +158,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IApplyRepository,ApplyRepository>();
             services.AddTransient<IOrganisationRepository,OrganisationRepository>();
             services.AddTransient<IDfeSignInService,DfeSignInService>();
+            services.AddTransient<IGetAnswersService, GetAnswersService>();
 
             services.AddTransient<IEmailService, EmailService.EmailService>();
             services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();
