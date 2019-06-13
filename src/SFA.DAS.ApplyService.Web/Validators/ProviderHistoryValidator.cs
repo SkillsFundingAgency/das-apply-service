@@ -3,11 +3,11 @@
     using System;
     using SFA.DAS.ApplyService.Domain.Roatp;
 
-    public static class IncorporationDateValidator
+    public static class ProviderHistoryValidator
     {
-        public static bool IsValidIncorporationDate(int applicationRouteId, DateTime? incorporationDate)
+        public static bool HasSufficientHistory(int applicationRouteId, DateTime? startDate)
         {
-            if (!incorporationDate.HasValue)
+            if (!startDate.HasValue)
             {
                 return false;
             }
@@ -16,12 +16,12 @@
             {
                 case ApplicationRoute.SupportingProviderApplicationRoute:
                 {
-                    return (incorporationDate <= DateTime.Today.AddMonths(-3));
+                    return (startDate <= DateTime.Today.AddMonths(-3));
                 }
                 case ApplicationRoute.MainProviderApplicationRoute:
                 case ApplicationRoute.EmployerProviderApplicationRoute:
                 {
-                    return (incorporationDate <= DateTime.Today.AddMonths(-12));
+                    return (startDate <= DateTime.Today.AddMonths(-12));
                 }
             }
 

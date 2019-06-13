@@ -166,7 +166,7 @@
                     return RedirectToAction("CompanyNotActive");
                 }
 
-                if (!IncorporationDateValidator.IsValidIncorporationDate(applicationDetails.ApplicationRoute.Id,
+                if (!ProviderHistoryValidator.HasSufficientHistory(applicationDetails.ApplicationRoute.Id,
                     companyDetails.IncorporationDate))
                 {
                     return RedirectToAction("InvalidCompanyTradingHistory");
@@ -198,6 +198,12 @@
                 if (!charityDetails.IsActivelyTrading)
                 {
                     return RedirectToAction("CharityNotActive");
+                }
+
+                if (!ProviderHistoryValidator.HasSufficientHistory(applicationDetails.ApplicationRoute.Id,
+                    charityDetails.IncorporatedOn))
+                {
+                    return RedirectToAction("InvalidCharityFormationHistory");
                 }
 
                 applicationDetails.CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails);
@@ -312,6 +318,19 @@
             };
 
             return View("~/Views/Roatp/InvalidCompanyTradingHistory.cshtml", viewModel);
+        }
+
+        public async Task<IActionResult> InvalidCharityFormationHistory()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var viewModel = new UkprnSearchResultsViewModel
+            {
+                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
+                UKPRN = applicationDetails.UKPRN.ToString()
+            };
+
+            return View("~/Views/Roatp/InvalidCharityFormationHistory.cshtml", viewModel);
         }
 
         [Route("start-application")]
