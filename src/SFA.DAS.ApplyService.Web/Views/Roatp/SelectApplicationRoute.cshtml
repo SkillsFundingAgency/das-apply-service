@@ -4,10 +4,10 @@
     ViewBag.Title = "Select application route";
     Layout = "_Layout";
 
-    bool showErrors = TempData["ShowErrors"] as bool? ?? false;
+    bool showErrors = !ViewData.ModelState.IsValid;
 }
 
-@if (!ViewData.ModelState.IsValid || showErrors)
+@if (showErrors)
 {
     <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
         <h2 class="govuk-error-summary__title" id="error-summary-title">
@@ -27,7 +27,7 @@
         
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-l">Select an application route</h1>
+                <h1 class="govuk-heading-l">Choose your organisation's provider route</h1>
             </div>
         </div>
 
@@ -35,8 +35,15 @@
             <div class="govuk-grid-column-two-thirds">
                 <form method="post" asp-action="EnterApplicationUkprn" asp-controller="RoatpApplicationPreamble">
 
-                    <div class="govuk-form-group" sfa-validation-for="ApplicationRouteId" sfa-validationerror-class="govuk-error-message">
+                    <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ApplicationRouteId" sfa-validationerror-class="govuk-error-message">
                         
+                        @if (showErrors)
+                        {
+                            <span class="govuk-error-message" data-valmsg-for="ApplicationRouteId" data-valmsg-replace="true">
+                                Select your training provider route
+                            </span>
+                        }
+
                         <fieldset class="govuk-fieldset">
 
                             <div class="govuk-radios">
@@ -46,17 +53,25 @@
                                     <div class="govuk-radios__item">
 
                                         <input asp-for="ApplicationRouteId" class="govuk-radios__input" id="route-@applicationRoute.Id"
-                                               name="ApplicationRouteId" type="radio" value="@applicationRoute.Id"
+                                               name="ApplicationRouteId" type="radio" value="@applicationRoute.Id" aria-describedby="route-@applicationRoute.Id-hint"
                                                sfa-validation-for="ApplicationRouteId" sfa-validationerror-class="form-control-error">
                                         <label class="govuk-label govuk-radios__label" for="route-@applicationRoute.Id">
                                             @applicationRoute.RouteName
                                         </label>
+                                        <span class="govuk-hint govuk-radios__hint" id="route-@applicationRoute.Id-hint">
+                                            @applicationRoute.Description
+                                        </span>
                                     </div>
                                 }
                             </div>
                         </fieldset>
                     </div>
-                    <input type="submit" class="govuk-button" value="Continue" />
+                    <div class="govuk-grid-row">
+                        <input type="submit" class="govuk-button" value="Save and continue" />
+                    </div>
+                    <div class="govuk-grid-row">
+                        <a class="govuk-link" asp-controller="Users" asp-action="SignOut">Save and sign out</a>
+                    </div>
                 </form>
             </div>
         </div>

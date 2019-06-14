@@ -11,7 +11,8 @@
             CreateMap<ProviderType, ApplicationRoute>()
                 .ForMember(dest => dest.Id,
                     opt => opt.MapFrom(source => source.Id))
-                .ForMember(dest => dest.RouteName, opt => opt.MapFrom(source => source.Type));
+                .ForMember(dest => dest.RouteName, opt => opt.MapFrom(source => source.Type))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(source => source.Description));
         }
     }
 }
