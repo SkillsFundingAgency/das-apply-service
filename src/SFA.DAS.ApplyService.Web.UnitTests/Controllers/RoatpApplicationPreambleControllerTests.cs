@@ -279,7 +279,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var model = new SelectApplicationRouteViewModel {ApplicationRouteId = applicationRouteId};
             _controller.ModelState.AddModelError("Application Route", "Select an application route");
 
-            var result = _controller.EnterApplicationUkprn(model).GetAwaiter().GetResult();
+            var result = _controller.EnterApplicationUkprn().GetAwaiter().GetResult();
 
             result.Should().BeOfType<ViewResult>();
 
@@ -296,7 +296,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var model = new SelectApplicationRouteViewModel { ApplicationRouteId = applicationRouteId };
 
-            var result = _controller.EnterApplicationUkprn(model).GetAwaiter().GetResult();
+            var result = _controller.EnterApplicationUkprn().GetAwaiter().GetResult();
 
             result.Should().BeOfType<ViewResult>();
 
@@ -304,7 +304,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.ViewName.Should().Contain("EnterApplicationUkprn");
             var viewModel = viewResult.Model as SearchByUkprnViewModel;
             viewModel.Should().NotBeNull();
-            viewModel.ApplicationRouteId.Should().Be(model.ApplicationRouteId);
             viewModel.UKPRN.Should().BeNullOrEmpty();
         }
 

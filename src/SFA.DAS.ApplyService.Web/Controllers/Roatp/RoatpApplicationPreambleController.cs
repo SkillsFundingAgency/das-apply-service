@@ -54,39 +54,10 @@
             _usersApiClient = usersApiClient;
         }
 
-        [Route("select-application-route")]
-        public async Task<IActionResult> SelectApplicationRoute()
+        [Route("enter-uk-provider-reference-number")]
+        public async Task<IActionResult> EnterApplicationUkprn()
         {
-            var applicationRoutes = await _roatpApiClient.GetApplicationRoutes();
-
-            var viewModel = new SelectApplicationRouteViewModel
-            {
-                ApplicationRoutes = applicationRoutes
-            };
-
-            return View("~/Views/Roatp/SelectApplicationRoute.cshtml", viewModel);
-        }
-
-        [Route("enter-your-ukprn")]
-        public async Task<IActionResult> EnterApplicationUkprn(SelectApplicationRouteViewModel model)
-        {
-            model.ApplicationRoutes = await _roatpApiClient.GetApplicationRoutes();
-
-            if (!ModelState.IsValid)
-            {
-                return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
-            }
-
-            var applicationDetails = new ApplicationDetails
-            {
-                ApplicationRoute = model.ApplicationRoutes.FirstOrDefault(x => x.Id == model.ApplicationRouteId)
-            };
-
-            _sessionService.Set(ApplicationDetailsKey, applicationDetails);
-
-            var viewModel = new SearchByUkprnViewModel { ApplicationRouteId = model.ApplicationRouteId };
-
-            return View("~/Views/Roatp/EnterApplicationUkprn.cshtml", viewModel);
+            return View("~/Views/Roatp/EnterApplicationUkprn.cshtml");
         }
 
         [HttpPost]
@@ -105,27 +76,30 @@
 
             if (matchingResults.Any())
             {
-                var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-                applicationDetails.UkrlpLookupDetails = matchingResults.FirstOrDefault();
+                var applicationDetails = new ApplicationDetails
+                {
+                    UKPRN = ukprn,
+                    UkrlpLookupDetails = matchingResults.FirstOrDefault()
+                };
 
                 _sessionService.Set(ApplicationDetailsKey, applicationDetails);
 
-                var registerStatus = await _roatpApiClient.UkprnOnRegister(ukprn);
+                //var registerStatus = await _roatpApiClient.UkprnOnRegister(ukprn);
 
-                if (registerStatus.ExistingUKPRN)
-                {
-                    if (registerStatus.ProviderTypeId != applicationDetails.ApplicationRoute.Id
-                        || registerStatus.StatusId == OrganisationRegisterStatus.RemovedStatus)
-                    {
-                        return RedirectToAction("UkprnFound");
-                    }
-                    else
-                    {
-                        return RedirectToAction("UkprnActive");
-                    }
-                }
+                //if (registerStatus.ExistingUKPRN)
+                //{
+                //    if (registerStatus.ProviderTypeId != applicationDetails.ApplicationRoute.Id
+                //        || registerStatus.StatusId == OrganisationRegisterStatus.RemovedStatus)
+                //    {
+                //        return RedirectToAction("UkprnFound");
+                //    }
+                //    else
+                //    {
+                //        return RedirectToAction("UkprnActive");
+                //    }
+                //}
                 
-                return RedirectToAction("UkprnFound");
+                return RedirectToAction("ConfirmOrganisation");
             }
             else
             {
@@ -137,7 +111,20 @@
             }
         }
 
-        [Route("confirm-organisation-details")]
+        [Route("confirm-organisations-details")]
+        public async Task<IActionResult> ConfirmOrganisation()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+            
+            var viewModel = new UkprnSearchResultsViewModel
+            {
+                ProviderDetails = applicationDetails.UkrlpLookupDetails,
+                UKPRN = applicationDetails.UkrlpLookupDetails.UKPRN
+            };
+
+            return View("~/Views/Roatp/ConfirmOrganisation.cshtml", viewModel);
+        }
+        
         public async Task<IActionResult> UkprnFound()
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
@@ -336,6 +323,20 @@
 
             return View("~/Views/Roatp/InvalidCharityFormationHistory.cshtml", viewModel);
         }
+
+        [Route("choose-provider-route")]
+        public async Task<IActionResult> SelectApplicationRoute()
+        {
+            var applicationRoutes = await _roatpApiClient.GetApplicationRoutes();
+
+            var viewModel = new SelectApplicationRouteViewModel
+            {
+                ApplicationRoutes = applicationRoutes
+            };
+
+            return View("~/Views/Roatp/SelectApplicationRoute.cshtml", viewModel);
+        }
+
 
         [Route("start-application")]
         public async Task<IActionResult> StartApplication()
