@@ -15,15 +15,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     public interface IApplicationApiClient
     {
-        //Task<Page> GetPage(Guid applicationId, string pageId, Guid userId);
-
-//        Task<UpdatePageAnswersResult> UpdatePageAnswers(Guid applicationId, Guid userId, string pageId,
-//            List<Answer> answers);
-
-        //Task<Sequence> GetSequence(Guid applicationId, string sequenceId, Guid userId);
-
-        //Task<List<Section>> GetSections(Guid applicationId, Guid userId);
-
         Task<List<Domain.Entities.Application>> GetApplicationsFor(Guid userId);
 
         Task<UploadResult> Upload(Guid applicationId, string userId, int sequenceId, int sectionId, string pageId, IFormFileCollection files);
@@ -36,10 +27,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<Domain.Apply.Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid userId);
 
         Task<UpdatePageAnswersResult> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId, int sectionId,
-            string pageId, List<Answer> answers);
+            string pageId, List<Answer> answers, bool saveNewAnswers);
 
         Task<StartApplicationResponse> StartApplication(Guid userId);
-        Task Submit(Guid applicationId, int sequenceId, Guid userId, string userEmail);
+        Task<bool> Submit(Guid applicationId, int sequenceId, Guid userId, string userEmail);
         Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, Guid userId);
         Task ImportWorkflow(IFormFile file);
         Task UpdateApplicationData<T>(T applicationData, Guid applicationId);
