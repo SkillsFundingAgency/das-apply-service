@@ -76,7 +76,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public IActionResult SignIn()
         {
             return Challenge(new AuthenticationProperties() {RedirectUri = Url.Action("PostSignIn", "Users")},
-                "oidc");
+                OpenIdConnectDefaults.AuthenticationScheme);
         }
         
         [HttpGet]
@@ -89,8 +89,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             if (string.IsNullOrEmpty(_contextAccessor.HttpContext.User.FindFirstValue("display_name")))
-                return SignOut("Cookies", "oidc");
-            
+                return SignOut(CookieAuthenticationDefaults.AuthenticationScheme,
+                    OpenIdConnectDefaults.AuthenticationScheme);
+
             var assessorServiceBaseUrl = (await _config.GetConfig()).AssessorServiceBaseUrl;
             return Redirect($"{assessorServiceBaseUrl}/Account/SignOut");
         }
