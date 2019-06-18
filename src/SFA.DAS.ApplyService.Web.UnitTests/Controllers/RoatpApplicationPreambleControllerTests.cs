@@ -654,7 +654,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Should().NotBeNull();
             var viewModel = viewResult.Model as UkprnSearchResultsViewModel;
             viewModel.Should().NotBeNull();
-            viewModel.CharityCommissionInformation.Should().BeNull();
+            viewModel.CharityCommissionInformation.Trustees.Should().BeEmpty();
+            viewModel.CharityCommissionInformation.TrusteeManualEntryRequired.Should().BeTrue();
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Never);
             _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
