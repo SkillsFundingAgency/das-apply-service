@@ -28,13 +28,24 @@ namespace SFA.DAS.ApplyService.Data
             SqlMapper.AddTypeHandler(typeof(ApplicationData), new ApplicationDataHandler());
             SqlMapper.AddTypeHandler(typeof(FinancialApplicationGrade), new FinancialApplicationGradeDataHandler());
         }
-        public async Task<List<Domain.Entities.Application>> GetApplications(Guid userId)
+
+        public async Task<List<Domain.Entities.Application>> GetUserApplications(Guid userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection.QueryAsync<Domain.Entities.Application>(@"SELECT a.* FROM Contacts c
                                                     INNER JOIN Applications a ON a.ApplyingOrganisationId = c.ApplyOrganisationID
-                                                    WHERE c.Id = @userId AND a.CreatedBy = @userId", new {userId})).ToList();
+                                                    WHERE c.Id = @userId AND a.CreatedBy = @userId", new { userId })).ToList();
+            }
+        }
+
+        public async Task<List<Domain.Entities.Application>> GetOrganisationApplications(Guid userId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<Domain.Entities.Application>(@"SELECT a.* FROM Contacts c
+                                                    INNER JOIN Applications a ON a.ApplyingOrganisationId = c.ApplyOrganisationID
+                                                    WHERE c.Id = @userId", new { userId })).ToList();
             }
         }
 
