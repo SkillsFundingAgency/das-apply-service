@@ -1,6 +1,7 @@
 ﻿namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -18,6 +19,7 @@
     using Validators;
     using Microsoft.AspNetCore.Authorization;
     using SFA.DAS.ApplyService.InternalApi.Types;
+    using Trustee = Domain.CharityCommission.Trustee;
 
     [Authorize]
     public class RoatpApplicationPreambleController : Controller
@@ -189,13 +191,13 @@
                 }
 
                 if (IsEnglandAndWalesCharityCommissionNumber(verificationId))
-                { 
+                {
                     bool isValidCharityNumber = int.TryParse(verificationId, out charityNumber);
                     if (!isValidCharityNumber)
                     {
                         return RedirectToAction("CharityNotFound");
                     }
-                    
+
                     charityDetails = await _charityCommissionApiClient.GetCharityDetails(charityNumber);
 
                     if (!charityDetails.IsActivelyTrading)
@@ -211,19 +213,29 @@
 
                     applicationDetails.CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails);
                 }
+                else
+                {
+                    applicationDetails.CharitySummary = new CharityCommissionSummary
+                    {
+                        CharityNumber = charityCommissionVerification.VerificationId,
+                        TrusteeManualEntryRequired = true,
+                        Trustees = new List<Trustee>()
+                    };
+                }
             }
 
             _sessionService.Set(ApplicationDetailsKey, applicationDetails);
 
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                ProviderDetails = applicationDetails.UkrlpLookupDetails,
-                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
-                UKPRN = applicationDetails.UkrlpLookupDetails.UKPRN,
-                CompaniesHouseInformation = applicationDetails.CompanySummary,
-                CharityCommissionInformation = applicationDetails.CharitySummary
-            };
+                var viewModel = new UkprnSearchResultsViewModel
+                {
+                    ProviderDetails = applicationDetails.UkrlpLookupDetails,
+                    ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
+                    UKPRN = applicationDetails.UkrlpLookupDetails.UKPRN,
+                    CompaniesHouseInformation = applicationDetails.CompanySummary,
+                    CharityCommissionInformation = applicationDetails.CharitySummary
+                };
             
+
             return View("~/Views/Roatp/UkprnFound.cshtml", viewModel);
         }
 
