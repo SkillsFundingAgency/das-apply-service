@@ -20,16 +20,37 @@
         @for (int i = 0; i < Model.Options.Count; i++)
         {
             var radioChecked = Model.Value == Model.Options[i].Label.ToString() ? "checked" : "";
+            var optionId = Model.QuestionId + (i == 0 ? "" : "_" + i);
             <div class="govuk-radios__item">
-                <input 
-                    class="govuk-radios__input"
-                    type="radio"
-                    id="@(Model.QuestionId + (i == 0 ? "" :  "_" + i))"
-                    name="@Model.QuestionId" value="@Model.Options[i].Label"
-                    data-aria-controls="conditional-@(Model.QuestionId + "_" + i)"
-                    @radioChecked 
-                />
-                <label class="govuk-label govuk-radios__label" for="@(Model.QuestionId + (i == 0 ? "" :  "_" + i))">@Model.Options[i].Label</label>
+                @if (Model.Options[i].HasHintText)
+                {
+                    <input 
+                        class="govuk-radios__input"
+                        type="radio"
+                        id="@optionId"
+                        name="@Model.QuestionId" value="@Model.Options[i].Label"
+                        data-aria-controls="conditional-@optionId"
+                        aria-describedby="@optionId-hint"
+                        @radioChecked 
+                      />
+                }
+                else
+                {
+                    <input
+                        class="govuk-radios__input"
+                        type="radio"
+                        id="@optionId"
+                        name="@Model.QuestionId" value="@Model.Options[i].Label"
+                        data-aria-controls="conditional-@optionId"
+                        @radioChecked/>
+                }
+                <label class="govuk-label govuk-radios__label" for="@(Model.QuestionId + (i == 0 ? "" : "_" + i))">@Model.Options[i].Label</label>
+                @if (Model.Options[i].HasHintText)
+                {
+                    <span id="@optionId-hint" class="govuk-hint govuk-radios__hint">
+                        @Html.Raw(Model.Options[i].HintText)
+                    </span>
+                }
             </div>
             if (Model.Options[i].FurtherQuestions != null)
             {
