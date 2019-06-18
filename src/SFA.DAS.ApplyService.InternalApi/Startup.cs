@@ -33,6 +33,9 @@ using StructureMap;
 
 namespace SFA.DAS.ApplyService.InternalApi
 {
+    using UKRLP;
+    using static UKRLP.ProviderQueryPortTypeClient;
+
     public class Startup
     {
         private readonly IHostingEnvironment _env;
@@ -168,7 +171,12 @@ namespace SFA.DAS.ApplyService.InternalApi
                 // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
                 config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>();
                 config.For<CharityCommissionApiClient>().Use<CharityCommissionApiClient>();
+                config.For<ProviderQueryPortType>().Use<ProviderQueryPortTypeClient>()
+                    .Ctor<EndpointConfiguration>("endpointConfiguration").Is(EndpointConfiguration.ProviderQueryPort)
+                    .Ctor<string>("remoteAddress").Is(_applyConfig.UkrlpApiAuthentication.ApiBaseAddress);
+                config.For<IUkrlpApiClient>().Use<UkrlpApiClient>();
                 // End of SOAP Services
+                config.For<IRoatpApiClient>().Use<RoatpApiClient>();
 
                 config.For<IKeyProvider>().Use<PlaceholderKeyProvider>();
                 config.For<IStorageService>().Use<StorageService>();

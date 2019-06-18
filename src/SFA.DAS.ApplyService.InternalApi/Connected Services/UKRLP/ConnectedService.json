@@ -1,0 +1,27 @@
+﻿{
+  "ProviderId": "Microsoft.VisualStudio.ConnectedService.Wcf",
+  "Version": "15.0.20628.921",
+  "GettingStartedDocument": {
+    "Uri": "https://go.microsoft.com/fwlink/?linkid=858517"
+  },
+  "ExtendedData": {
+    "Uri": "http://webservices.ukrlp.co.uk:80/UkrlpProviderQueryWS5/ProviderQueryServiceV5",
+    "Namespace": "ServiceReference1",
+    "SelectedAccessLevelForGeneratedClass": "Public",
+    "GenerateMessageContract": true,
+    "ReuseTypesinReferencedAssemblies": true,
+    "ReuseTypesinAllReferencedAssemblies": true,
+    "CollectionTypeReference": {
+      "Item1": "System.Collections.Generic.List`1",
+      "Item2": "System.Collections.dll"
+    },
+    "DictionaryCollectionTypeReference": {
+      "Item1": "System.Collections.Generic.Dictionary`2",
+      "Item2": "System.Collections.dll"
+    },
+    "CheckedReferencedAssemblies": [],
+    "InstanceId": null,
+    "Name": "ServiceReference1",
+    "Metadata": {}
+  }
+}
