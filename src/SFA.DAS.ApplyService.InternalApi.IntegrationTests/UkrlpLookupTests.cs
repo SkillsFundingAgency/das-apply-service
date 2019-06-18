@@ -12,7 +12,7 @@ namespace SFA.DAS.ApplyService.InternalApi.IntegrationTests
     using NUnit.Framework;
     using SFA.DAS.ApplyService.InternalApi.AutoMapper;
 
-    [TestFixture]
+  [TestFixture]
     public class UkrlpLookupTests
     {
         private Mock<ILogger<UkrlpApiClient>> _logger;
