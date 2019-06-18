@@ -8,7 +8,7 @@
     bool showErrors = TempData["ShowErrors"] as bool? ?? false;
 }
 
-<a asp-action="Index" asp-controller="OrganisationSearch" class="govuk-back-link">Search again</a>
+@*<a asp-action="Index" asp-controller="OrganisationSearch" class="govuk-back-link">Search again</a>*@
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
@@ -32,11 +32,8 @@
                 <div class="govuk-form-group">
                     <h1 class="govuk-label-wrapper">
                         <label class="govuk-label govuk-label--xl" for="company-name">
-                            Select your organisation
+                            Search results for
                         </label>
-                        <span class="govuk-hint">
-                            or search again
-                        </span>
                     </h1>
                     <input class="govuk-input govuk-input--width-20" asp-for="SearchString" minlength="2" required />
                 </div>
@@ -49,12 +46,13 @@
         <div class="govuk-grid-column-two-thirds">
             @if (@Model.Organisations != null && @Model.Organisations.Any())
             {
-                <table class="govuk-table">
+                <span class="govuk-body">@Model.OrganisationFoundString()</span>
+                <table class="govuk-table govuk-!-margin-top-4">
                     <tbody class="govuk-table__body">
                         @foreach (var result in Model.Organisations)
                         {
                             <tr class="govuk-table__row govuk-table__row--no-top-padding-on-first-child">
-                                <td class="govuk-table__cell govuk-!-padding-bottom-4">
+                                <td class="govuk-table__header--no-bottom-border">
                                     <form method="post" asp-action="@(result.RoEPAOApproved ? "Confirm" : "Type")" asp-controller="OrganisationSearch" novalidate>
                                         <input asp-for="SearchString" type="hidden" />
                                         <input asp-for="Name" value="@result.Name" type="hidden" />
@@ -63,7 +61,7 @@
                                         <input asp-for="Postcode" value="@result.Address?.Postcode" type="hidden" />
 
                                         <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-2">
-                                            <button type="submit" class="govuk-button govuk-button--looks-like-link govuk-!-font-weight-bold">@result.Name</button>
+                                            <button type="submit" class="govuk-button govuk-button__looks-like-link--no-decoration">@result.Name</button>
                                         </p>
                                     </form>
                                     <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-1">
@@ -77,43 +75,52 @@
                                             @string.Join(", ", @result.Address?.Address1, @result.Address?.City, @result.Address.Postcode);
                                         }
                                     </p>
-                                @if (result.OrganisationType != null)
-                                {
-                                    <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
-                                        <span class="govuk-body govuk-!-font-weight-bold">Type:</span>
-                                        @result.OrganisationType
-                                    </p>
-                                }
-                                @if (!string.Equals(configuration["EnvironmentName"], "PROD", StringComparison.InvariantCultureIgnoreCase))
-                                {
-                                    @* ON-1205 - request to show flags of what results were found in non-PROD environments *@
-                                    <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
-                                        <span class="govuk-body govuk-!-font-weight-bold">Found on:</span>
-                                        @if (result.RoEPAOApproved)
+                                    @*Caters for both PROD and PREPROD*@
+                                    @if (!configuration["EnvironmentName"].EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
+                                    {
+                                        @if (result.OrganisationType != null)
                                         {
-                                            <span>RoEPAO</span>
+                                            <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
+                                                <span class="govuk-body govuk-!-font-weight-bold">Type:</span>
+                                                @result.OrganisationType
+                                            </p>
                                         }
-                                        @if (result.RoEPAOApproved && result.RoATPApproved)
-                                        {
-                                            <span> and </span>
-                                        }
-                                        @if (result.RoATPApproved)
-                                        {
-                                            <span>RoATP</span>
-                                        }
-                                        @if (!result.RoEPAOApproved && !result.RoATPApproved)
-                                        {
-                                            switch (result.EasApiOrganisationType)
+                                        @* ON-1205 - request to show flags of what results were found in non-PROD environments *@
+                                        <p class="govuk-body govuk-!-font-weight-regular govuk-!-margin-bottom-0">
+                                            <span class="govuk-body govuk-!-font-weight-bold">Found on:</span>
+                                            @if (result.RoEPAOApproved)
                                             {
-                                                case "Charity": <span>Charity Commission</span> break;
-                                                case "Company": <span>Companies House</span> break;
-                                                case "PublicSector": <span>EASAPI - Public Sector</span>break;
-                                                case "EducationOrganisation": <span>EASAPI - Education Organisation</span> break;
-                                                default: <span>EASAPI</span> break;
+                                                <span>RoEPAO</span>
                                             }
-                                        }
-                                    </p>
-                                }
+                                            @if (result.RoEPAOApproved && result.RoATPApproved)
+                                            {
+                                                <span> and </span>
+                                            }
+                                            @if (result.RoATPApproved)
+                                            {
+                                                <span>RoATP</span>
+                                            }
+                                            @if (!result.RoEPAOApproved && !result.RoATPApproved)
+                                            {
+                                                switch (result.EasApiOrganisationType)
+                                                {
+                                                    case "Charity":<span>Charity Commission</span> break;
+                                                    case "Company": <span>Companies House</span> break;
+                                                    case "PublicSector": <span>EASAPI - Public Sector</span>break;
+                                                    case "EducationOrganisation": <span>EASAPI - Education Organisation</span> break;
+                                                    default: <span>EASAPI</span>break;
+                                                }
+                                            }
+                                        </p>
+                                    }
+                                    @if (result.RoEPAOApproved && result.OrganisationIsLive)
+                                    {
+                                        <p class="govuk-body">
+                                            <strong class="govuk-tag">
+                                                ACTIVE ACCOUNT
+                                            </strong>
+                                        </p>
+                                    }
                                 </td>
                             </tr>
                         }

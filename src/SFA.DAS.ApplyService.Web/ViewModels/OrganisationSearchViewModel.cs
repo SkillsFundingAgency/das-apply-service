@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SFA.DAS.ApplyService.Web.ViewModels
 {
@@ -21,5 +22,16 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
 
         [JsonIgnore]
         public IEnumerable<OrganisationType> OrganisationTypes { get; set; }
+
+        public string OrganisationFoundString()
+        {
+            var result = "0 results found";
+            if (Organisations != null && Organisations.Any())
+            {
+                var resultsString = Organisations.Count() > 1 ? "results" : "result";
+                result = $"{Organisations.Count()} {resultsString} found";
+            }
+            return result;
+        }
     }
 }
