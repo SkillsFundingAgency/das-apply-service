@@ -1,6 +1,7 @@
 ﻿namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
     using System.Linq;
+    using Domain.CompaniesHouse;
     using Domain.Ukrlp;
 
     public class UkprnSearchResultsViewModel
@@ -34,5 +35,7 @@
     
         public string UKPRN { get; set; }
         public int ApplicationRouteId { get; set; }
+
+        public CompaniesHouseSummary CompaniesHouseInformation { get; set; }
     }
 }
