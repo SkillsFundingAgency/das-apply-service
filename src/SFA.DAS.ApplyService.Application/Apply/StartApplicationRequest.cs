@@ -7,9 +7,12 @@ namespace SFA.DAS.ApplyService.Application.Apply
     {
         public Guid UserId { get; set; }
 
-        public StartApplicationRequest(Guid userId)
+        public string ApplicationType { get; set; }
+
+        public StartApplicationRequest(Guid userId, string applicationType)
         {     
             UserId = userId;
+            ApplicationType = applicationType;
         }
     }
 }

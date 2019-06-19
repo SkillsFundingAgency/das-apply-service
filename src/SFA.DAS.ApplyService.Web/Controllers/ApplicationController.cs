@@ -40,7 +40,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet("/Applications")]
-        public async Task<IActionResult> Applications()
+        public async Task<IActionResult> Applications(string applicationType)
         {
             var user = _sessionService.Get("LoggedInUser");
 
@@ -60,18 +60,18 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 if (org != null && org.RoEPAOApproved)
                 {
-                      return await StartApplication(userId);
+                      return await StartApplication(userId, applicationType);
                 }
 
                 if (org == null)
                 {
                     if (await _userService.AssociateOrgFromClaimWithUser())
-                        return await StartApplication(userId);
+                        return await StartApplication(userId, applicationType);
 
                     return RedirectToAction("Index", "OrganisationSearch");
                 }
 
-                return View("~/Views/Application/Declaration.cshtml");
+                return View("~/Views/Application/Declaration.cshtml", applicationType);
 
             }
 
@@ -100,17 +100,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return RedirectToAction("SequenceSignPost", new {applicationId = application.Id});
         }
 
-        private async Task<IActionResult> StartApplication(Guid userId)
+        private async Task<IActionResult> StartApplication(Guid userId, string applicationType)
         {
-            await _apiClient.StartApplication(userId);
+            await _apiClient.StartApplication(userId, applicationType);
 
             return RedirectToAction("Applications");
         }
 
         [HttpPost("/Applications")]
-        public async Task<IActionResult> StartApplication()
+        public async Task<IActionResult> StartApplication(string applicationType)
         {
-            var response = await _apiClient.StartApplication(await _userService.GetUserId());
+            var response = await _apiClient.StartApplication(await _userService.GetUserId(), applicationType);
 
             return RedirectToAction("SequenceSignPost", new {applicationId = response.ApplicationId});
         }

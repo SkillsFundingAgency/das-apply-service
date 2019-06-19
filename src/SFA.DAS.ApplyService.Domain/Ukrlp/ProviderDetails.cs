@@ -6,6 +6,8 @@
 
     public class ProviderDetails
     {
+        private const string LegalAddressIdentifier = "L";
+
         public string UKPRN { get; set; }
         public string ProviderName { get; set; }
         public string ProviderStatus { get; set; }
@@ -30,6 +32,11 @@
                 return VerificationDetails.Any(x =>
                     x.VerificationAuthority == VerificationAuthorities.CharityCommissionAuthority);
             }
+        }
+
+        public ProviderContact PrimaryContactDetails
+        {
+            get { return ContactDetails.FirstOrDefault(x => x.ContactType == LegalAddressIdentifier); }
         }
 
     }

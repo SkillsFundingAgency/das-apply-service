@@ -141,7 +141,7 @@ namespace SFA.DAS.ApplyService.Web
 
                 config.For<IUsersApiClient>().Use<UsersApiClient>();
                 config.For<IApplicationApiClient>().Use<ApplicationApiClient>();
-                config.For<OrganisationApiClient>().Use<OrganisationApiClient>();
+                config.For<IOrganisationApiClient>().Use<OrganisationApiClient>();
                 config.For<OrganisationSearchApiClient>().Use<OrganisationSearchApiClient>();
                 config.For<CreateAccountValidator>().Use<CreateAccountValidator>();
                 config.For<UserService>().Use<UserService>();

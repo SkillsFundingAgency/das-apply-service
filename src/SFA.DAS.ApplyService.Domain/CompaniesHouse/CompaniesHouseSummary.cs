@@ -11,7 +11,14 @@ namespace SFA.DAS.ApplyService.Domain.CompaniesHouse
         public string CompanyType { get; set; }
         public string CompanyTypeDescription
         {
-            get { return CompanyTypeDescriptions[CompanyType]; }
+            get
+            {
+                if (String.IsNullOrWhiteSpace(CompanyType))
+                {
+                    return string.Empty;
+                }
+                return CompanyTypeDescriptions[CompanyType];
+            }
         }
         public DateTime? IncorporationDate { get; set; }
         public List<DirectorInformation> Directors { get; set; }
@@ -22,6 +29,7 @@ namespace SFA.DAS.ApplyService.Domain.CompaniesHouse
         public const string CompanyStatusDissolved = "dissolved";
         public const string CompanyStatusLiquidation = "liquidation";
         public const string CompanyStatusReceivership = "receivership";
+        public const string CompanyStatusNotFound = "not_found";
 
         public CompaniesHouseSummary()
         {

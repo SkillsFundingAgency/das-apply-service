@@ -98,9 +98,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .ReadAsAsync<UpdatePageAnswersResult>();
         }
 
-        public async Task<StartApplicationResponse> StartApplication(Guid userId)
+        public async Task<StartApplicationResponse> StartApplication(Guid userId, string applicationType)
         {
-            var httpResponse = await _httpClient.PostAsJsonAsync("/Application/Start", new {userId});
+            var request = new StartApplyRequest { UserId = userId, ApplicationType = applicationType };
+
+            var httpResponse = await _httpClient.PostAsJsonAsync("/Application/Start", request);
             var startApplicationResponse = await httpResponse.Content.ReadAsAsync<StartApplicationResponse>();
             return startApplicationResponse;
         }

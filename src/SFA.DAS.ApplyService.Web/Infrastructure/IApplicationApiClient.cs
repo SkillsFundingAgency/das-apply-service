@@ -29,7 +29,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<UpdatePageAnswersResult> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId, int sectionId,
             string pageId, List<Answer> answers, bool saveNewAnswers);
 
-        Task<StartApplicationResponse> StartApplication(Guid userId);
+        Task<StartApplicationResponse> StartApplication(Guid userId, string applicationType);
         Task<bool> Submit(Guid applicationId, int sequenceId, Guid userId, string userEmail);
         Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, Guid userId);
         Task ImportWorkflow(IFormFile file);

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
@@ -17,11 +18,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     public class OrganisationSearchController : Controller
     {
         private readonly IUsersApiClient _usersApiClient;
-        private readonly OrganisationApiClient _organisationApiClient;
+        private readonly IOrganisationApiClient _organisationApiClient;
         private readonly OrganisationSearchApiClient _apiClient;
         private readonly ISessionService _sessionService;
 
-        public OrganisationSearchController(IUsersApiClient usersApiClient, OrganisationApiClient organisationApiClient,
+        public OrganisationSearchController(IUsersApiClient usersApiClient, IOrganisationApiClient organisationApiClient,
             OrganisationSearchApiClient apiClient, ISessionService sessionService)
         {
             _usersApiClient = usersApiClient;
@@ -37,7 +38,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (user.ApplyOrganisationId != null)
             {
-                return RedirectToAction("Applications", "Application");
+                return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.EndpointAssessor });
             }
 
             // Can get details from UkPrn?
@@ -73,7 +74,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         await _usersApiClient.ApproveUser(user.Id);
                     }
 
-                    return RedirectToAction("Applications", "Application");
+                    return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.EndpointAssessor });
                 }
             }
 
@@ -88,7 +89,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (user.ApplyOrganisationId != null)
             {
-                return RedirectToAction("Applications", "Application");
+                return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.EndpointAssessor });
             }
             else if (string.IsNullOrEmpty(viewModel.SearchString) || viewModel.SearchString.Length < 2)
             {
@@ -134,7 +135,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (user.ApplyOrganisationId != null)
             {
-                return RedirectToAction("Applications", "Application");
+                return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.EndpointAssessor });
             }
             else if (string.IsNullOrEmpty(viewModel.Name) || viewModel.SearchString.Length < 2)
             {
@@ -178,7 +179,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (user.ApplyOrganisationId != null)
             {
-                return RedirectToAction("Applications", "Application");
+                return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.EndpointAssessor });
             }
             else if (string.IsNullOrEmpty(viewModel.Name) || viewModel.SearchString.Length < 2)
             {
@@ -211,7 +212,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 var orgThatWasCreated = await _organisationApiClient.Create(organisationSearchResult, user.Id);
 
-                return RedirectToAction("Applications", "Application");
+                return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.EndpointAssessor });
             }
             else
             {

@@ -1,6 +1,7 @@
 ﻿namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
     using System.Linq;
+    using Domain.CharityCommission;
     using Domain.CompaniesHouse;
     using Domain.Ukrlp;
     using InternalApi.Types.CharityCommission;
@@ -39,6 +40,6 @@
 
         public CompaniesHouseSummary CompaniesHouseInformation { get; set; }
 
-        public Charity CharityCommissionInformation { get; set; }
+        public CharityCommissionSummary CharityCommissionInformation { get; set; }
     }
 }

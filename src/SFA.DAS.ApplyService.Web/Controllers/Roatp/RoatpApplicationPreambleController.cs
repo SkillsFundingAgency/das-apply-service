@@ -6,15 +6,19 @@
     using Microsoft.Extensions.Logging;
     using SFA.DAS.ApplyService.Web.Infrastructure;
     using System.Threading.Tasks;
+    using Domain.Apply;
+    using Domain.CharityCommission;
     using Domain.CompaniesHouse;
     using Domain.Roatp;
     using Domain.Ukrlp;
+    using global::AutoMapper;
     using InternalApi.Types.CharityCommission;
     using Session;
     using ViewModels.Roatp;
     using Validators;
     using Microsoft.AspNetCore.Authorization;
-   
+    using SFA.DAS.ApplyService.InternalApi.Types;
+
     [Authorize]
     public class RoatpApplicationPreambleController : Controller
     {
@@ -24,12 +28,17 @@
         private ISessionService _sessionService;
         private ICompaniesHouseApiClient _companiesHouseApiClient;
         private ICharityCommissionApiClient _charityCommissionApiClient;
+        private IOrganisationApiClient _organisationApiClient;
+        private readonly IUsersApiClient _usersApiClient;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
-       
+
         public RoatpApplicationPreambleController(ILogger<RoatpApplicationPreambleController> logger, IRoatpApiClient roatpApiClient, 
                                                   IUkrlpApiClient ukrlpApiClient, ISessionService sessionService, 
-                                                  ICompaniesHouseApiClient companiesHouseApiClient, ICharityCommissionApiClient charityCommissionApiClient)
+                                                  ICompaniesHouseApiClient companiesHouseApiClient, 
+                                                  ICharityCommissionApiClient charityCommissionApiClient,
+                                                  IOrganisationApiClient organisationApiClient,
+                                                  IUsersApiClient usersApiClient)
         {
             _logger = logger;
             _roatpApiClient = roatpApiClient;
@@ -37,6 +46,8 @@
             _sessionService = sessionService;
             _companiesHouseApiClient = companiesHouseApiClient;
             _charityCommissionApiClient = charityCommissionApiClient;
+            _organisationApiClient = organisationApiClient;
+            _usersApiClient = usersApiClient;
         }
 
         [Route("select-application-route")]
@@ -55,16 +66,16 @@
         [Route("enter-your-ukprn")]
         public async Task<IActionResult> EnterApplicationUkprn(SelectApplicationRouteViewModel model)
         {
+            model.ApplicationRoutes = await _roatpApiClient.GetApplicationRoutes();
+
             if (!ModelState.IsValid)
             {
-                model.ApplicationRoutes = await _roatpApiClient.GetApplicationRoutes();
-
                 return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
             }
 
             var applicationDetails = new ApplicationDetails
             {
-                ApplicationRouteId = model.ApplicationRouteId
+                ApplicationRoute = model.ApplicationRoutes.FirstOrDefault(x => x.Id == model.ApplicationRouteId)
             };
 
             _sessionService.Set(ApplicationDetailsKey, applicationDetails);
@@ -99,7 +110,7 @@
 
                 if (registerStatus.ExistingUKPRN)
                 {
-                    if (registerStatus.ProviderTypeId != applicationDetails.ApplicationRouteId
+                    if (registerStatus.ProviderTypeId != applicationDetails.ApplicationRoute.Id
                         || registerStatus.StatusId == OrganisationRegisterStatus.RemovedStatus)
                     {
                         return RedirectToAction("UkprnFound");
@@ -136,12 +147,18 @@
                         x.VerificationAuthority == VerificationAuthorities.CompaniesHouseAuthority);
 
                 companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companiesHouseVerification.VerificationId);
-
+                
                 if (String.IsNullOrWhiteSpace(companyDetails.Status) 
                     || companyDetails.Status.ToLower() != CompaniesHouseSummary.CompanyStatusActive)
                 {
+                    if (companyDetails.Status == CompaniesHouseSummary.CompanyStatusNotFound)
+                    {
+                        return RedirectToAction("CompanyNotFound");
+                    }
                     return RedirectToAction("CompanyNotActive");
                 }
+
+                applicationDetails.CompanySummary = companyDetails;
             }
 
             if (applicationDetails.UkrlpLookupDetails.VerifiedbyCharityCommission)
@@ -168,15 +185,19 @@
                 {
                     return RedirectToAction("CharityNotActive");
                 }
+
+                applicationDetails.CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails);
             }
+
+            _sessionService.Set(ApplicationDetailsKey, applicationDetails);
 
             var viewModel = new UkprnSearchResultsViewModel
             {
                 ProviderDetails = applicationDetails.UkrlpLookupDetails,
-                ApplicationRouteId = applicationDetails.ApplicationRouteId,
+                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
                 UKPRN = applicationDetails.UkrlpLookupDetails.UKPRN,
-                CompaniesHouseInformation = companyDetails,
-                CharityCommissionInformation = charityDetails
+                CompaniesHouseInformation = applicationDetails.CompanySummary,
+                CharityCommissionInformation = applicationDetails.CharitySummary
             };
             
             return View("~/Views/Roatp/UkprnFound.cshtml", viewModel);
@@ -189,7 +210,7 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
-                ApplicationRouteId = applicationDetails.ApplicationRouteId,
+                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
                 UKPRN = applicationDetails.UKPRN.ToString()
             };
 
@@ -203,7 +224,7 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
-                ApplicationRouteId = applicationDetails.ApplicationRouteId,
+                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
                 UKPRN = applicationDetails.UKPRN.ToString()
             };
 
@@ -217,11 +238,25 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
-                ApplicationRouteId = applicationDetails.ApplicationRouteId,
+                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
                 UKPRN = applicationDetails.UKPRN.ToString()
             };
 
             return View("~/Views/Roatp/CompanyNotActive.cshtml", viewModel);
+        }
+
+        [Route("company-not-found")]
+        public async Task<IActionResult> CompanyNotFound()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var viewModel = new UkprnSearchResultsViewModel
+            {
+                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
+                UKPRN = applicationDetails.UKPRN.ToString()
+            };
+
+            return View("~/Views/Roatp/CompanyNotFound.cshtml", viewModel);
         }
 
         [Route("charity-not-active")]
@@ -231,7 +266,7 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
-                ApplicationRouteId = applicationDetails.ApplicationRouteId,
+                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
                 UKPRN = applicationDetails.UKPRN.ToString()
             };
 
@@ -245,11 +280,32 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
-                ApplicationRouteId = applicationDetails.ApplicationRouteId,
+                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
                 UKPRN = applicationDetails.UKPRN.ToString()
             };
 
             return View("~/Views/Roatp/CharityNotFound.cshtml", viewModel);
+        }
+
+        [Route("start-application")]
+        public async Task<IActionResult> StartApplication()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
+
+            applicationDetails.CreatedBy = user.Id;
+
+            var createOrganisationRequest = Mapper.Map<CreateOrganisationRequest>(applicationDetails);
+            
+            var organisation = await _organisationApiClient.Create(createOrganisationRequest, user.Id);
+
+            if (!user.IsApproved)
+            {
+                await _usersApiClient.ApproveUser(user.Id);
+            }
+
+            return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.RegisterTrainingProviders } );
         }
     }
 }

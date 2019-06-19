@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
@@ -16,6 +17,8 @@ using SFA.DAS.ApplyService.Web.ViewModels;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
+    using System.Linq;
+
     public class UsersController : Controller
     {
         private readonly IUsersApiClient _usersApiClient;
@@ -24,8 +27,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IConfigurationService _config;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly CreateAccountValidator _createAccountValidator;
+        private readonly IApplicationApiClient _applicationApiClient;
+        private readonly IOrganisationApiClient _organisationApiClient;
 
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger, IConfigurationService config, IHttpContextAccessor contextAccessor, CreateAccountValidator createAccountValidator)
+        private const string TrainingProviderOrganisationType = "TrainingProvider";
+
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger, 
+                               IConfigurationService config, IHttpContextAccessor contextAccessor, 
+                               CreateAccountValidator createAccountValidator, IApplicationApiClient applicationApiClient,
+                               IOrganisationApiClient organisationApiClient)
         { 
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
@@ -33,6 +43,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _config = config;
             _contextAccessor = contextAccessor;
             _createAccountValidator = createAccountValidator;
+            _applicationApiClient = applicationApiClient;
+            _organisationApiClient = organisationApiClient;
         }
         
         [HttpGet]
@@ -113,8 +125,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return RedirectToAction("SelectApplicationRoute", "RoatpApplicationPreamble");
             }
-            
-            return RedirectToAction("Applications", "Application");
+
+            var organisation = await _organisationApiClient.GetByUser(user.Id);
+
+            var selectedApplicationType = ApplicationTypes.EndpointAssessor;
+            if (organisation.OrganisationType == TrainingProviderOrganisationType)
+            {
+                selectedApplicationType = ApplicationTypes.RegisterTrainingProviders;
+            }
+
+            return RedirectToAction("Applications", "Application", new { applicationType = selectedApplicationType });
         }
 
         [HttpGet("/Users/SignedOut")]
