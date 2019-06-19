@@ -6,6 +6,7 @@
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
     using Configuration;
+    using Domain.Roatp;
     using Microsoft.Extensions.Logging;
     using SFA.DAS.ApplyService.Domain.Roatp;
     using SFA.DAS.ApplyService.InternalApi.Models.Roatp;

@@ -12,8 +12,8 @@
     using ViewModels.Roatp;
     using Validators;
     using Microsoft.AspNetCore.Authorization;
-   
-    [Authorize]
+
+   [Authorize]
     public class RoatpApplicationPreambleController : Controller
     {
         private ILogger<RoatpApplicationPreambleController> _logger;
