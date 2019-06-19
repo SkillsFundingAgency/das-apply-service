@@ -33,7 +33,6 @@
 
             _config.GetConfig().GetAwaiter().GetResult().RoatpApiAuthentication.ApiBaseAddress = RoatpApiBaseAddress;
 
-
             var logger = new Mock<ILogger<RoatpApiClient>>();
 
             _apiClient = new RoatpApiClient(new HttpClient(), logger.Object, _config, new RoatpTokenService(_config));
@@ -42,9 +41,9 @@
         [Test]
         public void Client_retrieves_list_of_provider_types()
         {
-           var providerTypes = _apiClient.GetProviderTypes().GetAwaiter().GetResult();
+            var providerTypes = _apiClient.GetProviderTypes().GetAwaiter().GetResult();
 
-           providerTypes.Count().Should().Be(3);
+            providerTypes.Count().Should().Be(3);
         }
 
         [Test]

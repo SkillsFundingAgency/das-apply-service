@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class ProviderDetails
     {
@@ -12,6 +13,25 @@
         public DateTime? VerificationDate { get; set; }
         public List<ProviderAlias> ProviderAliases { get; set; }
         public List<VerificationDetails> VerificationDetails { get; set; }
+
+        public bool VerifiedByCompaniesHouse
+        {
+            get
+            {
+                return VerificationDetails.Any(x =>
+                    x.VerificationAuthority == VerificationAuthorities.CompaniesHouseAuthority);
+            }
+        }
+
+        public bool VerifiedbyCharityCommission
+        {
+            get
+            {
+                return VerificationDetails.Any(x =>
+                    x.VerificationAuthority == VerificationAuthorities.CharityCommissionAuthority);
+            }
+        }
+
     }
 
     public class ProviderContact
@@ -55,5 +75,11 @@
     {
         public string VerificationAuthority { get; set; }
         public string VerificationId { get; set; }
+    }
+
+    public class VerificationAuthorities
+    {
+        public const string CompaniesHouseAuthority = "Companies House";
+        public const string CharityCommissionAuthority = "Charity Commission";
     }
 }
