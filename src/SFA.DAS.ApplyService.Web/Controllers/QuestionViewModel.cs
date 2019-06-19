@@ -34,7 +34,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 var month = dateparts[1];
                 var year = dateparts[2];
 
-                return $"{day}/{month}/{year}";
+                var datetime = DateTime.Parse($"{day}/{month}/{year}");
+                return datetime.ToString("dd/MM/yyyy");
             }
             return answer.Value;
         }

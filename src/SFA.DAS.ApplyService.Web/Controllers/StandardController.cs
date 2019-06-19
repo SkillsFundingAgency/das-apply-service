@@ -34,11 +34,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost("Standard/{applicationId}")]
         public async Task<IActionResult> Search(StandardViewModel model)
         {
-        if (string.IsNullOrEmpty(model.StandardToFind) || model.StandardToFind.Length < 2)
+            if (string.IsNullOrEmpty(model.StandardToFind) || model.StandardToFind.Length <= 2)
             {
                 ModelState.AddModelError(nameof(model.StandardToFind), "Enter a valid search string (more than 2 characters)");
                 TempData["ShowErrors"] = true;
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { model.ApplicationId });
             }
 
             var results = await _apiClient.GetStandards();

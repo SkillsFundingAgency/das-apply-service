@@ -8,6 +8,7 @@
     using Configuration;
     using Domain.Roatp;
     using Microsoft.Extensions.Logging;
+    using SFA.DAS.ApplyService.Domain.Roatp;
     using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
 
     public class RoatpApiClient : IRoatpApiClient

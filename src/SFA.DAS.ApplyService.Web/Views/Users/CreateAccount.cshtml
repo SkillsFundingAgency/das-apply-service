@@ -36,7 +36,18 @@
                     {
                       <span class="govuk-error-message" asp-validation-for="GivenName"></span>
                     }
-                    <input class="govuk-input govuk-!-width-two-thirds" id="GivenName" name="GivenName" type="text" asp-for="GivenName" sfa-validation-for="GivenName" sfa-validationerror-class="govuk-input--error" autocomplete="given-name" spellcheck="false" />
+                    <input 
+                        class="govuk-input govuk-!-width-two-thirds"
+                        id="GivenName"
+                        name="GivenName"
+                        type="text"
+                        asp-for="GivenName"
+                        sfa-validation-for="GivenName"
+                        sfa-validationerror-class="govuk-input--error"
+                        autocomplete="given-name"
+                        spellcheck="false"
+                        maxlength="10000"
+                    />
                 </div>
 
                 <div class="govuk-form-group" sfa-validation-for="FamilyName" sfa-validationerror-class="govuk-form-group--error">
@@ -47,7 +58,18 @@
                     {
                       <span class="govuk-error-message" asp-validation-for="FamilyName"></span>
                     }
-                    <input class="govuk-input govuk-!-width-two-thirds" id="FamilyName" name="FamilyName" type="text" asp-for="FamilyName" sfa-validation-for="FamilyName" sfa-validationerror-class="govuk-input--error" autocomplete="family-name" spellcheck="false" />
+                    <input
+                        class="govuk-input govuk-!-width-two-thirds"
+                        id="FamilyName"
+                        name="FamilyName"
+                        type="text"
+                        asp-for="FamilyName"
+                        sfa-validation-for="FamilyName"
+                        sfa-validationerror-class="govuk-input--error"
+                        autocomplete="family-name"
+                        spellcheck="false"
+                        maxlength="10000"
+                    />
                 </div>
 
                 <div class="govuk-form-group" sfa-validation-for="Email" sfa-validationerror-class="govuk-form-group--error">
@@ -61,8 +83,17 @@
                     {
                       <span class="govuk-error-message" asp-validation-for="Email"></span>
                     }
-                    <input class="govuk-input" id="Email" name="Email" type="text" asp-for="Email"
-                        aria-describedby="email-hint" sfa-validation-for="FamilyName" sfa-validationerror-class="govuk-input--error" />
+                    <input
+                        class="govuk-input"
+                        id="Email"
+                        name="Email"
+                        type="text"
+                        asp-for="Email"
+                        aria-describedby="email-hint"
+                        sfa-validation-for="Email"
+                        sfa-validationerror-class="govuk-input--error"
+                        maxlength="320"
+                    />
                 </div>
 
                 <button type="submit" class="govuk-button">

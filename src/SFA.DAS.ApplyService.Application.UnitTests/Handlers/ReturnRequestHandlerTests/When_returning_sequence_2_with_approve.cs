@@ -4,6 +4,7 @@ using SFA.DAS.ApplyService.Application.Apply.Review.Return;
 using SFA.DAS.ApplyService.Application.Email.Consts;
 using SFA.DAS.ApplyService.Domain.Entities;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.ReturnRequestHandlerTests
@@ -40,6 +41,30 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.ReturnRequestHandl
             Handler.Handle(request, new CancellationToken()).Wait();
 
             EmailService.Verify(r => r.SendEmailToContact(EmailTemplateName.APPLY_EPAO_RESPONSE, It.IsAny<Contact>(), It.IsAny<object>()), Times.Once);
+        }
+
+        [Test]
+        public void Then_close_down_related_applications_if_initial_application()
+        {
+            var request = new ReturnRequest(Guid.NewGuid(), 2, "Approve");
+
+            Handler.Handle(request, new CancellationToken()).Wait();
+
+            ApplyRepository.Verify(r => r.DeleteRelatedApplications(request.ApplicationId), Times.Once);
+        }
+
+        [Test]
+        public void Then_dont_close_down_related_applications_if_not_the_initial_application()
+        {
+            var sequence1 = new ApplicationSequence { SequenceId = SequenceId.Stage1, NotRequired = true };
+            var sequence2 = new ApplicationSequence { SequenceId = SequenceId.Stage2, NotRequired = false };
+            ApplyRepository.Setup(r => r.GetSequences(It.IsAny<Guid>())).ReturnsAsync(new List<ApplicationSequence> { sequence1, sequence2 });
+
+            var request = new ReturnRequest(Guid.NewGuid(), 2, "Approve");
+
+            Handler.Handle(request, new CancellationToken()).Wait();
+
+            ApplyRepository.Verify(r => r.DeleteRelatedApplications(request.ApplicationId), Times.Never);
         }
     }
 }
