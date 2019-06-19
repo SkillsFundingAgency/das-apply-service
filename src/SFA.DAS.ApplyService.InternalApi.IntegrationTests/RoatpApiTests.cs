@@ -17,20 +17,22 @@
     {
         private const string RoatpApiBaseAddress = "http://localhost:37951";
 
-        private IApplyConfig _config;
+        private IConfigurationService _config;
         private const string ServiceName = "SFA.DAS.ApplyService";
         private const string Version = "1.0";
         private const string ConnectionString = "UseDevelopmentStorage=true;";
-        
+
         private RoatpApiClient _apiClient;
 
         [SetUp]
         public void Before_each_test()
         {
             var hostingEnvironment = new Mock<IHostingEnvironment>();
-            _config = new ConfigurationService(hostingEnvironment.Object, "LOCAL", ConnectionString, Version, ServiceName).GetConfig().GetAwaiter().GetResult();
+            _config = new ConfigurationService(hostingEnvironment.Object, "LOCAL", ConnectionString, Version,
+                ServiceName);
 
-            _config.RoatpApiAuthentication.ApiBaseAddress = RoatpApiBaseAddress; 
+            _config.GetConfig().GetAwaiter().GetResult().RoatpApiAuthentication.ApiBaseAddress = RoatpApiBaseAddress;
+
 
             var logger = new Mock<ILogger<RoatpApiClient>>();
 
@@ -76,7 +78,7 @@
 
             var duplicateCheckResult = _apiClient.DuplicateUKPRNCheck(Guid.NewGuid(), existingUKPRN).GetAwaiter().GetResult();
 
-            var reapplyStatus = _apiClient.GetOrganisationReapplyStatus(duplicateCheckResult.DuplicateOrganisationId).GetAwaiter().GetResult();
+            var reapplyStatus = _apiClient.GetOrganisationRegisterStatus(duplicateCheckResult.DuplicateOrganisationId).GetAwaiter().GetResult();
 
             reapplyStatus.ProviderTypeId.Should().Be(ProviderType.MainProvider);
             reapplyStatus.StatusId.Should().Be(OrganisationStatus.Active);
@@ -89,7 +91,7 @@
 
             var duplicateCheckResult = _apiClient.DuplicateUKPRNCheck(Guid.NewGuid(), providerRequestedRemovalUKPRN).GetAwaiter().GetResult();
 
-            var reapplyStatus = _apiClient.GetOrganisationReapplyStatus(duplicateCheckResult.DuplicateOrganisationId).GetAwaiter().GetResult();
+            var reapplyStatus = _apiClient.GetOrganisationRegisterStatus(duplicateCheckResult.DuplicateOrganisationId).GetAwaiter().GetResult();
 
             reapplyStatus.ProviderTypeId.Should().Be(ProviderType.EmployerProvider);
             reapplyStatus.StatusId.Should().Be(OrganisationStatus.Removed);

@@ -27,7 +27,6 @@ using SFA.DAS.ApplyService.Data;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.Encryption;
-using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Storage;
 using StructureMap;
 
@@ -176,7 +175,10 @@ namespace SFA.DAS.ApplyService.InternalApi
                     .Ctor<string>("remoteAddress").Is(_applyConfig.UkrlpApiAuthentication.ApiBaseAddress);
                 config.For<IUkrlpApiClient>().Use<UkrlpApiClient>();
                 // End of SOAP Services
+                config.For<IUkrlpApiClient>().Use<UkrlpApiClient>();
+                config.For<IUkrlpSoapSerializer>().Use<UkrlpSoapSerializer>();
                 config.For<IRoatpApiClient>().Use<RoatpApiClient>();
+                config.For<IRoatpTokenService>().Use<RoatpTokenService>();
 
                 config.For<IKeyProvider>().Use<PlaceholderKeyProvider>();
                 config.For<IStorageService>().Use<StorageService>();
