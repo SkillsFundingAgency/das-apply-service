@@ -1,5 +1,6 @@
 ﻿namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
+    using System;
     using System.Linq;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -8,12 +9,13 @@
     using Domain.CompaniesHouse;
     using Domain.Roatp;
     using Domain.Ukrlp;
+    using InternalApi.Types.CharityCommission;
     using Session;
     using ViewModels.Roatp;
     using Validators;
     using Microsoft.AspNetCore.Authorization;
-
-   [Authorize]
+   
+    [Authorize]
     public class RoatpApplicationPreambleController : Controller
     {
         private ILogger<RoatpApplicationPreambleController> _logger;
@@ -126,6 +128,7 @@
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
             var providerDetails = applicationDetails.UkrlpLookupDetails;
             CompaniesHouseSummary companyDetails = null;
+            Charity charityDetails = null;
 
             if (providerDetails.VerifiedByCompaniesHouse)
             {
@@ -134,7 +137,8 @@
 
                 companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companiesHouseVerification.VerificationId);
 
-                if (companyDetails.Status.ToLower() != CompaniesHouseSummary.CompanyStatusActive)
+                if (String.IsNullOrWhiteSpace(companyDetails.Status) 
+                    || companyDetails.Status.ToLower() != CompaniesHouseSummary.CompanyStatusActive)
                 {
                     return RedirectToAction("CompanyNotActive");
                 }
@@ -145,9 +149,25 @@
                 var charityCommissionVerification = providerDetails.VerificationDetails.FirstOrDefault(x =>
                     x.VerificationAuthority == VerificationAuthorities.CharityCommissionAuthority);
 
-                // Implementation of lookup and storage in story APR-449
-                var charityDetails =
-                    _charityCommissionApiClient.GetCharityDetails(charityCommissionVerification.VerificationId);
+                int charityNumber;
+                string verificationId = charityCommissionVerification.VerificationId;
+                if (verificationId.Contains("-"))
+                {
+                    verificationId = verificationId.Substring(0, verificationId.IndexOf("-"));
+                }
+
+                bool isValidCharityNumber = int.TryParse(verificationId, out charityNumber);
+                if (!isValidCharityNumber)
+                {
+                    return RedirectToAction("CharityNotFound");
+                }
+                
+                charityDetails = await _charityCommissionApiClient.GetCharityDetails(charityNumber);
+
+                if (!charityDetails.IsActivelyTrading)
+                {
+                    return RedirectToAction("CharityNotActive");
+                }
             }
 
             var viewModel = new UkprnSearchResultsViewModel
@@ -155,7 +175,8 @@
                 ProviderDetails = applicationDetails.UkrlpLookupDetails,
                 ApplicationRouteId = applicationDetails.ApplicationRouteId,
                 UKPRN = applicationDetails.UkrlpLookupDetails.UKPRN,
-                CompaniesHouseInformation = companyDetails
+                CompaniesHouseInformation = companyDetails,
+                CharityCommissionInformation = charityDetails
             };
             
             return View("~/Views/Roatp/UkprnFound.cshtml", viewModel);
@@ -201,6 +222,34 @@
             };
 
             return View("~/Views/Roatp/CompanyNotActive.cshtml", viewModel);
+        }
+
+        [Route("charity-not-active")]
+        public async Task<IActionResult> CharityNotActive()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var viewModel = new UkprnSearchResultsViewModel
+            {
+                ApplicationRouteId = applicationDetails.ApplicationRouteId,
+                UKPRN = applicationDetails.UKPRN.ToString()
+            };
+
+            return View("~/Views/Roatp/CharityNotActive.cshtml", viewModel);
+        }
+
+        [Route("charity-not-found")]
+        public async Task<IActionResult> CharityNotFound()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var viewModel = new UkprnSearchResultsViewModel
+            {
+                ApplicationRouteId = applicationDetails.ApplicationRouteId,
+                UKPRN = applicationDetails.UKPRN.ToString()
+            };
+
+            return View("~/Views/Roatp/CharityNotFound.cshtml", viewModel);
         }
     }
 }

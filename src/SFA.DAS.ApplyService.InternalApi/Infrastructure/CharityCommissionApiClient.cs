@@ -2,7 +2,6 @@
 using CharityCommissionService;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Configuration;
-using System;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
@@ -27,28 +26,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
         public async Task<Types.CharityCommission.Charity> GetCharity(int charityNumber)
         {
-            var charity = await GetCharityDetails(charityNumber);
-
-            if (charity != null)
-            {
-                // nothing to do at the moment
-            }
-
-            return charity;
-        }
-
-        public async Task<bool> IsCharityActivelyTrading(int charityNumber)
-        {
-            var isTrading = false;
-
-            var charity = await GetCharityDetails(charityNumber);
-
-            if (charity != null)
-            {
-                isTrading = "registered".Equals(charity.Status, StringComparison.InvariantCultureIgnoreCase) && charity.DissolvedOn == null;
-            }
-
-            return isTrading;
+            return await GetCharityDetails(charityNumber); 
         }
 
         private async Task<Types.CharityCommission.Charity> GetCharityDetails(int charityNumber)

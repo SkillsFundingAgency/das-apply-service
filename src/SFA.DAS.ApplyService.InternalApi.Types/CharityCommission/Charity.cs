@@ -21,5 +21,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.CharityCommission
         public Accounts Accounts { get; set; }
 
         public IEnumerable<Trustee> Trustees { get; set; }
+
+        public bool IsActivelyTrading
+        {
+            get
+            {
+                return Status.Equals("registered", StringComparison.InvariantCultureIgnoreCase) && DissolvedOn == null;
+            }
+        }
     }
 }

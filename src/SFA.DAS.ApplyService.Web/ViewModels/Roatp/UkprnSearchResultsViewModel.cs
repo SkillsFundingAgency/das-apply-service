@@ -3,6 +3,7 @@
     using System.Linq;
     using Domain.CompaniesHouse;
     using Domain.Ukrlp;
+    using InternalApi.Types.CharityCommission;
 
     public class UkprnSearchResultsViewModel
     {
@@ -37,5 +38,7 @@
         public int ApplicationRouteId { get; set; }
 
         public CompaniesHouseSummary CompaniesHouseInformation { get; set; }
+
+        public Charity CharityCommissionInformation { get; set; }
     }
 }

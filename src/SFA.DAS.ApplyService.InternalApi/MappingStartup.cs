@@ -41,7 +41,9 @@ namespace SFA.DAS.ApplyService.InternalApi
                 cfg.AddProfile<UkrlpProviderAliasProfile>();
                 cfg.AddProfile<UkrlpProviderContactProfile>();
                 cfg.AddProfile<UkrlpProviderDetailsProfile>();
+
                 cfg.AddProfile<RoatpProfile>();
+
             });
 
             Mapper.AssertConfigurationIsValid();
