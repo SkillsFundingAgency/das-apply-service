@@ -12,7 +12,7 @@ namespace SFA.DAS.ApplyService.InternalApi.IntegrationTests
     using NUnit.Framework;
     using SFA.DAS.ApplyService.InternalApi.AutoMapper;
 
-    [TestFixture]
+  [TestFixture]
     public class UkrlpLookupTests
     {
         private Mock<ILogger<UkrlpApiClient>> _logger;
@@ -55,7 +55,7 @@ namespace SFA.DAS.ApplyService.InternalApi.IntegrationTests
         public void Matching_UKPRN_returns_single_result()
         {
             var ukprn = 10012385;
-
+          
             var client = new UkrlpApiClient(_logger.Object, _config.Object, new HttpClient(),
                 new UkrlpSoapSerializer());
 
