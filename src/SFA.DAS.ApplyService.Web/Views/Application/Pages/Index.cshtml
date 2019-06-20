@@ -150,9 +150,17 @@
                 foreach (var question in Model.Questions)
                 {
                     <div class="govuk-form-group @(question.ErrorMessages?.Any() ?? false ? "govuk-form-group--error" : "")">
-                        <label class="govuk-label govuk-label--m" for="@question.QuestionId">
-                            @Html.Raw(question.Label)
-                        </label>
+
+                        @if (question.Type == "Address") {
+                            <h2 class="govuk-heading-l">
+                                @Html.Raw(question.Label)
+                            </h2>
+                        } else {
+                            <label class="govuk-label govuk-label--m" for="@question.QuestionId">
+                                @Html.Raw(question.Label)
+                            </label>
+                        }
+
 
                         @if (question.QuestionBodyText != null)
                         {

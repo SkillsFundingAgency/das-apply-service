@@ -1,7 +1,7 @@
 @model dynamic
 
 <div id="addressLookupWrapper" class="hide-nojs form-group disabled">
-    <div class="govuk-form-group" id="address-lookup">
+    <div class="govuk-form-group govuk-!-margin-bottom-2" id="address-lookup">
         <label for="postcode-search" class="govuk-label govuk-label--m">Start typing the address or postcode</label>
         <input id="postcode-search" name="postcodeSearch" type="text" class="govuk-input" spellcheck="false" autocomplete="off" autocorrect="off" disabled="disabled" />
         <span class="govuk-visually-hidden" id="ariaAddressEntered" aria-live="polite"></span>
@@ -10,6 +10,11 @@
         <p class="govuk-body"><a class="govuk-link" href="#" id="enterAddressManually">Enter the address manually</a></p>
         <p class="govuk-body toggle-content loading-text" id="addressLoading">Loading address...</p>
         <p id="postcodeServiceUnavailable" class="govuk-body error toggle-content text">Service is currently unavailable, please enter the address manually</p>
+    </div>
+    <div class="govuk-form-group govuk-!-margin-bottom-0 hidden" id="search-again">
+        <p class="govuk-body">
+            <a class="govuk-link" href="#" id="searchAgain">Search for a new address</a>
+        </p>
     </div>
 
     <div class="info-highlighted js-address-panel hidden">

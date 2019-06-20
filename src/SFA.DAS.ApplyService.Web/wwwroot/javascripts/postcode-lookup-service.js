@@ -18,6 +18,15 @@
         enableEnterAddressManually();
     });
 
+    $("#searchAgain").on("click", function (e) {
+        e.preventDefault();
+        $("#address-manual, #address-lookup").removeClass("hidden");
+        $("#search-again, .js-address-panel").addClass("hidden");
+        $("#postcode-search").val("")
+    });
+
+
+
     $("#postcode-search").keyup(function () {
         findAddressVal = $(this).val();
     });
@@ -113,6 +122,7 @@
                 }
             },
             focus: function (_, ui) {
+                searchContext = "";
                 $("#address-lookup")
                     .find(".ui-helper-hidden-accessible")
                     .text("To select " + ui.item.label + ", press enter");
@@ -120,9 +130,6 @@
             autoFocus: true,
             minLength: 1,
             delay: 100
-        })
-        .focus(function () {
-            searchContext = "";
         });
 
     function retrieveAddress(id) {
@@ -178,6 +185,9 @@
         $("#ariaAddressEntered").text(
             "Your address has been entered into the fields below."
         );
+
+        $("#address-manual, #address-lookup").addClass("hidden");
+        $("#search-again").removeClass("hidden");
     }
 
     function restorePreviousAddress() {
@@ -203,6 +213,8 @@
         });
 
         if (hasPreviousValues) {
+            $("#address-manual, #address-lookup").addClass("hidden");
+            $("#search-again").removeClass("hidden");
             $(".js-address-panel").removeClass("hidden");
         }
 
@@ -215,4 +227,11 @@
         $(".address-manual-input").removeClass("js-hidden");
         $(".address-manual-input-focus").focus();
     }
+
+    function searchAgain() {
+        
+    }
+
+
+
 })(jQuery);
