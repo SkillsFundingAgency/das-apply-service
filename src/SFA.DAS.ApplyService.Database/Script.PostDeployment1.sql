@@ -167,7 +167,7 @@ exec [Update_ApplicationSections_QuestionTags] 'CD-03_4', 'contact-address-4'
 -- ON-1917 Clean up double spaces on Organisation Name
 UPDATE [dbo].[Organisations]
 SET	   [Name] = REPLACE([Name], '  ', ' ')
-      ,[OrganisationDetails] = REPLACE(JSON_VALUE([OrganisationDetails], '$.LegalName'), '  ', ' ')
+      ,[OrganisationDetails] = JSON_MODIFY([OrganisationDetails], '$.LegalName', REPLACE(JSON_VALUE([OrganisationDetails], '$.LegalName'), '  ', ' '))
 WHERE CHARINDEX('  ', [Name]) > 0 OR CHARINDEX('  ', JSON_VALUE([OrganisationDetails], '$.LegalName')) > 0;
 -- END OF: ON-1917 
 
