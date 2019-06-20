@@ -83,28 +83,15 @@
                 };
 
                 _sessionService.Set(ApplicationDetailsKey, applicationDetails);
-
-                //var registerStatus = await _roatpApiClient.UkprnOnRegister(ukprn);
-
-                //if (registerStatus.ExistingUKPRN)
-                //{
-                //    if (registerStatus.ProviderTypeId != applicationDetails.ApplicationRoute.Id
-                //        || registerStatus.StatusId == OrganisationRegisterStatus.RemovedStatus)
-                //    {
-                //        return RedirectToAction("UkprnFound");
-                //    }
-                //    else
-                //    {
-                //        return RedirectToAction("UkprnActive");
-                //    }
-                //}
                 
                 return RedirectToAction("ConfirmOrganisation");
             }
             else
             {
-                var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-                applicationDetails.UKPRN = ukprn;
+                var applicationDetails = new ApplicationDetails
+                {
+                    UKPRN = ukprn
+                };
 
                 _sessionService.Set(ApplicationDetailsKey, applicationDetails);
                 return RedirectToAction("UkprnNotFound");
@@ -124,96 +111,7 @@
 
             return View("~/Views/Roatp/ConfirmOrganisation.cshtml", viewModel);
         }
-        
-        public async Task<IActionResult> UkprnFound()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-            var providerDetails = applicationDetails.UkrlpLookupDetails;
-            CompaniesHouseSummary companyDetails = null;
-            Charity charityDetails = null;
-
-            if (providerDetails.VerifiedByCompaniesHouse)
-            {
-                var companiesHouseVerification = providerDetails.VerificationDetails.FirstOrDefault(x =>
-                        x.VerificationAuthority == VerificationAuthorities.CompaniesHouseAuthority);
-
-                companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companiesHouseVerification.VerificationId);
-                
-                if (!CompanyReturnsFullDetails(companyDetails.CompanyNumber))
-                {
-                    companyDetails.ManualEntryRequired = true;
-                }
-                
-                if (String.IsNullOrWhiteSpace(companyDetails.Status) 
-                    || companyDetails.Status.ToLower() != CompaniesHouseSummary.CompanyStatusActive)
-                {
-                    if (companyDetails.Status == CompaniesHouseSummary.CompanyStatusNotFound)
-                    {
-                        return RedirectToAction("CompanyNotFound");
-                    }
-                    return RedirectToAction("CompanyNotActive");
-                }
-
-                if (!ProviderHistoryValidator.HasSufficientHistory(applicationDetails.ApplicationRoute.Id,
-                    companyDetails.IncorporationDate))
-                {
-                    return RedirectToAction("InvalidCompanyTradingHistory");
-                }
-
-                applicationDetails.CompanySummary = companyDetails;
-            }
-
-            if (applicationDetails.UkrlpLookupDetails.VerifiedbyCharityCommission)
-            {
-                var charityCommissionVerification = providerDetails.VerificationDetails.FirstOrDefault(x =>
-                    x.VerificationAuthority == VerificationAuthorities.CharityCommissionAuthority);
-
-                int charityNumber;
-                string verificationId = charityCommissionVerification.VerificationId;
-                if (verificationId.Contains("-"))
-                {
-                    verificationId = verificationId.Substring(0, verificationId.IndexOf("-"));
-                }
-
-                if (IsEnglandAndWalesCharityCommissionNumber(verificationId))
-                { 
-                    bool isValidCharityNumber = int.TryParse(verificationId, out charityNumber);
-                    if (!isValidCharityNumber)
-                    {
-                        return RedirectToAction("CharityNotFound");
-                    }
-                    
-                    charityDetails = await _charityCommissionApiClient.GetCharityDetails(charityNumber);
-
-                    if (!charityDetails.IsActivelyTrading)
-                    {
-                        return RedirectToAction("CharityNotActive");
-                    }
-
-                    if (!ProviderHistoryValidator.HasSufficientHistory(applicationDetails.ApplicationRoute.Id,
-                        charityDetails.IncorporatedOn))
-                    {
-                        return RedirectToAction("InvalidCharityFormationHistory");
-                    }
-
-                    applicationDetails.CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails);
-                }
-            }
-
-            _sessionService.Set(ApplicationDetailsKey, applicationDetails);
-
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                ProviderDetails = applicationDetails.UkrlpLookupDetails,
-                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
-                UKPRN = applicationDetails.UkrlpLookupDetails.UKPRN,
-                CompaniesHouseInformation = applicationDetails.CompanySummary,
-                CharityCommissionInformation = applicationDetails.CharitySummary
-            };
-            
-            return View("~/Views/Roatp/UkprnFound.cshtml", viewModel);
-        }
-
+       
         [Route("organisation-not-found")]
         public async Task<IActionResult> UkprnNotFound()
         {
@@ -221,11 +119,44 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
-                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
                 UKPRN = applicationDetails.UKPRN.ToString()
             };
 
             return View("~/Views/Roatp/UkprnNotFound.cshtml", viewModel);
+        }
+        
+        [Route("start-application")]
+        public async Task<IActionResult> StartApplication()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
+
+            applicationDetails.CreatedBy = user.Id;
+
+            var createOrganisationRequest = Mapper.Map<CreateOrganisationRequest>(applicationDetails);
+            
+            var organisation = await _organisationApiClient.Create(createOrganisationRequest, user.Id);
+
+            if (!user.IsApproved)
+            {
+                await _usersApiClient.ApproveUser(user.Id);
+            }
+
+            return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.RegisterTrainingProviders } );
+        }
+
+        [Route("choose-provider-route")]
+        public async Task<IActionResult> SelectApplicationRoute()
+        {
+            var applicationRoutes = await _roatpApiClient.GetApplicationRoutes();
+
+            var viewModel = new SelectApplicationRouteViewModel
+            {
+                ApplicationRoutes = applicationRoutes
+            };
+
+            return View("~/Views/Roatp/SelectApplicationRoute.cshtml", viewModel);
         }
 
         [Route("already-on-register")]
@@ -235,7 +166,6 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
-                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
                 UKPRN = applicationDetails.UKPRN.ToString()
             };
 
@@ -249,7 +179,6 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
-                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
                 UKPRN = applicationDetails.UKPRN.ToString()
             };
 
@@ -277,7 +206,6 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
-                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
                 UKPRN = applicationDetails.UKPRN.ToString()
             };
 
@@ -291,7 +219,6 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
-                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
                 UKPRN = applicationDetails.UKPRN.ToString()
             };
 
@@ -304,7 +231,6 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
-                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
                 UKPRN = applicationDetails.UKPRN.ToString()
             };
 
@@ -317,47 +243,101 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
-                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
                 UKPRN = applicationDetails.UKPRN.ToString()
             };
 
             return View("~/Views/Roatp/InvalidCharityFormationHistory.cshtml", viewModel);
         }
 
-        [Route("choose-provider-route")]
-        public async Task<IActionResult> SelectApplicationRoute()
+        private async Task<IActionResult> CheckIfOrganisationAlreadyOnRegister(long ukprn)
         {
-            var applicationRoutes = await _roatpApiClient.GetApplicationRoutes();
+            var registerStatus = await _roatpApiClient.UkprnOnRegister(ukprn);
 
-            var viewModel = new SelectApplicationRouteViewModel
+            if (registerStatus.ExistingUKPRN)
             {
-                ApplicationRoutes = applicationRoutes
-            };
-
-            return View("~/Views/Roatp/SelectApplicationRoute.cshtml", viewModel);
-        }
-
-
-        [Route("start-application")]
-        public async Task<IActionResult> StartApplication()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
-
-            applicationDetails.CreatedBy = user.Id;
-
-            var createOrganisationRequest = Mapper.Map<CreateOrganisationRequest>(applicationDetails);
-            
-            var organisation = await _organisationApiClient.Create(createOrganisationRequest, user.Id);
-
-            if (!user.IsApproved)
-            {
-                await _usersApiClient.ApproveUser(user.Id);
+                var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+                if (registerStatus.ProviderTypeId != applicationDetails.ApplicationRoute.Id
+                    || registerStatus.StatusId == OrganisationRegisterStatus.RemovedStatus)
+                {
+                    return RedirectToAction("ConfirmOrganisation");
+                }
+                else
+                {
+                    return RedirectToAction("UkprnActive");
+                }
             }
 
-            return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.RegisterTrainingProviders } );
+            return RedirectToAction("ConfirmOrganisation");
         }
+        
+        public async Task<IActionResult> VerifyOrganisationDetails()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+            var providerDetails = applicationDetails.UkrlpLookupDetails;
+            CompaniesHouseSummary companyDetails = null;
+            Charity charityDetails = null;
+
+            if (providerDetails.VerifiedByCompaniesHouse)
+            {
+                var companiesHouseVerification = providerDetails.VerificationDetails.FirstOrDefault(x =>
+                        x.VerificationAuthority == VerificationAuthorities.CompaniesHouseAuthority);
+
+                companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companiesHouseVerification.VerificationId);
+
+                if (!CompanyReturnsFullDetails(companyDetails.CompanyNumber))
+                {
+                    companyDetails.ManualEntryRequired = true;
+                }
+
+                if (String.IsNullOrWhiteSpace(companyDetails.Status)
+                    || companyDetails.Status.ToLower() != CompaniesHouseSummary.CompanyStatusActive)
+                {
+                    if (companyDetails.Status == CompaniesHouseSummary.CompanyStatusNotFound)
+                    {
+                        return RedirectToAction("CompanyNotFound");
+                    }
+                    return RedirectToAction("CompanyNotActive");
+                }
+                
+                applicationDetails.CompanySummary = companyDetails;
+            }
+
+            if (applicationDetails.UkrlpLookupDetails.VerifiedbyCharityCommission)
+            {
+                var charityCommissionVerification = providerDetails.VerificationDetails.FirstOrDefault(x =>
+                    x.VerificationAuthority == VerificationAuthorities.CharityCommissionAuthority);
+
+                int charityNumber;
+                string verificationId = charityCommissionVerification.VerificationId;
+                if (verificationId.Contains("-"))
+                {
+                    verificationId = verificationId.Substring(0, verificationId.IndexOf("-"));
+                }
+
+                if (IsEnglandAndWalesCharityCommissionNumber(verificationId))
+                {
+                    bool isValidCharityNumber = int.TryParse(verificationId, out charityNumber);
+                    if (!isValidCharityNumber)
+                    {
+                        return RedirectToAction("CharityNotFound");
+                    }
+
+                    charityDetails = await _charityCommissionApiClient.GetCharityDetails(charityNumber);
+
+                    if (!charityDetails.IsActivelyTrading)
+                    {
+                        return RedirectToAction("CharityNotActive");
+                    }
+                    
+                    applicationDetails.CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails);
+                }
+            }
+
+            _sessionService.Set(ApplicationDetailsKey, applicationDetails);
+
+            return RedirectToAction("StartApplication");
+        }
+
 
         private bool CompanyReturnsFullDetails(string companyNumber)
         {
@@ -394,5 +374,6 @@
 
             return true;
         }
+
     }
 }

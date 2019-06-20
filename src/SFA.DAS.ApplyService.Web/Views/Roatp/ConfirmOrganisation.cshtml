@@ -62,7 +62,9 @@
             </dl>
 
             <div class="govuk-grid-row">
-                <input type="submit" class="govuk-button" value="Confirm and continue" asp-action="StartApplication" asp-controller="RoatpApplicationPreamble" />
+                <form method="get" asp-action="VerifyOrganisationDetails" asp-controller="RoatpApplicationPreamble">
+                    <input type="submit" class="govuk-button" value="Confirm and continue" />
+                </form>
             </div>
             <div class="govuk-grid-row">
                 <a class="govuk-link" asp-controller="Users" asp-action="SignOut">Confirm and sign out</a>
