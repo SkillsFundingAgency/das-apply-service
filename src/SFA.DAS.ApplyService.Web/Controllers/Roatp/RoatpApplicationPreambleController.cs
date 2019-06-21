@@ -67,18 +67,24 @@
         }
 
         [Route("enter-uk-provider-reference-number")]
-        public async Task<IActionResult> EnterApplicationUkprn()
+        public async Task<IActionResult> EnterApplicationUkprn(string ukprn)
         {
-            return View("~/Views/Roatp/EnterApplicationUkprn.cshtml");
+            var model = new SearchByUkprnViewModel();
+            if (!String.IsNullOrWhiteSpace(ukprn))
+            {
+                model.UKPRN = ukprn;
+            }
+            return View("~/Views/Roatp/EnterApplicationUkprn.cshtml", model);
         }
 
         [HttpPost]
         public async Task<IActionResult> SearchByUkprn(SearchByUkprnViewModel model)
         {
             long ukprn;
-            if (!UkprnValidator.IsValidUkprn(model.UKPRN, out ukprn))
+            var validationMessage = UkprnValidator.IsValidUkprn(model.UKPRN, out ukprn);
+            if (!String.IsNullOrEmpty(validationMessage))
             {
-                ModelState.AddModelError(nameof(model.UKPRN), "Enter a valid UKPRN");
+                ModelState.AddModelError(nameof(model.UKPRN), validationMessage);
                 TempData["ShowErrors"] = true;
 
                 return View("~/Views/Roatp/EnterApplicationUkprn.cshtml", model);
@@ -124,7 +130,7 @@
             return View("~/Views/Roatp/ConfirmOrganisation.cshtml", viewModel);
         }
        
-        [Route("organisation-not-found")]
+        [Route("uk-provider-reference-number-not-found")]
         public async Task<IActionResult> UkprnNotFound()
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);

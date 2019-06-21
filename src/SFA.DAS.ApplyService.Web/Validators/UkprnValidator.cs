@@ -1,15 +1,29 @@
 ﻿namespace SFA.DAS.ApplyService.Web.Validators
 {
+    using System;
+    using Resources;
+
     public class UkprnValidator
     {
-        public static bool IsValidUkprn(string stringToCheck, out long ukprn)
+        public static string IsValidUkprn(string stringToCheck, out long ukprn)
         {
-            if (!long.TryParse(stringToCheck, out ukprn))
+            if (String.IsNullOrWhiteSpace(stringToCheck))
             {
-                return false;
+                ukprn = 0;
+                return UkprnValidationMessages.MissingUkprn;
             }
 
-            return ukprn >= 10000000 && ukprn <= 99999999;
+            if (!long.TryParse(stringToCheck, out ukprn))
+            {
+                return UkprnValidationMessages.InvalidUkprn;
+            }
+
+            if (ukprn >= 10000000 && ukprn <= 99999999)
+            {
+                return string.Empty;
+            }
+
+            return UkprnValidationMessages.InvalidUkprn;
         }
     }
 }

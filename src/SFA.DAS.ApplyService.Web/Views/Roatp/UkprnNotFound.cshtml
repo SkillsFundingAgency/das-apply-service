@@ -13,15 +13,19 @@
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-l">@Model.UKPRN not found</h1>
-                <p class="govuk-body">This is because it either:</p>
-                <ul class="govuk-list govuk-list--bullet">
-                    <li>does not exist</li>
-                    <li>is inactive on the UK Register of Learning Providers</li>
-                </ul>
-                <p class="govuk-body">If your organisation's UKPRN is inactive, contact the UKRLP helpdesk on 0345 202 1600 or <a class="govuk-link" href="mailto:helpdesk@ukrlp.co.uk">helpdesk@ukrlp.co.uk</a>.
-                </p>
-                <p><a class="govuk-link" asp-controller="RoatpApplicationPreamble" asp-action="EnterApplicationUkprn">Search for another UKRPN</a></p>
+                <form method="post" asp-controller="RoatpApplicationPreamble" asp-action="EnterApplicationUkprn">
+                    <h1 class="govuk-heading-l">@Model.UKPRN not found</h1>
+                    <p class="govuk-body">This is because it either:</p>
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>does not exist</li>
+                        <li>is inactive on the UK Register of Learning Providers</li>
+                    </ul>
+                    <p class="govuk-body">
+                        If your organisation's UKPRN is inactive, contact the UKRLP helpdesk on 0345 202 1600 or <a class="govuk-link" href="mailto:helpdesk@ukrlp.co.uk">helpdesk@ukrlp.co.uk</a>.
+                    </p>
+                    <input type="hidden" asp-for="UKPRN" />
+                    <input type="submit" class="govuk-button" asp-controller="RoatpApplicationPreamble" asp-action="EnterApplicationUkprn" value="Search for another UKRPN" />
+                </form>
             </div>
         </div>
     </main>
