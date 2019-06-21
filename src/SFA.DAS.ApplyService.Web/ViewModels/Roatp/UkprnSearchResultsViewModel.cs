@@ -1,10 +1,10 @@
 ﻿namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
+    using System;
     using System.Linq;
     using Domain.CharityCommission;
     using Domain.CompaniesHouse;
     using Domain.Ukrlp;
-    using InternalApi.Types.CharityCommission;
 
     public class UkprnSearchResultsViewModel
     {
@@ -57,5 +57,35 @@
         }
 
         public CharityCommissionSummary CharityCommissionInformation { get; set; }
+
+        public string FormattedLegalAddress()
+        {
+            var legalAddress = LegalContactDetails.ContactAddress;
+
+            var address = legalAddress.Address1 + "<br />";
+
+            if (!String.IsNullOrWhiteSpace(legalAddress.Address2))
+            {
+                address = address + legalAddress.Address2 + "<br />";
+            }
+            if (!String.IsNullOrWhiteSpace(legalAddress.Address3))
+            {
+                address = address + legalAddress.Address3 + "<br />";
+            }
+            if (!String.IsNullOrWhiteSpace(legalAddress.Address4))
+            {
+                address = address + legalAddress.Address4 + "<br />";
+            }
+            if (!String.IsNullOrWhiteSpace(legalAddress.Town))
+            {
+                address = address + legalAddress.Town + "<br />";
+            }
+            if (!String.IsNullOrWhiteSpace(legalAddress.PostCode))
+            {
+                address = address + legalAddress.PostCode + "<br />";
+            }
+
+            return address;           
+        }
     }
 }
