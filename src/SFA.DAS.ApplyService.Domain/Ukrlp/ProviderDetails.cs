@@ -68,34 +68,6 @@
         public string Address4 { get; set; }
         public string Town { get; set; }
         public string PostCode { get; set; }
-
-        public string FormattedAddress()
-        {
-            var address = Address1 + "<br />";
-
-            if (!String.IsNullOrWhiteSpace(Address2))
-            {
-                address = address + Address2 + "<br />";
-            }
-            if (!String.IsNullOrWhiteSpace(Address3))
-            {
-                address = address + Address3 + "<br />";
-            }
-            if (!String.IsNullOrWhiteSpace(Address4))
-            {
-                address = address + Address4 + "<br />";
-            }
-            if (!String.IsNullOrWhiteSpace(Town))
-            {
-                address = address + Town + "<br />";
-            }
-            if (!String.IsNullOrWhiteSpace(PostCode))
-            {
-                address = address + PostCode + "<br />";
-            }
-
-            return address;
-        }
     }
 
     public class ContactPersonalDetails
