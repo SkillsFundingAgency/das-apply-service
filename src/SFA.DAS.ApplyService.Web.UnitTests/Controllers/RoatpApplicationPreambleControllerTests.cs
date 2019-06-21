@@ -225,64 +225,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             Mapper.AssertConfigurationIsValid();
         }
-
-        [Test, Ignore("Select application route being moved to later in process")]
-        public void Select_application_routes_presents_choice_of_routes()
-        {
-            var applicationRoutes = new List<ApplicationRoute>
-            {
-                new ApplicationRoute { Id = ApplicationRoute.MainProviderApplicationRoute, RouteName = "Main provider" },
-                new ApplicationRoute { Id = ApplicationRoute.EmployerProviderApplicationRoute, RouteName = "Employer provider" },
-                new ApplicationRoute { Id = ApplicationRoute.SupportingProviderApplicationRoute, RouteName = "Supporting provider" }
-            };
-
-            _roatpApiClient.Setup(x => x.GetApplicationRoutes()).ReturnsAsync(applicationRoutes);
-
-            var result = _controller.SelectApplicationRoute().GetAwaiter().GetResult();
-
-            result.Should().BeOfType<ViewResult>();
-
-            var viewResult = result as ViewResult;
-            viewResult.Model.Should().BeOfType<SelectApplicationRouteViewModel>();
-
-            var model = viewResult.Model as SelectApplicationRouteViewModel;
-            model.ApplicationRouteId.Should().Be(0);    // unselected
-            var applicationRouteList = model.ApplicationRoutes.ToList();
-            applicationRouteList.Count.Should().Be(3);
-            applicationRouteList[0].Id.Should().Be(applicationRoutes[0].Id);
-            applicationRouteList[0].RouteName.Should().Be(applicationRoutes[0].RouteName);
-            applicationRouteList[1].Id.Should().Be(applicationRoutes[1].Id);
-            applicationRouteList[1].RouteName.Should().Be(applicationRoutes[1].RouteName);
-            applicationRouteList[2].Id.Should().Be(applicationRoutes[2].Id);
-            applicationRouteList[2].RouteName.Should().Be(applicationRoutes[2].RouteName);
-        }
-
-        [TestCase(0)]
-        [TestCase(-1)]
-        [TestCase(4)]
-        [Ignore("Application route selection moved to later in process")]
-        public void Validation_error_is_triggered_if_application_route_not_selected_or_invalid(int applicationRouteId)
-        {
-            var applicationRoutes = new List<ApplicationRoute>
-            {
-                new ApplicationRoute { Id = ApplicationRoute.MainProviderApplicationRoute, RouteName = "Main provider" },
-                new ApplicationRoute { Id = ApplicationRoute.EmployerProviderApplicationRoute, RouteName = "Employer provider" },
-                new ApplicationRoute { Id = ApplicationRoute.SupportingProviderApplicationRoute, RouteName = "Supporting provider" }
-            };
-
-            _roatpApiClient.Setup(x => x.GetApplicationRoutes()).ReturnsAsync(applicationRoutes);
-
-            var model = new SelectApplicationRouteViewModel { ApplicationRouteId = applicationRouteId };
-            _controller.ModelState.AddModelError("Application Route", "Select an application route");
-
-            var result = _controller.EnterApplicationUkprn().GetAwaiter().GetResult();
-
-            result.Should().BeOfType<ViewResult>();
-
-            var viewResult = result as ViewResult;
-            viewResult.ViewName.Should().Contain("SelectApplicationRoute");
-        }
-
+        
         [TestCase("")]
         [TestCase(null)]
         [TestCase("1234567")]

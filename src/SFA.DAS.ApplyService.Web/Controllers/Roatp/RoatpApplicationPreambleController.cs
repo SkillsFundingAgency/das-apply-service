@@ -146,19 +146,6 @@
             return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.RegisterTrainingProviders } );
         }
 
-        [Route("choose-provider-route")]
-        public async Task<IActionResult> SelectApplicationRoute()
-        {
-            var applicationRoutes = await _roatpApiClient.GetApplicationRoutes();
-
-            var viewModel = new SelectApplicationRouteViewModel
-            {
-                ApplicationRoutes = applicationRoutes
-            };
-
-            return View("~/Views/Roatp/SelectApplicationRoute.cshtml", viewModel);
-        }
-
         [Route("already-on-register")]
         public async Task<IActionResult> UkprnActive()
         {
