@@ -1,0 +1,27 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.SearchByUkprnViewModel
+
+@{
+    ViewBag.Title = "You do not accept the terms and conditions of making an application";
+    Layout = "_Layout";
+}
+
+<div class="grid-row">
+    <form asp-controller="RoatpApplicationPreamble" asp-action="TermsAndConditions" method="get" name="backForm">
+        <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+    </form>
+</div>
+
+<div class="govuk-width-container">
+
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-l">You do not accept the terms and conditions of making an application</h1>
+                <p class="govuk-body">This means you and your organisation are not eligible to apply to join the register of apprenticeship training providers.</p>
+                <p class="govuk-body"><a href="https://www.gov.uk">Back to GOV.UK</a></p>
+            </div>
+        </div>
+    </main>
+
+</div>

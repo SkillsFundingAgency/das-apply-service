@@ -54,6 +54,18 @@
             _usersApiClient = usersApiClient;
         }
 
+        [Route("terms-conditions-making-application")]
+        public async Task<IActionResult> TermsAndConditions()
+        {
+            return View("~/Views/Roatp/TermsAndConditions.cshtml");
+        }
+
+        [Route("not-accept-terms-conditions")]
+        public async Task<IActionResult> TermsAndConditionsNotAgreed()
+        {
+            return View("~/Views/Roatp/TermsAndConditionsNotAgreed.cshtml");
+        }
+
         [Route("enter-uk-provider-reference-number")]
         public async Task<IActionResult> EnterApplicationUkprn()
         {

@@ -1,0 +1,42 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.SearchByUkprnViewModel
+
+@{
+    ViewBag.Title = "Terms and conditions of making an application";
+    Layout = "_Layout";
+}
+
+
+<div class="govuk-width-container">
+
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-l">Terms and conditions of making an application</h1>
+            </div>
+        </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <p class="govuk-body">By making an application you agree to:</p>
+                <form method="post" asp-action="EnterApplicationUkprn" asp-controller="RoatpApplicationPreamble">
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>provide correct and accurate information</li>
+                        <li>ESFA using information from the public domain to support any application questions</li>
+                        <li>ESFA asking for further information on any application answers</li>
+                        <li>tell ESFA if ownership of your organisation changes whilst making an application</li>
+                    </ul>
+                    <div class="govuk-warning-text">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            <span class="govuk-warning-text__assistive">Warning</span>
+                            If you fail to meet these terms and conditions, your application will automatically be rejected.
+                        </strong>
+                    </div>
+                    <input type="submit" class="govuk-button" value="Accept and continue" />
+                    <p class="govuk-body"><a asp-controller="RoatpApplicationPreamble" asp-action="TermsAndConditionsNotAgreed">I do not accept</a></p>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
