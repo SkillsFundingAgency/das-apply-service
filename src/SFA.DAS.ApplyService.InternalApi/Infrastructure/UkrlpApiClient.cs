@@ -2,7 +2,6 @@
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
-    using System;
     using System.Collections.Generic;
     using System.Net.Http;
     using System.Threading.Tasks;
@@ -47,53 +46,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                     Content = new StringContent(request, Encoding.UTF8, "text/xml")
                 };
 
-            try
+            var responseMessage = await _httpClient.SendAsync(requestMessage);
+
+            if (!responseMessage.IsSuccessStatusCode)
             {
-                var responseMessage = await _httpClient.SendAsync(requestMessage);
-
-                if (!responseMessage.IsSuccessStatusCode)
-                {
-                    var failureResponse = new UkprnLookupResponse
-                    {
-                        Success = false,
-                        Results = new List<ProviderDetails>()
-                    };
-                    return await Task.FromResult(failureResponse);
-                }
-
-                string soapXml = await responseMessage.Content.ReadAsStringAsync();
-                var matchingProviderRecords = _serializer.DeserialiseMatchingProviderRecordsResponse(soapXml);
-
-                ProviderDetails providerDetails = null;
-
-                if (matchingProviderRecords != null)
-                {
-                    providerDetails = Mapper.Map<ProviderDetails>(matchingProviderRecords);
-
-                    var result = new List<ProviderDetails>
-                    {
-                        providerDetails
-                    };
-                    var resultsFound = new UkprnLookupResponse
-                    {
-                        Success = true,
-                        Results = result
-                    };
-                    return await Task.FromResult(resultsFound);
-                }
-                else
-                {
-                    var noResultsFound = new UkprnLookupResponse
-                    {
-                        Success = true,
-                        Results = new List<ProviderDetails>()
-                    };
-                    return await Task.FromResult(noResultsFound);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Unable to retrieve results from UKRLP", ex);
                 var failureResponse = new UkprnLookupResponse
                 {
                     Success = false,
@@ -101,6 +57,37 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                 };
                 return await Task.FromResult(failureResponse);
             }
+
+            string soapXml = await responseMessage.Content.ReadAsStringAsync();
+            var matchingProviderRecords = _serializer.DeserialiseMatchingProviderRecordsResponse(soapXml);
+
+            ProviderDetails providerDetails = null;
+
+            if (matchingProviderRecords != null)
+            {
+                providerDetails = Mapper.Map<ProviderDetails>(matchingProviderRecords);
+
+                var result = new List<ProviderDetails>
+                {
+                    providerDetails
+                };
+                var resultsFound = new UkprnLookupResponse
+                {
+                    Success = true,
+                    Results = result
+                };
+                return await Task.FromResult(resultsFound);
+            }
+            else
+            {
+                var noResultsFound = new UkprnLookupResponse
+                {
+                    Success = true,
+                    Results = new List<ProviderDetails>()
+                };
+                return await Task.FromResult(noResultsFound);
+            }
+            
         }
     }
 }
