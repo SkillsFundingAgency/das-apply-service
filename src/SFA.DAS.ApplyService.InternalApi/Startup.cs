@@ -144,6 +144,8 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddTransient<IValidatorFactory, ValidatorFactory>();
 
+            services.AddTransient<IValidator, DateOfBirthNotInFutureValidator>();
+            services.AddTransient<IValidator, DateOfBirthValidator>();
             services.AddTransient<IValidator, DateNotInFutureValidator>();
             services.AddTransient<IValidator, DateValidator>();
             services.AddTransient<IValidator, EmailAddressIsValidValidator>();
