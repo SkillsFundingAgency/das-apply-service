@@ -2,6 +2,7 @@
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
+    using System;
     using System.Collections.Generic;
     using System.Net.Http;
     using System.Threading.Tasks;
@@ -31,7 +32,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             _serializer = serializer;
         }
 
-        public async Task<List<ProviderDetails>> GetTrainingProviderByUkprn(long ukprn)
+        public async Task<UkprnLookupResponse> GetTrainingProviderByUkprn(long ukprn)
         {
             // Due to a bug in .net core, we have to parse the SOAP XML from UKRLP by hand
             // If this ever gets fixed then look to remove this code and replace with 'Add connected service'
@@ -46,32 +47,59 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                     Content = new StringContent(request, Encoding.UTF8, "text/xml")
                 };
 
-            var responseMessage = await _httpClient.SendAsync(requestMessage);
-                
-            if (!responseMessage.IsSuccessStatusCode)
+            try
             {
-                return await Task.FromResult(new List<ProviderDetails>());
-            }
+                var responseMessage = await _httpClient.SendAsync(requestMessage);
 
-            string soapXml = await responseMessage.Content.ReadAsStringAsync();
-            var matchingProviderRecords = _serializer.DeserialiseMatchingProviderRecordsResponse(soapXml);
-
-            ProviderDetails providerDetails = null;
-
-            if (matchingProviderRecords != null)
-            {
-                providerDetails =
-                    Mapper.Map<ProviderDetails>(matchingProviderRecords);
-
-                var result = new List<ProviderDetails>
+                if (!responseMessage.IsSuccessStatusCode)
                 {
-                    providerDetails
-                };
-                return await Task.FromResult(result);
+                    var failureResponse = new UkprnLookupResponse
+                    {
+                        Success = false,
+                        Results = new List<ProviderDetails>()
+                    };
+                    return await Task.FromResult(failureResponse);
+                }
+
+                string soapXml = await responseMessage.Content.ReadAsStringAsync();
+                var matchingProviderRecords = _serializer.DeserialiseMatchingProviderRecordsResponse(soapXml);
+
+                ProviderDetails providerDetails = null;
+
+                if (matchingProviderRecords != null)
+                {
+                    providerDetails = Mapper.Map<ProviderDetails>(matchingProviderRecords);
+
+                    var result = new List<ProviderDetails>
+                    {
+                        providerDetails
+                    };
+                    var resultsFound = new UkprnLookupResponse
+                    {
+                        Success = true,
+                        Results = result
+                    };
+                    return await Task.FromResult(resultsFound);
+                }
+                else
+                {
+                    var noResultsFound = new UkprnLookupResponse
+                    {
+                        Success = true,
+                        Results = new List<ProviderDetails>()
+                    };
+                    return await Task.FromResult(noResultsFound);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return await Task.FromResult(new List<ProviderDetails>());
+                _logger.LogError("Unable to retrieve results from UKRLP", ex);
+                var failureResponse = new UkprnLookupResponse
+                {
+                    Success = false,
+                    Results = new List<ProviderDetails>()
+                };
+                return await Task.FromResult(failureResponse);
             }
         }
     }

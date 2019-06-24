@@ -78,6 +78,7 @@
             return View("~/Views/Roatp/EnterApplicationUkprn.cshtml", model);
         }
 
+        [Route("search-by-ukprn")]
         [HttpPost]
         public async Task<IActionResult> SearchByUkprn(SearchByUkprnViewModel model)
         {
@@ -104,14 +105,19 @@
                 return View("~/Views/Roatp/EnterApplicationUkprn.cshtml", model);
             }
             
-            var matchingResults = await _ukrlpApiClient.GetTrainingProviderByUkprn(ukprn);
+            var ukrlpLookupResults = await _ukrlpApiClient.GetTrainingProviderByUkprn(ukprn);
 
-            if (matchingResults.Any())
+            if (!ukrlpLookupResults.Success)
+            {
+                return RedirectToAction("UkrlpNotAvailable");
+            }
+
+            if (ukrlpLookupResults.Results.Any())
             {
                 var applicationDetails = new ApplicationDetails
                 {
                     UKPRN = ukprn,
-                    UkrlpLookupDetails = matchingResults.FirstOrDefault()
+                    UkrlpLookupDetails = ukrlpLookupResults.Results.FirstOrDefault()
                 };
 
                 _sessionService.Set(ApplicationDetailsKey, applicationDetails);
@@ -266,6 +272,12 @@
             };
 
             return View("~/Views/Roatp/InvalidCharityFormationHistory.cshtml", viewModel);
+        }
+
+        [Route("ukrlp-unavailable")]
+        public async Task<IActionResult> UkrlpNotAvailable()
+        {
+            return View("~/Views/Roatp/UkrlpNotAvailable.cshtml");
         }
 
         private async Task<IActionResult> CheckIfOrganisationAlreadyOnRegister(long ukprn)

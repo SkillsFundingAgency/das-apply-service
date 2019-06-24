@@ -254,7 +254,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void UKPRN_is_not_found_on_UKRLP()
         {
-            var noResults = new List<ProviderDetails>();
+            var noResults = new UkrlpLookupResults {Success = true, Results = new List<ProviderDetails>()};
+            
             _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<long>())).ReturnsAsync(noResults);
 
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
@@ -275,14 +276,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test, Ignore("Checking against RoATP moved to later in the process")]
         public void UKPRN_is_found_on_UKRLP_but_existing_active_provider_on_register_with_same_application_route()
         {
-            var matchingResult = new List<ProviderDetails>
-            {
-                new ProviderDetails
+            var matchingResult = new UkrlpLookupResults { Success = true, Results = new List<ProviderDetails>
                 {
-                    UKPRN = "10001000",
-                    ProviderName = "Test Provider"
+                    new ProviderDetails
+                    {
+                        UKPRN = "10001000",
+                        ProviderName = "Test Provider"
+                    }
                 }
             };
+            
             _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<long>())).ReturnsAsync(matchingResult);
 
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
@@ -311,14 +314,19 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test, Ignore("RoATP check performed later in process")]
         public void UKPRN_is_found_on_UKRLP_but_existing_active_provider_on_register_with_different_application_route()
         {
-            var matchingResult = new List<ProviderDetails>
+            var matchingResult = new UkrlpLookupResults
             {
-                new ProviderDetails
+                Success = true,
+                Results = new List<ProviderDetails>
                 {
-                    UKPRN = "10001000",
-                    ProviderName = "Test Provider"
+                    new ProviderDetails
+                    {
+                        UKPRN = "10001000",
+                        ProviderName = "Test Provider"
+                    }
                 }
             };
+            
             _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<long>())).ReturnsAsync(matchingResult);
 
             var applicationDetails = new ApplicationDetails
@@ -356,12 +364,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test, Ignore("RoATP check performed later in process")]
         public void UKPRN_is_found_on_UKRLP_but_existing_provider_on_register_with_status_of_removed()
         {
-            var matchingResult = new List<ProviderDetails>
+            var matchingResult = new UkrlpLookupResults
             {
-                new ProviderDetails
+                Success = true,
+                Results = new List<ProviderDetails>
                 {
-                    UKPRN = "10001000",
-                    ProviderName = "Test Provider"
+                    new ProviderDetails
+                    {
+                        UKPRN = "10001000",
+                        ProviderName = "Test Provider"
+                    }
                 }
             };
             _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<long>())).ReturnsAsync(matchingResult);
@@ -401,12 +413,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void UKPRN_is_found_on_UKRLP()
         {
-            var matchingResult = new List<ProviderDetails>
+            var matchingResult = new UkrlpLookupResults
             {
-                new ProviderDetails
+                Success = true,
+                Results = new List<ProviderDetails>
                 {
-                    UKPRN = "10001000",
-                    ProviderName = "Test Provider"
+                    new ProviderDetails
+                    {
+                        UKPRN = "10001000",
+                        ProviderName = "Test Provider"
+                    }
                 }
             };
             _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<long>())).ReturnsAsync(matchingResult);

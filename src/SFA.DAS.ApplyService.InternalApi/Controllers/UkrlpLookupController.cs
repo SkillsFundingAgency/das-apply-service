@@ -3,11 +3,12 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using Domain.Ukrlp;
+    using SFA.DAS.ApplyService.InternalApi.Types;
     using global::AutoMapper;
     using Infrastructure;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using Models.Ukrlp;
 
     public class UkrlpLookupController : Controller
     {
@@ -28,9 +29,7 @@
 
             var providerData = await _apiClient.GetTrainingProviderByUkprn(ukprnValue);
 
-            var matchingProviders = Mapper.Map<List<ProviderDetails>>(providerData);
-
-            return Ok(matchingProviders);
+            return Ok(providerData);
         }
     }
 }
