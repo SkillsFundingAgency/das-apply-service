@@ -18,6 +18,7 @@
     using Validators;
     using Microsoft.AspNetCore.Authorization;
     using SFA.DAS.ApplyService.InternalApi.Types;
+    using SFA.DAS.ApplyService.Web.Resources;
 
     [Authorize]
     public class RoatpApplicationPreambleController : Controller
@@ -80,8 +81,21 @@
         [HttpPost]
         public async Task<IActionResult> SearchByUkprn(SearchByUkprnViewModel model)
         {
-            long ukprn;
-            var validationMessage = UkprnValidator.IsValidUkprn(model.UKPRN, out ukprn);
+            long ukprn = 0;
+            string validationMessage = string.Empty;
+            if (String.IsNullOrWhiteSpace(model.UKPRN))
+            {
+                validationMessage = UkprnValidationMessages.MissingUkprn;
+            }
+            else
+            {
+                bool isValidUkprn = UkprnValidator.IsValidUkprn(model.UKPRN, out ukprn);
+                if (!isValidUkprn)
+                {
+                    validationMessage = UkprnValidationMessages.InvalidUkprn;
+                }
+            }
+
             if (!String.IsNullOrEmpty(validationMessage))
             {
                 ModelState.AddModelError(nameof(model.UKPRN), validationMessage);

@@ -3,7 +3,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
 {
     using FluentAssertions;
     using NUnit.Framework;
-    using Resources;
     using Validators;
 
     [TestFixture]
@@ -11,12 +10,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
     {
         [TestCase("")]
         [TestCase(null)]
-        public void Validator_returns_appropriate_validation_message_for_missing_ukprn(string ukprn)
+        public void Validator_returns_false_for_missing_ukprn(string ukprn)
         {
             long ukprnValue;
-            string validationMessage = UkprnValidator.IsValidUkprn(ukprn, out ukprnValue);
+            bool isValid = UkprnValidator.IsValidUkprn(ukprn, out ukprnValue);
 
-            validationMessage.Should().Be(UkprnValidationMessages.MissingUkprn);
+            isValid.Should().BeFalse();
             ukprnValue.Should().Be(0);
         }
 
@@ -24,23 +23,23 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         [TestCase("1")]
         [TestCase("111111111")]
         [TestCase("1000123A")]
-        public void Validator_returns_appropriate_validation_message_for_invalid_ukprn(string ukprn)
+        public void Validator_returns_false_for_invalid_ukprn(string ukprn)
         {
             long ukprnValue;
-            string validationMessage = UkprnValidator.IsValidUkprn(ukprn, out ukprnValue);
+            bool isValid = UkprnValidator.IsValidUkprn(ukprn, out ukprnValue);
 
-            validationMessage.Should().Be(UkprnValidationMessages.InvalidUkprn);
+            isValid.Should().BeFalse();
         }
 
         [Test]
-        public void Validator_does_not_return_message_for_a_valid_ukprn()
+        public void Validator_returns_true_for_a_valid_ukprn()
         {
             string ukprn = "10002000";
 
             long ukprnValue;
-            string validationMessage = UkprnValidator.IsValidUkprn(ukprn, out ukprnValue);
+            bool isValid = UkprnValidator.IsValidUkprn(ukprn, out ukprnValue);
 
-            validationMessage.Should().BeEmpty();
+            isValid.Should().BeTrue();
             ukprnValue.Should().Be(10002000);
         }
     }
