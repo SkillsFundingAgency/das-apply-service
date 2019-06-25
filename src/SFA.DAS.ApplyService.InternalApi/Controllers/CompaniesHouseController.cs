@@ -7,6 +7,8 @@
     using Polly;
     using Polly.Retry;
     using System;
+    using System.Net;
+    using Microsoft.AspNetCore.Http;
 
     public class CompaniesHouseController : Controller
     {
@@ -27,8 +29,13 @@
         public async Task<IActionResult> CompanyDetails(string companyNumber)
         {
             var companyDetails = await _retryPolicy.ExecuteAsync(context => _apiClient.GetCompany(companyNumber), new Context());
+            
+            if (!companyDetails.Success)
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable);
+            }
 
-            if (companyDetails == null)
+            if (companyDetails.Response == null)
             {
                 return NotFound();
             }

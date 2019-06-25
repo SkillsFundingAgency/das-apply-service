@@ -217,7 +217,6 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
-                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
                 UKPRN = applicationDetails.UKPRN.ToString()
             };
 
