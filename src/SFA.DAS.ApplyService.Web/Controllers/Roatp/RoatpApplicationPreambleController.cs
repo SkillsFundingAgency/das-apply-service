@@ -279,6 +279,12 @@
             return View("~/Views/Roatp/UkrlpNotAvailable.cshtml");
         }
 
+        [Route("companies-house-unavailable")]
+        public async Task<IActionResult> CompaniesHouseNotAvailable()
+        {
+            return View("~/Views/Roatp/CompaniesHouseNotAvailable.cshtml");
+        }
+
         private async Task<IActionResult> CheckIfOrganisationAlreadyOnRegister(long ukprn)
         {
             var registerStatus = await _roatpApiClient.UkprnOnRegister(ukprn);
@@ -325,6 +331,11 @@
                     if (companyDetails.Status == CompaniesHouseSummary.CompanyStatusNotFound)
                     {
                         return RedirectToAction("CompanyNotFound");
+                    }
+
+                    if (companyDetails.Status == CompaniesHouseSummary.ServiceUnavailable)
+                    {
+                        return RedirectToAction("CompaniesHouseNotAvailable");
                     }
                     return RedirectToAction("CompanyNotActive");
                 }

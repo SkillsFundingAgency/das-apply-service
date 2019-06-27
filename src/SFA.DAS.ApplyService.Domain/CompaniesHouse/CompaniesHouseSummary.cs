@@ -32,6 +32,7 @@ namespace SFA.DAS.ApplyService.Domain.CompaniesHouse
         public const string CompanyStatusLiquidation = "liquidation";
         public const string CompanyStatusReceivership = "receivership";
         public const string CompanyStatusNotFound = "not_found";
+        public const string ServiceUnavailable = "service_unavailable";
 
         public CompaniesHouseSummary()
         {

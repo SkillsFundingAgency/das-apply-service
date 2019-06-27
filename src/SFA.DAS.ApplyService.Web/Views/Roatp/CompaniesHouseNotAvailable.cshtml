@@ -1,0 +1,23 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.UkprnSearchResultsViewModel
+
+<div class="grid-row">
+    <form asp-controller="RoatpApplicationPreamble" asp-action="EnterApplicationUkprn" method="get" name="backForm">
+        <input type="hidden" asp-for="UKPRN" />
+        <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+    </form>
+</div>
+
+<div class="govuk-width-container">
+
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-l">Companies House is unavailable</h1>
+                <p class="govuk-body">We were unable to get information from Companies House.</p>
+                <p class="govuk-body">You'll need to sign back in and continue with your application later.</p>
+                <p class="govuk-body"><a href="https://www.gov.uk">Back to GOV.UK</a></p>
+            </div>
+        </div>
+    </main>
+</div>
