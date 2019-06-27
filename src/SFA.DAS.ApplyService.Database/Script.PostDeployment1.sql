@@ -81,20 +81,38 @@ Post-Deployment Script Template
 -- WHERE  JSON_VALUE(QnAData, '$.FinancialApplicationGrade.SelectedGrade') = 'Excellent'
 -- GO
 
+-- AB 02/04/19 When coding has been done will need to swapout the templateIds for ApplyEPAOUpdate & ApplyEPAOResponse
+-- Was acf63bea-41ff-4a45-a376-9d557c30bca0 
+IF EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'ApplyEPAOUpdate' AND TemplateId = 'acf63bea-41ff-4a45-a376-9d557c30bca0')
+BEGIN
+UPDATE EmailTemplates SET TemplateId =  'ffe63c0d-b2b0-461f-b99a-73105d7d5fa3', UpdatedAt = GETDATE(), UpdatedBy ='System'
+WHERE TemplateName = N'ApplyEPAOUpdate'
+END
 
 IF NOT EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'ApplyEPAOUpdate')
 BEGIN
-INSERT EmailTemplates ([Id],[TemplateName],[TemplateId],[CreatedAt]) 
-VALUES (NEWID(), N'ApplyEPAOUpdate', N'ffe63c0d-b2b0-461f-b99a-73105d7d5fa3', GETDATE())
+INSERT EmailTemplates ([Id], [Status], [TemplateName],[TemplateId],[CreatedAt],[CreatedBy]) 
+VALUES (NEWID(), 'Live', N'ApplyEPAOUpdate', 'ffe63c0d-b2b0-461f-b99a-73105d7d5fa3', GETDATE(), 'System')
+END
+
+-- was 2ebc498c-2544-42db-b73e-a6c381c614df
+IF EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'ApplyEPAOResponse' AND TemplateId = '2ebc498c-2544-42db-b73e-a6c381c614df')
+BEGIN
+UPDATE EmailTemplates SET TemplateId =  N'84174eab-f3c1-4274-8670-2fb5b21cbd77', UpdatedAt = GETDATE(), UpdatedBy ='System'
+WHERE TemplateName = N'ApplyEPAOResponse'
 END
 
 IF NOT EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'ApplyEPAOResponse')
 BEGIN
-INSERT EmailTemplates ([Id],[TemplateName],[TemplateId],[CreatedAt]) 
-VALUES (NEWID(), N'ApplyEPAOResponse', N'84174eab-f3c1-4274-8670-2fb5b21cbd77', GETDATE())
+INSERT EmailTemplates ([Id], [Status],[TemplateName],[TemplateId],[CreatedAt],[CreatedBy]) 
+VALUES (NEWID(), 'Live', N'ApplyEPAOResponse', N'84174eab-f3c1-4274-8670-2fb5b21cbd77', GETDATE(), 'System')  
 END
 
+DELETE FROM EmailTemplates
+WHERE [TemplateName] IN ( 'EPAOUserApproveRequest' , 'EPAOUserApproveConfirm' )
+
 -- START OF: ON-1502 Fixes - Remove once deployed to PROD
+/*
 UPDATE [ApplicationSections]
    SET [Status] = 'Evaluated'
  WHERE [NotRequired] = 1
@@ -116,10 +134,12 @@ UPDATE app
  INNER JOIN [ApplicationSequences] seq ON app.Id = seq.ApplicationId
  WHERE seq.[NotRequired] = 1 AND seq.[SequenceId] = 1
 GO
+*/
 -- END OF: ON-1502 Fixes - Remove once deployed to PROD
 
 
 -- ON-1172 updating existing applications to include QuesstionTag against specific questions
+/*
 exec [Update_ApplicationSections_QuestionTags] 'CD-30', 'trading-name'
 exec [Update_ApplicationSections_QuestionTags] 'CD-01', 'use-trading-name'
 exec [Update_ApplicationSections_QuestionTags] 'CD-02', 'contact-name'
@@ -140,7 +160,7 @@ exec [Update_ApplicationSections_QuestionTags] 'CD-03_1', 'contact-address-1'
 exec [Update_ApplicationSections_QuestionTags] 'CD-03_2', 'contact-address-2'
 exec [Update_ApplicationSections_QuestionTags] 'CD-03_3', 'contact-address-3'
 exec [Update_ApplicationSections_QuestionTags] 'CD-03_4', 'contact-address-4'
-
+*/
 -- END OF: ON-1172 remove or comment out once deployed to PROD
 
 

@@ -15,7 +15,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     public interface IApplicationApiClient
     {
-        Task<List<Domain.Entities.Application>> GetApplicationsFor(Guid userId);
+        Task<List<Domain.Entities.Application>> GetApplications(Guid userId, bool createdBy);
 
         Task<UploadResult> Upload(Guid applicationId, string userId, int sequenceId, int sectionId, string pageId, IFormFileCollection files);
 
@@ -27,10 +27,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<Domain.Apply.Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid userId);
 
         Task<UpdatePageAnswersResult> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId, int sectionId,
-            string pageId, List<Answer> answers);
+            string pageId, List<Answer> answers, bool saveNewAnswers);
 
         Task<StartApplicationResponse> StartApplication(Guid userId);
-        Task Submit(Guid applicationId, int sequenceId, Guid userId, string userEmail);
+        Task<bool> Submit(Guid applicationId, int sequenceId, Guid userId, string userEmail);
         Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, Guid userId);
         Task ImportWorkflow(IFormFile file);
         Task UpdateApplicationData<T>(T applicationData, Guid applicationId);

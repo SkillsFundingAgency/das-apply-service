@@ -29,9 +29,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         public bool HasFeedback { get; set; }
+        public List<Feedback> Feedback { get; set; }
 
-        public List<Feedback> Feedback { get; set; }      
-        
         public string LinkTitle { get; set; }
 
         public string PageId { get; set; }
@@ -43,6 +42,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public string SequenceId { get; set; }
         public int SectionId { get; set; }
 
+        public bool AllowMultipleAnswers { get; set; }
         public List<PageOfAnswers> PageOfAnswers { get; set; }
         public string BodyText { get; set; }
         
@@ -60,6 +60,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             DisplayType = page.DisplayType;
             PageId = page.PageId;
             SequenceId = page.SequenceId;
+            AllowMultipleAnswers = page.AllowMultipleAnswers;
             if (errorMessages != null && errorMessages.Any())
             {
                 PageOfAnswers = page.PageOfAnswers.Take(page.PageOfAnswers.Count - 1).ToList();

@@ -9,9 +9,8 @@ namespace SFA.DAS.ApplyService.Application.Apply
 {
     public interface IApplyRepository
     {
-
-
-        Task<List<Domain.Entities.Application>> GetApplications(Guid userId);
+        Task<List<Domain.Entities.Application>> GetUserApplications(Guid userId);
+        Task<List<Domain.Entities.Application>> GetOrganisationApplications(Guid userId);
         Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId,  int sectionId, Guid? userId);
         Task<List<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid? userId);
         Task<List<ApplicationSection>> GetSections(Guid applicationId);
@@ -30,6 +29,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();
+        Task<bool> CanSubmitApplication(ApplicationSubmitRequest request);
         Task SubmitApplicationSequence(ApplicationSubmitRequest request, ApplicationData applicationdata);
         Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string sequenceStatus, string applicationStatus);
         Task CloseSequence(Guid applicationId, int sequenceId);
@@ -38,6 +38,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task UpdateApplicationData(Guid applicationId, ApplicationData applicationData);
         Task<Domain.Entities.Application> GetApplication(Guid requestApplicationId);
         Task UpdateApplicationStatus(Guid applicationId, string status);
+        Task DeleteRelatedApplications(Guid applicationId);
 
         Task StartApplicationReview(Guid applicationId, int sectionId);
         Task StartFinancialReview(Guid applicationId);

@@ -51,7 +51,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("Applications/{userId}")]
         public async Task<ActionResult<List<Domain.Entities.Application>>> GetApplications(string userId)
         {
-            return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId)));
+            return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), true));
+        }
+
+        [HttpGet("Applications/{userId}/Organisation")]
+        public async Task<ActionResult<List<Domain.Entities.Application>>> GetOrganisationApplications(string userId)
+        {
+            return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), false));
         }
 
         [HttpGet("Application/{applicationId}/User/{userId}/Sections")]
@@ -100,19 +106,18 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpPost("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
-        public async Task<ActionResult<UpdatePageAnswersResult>> Page(string applicationId, string userId, int sequenceId, int sectionId, string pageId, [FromBody] List<Answer> answers)
+        public async Task<ActionResult<UpdatePageAnswersResult>> Page(string applicationId, string userId, int sequenceId, int sectionId, string pageId, [FromBody] PageApplyRequest request)
         {
-            var updatedPage = await _mediator.Send(new UpdatePageAnswersRequest(Guid.Parse(applicationId), Guid.Parse(userId), sequenceId, sectionId, pageId, answers));
+            var updatedPage = await _mediator.Send(
+                new UpdatePageAnswersRequest(Guid.Parse(applicationId), Guid.Parse(userId), sequenceId, sectionId, pageId, request.Answers, request.SaveNewAnswers));
             return updatedPage;
         }
 
-
-
         [HttpPost("/Applications/Submit")]
-        public async Task<ActionResult> Submit([FromBody] ApplicationSubmitRequest request)
+        public async Task<ActionResult<bool>> Submit([FromBody] ApplicationSubmitRequest request)
         {
-            await _mediator.Send(request);
-            return Ok();
+            var submitted = await _mediator.Send(request);
+            return submitted;
         }
 
         [HttpPost("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/DeleteAnswer/{answerId}")]

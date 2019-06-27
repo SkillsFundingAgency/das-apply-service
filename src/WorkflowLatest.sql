@@ -12,7 +12,7 @@ INSERT INTO Assets
 VALUES
   (NEWID(), 'SQ-1-SE-1-PG-1-2', '', '', 'Live', GETUTCDATE(), 'Import')
 GO
-DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-1-3';
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-1-3'; 
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
@@ -144,6 +144,7 @@ INSERT INTO Assets
 VALUES
   (NEWID(), 'SQ-1-SE-1-PG-3-24', '', 'Contact details', 'Live', GETUTCDATE(), 'Import')
 GO
+
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-3-CD-02-25';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
@@ -154,7 +155,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-3-CD-02-26';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-3-CD-02-26', '', 'Full name', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-1-PG-3-CD-02-26', '', 'Given name', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-3-CD-02-27';
 INSERT INTO Assets
@@ -168,6 +169,32 @@ INSERT INTO Assets
 VALUES
   (NEWID(), 'SQ-1-SE-1-PG-3-CD-02-28', '', '', 'Live', GETUTCDATE(), 'Import')
 GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-3-CD-02_1-45';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-1-PG-3-CD-02_1-45', '', '', 'Live', GETUTCDATE(), 'Import')
+GO
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-3-CD-02_1-46';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-1-PG-3-CD-02_1-46', '', 'Family name', 'Live', GETUTCDATE(), 'Import')
+GO
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-3-CD-02_1-47';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-1-PG-3-CD-02_1-47', '', '', 'Live', GETUTCDATE(), 'Import')
+GO
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-3-CD-02_1-48';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-1-PG-3-CD-02_1-48', '', '', 'Live', GETUTCDATE(), 'Import')
+GO
+
 
 
 -- Old address field
@@ -395,7 +422,8 @@ INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
   (NEWID(), 'SQ-1-SE-1-PG-4-48', '', 'Contract notice contact details', 'Live', GETUTCDATE(), 'Import')
-GO
+Go
+
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-07-49';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
@@ -406,7 +434,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-07-50';
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-1-SE-1-PG-4-CD-07-50', '', 'Full name', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-1-SE-1-PG-4-CD-07-50', '', 'Given name', 'Live', GETUTCDATE(), 'Import')
 GO
 DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-07-51';
 INSERT INTO Assets
@@ -419,6 +447,31 @@ INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
   (NEWID(), 'SQ-1-SE-1-PG-4-CD-07-52', '', '', 'Live', GETUTCDATE(), 'Import')
+GO
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-07_1-69';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-1-PG-4-CD-07_1-69', '', '', 'Live', GETUTCDATE(), 'Import')
+GO
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-07_1-70';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-1-PG-4-CD-07_1-70', '', 'Family name', 'Live', GETUTCDATE(), 'Import')
+GO
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-07_1-71';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-1-PG-4-CD-07_1-71', '', '', 'Live', GETUTCDATE(), 'Import')
+GO
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-PG-4-CD-07_1-72';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-1-PG-4-CD-07_1-72', '', '', 'Live', GETUTCDATE(), 'Import')
 GO
 
 -- Old address field
@@ -3302,7 +3355,7 @@ VALUES
       "Questions": [
         {
           "QuestionId": "CD-02",
-		  "QuestionTag" : "contact-name",
+		  "QuestionTag" : "contact-given-name",
           "Label": "SQ-1-SE-1-PG-3-CD-02-26",
           "ShortLabel": "SQ-1-SE-1-PG-3-CD-02-27",
           "QuestionBodyText": "SQ-1-SE-1-PG-3-CD-02-28",
@@ -3314,7 +3367,27 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Enter name"
+                "ErrorMessage": "Enter given name"
+              }
+            ]
+          },
+          "Order": null
+        },
+		 {
+          "QuestionId": "CD-02_1",
+		  "QuestionTag" : "contact-family-name",
+          "Label": "SQ-1-SE-1-PG-3-CD-02_1-46",
+          "ShortLabel": "SQ-1-SE-1-PG-3-CD-02_1-47",
+          "QuestionBodyText": "SQ-1-SE-1-PG-3-CD-02_1-48",
+          "Hint": "SQ-1-SE-1-PG-3-CD-02_1-45",
+          "Input": {
+            "Type": "text",
+            "Options": null,
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Enter family name"
               }
             ]
           },
@@ -3497,7 +3570,26 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Enter name"
+                "ErrorMessage": "Enter given name"
+              }
+            ]
+          },
+          "Order": null
+        },
+		 {
+          "QuestionId": "CD-07_1",
+          "Label": "SQ-1-SE-1-PG-4-CD-07_1-70",
+          "ShortLabel": "SQ-1-SE-1-PG-4-CD-07_1-71",
+          "QuestionBodyText": "SQ-1-SE-1-PG-4-CD-07_1-72",
+          "Hint": "SQ-1-SE-1-PG-4-CD-07_1-69",
+          "Input": {
+            "Type": "text",
+            "Options": null,
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Enter family name"
               }
             ]
           },

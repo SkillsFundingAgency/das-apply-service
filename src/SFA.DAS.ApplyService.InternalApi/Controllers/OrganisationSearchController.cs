@@ -61,6 +61,44 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return Dedupe(results);
         }
 
+        [HttpGet("OrganisationSearchPaged")]
+        public async Task<PaginatedList<OrganisationSearchResult>> OrganisationSearchPaged(string searchTerm, int pageSize, int pageIndex)
+        {
+            _logger.LogInformation("Handling Organisation Search Request");
+            if (string.IsNullOrWhiteSpace(searchTerm) || searchTerm.Length < 2)
+            {
+                return new PaginatedList<OrganisationSearchResult>(new List<OrganisationSearchResult>(),0,1,1);
+            }
+
+            if (IsValidEpaOrganisationId(searchTerm))
+            {
+                _logger.LogInformation($@"Searching Organisations based on EPAO ID: [{searchTerm}]");
+                var orgByEpaoSearchResult = await OrganisationSearchByEpao(searchTerm);
+                var orgByEpaoSearchResultPaged = orgByEpaoSearchResult.Skip(pageSize*(pageIndex -1)).Take(pageSize);
+                return new PaginatedList<OrganisationSearchResult>(orgByEpaoSearchResultPaged.ToList(), orgByEpaoSearchResult.Count(), pageIndex, pageSize);
+            }
+
+            // NOTE: This is required because there are occasions where charity or company number can be interpreted as a ukprn
+            var results = new List<OrganisationSearchResult>();
+            if (IsValidUkprn(searchTerm, out var ukprn))
+            {
+                _logger.LogInformation($@"Searching Organisations based on UKPRN: [{searchTerm}]");
+                var resultFromUkprn = await OrganisationSearchByUkprn(ukprn);
+                if (resultFromUkprn != null) results.AddRange(resultFromUkprn);
+            }
+
+            _logger.LogInformation($@"Searching Organisations based on name or charity number or company number wildcard: [{searchTerm}]");
+            var resultFromName = await OrganisationSearchByNameOrCharityNumberOrCompanyNumber(searchTerm);
+            if (resultFromName != null) results.AddRange(resultFromName);
+
+            var organisationSearchResultList =  Dedupe(results);
+            organisationSearchResultList = organisationSearchResultList.OrderByDescending(x => x.OrganisationIsLive);
+
+            var organisationSearchResultListPaged = organisationSearchResultList.Skip(pageSize * (pageIndex -1)).Take(pageSize);
+            return new PaginatedList<OrganisationSearchResult>(organisationSearchResultListPaged.ToList(), organisationSearchResultList.Count(),pageIndex, pageSize);
+        }
+
+
         private bool IsValidEpaOrganisationId(string organisationIdToCheck)
         {
             var regex = new Regex(@"[eE][pP][aA][0-9]{4,9}$");
@@ -187,7 +225,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 }
             }
 
-            return results.GroupBy(r => r.Ukprn).Select(group => group.First()).ToList();
+            return results.ToList();
         }
 
         private async Task<IEnumerable<OrganisationSearchResult>> GetProviderRegisterResults(string name, IEnumerable<string> exactNames, int? ukprn)
@@ -315,7 +353,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                         CharityNumber = group.Select(g => g.CharityNumber).FirstOrDefault(CharityNumber => !string.IsNullOrWhiteSpace(CharityNumber)),
                         EasApiOrganisationType = group.Select(g => g.EasApiOrganisationType).FirstOrDefault(EasApiOrganisationType => !string.IsNullOrWhiteSpace(EasApiOrganisationType)),
                         FinancialDueDate = group.Select(g => g.FinancialDueDate).FirstOrDefault(FinancialDueDate => FinancialDueDate != null),
-                        FinancialExempt = group.Select(g => g.FinancialExempt).FirstOrDefault(FinancialExempt => FinancialExempt != null)
+                        FinancialExempt = group.Select(g => g.FinancialExempt).FirstOrDefault(FinancialExempt => FinancialExempt != null),
+                        OrganisationIsLive = group.Select(g => g.OrganisationIsLive).FirstOrDefault(OrganisationIsAlive => OrganisationIsAlive)
                     }
                 );
 
@@ -338,7 +377,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                         CharityNumber = group.Select(g => g.CharityNumber).FirstOrDefault(CharityNumber => !string.IsNullOrWhiteSpace(CharityNumber)),
                         EasApiOrganisationType = group.Select(g => g.EasApiOrganisationType).FirstOrDefault(EasApiOrganisationType => !string.IsNullOrWhiteSpace(EasApiOrganisationType)),
                         FinancialDueDate = group.Select(g => g.FinancialDueDate).FirstOrDefault(FinancialDueDate => FinancialDueDate != null),
-                        FinancialExempt = group.Select(g => g.FinancialExempt).FirstOrDefault(FinancialExempt => FinancialExempt != null)
+                        FinancialExempt = group.Select(g => g.FinancialExempt).FirstOrDefault(FinancialExempt => FinancialExempt != null),
+                        OrganisationIsLive = group.Select(g => g.OrganisationIsLive).FirstOrDefault(OrganisationIsAlive => OrganisationIsAlive)
                     }
                 );
 
@@ -361,7 +401,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                         CharityNumber = group.Select(g => g.CharityNumber).FirstOrDefault(CharityNumber => !string.IsNullOrWhiteSpace(CharityNumber)),
                         EasApiOrganisationType = group.Select(g => g.EasApiOrganisationType).FirstOrDefault(EasApiOrganisationType => !string.IsNullOrWhiteSpace(EasApiOrganisationType)),
                         FinancialDueDate = group.Select(g => g.FinancialDueDate).FirstOrDefault(FinancialDueDate => FinancialDueDate != null),
-                        FinancialExempt = group.Select(g => g.FinancialExempt).FirstOrDefault(FinancialExempt => FinancialExempt != null)
+                        FinancialExempt = group.Select(g => g.FinancialExempt).FirstOrDefault(FinancialExempt => FinancialExempt != null),
+                        OrganisationIsLive = group.Select(g => g.OrganisationIsLive).FirstOrDefault(OrganisationIsAlive => OrganisationIsAlive)
                     }
                 );
 
@@ -384,7 +425,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                         CharityNumber = group.Select(g => g.CharityNumber).FirstOrDefault(CharityNumber => !string.IsNullOrWhiteSpace(CharityNumber)),
                         EasApiOrganisationType = group.Select(g => g.EasApiOrganisationType).FirstOrDefault(EasApiOrganisationType => !string.IsNullOrWhiteSpace(EasApiOrganisationType)),
                         FinancialDueDate = group.Select(g => g.FinancialDueDate).FirstOrDefault(FinancialDueDate => FinancialDueDate != null),
-                        FinancialExempt = group.Select(g => g.FinancialExempt).FirstOrDefault(FinancialExempt => FinancialExempt != null)
+                        FinancialExempt = group.Select(g => g.FinancialExempt).FirstOrDefault(FinancialExempt => FinancialExempt != null),
+                        OrganisationIsLive = group.Select(g => g.OrganisationIsLive).FirstOrDefault(OrganisationIsLive => OrganisationIsLive)
                     }
                 );
 

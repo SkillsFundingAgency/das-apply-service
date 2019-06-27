@@ -1,9 +1,10 @@
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.ApplyService.Application.Apply.GetSection;
+using SFA.DAS.ApplyService.Application.Apply.Review.Feedback;
 using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -34,9 +35,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
 
             await _applyRepository.SaveSection(section);
 
-            var org = await UpdateApplyOrganisation(request);
+            if(request.UpdatedGrade.SelectedGrade == FinancialApplicationSelectedGrade.Inadequate
+                && !string.IsNullOrEmpty(request.UpdatedGrade.InadequateMoreInformation))
+            {
+                var pageId = section.QnAData.Pages.First(p => p.Active).PageId;
+                var feedback = new Feedback { Message = request.UpdatedGrade.InadequateMoreInformation, From = "Staff member", Date = DateTime.UtcNow, IsNew = true };
+                var addFeedbackRequest = new AddFeedbackRequest(section.ApplicationId, section.SequenceId, section.SectionId, pageId, feedback);
+                await _mediator.Send(addFeedbackRequest);
+            }
 
-            return org;
+            return await UpdateApplyOrganisation(request);
         }
 
         private async Task<Organisation> UpdateApplyOrganisation(UpdateGradeRequest request)
@@ -48,9 +56,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
                 FinancialExempt = request.UpdatedGrade.SelectedGrade == FinancialApplicationSelectedGrade.Exempt
             };
             
-            await _organisationRepository.UpdateOrganisation(org);
-
-            return org;
+            return await _organisationRepository.UpdateOrganisation(org);
         }
     }
 }
