@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,7 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
+    [Authorize]
     public class UploadController : Controller
     {
         private readonly IStorageService _storageService;
