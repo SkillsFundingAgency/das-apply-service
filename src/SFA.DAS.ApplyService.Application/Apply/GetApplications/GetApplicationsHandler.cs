@@ -17,7 +17,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.GetApplications
         
         public async Task<List<Domain.Entities.Application>> Handle(GetApplicationsRequest request, CancellationToken cancellationToken)
         {
-            return await _applyRepository.GetApplications(request.UserId);
+            if(!request.CreatedBy)
+            {
+                return await _applyRepository.GetOrganisationApplications(request.UserId);
+            }
+
+            return await _applyRepository.GetUserApplications(request.UserId);
         }
     }
 }

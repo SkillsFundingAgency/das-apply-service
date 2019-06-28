@@ -9,9 +9,8 @@ namespace SFA.DAS.ApplyService.Application.Apply
 {
     public interface IApplyRepository
     {
-
-
-        Task<List<Domain.Entities.Application>> GetApplications(Guid userId);
+        Task<List<Domain.Entities.Application>> GetUserApplications(Guid userId);
+        Task<List<Domain.Entities.Application>> GetOrganisationApplications(Guid userId);
         Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId,  int sectionId, Guid? userId);
         Task<List<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid? userId);
         Task<List<ApplicationSection>> GetSections(Guid applicationId);
