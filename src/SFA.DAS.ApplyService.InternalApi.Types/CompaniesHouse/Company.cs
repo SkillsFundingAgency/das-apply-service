@@ -19,5 +19,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.CompaniesHouse
         public Accounts Accounts { get; set; }
         public IEnumerable<Officer> Officers { get; set; }
         public IEnumerable<PersonWithSignificantControl> PeopleWithSignificantControl { get; set; }
+
+        public bool ManualEntryRequired { get; set; }
     }
 }

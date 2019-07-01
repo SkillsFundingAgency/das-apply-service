@@ -67,6 +67,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types
         public List<DirectorInformation> Directors { get; set; }
         public List<PersonSignificantControlInformation> PersonsSignificationControl { get; set; }
         public DateTime? IncorporationDate { get; set; }
+        public bool ManualEntryRequired { get; set; }
     }
 
     public class CharityCommissionDetails
