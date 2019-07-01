@@ -43,7 +43,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private RoatpApplicationPreambleController _controller;
 
         private CompaniesHouseSummary _activeCompany;
-        private Charity _activeCharity;
+        private ApiResponse<Charity> _activeCharity;
 
         private Contact _user;
         private ApplicationDetails _applicationDetails;
@@ -94,21 +94,26 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 Status = "active"
             };
 
-            _activeCharity = new Charity
+            _activeCharity = new ApiResponse<Charity>
             {
-                Status = "registered",
-                CharityNumber = "12345678",
-                Trustees = new List<Trustee>
+                Success = true,
+                Response = new Charity
                 {
-                    new Trustee
+                    Status = "registered",
+                    CharityNumber = "12345678",
+                    Trustees = new List<Trustee>
                     {
-                        Id = 1,
-                        Name = "MR A TRUSTEE"
-                    }
-                },
-                IncorporatedOn = new DateTime(2019, 1, 1),
-                DissolvedOn = null
+                        new Trustee
+                        {
+                            Id = 1,
+                            Name = "MR A TRUSTEE"
+                        }
+                    },
+                    IncorporatedOn = new DateTime(2019, 1, 1),
+                    DissolvedOn = null
+                }
             };
+                
 
             _applicationDetails = new ApplicationDetails
             {
@@ -535,7 +540,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>())).Verifiable();
 
-            _activeCharity.CharityNumber = charityNumber;
+            _activeCharity.Response.CharityNumber = charityNumber;
 
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(Task.FromResult(_activeCompany)).Verifiable();
             _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Returns(Task.FromResult(_activeCharity)).Verifiable();
@@ -696,11 +701,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
 
-            var inactiveCharity = new Charity
+            var inactiveCharity = new ApiResponse<Charity>()
             {
-                Status = "removed",
-                DissolvedOn = new DateTime(2010, 1, 1)
+                Success = true,
+                Response = new Charity
+                {
+                    Status = "removed",
+                    DissolvedOn = new DateTime(2010, 1, 1)
+                }
             };
+            
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Verifiable();
             _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Returns(Task.FromResult(inactiveCharity)).Verifiable();
 
@@ -775,7 +785,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 UkrlpLookupDetails = providerDetails
             };
 
-            _activeCharity.IncorporatedOn = DateTime.Today.AddMonths(-1 * monthsRequired).AddDays(1);
+            _activeCharity.Response.IncorporatedOn = DateTime.Today.AddMonths(-1 * monthsRequired).AddDays(1);
 
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(Task.FromResult(_activeCompany)).Verifiable();

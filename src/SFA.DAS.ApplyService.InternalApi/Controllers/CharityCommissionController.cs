@@ -7,6 +7,7 @@
     using Polly;
     using Polly.Retry;
     using System;
+    using Microsoft.AspNetCore.Http;
 
     public class CharityCommissionController : Controller
     {
@@ -26,14 +27,22 @@
         [Route("charity-commission-lookup")]
         public async Task<IActionResult> CharityDetails(int charityNumber)
         {
-            var charityDetails = await _retryPolicy.ExecuteAsync(context => _apiClient.GetCharity(charityNumber), new Context());
-
-            if (charityDetails == null)
+            try
             {
-                return NotFound();
-            }
+                var charityDetails =
+                    await _retryPolicy.ExecuteAsync(context => _apiClient.GetCharity(charityNumber), new Context());
 
-            return Ok(charityDetails);
+                if (charityDetails == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(charityDetails);
+            }
+            catch (ServiceUnavailableException)
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable);
+            }
         }
 
         private AsyncRetryPolicy GetRetryPolicy()

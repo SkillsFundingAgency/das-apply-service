@@ -285,6 +285,12 @@
             return View("~/Views/Roatp/CompaniesHouseNotAvailable.cshtml");
         }
 
+        [Route("charity-commission-unavailable")]
+        public async Task<IActionResult> CharityCommissionNotAvailable()
+        {
+            return View("~/Views/Roatp/CharityCommissionNotAvailable.cshtml");
+        }
+
         private async Task<IActionResult> CheckIfOrganisationAlreadyOnRegister(long ukprn)
         {
             var registerStatus = await _roatpApiClient.UkprnOnRegister(ukprn);
@@ -363,7 +369,13 @@
                         return RedirectToAction("CharityNotFound");
                     }
 
-                    charityDetails = await _charityCommissionApiClient.GetCharityDetails(charityNumber);
+                    var charityApiResponse = await _charityCommissionApiClient.GetCharityDetails(charityNumber);
+
+                    if (!charityApiResponse.Success)
+                    {
+                        return RedirectToAction("CharityCommissionNotAvailable");
+                    } 
+                    charityDetails = charityApiResponse.Response;
 
                     if (!charityDetails.IsActivelyTrading)
                     {

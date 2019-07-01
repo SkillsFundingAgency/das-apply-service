@@ -40,7 +40,7 @@
                 return NotFound();
             }
 
-            return Ok(companyDetails);
+            return Ok(companyDetails.Response);
         }
 
         private AsyncRetryPolicy GetRetryPolicy()
