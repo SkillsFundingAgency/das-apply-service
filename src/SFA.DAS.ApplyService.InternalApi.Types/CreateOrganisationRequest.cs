@@ -73,5 +73,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Types
     {
         public DateTime? RegistrationDate { get; set; }
         public List<Trustee> Trustees { get; set; }
+        public bool TrusteeManualEntryRequired { get; set; }
     }
 }

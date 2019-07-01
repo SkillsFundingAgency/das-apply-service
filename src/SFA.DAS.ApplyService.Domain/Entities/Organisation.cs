@@ -70,5 +70,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     {
         public DateTime? RegistrationDate { get; set; }
         public List<Trustee> Trustees { get; set; }
+        public bool TrusteeManualEntryRequired { get; set; }
     }
 }

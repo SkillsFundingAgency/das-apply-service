@@ -44,7 +44,8 @@ namespace SFA.DAS.ApplyService.Web.AutoMapper
                 destMember.CharityCommissionDetails = new CharityCommissionDetails
                 {
                     RegistrationDate = source.CharitySummary.IncorporatedOn,
-                    Trustees = Mapper.Map<List<Domain.CharityCommission.Trustee>>(source.CharitySummary.Trustees)
+                    Trustees = Mapper.Map<List<Domain.CharityCommission.Trustee>>(source.CharitySummary.Trustees),
+                    TrusteeManualEntryRequired = source.CharitySummary.TrusteeManualEntryRequired
                 };
             }
 
