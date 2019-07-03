@@ -35,30 +35,19 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
         public async Task<ApiResponse<Company>> GetCompany(string companyNumber)
         {
-            try
-            {
-                var company = await GetCompanyDetails(companyNumber);
+            var company = await GetCompanyDetails(companyNumber);
 
-                if (company != null)
-                {
-                    company.Officers = await GetOfficers(companyNumber);
-                    company.PeopleWithSignificantControl = await GetPeopleWithSignificantControl(companyNumber);
-                }
-
-                return new ApiResponse<Company>
-                {
-                    Success = true,
-                    Response = company
-                };
-            }
-            catch (ServiceUnavailableException)
+            if (company != null)
             {
-                return new ApiResponse<Company>
-                {
-                    Success = false
-                };
+                company.Officers = await GetOfficers(companyNumber);
+                company.PeopleWithSignificantControl = await GetPeopleWithSignificantControl(companyNumber);
             }
 
+            return new ApiResponse<Company>
+            {
+                Success = true,
+                Response = company
+            };        
         }
 
         public async Task<bool> IsCompanyActivelyTrading(string companyNumber)

@@ -28,19 +28,27 @@
         [Route("companies-house-lookup")]
         public async Task<IActionResult> CompanyDetails(string companyNumber)
         {
-            var companyDetails = await _retryPolicy.ExecuteAsync(context => _apiClient.GetCompany(companyNumber), new Context());
-            
-            if (!companyDetails.Success)
+            try
+            {
+                var companyDetails =
+                    await _retryPolicy.ExecuteAsync(context => _apiClient.GetCompany(companyNumber), new Context());
+
+                if (!companyDetails.Success)
+                {
+                    return StatusCode(StatusCodes.Status503ServiceUnavailable);
+                }
+
+                if (companyDetails.Response == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(companyDetails.Response);
+            }
+            catch (ServiceUnavailableException)
             {
                 return StatusCode(StatusCodes.Status503ServiceUnavailable);
             }
-
-            if (companyDetails.Response == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(companyDetails.Response);
         }
 
         private AsyncRetryPolicy GetRetryPolicy()
