@@ -29,5 +29,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.CharityCommission
                 return Status.Equals("registered", StringComparison.InvariantCultureIgnoreCase) && DissolvedOn == null;
             }
         }
+        
+        public bool TrusteeManualEntryRequired { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -18,6 +19,7 @@
     using Validators;
     using Microsoft.AspNetCore.Authorization;
     using SFA.DAS.ApplyService.InternalApi.Types;
+    using Trustee = Domain.CharityCommission.Trustee;
 
     [Authorize]
     public class RoatpApplicationPreambleController : Controller
@@ -224,6 +226,19 @@
             return View("~/Views/Roatp/InvalidCompanyTradingHistory.cshtml", viewModel);
         }
 
+        [Route("start-application")]
+        public async Task<IActionResult> StartApplication()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var viewModel = new UkprnSearchResultsViewModel
+            {
+                UKPRN = applicationDetails.UKPRN.ToString()
+            };
+
+            return View("~/Views/Roatp/InvalidCompanyTradingHistory.cshtml", viewModel);
+        }
+
         public async Task<IActionResult> InvalidCharityFormationHistory()
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
@@ -324,7 +339,6 @@
 
             return RedirectToAction("StartApplication");
         }
-
 
         private bool CompanyReturnsFullDetails(string companyNumber)
         {

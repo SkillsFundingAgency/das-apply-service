@@ -12,6 +12,7 @@ namespace SFA.DAS.ApplyService.Web.AutoMapper
                 .ForMember(dest => dest.CharityNumber, opt => opt.MapFrom(source => source.CharityNumber))
                 .ForMember(dest => dest.IncorporatedOn, opt => opt.MapFrom(source => source.IncorporatedOn))
                 .ForMember(dest => dest.Trustees, opt => opt.MapFrom(source => source.Trustees))
+                .ForMember(dest => dest.TrusteeManualEntryRequired, opt => opt.MapFrom(source => source.TrusteeManualEntryRequired))
                 .ForAllOtherMembers(opt => opt.Ignore());
         }
     }
