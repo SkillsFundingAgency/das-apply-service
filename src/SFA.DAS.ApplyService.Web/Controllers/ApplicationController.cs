@@ -211,14 +211,21 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}"), ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
-            var canUpdate = await CanUpdateApplication(applicationId, sequenceId);
-            if (!canUpdate)
+            var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
+            if (!CanUpdateApplication(sequence, sequenceId))
             {
                 return RedirectToAction("Sequence", new { applicationId });
             }
 
             PageViewModel viewModel = null;
             var returnUrl = Request.Headers["Referer"].ToString();
+
+            string pageContext = string.Empty;
+            if (sequence.SequenceId == SequenceId.Stage2)
+            {
+                var application = await _apiClient.GetApplication(applicationId);
+                pageContext = $"{application?.ApplicationData?.StandardReference } {application?.ApplicationData?.StandardName}";
+            }
 
             if (!ModelState.IsValid)
             {
@@ -233,7 +240,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     })).ToList()
                     : null;
 
-                viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, redirectAction,
+                viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, pageContext, redirectAction,
                     returnUrl, errorMessages);
             }
             else
@@ -259,7 +266,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 page = await GetDataFedOptions(page);
 
-                viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, redirectAction,
+                viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, pageContext, redirectAction,
                     returnUrl, null);
 
                 ProcessPageVmQuestionsForStandardName(viewModel.Questions, applicationId);
@@ -275,11 +282,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private async Task<bool> CanUpdateApplication(Guid applicationId, int sequenceId)
         {
+            var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
+            return CanUpdateApplication(sequence, sequenceId);
+        }
+
+        private bool CanUpdateApplication(ApplicationSequence sequence, int sequenceId)
+        {
             bool canUpdate = false;
 
-            var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
-
-            if(sequence?.Status != null && (int)sequence.SequenceId == sequenceId)
+            if (sequence?.Status != null && (int)sequence.SequenceId == sequenceId)
             {
                 canUpdate = sequence.Status == ApplicationSequenceStatus.Draft || sequence.Status == ApplicationSequenceStatus.FeedbackAdded;
             }
@@ -604,7 +615,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 ReferenceNumber = application?.ApplicationData?.ReferenceNumber,
                 FeedbackUrl = config.FeedbackUrl,
-                StandardName = application?.ApplicationData?.StandardName
+                StandardName = application?.ApplicationData?.StandardName,
+                StandardReference = application?.ApplicationData?.StandardReference,
+                StandardLevel = application?.ApplicationData?.StandardLevel
             });
         }
 
