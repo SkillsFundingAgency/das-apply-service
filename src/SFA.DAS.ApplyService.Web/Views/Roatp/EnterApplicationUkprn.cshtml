@@ -1,11 +1,17 @@
 ﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.SearchByUkprnViewModel
 
 @{
-    ViewBag.Title = "Enter the UKPRN";
+    ViewBag.Title = "What is your organisation's UK provider reference number (UKPRN)?";
     Layout = "_Layout";
 
-    bool showErrors = TempData["ShowErrors"] as bool? ?? false;
+    bool showErrors = !ViewData.ModelState.IsValid;
 }
+
+<div class="grid-row">
+    <form asp-controller="RoatpApplicationPreamble" asp-action="TermsAndConditions" method="get" name="backForm">
+        <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+    </form>
+</div>
 
 @if (!ViewData.ModelState.IsValid || showErrors)
 {
@@ -27,24 +33,40 @@
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-l">Enter your UKPRN</h1>
+                <h1 class="govuk-heading-l">What is your organisation's UK provider reference number (UKPRN)?</h1>
+                <p class="govuk-body">This is an 8-digit number from the UK Register of Learning Providers (UKRLP).</p>
             </div>
         </div>
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <form method="post" asp-action="SearchByUkprn" asp-controller="RoatpApplicationPreamble">
-
-                    <input type="hidden" asp-for="ApplicationRouteId" />
-
-                    <div class="govuk-form-group" sfa-validation-for="UKPRN" sfa-validationerror-class="form-group-error">
+                    
+                    <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="UKPRN" sfa-validationerror-class="form-group-error">
+                        @if (showErrors)
+                        {
+                            <span class="govuk-error-message" data-valmsg-for="UKPRN" data-valmsg-replace="true" sfa-validation-for="UKPRN"></span>
+                        }
+                        
                         <label for="UKPRN" class="govuk-label">UKPRN</label>
 
                         <input id="UKPRN" name="UKPRN" type="text" class="govuk-input govuk-!-width-one-third" asp-for="UKPRN"
                                sfa-validation-for="UKPRN" sfa-validationerror-class="form-control-error" />
                     </div>
+                    
+                    <details class="govuk-details" role="group">
+                        <summary class="govuk-details__summary" role="button" aria-controls="details-content-ukprn" aria-expanded="false">
+                            <span class="govuk-details__summary-text">
+                                I do not have a UKPRN
+                            </span>
+                        </summary>
+                        <div class="govuk-details__text" id="details-content-ukprn" aria-hidden="true">
+                            <p>To get a UKPRN, you’ll need to <a href="https://www.ukrlp.co.uk/" target="_blank">register with the UKRLP (opens in a new window or tab)</a>.</p>
+                            <p>After you’ve registered and received a UKPRN, sign back in to continue with this application.</p>
+                        </div>
+                    </details>
 
-                    <input type="submit" class="govuk-button" value="Search" />
+                    <input type="submit" class="govuk-button" value="Save and continue" />
                 </form>
             </div>
         </div>

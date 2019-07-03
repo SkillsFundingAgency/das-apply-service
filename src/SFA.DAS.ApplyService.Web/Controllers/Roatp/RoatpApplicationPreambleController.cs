@@ -19,7 +19,7 @@
     using Validators;
     using Microsoft.AspNetCore.Authorization;
     using SFA.DAS.ApplyService.InternalApi.Types;
-    using Trustee = Domain.CharityCommission.Trustee;
+    using SFA.DAS.ApplyService.Web.Resources;
 
     [Authorize]
     public class RoatpApplicationPreambleController : Controller
@@ -56,48 +56,50 @@
             _usersApiClient = usersApiClient;
         }
 
-        [Route("select-application-route")]
-        public async Task<IActionResult> SelectApplicationRoute()
+        [Route("terms-conditions-making-application")]
+        public async Task<IActionResult> TermsAndConditions()
         {
-            var applicationRoutes = await _roatpApiClient.GetApplicationRoutes();
-
-            var viewModel = new SelectApplicationRouteViewModel
-            {
-                ApplicationRoutes = applicationRoutes
-            };
-
-            return View("~/Views/Roatp/SelectApplicationRoute.cshtml", viewModel);
+            return View("~/Views/Roatp/TermsAndConditions.cshtml");
         }
 
-        [Route("enter-your-ukprn")]
-        public async Task<IActionResult> EnterApplicationUkprn(SelectApplicationRouteViewModel model)
+        [Route("not-accept-terms-conditions")]
+        public async Task<IActionResult> TermsAndConditionsNotAgreed()
         {
-            model.ApplicationRoutes = await _roatpApiClient.GetApplicationRoutes();
+            return View("~/Views/Roatp/TermsAndConditionsNotAgreed.cshtml");
+        }
 
-            if (!ModelState.IsValid)
+        [Route("enter-uk-provider-reference-number")]
+        public async Task<IActionResult> EnterApplicationUkprn(string ukprn)
+        {
+            var model = new SearchByUkprnViewModel();
+            if (!String.IsNullOrWhiteSpace(ukprn))
             {
-                return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
+                model.UKPRN = ukprn;
             }
-
-            var applicationDetails = new ApplicationDetails
-            {
-                ApplicationRoute = model.ApplicationRoutes.FirstOrDefault(x => x.Id == model.ApplicationRouteId)
-            };
-
-            _sessionService.Set(ApplicationDetailsKey, applicationDetails);
-
-            var viewModel = new SearchByUkprnViewModel { ApplicationRouteId = model.ApplicationRouteId };
-
-            return View("~/Views/Roatp/EnterApplicationUkprn.cshtml", viewModel);
+            return View("~/Views/Roatp/EnterApplicationUkprn.cshtml", model);
         }
 
         [HttpPost]
         public async Task<IActionResult> SearchByUkprn(SearchByUkprnViewModel model)
         {
-            long ukprn;
-            if (!UkprnValidator.IsValidUkprn(model.UKPRN, out ukprn))
+            long ukprn = 0;
+            string validationMessage = string.Empty;
+            if (String.IsNullOrWhiteSpace(model.UKPRN))
             {
-                ModelState.AddModelError(nameof(model.UKPRN), "Enter a valid UKPRN");
+                validationMessage = UkprnValidationMessages.MissingUkprn;
+            }
+            else
+            {
+                bool isValidUkprn = UkprnValidator.IsValidUkprn(model.UKPRN, out ukprn);
+                if (!isValidUkprn)
+                {
+                    validationMessage = UkprnValidationMessages.InvalidUkprn;
+                }
+            }
+
+            if (!String.IsNullOrEmpty(validationMessage))
+            {
+                ModelState.AddModelError(nameof(model.UKPRN), validationMessage);
                 TempData["ShowErrors"] = true;
 
                 return View("~/Views/Roatp/EnterApplicationUkprn.cshtml", model);
@@ -107,40 +109,189 @@
 
             if (matchingResults.Any())
             {
-                var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-                applicationDetails.UkrlpLookupDetails = matchingResults.FirstOrDefault();
+                var applicationDetails = new ApplicationDetails
+                {
+                    UKPRN = ukprn,
+                    UkrlpLookupDetails = matchingResults.FirstOrDefault()
+                };
 
                 _sessionService.Set(ApplicationDetailsKey, applicationDetails);
-
-                var registerStatus = await _roatpApiClient.UkprnOnRegister(ukprn);
-
-                if (registerStatus.ExistingUKPRN)
-                {
-                    if (registerStatus.ProviderTypeId != applicationDetails.ApplicationRoute.Id
-                        || registerStatus.StatusId == OrganisationRegisterStatus.RemovedStatus)
-                    {
-                        return RedirectToAction("UkprnFound");
-                    }
-                    else
-                    {
-                        return RedirectToAction("UkprnActive");
-                    }
-                }
                 
-                return RedirectToAction("UkprnFound");
+                return RedirectToAction("ConfirmOrganisation");
             }
             else
             {
-                var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-                applicationDetails.UKPRN = ukprn;
+                var applicationDetails = new ApplicationDetails
+                {
+                    UKPRN = ukprn
+                };
 
                 _sessionService.Set(ApplicationDetailsKey, applicationDetails);
                 return RedirectToAction("UkprnNotFound");
             }
         }
 
-        [Route("confirm-organisation-details")]
-        public async Task<IActionResult> UkprnFound()
+        [Route("confirm-organisations-details")]
+        public async Task<IActionResult> ConfirmOrganisation()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+            
+            var viewModel = new UkprnSearchResultsViewModel
+            {
+                ProviderDetails = applicationDetails.UkrlpLookupDetails,
+                UKPRN = applicationDetails.UkrlpLookupDetails.UKPRN
+            };
+
+            return View("~/Views/Roatp/ConfirmOrganisation.cshtml", viewModel);
+        }
+       
+        [Route("uk-provider-reference-number-not-found")]
+        public async Task<IActionResult> UkprnNotFound()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var viewModel = new UkprnSearchResultsViewModel
+            {
+                UKPRN = applicationDetails.UKPRN.ToString()
+            };
+
+            return View("~/Views/Roatp/UkprnNotFound.cshtml", viewModel);
+        }
+ 
+        [Route("already-on-register")]
+        public async Task<IActionResult> UkprnActive()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var viewModel = new UkprnSearchResultsViewModel
+            {
+                UKPRN = applicationDetails.UKPRN.ToString()
+            };
+
+            return View("~/Views/Roatp/UkprnActive.cshtml", viewModel);
+        }
+
+        [Route("company-not-active")]
+        public async Task<IActionResult> CompanyNotActive()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var viewModel = new UkprnSearchResultsViewModel
+            {
+                UKPRN = applicationDetails.UKPRN.ToString()
+            };
+
+            return View("~/Views/Roatp/CompanyNotActive.cshtml", viewModel);
+        }
+
+        [Route("company-not-found")]
+        public async Task<IActionResult> CompanyNotFound()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var viewModel = new UkprnSearchResultsViewModel
+            {
+                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
+                UKPRN = applicationDetails.UKPRN.ToString()
+            };
+
+            return View("~/Views/Roatp/CompanyNotFound.cshtml", viewModel);
+        }
+
+        [Route("charity-not-active")]
+        public async Task<IActionResult> CharityNotActive()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var viewModel = new UkprnSearchResultsViewModel
+            {
+                UKPRN = applicationDetails.UKPRN.ToString()
+            };
+
+            return View("~/Views/Roatp/CharityNotActive.cshtml", viewModel);
+        }
+
+        [Route("charity-not-found")]
+        public async Task<IActionResult> CharityNotFound()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var viewModel = new UkprnSearchResultsViewModel
+            {
+                UKPRN = applicationDetails.UKPRN.ToString()
+            };
+
+            return View("~/Views/Roatp/CharityNotFound.cshtml", viewModel);
+        }
+
+        public async Task<IActionResult> InvalidCompanyTradingHistory()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var viewModel = new UkprnSearchResultsViewModel
+            {
+                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
+                UKPRN = applicationDetails.UKPRN.ToString()
+            };
+
+            return View("~/Views/Roatp/InvalidCompanyTradingHistory.cshtml", viewModel);
+        }
+        
+        [Route("start-application")]
+        public async Task<IActionResult> StartApplication()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
+
+            applicationDetails.CreatedBy = user.Id;
+
+            var createOrganisationRequest = Mapper.Map<CreateOrganisationRequest>(applicationDetails);
+
+            var organisation = await _organisationApiClient.Create(createOrganisationRequest, user.Id);
+
+            if (!user.IsApproved)
+            {
+                await _usersApiClient.ApproveUser(user.Id);
+            }
+
+            return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
+        }
+
+        public async Task<IActionResult> InvalidCharityFormationHistory()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var viewModel = new UkprnSearchResultsViewModel
+            {
+                UKPRN = applicationDetails.UKPRN.ToString()
+            };
+
+            return View("~/Views/Roatp/InvalidCharityFormationHistory.cshtml", viewModel);
+        }
+
+        private async Task<IActionResult> CheckIfOrganisationAlreadyOnRegister(long ukprn)
+        {
+            var registerStatus = await _roatpApiClient.UkprnOnRegister(ukprn);
+
+            if (registerStatus.ExistingUKPRN)
+            {
+                var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+                if (registerStatus.ProviderTypeId != applicationDetails.ApplicationRoute.Id
+                    || registerStatus.StatusId == OrganisationRegisterStatus.RemovedStatus)
+                {
+                    return RedirectToAction("ConfirmOrganisation");
+                }
+                else
+                {
+                    return RedirectToAction("UkprnActive");
+                }
+            }
+
+            return RedirectToAction("ConfirmOrganisation");
+        }
+        
+        public async Task<IActionResult> VerifyOrganisationDetails()
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
             var providerDetails = applicationDetails.UkrlpLookupDetails;
@@ -153,13 +304,13 @@
                         x.VerificationAuthority == VerificationAuthorities.CompaniesHouseAuthority);
 
                 companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companiesHouseVerification.VerificationId);
-                
+
                 if (!CompanyReturnsFullDetails(companyDetails.CompanyNumber))
                 {
                     companyDetails.ManualEntryRequired = true;
                 }
-                
-                if (String.IsNullOrWhiteSpace(companyDetails.Status) 
+
+                if (String.IsNullOrWhiteSpace(companyDetails.Status)
                     || companyDetails.Status.ToLower() != CompaniesHouseSummary.CompanyStatusActive)
                 {
                     if (companyDetails.Status == CompaniesHouseSummary.CompanyStatusNotFound)
@@ -168,13 +319,7 @@
                     }
                     return RedirectToAction("CompanyNotActive");
                 }
-
-                if (!ProviderHistoryValidator.HasSufficientHistory(applicationDetails.ApplicationRoute.Id,
-                    companyDetails.IncorporationDate))
-                {
-                    return RedirectToAction("InvalidCompanyTradingHistory");
-                }
-
+                
                 applicationDetails.CompanySummary = companyDetails;
             }
 
@@ -204,170 +349,14 @@
                     {
                         return RedirectToAction("CharityNotActive");
                     }
-
-                    if (!ProviderHistoryValidator.HasSufficientHistory(applicationDetails.ApplicationRoute.Id,
-                        charityDetails.IncorporatedOn))
-                    {
-                        return RedirectToAction("InvalidCharityFormationHistory");
-                    }
-
+                    
                     applicationDetails.CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails);
-                }
-                else
-                {
-                    applicationDetails.CharitySummary = new CharityCommissionSummary
-                    {
-                        CharityNumber = charityCommissionVerification.VerificationId,
-                        TrusteeManualEntryRequired = true,
-                        Trustees = new List<Trustee>()
-                    };
                 }
             }
 
             _sessionService.Set(ApplicationDetailsKey, applicationDetails);
 
-                var viewModel = new UkprnSearchResultsViewModel
-                {
-                    ProviderDetails = applicationDetails.UkrlpLookupDetails,
-                    ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
-                    UKPRN = applicationDetails.UkrlpLookupDetails.UKPRN,
-                    CompaniesHouseInformation = applicationDetails.CompanySummary,
-                    CharityCommissionInformation = applicationDetails.CharitySummary
-                };
-            
-
-            return View("~/Views/Roatp/UkprnFound.cshtml", viewModel);
-        }
-
-        [Route("organisation-not-found")]
-        public async Task<IActionResult> UkprnNotFound()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
-                UKPRN = applicationDetails.UKPRN.ToString()
-            };
-
-            return View("~/Views/Roatp/UkprnNotFound.cshtml", viewModel);
-        }
-
-        [Route("already-on-register")]
-        public async Task<IActionResult> UkprnActive()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
-                UKPRN = applicationDetails.UKPRN.ToString()
-            };
-
-            return View("~/Views/Roatp/UkprnActive.cshtml", viewModel);
-        }
-
-        [Route("company-not-active")]
-        public async Task<IActionResult> CompanyNotActive()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
-                UKPRN = applicationDetails.UKPRN.ToString()
-            };
-
-            return View("~/Views/Roatp/CompanyNotActive.cshtml", viewModel);
-        }
-
-        [Route("company-not-found")]
-        public async Task<IActionResult> CompanyNotFound()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
-                UKPRN = applicationDetails.UKPRN.ToString()
-            };
-
-            return View("~/Views/Roatp/CompanyNotFound.cshtml", viewModel);
-        }
-
-        [Route("charity-not-active")]
-        public async Task<IActionResult> CharityNotActive()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
-                UKPRN = applicationDetails.UKPRN.ToString()
-            };
-
-            return View("~/Views/Roatp/CharityNotActive.cshtml", viewModel);
-        }
-
-        [Route("charity-not-found")]
-        public async Task<IActionResult> CharityNotFound()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
-                UKPRN = applicationDetails.UKPRN.ToString()
-            };
-
-            return View("~/Views/Roatp/CharityNotFound.cshtml", viewModel);
-        }
-
-        public async Task<IActionResult> InvalidCompanyTradingHistory()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
-                UKPRN = applicationDetails.UKPRN.ToString()
-            };
-
-            return View("~/Views/Roatp/InvalidCompanyTradingHistory.cshtml", viewModel);
-        }
-
-        public async Task<IActionResult> InvalidCharityFormationHistory()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
-                UKPRN = applicationDetails.UKPRN.ToString()
-            };
-
-            return View("~/Views/Roatp/InvalidCharityFormationHistory.cshtml", viewModel);
-        }
-
-        [Route("start-application")]
-        public async Task<IActionResult> StartApplication()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
-
-            applicationDetails.CreatedBy = user.Id;
-
-            var createOrganisationRequest = Mapper.Map<CreateOrganisationRequest>(applicationDetails);
-            
-            var organisation = await _organisationApiClient.Create(createOrganisationRequest, user.Id);
-
-            if (!user.IsApproved)
-            {
-                await _usersApiClient.ApproveUser(user.Id);
-            }
-
-            return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.RegisterTrainingProviders } );
+            return RedirectToAction("StartApplication");
         }
 
         private bool CompanyReturnsFullDetails(string companyNumber)
@@ -405,5 +394,6 @@
 
             return true;
         }
+
     }
 }

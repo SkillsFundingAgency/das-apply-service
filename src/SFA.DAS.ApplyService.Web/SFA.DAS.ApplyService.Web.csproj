@@ -39,6 +39,19 @@
     <ProjectReference Include="..\SFA.DAS.ApplyService.DfeSignIn\SFA.DAS.ApplyService.DfeSignIn.csproj" />
     <ProjectReference Include="..\SFA.DAS.ApplyService.InternalApi.Types\SFA.DAS.ApplyService.InternalApi.Types.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Resources\UkprnValidationMessages.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>UkprnValidationMessages.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\UkprnValidationMessages.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>UkprnValidationMessages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
 
   <Target Name="ChangeAliasesOfStrongNameAssemblies" BeforeTargets="FindReferenceAssembliesForReferences;ResolveReferences">
     <ItemGroup>

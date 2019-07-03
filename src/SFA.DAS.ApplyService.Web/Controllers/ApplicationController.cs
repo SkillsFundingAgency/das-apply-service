@@ -58,9 +58,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (!applications.Any())
             {
-                if (org != null && org.RoEPAOApproved)
+                if (applicationType == ApplicationTypes.EndpointAssessor)
                 {
-                      return await StartApplication(userId, applicationType);
+                    if (org != null && org.RoEPAOApproved)
+                    {
+                        return await StartApplication(userId, applicationType);
+                    }
+                }
+
+                if (applicationType == ApplicationTypes.RegisterTrainingProviders)
+                {
+                    return await StartApplication(userId, applicationType);
                 }
 
                 if (org == null)

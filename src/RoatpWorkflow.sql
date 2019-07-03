@@ -41,9 +41,27 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,'Draft'
            ,1)
 		   
--- REMOVE LATER
--- This is just to test that we can start a new workflow with a new workflow
-		   
+
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-APR-PG-1-1';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-1-APR-PG-1-1', '', 'Provider route', 'Live', GETUTCDATE(), 'Import')
+GO
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-APR-PG-1-2';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-1-APR-PG-1-2', '', 'Choose your organisation''s provider route', 'Live', GETUTCDATE(), 'Import')
+GO
+DELETE FROM Assets WHERE Reference = 'SQ-1-SE-1-APR-PG-1-3';
+INSERT INTO Assets
+  (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
+VALUES
+  (NEWID(), 'SQ-1-SE-1-APR-PG-1-3', '', '', 'Live', GETUTCDATE(), 'Import')
+GO
+	
+	
 INSERT [dbo].[WorkflowSections]
   ([Id], [WorkflowId], [SequenceId], [SectionId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType], [DisallowedOrgTypes])
 VALUES
@@ -51,55 +69,48 @@ VALUES
 {
   "Pages": [
     {
-      "PageId": "23",
+      "PageId": "1",
       "SequenceId": "1",
-      "SectionId": "3",
-      "Title": "SQ-1-SE-3-PG-23-441",
-      "LinkTitle": "SQ-1-SE-3-PG-23-444",
-      "InfoText": "SQ-1-SE-3-PG-23-443",
-      "Details": {
-        "Title": "SQ-1-SE-2-PG-23-DT-1",
-        "Body": "SQ-1-SE-2-PG-23-DB-1"
-      },
+      "SectionId": "1",
+      "Title": "SQ-1-SE-1-APR-PG-1-2",
+      "LinkTitle": "SQ-1-SE-1-APR-PG-1-1",
+      "InfoText": "SQ-1-SE-1-APR-PG-1-3",
+      "Details": null,
       "Questions": [
         {
-          "QuestionId": "FHA-01",
-          "Label": "SQ-1-SE-3-PG-23-FHA-01-446",
-          "ShortLabel": "SQ-1-SE-3-PG-23-FHA-01-447",
-          "QuestionBodyText": "SQ-1-SE-3-PG-23-FHA-01-448",
-          "Hint": "SQ-1-SE-3-PG-23-FHA-01-445",
+          "QuestionId": "APR-ORG-01",
+          "QuestionTag": "organsation-type",
+          "Label": "SQ-1-SE-1-APR-PG-1-2",
+          "ShortLabel": "SQ-1-SE-1-APR-PG-1-3",
+          "QuestionBodyText": "SQ-1-SE-1-APR-PG-1-3",
+          "Hint": "SQ-1-SE-1-APR-PG-1-3",
           "Input": {
-            "Type": "FileUpload",
-            "Options": null,
-            "Validations": [
-               {
-                "Name": "Required",
-                "Value": null,
-                "ErrorMessage": "Select a file containing your accounts"
+            "Type": "ComplexRadio",
+            "Options": [
+              {
+                "Label": "Main provider",
+				"HintText" : "Your organisation can train apprentices for other organisations, its own employees, employees of connected organisations or act as a subcontractor for other main and employer providers.",
+                "Value": "1",
+                "FurtherQuestions": null
               },
               {
-                "Name": "FileType",
-                "Value": "pdf,application/pdf",
-                "ErrorMessage": "The selected file must be a PDF"
+                "Label": "Employer provider",
+				"HintText": "Your organisation can train its own employees, employees of connected organisations or act as a subcontractor for other employer or main providers.",
+                "Value": "2",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "Supporting provider",
+				"HintText": "Your organisation will act as a subcontractor for main and employer providers to train apprentices up to a maximum of £500,000 per year. If your organisation is new on the register, this will be limited to £100,000 in its first year.",
+                "Value": "3",
+                "FurtherQuestions": null
               }
-            ]
-          },
-          "Order": null
-        },
-        {
-          "QuestionId": "FHA-02",
-          "Label": "SQ-1-SE-3-PG-23-FHA-02-450",
-          "ShortLabel": "SQ-1-SE-3-PG-23-FHA-02-451",
-          "QuestionBodyText": "SQ-1-SE-3-PG-23-FHA-02-452",
-          "Hint": "SQ-1-SE-3-PG-23-FHA-02-449",
-          "Input": {
-            "Type": "FileUpload",
-            "Options": null,
+            ],
             "Validations": [
               {
-                "Name": "FileType",
-                "Value": "pdf,application/pdf",
-                "ErrorMessage": "The selected file must be a PDF"
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Choose your organisation''s provider route"
               }
             ]
           },
@@ -107,9 +118,9 @@ VALUES
         }
       ],
       "PageOfAnswers": [],
-      "Next": [
+      "Next": [      
         {
-          "Action": "ReturnToSection",
+          "Action": "NextPage",
           "ReturnId": "3",
           "Condition": null,
           "ConditionMet": false
@@ -123,13 +134,10 @@ VALUES
       "Feedback": null,
       "HasFeedback": false,
       "NotRequiredOrgTypes": [],
-      "BodyText": "SQ-1-SE-3-PG-23-442"
+      "BodyText": "SQ-1-SE-1-APR-PG-1-3"
     }
-  ],
-  "FinancialApplicationGrade": null
+  ]
 }
-', N'Financial health assessment', N'Financial health assessment', N'Draft', N'Pages', N'')
-
--- REMOVE LATER
+', N'Your organisation', N'Your organisation', N'Draft', N'Pages', N'')
 
 
