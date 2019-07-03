@@ -157,28 +157,7 @@
 
             return View("~/Views/Roatp/UkprnNotFound.cshtml", viewModel);
         }
-        
-        [Route("start-application")]
-        public async Task<IActionResult> StartApplication()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
-
-            applicationDetails.CreatedBy = user.Id;
-
-            var createOrganisationRequest = Mapper.Map<CreateOrganisationRequest>(applicationDetails);
-            
-            var organisation = await _organisationApiClient.Create(createOrganisationRequest, user.Id);
-
-            if (!user.IsApproved)
-            {
-                await _usersApiClient.ApproveUser(user.Id);
-            }
-
-            return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.RegisterTrainingProviders } );
-        }
-
+ 
         [Route("already-on-register")]
         public async Task<IActionResult> UkprnActive()
         {
@@ -257,18 +236,26 @@
 
             return View("~/Views/Roatp/InvalidCompanyTradingHistory.cshtml", viewModel);
         }
-
+        
         [Route("start-application")]
         public async Task<IActionResult> StartApplication()
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
 
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                UKPRN = applicationDetails.UKPRN.ToString()
-            };
+            var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
 
-            return View("~/Views/Roatp/InvalidCompanyTradingHistory.cshtml", viewModel);
+            applicationDetails.CreatedBy = user.Id;
+
+            var createOrganisationRequest = Mapper.Map<CreateOrganisationRequest>(applicationDetails);
+
+            var organisation = await _organisationApiClient.Create(createOrganisationRequest, user.Id);
+
+            if (!user.IsApproved)
+            {
+                await _usersApiClient.ApproveUser(user.Id);
+            }
+
+            return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
         }
 
         public async Task<IActionResult> InvalidCharityFormationHistory()
