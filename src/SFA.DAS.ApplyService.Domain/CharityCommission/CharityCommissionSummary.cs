@@ -8,6 +8,7 @@
         public string CharityNumber { get; set; }
         public DateTime? IncorporatedOn { get; set; }
         public List<Trustee> Trustees { get; set; }
+        public bool TrusteeManualEntryRequired { get; set; }
     }
 
     public class Trustee

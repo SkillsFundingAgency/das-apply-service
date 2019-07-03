@@ -17,6 +17,7 @@ namespace SFA.DAS.ApplyService.Web.AutoMapper
                     opt => opt.MapFrom(source => source.Officers.Where(x => x.Role.ToLower() == "director")))
                 .ForMember(dest => dest.PersonsSignificationControl,
                     opt => opt.MapFrom(source => source.PeopleWithSignificantControl))
+                .ForMember(dest => dest.ManualEntryRequired, opt => opt.MapFrom(source => source.ManualEntryRequired))
                 .ForMember(dest => dest.CompanyTypeDescriptions, opt => opt.Ignore());
         }
     }

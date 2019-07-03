@@ -25,6 +25,8 @@ namespace SFA.DAS.ApplyService.Domain.CompaniesHouse
         public List<PersonSignificantControlInformation> PersonsSignificationControl { get; set; }
         public Dictionary<string, string> CompanyTypeDescriptions { get; set; }
 
+        public bool ManualEntryRequired { get; set; }
+
         public const string CompanyStatusActive = "active";
         public const string CompanyStatusDissolved = "dissolved";
         public const string CompanyStatusLiquidation = "liquidation";
