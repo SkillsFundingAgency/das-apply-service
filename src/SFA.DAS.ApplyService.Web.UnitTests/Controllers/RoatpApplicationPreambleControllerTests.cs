@@ -535,6 +535,52 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _sessionService.Verify(x => x.Set(It.IsAny<string>(), It.Is<ApplicationDetails>(y => y.CharitySummary == null)), Times.Once);
         }
 
+        [TestCase("SC123456")]
+        [TestCase("NI123123")]
+        public void UKPRN_is_verified_against_charity_commission_but_charity_number_not_for_england_and_wales_commission(string charityNumber)
+        {
+            var providerDetails = new ProviderDetails
+            {
+                UKPRN = "10001000",
+                ProviderName = "Test Provider",
+                VerificationDetails = new List<VerificationDetails>
+                {
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CharityCommissionAuthority,
+                        VerificationId = charityNumber
+                    }
+                }
+            };
+
+            var applicationDetails = new ApplicationDetails
+            {
+                ApplicationRoute = new ApplicationRoute
+                {
+                    Id = ApplicationRoute.MainProviderApplicationRoute,
+                    RouteName = "Main provider"
+                },
+                UkrlpLookupDetails = providerDetails
+            };
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+
+            _activeCharity.CharityNumber = charityNumber;
+
+            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(Task.FromResult(_activeCompany)).Verifiable();
+            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Returns(Task.FromResult(_activeCharity)).Verifiable();
+
+            var result = _controller.UkprnFound().GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var viewModel = viewResult.Model as UkprnSearchResultsViewModel;
+            viewModel.Should().NotBeNull();
+            viewModel.CharityCommissionInformation.Trustees.Should().BeEmpty();
+            viewModel.CharityCommissionInformation.TrusteeManualEntryRequired.Should().BeTrue();
+
+            _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Never);
+            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
+        }
 
         [Test]
         public void UKPRN_is_verified_against_companies_house_and_charity_commission()
@@ -857,6 +903,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("StartApplication");
             
             _sessionService.Verify(x => x.Set(It.IsAny<string>(), It.Is<ApplicationDetails>(y => y.CompanySummary.ManualEntryRequired == expectedRequired)));
+
         }
 
         [TestCase(1, 12)]

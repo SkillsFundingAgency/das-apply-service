@@ -1,6 +1,7 @@
 ﻿namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -250,6 +251,20 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
+                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
+                UKPRN = applicationDetails.UKPRN.ToString()
+            };
+
+            return View("~/Views/Roatp/InvalidCompanyTradingHistory.cshtml", viewModel);
+        }
+
+        [Route("start-application")]
+        public async Task<IActionResult> StartApplication()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var viewModel = new UkprnSearchResultsViewModel
+            {
                 UKPRN = applicationDetails.UKPRN.ToString()
             };
 
@@ -356,7 +371,6 @@
 
             return RedirectToAction("StartApplication");
         }
-
 
         private bool CompanyReturnsFullDetails(string companyNumber)
         {

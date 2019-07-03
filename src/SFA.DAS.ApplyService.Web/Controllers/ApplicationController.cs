@@ -53,7 +53,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var userId = applyUser?.Id ?? Guid.Empty;
 
             var org = await _apiClient.GetOrganisationByUserId(userId);
-            var applications = await _apiClient.GetApplicationsFor(userId);
+            var applications = await _apiClient.GetApplications(userId, false);
             applications = applications.Where(app => app.ApplicationStatus != ApplicationStatus.Rejected).ToList();
 
             if (!applications.Any())

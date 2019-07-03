@@ -64,11 +64,13 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public List<DirectorInformation> Directors { get; set; }
         public List<PersonSignificantControlInformation> PersonsSignificationControl { get; set; }
         public DateTime? IncorporationDate { get; set; }
+        public bool ManualEntryRequired { get; set; }
     }
 
     public class CharityCommissionDetails
     {
         public DateTime? RegistrationDate { get; set; }
         public List<Trustee> Trustees { get; set; }
+        public bool TrusteeManualEntryRequired { get; set; }
     }
 }

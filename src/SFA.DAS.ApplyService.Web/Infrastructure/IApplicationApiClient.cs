@@ -15,7 +15,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     public interface IApplicationApiClient
     {
-        Task<List<Domain.Entities.Application>> GetApplicationsFor(Guid userId);
+        Task<List<Domain.Entities.Application>> GetApplications(Guid userId, bool createdBy);
 
         Task<UploadResult> Upload(Guid applicationId, string userId, int sequenceId, int sectionId, string pageId, IFormFileCollection files);
 
