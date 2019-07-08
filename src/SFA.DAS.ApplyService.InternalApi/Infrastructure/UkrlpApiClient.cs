@@ -31,7 +31,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             _serializer = serializer;
         }
 
-        public async Task<List<ProviderDetails>> GetTrainingProviderByUkprn(long ukprn)
+        public async Task<UkprnLookupResponse> GetTrainingProviderByUkprn(long ukprn)
         {
             // Due to a bug in .net core, we have to parse the SOAP XML from UKRLP by hand
             // If this ever gets fixed then look to remove this code and replace with 'Add connected service'
@@ -47,10 +47,15 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                 };
 
             var responseMessage = await _httpClient.SendAsync(requestMessage);
-                
+
             if (!responseMessage.IsSuccessStatusCode)
             {
-                return await Task.FromResult(new List<ProviderDetails>());
+                var failureResponse = new UkprnLookupResponse
+                {
+                    Success = false,
+                    Results = new List<ProviderDetails>()
+                };
+                return await Task.FromResult(failureResponse);
             }
 
             string soapXml = await responseMessage.Content.ReadAsStringAsync();
@@ -60,19 +65,29 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
             if (matchingProviderRecords != null)
             {
-                providerDetails =
-                    Mapper.Map<ProviderDetails>(matchingProviderRecords);
+                providerDetails = Mapper.Map<ProviderDetails>(matchingProviderRecords);
 
                 var result = new List<ProviderDetails>
                 {
                     providerDetails
                 };
-                return await Task.FromResult(result);
+                var resultsFound = new UkprnLookupResponse
+                {
+                    Success = true,
+                    Results = result
+                };
+                return await Task.FromResult(resultsFound);
             }
             else
             {
-                return await Task.FromResult(new List<ProviderDetails>());
+                var noResultsFound = new UkprnLookupResponse
+                {
+                    Success = true,
+                    Results = new List<ProviderDetails>()
+                };
+                return await Task.FromResult(noResultsFound);
             }
+            
         }
     }
 }

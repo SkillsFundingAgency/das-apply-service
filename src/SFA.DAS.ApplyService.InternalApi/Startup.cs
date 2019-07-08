@@ -168,7 +168,13 @@ namespace SFA.DAS.ApplyService.InternalApi
                 config.For<IEmailService>().Use<EmailService.EmailService>();
 
                 // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
-                config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>();
+                config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>()
+                    .Use<CharityCommissionService.SearchCharitiesV1SoapClient>()
+                    .Ctor<CharityCommissionService.SearchCharitiesV1SoapClient.EndpointConfiguration>(
+                        "endpointConfiguration")
+                    .Is(CharityCommissionService.SearchCharitiesV1SoapClient.EndpointConfiguration
+                        .SearchCharitiesV1Soap)
+                    .Ctor<string>("remoteAddress").Is(_applyConfig.CharityCommissionApiAuthentication.ApiBaseAddress);
                 config.For<CharityCommissionApiClient>().Use<CharityCommissionApiClient>();
                 config.For<ProviderQueryPortType>().Use<ProviderQueryPortTypeClient>()
                     .Ctor<EndpointConfiguration>("endpointConfiguration").Is(EndpointConfiguration.ProviderQueryPort)

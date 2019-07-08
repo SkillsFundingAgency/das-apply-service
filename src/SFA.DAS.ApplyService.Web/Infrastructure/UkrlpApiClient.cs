@@ -6,6 +6,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     using System.Threading.Tasks;
     using Microsoft.Extensions.Logging;
     using SFA.DAS.ApplyService.Configuration;
+    using SFA.DAS.ApplyService.Domain.Ukrlp;
 
     public class UkrlpApiClient : IUkrlpApiClient
     {
@@ -21,10 +22,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
         }
 
-        public async Task<List<Domain.Ukrlp.ProviderDetails>> GetTrainingProviderByUkprn(long ukprn)
+        public async Task<UkrlpLookupResults> GetTrainingProviderByUkprn(long ukprn)
         {
             return await (await _httpClient.GetAsync($"/ukrlp-lookup?ukprn={ukprn}")).Content
-                .ReadAsAsync<List<Domain.Ukrlp.ProviderDetails>>();
+                .ReadAsAsync<UkrlpLookupResults>();
         }
 
     }

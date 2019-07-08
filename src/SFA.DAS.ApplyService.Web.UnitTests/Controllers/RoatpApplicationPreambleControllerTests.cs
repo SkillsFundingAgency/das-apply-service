@@ -43,7 +43,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private RoatpApplicationPreambleController _controller;
 
         private CompaniesHouseSummary _activeCompany;
-        private Charity _activeCharity;
+        private ApiResponse<Charity> _activeCharity;
 
         private Contact _user;
         private ApplicationDetails _applicationDetails;
@@ -94,21 +94,26 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 Status = "active"
             };
 
-            _activeCharity = new Charity
+            _activeCharity = new ApiResponse<Charity>
             {
-                Status = "registered",
-                CharityNumber = "12345678",
-                Trustees = new List<Trustee>
+                Success = true,
+                Response = new Charity
                 {
-                    new Trustee
+                    Status = "registered",
+                    CharityNumber = "12345678",
+                    Trustees = new List<Trustee>
                     {
-                        Id = 1,
-                        Name = "MR A TRUSTEE"
-                    }
-                },
-                IncorporatedOn = new DateTime(2019, 1, 1),
-                DissolvedOn = null
+                        new Trustee
+                        {
+                            Id = 1,
+                            Name = "MR A TRUSTEE"
+                        }
+                    },
+                    IncorporatedOn = new DateTime(2019, 1, 1),
+                    DissolvedOn = null
+                }
             };
+                
 
             _applicationDetails = new ApplicationDetails
             {
@@ -254,7 +259,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void UKPRN_is_not_found_on_UKRLP()
         {
-            var noResults = new List<ProviderDetails>();
+            var noResults = new UkrlpLookupResults {Success = true, Results = new List<ProviderDetails>()};
+            
             _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<long>())).ReturnsAsync(noResults);
 
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
@@ -275,14 +281,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test, Ignore("Checking against RoATP moved to later in the process")]
         public void UKPRN_is_found_on_UKRLP_but_existing_active_provider_on_register_with_same_application_route()
         {
-            var matchingResult = new List<ProviderDetails>
-            {
-                new ProviderDetails
+            var matchingResult = new UkrlpLookupResults { Success = true, Results = new List<ProviderDetails>
                 {
-                    UKPRN = "10001000",
-                    ProviderName = "Test Provider"
+                    new ProviderDetails
+                    {
+                        UKPRN = "10001000",
+                        ProviderName = "Test Provider"
+                    }
                 }
             };
+            
             _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<long>())).ReturnsAsync(matchingResult);
 
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
@@ -311,14 +319,19 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test, Ignore("RoATP check performed later in process")]
         public void UKPRN_is_found_on_UKRLP_but_existing_active_provider_on_register_with_different_application_route()
         {
-            var matchingResult = new List<ProviderDetails>
+            var matchingResult = new UkrlpLookupResults
             {
-                new ProviderDetails
+                Success = true,
+                Results = new List<ProviderDetails>
                 {
-                    UKPRN = "10001000",
-                    ProviderName = "Test Provider"
+                    new ProviderDetails
+                    {
+                        UKPRN = "10001000",
+                        ProviderName = "Test Provider"
+                    }
                 }
             };
+            
             _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<long>())).ReturnsAsync(matchingResult);
 
             var applicationDetails = new ApplicationDetails
@@ -356,12 +369,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test, Ignore("RoATP check performed later in process")]
         public void UKPRN_is_found_on_UKRLP_but_existing_provider_on_register_with_status_of_removed()
         {
-            var matchingResult = new List<ProviderDetails>
+            var matchingResult = new UkrlpLookupResults
             {
-                new ProviderDetails
+                Success = true,
+                Results = new List<ProviderDetails>
                 {
-                    UKPRN = "10001000",
-                    ProviderName = "Test Provider"
+                    new ProviderDetails
+                    {
+                        UKPRN = "10001000",
+                        ProviderName = "Test Provider"
+                    }
                 }
             };
             _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<long>())).ReturnsAsync(matchingResult);
@@ -401,12 +418,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void UKPRN_is_found_on_UKRLP()
         {
-            var matchingResult = new List<ProviderDetails>
+            var matchingResult = new UkrlpLookupResults
             {
-                new ProviderDetails
+                Success = true,
+                Results = new List<ProviderDetails>
                 {
-                    UKPRN = "10001000",
-                    ProviderName = "Test Provider"
+                    new ProviderDetails
+                    {
+                        UKPRN = "10001000",
+                        ProviderName = "Test Provider"
+                    }
                 }
             };
             _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<long>())).ReturnsAsync(matchingResult);
@@ -519,7 +540,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>())).Verifiable();
 
-            _activeCharity.CharityNumber = charityNumber;
+            _activeCharity.Response.CharityNumber = charityNumber;
 
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(Task.FromResult(_activeCompany)).Verifiable();
             _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Returns(Task.FromResult(_activeCharity)).Verifiable();
@@ -679,11 +700,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
 
-            var inactiveCharity = new Charity
+            var inactiveCharity = new ApiResponse<Charity>()
             {
-                Status = "removed",
-                DissolvedOn = new DateTime(2010, 1, 1)
+                Success = true,
+                Response = new Charity
+                {
+                    Status = "removed",
+                    DissolvedOn = new DateTime(2010, 1, 1)
+                }
             };
+            
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Verifiable();
             _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Returns(Task.FromResult(inactiveCharity)).Verifiable();
 
@@ -758,7 +784,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 UkrlpLookupDetails = providerDetails
             };
 
-            _activeCharity.IncorporatedOn = DateTime.Today.AddMonths(-1 * monthsRequired).AddDays(1);
+            _activeCharity.Response.IncorporatedOn = DateTime.Today.AddMonths(-1 * monthsRequired).AddDays(1);
 
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(Task.FromResult(_activeCompany)).Verifiable();

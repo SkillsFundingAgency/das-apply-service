@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
+    using System;
+
     /// <summary>
     /// Charity Commission API docs are located at: http://apps.charitycommission.gov.uk/Showcharity/API/SearchCharitiesV1/Docs/DevGuideHome.aspx
     /// Charity Commission WSDL is located at: https://apps.charitycommission.gov.uk/Showcharity/API/SearchCharitiesV1/SearchCharitiesV1.asmx?WSDL
@@ -26,7 +28,15 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
         public async Task<Types.CharityCommission.Charity> GetCharity(int charityNumber)
         {
-            return await GetCharityDetails(charityNumber); 
+            try
+            {
+                return await GetCharityDetails(charityNumber);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Unable to retrieve details from Charity Commission API", ex);
+                throw new ServiceUnavailableException("Unable to retrieve details from Charity Commission API");
+            }
         }
 
         private async Task<Types.CharityCommission.Charity> GetCharityDetails(int charityNumber)

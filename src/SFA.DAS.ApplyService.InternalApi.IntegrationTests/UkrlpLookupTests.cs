@@ -61,8 +61,8 @@ namespace SFA.DAS.ApplyService.InternalApi.IntegrationTests
             var result = client.GetTrainingProviderByUkprn(ukprn).GetAwaiter().GetResult();
 
             result.Should().NotBeNull();
-            result.Count.Should().Be(1);
-            var matchResult = result[0];
+            result.Results.Count.Should().Be(1);
+            var matchResult = result.Results[0];
             matchResult.UKPRN.Should().Be(ukprn.ToString());
             matchResult.ProviderStatus.Should().Be("Active");
             matchResult.ContactDetails.FirstOrDefault(x => x.ContactType == "L").Should().NotBeNull();
@@ -84,7 +84,7 @@ namespace SFA.DAS.ApplyService.InternalApi.IntegrationTests
             var result = client.GetTrainingProviderByUkprn(ukprn).GetAwaiter().GetResult();
 
             result.Should().NotBeNull();
-            result.Count.Should().Be(0);
+            result.Results.Count.Should().Be(0);
         }
 
         [Test]
@@ -98,7 +98,7 @@ namespace SFA.DAS.ApplyService.InternalApi.IntegrationTests
             var result = client.GetTrainingProviderByUkprn(ukprn).GetAwaiter().GetResult();
 
             result.Should().NotBeNull();
-            result.Count.Should().Be(0);
+            result.Results.Count.Should().Be(0);
         }
     }
 }

@@ -4,9 +4,11 @@
     using Microsoft.Extensions.Logging;
     using SFA.DAS.ApplyService.Configuration;
     using System;
+    using System.Net;
     using System.Net.Http;
     using System.Threading.Tasks;
     using SFA.DAS.ApplyService.InternalApi.Types.CharityCommission;
+    using SFA.DAS.ApplyService.InternalApi.Types;
 
     public class CharityCommissionApiClient : ICharityCommissionApiClient
     {
@@ -24,9 +26,21 @@
             }
         }
 
-        public async Task<Charity> GetCharityDetails(int charityNumber)
+        public async Task<ApiResponse<Charity>> GetCharityDetails(int charityNumber)
         {
-            return await (await _httpClient.GetAsync($"charity-commission-lookup?charityNumber={charityNumber}")).Content.ReadAsAsync<Charity>();
+            var responseMessage = await _httpClient.GetAsync($"charity-commission-lookup?charityNumber={charityNumber}");
+
+            if (responseMessage.StatusCode == HttpStatusCode.InternalServerError ||
+                responseMessage.StatusCode == HttpStatusCode.ServiceUnavailable)
+            {
+                return new ApiResponse<Charity> { Success = false };
+            }
+
+            return new ApiResponse<Charity>
+            {
+                Success = true,
+                Response = await responseMessage.Content.ReadAsAsync<Charity>()
+            };
         }
     }
 }

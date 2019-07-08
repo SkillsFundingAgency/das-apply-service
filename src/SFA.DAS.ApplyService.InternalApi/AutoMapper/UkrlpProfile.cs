@@ -2,8 +2,15 @@
 
 namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
 {
+    using Domain.Ukrlp;
     using SFA.DAS.ApplyService.InternalApi.Models.Ukrlp;
-    
+    using ContactAddress = Models.Ukrlp.ContactAddress;
+    using ContactPersonalDetails = Models.Ukrlp.ContactPersonalDetails;
+    using ProviderAlias = Models.Ukrlp.ProviderAlias;
+    using ProviderContact = Models.Ukrlp.ProviderContact;
+    using ProviderDetails = Models.Ukrlp.ProviderDetails;
+    using VerificationDetails = Models.Ukrlp.VerificationDetails;
+
     public class UkrlpProviderDetailsProfile : Profile
     {
         public UkrlpProviderDetailsProfile()

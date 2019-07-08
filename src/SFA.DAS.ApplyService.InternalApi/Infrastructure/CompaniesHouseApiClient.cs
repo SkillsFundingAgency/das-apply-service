@@ -9,9 +9,13 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.InternalApi.Types.CompaniesHouse;
+using SFA.DAS.ApplyService.InternalApi.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
+    using System.Net;
+
     /// <summary>
     /// Companies House API docs are located at: https://developer.companieshouse.gov.uk/api/docs/index.html
     /// There is a Web-Friendly version located at: https://beta.companieshouse.gov.uk/
@@ -29,17 +33,21 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             _config = configurationService.GetConfig().Result;
         }
 
-        public async Task<Types.CompaniesHouse.Company> GetCompany(string companyNumber)
+        public async Task<ApiResponse<Company>> GetCompany(string companyNumber)
         {
             var company = await GetCompanyDetails(companyNumber);
 
             if (company != null)
             {
-                company.Officers = await GetOfficers(company.CompanyNumber);
-                company.PeopleWithSignificantControl = await GetPeopleWithSignificantControl(company.CompanyNumber);
+                company.Officers = await GetOfficers(companyNumber);
+                company.PeopleWithSignificantControl = await GetPeopleWithSignificantControl(companyNumber);
             }
 
-            return company;
+            return new ApiResponse<Company>
+            {
+                Success = true,
+                Response = company
+            };        
         }
 
         public async Task<bool> IsCompanyActivelyTrading(string companyNumber)
@@ -50,7 +58,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
             if (company != null)
             {
-                isTrading = "active".Equals(company.Status, StringComparison.InvariantCultureIgnoreCase) && company.DissolvedOn == null && company.IsLiquidated != true;
+                isTrading = "active".Equals(company.Status, StringComparison.InvariantCultureIgnoreCase) 
+                            && company.DissolvedOn == null && company.IsLiquidated != true;
             }
 
             return isTrading;
@@ -64,22 +73,36 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             return new AuthenticationHeaderValue("Basic", token);
         }
 
-        private async Task<T> Get<T>(string uri)
+        private async Task<T> Get<T>(string uri) 
         {
-            _client.DefaultRequestHeaders.Authorization = GetBasicAuthHeader();
-
-            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
+            try
             {
-                return await response.Content.ReadAsAsync<T>();
+                _client.DefaultRequestHeaders.Authorization = GetBasicAuthHeader();
+
+                using (var responseMessage = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
+                {
+                    if (responseMessage.StatusCode == HttpStatusCode.ServiceUnavailable || responseMessage.StatusCode == HttpStatusCode.InternalServerError)
+                    {   // The Companies House API service returns a NotFound if the company details not available so don't fail on that
+                        throw new HttpRequestException(
+                            $"Unable to retrieve data from Companies House API - Status Code {responseMessage.StatusCode}");
+                    }
+
+                    return await responseMessage.Content.ReadAsAsync<T>();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Unable to retrieve data from Companies House API", ex);
+                throw new ServiceUnavailableException($"Unable to retrieve data from Companies House API - {ex.Message}");
             }
         }
         #endregion HTTP Request Helpers
 
-        private async Task<Types.CompaniesHouse.Company> GetCompanyDetails(string companyNumber)
+        private async Task<Company> GetCompanyDetails(string companyNumber)
         {
             _logger.LogInformation($"Searching Companies House - Company Details. Company Number: {companyNumber}");
             var apiResponse = await Get<CompanyDetails>($"/company/{companyNumber}");
-            return Mapper.Map<CompanyDetails, Types.CompaniesHouse.Company> (apiResponse);
+            return Mapper.Map<CompanyDetails, Company>(apiResponse);
         }
 
         private async Task<IEnumerable<Types.CompaniesHouse.Officer>> GetOfficers(string companyNumber, bool activeOnly = true)
@@ -89,7 +112,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
             var items = activeOnly ? apiResponse.items?.Where(i => i.resigned_on is null) : apiResponse.items;
 
-            var officers = Mapper.Map<IEnumerable<Officer>, IEnumerable<Types.CompaniesHouse.Officer>> (items);
+            var officers = Mapper.Map<IEnumerable<Models.CompaniesHouse.Officer>, IEnumerable<Types.CompaniesHouse.Officer>> (items);
 
             foreach(var officer in officers)
             {
@@ -107,7 +130,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             _logger.LogInformation($"Searching Companies House - Corporate Officer's Disqualifications. Officer Id: {officerId}");
             var apiResponseCorporate = await Get<DisqualificationList>($"/disqualified-officers/corporate/{officerId}");
 
-            var disqualifications = new List<Disqualification>();
+            var disqualifications = new List<Models.CompaniesHouse.Disqualification>();
 
             if(apiResponseNatural?.disqualifications != null)
             {
@@ -118,7 +141,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                 disqualifications.AddRange(apiResponseCorporate.disqualifications);
             }
 
-            return Mapper.Map<IEnumerable<Disqualification>, IEnumerable<Types.CompaniesHouse.Disqualification>> (disqualifications);
+            return Mapper.Map<IEnumerable<Models.CompaniesHouse.Disqualification>, IEnumerable<Types.CompaniesHouse.Disqualification>> (disqualifications);
         }
 
         private async Task<IEnumerable<Types.CompaniesHouse.PersonWithSignificantControl>> GetPeopleWithSignificantControl(string companyNumber, bool activeOnly = true)
@@ -127,7 +150,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             var apiResponse = await Get<PersonWithSignificantControlList>($"/company/{companyNumber}/persons-with-significant-control?items_per_page=100");
 
             var items = activeOnly ? apiResponse.items?.Where(i => i.ceased_on is null) : apiResponse.items;
-            return Mapper.Map<IEnumerable<PersonWithSignificantControl>, IEnumerable<Types.CompaniesHouse.PersonWithSignificantControl>>(items);
+            return Mapper.Map<IEnumerable<Models.CompaniesHouse.PersonWithSignificantControl>, IEnumerable<Types.CompaniesHouse.PersonWithSignificantControl>>(items);
         }
 
         private async Task<IEnumerable<dynamic>> GetCharges(string companyNumber)

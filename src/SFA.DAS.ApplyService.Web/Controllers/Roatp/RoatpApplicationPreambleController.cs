@@ -79,6 +79,7 @@
             return View("~/Views/Roatp/EnterApplicationUkprn.cshtml", model);
         }
 
+        [Route("search-by-ukprn")]
         [HttpPost]
         public async Task<IActionResult> SearchByUkprn(SearchByUkprnViewModel model)
         {
@@ -105,14 +106,19 @@
                 return View("~/Views/Roatp/EnterApplicationUkprn.cshtml", model);
             }
             
-            var matchingResults = await _ukrlpApiClient.GetTrainingProviderByUkprn(ukprn);
+            var ukrlpLookupResults = await _ukrlpApiClient.GetTrainingProviderByUkprn(ukprn);
 
-            if (matchingResults.Any())
+            if (!ukrlpLookupResults.Success)
+            {
+                return RedirectToAction("UkrlpNotAvailable");
+            }
+
+            if (ukrlpLookupResults.Results.Any())
             {
                 var applicationDetails = new ApplicationDetails
                 {
                     UKPRN = ukprn,
-                    UkrlpLookupDetails = matchingResults.FirstOrDefault()
+                    UkrlpLookupDetails = ukrlpLookupResults.Results.FirstOrDefault()
                 };
 
                 _sessionService.Set(ApplicationDetailsKey, applicationDetails);
@@ -191,7 +197,6 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
-                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
                 UKPRN = applicationDetails.UKPRN.ToString()
             };
 
@@ -270,6 +275,24 @@
             return View("~/Views/Roatp/InvalidCharityFormationHistory.cshtml", viewModel);
         }
 
+        [Route("ukrlp-unavailable")]
+        public async Task<IActionResult> UkrlpNotAvailable()
+        {
+            return View("~/Views/Roatp/UkrlpNotAvailable.cshtml");
+        }
+
+        [Route("companies-house-unavailable")]
+        public async Task<IActionResult> CompaniesHouseNotAvailable()
+        {
+            return View("~/Views/Roatp/CompaniesHouseNotAvailable.cshtml");
+        }
+
+        [Route("charity-commission-unavailable")]
+        public async Task<IActionResult> CharityCommissionNotAvailable()
+        {
+            return View("~/Views/Roatp/CharityCommissionNotAvailable.cshtml");
+        }
+
         private async Task<IActionResult> CheckIfOrganisationAlreadyOnRegister(long ukprn)
         {
             var registerStatus = await _roatpApiClient.UkprnOnRegister(ukprn);
@@ -317,6 +340,11 @@
                     {
                         return RedirectToAction("CompanyNotFound");
                     }
+
+                    if (companyDetails.Status == CompaniesHouseSummary.ServiceUnavailable)
+                    {
+                        return RedirectToAction("CompaniesHouseNotAvailable");
+                    }
                     return RedirectToAction("CompanyNotActive");
                 }
                 
@@ -343,7 +371,13 @@
                         return RedirectToAction("CharityNotFound");
                     }
 
-                    charityDetails = await _charityCommissionApiClient.GetCharityDetails(charityNumber);
+                    var charityApiResponse = await _charityCommissionApiClient.GetCharityDetails(charityNumber);
+
+                    if (!charityApiResponse.Success)
+                    {
+                        return RedirectToAction("CharityCommissionNotAvailable");
+                    } 
+                    charityDetails = charityApiResponse.Response;
 
                     if (!charityDetails.IsActivelyTrading)
                     {
