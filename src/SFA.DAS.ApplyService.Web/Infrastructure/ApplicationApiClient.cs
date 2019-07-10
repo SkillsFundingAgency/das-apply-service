@@ -34,8 +34,14 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
         }
 
-        public async Task<List<Domain.Entities.Application>> GetApplicationsFor(Guid userId)
+        public async Task<List<Domain.Entities.Application>> GetApplications(Guid userId, bool createdBy)
         {
+            if (!createdBy)
+            {
+                return await (await _httpClient.GetAsync($"/Applications/{userId}/Organisation")).Content
+                .ReadAsAsync<List<Domain.Entities.Application>>();
+            }
+
             return await (await _httpClient.GetAsync($"/Applications/{userId}")).Content
                 .ReadAsAsync<List<Domain.Entities.Application>>();
         }
