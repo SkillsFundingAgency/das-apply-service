@@ -15,7 +15,7 @@ namespace SFA.DAS.ApplyService.Application.Users.UpdateSignInId
         
         public async Task<Unit> Handle(UpdateSignInIdRequest request, CancellationToken cancellationToken)
         {
-            await _contactRepository.UpdateSignInId(request.ContactId, request.SignInId); 
+            await _contactRepository.UpdateSignInId(request.ContactId, request.SignInId);
             
             return Unit.Value;
         }
