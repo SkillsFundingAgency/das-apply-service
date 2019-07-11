@@ -549,7 +549,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("StartApplication");
+            redirectResult.ActionName.Should().Be("ParentCompanyCheck");
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Never);
             _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
@@ -881,7 +881,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
 
             var redirectResult = result as RedirectToActionResult;
-            redirectResult.ActionName.Should().Be("StartApplication");
+            redirectResult.ActionName.Should().Be("ParentCompanyCheck");
             
             _sessionService.Verify(x => x.Set(It.IsAny<string>(), It.Is<ApplicationDetails>(y => y.CompanySummary.ManualEntryRequired == expectedRequired)));
 
