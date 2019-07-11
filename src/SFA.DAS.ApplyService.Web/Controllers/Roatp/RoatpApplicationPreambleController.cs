@@ -294,6 +294,12 @@
             return View("~/Views/Roatp/CharityCommissionNotAvailable.cshtml");
         }
 
+        [Route("parent-company-check")]
+        public async Task<IActionResult> ParentCompanyCheck()
+        {
+            return View("~/Views/Roatp/ParentCompanyCheck.cshtml");
+        }
+
         private async Task<IActionResult> CheckIfOrganisationAlreadyOnRegister(long ukprn)
         {
             var registerStatus = await _roatpApiClient.UkprnOnRegister(ukprn);
@@ -391,7 +397,7 @@
 
             _sessionService.Set(ApplicationDetailsKey, applicationDetails);
 
-            return RedirectToAction("StartApplication");
+            return RedirectToAction("ParentCompanyCheck");
         }
 
         private bool CompanyReturnsFullDetails(string companyNumber)
