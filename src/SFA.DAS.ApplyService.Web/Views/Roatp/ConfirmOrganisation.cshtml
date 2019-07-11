@@ -27,7 +27,7 @@
                             </dd>
                         </div>
 
-                        @if (Model.ProviderDetails.ProviderAliases.Count > 0)
+                        @if (Model.ProviderDetails.ProviderAliases.Count > 0 && !String.IsNullOrWhiteSpace(Model.ProviderDetails.ProviderAliases[0].Alias))
                         {
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
