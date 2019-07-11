@@ -184,7 +184,8 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
-                UKPRN = applicationDetails.UKPRN.ToString()
+                UKPRN = applicationDetails.UKPRN.ToString(),
+                ProviderDetails = applicationDetails.UkrlpLookupDetails
             };
 
             return View("~/Views/Roatp/CompanyNotActive.cshtml", viewModel);
@@ -333,21 +334,21 @@
                     companyDetails.ManualEntryRequired = true;
                 }
 
-                if (String.IsNullOrWhiteSpace(companyDetails.Status)
-                    || companyDetails.Status.ToLower() != CompaniesHouseSummary.CompanyStatusActive)
+                if (companyDetails.Status == CompaniesHouseSummary.ServiceUnavailable)
                 {
-                    if (companyDetails.Status == CompaniesHouseSummary.CompanyStatusNotFound)
-                    {
-                        return RedirectToAction("CompanyNotFound");
-                    }
+                    return RedirectToAction("CompaniesHouseNotAvailable");
+                }
 
-                    if (companyDetails.Status == CompaniesHouseSummary.ServiceUnavailable)
-                    {
-                        return RedirectToAction("CompaniesHouseNotAvailable");
-                    }
-                    return RedirectToAction("CompanyNotActive");
+                if (companyDetails.Status == CompaniesHouseSummary.CompanyStatusNotFound)
+                {
+                    return RedirectToAction("CompanyNotFound");
                 }
                 
+                if (!CompaniesHouseValidator.CompaniesHouseStatusValid(companyDetails.CompanyNumber, companyDetails.Status))
+                {
+                    return RedirectToAction("CompanyNotActive");
+                }
+
                 applicationDetails.CompanySummary = companyDetails;
             }
 

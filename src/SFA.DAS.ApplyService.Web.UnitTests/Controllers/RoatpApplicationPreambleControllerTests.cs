@@ -622,7 +622,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var inactiveCompany = new CompaniesHouseSummary
             {
-                Status = status
+                Status = status,
+                CompanyNumber = "12345678"
             };
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(Task.FromResult(inactiveCompany)).Verifiable();
             _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
@@ -662,7 +663,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var companyNotFound = new CompaniesHouseSummary
             {
-                Status = CompaniesHouseSummary.CompanyStatusNotFound
+                Status = CompaniesHouseSummary.CompanyStatusNotFound,
+                CompanyNumber = "12345678"
             };
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(Task.FromResult(companyNotFound)).Verifiable();
             _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
