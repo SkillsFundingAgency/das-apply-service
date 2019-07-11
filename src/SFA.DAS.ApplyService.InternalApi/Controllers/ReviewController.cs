@@ -14,8 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
     [Authorize]
-    //[Authorize(Roles = "ApplyServiceInternalAPI")]
-    public class ReviewController : Controller
+     public class ReviewController : Controller
     {
         private readonly IMediator _mediator;
 
