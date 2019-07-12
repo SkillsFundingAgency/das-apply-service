@@ -48,6 +48,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                         "http://schemas.portal.com/orgname");
                     if (!string.IsNullOrEmpty(orgName))
                     {
+                        _sessionService.Set("OrganisationName", orgName);
                         _sessionService.Set("UserRegWithEPAO", true);
                     }
                 }
@@ -62,22 +63,13 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             if (!string.IsNullOrEmpty(user))
                 return true;
 
-            //Attempt to extract variable from claim incase called from Accessor
+            //Attempt to extract variable from claim incase called from Assessor
             try
             {
-                if (!string.IsNullOrEmpty(await GetClaim("display_name")))
+                if (string.IsNullOrEmpty(await GetClaim("display_name")))
                 {
-                    var displayName = await GetClaim("display_name");
-                    //May have empty strings
-                    if (!string.IsNullOrEmpty(displayName))
-                    {
-                        _sessionService.Set("LoggedInUser", displayName);
-                    }
-                    else
-                    {
-                        _logger.LogInformation("Claims where empty and user was null so redirecting to postsignin");
-                        return false;
-                    }
+                    _logger.LogInformation("Claims where empty and user was null so redirecting to postsignin");
+                    return false;
                 }
             }
             catch (ArgumentException e)

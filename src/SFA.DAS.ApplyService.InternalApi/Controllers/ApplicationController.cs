@@ -57,7 +57,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("Applications/{userId}")]
         public async Task<ActionResult<List<Domain.Entities.Application>>> GetApplications(string userId)
         {
-            return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId)));
+            return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), true));
+        }
+
+        [HttpGet("Applications/{userId}/Organisation")]
+        public async Task<ActionResult<List<Domain.Entities.Application>>> GetOrganisationApplications(string userId)
+        {
+            return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), false));
         }
 
         [HttpGet("Application/{applicationId}/User/{userId}/Sections")]

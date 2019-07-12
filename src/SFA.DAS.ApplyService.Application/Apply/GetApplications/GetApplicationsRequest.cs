@@ -9,9 +9,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.GetApplications
     {
         public Guid UserId { get; }
 
-        public GetApplicationsRequest(Guid userId)
+        public bool CreatedBy { get; }
+
+        public GetApplicationsRequest(Guid userId, bool createdBy)
         {
             UserId = userId;
+            CreatedBy = createdBy;
         }
     }
 }
