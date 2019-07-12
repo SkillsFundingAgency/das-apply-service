@@ -177,20 +177,6 @@
             return View("~/Views/Roatp/UkprnActive.cshtml", viewModel);
         }
 
-        [Route("company-not-active")]
-        public async Task<IActionResult> CompanyNotActive()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                UKPRN = applicationDetails.UKPRN.ToString(),
-                ProviderDetails = applicationDetails.UkrlpLookupDetails
-            };
-
-            return View("~/Views/Roatp/CompanyNotActive.cshtml", viewModel);
-        }
-
         [Route("company-not-found")]
         public async Task<IActionResult> CompanyNotFound()
         {
@@ -198,7 +184,8 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
-                UKPRN = applicationDetails.UKPRN.ToString()
+                UKPRN = applicationDetails.UKPRN.ToString(),
+                ProviderDetails = applicationDetails.UkrlpLookupDetails
             };
 
             return View("~/Views/Roatp/CompanyNotFound.cshtml", viewModel);
@@ -352,7 +339,7 @@
                 
                 if (!CompaniesHouseValidator.CompaniesHouseStatusValid(companyDetails.CompanyNumber, companyDetails.Status))
                 {
-                    return RedirectToAction("CompanyNotActive");
+                    return RedirectToAction("CompanyNotFound");
                 }
 
                 applicationDetails.CompanySummary = companyDetails;
