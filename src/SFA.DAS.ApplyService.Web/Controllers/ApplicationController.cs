@@ -48,7 +48,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("PostSignIn", "Users");
 
             _logger.LogInformation($"Got LoggedInUser from Session: {user}");
-            
+
             var applyUser = await _usersApiClient.GetUserBySignInId((await _userService.GetSignInId()).ToString());
             var userId = applyUser?.Id ?? Guid.Empty;
 
@@ -58,47 +58,43 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (!applications.Any())
             {
+                //ON-2068 Registered org  with no application created via digital service then
+                //display empty list of application screen
                 if (org != null && org.RoEPAOApproved)
-                {
-                      return await StartApplication(userId);
-                }
+                    return View(applications);
 
-                if (org == null)
-                {
-                    if (await _userService.AssociateOrgFromClaimWithUser())
-                        return await StartApplication(userId);
+                if (org != null)
+                    return View("~/Views/Application/Declaration.cshtml");
 
-                    return RedirectToAction("Index", "OrganisationSearch");
-                }
+                if (await _userService.AssociateOrgFromClaimWithUser())
+                    return await StartApplication(userId);
 
-                return View("~/Views/Application/Declaration.cshtml");
+                return RedirectToAction("Index", "OrganisationSearch");
 
             }
+
+            //ON-2068 If there is an existing application (in progress or approved) for an org that is registered then display it
+            //in a list of application screen
+            if (applications.Count() == 1 && (org != null && org.RoEPAOApproved))
+                return View(applications);
 
             if (applications.Count() > 1)
-            {
                 return View(applications);
-            }
 
             var application = applications.First();
 
-            if (application.ApplicationStatus == ApplicationStatus.FeedbackAdded)
+            switch (application.ApplicationStatus)
             {
-                return View("~/Views/Application/FeedbackIntro.cshtml", application.Id);
+                case ApplicationStatus.FeedbackAdded:
+                    return View("~/Views/Application/FeedbackIntro.cshtml", application.Id);
+                case ApplicationStatus.Rejected:
+                case ApplicationStatus.Approved:
+                    return View(applications);
+                default:
+                    return RedirectToAction("SequenceSignPost", new {applicationId = application.Id});
             }
-
-            if (application.ApplicationStatus == ApplicationStatus.Rejected)
-            {
-                return View(applications);
-            }
-
-            if (application.ApplicationStatus == ApplicationStatus.Approved)
-            {
-                return View(applications);
-            }
-
-            return RedirectToAction("SequenceSignPost", new {applicationId = application.Id});
         }
+
 
         private async Task<IActionResult> StartApplication(Guid userId)
         {
