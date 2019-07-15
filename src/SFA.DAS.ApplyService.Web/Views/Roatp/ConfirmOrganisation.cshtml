@@ -27,7 +27,7 @@
                             </dd>
                         </div>
 
-                        @if (Model.ProviderDetails.ProviderAliases.Count > 0)
+                        @if (Model.ProviderDetails.ProviderAliases.Count > 0 && !String.IsNullOrWhiteSpace(Model.ProviderDetails.ProviderAliases[0].Alias))
                         {
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
@@ -67,6 +67,17 @@
                                 </dt>
                                 <dd class="govuk-summary-list__value">
                                     @Model.CompaniesHouseNumber
+                                </dd>
+                            </div>
+                        }
+                        @if (Model.ProviderDetails.VerifiedbyCharityCommission)
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Charity registration number
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.CharityNumber
                                 </dd>
                             </div>
                         }
