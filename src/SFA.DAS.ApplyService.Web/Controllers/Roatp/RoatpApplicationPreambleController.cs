@@ -380,6 +380,13 @@
                     
                     applicationDetails.CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails);
                 }
+                else
+                {
+                    applicationDetails.CharitySummary = new CharityCommissionSummary
+                    {
+                        TrusteeManualEntryRequired = true
+                    };
+                }
             }
 
             _sessionService.Set(ApplicationDetailsKey, applicationDetails);
