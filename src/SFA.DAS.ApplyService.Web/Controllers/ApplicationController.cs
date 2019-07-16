@@ -60,20 +60,18 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 //ON-2068 Registered org  with no application created via digital service then
                 //display empty list of application screen
-                if (org != null && org.RoEPAOApproved)
-                    return View(applications);
-
                 if (org != null)
-                    return View("~/Views/Application/Declaration.cshtml");
+                    return org.RoEPAOApproved ? View(applications) : View("~/Views/Application/Declaration.cshtml");
 
                 if (await _userService.AssociateOrgFromClaimWithUser())
                     return await StartApplication(userId);
+
 
                 return RedirectToAction("Index", "OrganisationSearch");
 
             }
 
-            //ON-2068 If there is an existing application (in progress or approved) for an org that is registered then display it
+            //ON-2068 If there is an existing application for an org that is registered then display it
             //in a list of application screen
             if (applications.Count() == 1 && (org != null && org.RoEPAOApproved))
                 return View(applications);
