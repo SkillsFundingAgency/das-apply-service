@@ -361,7 +361,7 @@
                     } 
                     charityDetails = charityApiResponse.Response;
 
-                    if (!charityDetails.IsActivelyTrading)
+                    if (charityDetails == null || !charityDetails.IsActivelyTrading)
                     {
                         return RedirectToAction("CharityNotFound");
                     }
