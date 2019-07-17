@@ -34,8 +34,13 @@ namespace CharityCommissionService
         {
             get
             {
-                var dates = RegistrationHistory?.Where(d => d.RegistrationDateTime.HasValue).Select(d => d.RegistrationDateTime);
-                return dates?.Min();
+                if (RegistrationHistory.Length > 0)
+                {
+                    var mostRecentRegistration = RegistrationHistory[RegistrationHistory.Length - 1];
+                    return mostRecentRegistration?.RegistrationDateTime;
+                }
+
+                return null;
             }
         }
 
@@ -44,8 +49,13 @@ namespace CharityCommissionService
         {
             get
             {
-                var dates = RegistrationHistory?.Where(d => d.RegistrationRemovalDateTime.HasValue).Select(d => d.RegistrationRemovalDateTime);
-                return dates?.Min();
+                if (RegistrationHistory.Length > 0)
+                {
+                    var mostRecentRegistration = RegistrationHistory[RegistrationHistory.Length - 1];
+                    return mostRecentRegistration?.RegistrationRemovalDateTime;
+                }
+
+                return null;
             }
         }
 
