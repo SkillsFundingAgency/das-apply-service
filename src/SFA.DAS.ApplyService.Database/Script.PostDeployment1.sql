@@ -163,6 +163,9 @@ exec [Update_ApplicationSections_QuestionTags] 'CD-03_4', 'contact-address-4'
 */
 -- END OF: ON-1172 remove or comment out once deployed to PROD
 
+-- ON-1921 updating existing applications to include standard reference and standard level
+:r UpdateApplicationDataStandards-ON-1921.sql
+-- END OF: ON-1921 remove or comment out once deployed to PROD
 
 -- Add the Workflows
 :r ..\WorkflowLatest.sql

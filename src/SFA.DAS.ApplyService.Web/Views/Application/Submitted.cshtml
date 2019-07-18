@@ -16,7 +16,7 @@
                     }
                     else
                     {
-                        <text>Stage 2 of your application has been submitted</text>
+                        <text>Standard application submitted</text>
                     }
                 </h1>
                 <div class="govuk-panel__body">
@@ -26,15 +26,17 @@
                     @if (!string.IsNullOrEmpty(Model.StandardName))
                     {
                         <div class="govuk-!-margin-bottom-4">
-                            <span class="govuk-!-font-size-24">Standard applied for</span>
-                            <br />
                             <strong>@Model.StandardName</strong>
+                            <br />
+                            <strong>Level @Model.StandardLevel</strong>
+                            <br />
+                            <strong>Standard reference @Model.StandardReference</strong>
                         </div>
                     }
                     @if (!string.IsNullOrEmpty(Model.ReferenceNumber))
                     {
                         <div>
-                            <span class="govuk-!-font-size-24">Your reference number</span>
+                            <span class="govuk-!-font-size-24">Application reference number</span>
                             <br />
                             <strong>@Model.ReferenceNumber</strong>
                         </div>
