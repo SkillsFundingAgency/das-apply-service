@@ -34,8 +34,15 @@
         <div class="govuk-grid-column-two-thirds">
             @if (!string.IsNullOrEmpty(@Model.Title) && Model.Questions.Count() > 1)
             {
+                if (Model.PageContext != null)
+                {
+                    <span class="govuk-caption-xl">
+                        @Html.Raw(Model.PageContext)
+                    </span>
+                }
+
                 <h1 class="govuk-heading-xl">
-                    @if (Model?.DisplayType=="PagesWithSections")
+                    @if (Model?.DisplayType == "PagesWithSections")
                     {
                         @Model.LinkTitle
                     }
@@ -122,6 +129,7 @@
             @* no action is specified for the form, post back to the get url to preserve the page hierarchy parameters *@
             <form method="post" novalidate enctype="multipart/form-data">
                 <input type="hidden" id="RedirectAction" name="RedirectAction" value="@Model.RedirectAction" />
+
                 @if (Model.Questions.Count() == 1)
                 {
                     foreach (var question in Model.Questions)
@@ -131,6 +139,12 @@
                                 @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio" || question.Type == "CheckboxList")
                                 {
                                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                                        @if (Model.PageContext != null)
+                                        {
+                                            <span class="govuk-caption-xl">
+                                                @Html.Raw(Model.PageContext)
+                                            </span>
+                                        }
                                         <h1 class="govuk-fieldset__heading">
                                             @Html.Raw(question.Label)
                                         </h1>
@@ -138,6 +152,12 @@
                                 }
                                 else
                                 {
+                                    @if (Model.PageContext != null)
+                                    {
+                                        <span class="govuk-caption-xl">
+                                            @Html.Raw(Model.PageContext)
+                                        </span>
+                                    }
                                     <h2 class="govuk-label-wrapper">
                                         <label class="govuk-label govuk-label--xl" for="@question.QuestionId">
                                             @Html.Raw(question.Label)
@@ -188,8 +208,8 @@
                     <button type="submit" class="govuk-button govuk-button--looks-like-link" name="__formAction" value="Add">Save and add another</button>
                 </div>
 
-                <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details"/>
-                
+                <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details" />
+
                 <button type="submit" class="govuk-button" name="__formAction" value="Save">Save and continue</button>
             </form>
 
