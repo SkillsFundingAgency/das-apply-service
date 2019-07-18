@@ -42,63 +42,57 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet("/Applications")]
         public async Task<IActionResult> Applications()
         {
-            var user = _sessionService.Get("LoggedInUser");
+            var user = User.Identity.Name;
 
             if (!await _userService.ValidateUser(user))
-                RedirectToAction("PostSignIn", "Users");
+                return RedirectToAction("PostSignIn", "Users");
 
             _logger.LogInformation($"Got LoggedInUser from Session: {user}");
-            
+
             var applyUser = await _usersApiClient.GetUserBySignInId((await _userService.GetSignInId()).ToString());
             var userId = applyUser?.Id ?? Guid.Empty;
 
             var org = await _apiClient.GetOrganisationByUserId(userId);
-            var applications = await _apiClient.GetApplicationsFor(userId);
+            var applications = await _apiClient.GetApplications(userId, false);
             applications = applications.Where(app => app.ApplicationStatus != ApplicationStatus.Rejected).ToList();
 
             if (!applications.Any())
             {
-                if (org != null && org.RoEPAOApproved)
-                {
-                      return await StartApplication(userId);
-                }
+                //ON-2068 Registered org  with no application created via digital service then
+                //display empty list of application screen
+                if (org != null)
+                    return org.RoEPAOApproved ? View(applications) : View("~/Views/Application/Declaration.cshtml");
 
-                if (org == null)
-                {
-                    if (await _userService.AssociateOrgFromClaimWithUser())
-                        return await StartApplication(userId);
+                if (await _userService.AssociateOrgFromClaimWithUser())
+                    return await StartApplication(userId);
 
-                    return RedirectToAction("Index", "OrganisationSearch");
-                }
 
-                return View("~/Views/Application/Declaration.cshtml");
+                return RedirectToAction("Index", "OrganisationSearch");
 
             }
+
+            //ON-2068 If there is an existing application for an org that is registered then display it
+            //in a list of application screen
+            if (applications.Count() == 1 && (org != null && org.RoEPAOApproved))
+                return View(applications);
 
             if (applications.Count() > 1)
-            {
                 return View(applications);
-            }
 
             var application = applications.First();
 
-            if (application.ApplicationStatus == ApplicationStatus.FeedbackAdded)
+            switch (application.ApplicationStatus)
             {
-                return View("~/Views/Application/FeedbackIntro.cshtml", application.Id);
+                case ApplicationStatus.FeedbackAdded:
+                    return View("~/Views/Application/FeedbackIntro.cshtml", application.Id);
+                case ApplicationStatus.Rejected:
+                case ApplicationStatus.Approved:
+                    return View(applications);
+                default:
+                    return RedirectToAction("SequenceSignPost", new {applicationId = application.Id});
             }
-
-            if (application.ApplicationStatus == ApplicationStatus.Rejected)
-            {
-                return View(applications);
-            }
-
-            if (application.ApplicationStatus == ApplicationStatus.Approved)
-            {
-                return View(applications);
-            }
-
-            return RedirectToAction("SequenceSignPost", new {applicationId = application.Id});
         }
+
 
         private async Task<IActionResult> StartApplication(Guid userId)
         {
@@ -211,14 +205,21 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}"), ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
-            var canUpdate = await CanUpdateApplication(applicationId, sequenceId);
-            if (!canUpdate)
+            var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
+            if (!CanUpdateApplication(sequence, sequenceId))
             {
                 return RedirectToAction("Sequence", new { applicationId });
             }
 
             PageViewModel viewModel = null;
             var returnUrl = Request.Headers["Referer"].ToString();
+
+            string pageContext = string.Empty;
+            if (sequence.SequenceId == SequenceId.Stage2)
+            {
+                var application = await _apiClient.GetApplication(applicationId);
+                pageContext = $"{application?.ApplicationData?.StandardReference } {application?.ApplicationData?.StandardName}";
+            }
 
             if (!ModelState.IsValid)
             {
@@ -233,7 +234,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     })).ToList()
                     : null;
 
-                viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, redirectAction,
+                viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, pageContext, redirectAction,
                     returnUrl, errorMessages);
             }
             else
@@ -259,7 +260,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 page = await GetDataFedOptions(page);
 
-                viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, redirectAction,
+                viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, pageContext, redirectAction,
                     returnUrl, null);
 
                 ProcessPageVmQuestionsForStandardName(viewModel.Questions, applicationId);
@@ -275,11 +276,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private async Task<bool> CanUpdateApplication(Guid applicationId, int sequenceId)
         {
+            var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
+            return CanUpdateApplication(sequence, sequenceId);
+        }
+
+        private bool CanUpdateApplication(ApplicationSequence sequence, int sequenceId)
+        {
             bool canUpdate = false;
 
-            var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
-
-            if(sequence?.Status != null && (int)sequence.SequenceId == sequenceId)
+            if (sequence?.Status != null && (int)sequence.SequenceId == sequenceId)
             {
                 canUpdate = sequence.Status == ApplicationSequenceStatus.Draft || sequence.Status == ApplicationSequenceStatus.FeedbackAdded;
             }
@@ -604,7 +609,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 ReferenceNumber = application?.ApplicationData?.ReferenceNumber,
                 FeedbackUrl = config.FeedbackUrl,
-                StandardName = application?.ApplicationData?.StandardName
+                StandardName = application?.ApplicationData?.StandardName,
+                StandardReference = application?.ApplicationData?.StandardReference,
+                StandardLevel = application?.ApplicationData?.StandardLevel
             });
         }
 
