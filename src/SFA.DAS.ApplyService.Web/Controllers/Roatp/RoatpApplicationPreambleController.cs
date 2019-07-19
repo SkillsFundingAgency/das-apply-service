@@ -191,19 +191,6 @@
             return View("~/Views/Roatp/CompanyNotFound.cshtml", viewModel);
         }
 
-        [Route("charity-not-active")]
-        public async Task<IActionResult> CharityNotActive()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                UKPRN = applicationDetails.UKPRN.ToString()
-            };
-
-            return View("~/Views/Roatp/CharityNotActive.cshtml", viewModel);
-        }
-
         [Route("charity-not-found")]
         public async Task<IActionResult> CharityNotFound()
         {
@@ -211,7 +198,8 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
-                UKPRN = applicationDetails.UKPRN.ToString()
+                UKPRN = applicationDetails.UKPRN.ToString(),
+                ProviderDetails = applicationDetails.UkrlpLookupDetails
             };
 
             return View("~/Views/Roatp/CharityNotFound.cshtml", viewModel);
@@ -373,12 +361,19 @@
                     } 
                     charityDetails = charityApiResponse.Response;
 
-                    if (!charityDetails.IsActivelyTrading)
+                    if (charityDetails == null || !charityDetails.IsActivelyTrading)
                     {
-                        return RedirectToAction("CharityNotActive");
+                        return RedirectToAction("CharityNotFound");
                     }
                     
                     applicationDetails.CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails);
+                }
+                else
+                {
+                    applicationDetails.CharitySummary = new CharityCommissionSummary
+                    {
+                        TrusteeManualEntryRequired = true
+                    };
                 }
             }
 

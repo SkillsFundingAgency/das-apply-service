@@ -553,7 +553,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Never);
             _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
-            _sessionService.Verify(x => x.Set(It.IsAny<string>(), It.Is<ApplicationDetails>(y => y.CharitySummary == null)), Times.Once);
+            _sessionService.Verify(x => x.Set(It.IsAny<string>(), It.Is<ApplicationDetails>(y => y.CharitySummary.TrusteeManualEntryRequired == true)), Times.Once);
         }
 
         [Test]
@@ -718,7 +718,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
             result.Should().BeOfType<RedirectToActionResult>();
             var redirectResult = result as RedirectToActionResult;
-            redirectResult.ActionName.Should().Be("CharityNotActive");
+            redirectResult.ActionName.Should().Be("CharityNotFound");
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Never);
             _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Once);
