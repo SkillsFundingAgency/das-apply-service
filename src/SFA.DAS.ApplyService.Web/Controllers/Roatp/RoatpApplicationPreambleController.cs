@@ -177,19 +177,6 @@
             return View("~/Views/Roatp/UkprnActive.cshtml", viewModel);
         }
 
-        [Route("company-not-active")]
-        public async Task<IActionResult> CompanyNotActive()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                UKPRN = applicationDetails.UKPRN.ToString()
-            };
-
-            return View("~/Views/Roatp/CompanyNotActive.cshtml", viewModel);
-        }
-
         [Route("company-not-found")]
         public async Task<IActionResult> CompanyNotFound()
         {
@@ -197,23 +184,11 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
-                UKPRN = applicationDetails.UKPRN.ToString()
+                UKPRN = applicationDetails.UKPRN.ToString(),
+                ProviderDetails = applicationDetails.UkrlpLookupDetails
             };
 
             return View("~/Views/Roatp/CompanyNotFound.cshtml", viewModel);
-        }
-
-        [Route("charity-not-active")]
-        public async Task<IActionResult> CharityNotActive()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                UKPRN = applicationDetails.UKPRN.ToString()
-            };
-
-            return View("~/Views/Roatp/CharityNotActive.cshtml", viewModel);
         }
 
         [Route("charity-not-found")]
@@ -223,7 +198,8 @@
 
             var viewModel = new UkprnSearchResultsViewModel
             {
-                UKPRN = applicationDetails.UKPRN.ToString()
+                UKPRN = applicationDetails.UKPRN.ToString(),
+                ProviderDetails = applicationDetails.UkrlpLookupDetails
             };
 
             return View("~/Views/Roatp/CharityNotFound.cshtml", viewModel);
@@ -293,6 +269,12 @@
             return View("~/Views/Roatp/CharityCommissionNotAvailable.cshtml");
         }
 
+        [Route("parent-company-check")]
+        public async Task<IActionResult> ParentCompanyCheck()
+        {
+            return View("~/Views/Roatp/ParentCompanyCheck.cshtml");
+        }
+
         private async Task<IActionResult> CheckIfOrganisationAlreadyOnRegister(long ukprn)
         {
             var registerStatus = await _roatpApiClient.UkprnOnRegister(ukprn);
@@ -333,21 +315,21 @@
                     companyDetails.ManualEntryRequired = true;
                 }
 
-                if (String.IsNullOrWhiteSpace(companyDetails.Status)
-                    || companyDetails.Status.ToLower() != CompaniesHouseSummary.CompanyStatusActive)
+                if (companyDetails.Status == CompaniesHouseSummary.ServiceUnavailable)
                 {
-                    if (companyDetails.Status == CompaniesHouseSummary.CompanyStatusNotFound)
-                    {
-                        return RedirectToAction("CompanyNotFound");
-                    }
+                    return RedirectToAction("CompaniesHouseNotAvailable");
+                }
 
-                    if (companyDetails.Status == CompaniesHouseSummary.ServiceUnavailable)
-                    {
-                        return RedirectToAction("CompaniesHouseNotAvailable");
-                    }
-                    return RedirectToAction("CompanyNotActive");
+                if (companyDetails.Status == CompaniesHouseSummary.CompanyStatusNotFound)
+                {
+                    return RedirectToAction("CompanyNotFound");
                 }
                 
+                if (!CompaniesHouseValidator.CompaniesHouseStatusValid(companyDetails.CompanyNumber, companyDetails.Status))
+                {
+                    return RedirectToAction("CompanyNotFound");
+                }
+
                 applicationDetails.CompanySummary = companyDetails;
             }
 
@@ -379,18 +361,25 @@
                     } 
                     charityDetails = charityApiResponse.Response;
 
-                    if (!charityDetails.IsActivelyTrading)
+                    if (charityDetails == null || !charityDetails.IsActivelyTrading)
                     {
-                        return RedirectToAction("CharityNotActive");
+                        return RedirectToAction("CharityNotFound");
                     }
                     
                     applicationDetails.CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails);
+                }
+                else
+                {
+                    applicationDetails.CharitySummary = new CharityCommissionSummary
+                    {
+                        TrusteeManualEntryRequired = true
+                    };
                 }
             }
 
             _sessionService.Set(ApplicationDetailsKey, applicationDetails);
 
-            return RedirectToAction("StartApplication");
+            return RedirectToAction("ParentCompanyCheck");
         }
 
         private bool CompanyReturnsFullDetails(string companyNumber)

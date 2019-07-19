@@ -549,11 +549,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("StartApplication");
+            redirectResult.ActionName.Should().Be("ParentCompanyCheck");
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Never);
             _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
-            _sessionService.Verify(x => x.Set(It.IsAny<string>(), It.Is<ApplicationDetails>(y => y.CharitySummary == null)), Times.Once);
+            _sessionService.Verify(x => x.Set(It.IsAny<string>(), It.Is<ApplicationDetails>(y => y.CharitySummary.TrusteeManualEntryRequired == true)), Times.Once);
         }
 
         [Test]
@@ -622,7 +622,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var inactiveCompany = new CompaniesHouseSummary
             {
-                Status = status
+                Status = status,
+                CompanyNumber = "12345678"
             };
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(Task.FromResult(inactiveCompany)).Verifiable();
             _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
@@ -630,7 +631,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
             result.Should().BeOfType<RedirectToActionResult>();
             var redirectResult = result as RedirectToActionResult;
-            redirectResult.ActionName.Should().Be("CompanyNotActive");
+            redirectResult.ActionName.Should().Be("CompanyNotFound");
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Once);
             _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
@@ -662,7 +663,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var companyNotFound = new CompaniesHouseSummary
             {
-                Status = CompaniesHouseSummary.CompanyStatusNotFound
+                Status = CompaniesHouseSummary.CompanyStatusNotFound,
+                CompanyNumber = "12345678"
             };
             _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>())).Returns(Task.FromResult(companyNotFound)).Verifiable();
             _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
@@ -716,7 +718,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
             result.Should().BeOfType<RedirectToActionResult>();
             var redirectResult = result as RedirectToActionResult;
-            redirectResult.ActionName.Should().Be("CharityNotActive");
+            redirectResult.ActionName.Should().Be("CharityNotFound");
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Never);
             _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Once);
@@ -879,7 +881,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
 
             var redirectResult = result as RedirectToActionResult;
-            redirectResult.ActionName.Should().Be("StartApplication");
+            redirectResult.ActionName.Should().Be("ParentCompanyCheck");
             
             _sessionService.Verify(x => x.Set(It.IsAny<string>(), It.Is<ApplicationDetails>(y => y.CompanySummary.ManualEntryRequired == expectedRequired)));
 
