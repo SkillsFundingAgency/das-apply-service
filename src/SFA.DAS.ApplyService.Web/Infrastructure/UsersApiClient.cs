@@ -23,7 +23,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task MigrateContactAndOrgs(MigrateContactOrganisation migrateContactOrganisation);
     }
 
-    public class UsersApiClient : ApiClient, IUsersApiClient
+    public class UsersApiClient : ApiClientBase, IUsersApiClient
     {
         private readonly ILogger<UsersApiClient> _logger;
 

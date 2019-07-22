@@ -10,7 +10,7 @@ using OrganisationDetails = SFA.DAS.ApplyService.InternalApi.Types.OrganisationD
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    public class OrganisationApiClient : ApiClient
+    public class OrganisationApiClient : ApiClientBase
     {
         private readonly ILogger<OrganisationApiClient> _logger;
 

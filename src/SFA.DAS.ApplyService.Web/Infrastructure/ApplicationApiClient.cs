@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    public class ApplicationApiClient : ApiClient, IApplicationApiClient
+    public class ApplicationApiClient : ApiClientBase, IApplicationApiClient
     {
         private readonly ILogger<ApplicationApiClient> _logger;
 

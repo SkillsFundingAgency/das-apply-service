@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    public class OrganisationSearchApiClient : ApiClient
+    public class OrganisationSearchApiClient : ApiClientBase
     {
         private readonly ILogger<OrganisationSearchApiClient> _logger;
 
