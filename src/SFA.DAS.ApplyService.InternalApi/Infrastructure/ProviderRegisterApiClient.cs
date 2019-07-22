@@ -71,6 +71,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                             // safe to ignore any errors
                         }
                         _logger.LogError(ex, $"GET: HTTP {(int)response.StatusCode} Error getting response from: {uri} - ActualResponse: {actualResponse}");
+                        // NOTE: We're not throwing exception here. The upstream code expects it to return: default(T)
                     }
                 }
             }
