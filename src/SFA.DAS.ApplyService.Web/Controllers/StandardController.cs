@@ -88,7 +88,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     UserEmail = User.GetEmail()
                 };
 
-            await _apiClient.UpdateApplicationData(applicationData, model.ApplicationId);
+            await _apiClient.UpdateApplicationData(model.ApplicationId, applicationData);
 
             return RedirectToAction("Applications", "Application");
         }
