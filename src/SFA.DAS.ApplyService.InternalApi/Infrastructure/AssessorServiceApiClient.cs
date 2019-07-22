@@ -28,7 +28,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
         {
             _client = client;
             _logger = logger;
-            _config = configurationService.GetConfig().Result;
+            _config = configurationService.GetConfig().GetAwaiter().GetResult();
             _hostingEnvironment = hostingEnvironment;
         }
 
