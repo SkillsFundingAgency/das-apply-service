@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    public abstract class ApiClient
+    public abstract class ApiClientBase : IDisposable
     {
-        private readonly ILogger<ApiClient> _logger;
+        private readonly ILogger<ApiClientBase> _logger;
         protected readonly HttpClient _httpClient;
 
-        protected ApiClient(ILogger<ApiClient> logger, IConfigurationService configService)
+        protected ApiClientBase(ILogger<ApiClientBase> logger, IConfigurationService configService)
         {
             _logger = logger;
 
@@ -271,5 +271,35 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 throw;
             }
         }
+
+        #region IDisposable
+        private bool disposed = false;
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                // Free any other managed objects here.
+                _httpClient.Dispose();
+            }
+
+            // Free any unmanaged objects here.
+            disposed = true;
+        }
+
+        ~ApiClientBase()
+        {
+            Dispose(false);
+        }
+        #endregion
     }
 }
