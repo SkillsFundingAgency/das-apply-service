@@ -68,9 +68,34 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
         {
             _client.DefaultRequestHeaders.Authorization = GetBasicAuthHeader();
 
-            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
+            try
             {
-                return await response.Content.ReadAsAsync<T>();
+                using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
+                {
+                    try
+                    {
+                        return await response.Content.ReadAsAsync<T>();
+                    }
+                    catch (Exception ex)
+                    {
+                        var actualResponse = string.Empty;
+                        try
+                        {
+                            actualResponse = await response.Content.ReadAsStringAsync();
+                        }
+                        catch
+                        {
+                            // safe to ignore any errors
+                        }
+                        _logger.LogError(ex, $"GET: HTTP {(int)response.StatusCode} Error getting response from: {uri} - ActualResponse: {actualResponse}");
+                        throw;
+                    }
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"GET: HTTP Error when processing request to: {uri}");
+                throw;
             }
         }
         #endregion HTTP Request Helpers

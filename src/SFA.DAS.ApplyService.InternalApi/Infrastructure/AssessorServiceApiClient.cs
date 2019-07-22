@@ -90,20 +90,64 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GetToken());
 
-            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
+            try
             {
-                return await response.Content.ReadAsAsync<T>();
+                using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
+                {
+                    try
+                    {
+                        return await response.Content.ReadAsAsync<T>();
+                    }
+                    catch (Exception ex)
+                    {
+                        var actualResponse = string.Empty;
+                        try
+                        {
+                            actualResponse = await response.Content.ReadAsStringAsync();
+                        }
+                        catch
+                        {
+                            // safe to ignore any errors
+                        }
+                        _logger.LogError(ex, $"GET: HTTP {(int)response.StatusCode} Error getting response from: {uri} - ActualResponse: {actualResponse}");
+                        throw;
+                    }
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"GET: HTTP Error when processing request to: {uri}");
+                throw;
             }
         }
 
-        private async Task Post<T>(string uri, T model)
+        private async Task Post(string uri, object model)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", GetToken());
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GetToken());
             var serializeObject = JsonConvert.SerializeObject(model);
 
-            await _client.PostAsync(new Uri(uri, UriKind.Relative),
-                new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"));
+            try
+            {
+                var response = await _client.PostAsync(new Uri(uri, UriKind.Relative), new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json"));
+                if (!response.IsSuccessStatusCode)
+                {
+                    var actualResponse = string.Empty;
+                    try
+                    {
+                        actualResponse = await response.Content.ReadAsStringAsync();
+                    }
+                    catch
+                    {
+                        // safe to ignore any errors
+                    }
+                    _logger.LogError($"POST: HTTP {(int)response.StatusCode} Error getting response from: {uri} - ActualResponse: {actualResponse}");
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"POST: HTTP Error when processing request to: {uri}");
+                throw;
+            }
         }
 
         private string GetToken()

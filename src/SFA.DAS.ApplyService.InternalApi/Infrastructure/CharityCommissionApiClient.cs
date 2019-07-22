@@ -55,8 +55,17 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
         {
             _logger.LogInformation($"Searching Charity Commission - Charity Details. Charity Number: {charityNumber}");
             var request = new GetCharityByRegisteredCharityNumberRequest(_config.CharityCommissionApiAuthentication.ApiKey, charityNumber);
-            var apiResponse = await _client.GetCharityByRegisteredCharityNumberAsync(request);
-            return Mapper.Map<Charity, Types.CharityCommission.Charity>(apiResponse.GetCharityByRegisteredCharityNumberResult);
+
+            try
+            {
+                var apiResponse = await _client.GetCharityByRegisteredCharityNumberAsync(request);
+                return Mapper.Map<Charity, Types.CharityCommission.Charity>(apiResponse.GetCharityByRegisteredCharityNumberResult);
+            }
+            catch (Exception soapEx)
+            {
+                _logger.LogError(soapEx, $"GET: HTTP Error when processing request to GetCharityDetails: {charityNumber}");
+                throw;
+            }
         }
     }
 }

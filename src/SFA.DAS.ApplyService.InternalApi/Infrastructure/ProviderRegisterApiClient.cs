@@ -43,16 +43,43 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
         private async Task<T> Get<T>(string uri)
         {
-            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
+            var result = default(T);
+            try
             {
-                if (response.IsSuccessStatusCode)
+                using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
                 {
-                    return await response.Content.ReadAsAsync<T>();
+                    try
+                    {
+                        if (response.IsSuccessStatusCode)
+                        {
+                            result = await response.Content.ReadAsAsync<T>();
+                        }
+                        else
+                        {
+                            _logger.LogWarning($"GET: HTTP {(int)response.StatusCode} response from: {uri}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        var actualResponse = string.Empty;
+                        try
+                        {
+                            actualResponse = await response.Content.ReadAsStringAsync();
+                        }
+                        catch
+                        {
+                            // safe to ignore any errors
+                        }
+                        _logger.LogError(ex, $"GET: HTTP {(int)response.StatusCode} Error getting response from: {uri} - ActualResponse: {actualResponse}");
+                    }
                 }
-
-                return default(T);
             }
-        }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, $"GET: HTTP Error when processing request to: {uri}");
+            }
 
+            return result;
+        }
     }
 }
