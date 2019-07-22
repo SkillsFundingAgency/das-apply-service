@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply;
@@ -14,116 +8,94 @@ using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    public class ApplicationApiClient : IApplicationApiClient
+    public class ApplicationApiClient : ApiClient, IApplicationApiClient
     {
         private readonly ILogger<ApplicationApiClient> _logger;
-        private static readonly HttpClient _httpClient = new HttpClient();
 
-        public ApplicationApiClient(IConfigurationService configurationService, ILogger<ApplicationApiClient> logger)
+        public ApplicationApiClient(ILogger<ApplicationApiClient> logger, IConfigurationService configurationService) : base (logger, configurationService)
         {
             _logger = logger;
-            if (_httpClient.BaseAddress == null)
-            {
-                _httpClient.BaseAddress = new Uri(configurationService.GetConfig().Result.InternalApi.Uri);
-            }
         }
 
         public async Task<List<Domain.Entities.Application>> GetApplications(Guid userId, bool createdBy)
         {
             if (!createdBy)
             {
-                return await (await _httpClient.GetAsync($"/Applications/{userId}/Organisation")).Content
-                .ReadAsAsync<List<Domain.Entities.Application>>();
+                return await Get<List<Domain.Entities.Application>>($"/Applications/{userId}/Organisation");
             }
-
-            return await (await _httpClient.GetAsync($"/Applications/{userId}")).Content
-                .ReadAsAsync<List<Domain.Entities.Application>>();
+            else
+            {
+                return await Get<List<Domain.Entities.Application>>($"/Applications/{userId}");
+            }
         }
 
-        public async Task<UploadResult> Upload(Guid applicationId, string userId, int sequenceId, int sectionId,
-            string pageId, IFormFileCollection files)
+        public async Task<UploadResult> Upload(Guid applicationId, string userId, int sequenceId, int sectionId, string pageId, IFormFileCollection files)
         {
             var formDataContent = new MultipartFormDataContent();
             foreach (var file in files)
             {
                 var fileContent = new StreamContent(file.OpenReadStream())
-                    {Headers = {ContentLength = file.Length, ContentType = new MediaTypeHeaderValue(file.ContentType)}};
+                    { Headers = { ContentLength = file.Length, ContentType = new MediaTypeHeaderValue(file.ContentType) } };
                 formDataContent.Add(fileContent, file.Name, file.FileName);
+
+                _logger.LogInformation($"API Upload > Added content {file.FileName}");
             }
 
-            return await (await _httpClient.PostAsync(
-                    $"/Upload/Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}",
-                    formDataContent)).Content
-                .ReadAsAsync<UploadResult>();
-        }
-        
-        public async Task<HttpResponseMessage> Download(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId,string filename)
-        {
-            var downloadResponse = await _httpClient.GetAsync(
-                $"/Download/Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}");
-            return downloadResponse;
+            return await PostFileContent<UploadResult>($"/Upload/Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}", formDataContent);
         }
 
-        public async Task<FileInfoResponse> FileInfo(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId,string filename)
+        public async Task<HttpResponseMessage> Download(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string filename)
         {
-            var downloadResponse = await (await _httpClient.GetAsync(
-                $"/FileInfo/Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}")).Content.ReadAsAsync<FileInfoResponse>();
-            return downloadResponse;
+            return await Get($"/Download/Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}");
         }
-        
+
+        public async Task<FileInfoResponse> FileInfo(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string filename)
+        {
+            return await Get<FileInfoResponse>($"/FileInfo/Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}");
+        }
+
         public async Task<ApplicationSequence> GetSequence(Guid applicationId, Guid userId)
         {
-            return await (await _httpClient.GetAsync($"Application/{applicationId}/User/{userId}/Sections")).Content
-                .ReadAsAsync<ApplicationSequence>();
+            return await Get<ApplicationSequence>($"Application/{applicationId}/User/{userId}/Sections");
         }
 
         public async Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId, int sectionId, Guid userId)
         {
-            return await (await _httpClient.GetAsync(
-                    $"Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections/{sectionId}")).Content
-                .ReadAsAsync<ApplicationSection>();
+            return await Get<ApplicationSection>($"Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections/{sectionId}");
         }
 
         public async Task<Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid userId)
         {
-            return await (await _httpClient.GetAsync(
-                    $"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")
-                )
-                .Content.ReadAsAsync<Page>();
+            return await Get<Page>($"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}");
         }
 
-        public async Task<UpdatePageAnswersResult> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId,
-            int sectionId, string pageId, List<Answer> answers, bool saveNewAnswers)
+        public async Task<UpdatePageAnswersResult> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, List<Answer> answers, bool saveNewAnswers)
         {
-            return await (await _httpClient.PostAsJsonAsync(
-                    $"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}",
-                    new { answers, saveNewAnswers })).Content
-                .ReadAsAsync<UpdatePageAnswersResult>();
+            return await Post<UpdatePageAnswersResult>($"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}", new { answers, saveNewAnswers });
         }
 
         public async Task<StartApplicationResponse> StartApplication(Guid userId)
         {
-            var httpResponse = await _httpClient.PostAsJsonAsync("/Application/Start", new {userId});
-            var startApplicationResponse = await httpResponse.Content.ReadAsAsync<StartApplicationResponse>();
-            return startApplicationResponse;
+            return await Post<StartApplicationResponse>($"/Application/Start", new { userId });
         }
 
         public async Task<bool> Submit(Guid applicationId, int sequenceId, Guid userId, string userEmail)
         {
-            return await (await _httpClient.PostAsJsonAsync(
-                    "/Applications/Submit", new {applicationId, sequenceId, userId, userEmail })).Content
-                    .ReadAsAsync<bool>();
+            return await Post<bool>($"/Application/Submit", new { applicationId, sequenceId, userId, userEmail });
         }
 
-        public async Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId,
-            Guid userId)
+        public async Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, Guid userId)
         {
-            await _httpClient.PostAsJsonAsync(
-                $"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/DeleteAnswer/{answerId}",
-                new { });
+            await Post($"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/DeleteAnswer/{answerId}", new { });
         }
 
         public async Task ImportWorkflow(IFormFile file)
@@ -131,60 +103,58 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             var formDataContent = new MultipartFormDataContent();
 
             var fileContent = new StreamContent(file.OpenReadStream())
-                {Headers = {ContentLength = file.Length, ContentType = new MediaTypeHeaderValue(file.ContentType)}};
+                { Headers = { ContentLength = file.Length, ContentType = new MediaTypeHeaderValue(file.ContentType) } };
             formDataContent.Add(fileContent, file.Name, file.FileName);
 
             _logger.LogInformation($"API ImportWorkflow > Added content {file.FileName}");
 
-            await _httpClient.PostAsync($"/Import/Workflow", formDataContent);
+            await PostFileContent($"/Import/Workflow", formDataContent);
 
             _logger.LogInformation($"API ImportWorkflow > After post to Internal API");
         }
 
-        public async Task UpdateApplicationData<T>(T applicationData, Guid applicationId)
+        public async Task UpdateApplicationData<T>(Guid applicationId, T applicationData)
         {
-            await _httpClient.PostAsJsonAsync($"/Application/{applicationId}/UpdateApplicationData", applicationData);
+            await Post($"/Application/{applicationId}/UpdateApplicationData", applicationData);
         }
 
         public async Task<Domain.Entities.Application> GetApplication(Guid applicationId)
         {
-            return await (await _httpClient.GetAsync($"Application/{applicationId}")).Content
-                .ReadAsAsync<Domain.Entities.Application>();
+            return await Get<Domain.Entities.Application>($"Application/{applicationId}");
         }
 
         public async Task<string> GetApplicationStatus(Guid applicationId, int standardCode)
         {
-            return await(await _httpClient.GetAsync(
-                $"Application/{applicationId}/standard/{standardCode}/check-status")).Content.ReadAsStringAsync();
+            return await Get<string>($"Application/{applicationId}/standard/{standardCode}/check-status");
         }
 
         public async Task<List<StandardCollation>> GetStandards()
         {
-            return await(await _httpClient.GetAsync("all-standards")).Content.ReadAsAsync<List<StandardCollation>>();
+            return await Get<List<StandardCollation>>("all-standards");
         }
 
         public async Task<List<Option>> GetQuestionDataFedOptions(string dataEndpoint)
         {
-            return await(await _httpClient.GetAsync($"QuestionOptions/{dataEndpoint}")).Content.ReadAsAsync<List<Option>>();
+            return await Get<List<Option>>($"QuestionOptions/{dataEndpoint}");
         }
 
         public async Task DeleteFile(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId)
         {
-            await _httpClient.PostAsJsonAsync($"/DeleteFile", new {applicationId, userId, sequenceId, sectionId, pageId, questionId});
+            await Post($"/DeleteFile", new { applicationId, userId, sequenceId, sectionId, pageId, questionId });
         }
 
         public async Task<Organisation> GetOrganisationByUserId(Guid userId)
         {
-            return await(await _httpClient.GetAsync($"organisations/userId/{userId}")).Content.ReadAsAsync<Organisation>();
+            return await Get<Organisation>($"organisations/userId/{userId}");
         }
 
         public async Task<Organisation> GetOrganisationByUkprn(string ukprn)
         {
-            return await (await _httpClient.GetAsync($"organisations/ukprn/{ukprn}")).Content.ReadAsAsync<Organisation>();
+            return await Get<Organisation>($"organisations/ukprn/{ukprn}");
         }
         public async Task<Organisation> GetOrganisationByName(string name)
         {
-            return await (await _httpClient.GetAsync($"organisations/name/{WebUtility.UrlEncode(name)}")).Content.ReadAsAsync<Organisation>();
+            return await Get<Organisation>($"organisations/name/{WebUtility.UrlEncode(name)}");
         }
     }
 }

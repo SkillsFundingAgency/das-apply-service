@@ -23,67 +23,65 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task MigrateContactAndOrgs(MigrateContactOrganisation migrateContactOrganisation);
     }
 
-    public class UsersApiClient : IUsersApiClient
+    public class UsersApiClient : ApiClient, IUsersApiClient
     {
         private readonly ILogger<UsersApiClient> _logger;
-        private static readonly HttpClient HttpClient = new HttpClient();
 
-        public UsersApiClient(IConfigurationService configService, ILogger<UsersApiClient> logger)
+        public UsersApiClient(ILogger<UsersApiClient> logger, IConfigurationService configService) : base(logger, configService)
         {
             _logger = logger;
-            if (HttpClient.BaseAddress == null)
-            {
-                HttpClient.BaseAddress = new Uri(configService.GetConfig().Result.InternalApi.Uri);
-            }
         }
 
         public async Task<bool> InviteUser(CreateAccountViewModel vm)
         {
-            var result = await HttpClient.PostAsJsonAsync("/Account/", vm);
-            return result.IsSuccessStatusCode;
+            using (var result = await Post("/Account/", vm))
+            {
+                return result.IsSuccessStatusCode;
+            }
         }
 
         public async Task<Contact> GetUserBySignInId(string signInId)
         {
-            var httpResponseMessage = await HttpClient.GetAsync($"/Account/{signInId}");
+            using (var httpResponseMessage = await Get($"/Account/{signInId}"))
+            {
+                var contactJson = await httpResponseMessage.Content.ReadAsStringAsync();
 
-            var contactJson = await httpResponseMessage.Content.ReadAsStringAsync();
+                _logger.LogInformation($"GetUserBySignInId result: {contactJson}");
 
-            _logger.LogInformation($"GetUserBySignInId result: {contactJson}");
-            
-            return JsonConvert.DeserializeObject<Contact>(contactJson);
-
-            //return await httpResponseMessage.Content.ReadAsAsync<Contact>();
+                return JsonConvert.DeserializeObject<Contact>(contactJson);
+            }
         }
 
         public async Task<bool> ApproveUser(Guid contactId)
         {
-            var result = await HttpClient.PostAsJsonAsync("/Account/{contactId}/approve", string.Empty);
-            return result.IsSuccessStatusCode;
+            using (var result = await Post($"/Account/{contactId}/approve", new { }))
+            {
+                return result.IsSuccessStatusCode;
+            }
         }
 
         public async Task Callback(SignInCallback callback)
         {
-            await HttpClient.PostAsJsonAsync($"/Account/Callback", callback);
+            await Post($"/Account/Callback", callback);
         }
 
         public async Task MigrateUsers()
         {
-            await HttpClient.PostAsync("/Account/MigrateUsers", new StringContent(""));
+            await Post("/Account/MigrateUsers", new { });
         }
 
         public async Task AssociateOrganisationWithUser(Guid contactId, Guid organisationId)
         {
-            await HttpClient.PutAsJsonAsync($"/Account/UpdateContactWithOrgId", new UpdateContactOrgId
+            await Put($"/Account/UpdateContactWithOrgId", new UpdateContactOrgId
             {
-                ContactId=contactId,
-                OrganisationId=organisationId
-            } );
+                ContactId = contactId,
+                OrganisationId = organisationId
+            });
         }
 
         public async Task MigrateContactAndOrgs(MigrateContactOrganisation migrateContactOrganisation)
         {
-            await HttpClient.PostAsJsonAsync($"/Account/MigrateContactAndOrgs", migrateContactOrganisation);
+            await Post($"/Account/MigrateContactAndOrgs", migrateContactOrganisation);
         }
     }
 }

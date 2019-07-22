@@ -12,51 +12,46 @@ using Newtonsoft.Json;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    public class OrganisationSearchApiClient
+    public class OrganisationSearchApiClient : ApiClient
     {
         private readonly ILogger<OrganisationSearchApiClient> _logger;
-        private static readonly HttpClient _httpClient = new HttpClient();
 
-        public OrganisationSearchApiClient(IConfigurationService configurationService, ILogger<OrganisationSearchApiClient> logger)
+        public OrganisationSearchApiClient(ILogger<OrganisationSearchApiClient> logger, IConfigurationService configurationService) : base(logger, configurationService)
         {
             _logger = logger;
-            if (_httpClient.BaseAddress == null)
-            {
-                _httpClient.BaseAddress = new Uri(configurationService.GetConfig().Result.InternalApi.Uri);
-            }
         }
 
         public async Task<IEnumerable<OrganisationSearchResult>> SearchOrganisation(string searchTerm)
         {
-            return await (await _httpClient.GetAsync($"/OrganisationSearch?searchTerm={searchTerm}")).Content.ReadAsAsync<IEnumerable<OrganisationSearchResult>>();
+            return await Get<IEnumerable<OrganisationSearchResult>>($"/OrganisationSearch?searchTerm={searchTerm}");
         }
 
         public async Task<OrganisationSearchResult> GetOrganisationByEmail(string email)
         {
+            // NOTE: Original author of this code wanted to log the call and then process things manually.
+            // If this not required, move to: return await Get<OrganisationSearchResult>($"/OrganisationSearch/email/{WebUtility.UrlEncode(email)}");
             _logger.LogInformation($"Calling OrganisationSearch/email from: {_httpClient.BaseAddress}/OrganisationSearch/email/{email}");
-            
-            var httpResponseMessage = await _httpClient.GetAsync($"/OrganisationSearch/email/{WebUtility.UrlEncode(email)}");
 
-            var responseAsString = await httpResponseMessage.Content.ReadAsStringAsync();
-            
-            _logger.LogInformation($"Content received from OrganisationSearch/email: {responseAsString}");
+            using (var httpResponseMessage = await Get($"/OrganisationSearch/email/{WebUtility.UrlEncode(email)}"))
+            {
+                var responseAsString = await httpResponseMessage.Content.ReadAsStringAsync();
 
-            return JsonConvert.DeserializeObject<OrganisationSearchResult>(responseAsString);
-            
-//            return await httpResponseMessage.Content
-//                .ReadAsAsync<OrganisationSearchResult>();
+                _logger.LogInformation($"Content received from OrganisationSearch/email: {responseAsString}");
+
+                return JsonConvert.DeserializeObject<OrganisationSearchResult>(responseAsString);
+            }
         }
 
         public async Task<IEnumerable<OrganisationType>> GetOrganisationTypes()
         {
-            var types = await (await _httpClient.GetAsync($"/OrganisationTypes")).Content.ReadAsAsync<IEnumerable<OrganisationType>>();
+            var types = await Get<IEnumerable<OrganisationType>>($"/OrganisationTypes");
 
             return types?.OrderBy(t => t.Type.Equals("Public Sector", StringComparison.InvariantCultureIgnoreCase)).AsEnumerable();
         }
 
         public async Task<bool> IsCompanyActivelyTrading(string companyNumber)
         {
-            return await (await _httpClient.GetAsync($"/OrganisationSearch/{companyNumber}/isActivelyTrading")).Content.ReadAsAsync<bool>();
+            return await Get<bool>($"/OrganisationSearch/{companyNumber}/isActivelyTrading");
         }
     }
 }

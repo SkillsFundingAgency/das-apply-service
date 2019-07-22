@@ -1,4 +1,5 @@
-﻿using SFA.DAS.ApplyService.Configuration;
+﻿using Microsoft.Extensions.Logging;
+using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using System;
@@ -9,16 +10,13 @@ using OrganisationDetails = SFA.DAS.ApplyService.InternalApi.Types.OrganisationD
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    public class OrganisationApiClient
+    public class OrganisationApiClient : ApiClient
     {
-        private static readonly HttpClient _httpClient = new HttpClient();
+        private readonly ILogger<OrganisationApiClient> _logger;
 
-        public OrganisationApiClient(IConfigurationService configurationService)
+        public OrganisationApiClient(ILogger<OrganisationApiClient> logger, IConfigurationService configurationService) : base(logger, configurationService)
         {
-            if (_httpClient.BaseAddress == null)
-            {
-                _httpClient.BaseAddress = new Uri(configurationService.GetConfig().Result.InternalApi.Uri);
-            }
+            _logger = logger;
         }
 
         public async Task<Organisation> Create(OrganisationSearchResult organisation, Guid userId)
@@ -56,8 +54,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 PrimaryContactEmail = organisation.Email
             };
 
-            return await (await _httpClient.PostAsJsonAsync($"/Organisations", request)).Content
-                .ReadAsAsync<Organisation>();
+            return await Post<Organisation>($"/Organisations", request);
         }
     }
 }
