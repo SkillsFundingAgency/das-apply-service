@@ -1,47 +1,71 @@
-﻿using System.IO;
+﻿using Microsoft.Extensions.Logging;
+using SFA.DAS.ApplyService.Application.Interfaces;
+using SFA.DAS.ApplyService.Configuration;
+using System;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using SFA.DAS.ApplyService.Application.Interfaces;
-using SFA.DAS.ApplyService.Configuration;
 
 namespace SFA.DAS.ApplyService.Encryption
 {
     public class EncryptionService : IEncryptionService
     {
+        private readonly ILogger<EncryptionService> _logger;
         private readonly IKeyProvider _keyProvider;
 
-        public EncryptionService(IKeyProvider keyProvider)
+        public EncryptionService(ILogger<EncryptionService> logger, IKeyProvider keyProvider)
         {
+            _logger = logger;
             _keyProvider = keyProvider;
         }
-        
+
         public async Task<Stream> Encrypt(Stream fileStream)
-        {   
-            var key = await _keyProvider.GetKey();
+        {
+            try
+            {
+                byte[] bytesToEncyrpt;
 
-            var memoryStream = new MemoryStream(); 
-            fileStream.CopyTo(memoryStream);
+                using (var memoryStream = new MemoryStream())
+                {
+                    fileStream.CopyTo(memoryStream);
+                    bytesToEncyrpt = memoryStream.ToArray();
+                }
 
-            var originalBytes = memoryStream.ToArray();
+                var key = await _keyProvider.GetKey();
+                var encryptedBytes = AES_Encrypt(bytesToEncyrpt, Encoding.ASCII.GetBytes(key));
 
-            var encryptedBytes = AES_Encrypt(originalBytes, Encoding.ASCII.GetBytes(key));
-            
-            return new MemoryStream(encryptedBytes);
+                return new MemoryStream(encryptedBytes);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unable to Encrypt filestream");
+                throw;
+            }
         }
 
         public async Task<Stream> Decrypt(Stream encryptedFileStream)
         {
-            var key = await _keyProvider.GetKey();
-            
-            var memoryStream = new MemoryStream(); 
-            encryptedFileStream.CopyTo(memoryStream);
+            try
+            {
+                byte[] bytesToDecyrpt;
 
-            var encryptedBytes = memoryStream.ToArray();
-            
-            var originalBytes = AES_Decrypt(encryptedBytes, Encoding.ASCII.GetBytes(key));
-            
-            return new MemoryStream(originalBytes);
+                using (var memoryStream = new MemoryStream())
+                {
+                    encryptedFileStream.CopyTo(memoryStream);
+                    bytesToDecyrpt = memoryStream.ToArray();
+                }
+
+                var key = await _keyProvider.GetKey();
+                var decryptedBytes = AES_Decrypt(bytesToDecyrpt, Encoding.ASCII.GetBytes(key));
+
+                return new MemoryStream(decryptedBytes);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unable to Decrypt filestream");
+                throw;
+            }
         }
 
 
@@ -87,13 +111,13 @@ namespace SFA.DAS.ApplyService.Encryption
         {
             aes.KeySize = 256;
             aes.BlockSize = 128;
-            var key = new Rfc2898DeriveBytes(passwordBytes, new byte[] {1, 2, 3, 4, 5, 6, 7, 8}, 1000);
+            var key = new Rfc2898DeriveBytes(passwordBytes, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }, 1000);
             aes.Key = key.GetBytes(aes.KeySize / 8);
             aes.IV = key.GetBytes(aes.BlockSize / 8);
             aes.Mode = CipherMode.CBC;
         }
     }
-    
+
     public class PlaceholderKeyProvider : IKeyProvider
     {
         private readonly IConfigurationService _configurationService;
@@ -102,7 +126,7 @@ namespace SFA.DAS.ApplyService.Encryption
         {
             _configurationService = configurationService;
         }
-        
+
         public async Task<string> GetKey()
         {
             var config = await _configurationService.GetConfig();
