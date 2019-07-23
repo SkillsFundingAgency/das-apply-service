@@ -17,7 +17,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
             foreach (var file in files)
             {
-                
+
                 var typeValidation = page.Questions.First(q => q.QuestionId == file.Name).Input.Validations.FirstOrDefault(v => v.Name == "FileType");
                 if (typeValidation != null)
                 {
@@ -26,27 +26,62 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
                     var fileNameParts = file.FileName.Split(".", StringSplitOptions.RemoveEmptyEntries);
                     var fileNameExtension = fileNameParts[fileNameParts.Length - 1];
-                    
+
                     if (fileNameExtension != allowedExtension || file.ContentType.ToLower() != mimeType)
                     {
                         modelState.AddModelError(file.Name, typeValidation.ErrorMessage);
                         errorMessages.Add(new ValidationErrorDetail(file.Name, typeValidation.ErrorMessage));
                         fileValidationPassed = false;
                     }
-                    else
+                    else if (FileContentIsValidForMimeType(fileNameExtension, file.OpenReadStream()))
                     {
                         // Only add to answers if type validation passes.
-                        answers.Add(new Answer() {QuestionId = file.Name, Value = file.FileName});
+                        answers.Add(new Answer() { QuestionId = file.Name, Value = file.FileName });
+                    }
+                    else
+                    {
+                        fileValidationPassed = false;
                     }
                 }
                 else
                 {
                     // Only add to answers if type validation passes.
-                    answers.Add(new Answer() {QuestionId = file.Name, Value = file.FileName});
+                    answers.Add(new Answer() { QuestionId = file.Name, Value = file.FileName });
                 }
             }
 
             return fileValidationPassed;
+        }
+
+        // Refer to this: https://www.garykessler.net/library/file_sigs.html
+        private static Dictionary<string, byte[]> _knownHeaders = new Dictionary<string, byte[]>
+        {
+            {"JPG",  new byte[] { 0xFF, 0xD8, 0xFF }},
+            {"JPEG", new byte[] { 0xFF, 0xD8, 0xFF }},
+            {"TIF",  new byte[] { 0x49, 0x49, 0x2A, 0x00 }},
+            {"TIFF", new byte[] { 0x49, 0x49, 0x2A, 0x00 }},
+            {"GIF",  new byte[] { 0x47, 0x49, 0x46, 0x38 }},
+            {"BMP",  new byte[] { 0x42, 0x4D }},
+            {"ICO",  new byte[] { 0x00, 0x00, 0x01, 0x00 }},
+            {"PDF",  new byte[] { 0x25, 0x50, 0x44, 0x46 }}
+        };
+
+        public static bool FileContentIsValidForMimeType(string fileExtension, System.IO.Stream fileContents)
+        {
+            if (fileExtension is null || fileContents is null) return false;
+
+            var headerForFileExtension = _knownHeaders[fileExtension.ToUpper()];
+
+            if (headerForFileExtension != null)
+            {
+                var headerOfActualFile = new byte[headerForFileExtension.Length];
+                fileContents.Read(headerOfActualFile, 0, headerOfActualFile.Length);
+                fileContents.Position = 0;
+
+                return headerOfActualFile.SequenceEqual(headerForFileExtension);
+            }
+
+            return true;
         }
     }
 }
