@@ -33,14 +33,15 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                         errorMessages.Add(new ValidationErrorDetail(file.Name, typeValidation.ErrorMessage));
                         fileValidationPassed = false;
                     }
-                    else if (FileContentIsValidForMimeType(fileNameExtension, file.OpenReadStream()))
+                    else if (!FileContentIsValidForMimeType(fileNameExtension, file.OpenReadStream()))
                     {
-                        // Only add to answers if type validation passes.
-                        answers.Add(new Answer() { QuestionId = file.Name, Value = file.FileName });
+                        errorMessages.Add(new ValidationErrorDetail(file.Name, "File content is incorrect for the specified file type"));
+                        fileValidationPassed = false;
                     }
                     else
                     {
-                        fileValidationPassed = false;
+                        // Only add to answers if type validation passes.
+                        answers.Add(new Answer() { QuestionId = file.Name, Value = file.FileName });
                     }
                 }
                 else
