@@ -14,11 +14,11 @@
     {
         private ILogger<UkrlpLookupController> _logger;
 
-        private IUkrlpApiClient _apiClient;
+        private IRoatpApiClient _apiClient;
 
         private AsyncRetryPolicy _retryPolicy;
 
-        public UkrlpLookupController(ILogger<UkrlpLookupController> logger, IUkrlpApiClient apiClient)
+        public UkrlpLookupController(ILogger<UkrlpLookupController> logger, IRoatpApiClient apiClient)
         {
             _logger = logger;
             _apiClient = apiClient;
@@ -30,10 +30,9 @@
         {
             UkprnLookupResponse providerData;
 
-            long ukprnValue = Convert.ToInt64(ukprn);
             try
             {
-                providerData = await _retryPolicy.ExecuteAsync(context => _apiClient.GetTrainingProviderByUkprn(ukprnValue), new Context());
+                providerData = await _retryPolicy.ExecuteAsync(context => _apiClient.GetUkrlpDetails(ukprn), new Context());
             }
             catch (Exception ex)
             {

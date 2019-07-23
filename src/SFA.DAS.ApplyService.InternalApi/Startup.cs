@@ -176,13 +176,9 @@ namespace SFA.DAS.ApplyService.InternalApi
                         .SearchCharitiesV1Soap)
                     .Ctor<string>("remoteAddress").Is(_applyConfig.CharityCommissionApiAuthentication.ApiBaseAddress);
                 config.For<CharityCommissionApiClient>().Use<CharityCommissionApiClient>();
-                config.For<ProviderQueryPortType>().Use<ProviderQueryPortTypeClient>()
-                    .Ctor<EndpointConfiguration>("endpointConfiguration").Is(EndpointConfiguration.ProviderQueryPort)
-                    .Ctor<string>("remoteAddress").Is(_applyConfig.UkrlpApiAuthentication.ApiBaseAddress);
-                config.For<IUkrlpApiClient>().Use<UkrlpApiClient>();
+                
                 // End of SOAP Services
-                config.For<IUkrlpApiClient>().Use<UkrlpApiClient>();
-                config.For<IUkrlpSoapSerializer>().Use<UkrlpSoapSerializer>();
+                
                 config.For<IRoatpApiClient>().Use<RoatpApiClient>();
                 config.For<IRoatpTokenService>().Use<RoatpTokenService>();
                 config.For<IKeyProvider>().Use<PlaceholderKeyProvider>();

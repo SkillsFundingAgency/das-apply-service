@@ -8,8 +8,8 @@
     using Configuration;
     using Domain.Roatp;
     using Microsoft.Extensions.Logging;
-    using SFA.DAS.ApplyService.Domain.Roatp;
     using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
+    using SFA.DAS.ApplyService.InternalApi.Models.Ukrlp;
 
     public class RoatpApiClient : IRoatpApiClient
     {
@@ -51,6 +51,15 @@
             _logger.LogInformation($"Retrieving RoATP provider types");
 
             var apiResponse = await Get<IEnumerable<ProviderType>>($"{_baseAddress}/api/v1/lookupData/providerTypes");
+
+            return apiResponse;
+        }
+
+        public async Task<UkprnLookupResponse> GetUkrlpDetails(string ukprn)
+        {
+            _logger.LogInformation($"Retrieving UKRLP details for {ukprn}");
+
+            var apiResponse = await Get<UkprnLookupResponse>($"{_baseAddress}/api/v1/ukrlp/lookup/{ukprn}");
 
             return apiResponse;
         }

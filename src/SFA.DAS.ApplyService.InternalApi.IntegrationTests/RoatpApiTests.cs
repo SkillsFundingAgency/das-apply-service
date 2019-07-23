@@ -95,5 +95,47 @@
             reapplyStatus.ProviderTypeId.Should().Be(ProviderType.EmployerProvider);
             reapplyStatus.StatusId.Should().Be(OrganisationStatus.Removed);
         }
+
+        [Test]
+        public void Matching_UKPRN_returns_single_result()
+        {
+            var ukprn = "10012385";
+            
+            var result = _apiClient.GetUkrlpDetails(ukprn).GetAwaiter().GetResult();
+
+            result.Should().NotBeNull();
+            result.Results.Count.Should().Be(1);
+            var matchResult = result.Results[0];
+            matchResult.UKPRN.Should().Be(ukprn.ToString());
+            matchResult.ProviderStatus.Should().Be("Active");
+            matchResult.ContactDetails.FirstOrDefault(x => x.ContactType == "L").Should().NotBeNull();
+            matchResult.VerificationDate.Should().NotBeNull();
+            matchResult.VerificationDetails
+                .FirstOrDefault(x => x.VerificationAuthority == "Sole Trader or Non-limited Partnership")
+                .Should().NotBeNull();
+            matchResult.ProviderAliases.Count.Should().Be(1);
+        }
+
+        [Test]
+        public void Non_matching_UKPRN_returns_no_results()
+        {
+            var ukprn = "99998888";
+
+            var result = _apiClient.GetUkrlpDetails(ukprn).GetAwaiter().GetResult();
+
+            result.Should().NotBeNull();
+            result.Results.Count.Should().Be(0);
+        }
+
+        [Test]
+        public void Inactive_UKPRN_returns_no_results()
+        {
+            var ukprn = "10019227";
+
+            var result = _apiClient.GetUkrlpDetails(ukprn).GetAwaiter().GetResult();
+
+            result.Should().NotBeNull();
+            result.Results.Count.Should().Be(0);
+        }
     }
 }
