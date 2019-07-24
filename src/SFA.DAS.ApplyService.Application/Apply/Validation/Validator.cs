@@ -17,15 +17,15 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
         protected string GetValue(Answer answer)
         {
             return string.IsNullOrEmpty(ValidationDefinition.Key)
-                ? answer.Value
-                : answer.JsonValue[ValidationDefinition.Key];
+                ? answer?.Value
+                : answer?.JsonValue[ValidationDefinition.Key];
         }
 
         protected string GetFieldId(Answer answer)
         {
             return string.IsNullOrEmpty(ValidationDefinition.Key)
-                ? answer.QuestionId
-                : $"{answer.QuestionId}_Key_{ValidationDefinition.Key}";
+                ? answer?.QuestionId
+                : $"{answer?.QuestionId}_Key_{ValidationDefinition.Key}";
         }
     }
 }
