@@ -7,14 +7,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
 {
     public class EmailAddressIsValidValidator : Validator
     {
-        public override List<KeyValuePair<string, string>> Validate(Answer answer)
+        public override List<KeyValuePair<string, string>> Validate(string questionId, Answer answer)
         {
-            var errorMessages = base.Validate(answer);
+            var errorMessages = base.Validate(questionId, answer);
 
             var value = GetValue(answer);
             if(!string.IsNullOrEmpty(value) && !IsValidEmail(value))
             {
-                errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(answer), ValidationDefinition.ErrorMessage));
+                errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(questionId), ValidationDefinition.ErrorMessage));
             }
 
             return errorMessages;

@@ -153,6 +153,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IValidator, RegexValidator>();
             services.AddTransient<IValidator, RegisteredCharityNumberValidator>();
             services.AddTransient<IValidator, RequiredValidator>();
+            services.AddTransient<IValidator, SimpleRadioNotNullValidator>();
 
             services.AddTransient<IContactRepository,ContactRepository>();
             services.AddTransient<IApplyRepository,ApplyRepository>();

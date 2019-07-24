@@ -7,9 +7,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
 {
     public class MaxWordCountValidator : Validator
     {
-        public override List<KeyValuePair<string, string>> Validate(Answer answer)
+        public override List<KeyValuePair<string, string>> Validate(string questionId, Answer answer)
         {
-            var errorMessages = base.Validate(answer);
+            var errorMessages = base.Validate(questionId, answer);
 
             var text = GetValue(answer)?.Trim();
             if (string.IsNullOrEmpty(text))
@@ -19,7 +19,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
 
             if (wordCount > (long)ValidationDefinition.Value)
             {
-                errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(answer), ValidationDefinition.ErrorMessage));
+                errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(questionId), ValidationDefinition.ErrorMessage));
             }
 
             return errorMessages;

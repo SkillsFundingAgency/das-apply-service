@@ -8,12 +8,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
 {
     public class DateNotInFutureValidator : Validator
     {
-        public override List<KeyValuePair<string, string>> Validate(Answer answer)
+        public override List<KeyValuePair<string, string>> Validate(string questionId, Answer answer)
         {
-            var errorMessages = base.Validate(answer);
+            var errorMessages = base.Validate(questionId, answer);
 
             var dateParts = GetValue(answer).Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-            if (dateParts.Length != 3)
+            if (dateParts?.Length != 3)
             {
                 return errorMessages;
             }
@@ -32,7 +32,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
             {
                 if (dateEntered > DateTime.Today)
                 {
-                    errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(answer),
+                    errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(questionId),
                         ValidationDefinition.ErrorMessage));
                 }
             }

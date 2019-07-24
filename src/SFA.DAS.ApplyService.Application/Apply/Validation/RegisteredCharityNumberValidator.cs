@@ -8,13 +8,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
 {
     public class RegisteredCharityNumberValidator : Validator
     {
-        public override List<KeyValuePair<string, string>> Validate(Answer answer)
+        public override List<KeyValuePair<string, string>> Validate(string questionId, Answer answer)
         {
-            var errorMessages = base.Validate(answer);
+            var errorMessages = base.Validate(questionId,answer);
 
             if (!string.IsNullOrEmpty(GetValue(answer)) && !IsValidRegisteredCharityNumber(GetValue(answer)))
             {
-                errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(answer), ValidationDefinition.ErrorMessage));
+                errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(questionId), ValidationDefinition.ErrorMessage));
             }
 
             return errorMessages;

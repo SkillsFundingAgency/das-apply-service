@@ -5,7 +5,6 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
-using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 
@@ -17,24 +16,24 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
         {
             base.Arrange();
 
-            AnswerQ1 = new Answer() { QuestionId = "Q1", Value = "Yes" };
-            AnswerQ1Dot1 = new Answer() { QuestionId = "Q1.1", Value = "SomeNewAnswer" };
+            AnswerQ1.Value = "Yes";
+            AnswerQ1Dot1.Value = "SomeNewAnswer";
 
-            Validator.Setup(v => v.Validate(It.Is<Answer>(p => p.QuestionId == AnswerQ1.QuestionId)))
+            Validator.Setup(v => v.Validate(It.Is<string>(p => p == QuestionIdQ1), It.Is<Answer>(p => p.QuestionId == AnswerQ1.QuestionId)))
                 .Returns
-                ((Answer answer) => !string.IsNullOrEmpty(answer.Value)
+                ((string questionId, Answer answer) => !string.IsNullOrEmpty(answer.Value)
                     ? new List<KeyValuePair<string, string>>()
-                    : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(answer.QuestionId, $"{answer.QuestionId} is required") });
+                    : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(questionId, $"{questionId} is required") });
 
-            Validator.Setup(v => v.Validate(It.Is<Answer>(p => p.QuestionId == AnswerQ1Dot1.QuestionId)))
+            Validator.Setup(v => v.Validate(It.Is<string>(p => p == QuestionIdQ1Dot1), It.Is<Answer>(p => p.QuestionId == AnswerQ1Dot1.QuestionId)))
                 .Returns
-                ((Answer answer) => !string.IsNullOrEmpty(answer.Value)
+                ((string questionId,Answer answer) => !string.IsNullOrEmpty(answer.Value)
                     ? new List<KeyValuePair<string, string>>()
-                    : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(answer.QuestionId, $"{answer.QuestionId} is required") });
+                    : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(questionId, $"{questionId} is required") });
         }
 
         [Test]
-        public void Then_section_is_not_saved_with_those_answers()
+        public void Then_section_is_saved_with_those_answers()
         {
             Handler.Handle(new UpdatePageAnswersRequest(ApplicationId, UserId, 1, 1, "1", 
                 new List<Answer>()
@@ -56,7 +55,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
         }
         
         [Test]
-        public void Then_page_is_returned_with_no_next_conditions_met()
+        public void Then_page_is_returned_with_next_conditions_met()
         {
             var result = Handler.Handle(new UpdatePageAnswersRequest(ApplicationId, UserId, 1, 1, "1",
                 new List<Answer>()
@@ -86,10 +85,10 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
                 false), new CancellationToken()).Wait();
 
             ValidatorFactory.Verify(v=>v.Build(It.Is<Question>(question => question.QuestionId == "Q1")));
-            Validator.Verify(v => v.Validate(AnswerQ1));
+            Validator.Verify(v => v.Validate(QuestionIdQ1, AnswerQ1));
 
             ValidatorFactory.Verify(v => v.Build(It.Is<Question>(question => question.QuestionId == "Q1.1")));
-            Validator.Verify(v => v.Validate(AnswerQ1Dot1));
+            Validator.Verify(v => v.Validate(QuestionIdQ1Dot1, AnswerQ1Dot1));
         }
     }
 }

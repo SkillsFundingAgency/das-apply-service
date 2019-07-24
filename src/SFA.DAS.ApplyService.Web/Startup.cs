@@ -123,6 +123,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IValidator, RegexValidator>();
             services.AddTransient<IValidator, RegisteredCharityNumberValidator>();
             services.AddTransient<IValidator, RequiredValidator>();
+            services.AddTransient<IValidator, SimpleRadioNotNullValidator>();
 
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 

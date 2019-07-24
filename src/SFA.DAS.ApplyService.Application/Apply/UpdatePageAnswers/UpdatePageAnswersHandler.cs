@@ -72,7 +72,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                 var answer = newAnswers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
                 var existingAnswer = existingAnswers.SelectMany(poa => poa.Answers).FirstOrDefault(a => a.QuestionId == question.QuestionId);
 
-                atLeastOneAnswerChanged = atLeastOneAnswerChanged ? true : !answer.HasSameValue(existingAnswer);
+                atLeastOneAnswerChanged = atLeastOneAnswerChanged 
+                    ? true 
+                    : !answer?.HasSameValue(existingAnswer) ?? answer != existingAnswer;
+
                 validationPassed = ProcessAnswer(answer, question, validationPassed, validationErrors, pageAnswers, existingAnswers);
                 
                 if (question.Input.Options != null)
@@ -89,8 +92,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                                 {
                                     var furtherAnswer = newAnswers.FirstOrDefault(a => a.QuestionId == furtherQuestion.QuestionId);
                                     var existingFutherAnswer = existingAnswers.SelectMany(poa => poa.Answers).FirstOrDefault(a => a.QuestionId == furtherQuestion.QuestionId);
+                                    
+                                    atLeastOneFutherQuestionAnswerChanged = atLeastOneFutherQuestionAnswerChanged
+                                        ? true
+                                        : !furtherAnswer?.HasSameValue(existingFutherAnswer) ?? furtherAnswer != existingFutherAnswer;
+
                                     validationPassed = ProcessAnswer(furtherAnswer, furtherQuestion, validationPassed, validationErrors, pageAnswers, existingAnswers);
-                                    atLeastOneFutherQuestionAnswerChanged = atLeastOneFutherQuestionAnswerChanged ? true : !furtherAnswer.HasSameValue(existingFutherAnswer);
                                 }
 
                                 atLeastOneAnswerChanged = atLeastOneAnswerChanged ? true : atLeastOneFutherQuestionAnswerChanged;
@@ -219,7 +226,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                     var validators = _validatorFactory.Build(question);
                     foreach (var validator in validators)
                     {
-                        var errors = validator.Validate(answer);
+                        var errors = validator.Validate(question.QuestionId, answer);
 
                         if (!errors.Any()) continue;
 
@@ -238,7 +245,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                 var validators = _validatorFactory.Build(question);
                 foreach (var validator in validators)
                 {
-                    var errors = validator.Validate(answer);
+                    var errors = validator.Validate(question.QuestionId, answer);
 
                     if (errors.Any())
                     {

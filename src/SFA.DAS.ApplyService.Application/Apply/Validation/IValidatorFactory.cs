@@ -12,6 +12,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
     {
         ValidationDefinition ValidationDefinition { get; set; }
 
-        List<KeyValuePair<string, string>> Validate(Answer answer);
+        List<KeyValuePair<string, string>> Validate(string questionId, Answer answer);
     }
 }

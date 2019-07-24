@@ -7,14 +7,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
 {
     public class DateValidator : Validator
     {
-        public override List<KeyValuePair<string, string>> Validate(Answer answer)
+        public override List<KeyValuePair<string, string>> Validate(string questionId, Answer answer)
         {
-            var errorMessages = base.Validate(answer);
+            var errorMessages = base.Validate(questionId, answer);
             
             var dateParts = GetValue(answer).Split(new[]{","}, StringSplitOptions.RemoveEmptyEntries);
-            if (dateParts.Length != 3)
+            if (dateParts?.Length != 3)
             {
-                errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(answer), ValidationDefinition.ErrorMessage));
+                errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(questionId), ValidationDefinition.ErrorMessage));
                 return errorMessages;
             }
             
@@ -24,14 +24,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
 
             if (string.IsNullOrWhiteSpace(day) || string.IsNullOrWhiteSpace(month) || string.IsNullOrWhiteSpace(year))
             {
-                errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(answer), ValidationDefinition.ErrorMessage));
+                errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(questionId), ValidationDefinition.ErrorMessage));
                 return errorMessages;
             }
 
             var formatStrings = new string[] { "d/M/yyyy" };
             if (!DateTime.TryParseExact($"{day}/{month}/{year}", formatStrings, null, DateTimeStyles.None, out _))
             {
-                errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(answer), ValidationDefinition.ErrorMessage));
+                errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(questionId), ValidationDefinition.ErrorMessage));
             }
 
             return errorMessages;

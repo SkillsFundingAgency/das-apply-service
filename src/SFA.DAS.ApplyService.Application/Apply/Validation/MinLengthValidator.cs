@@ -5,13 +5,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
 {
     public class MinLengthValidator : Validator
     {
-        public override List<KeyValuePair<string, string>> Validate(Answer answer)
+        public override List<KeyValuePair<string, string>> Validate(string questionId, Answer answer)
         {
-            var errorMessages = base.Validate(answer);
+            var errorMessages = base.Validate(questionId, answer);
 
-            if (GetValue(answer).Length < (long)ValidationDefinition.Value)
+            var value = GetValue(answer);
+            if (value == null || value?.Length < (long)ValidationDefinition.Value)
             {
-                errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(answer),
+                errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(questionId),
                         ValidationDefinition.ErrorMessage));
             }
 
