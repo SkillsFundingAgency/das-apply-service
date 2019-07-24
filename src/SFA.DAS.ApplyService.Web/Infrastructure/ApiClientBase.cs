@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Configuration;
 using System;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
@@ -12,12 +13,13 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         private readonly ILogger<ApiClientBase> _logger;
         protected readonly HttpClient _httpClient;
 
-        protected ApiClientBase(ILogger<ApiClientBase> logger, IConfigurationService configService)
+        protected ApiClientBase(ILogger<ApiClientBase> logger, IConfigurationService configService, ITokenService tokenService)
         {
             _logger = logger;
 
             var baseAddress = configService.GetConfig().GetAwaiter().GetResult().InternalApi.Uri;
             _httpClient = new HttpClient() { BaseAddress = new Uri(baseAddress) };
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken());
         }
 
         protected async Task<T> Get<T>(string uri)

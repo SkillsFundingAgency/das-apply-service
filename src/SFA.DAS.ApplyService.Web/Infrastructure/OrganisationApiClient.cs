@@ -14,7 +14,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     {
         private readonly ILogger<OrganisationApiClient> _logger;
 
-        public OrganisationApiClient(ILogger<OrganisationApiClient> logger, IConfigurationService configurationService) : base(logger, configurationService)
+        public OrganisationApiClient(ILogger<OrganisationApiClient> logger, IConfigurationService configurationService, ITokenService tokenService) : base(logger, configurationService, tokenService)
         {
             _logger = logger;
         }
