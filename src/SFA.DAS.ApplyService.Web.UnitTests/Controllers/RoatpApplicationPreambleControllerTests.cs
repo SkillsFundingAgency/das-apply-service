@@ -298,8 +298,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var registerStatus = new OrganisationRegisterStatus
             {
                 ProviderTypeId = ApplicationRoute.MainProviderApplicationRoute,
-                StatusId = OrganisationRegisterStatus.ActiveStatus,
-                ExistingUKPRN = true
+                StatusId = OrganisationStatus.Active,
+                UkprnOnRegister = true
             };
             _roatpApiClient.Setup(x => x.UkprnOnRegister(It.IsAny<long>())).ReturnsAsync(registerStatus);
 
@@ -348,8 +348,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var registerStatus = new OrganisationRegisterStatus
             {
                 ProviderTypeId = ApplicationRoute.SupportingProviderApplicationRoute,
-                StatusId = OrganisationRegisterStatus.ActiveStatus,
-                ExistingUKPRN = true
+                StatusId = OrganisationStatus.Active,
+                UkprnOnRegister = true
             };
             _roatpApiClient.Setup(x => x.UkprnOnRegister(It.IsAny<long>())).ReturnsAsync(registerStatus);
 
@@ -397,8 +397,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var registerStatus = new OrganisationRegisterStatus
             {
                 ProviderTypeId = ApplicationRoute.MainProviderApplicationRoute,
-                StatusId = OrganisationRegisterStatus.RemovedStatus,
-                ExistingUKPRN = true
+                StatusId = OrganisationStatus.Removed,
+                UkprnOnRegister = true
             };
             _roatpApiClient.Setup(x => x.UkprnOnRegister(It.IsAny<long>())).ReturnsAsync(registerStatus);
 

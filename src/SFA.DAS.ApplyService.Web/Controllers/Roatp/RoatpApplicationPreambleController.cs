@@ -279,11 +279,11 @@
         {
             var registerStatus = await _roatpApiClient.UkprnOnRegister(ukprn);
 
-            if (registerStatus.ExistingUKPRN)
+            if (registerStatus.UkprnOnRegister)
             {
                 var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
                 if (registerStatus.ProviderTypeId != applicationDetails.ApplicationRoute.Id
-                    || registerStatus.StatusId == OrganisationRegisterStatus.RemovedStatus)
+                    || registerStatus.StatusId == OrganisationStatus.Removed)
                 {
                     return RedirectToAction("ConfirmOrganisation");
                 }

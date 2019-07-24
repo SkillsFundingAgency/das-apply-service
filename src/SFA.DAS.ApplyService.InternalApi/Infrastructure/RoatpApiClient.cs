@@ -26,22 +26,12 @@
             _tokenService = tokenService;
         }
 
-        public async Task<DuplicateCheckResponse> DuplicateUKPRNCheck(Guid organisationId, long ukprn)
+        public async Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(string ukprn)
         {
-            _logger.LogInformation($"Performing duplicate UKPRN check for {ukprn}");
-
-            var apiResponse = await Get<DuplicateCheckResponse>(
-                $"{_baseAddress}/api/v1/duplicateCheck/ukprn?ukprn={ukprn}&organisationId={organisationId}");
-
-            return apiResponse;
-        }
-
-        public async Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(Guid organisationId)
-        {
-            _logger.LogInformation($"Looking up reapply status for organisation id {organisationId}");
+            _logger.LogInformation($"Looking up RoATP status for UKPRN {ukprn}");
 
             var apiResponse = await Get<OrganisationRegisterStatus>(
-                $"{_baseAddress}/api/v1/organisation/reapply-status?&organisationId={organisationId}");
+                $"{_baseAddress}/api/v1/organisation/register-status?&ukprn={ukprn}");
 
             return apiResponse;
         }
