@@ -846,7 +846,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 }
             };
 
-            var result = _controller.StartApplication().GetAwaiter().GetResult();
+            var applicationRouteModel = new SelectApplicationRouteViewModel
+            {
+                ApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute
+            };
+
+            var result = _controller.StartApplication(applicationRouteModel).GetAwaiter().GetResult();
 
             _organisationApiClient.Verify(x =>
                 x.Create(It.Is<CreateOrganisationRequest>(y => y.OrganisationUkprn == _expectedRequest.OrganisationUkprn
@@ -921,7 +926,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                     }
                 };
 
-            var result = _controller.StartApplication().GetAwaiter().GetResult();
+            var applicationRouteModel = new SelectApplicationRouteViewModel
+            {
+                ApplicationRouteId = ApplicationRoute.SupportingProviderApplicationRoute
+            };
+
+            var result = _controller.StartApplication(applicationRouteModel).GetAwaiter().GetResult();
 
             _organisationApiClient.Verify(x =>
                 x.Create(It.Is<CreateOrganisationRequest>(y => y.OrganisationUkprn == _expectedRequest.OrganisationUkprn
@@ -958,7 +968,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 VerificationId = "12345678"
             });
 
-            var result = _controller.StartApplication().GetAwaiter().GetResult();
+            var applicationRouteModel = new SelectApplicationRouteViewModel
+            {
+                ApplicationRouteId = ApplicationRoute.EmployerProviderApplicationRoute
+            };
+
+            var result = _controller.StartApplication(applicationRouteModel).GetAwaiter().GetResult();
 
             _organisationApiClient.Verify(x =>
                 x.Create(It.Is<CreateOrganisationRequest>(y => y.OrganisationUkprn == _expectedRequest.OrganisationUkprn

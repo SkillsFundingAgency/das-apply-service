@@ -196,8 +196,16 @@
         }
         
         [Route("start-application")]
-        public async Task<IActionResult> StartApplication()
+        [HttpPost]
+        public async Task<IActionResult> StartApplication(SelectApplicationRouteViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                model.ApplicationRoutes = await _roatpApiClient.GetApplicationRoutes();
+
+                return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
+            }
+
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
 
             var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
