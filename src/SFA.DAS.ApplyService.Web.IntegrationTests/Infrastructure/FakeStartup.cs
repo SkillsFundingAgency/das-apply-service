@@ -19,13 +19,5 @@ namespace SFA.DAS.ApplyService.Web.IntegrationTests.Infrastructure
             }).AddTestAuth(o => { });
         }
 
-        protected override void ConfigureMvc(IServiceCollection services)
-        {
-            services.AddMvc(options =>
-            {
-                options.Filters.Clear();
-                options.Filters.Add<NullValidationFilter>();
-            });
-        }
     }
 }
