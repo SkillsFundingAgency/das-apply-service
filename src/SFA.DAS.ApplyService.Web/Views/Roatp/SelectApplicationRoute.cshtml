@@ -1,7 +1,7 @@
 ﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.SelectApplicationRouteViewModel
 
 @{
-    ViewBag.Title = "Select application route";
+    ViewBag.Title = "Choose your organisation's provider route";
     Layout = "_Layout";
 
     bool showErrors = TempData["ShowErrors"] as bool? ?? false;
@@ -27,7 +27,7 @@
         
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-l">Select an application route</h1>
+                <h1 class="govuk-heading-l">Choose your organisation's provider route</h1>
             </div>
         </div>
 
@@ -47,10 +47,14 @@
 
                                         <input asp-for="ApplicationRouteId" class="govuk-radios__input" id="route-@applicationRoute.Id"
                                                name="ApplicationRouteId" type="radio" value="@applicationRoute.Id"
-                                               sfa-validation-for="ApplicationRouteId" sfa-validationerror-class="form-control-error">
+                                               sfa-validation-for="ApplicationRouteId" sfa-validationerror-class="form-control-error"
+                                               aria-describedby="route-@applicationRoute.Id-item-hint">
                                         <label class="govuk-label govuk-radios__label" for="route-@applicationRoute.Id">
                                             @applicationRoute.RouteName
                                         </label>
+                                        <span id="route-@applicationRoute.Id-item-hint" class="govuk-hint govuk-radios__hint">
+                                            @applicationRoute.Description
+                                        </span>
                                     </div>
                                 }
                             </div>
