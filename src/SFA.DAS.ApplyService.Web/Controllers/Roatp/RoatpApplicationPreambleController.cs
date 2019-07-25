@@ -166,19 +166,6 @@
 
             return View("~/Views/Roatp/UkprnNotFound.cshtml", viewModel);
         }
- 
-        [Route("already-on-register")]
-        public async Task<IActionResult> UkprnActive()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                UKPRN = applicationDetails.UKPRN.ToString()
-            };
-
-            return View("~/Views/Roatp/UkprnActive.cshtml", viewModel);
-        }
 
         [Route("company-not-found")]
         public async Task<IActionResult> CompanyNotFound()
