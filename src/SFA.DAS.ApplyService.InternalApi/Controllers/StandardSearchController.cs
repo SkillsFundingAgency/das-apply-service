@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
@@ -10,6 +11,7 @@ using SFA.DAS.ApplyService.InternalApi.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
+    [Authorize]
     public class StandardSearchController: Controller
     {
         private readonly ILogger<StandardSearchController> _logger;
