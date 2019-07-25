@@ -649,51 +649,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
         }
 
-        [TestCase(1, 12)]
-        [TestCase(2, 12)]
-        [TestCase(3, 3)]
-        [Ignore("Checking for charity history moved to later in the process")]
-        public void UKPRN_is_verified_against_charity_commission_but_does_not_have_sufficient_history(
-            int applicationRouteId, int monthsRequired)
-        {
-            var providerDetails = new ProviderDetails
-            {
-                UKPRN = "10001000",
-                ProviderName = "Test Provider",
-                VerificationDetails = new List<VerificationDetails>
-                {
-                    new VerificationDetails
-                    {
-                        VerificationAuthority = VerificationAuthorities.CharityCommissionAuthority,
-                        VerificationId = "12345678"
-                    }
-                }
-            };
-
-            var applicationDetails = new ApplicationDetails
-            {
-                UKPRN = 10001000,
-                UkrlpLookupDetails = providerDetails
-            };
-
-            _activeCharity.Response.IncorporatedOn = DateTime.Today.AddMonths(-1 * monthsRequired).AddDays(1);
-
-            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
-            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
-                .Returns(Task.FromResult(_activeCompany)).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
-                .Returns(Task.FromResult(_activeCharity)).Verifiable();
-
-            var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
-
-            _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Never);
-            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Once);
-
-            result.Should().BeOfType<RedirectToActionResult>();
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.ActionName.Should().Be("InvalidCharityFormationHistory");
-        }
-
         [Test]
         public void UKPRN_is_not_verified_against_a_recognised_source()
         {
@@ -786,52 +741,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 It.Is<ApplicationDetails>(y => y.CompanySummary.ManualEntryRequired == expectedRequired)));
 
         }
-
-        [TestCase(1, 12)]
-        [TestCase(2, 12)]
-        [TestCase(3, 3)]
-        [Ignore("Checking for company history moved to later in the application process")]
-        public void UKPRN_is_verified_against_companies_house_but_does_not_have_sufficient_trading_history(
-            int applicationRouteId, int monthsRequired)
-        {
-            var providerDetails = new ProviderDetails
-            {
-                UKPRN = "10001000",
-                ProviderName = "Test Provider",
-                VerificationDetails = new List<VerificationDetails>
-                {
-                    new VerificationDetails
-                    {
-                        VerificationAuthority = VerificationAuthorities.CompaniesHouseAuthority,
-                        VerificationId = "12345678"
-                    }
-                }
-            };
-
-            var applicationDetails = new ApplicationDetails
-            {
-                UKPRN = 10001000,
-                UkrlpLookupDetails = providerDetails
-            };
-
-            _activeCompany.IncorporationDate = DateTime.Today.AddMonths(-1 * monthsRequired).AddDays(1);
-
-            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
-
-            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
-                .Returns(Task.FromResult(_activeCompany)).Verifiable();
-            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
-
-            var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
-
-            _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Once);
-            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
-
-            result.Should().BeOfType<RedirectToActionResult>();
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.ActionName.Should().Be("InvalidCompanyTradingHistory");
-        }
-
+        
         [Test]
         public void Application_details_confirmed_with_match_on_companies_house()
         {
