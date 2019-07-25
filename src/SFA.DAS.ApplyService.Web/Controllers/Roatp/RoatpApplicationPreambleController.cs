@@ -237,7 +237,11 @@
         [Route("select-application-route")]
         public async Task<IActionResult> SelectApplicationRoute()
         {
-            return View("~/Views/Roatp/SelectApplicationRoute.cshtml");
+            var model = new SelectApplicationRouteViewModel();
+
+            model.ApplicationRoutes = await _roatpApiClient.GetApplicationRoutes();
+
+            return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
         }
 
         [Route("not-eligible")]
