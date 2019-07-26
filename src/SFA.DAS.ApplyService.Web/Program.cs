@@ -25,9 +25,10 @@ namespace SFA.DAS.ApplyService.Web
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseApplicationInsights()
                 .UseStartup<Startup>()
+                .UseApplicationInsights()
                 .UseUrls("https://localhost:6016", "http://localhost:6015")
+                .UseKestrel()
                 .UseNLog();
     }
 }

@@ -16,22 +16,27 @@
                     }
                     else
                     {
-                        <text>Stage 2 of your application has been submitted</text>
+                        <text>Standard application submitted</text>
                     }
                 </h1>
                 <div class="govuk-panel__body">
+                    <div class="govuk-!-margin-bottom-6">
+                        <span class="govuk-!-font-size-24">We will email the outcome to you within 2 weeks.</span>
+                    </div>
                     @if (!string.IsNullOrEmpty(Model.StandardName))
                     {
                         <div class="govuk-!-margin-bottom-4">
-                            <span class="govuk-!-font-size-24">Standard applied for</span>
-                            <br />
                             <strong>@Model.StandardName</strong>
+                            <br />
+                            <strong>Level @Model.StandardLevel</strong>
+                            <br />
+                            <strong>Standard reference @Model.StandardReference</strong>
                         </div>
                     }
                     @if (!string.IsNullOrEmpty(Model.ReferenceNumber))
                     {
                         <div>
-                            <span class="govuk-!-font-size-24">Your reference number</span>
+                            <span class="govuk-!-font-size-24">Application reference number</span>
                             <br />
                             <strong>@Model.ReferenceNumber</strong>
                         </div>
@@ -43,15 +48,12 @@
 
             <h3 class="govuk-heading-m">What happens next</h3>
 
-            <p class="govuk-body">We will email the outcome to you within 2 weeks.</p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>if your application is successful, you will appear in our list of organisations for this standard</li>
+                <li>if your application is not successful, we will ask you for additional information to reassess your application</li>
+            </ul>
 
             <p class="govuk-body"><a href="@Model.FeedbackUrl" target="_blank" class="govuk-link">What do you think of this service?</a> (takes 60 seconds)</p>
-            @* LINK BELOW REMOVED FOR PRIVATE BETA *@
-            @*
-            <p class="govuk-body">
-                <a asp-action="Applications" asp-controller="Application" class="govuk-link">Return to application overview</a>
-            </p>
-            *@
         </div>
     </div>
 </main>

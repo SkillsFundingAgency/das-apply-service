@@ -1,9 +1,11 @@
 using System.Runtime.InteropServices;
+using Newtonsoft.Json;
 
 namespace SFA.DAS.ApplyService.Configuration
 {
     public interface IApplyConfig
     {
+        ApiAuthentication ApiAuthentication { get; set; }
         InternalApiConfig InternalApi { get; set; }
         string SignInPage { get; set; }
         string SessionRedisConnectionString { get; set; }
@@ -26,5 +28,16 @@ namespace SFA.DAS.ApplyService.Configuration
         RoatpApiAuthentication RoatpApiAuthentication { get; set; }
 
         UkrlpApiAuthentication UkrlpApiAuthentication { get; set; }
+    }
+
+    public class ApiAuthentication
+    {
+        [JsonRequired] public string ClientId { get; set; }
+
+        [JsonRequired] public string Instance { get; set; }
+
+        [JsonRequired] public string TenantId { get; set; }
+
+        [JsonRequired] public string Audience { get; set; }
     }
 }

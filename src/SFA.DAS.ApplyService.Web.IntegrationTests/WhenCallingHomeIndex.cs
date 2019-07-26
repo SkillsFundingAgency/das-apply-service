@@ -12,7 +12,6 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using SFA.DAS.ApplyService.Web.Infrastructure;
-using SFA.DAS.ApplyService.Web.IntegrationTests.Infrastructure;
 
 namespace SFA.DAS.ApplyService.Web.IntegrationTests
 {
@@ -26,14 +25,20 @@ namespace SFA.DAS.ApplyService.Web.IntegrationTests
         {
             var configurationService = new Mock<IConfigurationService>();
 
+            var configuration = new Mock<IConfiguration>();
+            configuration.SetupGet(x => x["EnvironmentName"]).Returns("LOCAL");
+            configuration.SetupGet(x => x["ConfigurationStorageConnectionString"]).Returns("UseDevelopmentStorage=true;");
+
             configurationService.Setup(c => c.GetConfig())
                 .ReturnsAsync(new ApplyConfig() {SessionRedisConnectionString = "HelloDave"});
-            
-            var builder = new WebHostBuilder().UseStartup<FakeStartup>();
+
+            var builder = new WebHostBuilder();
             builder.ConfigureServices(services =>
             {
                 services.AddSingleton(p => configurationService.Object);
+                services.AddSingleton(p => configuration.Object);
             });
+            builder.UseStartup<Startup>();
 
             var testServer = new TestServer(builder);
             

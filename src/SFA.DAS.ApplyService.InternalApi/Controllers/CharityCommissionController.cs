@@ -7,8 +7,10 @@
     using Polly;
     using Polly.Retry;
     using System;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Http;
 
+    [Authorize]
     public class CharityCommissionController : Controller
     {
         private ILogger<CharityCommissionController> _logger;
