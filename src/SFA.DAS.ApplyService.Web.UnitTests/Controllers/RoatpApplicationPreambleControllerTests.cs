@@ -161,6 +161,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                             }
                         }
                     }
+                },
+                RoatpRegisterStatus = new OrganisationRegisterStatus
+                {
+                    UkprnOnRegister = true,
+                    OrganisationId = Guid.NewGuid(),
+                    ProviderTypeId = 1,
+                    StatusDate = new DateTime(2017, 2, 4),
+                    StatusId = 1
                 }
             };
 
