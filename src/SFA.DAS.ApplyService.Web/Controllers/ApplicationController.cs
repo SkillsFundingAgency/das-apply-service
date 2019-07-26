@@ -77,7 +77,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     return org.RoEPAOApproved ? View(applications) : View("~/Views/Application/Declaration.cshtml");
 
                 if (await _userService.AssociateOrgFromClaimWithUser())
-					return await StartApplication(userId);
+					return await StartApplication(userId, ApplicationTypes.EndpointAssessor);
 
                 return View("~/Views/Application/Declaration.cshtml", applicationType);
 

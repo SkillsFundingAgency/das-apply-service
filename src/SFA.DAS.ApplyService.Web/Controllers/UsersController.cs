@@ -28,7 +28,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IConfigurationService _config;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly CreateAccountValidator _createAccountValidator;
-        private readonly IApplicationApiClient _applicationApiClient;
         private readonly IOrganisationApiClient _organisationApiClient;
 
         private const string TrainingProviderOrganisationType = "TrainingProvider";

@@ -9,7 +9,9 @@
     using System;
     using System.Net;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Authorization;
 
+    [Authorize]
     public class CompaniesHouseController : Controller
     {
         private ILogger<CompaniesHouseController> _logger;

@@ -10,7 +10,9 @@
     using SFA.DAS.ApplyService.Domain.Roatp;
     using Polly;
     using Polly.Retry;
+    using Microsoft.AspNetCore.Authorization;
 
+    [Authorize]
     public class RoatpApplicationController : Controller
     {
         private ILogger<RoatpApplicationController> _logger;
