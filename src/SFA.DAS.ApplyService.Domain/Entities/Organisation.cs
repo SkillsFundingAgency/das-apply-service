@@ -39,6 +39,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public UKRLPDetails UKRLPDetails { get; set; }
         public CompaniesHouseDetails CompaniesHouseDetails { get; set; }
         public CharityCommissionDetails CharityCommissionDetails { get; set; }
+        public RoatpRegisterDetails RoatpDetails { get; set; }
     }
 
     public class FHADetails
@@ -72,5 +73,15 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public DateTime? RegistrationDate { get; set; }
         public List<Trustee> Trustees { get; set; }
         public bool TrusteeManualEntryRequired { get; set; }
+    }
+
+    public class RoatpRegisterDetails
+    {
+        public bool UkprnOnRegister { get; set; }
+        public Guid? OrganisationId { get; set; }
+        public int? ProviderTypeId { get; set; }
+        public int? StatusId { get; set; }
+        public int? RemovedReasonId { get; set; }
+        public DateTime? StatusDate { get; set; }
     }
 }
