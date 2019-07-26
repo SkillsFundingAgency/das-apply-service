@@ -19,6 +19,8 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     {
         public string StandardName { get; set; }
         public int StandardCode { get; set; }
+        public string StandardReference { get; set; }
+        public int? StandardLevel { get; set; }
         public Guid UserId { get; set; }
         public string UserEmail { get; set; }
     }
@@ -35,8 +37,10 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     public class ApplicationData
     {
         public string ReferenceNumber { get; set; }
-        public int StandardCode { get; set; }
         public string StandardName { get; set; }
+        public int StandardCode { get; set; }
+        public string StandardReference { get; set; }
+        public int? StandardLevel { get; set; }
         public List<InitSubmission> InitSubmissions { get; set; }
         public int InitSubmissionsCount { get; set; }
         public DateTime? LatestInitSubmissionDate { get; set; }

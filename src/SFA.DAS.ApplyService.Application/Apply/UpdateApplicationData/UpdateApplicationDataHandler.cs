@@ -38,6 +38,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdateApplicationData
 
             application.ApplicationData.StandardName = standardAppData.StandardName;
             application.ApplicationData.StandardCode = standardAppData.StandardCode;
+            application.ApplicationData.StandardReference = standardAppData.StandardReference;
+            application.ApplicationData.StandardLevel = standardAppData.StandardLevel;
 
             await _applyRepository.UpdateApplicationData(request.ApplicationId, application.ApplicationData);
 

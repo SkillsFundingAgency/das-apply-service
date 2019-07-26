@@ -4,12 +4,14 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Infrastructure;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using Polly;
     using Polly.Retry;
     using SFA.DAS.ApplyService.InternalApi.Models.Ukrlp;
 
+    [Authorize]
     public class UkrlpLookupController : Controller
     {
         private ILogger<UkrlpLookupController> _logger;

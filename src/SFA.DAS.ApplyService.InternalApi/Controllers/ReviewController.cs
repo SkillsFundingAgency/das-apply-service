@@ -9,11 +9,12 @@ using SFA.DAS.ApplyService.Application.Apply.Review.Return;
 using SFA.DAS.ApplyService.Domain.Apply;
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
-    //[Authorize(Roles = "ApplyServiceInternalAPI")]
-    public class ReviewController : Controller
+    [Authorize]
+     public class ReviewController : Controller
     {
         private readonly IMediator _mediator;
 
