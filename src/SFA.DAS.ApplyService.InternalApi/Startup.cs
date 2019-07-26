@@ -142,6 +142,8 @@ namespace SFA.DAS.ApplyService.InternalApi
             
             services.AddDistributedMemoryCache();
 
+            services.AddHealthChecks();
+
             return ConfigureIOC(services);
         }
 
