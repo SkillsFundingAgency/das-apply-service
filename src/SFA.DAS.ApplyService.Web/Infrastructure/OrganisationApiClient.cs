@@ -3,6 +3,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using System;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using FHADetails = SFA.DAS.ApplyService.InternalApi.Types.FHADetails;
 using OrganisationDetails = SFA.DAS.ApplyService.InternalApi.Types.OrganisationDetails;
@@ -11,14 +12,17 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     public class OrganisationApiClient : IOrganisationApiClient
     {
+        private readonly ITokenService _tokenService;
         private static readonly HttpClient _httpClient = new HttpClient();
 
-        public OrganisationApiClient(IConfigurationService configurationService)
+        public OrganisationApiClient(IConfigurationService configurationService, ITokenService tokenService)
         {
+            _tokenService = tokenService;
             if (_httpClient.BaseAddress == null)
             {
                 _httpClient.BaseAddress = new Uri(configurationService.GetConfig().Result.InternalApi.Uri);
             }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
         }
 
         public async Task<Organisation> Create(OrganisationSearchResult organisation, Guid userId)

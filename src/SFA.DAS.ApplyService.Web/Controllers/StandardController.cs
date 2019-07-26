@@ -77,11 +77,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return View("~/Views/Application/Standard/ConfirmStandard.cshtml", model);
             }
+
             var applicationData =
                 new StandardApplicationData
                 {
                     StandardName = model.SelectedStandard?.Title,
                     StandardCode = standardCode,
+                    StandardReference = model.SelectedStandard?.ReferenceNumber,
+                    StandardLevel = model.SelectedStandard?.StandardData?.Level,
                     UserId = User.GetUserId(),
                     UserEmail = User.GetEmail()
                 };

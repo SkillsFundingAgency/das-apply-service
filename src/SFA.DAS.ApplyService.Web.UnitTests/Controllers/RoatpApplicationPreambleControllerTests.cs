@@ -741,6 +741,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 It.Is<ApplicationDetails>(y => y.CompanySummary.ManualEntryRequired == expectedRequired)));
 
         }
+  
         
         [Test]
         public void Application_details_confirmed_with_match_on_companies_house()
