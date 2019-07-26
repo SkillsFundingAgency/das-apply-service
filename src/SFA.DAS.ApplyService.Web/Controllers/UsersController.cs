@@ -22,6 +22,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     public class UsersController : Controller
     {
         private readonly IUsersApiClient _usersApiClient;
+        private readonly IApplicationApiClient _applicationApiClient;
         private readonly ISessionService _sessionService;
         private readonly ILogger<UsersController> _logger;
         private readonly IConfigurationService _config;
@@ -32,12 +33,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private const string TrainingProviderOrganisationType = "TrainingProvider";
 
+
         public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger, 
                                IConfigurationService config, IHttpContextAccessor contextAccessor, 
                                CreateAccountValidator createAccountValidator, IApplicationApiClient applicationApiClient,
                                IOrganisationApiClient organisationApiClient)
         { 
             _usersApiClient = usersApiClient;
+            _applicationApiClient = applicationApiClient;
             _sessionService = sessionService;
             _logger = logger;
             _config = config;
@@ -112,16 +115,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
            
-            if (user == null)
+            if (user is null)
             {
                 return RedirectToAction("NotSetUp");
             }
-            
-            _logger.LogInformation($"Setting LoggedInUser in Session: {user.GivenNames} {user.FamilyName}");
-            
-            _sessionService.Set("LoggedInUser", $"{user.GivenNames} {user.FamilyName}");
-
-            if (user.ApplyOrganisationId == null)
+            else if (user.ApplyOrganisationId is null)
             {
                 return RedirectToAction("TermsAndConditions", "RoatpApplicationPreamble");
             }
@@ -132,9 +130,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             if (organisation.OrganisationType == TrainingProviderOrganisationType)
             {
                 selectedApplicationType = ApplicationTypes.RegisterTrainingProviders;
-            }
+            }           
+            else
+            {
+                var org = await _applicationApiClient.GetOrganisationByUserId(user.Id);
 
+                if (org != null)
+                {
+                    _logger.LogInformation($"Setting OrganisationName in Session: {org.Name}");
+                    _sessionService.Set("OrganisationName", $"{org.Name}");
+                }
+            }
+            
             return RedirectToAction("Applications", "Application", new { applicationType = selectedApplicationType });
+
         }
 
         [HttpGet("/Users/SignedOut")]

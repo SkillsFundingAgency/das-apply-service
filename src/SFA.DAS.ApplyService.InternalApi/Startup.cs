@@ -4,8 +4,10 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Reflection;
+using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -15,6 +17,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Logging;
 using SFA.DAS.ApplyService.Application;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Validation;
@@ -54,6 +57,43 @@ namespace SFA.DAS.ApplyService.InternalApi
 
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+
+            IdentityModelEventSource.ShowPII = true;
+            
+        
+            services.AddAuthentication(o =>
+                {
+                    o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(o =>
+                {
+                    o.Authority = $"https://login.microsoftonline.com/{_applyConfig.ApiAuthentication.TenantId}"; 
+                    o.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                    {
+                        RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                        ValidAudiences = new List<string>
+                        {
+                            _applyConfig.ApiAuthentication.Audience,
+                            _applyConfig.ApiAuthentication.ClientId
+                        }
+                    };
+                    o.Events = new JwtBearerEvents()
+                    {
+                        OnMessageReceived = c =>
+                        {
+                            
+                            return Task.CompletedTask;
+                        },
+                        OnTokenValidated = c =>
+                        {
+                            return Task.CompletedTask;
+                        }, OnAuthenticationFailed = c =>
+                        {
+                            return Task.CompletedTask;
+                        }
+                    };
+                });    
+            
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
 
             services.AddHttpClient<AssessorServiceApiClient>("AssessorServiceApiClient", config =>
@@ -123,6 +163,9 @@ namespace SFA.DAS.ApplyService.InternalApi
             }
             app.UseRequestLocalization();
             app.UseSecurityHeaders();
+
+            app.UseAuthentication();
+            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

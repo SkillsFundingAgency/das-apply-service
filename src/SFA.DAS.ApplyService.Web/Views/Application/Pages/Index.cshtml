@@ -59,14 +59,24 @@
 
                 @if (Model.Questions.Count() > 1)
                 {
-                    @if (!string.IsNullOrEmpty(@Model.Title))
+                    var hasModelTitle = !string.IsNullOrEmpty(Model.Title);
+                    var hasBodyText = !string.IsNullOrEmpty(Model.BodyText);
+
+                    if ((hasModelTitle || hasBodyText) && Model.PageContext != null)
+                    {
+                        <span class="govuk-caption-xl">
+                            @Html.Raw(Model.PageContext)
+                        </span>
+                    }
+
+                    @if (hasModelTitle)
                     {
                         <h1 class="govuk-heading-xl">
                             @Html.Raw(Model.Title)
                         </h1>
                     }
 
-                    @if (!string.IsNullOrEmpty(@Model.BodyText))
+                    @if (hasBodyText)
                     {
                         @Html.Raw(Model.BodyText)
                     }
@@ -86,6 +96,7 @@
                 @* no action is specified for the form, post back to the get url to preserve the page hierarchy parameters *@
                 <form method="post" novalidate enctype="multipart/form-data">
                     <input type="hidden" id="RedirectAction" name="RedirectAction" value="@Model.RedirectAction" />
+
                     @if (Model.Questions.Count() == 1)
                     {
                         foreach (var question in Model.Questions)
@@ -95,9 +106,14 @@
                                     @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio" || question.Type == "CheckboxList")
                                     {
                                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                                            @if (Model.PageContext != null)
+                                            {
+                                                <span class="govuk-caption-xl">
+                                                    @Html.Raw(Model.PageContext)
+                                                </span>
+                                            }
                                             <h1 class="govuk-fieldset__heading">
                                                 @Html.Raw(question.Label)
-                                                @* @Html.Raw(question.QuestionId) *@
                                             </h1>
                                         </legend>
                                         if (!string.IsNullOrWhiteSpace(@Model.BodyText))
@@ -112,6 +128,12 @@
                                             <div>
                                                 @Html.Raw(Model.BodyText)
                                             </div>
+                                        }
+                                        @if (Model.PageContext != null)
+                                        {
+                                            <span class="govuk-caption-xl">
+                                                @Html.Raw(Model.PageContext)
+                                            </span>
                                         }
                                         <h2 class="govuk-label-wrapper">
                                             <label class="govuk-label govuk-label--xl" for="@question.QuestionId">

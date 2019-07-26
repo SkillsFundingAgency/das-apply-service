@@ -155,6 +155,17 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<Organisation> GetOrganisation(Guid organisationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                if (connection.State != ConnectionState.Open)
+                    await connection.OpenAsync();
+
+                return await connection.QueryFirstAsync<Organisation>("SELECT * FROM Organisations WHERE Id = @organisationId", new {organisationId});
+            }
+        }
+
         public async Task<Organisation> GetOrganisationByName(string name)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
