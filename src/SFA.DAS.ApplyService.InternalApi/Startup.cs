@@ -163,7 +163,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             app.UseSecurityHeaders();
 
             app.UseAuthentication();
-            
+            app.UseHealthChecks("/health");
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

@@ -178,6 +178,7 @@ namespace SFA.DAS.ApplyService.Web
             app.UseAuthentication();
             app.UseRequestLocalization();
             app.UseSecurityHeaders();
+            app.UseHealthChecks("/health");
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
