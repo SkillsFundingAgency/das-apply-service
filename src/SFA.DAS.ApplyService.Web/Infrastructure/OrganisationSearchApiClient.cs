@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -15,15 +16,18 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     public class OrganisationSearchApiClient
     {
         private readonly ILogger<OrganisationSearchApiClient> _logger;
+        private readonly ITokenService _tokenService;
         private static readonly HttpClient _httpClient = new HttpClient();
 
-        public OrganisationSearchApiClient(IConfigurationService configurationService, ILogger<OrganisationSearchApiClient> logger)
+        public OrganisationSearchApiClient(IConfigurationService configurationService, ILogger<OrganisationSearchApiClient> logger, ITokenService tokenService)
         {
             _logger = logger;
+            _tokenService = tokenService;
             if (_httpClient.BaseAddress == null)
             {
                 _httpClient.BaseAddress = new Uri(configurationService.GetConfig().Result.InternalApi.Uri);
             }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
         }
 
         public async Task<IEnumerable<OrganisationSearchResult>> SearchOrganisation(string searchTerm)
