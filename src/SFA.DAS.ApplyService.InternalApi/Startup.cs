@@ -142,6 +142,8 @@ namespace SFA.DAS.ApplyService.InternalApi
             
             services.AddDistributedMemoryCache();
 
+            services.AddHealthChecks();
+
             return ConfigureIOC(services);
         }
 
@@ -163,7 +165,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             app.UseSecurityHeaders();
 
             app.UseAuthentication();
-            
+            app.UseHealthChecks("/health");
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
