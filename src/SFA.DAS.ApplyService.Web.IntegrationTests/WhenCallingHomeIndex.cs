@@ -12,7 +12,6 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using SFA.DAS.ApplyService.Web.Infrastructure;
-using SFA.DAS.ApplyService.Web.IntegrationTests.Infrastructure;
 
 namespace SFA.DAS.ApplyService.Web.IntegrationTests
 {
@@ -28,8 +27,8 @@ namespace SFA.DAS.ApplyService.Web.IntegrationTests
 
             configurationService.Setup(c => c.GetConfig())
                 .ReturnsAsync(new ApplyConfig() {SessionRedisConnectionString = "HelloDave"});
-            
-            var builder = new WebHostBuilder().UseStartup<FakeStartup>();
+
+            var builder = new WebHostBuilder();
             builder.ConfigureServices(services =>
             {
                 services.AddSingleton(p => configurationService.Object);
