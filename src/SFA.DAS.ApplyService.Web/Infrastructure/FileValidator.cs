@@ -35,7 +35,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                     }
                     else if (!FileContentIsValidForMimeType(fileNameExtension, file.OpenReadStream()))
                     {
-                        errorMessages.Add(new ValidationErrorDetail(file.Name, "File content is incorrect for the specified file type"));
+                        var errorMessage = "File content is incorrect for the specified file type";
+                        modelState.AddModelError(file.Name, errorMessage);
+                        errorMessages.Add(new ValidationErrorDetail(file.Name, errorMessage));
                         fileValidationPassed = false;
                     }
                     else
