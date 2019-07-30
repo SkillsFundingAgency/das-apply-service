@@ -242,7 +242,7 @@
             return View("~/Views/Roatp/CharityCommissionNotAvailable.cshtml");
         }
 
-        [Route("select-application-route")]
+        [Route("choose-provider-route")]
         public async Task<IActionResult> SelectApplicationRoute()
         {
             var model = new SelectApplicationRouteViewModel();
