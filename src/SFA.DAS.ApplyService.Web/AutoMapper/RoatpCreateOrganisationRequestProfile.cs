@@ -43,6 +43,7 @@ namespace SFA.DAS.ApplyService.Web.AutoMapper
             {
                 destMember.CharityCommissionDetails = new CharityCommissionDetails
                 {
+                    CharityName = source.CharitySummary.CharityName,
                     RegistrationDate = source.CharitySummary.IncorporatedOn,
                     Trustees = Mapper.Map<List<Domain.CharityCommission.Trustee>>(source.CharitySummary.Trustees),
                     TrusteeManualEntryRequired = source.CharitySummary.TrusteeManualEntryRequired
@@ -55,6 +56,7 @@ namespace SFA.DAS.ApplyService.Web.AutoMapper
             {
                 destMember.CompaniesHouseDetails = new CompaniesHouseDetails
                 {
+                    CompanyName = source.CompanySummary.CompanyName,
                     CompanyType = source.CompanySummary.CompanyTypeDescription,
                     IncorporationDate = source.CompanySummary.IncorporationDate,
                     Directors = Mapper.Map<List<DirectorInformation>>(source.CompanySummary.Directors),

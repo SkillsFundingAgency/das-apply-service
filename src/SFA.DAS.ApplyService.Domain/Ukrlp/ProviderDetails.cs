@@ -82,11 +82,13 @@
     {
         public string VerificationAuthority { get; set; }
         public string VerificationId { get; set; }
+        public bool PrimaryVerificationSource { get; set; }
     }
 
     public class VerificationAuthorities
     {
         public const string CompaniesHouseAuthority = "Companies House";
         public const string CharityCommissionAuthority = "Charity Commission";
+        public const string SoleTraderPartnershipAuthority = "Sole Trader or Non-limited Partnership";
     }
 }

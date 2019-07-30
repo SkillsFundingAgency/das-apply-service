@@ -9,6 +9,7 @@ namespace SFA.DAS.ApplyService.Web.AutoMapper
         public CharityCommissionProfile()
         {
             CreateMap<InternalApi.Types.CharityCommission.Charity, CharityCommissionSummary>()
+                .ForMember(dest => dest.CharityName, opt => opt.MapFrom(source => source.Name))
                 .ForMember(dest => dest.CharityNumber, opt => opt.MapFrom(source => source.CharityNumber))
                 .ForMember(dest => dest.IncorporatedOn, opt => opt.MapFrom(source => source.IncorporatedOn))
                 .ForMember(dest => dest.Trustees, opt => opt.MapFrom(source => source.Trustees))
