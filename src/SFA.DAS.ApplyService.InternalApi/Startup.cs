@@ -56,8 +56,6 @@ namespace SFA.DAS.ApplyService.InternalApi
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
 
-            IdentityModelEventSource.ShowPII = true;
-            
         
             services.AddAuthentication(o =>
                 {
