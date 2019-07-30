@@ -31,7 +31,12 @@ namespace SFA.DAS.ApplyService.Storage
                 blob.Properties.ContentType = fileContentType;
                 await blob.UploadFromStreamAsync(fileStream);
 
-                return filename; // NOTE: Shouldn't this be: blob.Uri.ToString() ???
+                if(blob?.Uri?.IsAbsoluteUri is true)
+                {
+                    return Path.GetFileName(blob.Uri.LocalPath);
+                }
+
+                return filename;
             }
             catch (Exception ex)
             {
