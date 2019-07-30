@@ -41,19 +41,12 @@
         [Route("ukprn-on-register")]
         public async Task<IActionResult> UkprnOnRegister(long ukprn)
         {
-            var response = await _retryPolicy.ExecuteAsync(context => _apiClient.DuplicateUKPRNCheck(Guid.Empty, ukprn), new Context());
-            
-            if (response.DuplicateFound)
-            {
-                var registerStatus = await _retryPolicy.ExecuteAsync(
-                    context => _apiClient.GetOrganisationRegisterStatus(response.DuplicateOrganisationId),
-                    new Context());
-                registerStatus.ExistingUKPRN = response.DuplicateFound;
-
-                return Ok(registerStatus);
-            }
-
-            return Ok(new OrganisationRegisterStatus {ExistingUKPRN = false});
+            var registerStatus = await _retryPolicy.ExecuteAsync(
+                context => _apiClient.GetOrganisationRegisterStatus(ukprn.ToString()),
+                new Context());
+     
+            return Ok(registerStatus);
+        
         }
 
         private AsyncRetryPolicy GetRetryPolicy()

@@ -10,8 +10,7 @@
     public interface IRoatpApiClient
     {
         Task<IEnumerable<ProviderType>> GetProviderTypes();
-        Task<DuplicateCheckResponse> DuplicateUKPRNCheck(Guid organisationId, long ukprn);
-        Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(Guid organisationId);
+        Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(string ukprn);
         Task<UkprnLookupResponse> GetUkrlpDetails(string ukprn);
     }
 }

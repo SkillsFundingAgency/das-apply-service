@@ -47,37 +47,11 @@
         }
 
         [Test]
-        public void Client_returns_duplicate_check_result_of_true_for_existing_UKPRN()
-        {
-            var existingUKPRN = 10001123;
-
-            var duplicateCheckResult = _apiClient.DuplicateUKPRNCheck(Guid.NewGuid(), existingUKPRN).GetAwaiter().GetResult();
-
-            duplicateCheckResult.DuplicateFound.Should().BeTrue();
-            duplicateCheckResult.DuplicateOrganisationId.Should().NotBe(Guid.Empty);
-            duplicateCheckResult.DuplicateOrganisationName.Should().NotBeNullOrEmpty();
-        }
-
-        [Test]
-        public void Client_returns_duplicate_check_results_of_false_for_new_UKPRN()
-        {
-            var existingUKPRN = 99998888;
-
-            var duplicateCheckResult = _apiClient.DuplicateUKPRNCheck(Guid.NewGuid(), existingUKPRN).GetAwaiter().GetResult();
-
-            duplicateCheckResult.DuplicateFound.Should().BeFalse();
-            duplicateCheckResult.DuplicateOrganisationId.Should().Be(Guid.Empty);
-            duplicateCheckResult.DuplicateOrganisationName.Should().BeNullOrEmpty();
-        }
-
-        [Test]
         public void Client_returns_reapply_status_for_existing_UKPRN_that_is_active()
         {
             var existingUKPRN = 10001123;
-
-            var duplicateCheckResult = _apiClient.DuplicateUKPRNCheck(Guid.NewGuid(), existingUKPRN).GetAwaiter().GetResult();
-
-            var reapplyStatus = _apiClient.GetOrganisationRegisterStatus(duplicateCheckResult.DuplicateOrganisationId).GetAwaiter().GetResult();
+            
+            var reapplyStatus = _apiClient.GetOrganisationRegisterStatus(existingUKPRN.ToString()).GetAwaiter().GetResult();
 
             reapplyStatus.ProviderTypeId.Should().Be(ProviderType.MainProvider);
             reapplyStatus.StatusId.Should().Be(OrganisationStatus.Active);
@@ -88,9 +62,7 @@
         {
             var providerRequestedRemovalUKPRN = 10000066;
 
-            var duplicateCheckResult = _apiClient.DuplicateUKPRNCheck(Guid.NewGuid(), providerRequestedRemovalUKPRN).GetAwaiter().GetResult();
-
-            var reapplyStatus = _apiClient.GetOrganisationRegisterStatus(duplicateCheckResult.DuplicateOrganisationId).GetAwaiter().GetResult();
+            var reapplyStatus = _apiClient.GetOrganisationRegisterStatus(providerRequestedRemovalUKPRN.ToString()).GetAwaiter().GetResult();
 
             reapplyStatus.ProviderTypeId.Should().Be(ProviderType.EmployerProvider);
             reapplyStatus.StatusId.Should().Be(OrganisationStatus.Removed);

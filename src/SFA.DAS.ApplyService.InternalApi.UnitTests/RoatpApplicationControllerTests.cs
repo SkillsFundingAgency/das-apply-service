@@ -73,25 +73,16 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         }
 
         [Test]
-        public void Ukprn_on_register_performs_register_status_lookup_if_already_exists()
+        public void Get_organisation_register_status_performs_roatp_lookup()
         {
-            var matchedResponse = new DuplicateCheckResponse
-            {
-                DuplicateFound = true,
-                DuplicateOrganisationId = Guid.NewGuid(),
-                DuplicateOrganisationName = "Duplicate Org"
-            };
-
-            _apiClient.Setup(x => x.DuplicateUKPRNCheck(It.IsAny<Guid>(), It.IsAny<long>())).ReturnsAsync(matchedResponse);
-
             var registerStatus = new OrganisationRegisterStatus
             {
-                ExistingUKPRN = true,
-                StatusId = OrganisationRegisterStatus.ActiveStatus,
+                UkprnOnRegister = true,
+                StatusId = Domain.Roatp.OrganisationStatus.Active,
                 ProviderTypeId = ProviderType.EmployerProvider
             };
 
-            _apiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<Guid>())).ReturnsAsync(registerStatus).Verifiable();
+            _apiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<string>())).ReturnsAsync(registerStatus).Verifiable();
 
             var result = _controller.UkprnOnRegister(10002000).GetAwaiter().GetResult();
 
@@ -101,45 +92,12 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             registerStatusResult.Should().NotBeNull();
 
-            registerStatusResult.ExistingUKPRN.Should().BeTrue();
+            registerStatusResult.UkprnOnRegister.Should().BeTrue();
             registerStatusResult.StatusId.Should().Be(registerStatus.StatusId);
             registerStatusResult.ProviderTypeId.Should().Be(registerStatus.ProviderTypeId);
 
-            _apiClient.Verify(x => x.GetOrganisationRegisterStatus(It.IsAny<Guid>()), Times.Once);
+            _apiClient.Verify(x => x.GetOrganisationRegisterStatus(It.IsAny<string>()), Times.Once);
         }
 
-        [Test]
-        public void Ukprn_on_register_does_not_lookup_status_if_not_already_on_register()
-        {
-            var matchedResponse = new DuplicateCheckResponse
-            {
-                DuplicateFound = false,
-                DuplicateOrganisationId = Guid.Empty,
-                DuplicateOrganisationName = null
-            };
-
-            _apiClient.Setup(x => x.DuplicateUKPRNCheck(It.IsAny<Guid>(), It.IsAny<long>())).ReturnsAsync(matchedResponse);
-
-            var registerStatus = new OrganisationRegisterStatus
-            {
-                ExistingUKPRN = true,
-                StatusId = OrganisationRegisterStatus.ActiveStatus,
-                ProviderTypeId = ProviderType.EmployerProvider
-            };
-
-            _apiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<Guid>())).ReturnsAsync(registerStatus).Verifiable();
-
-            var result = _controller.UkprnOnRegister(10002000).GetAwaiter().GetResult();
-
-            result.Should().BeOfType<OkObjectResult>();
-
-            var registerStatusResult = ((OkObjectResult)result).Value as OrganisationRegisterStatus;
-
-            registerStatusResult.Should().NotBeNull();
-
-            registerStatusResult.ExistingUKPRN.Should().BeFalse();
-
-            _apiClient.Verify(x => x.GetOrganisationRegisterStatus(It.IsAny<Guid>()), Times.Never);
-        }
     }
 }

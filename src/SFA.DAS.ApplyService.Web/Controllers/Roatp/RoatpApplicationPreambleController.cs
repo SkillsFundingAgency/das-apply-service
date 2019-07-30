@@ -32,6 +32,7 @@
         private ICharityCommissionApiClient _charityCommissionApiClient;
         private IOrganisationApiClient _organisationApiClient;
         private readonly IUsersApiClient _usersApiClient;
+        private IRoatpStatusValidator _roatpStatusValidator;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
         
@@ -44,7 +45,8 @@
                                                   ICompaniesHouseApiClient companiesHouseApiClient, 
                                                   ICharityCommissionApiClient charityCommissionApiClient,
                                                   IOrganisationApiClient organisationApiClient,
-                                                  IUsersApiClient usersApiClient)
+                                                  IUsersApiClient usersApiClient,
+                                                  IRoatpStatusValidator roatpStatusValidator)
         {
             _logger = logger;
             _roatpApiClient = roatpApiClient;
@@ -54,6 +56,7 @@
             _charityCommissionApiClient = charityCommissionApiClient;
             _organisationApiClient = organisationApiClient;
             _usersApiClient = usersApiClient;
+            _roatpStatusValidator = roatpStatusValidator;
         }
 
         [Route("terms-conditions-making-application")]
@@ -269,33 +272,18 @@
             return View("~/Views/Roatp/CharityCommissionNotAvailable.cshtml");
         }
 
-        [Route("parent-company-check")]
-        public async Task<IActionResult> ParentCompanyCheck()
+        [Route("select-application-route")]
+        public async Task<IActionResult> SelectApplicationRoute()
         {
-            return View("~/Views/Roatp/ParentCompanyCheck.cshtml");
+            return View("~/Views/Roatp/SelectApplicationRoute.cshtml");
         }
 
-        private async Task<IActionResult> CheckIfOrganisationAlreadyOnRegister(long ukprn)
+        [Route("not-eligible")]
+        public async Task<IActionResult> IneligibleToJoin()
         {
-            var registerStatus = await _roatpApiClient.UkprnOnRegister(ukprn);
-
-            if (registerStatus.ExistingUKPRN)
-            {
-                var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-                if (registerStatus.ProviderTypeId != applicationDetails.ApplicationRoute.Id
-                    || registerStatus.StatusId == OrganisationRegisterStatus.RemovedStatus)
-                {
-                    return RedirectToAction("ConfirmOrganisation");
-                }
-                else
-                {
-                    return RedirectToAction("UkprnActive");
-                }
-            }
-
-            return RedirectToAction("ConfirmOrganisation");
+            return View("~/Views/Roatp/IneligibleToJoin.cshtml");
         }
-        
+
         public async Task<IActionResult> VerifyOrganisationDetails()
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
@@ -379,7 +367,14 @@
 
             _sessionService.Set(ApplicationDetailsKey, applicationDetails);
 
-            return RedirectToAction("ParentCompanyCheck");
+            var roatpRegisterStatus = await _roatpApiClient.GetOrganisationRegisterStatus(applicationDetails.UKPRN);
+
+            if (!_roatpStatusValidator.ProviderEligibleToJoinRegister(roatpRegisterStatus))
+            {
+                return RedirectToAction("IneligibleToJoin");
+            }
+            
+            return RedirectToAction("SelectApplicationRoute");           
         }
 
         private bool CompanyReturnsFullDetails(string companyNumber)

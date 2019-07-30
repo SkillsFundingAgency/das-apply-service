@@ -26,13 +26,13 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
         }
 
-        public async Task<IEnumerable<Domain.Roatp.ApplicationRoute>> GetApplicationRoutes()
+        public async Task<IEnumerable<ApplicationRoute>> GetApplicationRoutes()
         {
             return await (await _httpClient.GetAsync($"/all-roatp-routes")).Content
                 .ReadAsAsync<IEnumerable<ApplicationRoute>>();
         }
 
-        public async Task<OrganisationRegisterStatus> UkprnOnRegister(long ukprn)
+        public async Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(long ukprn)
         {
             return await (await _httpClient.GetAsync($"/ukprn-on-register?ukprn={ukprn}")).Content
                 .ReadAsAsync<OrganisationRegisterStatus>();
