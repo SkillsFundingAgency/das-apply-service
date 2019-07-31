@@ -130,7 +130,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> StartApplication(string applicationType)
         {
             var response = await _apiClient.StartApplication(await _userService.GetUserId(), applicationType);
-            
+
+            if (applicationType == ApplicationTypes.RegisterTrainingProviders)
+            {
+                return RedirectToAction("TaskList", new {applicationId = response.ApplicationId});
+            }
             return RedirectToAction("SequenceSignPost", new {applicationId = response.ApplicationId});
         }
 
@@ -151,7 +155,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return RedirectToAction("Applications");
             }
-
+            
             if (application.ApplicationStatus == ApplicationStatus.Approved)
             {
                 return View("~/Views/Application/Approved.cshtml", application);
@@ -297,6 +301,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return View("~/Views/Application/Pages/Index.cshtml", viewModel);
+        }
+
+        [Route("task-list")]
+        public async Task<IActionResult> TaskList(Guid applicationId)
+        {
+            return View("~/Views/Roatp/TaskList.cshtml");
         }
 
         private async Task<bool> CanUpdateApplication(Guid applicationId, int sequenceId)
