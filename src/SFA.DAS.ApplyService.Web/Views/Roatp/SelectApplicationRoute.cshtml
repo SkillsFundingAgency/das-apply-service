@@ -1,21 +1,76 @@
-﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.UkprnSearchResultsViewModel
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.SelectApplicationRouteViewModel
+
+@{
+    ViewBag.Title = "Choose your organisation's provider route";
+    Layout = "_Layout";
+
+    bool showErrors = TempData["ShowErrors"] as bool? ?? false;
+}
 
 <div class="grid-row">
-    <form asp-controller="RoatpApplicationPreamble" asp-action="EnterApplicationUkprn" method="get" name="backForm">
-        <input type="hidden" asp-for="UKPRN" />
-        <input type="hidden" asp-for="ApplicationRouteId" />
+    <form asp-controller="RoatpApplicationPreamble" asp-action="ConfirmOrganisation" method="get" name="backForm">
         <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
     </form>
 </div>
 
-<div class="govuk-width-container">
+@if (!ViewData.ModelState.IsValid || showErrors)
+{
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+        <h2 class="govuk-error-summary__title" id="error-summary-title">
+            There is a problem
+        </h2>
+        <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+                <li><a sfa-validation-for="ApplicationRouteId"></a></li>
+            </ul>
+        </div>
+    </div>
+}
 
+<div class="govuk-width-container">
+    
     <main class="govuk-main-wrapper " id="main-content" role="main">
+        
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-l">Choose your organisation's provider route</h1>
+            </div>
+        </div>
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-l">Select application route placeholder page</h1>
+                <form method="post" asp-action="StartApplication" asp-controller="RoatpApplicationPreamble">
+
+                    <div class="govuk-form-group" sfa-validation-for="ApplicationRouteId" sfa-validationerror-class="govuk-error-message">
+                        
+                        <fieldset class="govuk-fieldset">
+
+                            <div class="govuk-radios">
+
+                                @foreach (var applicationRoute in Model.ApplicationRoutes)
+                                {
+                                    <div class="govuk-radios__item">
+
+                                        <input asp-for="ApplicationRouteId" class="govuk-radios__input" id="route-@applicationRoute.Id"
+                                               name="ApplicationRouteId" type="radio" value="@applicationRoute.Id"
+                                               sfa-validation-for="ApplicationRouteId" sfa-validationerror-class="form-control-error"
+                                               aria-describedby="route-@applicationRoute.Id-item-hint">
+                                        <label class="govuk-label govuk-radios__label" for="route-@applicationRoute.Id">
+                                            @applicationRoute.RouteName
+                                        </label>
+                                        <span id="route-@applicationRoute.Id-item-hint" class="govuk-hint govuk-radios__hint">
+                                            @applicationRoute.Description
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </fieldset>
+                    </div>
+                    <input type="submit" class="govuk-button" value="Save and continue" />
+                </form>
             </div>
         </div>
     </main>
 </div>
+
+

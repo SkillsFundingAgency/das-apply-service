@@ -196,8 +196,16 @@
         }
         
         [Route("start-application")]
-        public async Task<IActionResult> StartApplication()
+        [HttpPost]
+        public async Task<IActionResult> StartApplication(SelectApplicationRouteViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                model.ApplicationRoutes = await _roatpApiClient.GetApplicationRoutes();
+
+                return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
+            }
+
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
 
             var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
@@ -234,10 +242,14 @@
             return View("~/Views/Roatp/CharityCommissionNotAvailable.cshtml");
         }
 
-        [Route("select-application-route")]
+        [Route("choose-provider-route")]
         public async Task<IActionResult> SelectApplicationRoute()
         {
-            return View("~/Views/Roatp/SelectApplicationRoute.cshtml");
+            var model = new SelectApplicationRouteViewModel();
+
+            model.ApplicationRoutes = await _roatpApiClient.GetApplicationRoutes();
+
+            return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
         }
 
         [Route("not-eligible")]

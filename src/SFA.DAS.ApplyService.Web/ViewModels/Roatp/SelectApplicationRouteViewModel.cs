@@ -8,8 +8,8 @@
     {
         public IEnumerable<ApplicationRoute> ApplicationRoutes { get; set; }
 
-        [Required(ErrorMessage = "Select your training provider route")]
-        [Range(1, 3, ErrorMessage = "Select your training provider route")]
+        [Required(ErrorMessage = "Tell us your organisation's provider route")]
+        [Range(1, 3, ErrorMessage = "Tell us your organisation's provider route")]
         public int ApplicationRouteId { get; set; }
     }
 }
