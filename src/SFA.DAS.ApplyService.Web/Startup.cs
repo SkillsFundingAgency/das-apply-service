@@ -109,7 +109,10 @@ namespace SFA.DAS.ApplyService.Web
             
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Apply.AntiForgery", HttpOnly = true });
 
-            ConfigureIOC(services);
+            services.AddHealthChecks();
+
+            return ConfigureIOC(services);
+
         }
 
         private void ConfigureIOC(IServiceCollection services)
@@ -175,6 +178,7 @@ namespace SFA.DAS.ApplyService.Web
             app.UseAuthentication();
             app.UseRequestLocalization();
             app.UseSecurityHeaders();
+            app.UseHealthChecks("/health");
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

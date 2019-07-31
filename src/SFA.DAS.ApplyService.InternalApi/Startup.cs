@@ -58,8 +58,6 @@ namespace SFA.DAS.ApplyService.InternalApi
         public void ConfigureServices(IServiceCollection services)
         {
 
-            IdentityModelEventSource.ShowPII = true;
-            
         
             services.AddAuthentication(o =>
                 {
@@ -144,7 +142,10 @@ namespace SFA.DAS.ApplyService.InternalApi
             
             services.AddDistributedMemoryCache();
 
-            ConfigureIOC(services);
+            services.AddHealthChecks();
+
+            return ConfigureIOC(services);
+
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -165,7 +166,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             app.UseSecurityHeaders();
 
             app.UseAuthentication();
-            
+            app.UseHealthChecks("/health");
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
