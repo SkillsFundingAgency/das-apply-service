@@ -115,7 +115,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return updatedPage;
         }
 
-        [HttpPost("/Applications/Submit")]
+        [HttpPost("/Application/Submit")]
         public async Task<ActionResult<bool>> Submit([FromBody] ApplicationSubmitRequest request)
         {
             var submitted = await _mediator.Send(request);
