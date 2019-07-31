@@ -480,9 +480,10 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
 
             questions.Should().NotBeNull();
 
-            var question = questions.FirstOrDefault(x => x.QuestionId == RoatpPreambleQuestionIdConstants.ApplyProviderRouteMain);
+            var question = questions.FirstOrDefault(
+                x => x.QuestionId == RoatpPreambleQuestionIdConstants.ApplyProviderRoute);
             question.Should().NotBeNull();
-            question.Value.Should().Be("TRUE");
+            question.Value.Should().Be("1");
         }
 
         [Test]
@@ -493,9 +494,10 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
 
             questions.Should().NotBeNull();
 
-            var question = questions.FirstOrDefault(x => x.QuestionId == RoatpPreambleQuestionIdConstants.ApplyProviderRouteEmployer);
+            var question = questions.FirstOrDefault(
+                x => x.QuestionId == RoatpPreambleQuestionIdConstants.ApplyProviderRoute);
             question.Should().NotBeNull();
-            question.Value.Should().Be("TRUE");
+            question.Value.Should().Be("2");
         }
 
         [Test]
@@ -506,9 +508,10 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
 
             questions.Should().NotBeNull();
 
-            var question = questions.FirstOrDefault(x => x.QuestionId == RoatpPreambleQuestionIdConstants.ApplyProviderRouteSupporting);
+            var question = questions.FirstOrDefault(
+                x => x.QuestionId == RoatpPreambleQuestionIdConstants.ApplyProviderRoute);
             question.Should().NotBeNull();
-            question.Value.Should().Be("TRUE");
+            question.Value.Should().Be("3");
         }
 
         [Test]

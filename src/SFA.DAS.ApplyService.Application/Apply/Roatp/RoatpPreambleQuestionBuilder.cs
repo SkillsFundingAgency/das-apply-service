@@ -37,7 +37,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string RoatpCurrentStatus = "PRE-91";
         public static string RoatpRemovedReason = "PRE-92";
         public static string RoatpStatusDate = "PRE-93";
-        public static string RoatpProviderRoute = "PRE-94";     
+        public static string RoatpProviderRoute = "PRE-94";
+        public static string ApplyProviderRoute = "YO-1";
         public static string ApplyProviderRouteMain = "YO-1.1";              
         public static string ApplyProviderRouteEmployer = "YO-1.2";
         public static string ApplyProviderRouteSupporting = "YO-1.3";
@@ -86,39 +87,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
         private static void CreateApplyQuestionAnswers(ApplicationDetails applicationDetails, List<PreambleAnswer> questions)
         {
-            switch (applicationDetails?.ApplicationRoute?.Id)
+            questions.Add(new PreambleAnswer
             {
-                case ApplicationRoute.MainProviderApplicationRoute:
-                {
-                    questions.Add(new PreambleAnswer
-                    {
-                        QuestionId = RoatpPreambleQuestionIdConstants.ApplyProviderRouteMain,
-                        Value = "TRUE",
-                        SequenceId = RoatpWorkflowSequenceIds.YourOrganisation
-                    });
-                    break;
-                }
-                case ApplicationRoute.EmployerProviderApplicationRoute:
-                {
-                    questions.Add(new PreambleAnswer
-                    {
-                        QuestionId = RoatpPreambleQuestionIdConstants.ApplyProviderRouteEmployer,
-                        Value = "TRUE",
-                        SequenceId = RoatpWorkflowSequenceIds.YourOrganisation
-                    });
-                    break;
-                }
-                case ApplicationRoute.SupportingProviderApplicationRoute:
-                {
-                    questions.Add(new PreambleAnswer
-                    {
-                        QuestionId = RoatpPreambleQuestionIdConstants.ApplyProviderRouteSupporting,
-                        Value = "TRUE",
-                        SequenceId = RoatpWorkflowSequenceIds.YourOrganisation
-                    });
-                    break;
-                }
-            }
+                QuestionId = RoatpPreambleQuestionIdConstants.ApplyProviderRoute,
+                Value = applicationDetails.ApplicationRoute?.Id.ToString(),
+                SequenceId = RoatpWorkflowSequenceIds.YourOrganisation
+            });
 
             questions.Add(new PreambleAnswer
             {
