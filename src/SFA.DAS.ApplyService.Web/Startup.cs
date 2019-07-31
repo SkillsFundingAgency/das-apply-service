@@ -111,7 +111,7 @@ namespace SFA.DAS.ApplyService.Web
 
             services.AddHealthChecks();
 
-            return ConfigureIOC(services);
+            ConfigureIOC(services);
 
         }
 

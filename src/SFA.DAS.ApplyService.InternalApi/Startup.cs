@@ -144,8 +144,7 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddHealthChecks();
 
-            return ConfigureIOC(services);
-
+            ConfigureIOC(services);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
