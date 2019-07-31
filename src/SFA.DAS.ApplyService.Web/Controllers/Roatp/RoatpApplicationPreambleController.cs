@@ -166,19 +166,6 @@
 
             return View("~/Views/Roatp/UkprnNotFound.cshtml", viewModel);
         }
- 
-        [Route("already-on-register")]
-        public async Task<IActionResult> UkprnActive()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                UKPRN = applicationDetails.UKPRN.ToString()
-            };
-
-            return View("~/Views/Roatp/UkprnActive.cshtml", viewModel);
-        }
 
         [Route("company-not-found")]
         public async Task<IActionResult> CompanyNotFound()
@@ -207,19 +194,6 @@
 
             return View("~/Views/Roatp/CharityNotFound.cshtml", viewModel);
         }
-
-        public async Task<IActionResult> InvalidCompanyTradingHistory()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                ApplicationRouteId = applicationDetails.ApplicationRoute.Id,
-                UKPRN = applicationDetails.UKPRN.ToString()
-            };
-
-            return View("~/Views/Roatp/InvalidCompanyTradingHistory.cshtml", viewModel);
-        }
         
         [Route("start-application")]
         public async Task<IActionResult> StartApplication()
@@ -240,18 +214,6 @@
             }
 
             return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
-        }
-
-        public async Task<IActionResult> InvalidCharityFormationHistory()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                UKPRN = applicationDetails.UKPRN.ToString()
-            };
-
-            return View("~/Views/Roatp/InvalidCharityFormationHistory.cshtml", viewModel);
         }
 
         [Route("ukrlp-unavailable")]

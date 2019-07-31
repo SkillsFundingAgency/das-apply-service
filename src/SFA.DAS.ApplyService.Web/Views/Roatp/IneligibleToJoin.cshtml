@@ -1,5 +1,11 @@
 ﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.UkprnSearchResultsViewModel
 
+
+@{
+    ViewBag.Title = "Your organisation is not eligible to apply to join the register of apprenticeship training providers";
+    Layout = "_Layout";
+}
+
 <div class="grid-row">
     <form asp-controller="RoatpApplicationPreamble" asp-action="EnterApplicationUkprn" method="get" name="backForm">
         <input type="hidden" asp-for="UKPRN" />
