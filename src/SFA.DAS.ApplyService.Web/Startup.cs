@@ -128,6 +128,8 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IValidator, RequiredValidator>();
             services.AddTransient<IValidator, SimpleRadioNotNullValidator>();
 
+            services.AddTransient<ITokenService, TokenService>();
+            
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddSingleton<IConfigurationService>(sp => new ConfigurationService(
