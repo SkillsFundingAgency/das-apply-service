@@ -97,6 +97,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var application = applications.First();
 
+            if (applicationType == ApplicationTypes.RegisterTrainingProviders)
+            {
+                return RedirectToAction("TaskList", new {applicationId = application.Id});
+            }
+            
             switch (application.ApplicationStatus)
             {
                 case ApplicationStatus.FeedbackAdded:
@@ -123,7 +128,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 await SavePreambleQuestions(response.ApplicationId, userId, preambleQuestions);
             }
 
-            return RedirectToAction("Applications");
+            return RedirectToAction("Applications", new { applicationType = applicationType });
         }
 
         [HttpPost("/Applications")]
@@ -132,8 +137,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var response = await _apiClient.StartApplication(await _userService.GetUserId(), applicationType);
 
             if (applicationType == ApplicationTypes.RegisterTrainingProviders)
-            {
-                return RedirectToAction("TaskList", new {applicationId = response.ApplicationId});
+            { 
+                return RedirectToAction("TaskList", new { applicationId = response.ApplicationId });
             }
             return RedirectToAction("SequenceSignPost", new {applicationId = response.ApplicationId});
         }
@@ -304,6 +309,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [Route("task-list")]
+        [HttpGet]
         public async Task<IActionResult> TaskList(Guid applicationId)
         {
             return View("~/Views/Roatp/TaskList.cshtml");
