@@ -138,7 +138,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                         {
                             if (nextAction.Action == "NextPage")
                             {
-                                qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Active = true;
+                                var nextActionPage = qnADataObject.Pages.FirstOrDefault(p => p.PageId == nextAction.ReturnId);
+                                if (nextActionPage != null)
+                                {
+                                    nextActionPage.Active = true;
+                                }
                             }
 
                             returnIdConditionMet = nextAction.ReturnId;
@@ -150,7 +154,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                             // as a previously met condition (handles OR conditions) then deactivate the page 
                             if (nextAction.Action == "NextPage" && nextAction.ReturnId != returnIdConditionMet)
                             {
-                                qnADataObject.Pages.Single(p => p.PageId == nextAction.ReturnId).Active = false;
+                                var nextActionPage = qnADataObject.Pages.FirstOrDefault(p => p.PageId == nextAction.ReturnId);
+                                if (nextActionPage != null)
+                                {
+                                    nextActionPage.Active = false;
+                                }
                             }
                         }
                     }
