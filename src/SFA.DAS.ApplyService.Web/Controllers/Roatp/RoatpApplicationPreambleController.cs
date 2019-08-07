@@ -225,7 +225,7 @@
                 await _usersApiClient.ApproveUser(user.Id);
             }
 
-            return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
+            return RedirectToAction("Applications", "RoatpApplication", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
         }
 
         [Route("ukrlp-unavailable")]

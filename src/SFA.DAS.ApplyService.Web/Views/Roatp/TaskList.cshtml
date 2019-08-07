@@ -1,4 +1,4 @@
-﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.UkprnSearchResultsViewModel
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.TaskListViewModel
 
 @{
     ViewBag.Title = "Task list";
@@ -11,8 +11,31 @@
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-l">Task list placeholder page</h1>
-               
+                <h1 class="govuk-heading-l">Application overview</h1>
+                <p class="govuk-body">
+                    UKPRN: @Model.UKPRN <br/>
+                    Organisation name: @Model.OrganisationName
+                </p>
+                <ol class="app-task-list">
+                    @foreach (var applicationSequence in Model.ApplicationSequences.OrderBy(seq => seq.SequenceId))
+                    {
+                        <li>
+                            <h2 class="app-task-list__section">
+                                @Html.Raw(Convert.ToInt32(applicationSequence.SequenceId)). @Html.Raw(applicationSequence.Description)
+                            </h2>
+                            <ul class="app-task-list__items">
+                                @foreach (var section in applicationSequence.Sections.OrderBy(sec => sec.SectionId))
+                                {
+                                    <li class="app-task-list__item">
+                                        <a class="app-task-list__task-name" href="@Url.Action("Section", "RoatpApplication", new { section.ApplicationId, section.SequenceId, section.SectionId })">
+                                            @Html.Raw(section.Title)
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </li>
+                    }
+                </ol>
             </div>
         </div>
     </main>

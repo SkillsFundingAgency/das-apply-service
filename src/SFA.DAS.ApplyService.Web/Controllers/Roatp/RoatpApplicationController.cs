@@ -8,27 +8,33 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
+using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.ViewModels;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
+    using ViewModels.Roatp;
+
     [Authorize]
-    public class ApplicationController : Controller
+    public class RoatpApplicationController : Controller
     {
         private readonly IApplicationApiClient _apiClient;
-        private readonly ILogger<ApplicationController> _logger;
+        private readonly ILogger<RoatpApplicationController> _logger;
         private readonly IUsersApiClient _usersApiClient;
         private readonly ISessionService _sessionService;
         private readonly IConfigurationService _configService;
         private readonly IUserService _userService;
 
-        public ApplicationController(IApplicationApiClient apiClient, ILogger<ApplicationController> logger,
+        private const string ApplicationDetailsKey = "Roatp_Application_Details";
+
+        public RoatpApplicationController(IApplicationApiClient apiClient, ILogger<RoatpApplicationController> logger,
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient)
         {
             _apiClient = apiClient;
@@ -39,14 +45,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _usersApiClient = usersApiClient;
         }
 
-        [HttpGet("/Applications")]
         public async Task<IActionResult> Applications(string applicationType)
         {
-            if (applicationType == ApplicationTypes.RegisterTrainingProviders)
-            {
-                return RedirectToAction("Applications", "RoatpApplication");
-            }
-
             var user = User.Identity.Name;
 
             if (!await _userService.ValidateUser(user))
@@ -62,37 +62,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             applications = applications.Where(app => app.ApplicationStatus != ApplicationStatus.Rejected).ToList();
 
             if (!applications.Any())
-            {
-                if (applicationType == ApplicationTypes.EndpointAssessor)
-                {
-                    if (org != null && org.RoEPAOApproved)
-                    {
-                        return await StartApplication(userId, applicationType);
-                    }
-                }
-
-                if (applicationType == ApplicationTypes.RegisterTrainingProviders)
-                {
-                    return await StartApplication(userId, applicationType);
-                }
-
-                //ON-2068 Registered org  with no application created via digital service then
-                //display empty list of application screen
-                if (org != null)
-                    return org.RoEPAOApproved ? View(applications) : View("~/Views/Application/Declaration.cshtml");
-
-                if (await _userService.AssociateOrgFromClaimWithUser())
-					return await StartApplication(userId, ApplicationTypes.EndpointAssessor);
-
-                return View("~/Views/Application/Declaration.cshtml", applicationType);
-
+            {              
+                return await StartApplication(userId, applicationType);
             }
-
-            //ON-2068 If there is an existing application for an org that is registered then display it
-            //in a list of application screen
-            if (applications.Count() == 1 && (org != null && org.RoEPAOApproved))
-                return View(applications);
-
+            
             if (applications.Count() > 1)
                 return View(applications);
 
@@ -106,31 +79,30 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 case ApplicationStatus.Approved:
                     return View(applications);
                 default:
-                    return RedirectToAction("SequenceSignPost", new {applicationId = application.Id});
+                    return RedirectToAction("TaskList", new {applicationId = application.Id});
             }
         }
-
 
         private async Task<IActionResult> StartApplication(Guid userId, string applicationType)
         {
             var response = await _apiClient.StartApplication(userId, applicationType);
+
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var preambleQuestions = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(applicationDetails);
+
+            await SavePreambleQuestions(response.ApplicationId, userId, preambleQuestions);
             
             return RedirectToAction("Applications", new { applicationType = applicationType });
         }
 
-        [HttpPost("/Applications")]
         public async Task<IActionResult> StartApplication(string applicationType)
         {
             var response = await _apiClient.StartApplication(await _userService.GetUserId(), applicationType);
-
-            if (applicationType == ApplicationTypes.RegisterTrainingProviders)
-            { 
-                return RedirectToAction("TaskList", new { applicationId = response.ApplicationId });
-            }
-            return RedirectToAction("SequenceSignPost", new {applicationId = response.ApplicationId});
+            
+            return RedirectToAction("TaskList", new { applicationId = response.ApplicationId });            
         }
 
-        [HttpGet("/Applications/{applicationId}/Sequence")]
         public async Task<IActionResult> Sequence(Guid applicationId)
         {
             // Break this out into a "Signpost" action.
@@ -139,7 +111,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return View(sequenceVm);
         }
 
-        [HttpGet("/Applications/{applicationId}")]
         public async Task<IActionResult> SequenceSignPost(Guid applicationId)
         {
             var application = await _apiClient.GetApplication(applicationId);
@@ -198,50 +169,24 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             throw new BadRequestException("Section does not have a valid DisplayType");
         }
 
-        [HttpGet("/Applications/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}")]
         public async Task<IActionResult> Section(Guid applicationId, int sequenceId, int sectionId)
         {
-            var canUpdate = await CanUpdateApplication(applicationId, sequenceId);
-            if (!canUpdate)
-            {
-                return RedirectToAction("Sequence", new { applicationId });
-            }
-
             var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, User.GetUserId());
 
-            switch(section?.DisplayType)
-            {
-                case null:
-                case SectionDisplayType.Pages:
-                    return View("~/Views/Application/Section.cshtml", section);
-                case SectionDisplayType.Questions:
-                    return View("~/Views/Application/Section.cshtml", section);
-                case SectionDisplayType.PagesWithSections:
-                    return View("~/Views/Application/PagesWithSections.cshtml", section);
-                default:
-                    throw new BadRequestException("Section does not have a valid DisplayType");
-            }
+            var pageId = section.QnAData.Pages.FirstOrDefault()?.PageId;
+
+            return await Page(applicationId, sequenceId, sectionId, pageId, string.Empty);
         }
 
-        [HttpGet("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}"), ModelStatePersist(ModelStatePersist.RestoreEntry)]
         public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
             var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
-            if (!CanUpdateApplication(sequence, sequenceId))
-            {
-                return RedirectToAction("Sequence", new { applicationId });
-            }
-
+            
             PageViewModel viewModel = null;
             var returnUrl = Request.Headers["Referer"].ToString();
 
             string pageContext = string.Empty;
-            if (sequence.SequenceId == SequenceId.Stage2)
-            {
-                var application = await _apiClient.GetApplication(applicationId);
-                pageContext = $"{application?.ApplicationData?.StandardReference } {application?.ApplicationData?.StandardName}";
-            }
-
+            
             if (!ModelState.IsValid)
             {
                 // when the model state has errors the page will be displayed with the values which failed validation
@@ -284,7 +229,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, pageContext, redirectAction,
                     returnUrl, null);
 
-                ProcessPageVmQuestionsForStandardName(viewModel.Questions, applicationId);
             }
 
             if (viewModel.AllowMultipleAnswers)
@@ -293,6 +237,32 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return View("~/Views/Application/Pages/Index.cshtml", viewModel);
+        }
+
+        [Route("task-list")]
+        [HttpGet]
+        public async Task<IActionResult> TaskList(Guid applicationId)
+        {
+            var sequences = await _apiClient.GetSequences(applicationId);
+
+            var filteredSequences = sequences.Where(x => !String.IsNullOrWhiteSpace(x.Description)).OrderBy(y => y.SequenceId);
+            
+            foreach (var sequence in filteredSequences)
+            {
+                var sections = await _apiClient.GetSections(applicationId, Convert.ToInt32(sequence.SequenceId), User.GetUserId());
+                sequence.Sections = sections.ToList();
+            }
+
+            var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
+
+            var model = new TaskListViewModel
+            {
+                ApplicationSequences = filteredSequences,
+                UKPRN = organisationDetails.OrganisationUkprn?.ToString(),
+                OrganisationName = organisationDetails.Name
+            };
+
+            return View("~/Views/Roatp/TaskList.cshtml", model);
         }
 
         private async Task<bool> CanUpdateApplication(Guid applicationId, int sequenceId)
@@ -331,40 +301,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             return page;
         }
-
-        private void ProcessPageVmQuestionsForStandardName(List<QuestionViewModel> pageVmQuestions, Guid applicationId)
-         {
-            if (pageVmQuestions == null) return;
-
-             var placeholderString = "StandardName";
-             var isPlaceholderPresent = false;
-
-             foreach (var question in pageVmQuestions)
-             
-                 if (question.Label.Contains($"[{placeholderString}]") ||
-                    question.Hint.Contains($"[{placeholderString}]") ||
-                     question.QuestionBodyText.Contains($"[{placeholderString}]") ||
-                     question.ShortLabel.Contains($"[{placeholderString}]")
-                    )
-                    isPlaceholderPresent=true;
-
-             if (!isPlaceholderPresent) return;
-
-             var application = _apiClient.GetApplication(applicationId).Result;
-             var standardName = application?.ApplicationData?.StandardName;
-
-
-             if (string.IsNullOrEmpty(standardName)) standardName = "the standard to be selected";
-
-            foreach (var question in pageVmQuestions)
-             {
-                question.Label = question.Label?.Replace($"[{placeholderString}]", standardName);
-                question.Hint = question.Hint?.Replace($"[{placeholderString}]", standardName);
-                question.QuestionBodyText = question.QuestionBodyText?.Replace($"[{placeholderString}]", standardName);
-                question.ShortLabel = question.Label?.Replace($"[{placeholderString}]", standardName);
-            }     
-         }
-       
+        
         private async Task<bool> CheckIfAnswersMustBeValidated(Guid applicationId, int sequenceId, int sectionId,
             string pageId, List<Answer> answers, Regex inputEnteredRegex)
         {
@@ -377,7 +314,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return !page.PageOfAnswers.Any();
         }
 
-        [HttpPost("/Application/{applicationId}/Sequences/{sequenceId}/Sections/{sectionId}/Pages/{pageId}"), ModelStatePersist(ModelStatePersist.Store)]
         public async Task<IActionResult> SaveAnswers(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, string __formAction)
         {
             var canUpdate = await CanUpdateApplication(applicationId, sequenceId);
@@ -515,9 +451,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return fileValidationPassed;
         }
 
-        [HttpGet("Application/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}/Download")]
-        
-        //[HttpGet("/Application/{applicationId}/Page/{pageId}/Question/{questionId}/File/{filename}/Download")]
         public async Task<IActionResult> Download(Guid applicationId, int sequenceId, int sectionId, string pageId, string questionId, string filename)
         {
             var userId = User.GetUserId();
@@ -531,16 +464,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return File(fileStream, fileInfo.ContentType, fileInfo.Filename);
         }
 
-        [HttpGet("Application/{applicationId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{redirectAction}/Delete")]
         public async Task<IActionResult> DeleteFile(Guid applicationId, int sequenceId, int sectionId, string pageId, string questionId, string redirectAction)
         {
             await _apiClient.DeleteFile(applicationId, User.GetUserId(), sequenceId, sectionId, pageId, questionId);
             
             return RedirectToAction("Page", new {applicationId, sequenceId, sectionId, pageId, redirectAction});
         }
-
-
-        [HttpPost("/Applications/Submit")]
+        
         public async Task<IActionResult> Submit(Guid applicationId, int sequenceId)
         {
             var canUpdate = await CanUpdateApplication(applicationId, sequenceId);
@@ -605,7 +535,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return validationErrors;
         }
 
-        [HttpPost("/Application/DeleteAnswer")]
         public async Task<IActionResult> DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, string redirectAction)
         {
             await _apiClient.DeleteAnswer(applicationId, sequenceId, sectionId, pageId, answerId, User.GetUserId());
@@ -613,7 +542,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return RedirectToAction("Page", new {applicationId, sequenceId, sectionId, pageId, redirectAction});
         }
 
-        [HttpGet("/Application/{applicationId}/Feedback")]
         public async Task<IActionResult> Feedback(Guid applicationId)
         {
             var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
@@ -621,7 +549,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return View("~/Views/Application/Feedback.cshtml", sequenceVm);
         }
 
-        [HttpGet("/Application/{applicationId}/Submitted")]
         public async Task<IActionResult> Submitted(Guid applicationId)
         {
             var application = await _apiClient.GetApplication(applicationId);
@@ -636,7 +563,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             });
         }
 
-        [HttpGet("/Application/{applicationId}/NotSubmitted")]
         public async Task<IActionResult> NotSubmitted(Guid applicationId)
         {
             var application = await _apiClient.GetApplication(applicationId);
@@ -649,5 +575,30 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             });
         }
 
+        private async Task SavePreambleQuestions(Guid applicationId, Guid userId, List<PreambleAnswer> questions)
+        {
+            const int DefaultSectionId = 1;
+
+            var preambleAnswers = questions
+                .Where(x => x.SequenceId == RoatpWorkflowSequenceIds.Preamble).AsEnumerable<Answer>()
+                .ToList();
+
+            var updateResult = await _apiClient.UpdatePageAnswers(applicationId, userId,
+                RoatpWorkflowSequenceIds.Preamble, DefaultSectionId, RoatpWorkflowPageIds.Preamble, preambleAnswers, true);
+            
+            var yourOrganisationAnswers = questions
+                .Where(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation).AsEnumerable<Answer>()
+                .ToList();
+
+            updateResult = await _apiClient.UpdatePageAnswers(applicationId, userId,
+                RoatpWorkflowSequenceIds.YourOrganisation, DefaultSectionId, RoatpWorkflowPageIds.YourOrganisation, yourOrganisationAnswers, true);
+            
+            var conditionsOfAcceptanceAnswers = questions
+                .Where(x => x.SequenceId == RoatpWorkflowSequenceIds.ConditionsOfAcceptance).AsEnumerable<Answer>()
+                .ToList();
+
+            updateResult = await _apiClient.UpdatePageAnswers(applicationId, userId,
+                RoatpWorkflowSequenceIds.ConditionsOfAcceptance, DefaultSectionId, RoatpWorkflowPageIds.ConditionsOfAcceptance, conditionsOfAcceptanceAnswers, true);
+        }
     }
 }
