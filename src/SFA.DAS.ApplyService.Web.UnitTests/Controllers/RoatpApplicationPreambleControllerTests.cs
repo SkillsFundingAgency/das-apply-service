@@ -481,8 +481,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [TestCase("liquidation")]
-        [TestCase(null)]
-        [TestCase("")]
         public void UKPRN_is_verified_against_companies_house_but_company_not_active(string status)
         {
             var providerDetails = new ProviderDetails
@@ -519,6 +517,49 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             result.Should().BeOfType<RedirectToActionResult>();
             var redirectResult = result as RedirectToActionResult;
             redirectResult.ActionName.Should().Be("CompanyNotFound");
+
+            _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Once);
+            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
+        }
+
+        [TestCase(null)]
+        [TestCase("")]
+        public void UKPRN_is_verified_against_companies_house_but_company_status_not_supplied(string status)
+        {
+            var providerDetails = new ProviderDetails
+            {
+                UKPRN = "10001000",
+                ProviderName = "Test Provider",
+                VerificationDetails = new List<VerificationDetails>
+                {
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CompaniesHouseAuthority,
+                        VerificationId = "12345678"
+                    }
+                }
+            };
+
+            var applicationDetails = new ApplicationDetails
+            {
+                UKPRN = 10001000,
+                UkrlpLookupDetails = providerDetails
+            };
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+
+            var inactiveCompany = new CompaniesHouseSummary
+            {
+                Status = status,
+                CompanyNumber = "12345678"
+            };
+            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
+                .Returns(Task.FromResult(inactiveCompany)).Verifiable();
+            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
+
+            var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
+            result.Should().BeOfType<RedirectToActionResult>();
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("SelectApplicationRoute");
 
             _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Once);
             _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
