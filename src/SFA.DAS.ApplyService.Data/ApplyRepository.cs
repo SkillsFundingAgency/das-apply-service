@@ -212,8 +212,8 @@ namespace SFA.DAS.ApplyService.Data
             {
                 return (await connection.QueryAsync<ApplicationSection>(@"
                                 INSERT INTO ApplicationSequences
-                                    (ApplicationId, SequenceId, Status, IsActive)
-                                SELECT        @applicationId AS ApplicationId, SequenceId, Status, IsActive
+                                    (ApplicationId, SequenceId, Status, IsActive, Description)
+                                SELECT        @applicationId AS ApplicationId, SequenceId, Status, IsActive, Description
                                 FROM            WorkflowSequences
                                 WHERE        (WorkflowId = @workflowId);
                     

@@ -83,11 +83,24 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .ReadAsAsync<ApplicationSequence>();
         }
 
+        public async Task<IEnumerable<ApplicationSequence>> GetSequences(Guid applicationId)
+        {
+            return await (await _httpClient.GetAsync($"Application/{applicationId}/Sequences")).Content
+                .ReadAsAsync<IEnumerable<ApplicationSequence>>();
+        }
+
         public async Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId, int sectionId, Guid userId)
         {
             return await (await _httpClient.GetAsync(
                     $"Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections/{sectionId}")).Content
                 .ReadAsAsync<ApplicationSection>();
+        }
+
+        public async Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid userId)
+        {
+            return await (await _httpClient.GetAsync(
+                    $"Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections")).Content
+                .ReadAsAsync<IEnumerable<ApplicationSection>>();
         }
 
         public async Task<Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid userId)

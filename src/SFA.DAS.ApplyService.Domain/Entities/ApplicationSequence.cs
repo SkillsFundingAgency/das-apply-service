@@ -12,6 +12,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public bool IsActive { get; set; }
         public List<ApplicationSection> Sections { get; set; }
         public bool NotRequired { get; set; }
+        public string Description { get; set; }
     }
 
     public class ApplicationSequenceStatus
@@ -27,6 +28,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
 
     public enum SequenceId
     {
+        Preamble = 0,
         Stage1 = 1,
         Stage2 = 2
     }

@@ -22,8 +22,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<HttpResponseMessage> Download(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string filename);
         Task<FileInfoResponse> FileInfo(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string filename);
         Task<ApplicationSequence> GetSequence(Guid applicationId, Guid userId);
+        Task<IEnumerable<ApplicationSequence>> GetSequences(Guid applicationId);
         Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId, int sectionId, Guid userId);
-        
+        Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid userId);
         Task<Domain.Apply.Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid userId);
 
         Task<UpdatePageAnswersResult> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId, int sectionId,
