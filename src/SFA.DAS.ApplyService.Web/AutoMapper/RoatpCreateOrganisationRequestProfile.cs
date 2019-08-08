@@ -89,6 +89,16 @@ namespace SFA.DAS.ApplyService.Web.AutoMapper
 
             destMember.FHADetails = new FHADetails();
 
+            destMember.RoatpDetails = new RoatpRegisterDetails
+            {
+                OrganisationId = source.RoatpRegisterStatus.OrganisationId,
+                ProviderTypeId = source.RoatpRegisterStatus.ProviderTypeId,
+                RemovedReasonId = source.RoatpRegisterStatus.RemovedReasonId,
+                StatusId = source.RoatpRegisterStatus.StatusId,
+                StatusDate = source.RoatpRegisterStatus.StatusDate,
+                UkprnOnRegister = source.RoatpRegisterStatus.UkprnOnRegister
+            };
+
             return destMember;
         }
     }
@@ -106,4 +116,5 @@ namespace SFA.DAS.ApplyService.Web.AutoMapper
                 .ForMember(dest => dest.PostCode, opt => opt.MapFrom(source => source.ContactAddress.PostCode));
         }
     }
+
 }

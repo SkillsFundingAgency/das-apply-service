@@ -339,9 +339,11 @@
                 }
             }
 
-            _sessionService.Set(ApplicationDetailsKey, applicationDetails);
-
             var roatpRegisterStatus = await _roatpApiClient.GetOrganisationRegisterStatus(applicationDetails.UKPRN);
+
+            applicationDetails.RoatpRegisterStatus = roatpRegisterStatus;
+
+            _sessionService.Set(ApplicationDetailsKey, applicationDetails);
 
             if (!_roatpStatusValidator.ProviderEligibleToJoinRegister(roatpRegisterStatus))
             {
