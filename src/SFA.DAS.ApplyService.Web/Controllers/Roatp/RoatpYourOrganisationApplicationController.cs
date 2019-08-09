@@ -3,8 +3,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
     using System;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
+    [Authorize]
     public class RoatpYourOrganisationApplicationController : Controller
     {
         public async Task<IActionResult> ProviderRoute(Guid applicationId)
