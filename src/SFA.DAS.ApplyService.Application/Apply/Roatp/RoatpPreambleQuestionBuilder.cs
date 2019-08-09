@@ -52,6 +52,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static int ConditionsOfAcceptance = 99;
     }
 
+    public static class RoatpWorkflowSectionIds
+    {
+        public static int YourOrganisationProviderRoute = 1;
+        public static int YourOrganisationWhatYouWillNeed = 2;
+    }
+
     public static class RoatpWorkflowPageIds
     {
         public static string Preamble = "1";

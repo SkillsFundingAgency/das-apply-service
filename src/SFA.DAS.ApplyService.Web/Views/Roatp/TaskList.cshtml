@@ -1,4 +1,5 @@
-﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.TaskListViewModel
+﻿@using SFA.DAS.ApplyService.Application.Apply.Roatp
+@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.TaskListViewModel
 
 @{
     ViewBag.Title = "Task list";
@@ -17,24 +18,58 @@
                     Organisation name: @Model.OrganisationName
                 </p>
                 <ol class="app-task-list">
-                    @foreach (var applicationSequence in Model.ApplicationSequences.OrderBy(seq => seq.SequenceId))
-                    {
+
+                    @{
+                        var yourOrganisationSequence = Model.ApplicationSequences
+                            .Single(seq => (int) seq.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
+
+                        var sequentialSections = yourOrganisationSequence.Sections
+                            .Where(section => section.SectionId != RoatpWorkflowSectionIds.YourOrganisationProviderRoute 
+                                           && section.SectionId != RoatpWorkflowSectionIds.YourOrganisationWhatYouWillNeed);
+
                         <li>
                             <h2 class="app-task-list__section">
-                                @Html.Raw(Convert.ToInt32(applicationSequence.SequenceId)). @Html.Raw(applicationSequence.Description)
+                                @Html.Raw(Convert.ToInt32(yourOrganisationSequence.SequenceId)). @Html.Raw(yourOrganisationSequence.Description)
                             </h2>
+
                             <ul class="app-task-list__items">
-                                @foreach (var section in applicationSequence.Sections.OrderBy(sec => sec.SectionId))
+                                <li class="app-task-list__item">
+                                    <a class="app-task-list__task-name" asp-controller="RoatpYourOrganisationApplication" asp-action="ProviderRoute">Provider route</a>
+                                </li>
+                                <li class="app-task-list__item">
+                                    <a class="app-task-list__task_name" asp-controller="RoatpYourOrganisationApplication" asp-action="WhatYouWillNeed">Introduction and what you'll need</a>
+                                </li>
+
+                                @foreach (var section in sequentialSections)
                                 {
                                     <li class="app-task-list__item">
-                                        <a class="app-task-list__task-name" href="@Url.Action("Section", "RoatpApplication", new { section.ApplicationId, section.SequenceId, section.SectionId })">
+                                        <a class="app-task-list__task-name" href="@Url.Action("Section", "RoatpApplication", new {section.ApplicationId, section.SequenceId, section.SectionId})">
                                             @Html.Raw(section.Title)
                                         </a>
                                     </li>
                                 }
                             </ul>
                         </li>
+                        @foreach (var applicationSequence in Model.ApplicationSequences.Where(sequence => (int)sequence.SequenceId != RoatpWorkflowSequenceIds.YourOrganisation).OrderBy(seq => seq.SequenceId))
+                         {
+                             <li>
+                                 <h2 class="app-task-list__section">
+                                     @Html.Raw(Convert.ToInt32(applicationSequence.SequenceId)). @Html.Raw(applicationSequence.Description)
+                                 </h2>
+                                 <ul class="app-task-list__items">
+                                     @foreach (var section in applicationSequence.Sections.OrderBy(sec => sec.SectionId))
+                                     {
+                                         <li class="app-task-list__item">
+                                             <a class="app-task-list__task-name" href="@Url.Action("Section", "RoatpApplication", new {section.ApplicationId, section.SequenceId, section.SectionId})">
+                                                 @Html.Raw(section.Title)
+                                             </a>
+                                         </li>
+                                     }
+                                 </ul>
+                             </li>
+                         }
                     }
+
                 </ol>
             </div>
         </div>
