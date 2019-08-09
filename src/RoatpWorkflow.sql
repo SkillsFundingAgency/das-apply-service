@@ -568,6 +568,12 @@ VALUES
             "MustEqual": "3"
           },
           "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
         }
       ],
       "Complete": false,
