@@ -503,7 +503,7 @@ VALUES
         {
           "QuestionId": "YO-1",
           "QuestionTag": "Apply-ProviderRoute",
-          "Label": "",
+          "Label": "Choose your organisation''s provider route",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
