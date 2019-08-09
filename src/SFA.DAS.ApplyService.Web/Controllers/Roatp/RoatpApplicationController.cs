@@ -208,7 +208,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 // when the model state has no errors the page will be displayed with the last valid values which were saved
                 var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, User.GetUserId());
 
-                if (page != null && (!page.Active || page.NotRequired))
+                var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, User.GetUserId());
+
+                if (page != null && (!page.Active || page.NotRequired ||
+                                     (section.QnAData.Pages.Count == 1 && IsPostBack())))
                 {
                     var nextPage = page.Next.FirstOrDefault(p => p.Condition is null);
 
@@ -220,7 +223,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     }
                     else
                     {
-                        return RedirectToAction("Section", new {applicationId, sequenceId, sectionId});
+                        await SaveAnswers(applicationId, sequenceId, sectionId, pageId, redirectAction, string.Empty);
+                        return RedirectToAction("TaskList", new {applicationId});
                     }
                 }
 
@@ -600,6 +604,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             updateResult = await _apiClient.UpdatePageAnswers(applicationId, userId,
                 RoatpWorkflowSequenceIds.ConditionsOfAcceptance, DefaultSectionId, RoatpWorkflowPageIds.ConditionsOfAcceptance, conditionsOfAcceptanceAnswers, true);
+        }
+
+        private bool IsPostBack()
+        {
+            return ControllerContext.HttpContext.Request.Method?.ToUpper() == "POST";
         }
     }
 }
