@@ -257,6 +257,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var model = new TaskListViewModel
             {
+                ApplicationId = applicationId,
                 ApplicationSequences = filteredSequences,
                 UKPRN = organisationDetails.OrganisationUkprn?.ToString(),
                 OrganisationName = organisationDetails.Name

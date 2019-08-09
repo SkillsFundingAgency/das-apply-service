@@ -34,10 +34,10 @@
 
                             <ul class="app-task-list__items">
                                 <li class="app-task-list__item">
-                                    <a class="app-task-list__task-name" asp-controller="RoatpYourOrganisationApplication" asp-action="ProviderRoute">Provider route</a>
+                                    <a class="app-task-list__task-name" href="@Url.Action("ProviderRoute", "RoatpYourOrganisationApplication", new {applicationId = Model.ApplicationId})">Provider route</a>
                                 </li>
                                 <li class="app-task-list__item">
-                                    <a class="app-task-list__task_name" asp-controller="RoatpYourOrganisationApplication" asp-action="WhatYouWillNeed">Introduction and what you'll need</a>
+                                    <a class="app-task-list__task_name" href="@Url.Action("WhatYouWillNeed", "RoatpYourOrganisationApplication", new {applicationId = Model.ApplicationId})">Introduction and what you'll need</a>
                                 </li>
 
                                 @foreach (var section in sequentialSections)
