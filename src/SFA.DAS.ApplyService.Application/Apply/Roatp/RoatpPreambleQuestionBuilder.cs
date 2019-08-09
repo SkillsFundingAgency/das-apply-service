@@ -62,6 +62,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
     {
         public static string Preamble = "1";
         public static string YourOrganisation = "2";
+        public static string YourOrganisationIntroductionMain = "3";
+        public static string YourOrganisationIntroductionEmployer = "4";
+        public static string YourOrganisationIntroductionSupporting = "5";
         public static string ConditionsOfAcceptance = "999999";
     }
 
