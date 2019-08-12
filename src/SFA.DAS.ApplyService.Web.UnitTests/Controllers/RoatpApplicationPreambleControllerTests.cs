@@ -790,6 +790,57 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 It.Is<ApplicationDetails>(y => y.CompanySummary.ManualEntryRequired == expectedRequired)));
 
         }
+
+        [Test]
+        public void UKPRN_is_verified_against_companies_house_but_no_directors_or_pscs_returned()
+        {
+            var providerDetails = new ProviderDetails
+            {
+                UKPRN = "10001000",
+                ProviderName = "Test Provider",
+                VerificationDetails = new List<VerificationDetails>
+                {
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CompaniesHouseAuthority,
+                        VerificationId = "12345678"
+                    }
+                }
+            };
+            _activeCompany = new CompaniesHouseSummary
+            {
+                Status = "active",
+                CompanyNumber = "12345678",
+                Directors = new List<DirectorInformation>(),
+                PersonsSignificationControl = new List<PersonSignificantControlInformation>(),
+                IncorporationDate = new DateTime(2012, 1, 10),
+                CompanyType = "ltd"
+            };
+
+            var applicationDetails = new ApplicationDetails
+            {
+                UKPRN = 10001000,
+                UkrlpLookupDetails = providerDetails
+            };
+
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+            _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>())).Verifiable();
+
+            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
+                .Returns(Task.FromResult(_activeCompany)).Verifiable();
+            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>())).Verifiable();
+
+            var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
+
+            _companiesHouseApiClient.Verify(x => x.GetCompanyDetails(It.IsAny<string>()), Times.Once);
+            _charityCommissionApiClient.Verify(x => x.GetCharityDetails(It.IsAny<int>()), Times.Never);
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("SelectApplicationRoute");
+
+            _sessionService.Verify(x => x.Set(It.IsAny<string>(),
+                It.Is<ApplicationDetails>(y => y.CompanySummary.ManualEntryRequired == true)));
+        }
   
         
         [Test]
