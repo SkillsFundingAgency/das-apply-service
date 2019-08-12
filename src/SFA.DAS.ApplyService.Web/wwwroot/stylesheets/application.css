@@ -332,17 +332,40 @@
     }
 }
 
-.app-task-list__task-completed {
+.app-task-list__task-completed,
+.app-task-list__task-inprogress,
+.app-task-list__task-next,
+.app-task-list__task-notrequired {
     margin-top: 10px;
     margin-bottom: 5px;
 }
 
 @media (min-width: 28.125em) {
-    .app-task-list__task-completed {
+    .app-task-list__task-completed,
+    .app-task-list__task-inprogress,
+    .app-task-list__task-next,
+    .app-task-list__task-notrequired {
         float: right;
         margin-top: 0;
         margin-bottom: 0;
     }
+}
+
+.app-task-list__task-inprogress {
+    background-color: #00823B;
+}
+
+.app-task-list__task-notrequired {
+    background-color: #6F777B;
+}
+
+.app-task-list__task-next {
+    background-color: #FFBF47;
+    color: #000;
+}
+
+.app-task-list__task-hidden {
+    display: none;
 }
 
 .das-user-panel {
