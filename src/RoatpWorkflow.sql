@@ -508,7 +508,7 @@ VALUES
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "ComplexRadio",
+            "Type": "Radio",
             "Options": [
               {
                 "Label": "Main provider",
