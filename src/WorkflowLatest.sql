@@ -3202,7 +3202,7 @@ VALUES
                 "ErrorMessage": "Enter building and street"
               },
               {
-                "Key": "TownOrCity",
+                "Key": "AddressLine3",
                 "Name": "Required",
                 "Value": null,
                 "ErrorMessage": "Enter town or city"
@@ -3346,7 +3346,7 @@ VALUES
                 "ErrorMessage": "Enter building and street"
               },
               {
-                "Key": "TownOrCity",
+                "Key": "AddressLine3",
                 "Name": "Required",
                 "Value": null,
                 "ErrorMessage": "Enter town or city"

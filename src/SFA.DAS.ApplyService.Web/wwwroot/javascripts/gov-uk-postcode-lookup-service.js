@@ -1,3 +1,6 @@
+// This version of the postcode-lookup-service uses the 5 address fields; building and street (1 & 2), 
+// town or city, county and postcode which are recommended by the gov uk style guidelines
+// see https://design-system.service.gov.uk/patterns/addresses/
 (function ($) {
     var searchContext = "";
     var findAddressVal = $("#postcode-search").val();
@@ -20,12 +23,8 @@
 
     $("#searchAgain").on("click", function (e) {
         e.preventDefault();
-        $("#address-manual, #address-lookup").removeClass("hidden");
-        $("#search-again, .js-address-panel").addClass("hidden");
-        $("#postcode-search").val("")
+        searchAgain();
     });
-
-
 
     $("#postcode-search").keyup(function () {
         findAddressVal = $(this).val();
@@ -98,7 +97,7 @@
             select: function (event, ui) {
                 var item = ui.item.data;
 
-                if (item.Next == "Retrieve") {
+                if (item.Next === "Retrieve") {
                     //retrieve the address
                     retrieveAddress(item.Id);
                     searchContext = "";
@@ -167,10 +166,10 @@
 
     function populateAddress(address) {
         var addressFields = {
-            '.address-manual-input-building-1': address.Line1,
-            '.address-manual-input-building-2': address.Line2,
-            '.address-manual-input-town-or-city': address.City,
-            '.address-manual-input-county': address.Province,
+            '.address-manual-input-address-line-1': address.Line1,
+            '.address-manual-input-address-line-2': address.Line2,
+            '.address-manual-input-address-line-3': address.City,
+            '.address-manual-input-address-line-4': address.Province,
             '.address-manual-input-postcode': address.PostalCode
         };
 
@@ -194,10 +193,10 @@
         var hasPreviousValues = false;
 
         var addressFields = {
-            '.address-manual-input-building-1': '',
-            '.address-manual-input-building-2': '',
-            '.address-manual-input-town-or-city': '',
-            '.address-manual-input-county': '',
+            '.address-manual-input-address-line-1': '',
+            '.address-manual-input-address-line-2': '',
+            '.address-manual-input-address-line-3': '',
+            '.address-manual-input-address-line-4': '',
             '.address-manual-input-postcode': ''
         };
 
@@ -229,9 +228,20 @@
     }
 
     function searchAgain() {
-        
+        var addressFields = {
+            '.address-manual-input-address-line-1': '',
+            '.address-manual-input-address-line-2': '',
+            '.address-manual-input-address-line-3': '',
+            '.address-manual-input-address-line-4': '',
+            '.address-manual-input-postcode': ''
+        };
+
+        $.each(addressFields, function (index, value) {
+            $(index).val(value);
+        });
+
+        $("#address-manual, #address-lookup").removeClass("hidden");
+        $("#search-again, .js-address-panel").addClass("hidden");
+        $("#postcode-search").val("");
     }
-
-
-
 })(jQuery);
