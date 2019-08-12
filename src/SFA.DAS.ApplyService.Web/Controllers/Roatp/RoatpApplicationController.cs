@@ -321,11 +321,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public async Task<IActionResult> SaveAnswers(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, string __formAction)
         {
-            var canUpdate = await CanUpdateApplication(applicationId, sequenceId);
-            if (!canUpdate)
-            {
-                return RedirectToAction("Sequence", new { applicationId });
-            }
+            //var canUpdate = await CanUpdateApplication(applicationId, sequenceId);
+            //if (!canUpdate)
+            //{
+            //    return RedirectToAction("Sequence", new { applicationId });
+            //}
 
             var userId = User.GetUserId();
 
