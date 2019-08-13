@@ -73,7 +73,9 @@ namespace SFA.DAS.ApplyService.Domain.CompaniesHouse
                 {"other", "Other company type"},
                 {"european-public-limited-liability-company-se", "European public limited liability company (SE)"},
                 {"uk-establishment", "UK establishment company"},
-                {"scottish-partnership", "Scottish qualifying partnership"}
+                {"scottish-partnership", "Scottish qualifying partnership"},
+                {"registered-society-non-jurisdictional", "Registered society" },
+                {"charitable-incorporated-organisation", "Charitable incorporated organisation" }
             };
         }
     }

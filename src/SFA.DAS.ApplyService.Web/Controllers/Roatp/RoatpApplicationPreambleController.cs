@@ -1,7 +1,6 @@
 ﻿namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -276,11 +275,13 @@
 
                 companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companiesHouseVerification.VerificationId);
 
-                if (!CompanyReturnsFullDetails(companyDetails.CompanyNumber))
+                if ((companyDetails.Directors == null || companyDetails.Directors.Count == 0)
+                    && (companyDetails.PersonsSignificationControl == null ||
+                        companyDetails.PersonsSignificationControl.Count == 0))
                 {
                     companyDetails.ManualEntryRequired = true;
                 }
-
+                
                 if (companyDetails.Status == CompaniesHouseSummary.ServiceUnavailable)
                 {
                     return RedirectToAction("CompaniesHouseNotAvailable");
@@ -355,24 +356,6 @@
             }
             
             return RedirectToAction("SelectApplicationRoute");           
-        }
-
-        private bool CompanyReturnsFullDetails(string companyNumber)
-        {
-            if (String.IsNullOrWhiteSpace(companyNumber))
-            {
-                return false;
-            }
-
-            foreach (var prefix in StatusOnlyCompanyNumberPrefixes)
-            {
-                if (companyNumber.ToUpper().StartsWith(prefix))
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
 
         private bool IsEnglandAndWalesCharityCommissionNumber(string charityNumber)
