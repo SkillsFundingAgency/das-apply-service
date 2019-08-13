@@ -121,5 +121,8 @@
 
         [XmlElement(ElementName = "VerificationID")]
         public string VerificationId { get; set; }
+
+        [XmlElement]
+        public bool PrimaryVerificationSource { get; set; }
     }
 }
