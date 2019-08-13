@@ -83,26 +83,29 @@
     </div>
 </header>
 
-@if (@SessionService.Get("LoggedInUser") != null)
+@if (User.Identity.IsAuthenticated)
 {
     <div class="das-user-panel">
         <div class="govuk-width-container">
             <div class="das-user-panel__content">
-                <span class="govuk-body-s das-user-panel__item das-user-panel__item--grow">
-                    @*
-                    If we have access to the applying org. include it here
-                    <span class="govuk-!-font-weight-bold">Applying organisation</span>
-                    <span class="govuk-visually-hidden">Signed in as </span>
-                    *@
-                    <span>Signed in as </span>
-                    <span>@SessionService.Get("LoggedInUser")</span>
-                </span>
-                <span class="govuk-body-s das-user-panel__item">
-                    <a class="govuk-link govuk-link--white" asp-controller="Home" asp-action="ContactUs">Contact us</a>
-                </span>
-                <span class="govuk-body-s das-user-panel__item">
-                    <a class="govuk-link govuk-link--white" href="@Url.Action("SignOut","Users")">Sign out</a>
-                </span>
+                <div class="govuk-body-s das-user-panel__item das-user-panel__item--grow">
+                    <p class="govuk-!-margin-top-0 govuk-!-margin-bottom-0 das-no-wrap">
+                        <span class="govuk-visually-hidden">Signed in as </span>
+                        <span class="nowrap">@User.Identity.Name</span>
+                    </p>
+                    @if (@SessionService.Get("OrganisationName") != null)
+                    {
+                        <p class="govuk-!-font-weight-bold govuk-!-margin-top-0 govuk-!-margin-bottom-0">@SessionService.Get("OrganisationName")</p>
+                    }
+                </div>
+                <div>
+                    <span class="govuk-body-s das-user-panel__item">
+                        <a class="govuk-link govuk-link--white" asp-controller="Home" asp-action="ContactUs">Contact us</a>
+                    </span>
+                    <span class="govuk-body-s das-user-panel__item">
+                        <a class="govuk-link govuk-link--white" href="@Url.Action("SignOut","Users")">Sign out</a>
+                    </span>
+                </div>
             </div>
         </div>
     </div>

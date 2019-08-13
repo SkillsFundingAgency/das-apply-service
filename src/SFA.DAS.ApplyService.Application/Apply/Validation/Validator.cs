@@ -9,23 +9,25 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
     {
         public ValidationDefinition ValidationDefinition { get; set; }
         
-        public virtual List<KeyValuePair<string, string>> Validate(Answer answer)
+        public virtual List<KeyValuePair<string, string>> Validate(string questionId, Answer answer)
         {
             return new List<KeyValuePair<string, string>>();
         }
 
         protected string GetValue(Answer answer)
         {
-            return string.IsNullOrEmpty(ValidationDefinition.Key)
-                ? answer.Value
-                : answer.JsonValue[ValidationDefinition.Key];
+            return answer != null 
+                ? string.IsNullOrEmpty(ValidationDefinition.Key)
+                    ? answer.Value
+                    : answer.JsonValue[ValidationDefinition.Key]
+                : null;
         }
 
-        protected string GetFieldId(Answer answer)
+        protected string GetFieldId(string questionId)
         {
             return string.IsNullOrEmpty(ValidationDefinition.Key)
-                ? answer.QuestionId
-                : $"{answer.QuestionId}_Key_{ValidationDefinition.Key}";
+                    ? questionId
+                    : $"{questionId}_Key_{ValidationDefinition.Key}";
         }
     }
 }

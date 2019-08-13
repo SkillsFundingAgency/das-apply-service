@@ -3202,7 +3202,7 @@ VALUES
                 "ErrorMessage": "Enter building and street"
               },
               {
-                "Key": "TownOrCity",
+                "Key": "AddressLine3",
                 "Name": "Required",
                 "Value": null,
                 "ErrorMessage": "Enter town or city"
@@ -3346,7 +3346,7 @@ VALUES
                 "ErrorMessage": "Enter building and street"
               },
               {
-                "Key": "TownOrCity",
+                "Key": "AddressLine3",
                 "Name": "Required",
                 "Value": null,
                 "ErrorMessage": "Enter town or city"
@@ -7323,7 +7323,7 @@ DELETE FROM Assets WHERE Reference = 'SQ-2-SE-4-PG-28-CC-29-H-1';   -- Row AA
 INSERT INTO Assets
   (Id, Reference, Type, Text, Status, CreatedAt, CreatedBy)
 VALUES
-  (NEWID(), 'SQ-2-SE-4-PG-28-CC-29-H-1', '', '', 'Live', GETUTCDATE(), 'Import')
+  (NEWID(), 'SQ-2-SE-4-PG-28-CC-29-H-1', '', 'You need to include a statement about how you will ensure the EPA will only take place after the gateway review.', 'Live', GETUTCDATE(), 'Import')
 
   -- page 28 question 30
 GO

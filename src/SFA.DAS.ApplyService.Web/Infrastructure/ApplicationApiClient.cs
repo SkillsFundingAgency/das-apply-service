@@ -20,19 +20,28 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     public class ApplicationApiClient : IApplicationApiClient
     {
         private readonly ILogger<ApplicationApiClient> _logger;
+        private readonly ITokenService _tokenService;
         private static readonly HttpClient _httpClient = new HttpClient();
 
-        public ApplicationApiClient(IConfigurationService configurationService, ILogger<ApplicationApiClient> logger)
+        public ApplicationApiClient(IConfigurationService configurationService, ILogger<ApplicationApiClient> logger, ITokenService tokenService)
         {
             _logger = logger;
+            _tokenService = tokenService;
             if (_httpClient.BaseAddress == null)
             {
                 _httpClient.BaseAddress = new Uri(configurationService.GetConfig().Result.InternalApi.Uri);
             }
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
         }
 
-        public async Task<List<Domain.Entities.Application>> GetApplicationsFor(Guid userId)
+        public async Task<List<Domain.Entities.Application>> GetApplications(Guid userId, bool createdBy)
         {
+            if (!createdBy)
+            {
+                return await (await _httpClient.GetAsync($"/Applications/{userId}/Organisation")).Content
+                .ReadAsAsync<List<Domain.Entities.Application>>();
+            }
+
             return await (await _httpClient.GetAsync($"/Applications/{userId}")).Content
                 .ReadAsAsync<List<Domain.Entities.Application>>();
         }

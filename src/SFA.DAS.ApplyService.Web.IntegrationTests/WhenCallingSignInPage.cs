@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Configuration;
-using SFA.DAS.ApplyService.Web.IntegrationTests.Infrastructure;
 
 namespace SFA.DAS.ApplyService.Web.IntegrationTests
 {
@@ -27,8 +26,8 @@ namespace SFA.DAS.ApplyService.Web.IntegrationTests
                 .ReturnsAsync(new ApplyConfig() {SessionRedisConnectionString = "HelloDave"});
 
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
-            
-            var builder = new WebHostBuilder().UseStartup<FakeStartup>();
+
+            var builder = new WebHostBuilder();
             builder.ConfigureServices(services =>
             {
                 services.AddSingleton(p => configurationService.Object);

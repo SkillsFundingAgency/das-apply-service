@@ -55,9 +55,10 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
                 }
             });
 
-            AnswerQ1 = new Answer() { QuestionId = "Q1", Value = "QuestionAnswer" };
+            AnswerQ1.Value = "QuestionAnswer";
 
-            Validator.Setup(v => v.Validate(It.Is<Answer>(p => p.QuestionId == AnswerQ1.QuestionId))).Returns(new List<KeyValuePair<string, string>>());
+            Validator.Setup(v => v.Validate(It.Is<string>(p => p == QuestionIdQ1), It.Is<Answer>(p => p.QuestionId == AnswerQ1.QuestionId))).Returns(
+                new List<KeyValuePair<string, string>>());
         }
 
         [Test]

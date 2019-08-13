@@ -18,9 +18,11 @@ using SFA.DAS.ApplyService.InternalApi.Types;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
+    [Authorize]
     public class ApplicationController : Controller
     {
         private readonly IMediator _mediator;
@@ -57,7 +59,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("Applications/{userId}")]
         public async Task<ActionResult<List<Domain.Entities.Application>>> GetApplications(string userId)
         {
-            return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId)));
+            return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), true));
+        }
+
+        [HttpGet("Applications/{userId}/Organisation")]
+        public async Task<ActionResult<List<Domain.Entities.Application>>> GetOrganisationApplications(string userId)
+        {
+            return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), false));
         }
 
         [HttpGet("Application/{applicationId}/User/{userId}/Sections")]

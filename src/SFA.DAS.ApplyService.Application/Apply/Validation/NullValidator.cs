@@ -5,9 +5,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
 {
     public class NullValidator : Validator
     {
-        public override List<KeyValuePair<string, string>> Validate(Answer answer)
+        public override List<KeyValuePair<string, string>> Validate(string questionId, Answer answer)
         {
-            return base.Validate(answer);
+            return base.Validate(questionId, answer);
         }
     }
 }

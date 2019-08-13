@@ -12,7 +12,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
                 .BeforeMap((source, dest) => dest.OrganisationReferenceType = "EASAPI")
                 .BeforeMap((source, dest) => dest.Email = null)
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(source => source.Code))
-                .ForMember(dest => dest.LegalName, opt => opt.MapFrom(source => source.Name))
+                .ForMember(dest => dest.LegalName, opt => opt.ResolveUsing(source => source.Name?.Replace("  ", " ")))
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(source => Mapper.Map<Address, Types.OrganisationAddress>(source.Address)))
                 .ForMember(dest => dest.CompanyNumber, opt => opt.ResolveUsing(source => source.Type == OrganisationType.Company ? source.Code : null))
                 .ForMember(dest => dest.CharityNumber, opt => opt.ResolveUsing(source => source.Type == OrganisationType.Charity ? source.Code : null))
