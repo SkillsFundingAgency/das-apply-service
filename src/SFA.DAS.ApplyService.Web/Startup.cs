@@ -21,7 +21,6 @@ using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Validators;
-using StructureMap;
 using StackExchange.Redis;
 
 namespace SFA.DAS.ApplyService.Web
@@ -45,7 +44,7 @@ namespace SFA.DAS.ApplyService.Web
             _configService =  new ConfigurationService(env, _configuration["EnvironmentName"], _configuration["ConfigurationStorageConnectionString"], Version, ServiceName).GetConfig().GetAwaiter().GetResult();
         }
 
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             IdentityModelEventSource.ShowPII = true;
         
@@ -111,46 +110,45 @@ namespace SFA.DAS.ApplyService.Web
 
             services.AddHealthChecks();
 
-            return ConfigureIOC(services);
+            ConfigureIOC(services);
         }
         
-        private IServiceProvider ConfigureIOC(IServiceCollection services)
+        private void ConfigureIOC(IServiceCollection services)
         {
-            var container = new Container();
+            services.AddTransient<IValidator, DateNotInFutureValidator>();
+            services.AddTransient<IValidator, DateValidator>();
+            services.AddTransient<IValidator, EmailAddressIsValidValidator>();
+            services.AddTransient<IValidator, MaxLengthValidator>();
+            services.AddTransient<IValidator, MaxWordCountValidator>();
+            services.AddTransient<IValidator, NullValidator>();
+            services.AddTransient<IValidator, RegexValidator>();
+            services.AddTransient<IValidator, RegisteredCharityNumberValidator>();
+            services.AddTransient<IValidator, RequiredValidator>();
+            services.AddTransient<IValidator, SimpleRadioNotNullValidator>();
 
-            container.Configure(config =>
-            {
-                config.Scan(_ =>
-                {
-                    _.AssembliesFromApplicationBaseDirectory(c => c.FullName.StartsWith("SFA"));
-                    _.WithDefaultConventions();
+            services.AddTransient<ITokenService, TokenService>();
+            
+            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
-                    _.AddAllTypesOf<IValidator>();
-                });
+            services.AddSingleton<IConfigurationService>(sp => new ConfigurationService(
+                sp.GetService<IHostingEnvironment>(),
+                _configuration["EnvironmentName"],
+                _configuration["ConfigurationStorageConnectionString"],
+                "1.0",
+                "SFA.DAS.ApplyService"));
 
-                config.For<IHttpContextAccessor>().Use<HttpContextAccessor>();
-                
-                config.For<IConfigurationService>()
-                    .Use<ConfigurationService>().Singleton()
-                    .Ctor<string>("environment").Is(_configuration["EnvironmentName"])
-                    .Ctor<string>("storageConnectionString").Is(_configuration["ConfigurationStorageConnectionString"])
-                    .Ctor<string>("version").Is("1.0")
-                    .Ctor<string>("serviceName").Is("SFA.DAS.ApplyService");
-                
-                config.For<ISessionService>().Use<SessionService>().Ctor<string>("environment")
-                    .Is(_configuration["EnvironmentName"]);
-                config.For<IDfeSignInService>().Use<DfeSignInService>();
+            services.AddTransient<ISessionService>(s => new SessionService(
+                s.GetService<IHttpContextAccessor>(), 
+                _configuration["EnvironmentName"]));
 
-                config.For<IUsersApiClient>().Use<UsersApiClient>();
-                config.For<IApplicationApiClient>().Use<ApplicationApiClient>();
-                config.For<OrganisationApiClient>().Use<OrganisationApiClient>();
-                config.For<OrganisationSearchApiClient>().Use<OrganisationSearchApiClient>();
-                config.For<CreateAccountValidator>().Use<CreateAccountValidator>();
-                config.For<UserService>().Use<UserService>();
-                config.Populate(services);
-            });
+            services.AddTransient<IDfeSignInService,DfeSignInService>();
 
-            return container.GetInstance<IServiceProvider>();
+            services.AddTransient<IUsersApiClient,UsersApiClient>();
+            services.AddTransient<IApplicationApiClient,ApplicationApiClient>();
+            services.AddTransient<OrganisationApiClient,OrganisationApiClient>();
+            services.AddTransient<OrganisationSearchApiClient,OrganisationSearchApiClient>();
+            services.AddTransient<CreateAccountValidator,CreateAccountValidator>();
+            services.AddTransient<IUserService,UserService>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)
