@@ -110,22 +110,13 @@ namespace SFA.DAS.ApplyService.Web
 
             services.AddHealthChecks();
 
-            ConfigureIOC(services);
+            ConfigureDependencyInjection(services);
         }
         
-        private void ConfigureIOC(IServiceCollection services)
+        private void ConfigureDependencyInjection(IServiceCollection services)
         {
-            services.AddTransient<IValidator, DateNotInFutureValidator>();
-            services.AddTransient<IValidator, DateValidator>();
-            services.AddTransient<IValidator, EmailAddressIsValidValidator>();
-            services.AddTransient<IValidator, MaxLengthValidator>();
-            services.AddTransient<IValidator, MaxWordCountValidator>();
-            services.AddTransient<IValidator, NullValidator>();
-            services.AddTransient<IValidator, RegexValidator>();
-            services.AddTransient<IValidator, RegisteredCharityNumberValidator>();
-            services.AddTransient<IValidator, RequiredValidator>();
-            services.AddTransient<IValidator, SimpleRadioNotNullValidator>();
-
+            services.RegisterAllTypes<IValidator>(new[] { typeof(IValidator).Assembly });
+            
             services.AddTransient<ITokenService, TokenService>();
             
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
