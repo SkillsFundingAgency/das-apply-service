@@ -277,11 +277,6 @@
                 {
                     companyDetails.ManualEntryRequired = true;
                 }
-
-                if (!CompanyReturnsFullDetails(companyDetails.CompanyNumber))
-                {
-                    companyDetails.ManualEntryRequired = true;
-                }
                 
                 if (companyDetails.Status == CompaniesHouseSummary.ServiceUnavailable)
                 {
@@ -357,24 +352,6 @@
             }
             
             return RedirectToAction("SelectApplicationRoute");           
-        }
-
-        private bool CompanyReturnsFullDetails(string companyNumber)
-        {
-            if (String.IsNullOrWhiteSpace(companyNumber))
-            {
-                return false;
-            }
-
-            foreach (var prefix in StatusOnlyCompanyNumberPrefixes)
-            {
-                if (companyNumber.ToUpper().StartsWith(prefix))
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
 
         private bool IsEnglandAndWalesCharityCommissionNumber(string charityNumber)
