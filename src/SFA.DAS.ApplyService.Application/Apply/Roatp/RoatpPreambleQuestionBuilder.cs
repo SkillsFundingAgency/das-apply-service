@@ -4,6 +4,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net.NetworkInformation;
     using Domain.Apply;
     using Domain.Roatp;
     using SFA.DAS.ApplyService.Domain.Ukrlp;
@@ -49,13 +50,36 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
     {
         public static int Preamble = 0;
         public static int YourOrganisation = 1;
+        public static int FinancialEvidence = 2;
+        public static int CriminalComplianceChecks = 3;
+        public static int ApprenticeshipWelfare = 4;
+        public static int ReadinessToEngage = 5;
+        public static int PeopleAndPlanning = 6;
+        public static int LeadersAndManagers = 7;
         public static int ConditionsOfAcceptance = 99;
     }
 
     public static class RoatpWorkflowSectionIds
     {
-        public static int YourOrganisationProviderRoute = 1;
-        public static int YourOrganisationWhatYouWillNeed = 2;
+        public static class YourOrganisation
+        {
+
+            public static int ProviderRoute = 1;
+            public static int WhatYouWillNeed = 2;
+        }
+
+        public static class FinancialEvidence
+        {
+            public static int WhatYouWillNeed = 1;
+            public static int YourOrganisationsFinancialEvidence = 2;
+        }
+
+        public static class CriminalComplianceChecks
+        {
+            public static int WhatYouWillNeed = 1;
+            public static int ChecksOnYourOrganisation = 2;
+            public static int CheckOnWhosInControl = 3;
+        }
     }
 
     public static class RoatpWorkflowPageIds

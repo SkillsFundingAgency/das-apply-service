@@ -24,20 +24,9 @@
                             .Single(seq => (int) seq.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
 
                         var sequentialSections = yourOrganisationSequence.Sections
-                            .Where(section => section.SectionId != RoatpWorkflowSectionIds.YourOrganisationProviderRoute
-                                           && section.SectionId != RoatpWorkflowSectionIds.YourOrganisationWhatYouWillNeed);
-
-                        var whatYouNeedStatus = Model.SectionStatus(RoatpWorkflowSectionIds.YourOrganisationProviderRoute, RoatpWorkflowSectionIds.YourOrganisationWhatYouWillNeed);
-                        var whatYouNeedCss = "";
-                        if (whatYouNeedStatus != "Completed")
-                        {
-                            whatYouNeedCss = "next";
-                        }
-                        else
-                        {
-                            whatYouNeedCss = whatYouNeedStatus;
-                        }
-
+                            .Where(section => section.SectionId != RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute
+                                           && section.SectionId != RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed);
+                      
                         <li>
                             <h2 class="app-task-list__section">
                                 @Html.Raw(Convert.ToInt32(yourOrganisationSequence.SequenceId)). @Html.Raw(yourOrganisationSequence.Description)
@@ -46,11 +35,11 @@
                             <ul class="app-task-list__items">
                                 <li class="app-task-list__item">
                                     <a class="app-task-list__task-name" href="@Url.Action("ProviderRoute", "RoatpYourOrganisationApplication", new {applicationId = Model.ApplicationId})">Provider route</a>
-                                    <strong class="govuk-tag app-task-list__task-completed" id="completed">Completed</strong>                               
+                                    <strong class="govuk-tag app-task-list__task-@Model.CssClass(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute, true)" id="completed">@Model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute, true)</strong>
                                 </li>
                                 <li class="app-task-list__item">
                                     <a class="app-task-list__task_name" href="@Url.Action("WhatYouWillNeed", "RoatpYourOrganisationApplication", new {applicationId = Model.ApplicationId})">Introduction and what you'll need</a>
-                                    <strong class="govuk-tag app-task-list__task-@whatYouNeedCss" id="completed">@whatYouNeedCss</strong>
+                                    <strong class="govuk-tag app-task-list__task-@Model.CssClass(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed, true)" id="completed">@Model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed, true)</strong>
                                 </li>
 
                                 @foreach (var section in sequentialSections)
