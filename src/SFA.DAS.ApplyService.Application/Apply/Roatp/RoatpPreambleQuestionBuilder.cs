@@ -32,6 +32,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string UkrlpVerificationCharityRegNumber = "PRE-61";
         public static string CharityCommissionCharityName = "PRE-62";
         public static string CharityCommissionRegistrationDate = "PRE-64";
+        public static string UkrlpVerificationCharity = "PRE-65";
         public static string UkrlpVerificationSoleTraderPartnership = "PRE-70";
         public static string UkrlpPrimaryVerificationSource = "PRE-80";
         public static string OnRoatp = "PRE-90";
@@ -188,6 +189,15 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                     Value = companiesHouseVerification.VerificationId
                 });
 
+            }
+
+            if (applicationDetails.UkrlpLookupDetails?.VerificationDetails?.FirstOrDefault(x => x.VerificationAuthority == VerificationAuthorities.CharityCommissionAuthority) != null)
+            {
+                questions.Add(new PreambleAnswer
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity,
+                    Value = "TRUE"
+                });
             }
 
             questions.Add(new PreambleAnswer

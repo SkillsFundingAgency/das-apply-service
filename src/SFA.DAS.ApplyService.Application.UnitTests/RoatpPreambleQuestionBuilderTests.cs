@@ -375,6 +375,23 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
         }
 
         [Test]
+        public void Preamble_questions_contains_charity_commission_verification_flag()
+        {
+            _applicationDetails.UkrlpLookupDetails.VerificationDetails = new List<VerificationDetails>
+            {
+                new VerificationDetails { VerificationAuthority = VerificationAuthorities.CharityCommissionAuthority, VerificationId = "1234567" }
+            };
+
+            var questions = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(_applicationDetails);
+
+            questions.Should().NotBeNull();
+
+            var question = questions.FirstOrDefault(x => x.QuestionId == RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity);
+            question.Should().NotBeNull();
+            question.Value.Should().Be("TRUE");
+        }
+
+        [Test]
         public void Preamble_questions_contains_UKRLP_verification_sole_trader_partnership()
         {
             _applicationDetails.UkrlpLookupDetails.VerificationDetails = new List<VerificationDetails>
