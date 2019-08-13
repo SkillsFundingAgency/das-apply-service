@@ -15,7 +15,9 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
 using SFA.DAS.ApplyService.Application.Apply.Validation;
+using SFA.DAS.ApplyService.Application.Email;
 using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Users;
@@ -163,59 +165,40 @@ namespace SFA.DAS.ApplyService.InternalApi
             });
         }
         
-        private IServiceProvider ConfigureDependencyInjection(IServiceCollection services)
+        private void ConfigureDependencyInjection(IServiceCollection services)
         {
             services.RegisterAllTypes<IValidator>(new[] { typeof(IValidator).Assembly });
             
+            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+                
+            services.AddSingleton<IConfigurationService>(sp => new ConfigurationService(
+                 sp.GetService<IHostingEnvironment>(),
+                 _configuration["EnvironmentName"],
+                 _configuration["ConfigurationStorageConnectionString"],
+                 _version,
+                 _serviceName));
+
+            services.AddTransient<IValidatorFactory, ValidatorFactory>();
             
-//            var container = new Container();
-//
-//            container.Configure(config =>
-//            {
-//                config.Scan(_ =>
-//                {
-//                    //_.AssemblyContainingType(typeof(Startup));
-//                    _.AssembliesFromApplicationBaseDirectory(c => c.FullName.StartsWith("SFA"));
-//                    _.WithDefaultConventions();
-//
-//                    _.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<>)); // Handlers with no response
-//                    _.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>)); // Handlers with a response
-//                    _.ConnectImplementationsToTypesClosing(typeof(INotificationHandler<>));
-//
-//                    _.AddAllTypesOf<IValidator>();
-//                });
-//
-//                config.For<IMediator>().Use<Mediator>();
-//
-//                config.For<IHttpContextAccessor>().Use<HttpContextAccessor>();
-//                
-//                config.For<IConfigurationService>()
-//                    .Use<ConfigurationService>().Singleton()
-//                    .Ctor<string>("environment").Is(_configuration["EnvironmentName"])
-//                    .Ctor<string>("storageConnectionString").Is(_configuration["ConfigurationStorageConnectionString"])
-//                    .Ctor<string>("version").Is(_version)
-//                    .Ctor<string>("serviceName").Is(_serviceName);
-//
-//                config.For<IContactRepository>().Use<ContactRepository>();
-//                config.For<IApplyRepository>().Use<ApplyRepository>();
-//                config.For<IOrganisationRepository>().Use<OrganisationRepository>();
-//                config.For<IDfeSignInService>().Use<DfeSignInService>();
-//                config.For<IEmailService>().Use<EmailService.EmailService>();
-//
-//                // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
-//                config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>().Use<CharityCommissionService.SearchCharitiesV1SoapClient>();
-//                config.For<CharityCommissionApiClient>().Use<CharityCommissionApiClient>();
-//                // End of SOAP Services
-//
-//                config.For<IKeyProvider>().Use<PlaceholderKeyProvider>();
-//                config.For<IStorageService>().Use<StorageService>();
-//                
-//                services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
-//                
-//                config.Populate(services);
-//            });
-//
-//            return container.GetInstance<IServiceProvider>();
+            services.AddTransient<IContactRepository,ContactRepository>();
+            services.AddTransient<IApplyRepository,ApplyRepository>();
+            services.AddTransient<IOrganisationRepository,OrganisationRepository>();
+            services.AddTransient<IDfeSignInService,DfeSignInService>();
+            services.AddTransient<IGetAnswersService, GetAnswersService>();
+
+            services.AddTransient<IEmailService, EmailService.EmailService>();
+            services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();
+
+            // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
+            services.AddTransient<CharityCommissionService.ISearchCharitiesV1SoapClient,CharityCommissionService.SearchCharitiesV1SoapClient>();
+            services.AddTransient<CharityCommissionApiClient,CharityCommissionApiClient>();
+            // End of SOAP Services
+
+            services.AddTransient<IKeyProvider,PlaceholderKeyProvider>();
+            services.AddTransient<IStorageService,StorageService>();
+            services.AddTransient<IEncryptionService, EncryptionService>();
+    
+            services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
         }
     }
 }
