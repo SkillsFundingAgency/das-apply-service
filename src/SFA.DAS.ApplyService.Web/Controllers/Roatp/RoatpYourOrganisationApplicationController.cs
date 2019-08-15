@@ -26,8 +26,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         public async Task<IActionResult> ProviderRoute(Guid applicationId)
         {
-            // TODO: reset application questions if route has changed
-
             return RedirectToAction("Page", "RoatpApplication",
                 new
                 {

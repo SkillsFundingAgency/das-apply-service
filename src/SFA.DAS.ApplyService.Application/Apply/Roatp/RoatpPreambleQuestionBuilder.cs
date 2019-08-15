@@ -4,7 +4,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Net.NetworkInformation;
     using Domain.Apply;
     using Domain.Roatp;
     using SFA.DAS.ApplyService.Domain.Ukrlp;
