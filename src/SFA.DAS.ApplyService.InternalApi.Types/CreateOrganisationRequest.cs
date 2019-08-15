@@ -66,6 +66,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types
     {
         public string CompanyName { get; set; }
         public string CompanyType { get; set; }
+        public string CompanyStatus { get; set; }
         public List<DirectorInformation> Directors { get; set; }
         public List<PersonSignificantControlInformation> PersonsSignificationControl { get; set; }
         public DateTime? IncorporationDate { get; set; }

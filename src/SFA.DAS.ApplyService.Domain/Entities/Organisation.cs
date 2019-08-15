@@ -61,6 +61,8 @@ namespace SFA.DAS.ApplyService.Domain.Entities
 
     public class CompaniesHouseDetails
     {
+        public string CompanyName { get; set; }
+        public string CompanyStatus { get; set; }
         public string CompanyType { get; set; }
         public List<DirectorInformation> Directors { get; set; }
         public List<PersonSignificantControlInformation> PersonsSignificationControl { get; set; }
@@ -70,6 +72,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
 
     public class CharityCommissionDetails
     {
+        public string CharityName { get; set; }
         public DateTime? RegistrationDate { get; set; }
         public List<Trustee> Trustees { get; set; }
         public bool TrusteeManualEntryRequired { get; set; }

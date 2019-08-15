@@ -58,6 +58,7 @@ namespace SFA.DAS.ApplyService.Web.AutoMapper
                 {
                     CompanyName = source.CompanySummary.CompanyName,
                     CompanyType = source.CompanySummary.CompanyTypeDescription,
+                    CompanyStatus = source.CompanySummary.Status,
                     IncorporationDate = source.CompanySummary.IncorporationDate,
                     Directors = Mapper.Map<List<DirectorInformation>>(source.CompanySummary.Directors),
                     PersonsSignificationControl =
