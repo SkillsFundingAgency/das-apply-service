@@ -288,6 +288,23 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
             question.Value.Should().Be(_applicationDetails.CompanySummary.IncorporationDate.Value.ToString());
         }
 
+        [Test]
+        public void Preamble_questions_contains_companies_house_verification_flag()
+        {
+            _applicationDetails.UkrlpLookupDetails.VerificationDetails = new List<VerificationDetails>
+            {
+                new VerificationDetails { VerificationAuthority = VerificationAuthorities.CompaniesHouseAuthority, VerificationId = "01234567" }
+            };
+
+            var questions = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(_applicationDetails);
+
+            questions.Should().NotBeNull();
+
+            var question = questions.FirstOrDefault(x => x.QuestionId == RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany);
+            question.Should().NotBeNull();
+            question.Value.Should().Be("TRUE");
+        }
+
         [TestCase(true, "TRUE")]
         [TestCase(false, "")]
         public void Preamble_questions_contains_charity_commission_trustee_manual_entry_flag(bool manualEntryRequired, string expectedValue)
@@ -355,6 +372,23 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
             var question = questions.FirstOrDefault(x => x.QuestionId == RoatpPreambleQuestionIdConstants.CharityCommissionRegistrationDate);
             question.Should().NotBeNull();
             question.Value.Should().Be(_applicationDetails.CharitySummary.IncorporatedOn.Value.ToString());
+        }
+
+        [Test]
+        public void Preamble_questions_contains_charity_commission_verification_flag()
+        {
+            _applicationDetails.UkrlpLookupDetails.VerificationDetails = new List<VerificationDetails>
+            {
+                new VerificationDetails { VerificationAuthority = VerificationAuthorities.CharityCommissionAuthority, VerificationId = "1234567" }
+            };
+
+            var questions = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(_applicationDetails);
+
+            questions.Should().NotBeNull();
+
+            var question = questions.FirstOrDefault(x => x.QuestionId == RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity);
+            question.Should().NotBeNull();
+            question.Value.Should().Be("TRUE");
         }
 
         [Test]

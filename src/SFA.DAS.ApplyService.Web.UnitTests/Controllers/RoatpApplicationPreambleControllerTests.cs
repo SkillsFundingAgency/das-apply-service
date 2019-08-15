@@ -735,20 +735,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("SelectApplicationRoute");
         }
 
-        [TestCase("IP123456", true)]
-        [TestCase("SP123456", true)]
-        [TestCase("IC123456", true)]
-        [TestCase("SI123456", true)]
-        [TestCase("NP123456", true)]
-        [TestCase("NV123456", true)]
-        [TestCase("RC123456", true)]
-        [TestCase("SR123456", true)]
-        [TestCase("NR123456", true)]
-        [TestCase("NO123456", true)]
-        [TestCase("SC123456", false)]
-        [TestCase("12345678", false)]
-        public void UKPRN_is_verified_against_companies_house_but_limited_information_returned(string companyNumber,
-            bool expectedRequired)
+        [Test]
+        public void UKPRN_is_verified_against_companies_house_but_no_directors_or_pscs_returned()
         {
             var providerDetails = new ProviderDetails
             {
@@ -759,11 +747,19 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                     new VerificationDetails
                     {
                         VerificationAuthority = VerificationAuthorities.CompaniesHouseAuthority,
-                        VerificationId = companyNumber
+                        VerificationId = "12345678"
                     }
                 }
             };
-            _activeCompany.CompanyNumber = companyNumber;
+            _activeCompany = new CompaniesHouseSummary
+            {
+                Status = "active",
+                CompanyNumber = "12345678",
+                Directors = new List<DirectorInformation>(),
+                PersonsSignificationControl = new List<PersonSignificantControlInformation>(),
+                IncorporationDate = new DateTime(2012, 1, 10),
+                CompanyType = "ltd"
+            };
 
             var applicationDetails = new ApplicationDetails
             {
@@ -787,8 +783,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("SelectApplicationRoute");
 
             _sessionService.Verify(x => x.Set(It.IsAny<string>(),
-                It.Is<ApplicationDetails>(y => y.CompanySummary.ManualEntryRequired == expectedRequired)));
-
+                It.Is<ApplicationDetails>(y => y.CompanySummary.ManualEntryRequired == true)));
         }
   
         

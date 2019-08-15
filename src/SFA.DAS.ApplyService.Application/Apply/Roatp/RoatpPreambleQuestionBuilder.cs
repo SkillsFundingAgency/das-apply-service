@@ -28,10 +28,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string CompaniesHouseCompanyType = "PRE-53";
         public static string CompaniesHouseCompanyStatus = "PRE-54";
         public static string CompaniesHouseIncorporationDate = "PRE-55";
+        public static string UkrlpVerificationCompany = "PRE-56";
         public static string CharityCommissionTrusteeManualEntry = "PRE-60";
         public static string UkrlpVerificationCharityRegNumber = "PRE-61";
         public static string CharityCommissionCharityName = "PRE-62";
         public static string CharityCommissionRegistrationDate = "PRE-64";
+        public static string UkrlpVerificationCharity = "PRE-65";
         public static string UkrlpVerificationSoleTraderPartnership = "PRE-70";
         public static string UkrlpPrimaryVerificationSource = "PRE-80";
         public static string OnRoatp = "PRE-90";
@@ -204,12 +206,33 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 Value = applicationDetails.UkrlpLookupDetails?.ProviderAliases?[0].Alias
             });
 
-            questions.Add(new PreambleAnswer
+            var companiesHouseVerification = applicationDetails.UkrlpLookupDetails?.VerificationDetails?.FirstOrDefault(x => x.VerificationAuthority == VerificationAuthorities.CompaniesHouseAuthority);
+
+            if (companiesHouseVerification != null)
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCompanyNumber,
-                Value = applicationDetails.UkrlpLookupDetails?.VerificationDetails?.FirstOrDefault(x => x.VerificationAuthority == VerificationAuthorities.CompaniesHouseAuthority)?.VerificationId
-            });
-            
+                questions.Add(new PreambleAnswer
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany,
+                    Value = "TRUE"
+                });
+                
+                questions.Add(new PreambleAnswer
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCompanyNumber,
+                    Value = companiesHouseVerification.VerificationId
+                });
+
+            }
+
+            if (applicationDetails.UkrlpLookupDetails?.VerificationDetails?.FirstOrDefault(x => x.VerificationAuthority == VerificationAuthorities.CharityCommissionAuthority) != null)
+            {
+                questions.Add(new PreambleAnswer
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity,
+                    Value = "TRUE"
+                });
+            }
+
             questions.Add(new PreambleAnswer
             {
                 QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCharityRegNumber,
