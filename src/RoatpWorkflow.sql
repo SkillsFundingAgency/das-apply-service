@@ -741,6 +741,197 @@ VALUES
 }
 ', N'Introduction and what you''ll need', N'Introduction and what you''ll need', N'Draft', N'Pages', N'')
 
+INSERT [dbo].[WorkflowSections]
+  ([Id], [WorkflowId], [SequenceId], [SectionId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType], [DisallowedOrgTypes])
+VALUES
+  (N'A7962801-47FA-4A72-95DB-827E76D0A482', N'86F83D58-8608-4462-9A4E-65837AF04287', 1, 3, N'
+{
+  "Pages": [
+    {
+      "PageId": "20",
+      "SequenceId": "1",
+      "SectionId": "3",
+      "Title": "Does your organisation have an ultimate parent company in the UK?",
+      "LinkTitle": "",
+      "InfoText": "<p>Your organisation will only have an ultimate parent company if it’s part of a group.</p><p>An ultimate parent company sits at the top of your organisation’s group and has the most responsibility.</p>",
+      "Questions": [
+        {
+          "QuestionId": "YO-20",
+          "QuestionTag": "Has-ParentCompany",
+          "Label": "",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			{
+                "Label": "Yes",
+				"Value": "Y",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "No",
+				"Value": "N",
+                "FurtherQuestions": null
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation has an ultimate UK parent company"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [   
+		{
+          "Action": "NextPage",
+          "ReturnId": "21",
+          "Condition": {
+            "QuestionId": "YO-20",
+            "MustEqual": "Y"
+          },
+          "ConditionMet": false
+        },	  
+        {
+          "Action": "NextPage",
+          "ReturnId": "30",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "21",
+      "SequenceId": "1",
+      "SectionId": "3",
+      "Title": "Enter your organisation’s ultimate parent company details",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-21",
+          "QuestionTag": "Add-ParentCompanyNumber",
+          "Label": "Company number",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Text"
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Enter a company number"
+              }
+            ]
+          },
+          "Order": null
+        },
+		{
+          "QuestionId": "YO-22",
+          "QuestionTag": "Add-ParentCompanyName",
+          "Label": "Company number",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Text"
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Enter a company name"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "30",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "30",
+      "SequenceId": "1",
+      "SectionId": "3",
+      "Title": "What is your organisation’s Information Commissioner''s Office (ICO) registration number?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-30",
+          "QuestionTag": "ICO-Number",
+          "Label": "",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Text",
+			"Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us your organisation''s provider route"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "999999",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    }
+  ]
+}
+', N'Organisation details', N'Organisation details', N'Draft', N'Pages', N'')
+
 INSERT INTO [dbo].[WorkflowSequences]
            ([Id]
            ,[WorkflowId]
