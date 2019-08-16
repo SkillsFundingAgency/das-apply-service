@@ -243,7 +243,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return View("~/Views/Application/Pages/Index.cshtml", viewModel);
         }
 
-        [Route("task-list")]
+        [Route("apply-training-provider-tasklist")]
         [HttpGet]
         public async Task<IActionResult> TaskList(Guid applicationId)
         {
@@ -321,12 +321,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public async Task<IActionResult> SaveAnswers(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, string __formAction)
         {
-            //var canUpdate = await CanUpdateApplication(applicationId, sequenceId);
-            //if (!canUpdate)
-            //{
-            //    return RedirectToAction("Sequence", new { applicationId });
-            //}
-
             var userId = User.GetUserId();
 
             var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, userId);

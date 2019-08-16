@@ -216,16 +216,20 @@
                 </form>
             }
 
-            <p class="govuk-body">
-                @if (Model.RedirectAction == "Feedback")
-                {
-                    <a class="govuk-link" href="@Url.Action("Feedback", "Application", new { Model.ApplicationId })">Return to summary</a>
-                }
-                else
-                {
-                    <a class="govuk-link" href="@Url.Action("Section", "Application", new { Model.ApplicationId, Model.SequenceId, Model.SectionId })">Return to summary</a>
-                }
-            </p>
+                <p class="govuk-body">
+                    @if (Model.RedirectAction == "Feedback")
+                    {
+                        <a class="govuk-link" href="@Url.Action("Feedback", "Application", new { Model.ApplicationId })">Return to summary</a>
+                    }
+                    else if (Model.RedirectAction == "TaskList")
+                    {
+                        <a class="govuk-link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Return to summary</a>
+                    }
+                    else
+                    {
+                        <a class="govuk-link" href="@Url.Action("Section", "Application", new { Model.ApplicationId, Model.SequenceId, Model.SectionId })">Return to summary</a>
+                    }
+                </p>
         </div>
     </div>
 </main>

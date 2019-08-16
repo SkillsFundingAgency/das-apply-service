@@ -33,7 +33,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     sequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
                     sectionId = RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute,
                     pageId = RoatpWorkflowPageIds.YourOrganisation,
-                    redirectAction = string.Empty
+                    redirectAction = "TaskList"
                 });
         }
 
@@ -46,7 +46,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 {
                     applicationId = applicationId, sequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
                     sectionId = RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed, pageId = pageId,
-                    redirectAction = string.Empty
+                    redirectAction = "TaskList"
                 });
         }
 
