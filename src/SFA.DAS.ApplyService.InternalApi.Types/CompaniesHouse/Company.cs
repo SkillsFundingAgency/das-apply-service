@@ -5,6 +5,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.CompaniesHouse
 {
     public class Company
     {
+        public string CompanyName { get; set; }
         public string CompanyNumber { get; set; }
         public string Name { get; set; }
         public string Status { get; set; }

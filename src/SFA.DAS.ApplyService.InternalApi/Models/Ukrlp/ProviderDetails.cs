@@ -55,5 +55,6 @@
     {
         public string VerificationAuthority { get; set; }
         public string VerificationId { get; set; }
+        public bool PrimaryVerificationSource { get; set; }
     }
 }

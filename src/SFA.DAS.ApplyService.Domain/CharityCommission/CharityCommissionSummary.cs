@@ -5,6 +5,7 @@
 
     public class CharityCommissionSummary
     {
+        public string CharityName { get; set; }
         public string CharityNumber { get; set; }
         public DateTime? IncorporatedOn { get; set; }
         public List<Trustee> Trustees { get; set; }

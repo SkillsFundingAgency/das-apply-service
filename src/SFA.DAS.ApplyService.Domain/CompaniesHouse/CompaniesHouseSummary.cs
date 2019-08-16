@@ -6,6 +6,7 @@ namespace SFA.DAS.ApplyService.Domain.CompaniesHouse
 
     public class CompaniesHouseSummary
     {
+        public string CompanyName { get; set; }
         public string CompanyNumber { get; set; }
         public string Status { get; set; }
         public string CompanyType { get; set; }

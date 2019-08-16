@@ -12,6 +12,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
         public CompaniesHouseCompanyProfile()
         {
             CreateMap<Models.CompaniesHouse.CompanyDetails, Types.CompaniesHouse.Company>()
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(source => source.company_name))
                 .ForMember(dest => dest.CompanyNumber, opt => opt.MapFrom(source => source.company_number))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(source => source.company_name))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.company_status))

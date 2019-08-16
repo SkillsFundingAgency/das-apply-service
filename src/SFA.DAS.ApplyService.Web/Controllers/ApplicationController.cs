@@ -8,10 +8,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
+using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.ViewModels;
@@ -27,6 +29,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly ISessionService _sessionService;
         private readonly IConfigurationService _configService;
         private readonly IUserService _userService;
+
+        private const string ApplicationDetailsKey = "Roatp_Application_Details";
 
         public ApplicationController(IApplicationApiClient apiClient, ILogger<ApplicationController> logger,
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient)
@@ -93,6 +97,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var application = applications.First();
 
+            if (applicationType == ApplicationTypes.RegisterTrainingProviders)
+            {
+                return RedirectToAction("TaskList", new {applicationId = application.Id});
+            }
+            
             switch (application.ApplicationStatus)
             {
                 case ApplicationStatus.FeedbackAdded:
@@ -108,9 +117,18 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private async Task<IActionResult> StartApplication(Guid userId, string applicationType)
         {
-            await _apiClient.StartApplication(userId, applicationType);
+            var response = await _apiClient.StartApplication(userId, applicationType);
 
-            return RedirectToAction("Applications");
+            if (applicationType == ApplicationTypes.RegisterTrainingProviders)
+            {
+                var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+                var preambleQuestions = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(applicationDetails);
+
+                await SavePreambleQuestions(response.ApplicationId, userId, preambleQuestions);
+            }
+
+            return RedirectToAction("Applications", new { applicationType = applicationType });
         }
 
         [HttpPost("/Applications")]
@@ -118,6 +136,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var response = await _apiClient.StartApplication(await _userService.GetUserId(), applicationType);
 
+            if (applicationType == ApplicationTypes.RegisterTrainingProviders)
+            { 
+                return RedirectToAction("TaskList", new { applicationId = response.ApplicationId });
+            }
             return RedirectToAction("SequenceSignPost", new {applicationId = response.ApplicationId});
         }
 
@@ -138,7 +160,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return RedirectToAction("Applications");
             }
-
+            
             if (application.ApplicationStatus == ApplicationStatus.Approved)
             {
                 return View("~/Views/Application/Approved.cshtml", application);
@@ -284,6 +306,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return View("~/Views/Application/Pages/Index.cshtml", viewModel);
+        }
+
+        [Route("task-list")]
+        [HttpGet]
+        public async Task<IActionResult> TaskList(Guid applicationId)
+        {
+            return View("~/Views/Roatp/TaskList.cshtml");
         }
 
         private async Task<bool> CanUpdateApplication(Guid applicationId, int sequenceId)
@@ -638,6 +667,32 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 FeedbackUrl = config.FeedbackUrl,
                 StandardName = application?.ApplicationData?.StandardName
             });
+        }
+
+        private async Task SavePreambleQuestions(Guid applicationId, Guid userId, List<PreambleAnswer> questions)
+        {
+            const int DefaultSectionId = 1;
+
+            var preambleAnswers = questions
+                .Where(x => x.SequenceId == RoatpWorkflowSequenceIds.Preamble).AsEnumerable<Answer>()
+                .ToList();
+
+            var updateResult = await _apiClient.UpdatePageAnswers(applicationId, userId,
+                RoatpWorkflowSequenceIds.Preamble, DefaultSectionId, RoatpWorkflowPageIds.Preamble, preambleAnswers, true);
+            
+            var yourOrganisationAnswers = questions
+                .Where(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation).AsEnumerable<Answer>()
+                .ToList();
+
+            updateResult = await _apiClient.UpdatePageAnswers(applicationId, userId,
+                RoatpWorkflowSequenceIds.YourOrganisation, DefaultSectionId, RoatpWorkflowPageIds.YourOrganisation, yourOrganisationAnswers, true);
+            
+            var conditionsOfAcceptanceAnswers = questions
+                .Where(x => x.SequenceId == RoatpWorkflowSequenceIds.ConditionsOfAcceptance).AsEnumerable<Answer>()
+                .ToList();
+
+            updateResult = await _apiClient.UpdatePageAnswers(applicationId, userId,
+                RoatpWorkflowSequenceIds.ConditionsOfAcceptance, DefaultSectionId, RoatpWorkflowPageIds.ConditionsOfAcceptance, conditionsOfAcceptanceAnswers, true);
         }
     }
 }

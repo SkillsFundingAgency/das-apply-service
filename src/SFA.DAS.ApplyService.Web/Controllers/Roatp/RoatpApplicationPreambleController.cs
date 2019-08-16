@@ -6,6 +6,7 @@
     using Microsoft.Extensions.Logging;
     using SFA.DAS.ApplyService.Web.Infrastructure;
     using System.Threading.Tasks;
+    using Application.Apply.Roatp;
     using Domain.Apply;
     using Domain.CharityCommission;
     using Domain.CompaniesHouse;
@@ -23,16 +24,16 @@
     [Authorize]
     public class RoatpApplicationPreambleController : Controller
     {
-        private ILogger<RoatpApplicationPreambleController> _logger;
-        private IRoatpApiClient _roatpApiClient;
-        private IUkrlpApiClient _ukrlpApiClient;
-        private ISessionService _sessionService;
-        private ICompaniesHouseApiClient _companiesHouseApiClient;
-        private ICharityCommissionApiClient _charityCommissionApiClient;
-        private IOrganisationApiClient _organisationApiClient;
+        private readonly ILogger<RoatpApplicationPreambleController> _logger;
+        private readonly IRoatpApiClient _roatpApiClient;
+        private readonly IUkrlpApiClient _ukrlpApiClient;
+        private readonly ISessionService _sessionService;
+        private readonly ICompaniesHouseApiClient _companiesHouseApiClient;
+        private readonly ICharityCommissionApiClient _charityCommissionApiClient;
+        private readonly IOrganisationApiClient _organisationApiClient;
         private readonly IUsersApiClient _usersApiClient;
-        private IRoatpStatusValidator _roatpStatusValidator;
-
+        private readonly IRoatpStatusValidator _roatpStatusValidator;
+        
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
         
         private string[] StatusOnlyCompanyNumberPrefixes = new[] { "IP", "SP", "IC", "SI", "NP", "NV", "RC", "SR", "NR", "NO" };
@@ -206,14 +207,17 @@
             }
 
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+            applicationDetails.ApplicationRoute = new ApplicationRoute { Id = model.ApplicationRouteId };
 
             var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
 
             applicationDetails.CreatedBy = user.Id;
-
+            
             var createOrganisationRequest = Mapper.Map<CreateOrganisationRequest>(applicationDetails);
 
-            var organisation = await _organisationApiClient.Create(createOrganisationRequest, user.Id);
+            var organisation = await _organisationApiClient.Create(createOrganisationRequest, user.Id);          
+
+            _sessionService.Set(ApplicationDetailsKey, applicationDetails);
 
             if (!user.IsApproved)
             {
@@ -371,6 +375,6 @@
 
             return true;
         }
-
+        
     }
 }
