@@ -20,6 +20,7 @@ using SFA.DAS.ApplyService.Web.ViewModels;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
+    using MoreLinq;
     using ViewModels.Roatp;
 
     [Authorize]
@@ -173,6 +174,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, User.GetUserId());
 
+            if (sequenceId == RoatpWorkflowSequenceIds.YourOrganisation && sectionId == RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails)
+            {
+                await RemoveIrrelevantQuestions(applicationId, section);
+            }
+
             var pageId = section.QnAData.Pages.FirstOrDefault()?.PageId;
 
             return await Page(applicationId, sequenceId, sectionId, pageId, "TaskList");
@@ -197,7 +203,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     {
                         ErrorMessage = e.ErrorMessage,
                         Field = k.Key
-                    })).ToList()
+                    })).DistinctBy(f => f.Field).ToList()
                     : null;
 
                 viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, pageContext, redirectAction,
@@ -261,6 +267,23 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             };
 
             return View("~/Views/Roatp/TaskList.cshtml", model);
+        }
+
+        private async Task RemoveIrrelevantQuestions(Guid applicationId, ApplicationSection section)
+        {
+            var isCompanyAnswer = await _apiClient.GetAnswer(applicationId, RoatpWorkflowQuestionTags.UkrlpVerificationCompany);
+            if (isCompanyAnswer.Answer == null || isCompanyAnswer.Answer.ToUpper() != "TRUE")
+            {
+                if (section != null)
+                {
+                    var parentCompanyPages = section.QnAData.Pages.Where(x => x.PageId == RoatpWorkflowPageIds.YourOrganisationParentCompanyCheck
+                                                                                              || x.PageId == RoatpWorkflowPageIds.YourOrganisationParentCompanyDetails).ToList();
+                    foreach (var page in parentCompanyPages)
+                    {
+                        section.QnAData.Pages.Remove(page);
+                    }
+                }
+            }
         }
 
         private async Task<bool> CanUpdateApplication(Guid applicationId, int sequenceId)
