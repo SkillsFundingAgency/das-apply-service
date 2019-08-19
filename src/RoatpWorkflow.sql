@@ -898,7 +898,22 @@ VALUES
                 "Name": "Required",
                 "Value": null,
                 "ErrorMessage": "Enter a company number"
-              }
+              },
+			  {
+				"Name": "MinLength",
+                "Value": 8,
+                "ErrorMessage": "Enter a company number using 8 characters"
+			  },
+			  {
+				"Name": "MaxLength",
+                "Value": 8,
+                "ErrorMessage": "Enter a company number using 8 characters"
+			  },
+			  {
+				"Name": "Regex",
+				"Value": "[A-Za-z0-9]{2}[0-9]{5}[A-Za-z0-9]{1}",
+				"ErrorMessage": "Enter a valid company number"
+			  }
             ]
           },
           "Order": null
@@ -917,7 +932,17 @@ VALUES
                 "Name": "Required",
                 "Value": null,
                 "ErrorMessage": "Enter a company name"
-              }
+              },
+			  {
+				"Name": "MinLength",
+                "Value": 2,
+                "ErrorMessage": "Enter a company name using 2 characters or more"
+			  },
+			  {
+				"Name": "MaxLength",
+                "Value": 200,
+                "ErrorMessage": "Enter a company number using 200 characters or less"
+			  }
             ]
           },
           "Order": null
