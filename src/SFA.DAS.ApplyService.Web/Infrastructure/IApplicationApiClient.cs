@@ -13,6 +13,8 @@ using SFA.DAS.ApplyService.InternalApi.Types;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
+    using Application.Apply.GetAnswers;
+
     public interface IApplicationApiClient
     {
         Task<List<Domain.Entities.Application>> GetApplications(Guid userId, bool createdBy);
@@ -45,6 +47,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<Organisation> GetOrganisationByUserId(Guid userId);
         Task<Organisation> GetOrganisationByUkprn(string ukprn);
         Task<Organisation> GetOrganisationByName(string name);
-
+        Task<GetAnswersResponse> GetAnswer(Guid applicationId, string questionIdentifer);
     }
 }
