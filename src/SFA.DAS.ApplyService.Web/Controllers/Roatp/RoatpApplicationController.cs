@@ -390,7 +390,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             return await Page(applicationId, sequenceId, sectionId, pageId, redirectAction);
 
-            //return RedirectToAction("Page", new { applicationId, sequenceId, sectionId, pageId, redirectAction });
         }
 
         private async Task UploadFilesToStorage(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid userId)
