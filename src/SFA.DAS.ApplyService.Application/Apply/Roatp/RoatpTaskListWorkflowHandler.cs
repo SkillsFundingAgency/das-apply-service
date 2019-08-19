@@ -87,7 +87,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         {
             if (completedCount != questionCount)
             {
-                if (sequential)
+                if (sequential && completedCount == 0)
                 {
                     return "Next";
                 }

@@ -175,7 +175,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var pageId = section.QnAData.Pages.FirstOrDefault()?.PageId;
 
-            return await Page(applicationId, sequenceId, sectionId, pageId, string.Empty);
+            return await Page(applicationId, sequenceId, sectionId, pageId, "TaskList");
         }
 
         public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
