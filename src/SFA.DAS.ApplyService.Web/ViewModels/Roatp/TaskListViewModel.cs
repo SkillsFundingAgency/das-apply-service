@@ -3,6 +3,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Domain.Entities;
     using SFA.DAS.ApplyService.Application.Apply.Roatp;
 
@@ -31,6 +32,13 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string SectionStatus(int sequenceId, int sectionId, bool sequential = false)
         {
             return RoatpTaskListWorkflowHandler.SectionStatus(ApplicationSequences, sequenceId, sectionId, sequential);
+        }
+
+        public bool PreviousSectionCompleted(int sequenceId, int sectionId, bool sequential = false)
+        {
+            var sequence = ApplicationSequences.FirstOrDefault(x => x.SequenceId == sequenceId);
+
+            return RoatpTaskListWorkflowHandler.PreviousSectionCompleted(sequence, sectionId, sequential);
         }
     }
 }

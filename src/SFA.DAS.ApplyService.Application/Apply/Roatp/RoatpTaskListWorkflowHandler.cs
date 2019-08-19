@@ -4,6 +4,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
     using System;
     using System.Linq;
     using System.Collections.Generic;
+    using MoreLinq;
     using SFA.DAS.ApplyService.Domain.Entities;
 
     public static class RoatpTaskListWorkflowHandler
@@ -22,25 +23,36 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 return string.Empty;
             }
 
+            if (!PreviousSectionCompleted(sequence, sectionId, sequential))
+            {
+                return string.Empty;
+            }
+
+            var questionsCompleted = SectionHasCompletedQuestions(section);
+            var questionsInSection = section.QnAData.Pages.SelectMany(x => x.Questions).DistinctBy(q => q.QuestionId).Count();
+            return SectionText(questionsCompleted, questionsInSection, sequential);
+        }
+
+        public static bool PreviousSectionCompleted(ApplicationSequence sequence, int sectionId, bool sequential)
+        {
             if (sequential && sectionId > 1)
             {
                 var previousSection = sequence.Sections.FirstOrDefault(x => x.SectionId == (sectionId - 1));
                 if (previousSection == null)
                 {
-                    return string.Empty;
+                    return false;
                 }
 
                 var previousSectionQuestionsCompleted = SectionHasCompletedQuestions(previousSection);
-                var previousSectionQuestionsCount = previousSection.QnAData.Pages.SelectMany(x => x.Questions).Count();
+                var previousSectionQuestionsCount = previousSection.QnAData.Pages.SelectMany(x => x.Questions)
+                    .DistinctBy(q => q.QuestionId).Count();
                 if (previousSectionQuestionsCompleted != previousSectionQuestionsCount)
                 {
-                    return string.Empty;
+                    return false;
                 }
             }
 
-            var questionsCompleted = SectionHasCompletedQuestions(section);
-            var questionsInSection = section.QnAData.Pages.SelectMany(x => x.Questions).Count();
-            return SectionText(questionsCompleted, questionsInSection, sequential);
+            return true;
         }
 
         private static int SectionHasCompletedQuestions(ApplicationSection section)
