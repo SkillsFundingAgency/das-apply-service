@@ -893,6 +893,7 @@ VALUES
           "Input": {
             "Type": "Text",
 			"HintText": "Company number",
+			"InputClasses": "app-uppercase",
             "Validations": [
               {
                 "Name": "Required",
@@ -927,6 +928,7 @@ VALUES
           "Hint": "",
           "Input": {
             "Type": "Text",
+			"InputClasses": "app-uppercase",
             "Validations": [
               {
                 "Name": "Required",

@@ -34,6 +34,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IUserService _userService;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
+        private const string InputClassUpperCase = "app-uppercase";
 
         public RoatpApplicationController(IApplicationApiClient apiClient, ILogger<RoatpApplicationController> logger,
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient)
@@ -346,6 +347,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var fileValidationPassed = FileValidator.FileValidationPassed(answers, page, errorMessages, ModelState, HttpContext.Request.Form.Files);
             GetAnswersFromForm(answers);
+            ApplyFormattingToAnswers(answers, page);
 
             var answersMustBeValidated = await CheckIfAnswersMustBeValidated(applicationId, sequenceId, sectionId, pageId, answers, new Regex(@"\w+"));
             var saveNewAnswers = (__formAction == "Add" || answersMustBeValidated);
@@ -413,6 +415,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             return await Page(applicationId, sequenceId, sectionId, pageId, redirectAction);
 
+        }
+
+        private static void ApplyFormattingToAnswers(List<Answer> answers, Page page)
+        {
+            foreach (var answer in answers)
+            {
+                var question = page.Questions.FirstOrDefault(x => x.QuestionId == answer.QuestionId);
+                if (question != null && question.Input != null 
+                                     && !String.IsNullOrWhiteSpace(question.Input.InputClasses)
+                                     && question.Input.InputClasses.Contains(InputClassUpperCase))
+                {
+                    answer.Value = answer.Value.ToUpper();
+                }
+            }
         }
 
         private async Task UploadFilesToStorage(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid userId)

@@ -620,3 +620,7 @@
     color: #2b8cc4;
     background-color: inherit;
 }
+
+.app-uppercase {
+    text-transform: uppercase;
+}
