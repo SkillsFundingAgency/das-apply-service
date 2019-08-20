@@ -97,6 +97,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
     public static class RoatpWorkflowQuestionTags
     {
+        public static string ProviderRoute = "Apply-ProviderRoute";
         public static string UkrlpVerificationCompany = "UKRLP-Verification-Company";
     }
 
