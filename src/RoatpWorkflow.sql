@@ -1000,6 +1000,11 @@ VALUES
 				"Name": "MinLength",
                 "Value": 8,
                 "ErrorMessage": "Enter an ICO registration number using 8 characters"
+			  },
+			  {
+				"Name": "MaxLength",
+                "Value": 8,
+                "ErrorMessage": "Enter an ICO registration number using 8 characters"
 			  }
             ]
           },
