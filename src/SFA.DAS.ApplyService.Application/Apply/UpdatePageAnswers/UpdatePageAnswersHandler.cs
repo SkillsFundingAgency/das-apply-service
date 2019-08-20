@@ -133,7 +133,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                         // ignore an action with no condition as these do not activate pages
                         if (nextAction.Condition == null) continue;
 
-                        var answerValue = newAnswers.Single(a => a.QuestionId == nextAction.Condition.QuestionId).Value;
+                        var conditionAnswer = newAnswers.FirstOrDefault(a => a.QuestionId == nextAction.Condition.QuestionId);
+                        if (conditionAnswer == null)
+                        {
+                            conditionAnswer = await FindAnswerInOtherApplicationSections(request.ApplicationId, nextAction.Condition.QuestionId);
+                        }
+
+                        var answerValue = conditionAnswer.Value;
                         if (nextAction.Condition.MustEqual == answerValue)
                         {
                             if (nextAction.Action == "NextPage")
@@ -274,6 +280,44 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
         private static bool ExistingUpload(string questionId, List<PageOfAnswers> pagePageOfAnswers)
         {
             return pagePageOfAnswers.Any(poa => poa.Answers.Any(a => a.QuestionId == questionId && a.Value != ""));
+        }
+
+        private async Task<Answer> FindAnswerInOtherApplicationSections(Guid applicationId, string questionId)
+        {
+            var answer = string.Empty;
+
+            var sequences = await _applyRepository.GetSequences(applicationId);
+
+            foreach (var sequence in sequences)
+            {
+                var sections = await _applyRepository.GetSections(applicationId, sequence.SequenceId, null);
+                foreach (var section in sections)
+                {
+                    foreach (var page in section.QnAData.Pages)
+                    {
+                        foreach (var question in page.Questions)
+                        {
+                            if (question.QuestionId == questionId)
+                            {
+                                if (page.PageOfAnswers != null && page.PageOfAnswers.Count > 0)
+                                {
+                                    foreach (var pageOfAnswers in page.PageOfAnswers)
+                                    {
+                                        var pageAnswer =
+                                            pageOfAnswers.Answers.FirstOrDefault(x => x.QuestionId == questionId);
+                                        if (pageAnswer != null)
+                                        {
+                                            return await Task.FromResult(pageAnswer);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return await Task.FromResult(new Answer {QuestionId = questionId, Value = string.Empty});
         }
     }
 }
