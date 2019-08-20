@@ -1034,7 +1034,19 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "50",
-          "Condition": null,
+          "Condition": {
+            "QuestionId": "YO-1",
+            "MustEqual": "1"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "50",
+          "Condition": {
+            "QuestionId": "YO-1",
+            "MustEqual": "2"
+          },
           "ConditionMet": false
         }
       ],
@@ -1100,7 +1112,7 @@ VALUES
         {
           "QuestionId": "YO-50",
           "QuestionTag": "Confirm-Trading-MainEmployer",
-          "Label": "",
+          "Label": "PLACEHOLDER Confirm Trading Main/Employer",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
@@ -1141,7 +1153,7 @@ VALUES
         {
           "QuestionId": "YO-60",
           "QuestionTag": "Confirm-Trading-Supporting",
-          "Label": "PLACEHOLDER Confirm Trading Main/Employer",
+          "Label": "PLACEHOLDER Confirm Trading Supporting",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
