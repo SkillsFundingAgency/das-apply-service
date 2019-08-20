@@ -12,6 +12,8 @@ CREATE TABLE [dbo].[ApplicationSections](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
+CREATE INDEX [IX_ApplicationSections_ApplicationId] ON [ApplicationSections] ([ApplicationId])
+
 ALTER TABLE [dbo].[ApplicationSections] ADD  CONSTRAINT [DF_ApplicationSequences_Id]  DEFAULT (newid()) FOR [Id]
 GO
 
