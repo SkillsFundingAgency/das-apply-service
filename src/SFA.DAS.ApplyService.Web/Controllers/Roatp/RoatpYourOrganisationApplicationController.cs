@@ -52,11 +52,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         private async Task<string> GetIntroductionPageForApplication(Guid applicationId)
         {
-            var organisation = await _applicationApiClient.GetOrganisationByUserId(User.GetUserId());
-
+            int providerTypeId = 1;
             string pageId = RoatpWorkflowPageIds.YourOrganisationIntroductionMain;
 
-            switch (organisation.OrganisationDetails.RoatpDetails.ProviderTypeId)
+            var providerTypeAnswer = await _applicationApiClient.GetAnswer(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
+            if (providerTypeAnswer != null && !String.IsNullOrWhiteSpace(providerTypeAnswer.Answer))
+            {
+                int.TryParse(providerTypeAnswer.Answer, out providerTypeId);
+            }
+
+            switch (providerTypeId)
             {
                 case ApplicationRoute.MainProviderApplicationRoute:
                     pageId = RoatpWorkflowPageIds.YourOrganisationIntroductionMain;
