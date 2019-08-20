@@ -13,6 +13,7 @@ CREATE TABLE [dbo].[ApplicationSections](
 GO
 
 CREATE INDEX [IX_ApplicationSections_ApplicationId] ON [ApplicationSections] ([ApplicationId])
+GO
 
 ALTER TABLE [dbo].[ApplicationSections] ADD  CONSTRAINT [DF_ApplicationSequences_Id]  DEFAULT (newid()) FOR [Id]
 GO
