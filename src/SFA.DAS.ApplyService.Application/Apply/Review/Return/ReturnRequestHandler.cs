@@ -8,6 +8,8 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.ApplyService.Application.Organisations;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
 {
@@ -17,17 +19,21 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
         private readonly IEmailService _emailServiceObject;
         private readonly IContactRepository _contactRepository;
         private readonly IConfigurationService _configurationService;
+        private readonly IOrganisationRepository _organisationRepository;
+        private readonly ILogger<ReturnRequestHandler> _logger;
 
         private const string SERVICE_NAME = "Apprenticeship assessment service";
         private const string SERVICE_TEAM = "Apprenticeship assessment service team";
 
         public ReturnRequestHandler(IApplyRepository applyRepository, IContactRepository contactRepository, 
-            IEmailService emailServiceObject, IConfigurationService configurationService)
+            IEmailService emailServiceObject, IConfigurationService configurationService, IOrganisationRepository organisationRepository, ILogger<ReturnRequestHandler> logger)
         {
             _applyRepository = applyRepository;
             _emailServiceObject = emailServiceObject;
             _contactRepository = contactRepository;
             _configurationService = configurationService;
+            _organisationRepository = organisationRepository;
+            _logger = logger;
         }
 
         public async Task<Unit> Handle(ReturnRequest request, CancellationToken cancellationToken)
@@ -56,10 +62,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
                     // This is the last sequence, so approve the whole application
                     await _applyRepository.UpdateApplicationStatus(request.ApplicationId, ApplicationStatus.Approved);
 
-                    // Delete any related applications if this one was an initial application
-                    // (i.e all sequences are required, and thus, not on EPAO Register)
-                    if (sequences.All(seq => !seq.NotRequired))
+                    if(await OrganisationIsNotYetOnTheRegister(request.ApplicationId))
                     {
+                        _logger.LogInformation($"Organisation attached to ApplicationId: {request.ApplicationId} is not yet on the register. Check to see if any related applications need to be removed.");
                         await _applyRepository.DeleteRelatedApplications(request.ApplicationId);
                     }
                 }
@@ -73,6 +78,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
             await NotifyContact(request.ApplicationId, request.SequenceId);
 
             return Unit.Value;
+        }
+
+        private async Task<bool> OrganisationIsNotYetOnTheRegister(Guid applicationId)
+        {
+            var org = await _organisationRepository.GetOrganisationByApplicationId(applicationId);
+            return !org.RoEPAOApproved;
         }
 
         private async Task NotifyContact(Guid applicationId, int sequenceId)
