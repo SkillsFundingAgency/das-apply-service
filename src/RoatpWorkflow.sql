@@ -886,13 +886,12 @@ VALUES
         {
           "QuestionId": "YO-21",
           "QuestionTag": "Add-ParentCompanyNumber",
-          "Label": "Company number",
+          "Label": "<span class=\"govuk-label\">Company number</span>",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
             "Type": "Text",
-			"HintText": "Company number",
 			"InputClasses": "app-uppercase",
             "Validations": [
               {
@@ -922,7 +921,7 @@ VALUES
 		{
           "QuestionId": "YO-22",
           "QuestionTag": "Add-ParentCompanyName",
-          "Label": "Company name",
+          "Label": "<span class=\"govuk-label\">Company name</span>",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
@@ -973,25 +972,35 @@ VALUES
       "PageId": "30",
       "SequenceId": "1",
       "SectionId": "3",
-      "Title": "What is your organisation’s Information Commissioner''s Office (ICO) registration number?",
+      "Title": "What is your organisation''s Information Commissioner''s Office (ICO) registration number?",
       "LinkTitle": "",
       "InfoText": "",
+	  "Details": {
+        "Title": "I do not have an ICO registration number",
+        "Body": "<p class=\"govuk-body\">To get an ICO registration number, you’ll need to <a href=\"https://ico.org.uk/registration/new\" target=\"_blank\">register with the ICO (opens in a new window or tab)</a>.</p><p class=\"govuk-body\">After you''ve registered and received an ICO registration number, sign back in to continue with this application.</p>"
+      },
       "Questions": [
         {
           "QuestionId": "YO-30",
           "QuestionTag": "ICO-Number",
-          "Label": "What is your organisation’s Information Commissioner''s Office (ICO) registration number?",
+          "Label": "What is your organisation''s Information Commissioner''s Office (ICO) registration number?",
           "ShortLabel": "",
-          "QuestionBodyText": "",
-          "Hint": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">This is an 8-digit registration number from the ICO data protection public register. Any organisation that processes personal data must have one.</p><p class=\"govuk-body\">If you''re not sure, <a href=\"https://ico.org.uk/ESDWebPages/Search\" target=\"_blank\">search for your organisation on the ICO data protection register (opens in a new window or tab)</a></p>",
+          "Hint": "<span class=\"govuk-label\">ICO registration number</span>",
           "Input": {
             "Type": "Text",
+			"InputClasses": "app-uppercase",
 			"Validations": [
               {
                 "Name": "Required",
                 "Value": null,
+                "ErrorMessage": "Enter an ICO registration number"
+              },
+			  {
+				"Name": "MinLength",
+                "Value": 8,
                 "ErrorMessage": "Enter an ICO registration number using 8 characters"
-              }
+			  }
             ]
           },
           "Order": null
