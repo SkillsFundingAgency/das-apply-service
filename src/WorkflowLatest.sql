@@ -4053,7 +4053,7 @@ VALUES
           "QuestionBodyText": "SQ-1-SE-1-PG-11-CD-20-160",
           "Hint": "SQ-1-SE-1-PG-11-CD-20-157",
           "Input": {
-            "Type": "Date",
+            "Type": "DateOfBirth",
             "Options": null,
             "Validations": [
               {
@@ -4062,12 +4062,12 @@ VALUES
                 "ErrorMessage": "Enter a date"
               },
               {
-                "Name":"Date",
+                "Name":"DateOfBirth",
                 "Value":"",
                 "ErrorMessage": "Date must be correct"
               },
               {
-                "Name":"DateNotInFuture",
+                "Name":"DateOfBirthNotInFuture",
                 "Value":"",
                 "ErrorMessage": "Date cannot be in the future"
               }

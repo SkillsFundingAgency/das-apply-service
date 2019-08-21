@@ -8,32 +8,25 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
 {
     public class DateNotInFutureValidator : Validator
     {
+        protected string[] Formats;
+
+        public DateNotInFutureValidator(string[] formats = null)
+        {
+            Formats = formats ?? new string[] { "d,M,yyyy" };
+        }
+
         public override List<KeyValuePair<string, string>> Validate(string questionId, Answer answer)
         {
             var errorMessages = base.Validate(questionId, answer);
 
-            var dateParts = GetValue(answer).Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-            if (dateParts?.Length != 3)
+            if (!string.IsNullOrWhiteSpace(GetValue(answer)))
             {
-                return errorMessages;
-            }
-
-            var day = dateParts[0];
-            var month = dateParts[1];
-            var year = dateParts[2];
-
-            if (string.IsNullOrWhiteSpace(day) || string.IsNullOrWhiteSpace(month) || string.IsNullOrWhiteSpace(year))
-            {
-                return errorMessages;
-            }
-
-            var formatStrings = new string[] { "d/M/yyyy" };
-            if (DateTime.TryParseExact($"{day}/{month}/{year}", formatStrings, null, DateTimeStyles.None, out DateTime dateEntered))
-            {
-                if (dateEntered > DateTime.Today)
+                if (DateTime.TryParseExact(GetValue(answer), Formats, null, DateTimeStyles.None, out DateTime dateEntered))
                 {
-                    errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(questionId),
-                        ValidationDefinition.ErrorMessage));
+                    if (dateEntered > DateTime.Today)
+                    {
+                        errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(questionId), ValidationDefinition.ErrorMessage));
+                    }
                 }
             }
 
