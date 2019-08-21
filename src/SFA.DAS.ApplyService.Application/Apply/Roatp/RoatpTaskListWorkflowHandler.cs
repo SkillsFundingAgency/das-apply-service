@@ -64,11 +64,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 var questionIds = page.Questions.Select(x => x.QuestionId);
                 foreach (var questionId in questionIds)
                 {
-                    if (!page.PageOfAnswers.Any())
-                    {
-                        return answeredQuestions;
-                    }
-
                     foreach (var pageOfAnswers in page.PageOfAnswers)
                     {
                         var matchedAnswer = pageOfAnswers.Answers.FirstOrDefault(y => y.QuestionId == questionId);
