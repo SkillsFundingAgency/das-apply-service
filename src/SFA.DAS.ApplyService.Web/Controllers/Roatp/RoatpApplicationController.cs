@@ -175,7 +175,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var pageId = section.QnAData.Pages.FirstOrDefault()?.PageId;
 
-            return await Page(applicationId, sequenceId, sectionId, pageId, string.Empty);
+            return await Page(applicationId, sequenceId, sectionId, pageId, "TaskList");
         }
 
         public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
@@ -207,25 +207,18 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 // when the model state has no errors the page will be displayed with the last valid values which were saved
                 var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, User.GetUserId());
+                
+                if (page == null)
+                {
+                    return RedirectToAction("TaskList", new {applicationId = applicationId});
+                }
 
                 var section = await _apiClient.GetSection(applicationId, sequenceId, sectionId, User.GetUserId());
 
-                if (page != null && (!page.Active || page.NotRequired ||
-                                     (section.QnAData.Pages.Count == 1 && IsPostBack())))
+                if (IsPostBack())
                 {
-                    var nextPage = page.Next.FirstOrDefault(p => p.Condition is null);
-
-                    if (nextPage?.ReturnId != null && nextPage?.Action == "NextPage")
-                    {
-                        pageId = nextPage.ReturnId;
-                        return RedirectToAction("Page",
-                            new {applicationId, sequenceId, sectionId, pageId, redirectAction});
-                    }
-                    else
-                    {
-                        await SaveAnswers(applicationId, sequenceId, sectionId, pageId, redirectAction, string.Empty);
-                        return RedirectToAction("TaskList", new {applicationId});
-                    }
+                    return await SaveAnswers(applicationId, sequenceId, sectionId, pageId, redirectAction,
+                        string.Empty);
                 }
 
                 page = await GetDataFedOptions(page);
@@ -388,13 +381,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 foreach (var error in updatePageResult.ValidationErrors)
                 {
                     ModelState.AddModelError(error.Key, error.Value);
+                    var valid = ModelState.IsValid;
                 }
             }
 
             var invalidPage = await GetDataFedOptions(updatePageResult.Page);
             this.TempData["InvalidPage"] = JsonConvert.SerializeObject(invalidPage);
 
-            return RedirectToAction("Page", new { applicationId, sequenceId, sectionId, pageId, redirectAction });
+            return await Page(applicationId, sequenceId, sectionId, pageId, redirectAction);
+
         }
 
         private async Task UploadFilesToStorage(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid userId)
