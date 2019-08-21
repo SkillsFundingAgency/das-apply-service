@@ -46,7 +46,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 var previousSectionQuestionsCompleted = SectionHasCompletedQuestions(previousSection);
                 var previousSectionQuestionsCount = previousSection.QnAData.Pages.SelectMany(x => x.Questions)
                     .DistinctBy(q => q.QuestionId).Count();
-                if (previousSectionQuestionsCompleted != previousSectionQuestionsCount)
+                if (previousSectionQuestionsCompleted < previousSectionQuestionsCount)
                 {
                     return false;
                 }
@@ -80,7 +80,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
         private static string SectionText(int completedCount, int questionCount, bool sequential)
         {
-            if (completedCount != questionCount)
+            if (completedCount < questionCount)
             {
                 if (sequential && completedCount == 0)
                 {
