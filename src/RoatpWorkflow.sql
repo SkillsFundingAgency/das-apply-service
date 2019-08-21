@@ -1064,20 +1064,38 @@ VALUES
       "PageId": "40",
       "SequenceId": "1",
       "SectionId": "3",
-      "Title": "PLACEHOLDER Website",
+      "Title": "Does your organisation have a website?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-40",
           "QuestionTag": "Has-Website",
-          "Label": "PLACEHOLDER Website",
+          "Label": "Does your organisation have a website?",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
-			"Validations": []
+            "Type": "ComplexRadio",
+			 "Options": [
+              {
+                "Label": "Yes",
+				"Value": "Yes",
+                "FurtherQuestions": null
+              },
+              {
+                "Label": "No",
+                "Value": "No",
+                "FurtherQuestions": null
+              }
+            ],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Select if your company has a website"
+              }
+            ]
           },
           "Order": null
         }
@@ -1086,8 +1104,29 @@ VALUES
       "Next": [      
         {
           "Action": "NextPage",
-          "ReturnId": "999999",
-          "Condition": null,
+          "ReturnId": "60",
+          "Condition": {
+            "QuestionId": "YO-1",
+            "MustEqual": "3"
+          },
+          "ConditionMet": false
+        },
+        {
+          "Action": "NextPage",
+          "ReturnId": "50",
+          "Condition": {
+            "QuestionId": "YO-1",
+            "MustEqual": "1"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "50",
+          "Condition": {
+            "QuestionId": "YO-1",
+            "MustEqual": "2"
+          },
           "ConditionMet": false
         }
       ],
