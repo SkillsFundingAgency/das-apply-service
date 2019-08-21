@@ -442,6 +442,17 @@
     display: block;
 }
 
+.hidden {
+    display: none;
+    visibility: hidden;
+}
+
+/* when .js-enabled has been appended to the body (as javascript is enabled) then hide contained elements with .js-hidden present */
+.js-enabled .js-hidden {
+    display: none;
+    visibility: hidden;
+}
+
 .govuk-checkboxes__input--indeterminate + .govuk-checkboxes__label:after {
     top: 16px;
     left: 6px;
@@ -481,6 +492,175 @@
 @media (min-width: 40.0625em) {
     .govuk-character-count {
         margin-bottom: 0;
+    }
+}
+
+/* Postcode lookup */
+/* jQuery UI Styles */
+
+.ui-autocomplete {
+    position: absolute;
+    cursor: default;
+}
+
+* html .ui-autocomplete {
+    width: 1px;
+}
+
+.ui-menu {
+    list-style: none;
+    padding: 2px;
+    margin: 0;
+    display: block;
+    float: left;
+}
+
+.ui-menu .ui-menu {
+    margin-top: -3px;
+}
+
+.ui-menu .ui-menu-item {
+    margin: 0;
+    padding: 0;
+    zoom: 1;
+    float: left;
+    clear: left;
+    width: 100%;
+}
+
+.ui-menu .ui-menu-item .ui-menu-item-wrapper {
+    text-decoration: none;
+    display: block;
+    padding: 0.2em 0.4em;
+    line-height: 1.5;
+    zoom: 1;
+}
+
+.ui-helper-hidden-accessible {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+.ui-autocomplete {
+    background: #fff;
+    border: 1px solid #bfc1c3;
+    list-style-type: none;
+    max-height: 370px;
+    max-width: 100%;
+    overflow-y: auto;
+}
+
+.ui-autocomplete .ui-menu-item {
+    cursor: pointer;
+    font-family: "nta", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.25;
+    font-weight: 300;
+    text-transform: none;
+    padding-top: 8px;
+    padding-bottom: 7px;
+}
+
+@media (max-width: 640px) {
+    .ui-autocomplete .ui-menu-item {
+        font-size: 14px;
+    }
+}
+
+@media (min-width: 641px) {
+    .ui-autocomplete .ui-menu-item {
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+}
+
+/* .ui-autocomplete .ui-menu-item a:hover,
+.ui-autocomplete .ui-menu-item .ui-state-focus {
+    background: #dee0e2;
+} */
+
+.ui-menu .ui-menu-item .ui-state-hover,
+.ui-menu .ui-menu-item .ui-state-active {
+    background: #dee0e2;
+}
+
+.toggle-content {
+    display: none;
+}
+
+.disabled,
+.disabled > * {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.ui-menu {
+    top: -2px;
+    padding: 0;
+    box-sizing: border-box;
+    border-width: 2px;
+}
+
+.ui-autocomplete .ui-menu-item {
+    padding: 0;
+}
+
+.ui-menu .ui-menu-item .ui-menu-item-wrapper {
+    padding: 6px 5px;
+}
+
+.ui-menu .ui-menu-item:first-child .ui-menu-item-wrapper {
+    padding-top: 8px;
+}
+
+.ui-menu .ui-menu-item:last-child .ui-menu-item-wrapper {
+    padding-bottom: 5px;
+}
+
+.ui-autocomplete .ui-menu-item {
+    font-size: 16px;
+}
+
+@media (min-width: 641px) {
+    .ui-autocomplete .ui-menu-item {
+        font-size: 19px;
+    }
+}
+
+.hide-nojs {
+    display: none;
+}
+
+.js-enabled .hide-nojs {
+    display: block;
+}
+
+/* Content boxes */
+
+.info-highlighted {
+    max-width: 30em;
+    background: #eaebf3;
+    border: none;
+    border-left: solid 10px #2e358b;
+    padding: 20px 15px 15px;
+}
+
+.info-highlighted *:last-child {
+    margin-bottom: 0;
+}
+
+@media (min-width: 40.0625em) {
+    .info-highlighted {
+        border-width: 5px;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        
     }
 }
 

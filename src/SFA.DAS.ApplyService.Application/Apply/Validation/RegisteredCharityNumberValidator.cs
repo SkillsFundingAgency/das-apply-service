@@ -6,17 +6,18 @@ using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Validation
 {
-    public class RegisteredCharityNumberValidator : IValidator
+    public class RegisteredCharityNumberValidator : Validator
     {
-        public ValidationDefinition ValidationDefinition { get; set; }
-        public List<KeyValuePair<string, string>> Validate(Question question, Answer answer)
+        public override List<KeyValuePair<string, string>> Validate(string questionId, Answer answer)
         {
-            if (string.IsNullOrEmpty(answer?.Value)) return new List<KeyValuePair<string, string>>();
+            var errorMessages = base.Validate(questionId,answer);
 
-            return !IsValidRegisteredCharityNumber(answer.Value)
-                ? new List<KeyValuePair<string, string>>
-                    {new KeyValuePair<string, string>(answer.QuestionId, ValidationDefinition.ErrorMessage)}
-                : new List<KeyValuePair<string, string>>();
+            if (!string.IsNullOrEmpty(GetValue(answer)) && !IsValidRegisteredCharityNumber(GetValue(answer)))
+            {
+                errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(questionId), ValidationDefinition.ErrorMessage));
+            }
+
+            return errorMessages;
         }
 
         private static bool IsValidRegisteredCharityNumber(string registeredCharityNumber)

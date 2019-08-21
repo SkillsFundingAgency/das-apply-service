@@ -5,17 +5,16 @@ using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Validation
 {
-    public class DateValidator : IValidator
+    public class DateValidator : Validator
     {
-        public ValidationDefinition ValidationDefinition { get; set; }
-        public List<KeyValuePair<string, string>> Validate(Question question, Answer answer)
+        public override List<KeyValuePair<string, string>> Validate(string questionId, Answer answer)
         {
-            var errorMessages = new List<KeyValuePair<string, string>>();
-
-            var dateParts = answer.Value.Split(new[]{","}, StringSplitOptions.RemoveEmptyEntries);
-            if (dateParts.Length != 3)
+            var errorMessages = base.Validate(questionId, answer);
+            
+            var dateParts = GetValue(answer).Split(new[]{","}, StringSplitOptions.RemoveEmptyEntries);
+            if (dateParts?.Length != 3)
             {
-                errorMessages.Add(new KeyValuePair<string, string>(question.QuestionId, ValidationDefinition.ErrorMessage));
+                errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(questionId), ValidationDefinition.ErrorMessage));
                 return errorMessages;
             }
             
@@ -25,14 +24,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
 
             if (string.IsNullOrWhiteSpace(day) || string.IsNullOrWhiteSpace(month) || string.IsNullOrWhiteSpace(year))
             {
-                errorMessages.Add(new KeyValuePair<string, string>(question.QuestionId, ValidationDefinition.ErrorMessage));
+                errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(questionId), ValidationDefinition.ErrorMessage));
                 return errorMessages;
             }
 
             var formatStrings = new string[] { "d/M/yyyy" };
             if (!DateTime.TryParseExact($"{day}/{month}/{year}", formatStrings, null, DateTimeStyles.None, out _))
             {
-                errorMessages.Add(new KeyValuePair<string, string>(question.QuestionId, ValidationDefinition.ErrorMessage));
+                errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(questionId), ValidationDefinition.ErrorMessage));
             }
 
             return errorMessages;
