@@ -113,7 +113,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
             sequences.Single(seq => seq.SequenceId == SequenceId.Stage2).IsActive = true;
         }
 
-        private async Task SetSubmissionData(Guid applicationId, SequenceId sequenceId)
+        private async Task SetSubmissionData(Guid applicationId, int sequenceId)
         {
             var application = await _applyRepository.GetApplication(applicationId);
 

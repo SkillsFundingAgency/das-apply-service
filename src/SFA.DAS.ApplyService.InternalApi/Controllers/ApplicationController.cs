@@ -81,6 +81,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(new GetSequenceRequest(Guid.Parse(applicationId), uid, sequenceId));
         }
 
+        [HttpGet("Application/{applicationId}/Sequences")]
+        public async Task<IEnumerable<ApplicationSequence>> GetSequences(string applicationId)
+        {
+            return await _mediator.Send(new GetSequencesRequest(Guid.Parse(applicationId)));
+        }
+
         [HttpGet("Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections/{sectionId}")]
         public async Task<ActionResult<ApplicationSection>> GetSection(string applicationId, string userId, int sequenceId, int sectionId)
         {
@@ -92,6 +98,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             }
 
             return await _mediator.Send(new GetSectionRequest(Guid.Parse(applicationId), uid, sequenceId, sectionId));
+        }
+
+        [HttpGet("Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections")]
+        public async Task<IEnumerable<ApplicationSection>> GetSections(string applicationId, int sequenceId, string userId)
+        {
+            return await _mediator.Send(new GetSectionsRequest(Guid.Parse(applicationId), sequenceId, Guid.Parse(userId)));
         }
 
         [HttpGet("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]

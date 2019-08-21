@@ -8,10 +8,11 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     public class ApplicationSequence : EntityBase
     {
         public Guid ApplicationId { get; set; }
-        public SequenceId SequenceId { get; set; }
+        public int SequenceId { get; set; }
         public bool IsActive { get; set; }
         public List<ApplicationSection> Sections { get; set; }
         public bool NotRequired { get; set; }
+        public string Description { get; set; }
     }
 
     public class ApplicationSequenceStatus
@@ -25,9 +26,10 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Approved = "Approved";
     }
 
-    public enum SequenceId
+    public static class SequenceId
     {
-        Stage1 = 1,
-        Stage2 = 2
+        public static int Preamble = 0;
+        public static int Stage1 = 1;
+        public static int Stage2 = 2;
     }
 }

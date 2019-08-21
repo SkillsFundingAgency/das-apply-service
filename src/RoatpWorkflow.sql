@@ -33,15 +33,16 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,[WorkflowId]
            ,[SequenceId]
            ,[Status]
-           ,[IsActive])
+           ,[IsActive],
+		   [Description])
      VALUES
            ('79F6D68E-1EC3-47A5-9BAA-4CBE987B3153'
            ,'86F83D58-8608-4462-9A4E-65837AF04287'
            ,0
            ,'Draft'
-           ,1)
-	
-	
+           ,1,
+		   '')
+	 		  	
 INSERT [dbo].[WorkflowSections]
   ([Id], [WorkflowId], [SequenceId], [SectionId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType], [DisallowedOrgTypes])
 VALUES
@@ -475,13 +476,15 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,[WorkflowId]
            ,[SequenceId]
            ,[Status]
-           ,[IsActive])
+           ,[IsActive],
+		   [Description])
      VALUES
            ('79F6D68E-1EC3-47A5-9BAA-4CBE987B3153'
            ,'86F83D58-8608-4462-9A4E-65837AF04287'
            ,1
            ,'Draft'
-           ,1)
+           ,1
+		   ,'Your organisation')
 
 INSERT [dbo].[WorkflowSections]
   ([Id], [WorkflowId], [SequenceId], [SectionId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType], [DisallowedOrgTypes])
@@ -500,12 +503,12 @@ VALUES
         {
           "QuestionId": "YO-1",
           "QuestionTag": "Apply-ProviderRoute",
-          "Label": "",
+          "Label": "Choose your organisation''s provider route",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "ComplexRadio",
+            "Type": "Radio",
             "Options": [
               {
                 "Label": "Main provider",
@@ -538,10 +541,37 @@ VALUES
         }
       ],
       "PageOfAnswers": [],
-      "Next": [      
-        {
+      "Next": [
+		{
           "Action": "NextPage",
-          "ReturnId": "3",
+          "ReturnId": "10",
+          "Condition": {
+            "QuestionId": "YO-1",
+            "MustEqual": "1"
+          },
+          "ConditionMet": false
+        },      
+		{
+          "Action": "NextPage",
+          "ReturnId": "11",
+          "Condition": {
+            "QuestionId": "YO-1",
+            "MustEqual": "2"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "12",
+          "Condition": {
+            "QuestionId": "YO-1",
+            "MustEqual": "3"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
           "Condition": null,
           "ConditionMet": false
         }
@@ -558,20 +588,264 @@ VALUES
     }
   ]
 }
-', N'Your organisation', N'Your organisation', N'Draft', N'Pages', N'')
+', N'Provider route', N'Provider route', N'Draft', N'Pages', N'')
+
+INSERT [dbo].[WorkflowSections]
+  ([Id], [WorkflowId], [SequenceId], [SectionId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType], [DisallowedOrgTypes])
+VALUES
+  (N'A7962801-47FA-4A72-95DB-827E76D0A482', N'86F83D58-8608-4462-9A4E-65837AF04287', 1, 2, N'
+{
+  "Pages": [
+    {
+      "PageId": "10",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "Introduction and what you''ll need",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-10",
+          "QuestionTag": "Organisation-Introduction-Main",
+          "Label": "",
+          "ShortLabel": "",
+          "QuestionBodyText": "MAIN PROVIDER Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sed interdum diam, vitae ornare tortor. Etiam ac lectus placerat, porttitor.",
+          "Hint": "",
+          "Input": {
+            "Type": "Checkbox",
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us your organisation''s provider route"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "999999",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "11",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "Introduction and what you''ll need",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-11",
+          "QuestionTag": "Organisation-Introduction-Employer",
+          "Label": "",
+          "ShortLabel": "",
+          "QuestionBodyText": "EMPLOYER PROVIDER Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sed interdum diam, vitae ornare tortor. Etiam ac lectus placerat, porttitor.",
+          "Hint": "",
+          "Input": {
+            "Type": "Checkbox",
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us your organisation''s provider route"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "999999",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "12",
+      "SequenceId": "1",
+      "SectionId": "2",
+      "Title": "Introduction and what you''ll need",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-12",
+          "QuestionTag": "Organisation-Introduction-Supporting",
+          "Label": "",
+          "ShortLabel": "",
+          "QuestionBodyText": "SUPPORTING PROVIDER Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sed interdum diam, vitae ornare tortor. Etiam ac lectus placerat, porttitor.",
+          "Hint": "",
+          "Input": {
+            "Type": "Checkbox",
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us your organisation''s provider route"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "999999",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    }
+  ]
+}
+', N'Introduction and what you''ll need', N'Introduction and what you''ll need', N'Draft', N'Pages', N'')
 
 INSERT INTO [dbo].[WorkflowSequences]
            ([Id]
            ,[WorkflowId]
            ,[SequenceId]
            ,[Status]
-           ,[IsActive])
+           ,[IsActive]
+		   ,[Description])
+     VALUES
+           ('DEF40E31-71DA-40EC-8F33-9856C76C67DA'
+           ,'86F83D58-8608-4462-9A4E-65837AF04287'
+           ,2
+           ,'Draft'
+           ,1
+		   ,'Financial evidence')
+		   
+INSERT INTO [dbo].[WorkflowSequences]
+			([Id]
+			,[WorkflowId]
+			,[SequenceId]
+			,[Status]
+			,[IsActive]
+			,[Description])
+VALUES
+			('B9FFC03D-2B9F-46C0-9481-44CD4C2E1E4F'
+			,'86F83D58-8608-4462-9A4E-65837AF04287'
+			,3
+			,'Draft'
+			,1
+			,'Criminal and compliance checks')
+
+INSERT INTO [dbo].[WorkflowSequences]
+			([Id]
+			,[WorkflowId]
+			,[SequenceId]
+			,[Status]
+			,[IsActive]
+			,[Description])
+VALUES
+			('4904E35B-6AF2-45C5-825B-EA41617287E1'
+			,'86F83D58-8608-4462-9A4E-65837AF04287'
+			,4
+			,'Draft'
+			,1
+			,'Apprenticeship welfare')
+			
+INSERT INTO [dbo].[WorkflowSequences]
+			([Id]
+			,[WorkflowId]
+			,[SequenceId]
+			,[Status]
+			,[IsActive]
+			,[Description])
+VALUES
+			('8FA9490D-E7C0-40AE-97AF-38F0976B2A88'
+			,'86F83D58-8608-4462-9A4E-65837AF04287'
+			,5
+			,'Draft'
+			,1
+			,'Readiness to engage')
+
+INSERT INTO [dbo].[WorkflowSequences]
+			([Id]
+			,[WorkflowId]
+			,[SequenceId]
+			,[Status]
+			,[IsActive]
+			,[Description])
+VALUES
+			('C0D1550F-1372-404E-9CA9-D0021D190E7E'
+			,'86F83D58-8608-4462-9A4E-65837AF04287'
+			,6
+			,'Draft'
+			,1
+			,'People and planning')
+
+INSERT INTO [dbo].[WorkflowSequences]
+			([Id]
+			,[WorkflowId]
+			,[SequenceId]
+			,[Status]
+			,[IsActive]
+			,[Description])
+VALUES
+			('A8DC9146-4BEC-4B1E-B5AC-6D1698AF5FDF'
+			,'86F83D58-8608-4462-9A4E-65837AF04287'
+			,7
+			,'Draft'
+			,1
+			,'Leaders and managers')
+			
+
+INSERT INTO [dbo].[WorkflowSequences]
+           ([Id]
+           ,[WorkflowId]
+           ,[SequenceId]
+           ,[Status]
+           ,[IsActive]
+		   ,[Description])
      VALUES
            ('79F6D68E-1EC3-47A5-9BAA-4CBE987B3153'
            ,'86F83D58-8608-4462-9A4E-65837AF04287'
            ,99
            ,'Draft'
-           ,1)
+           ,1
+		   ,'')
 
            
 INSERT [dbo].[WorkflowSections]

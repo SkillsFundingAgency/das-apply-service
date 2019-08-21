@@ -51,13 +51,45 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
     {
         public static int Preamble = 0;
         public static int YourOrganisation = 1;
+        public static int FinancialEvidence = 2;
+        public static int CriminalComplianceChecks = 3;
+        public static int ApprenticeshipWelfare = 4;
+        public static int ReadinessToEngage = 5;
+        public static int PeopleAndPlanning = 6;
+        public static int LeadersAndManagers = 7;
         public static int ConditionsOfAcceptance = 99;
+    }
+
+    public static class RoatpWorkflowSectionIds
+    {
+        public static class YourOrganisation
+        {
+
+            public static int ProviderRoute = 1;
+            public static int WhatYouWillNeed = 2;
+        }
+
+        public static class FinancialEvidence
+        {
+            public static int WhatYouWillNeed = 1;
+            public static int YourOrganisationsFinancialEvidence = 2;
+        }
+
+        public static class CriminalComplianceChecks
+        {
+            public static int WhatYouWillNeed = 1;
+            public static int ChecksOnYourOrganisation = 2;
+            public static int CheckOnWhosInControl = 3;
+        }
     }
 
     public static class RoatpWorkflowPageIds
     {
         public static string Preamble = "1";
         public static string YourOrganisation = "2";
+        public static string YourOrganisationIntroductionMain = "10";
+        public static string YourOrganisationIntroductionEmployer = "11";
+        public static string YourOrganisationIntroductionSupporting = "12";
         public static string ConditionsOfAcceptance = "999999";
     }
 
