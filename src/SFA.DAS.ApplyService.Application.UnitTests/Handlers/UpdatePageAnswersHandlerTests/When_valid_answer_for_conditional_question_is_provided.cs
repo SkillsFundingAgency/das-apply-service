@@ -15,20 +15,20 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
         [Test]
         public void Then_page_is_returned_with_first_next_condition_met()
         {
-            AnswerQ1 = new Answer() { QuestionId = "Q1", Value = "Yes" };
-            AnswerQ1Dot1 = new Answer() { QuestionId = "Q1.1", Value = "SomeNewAnswer" };
+            AnswerQ1.Value = "Yes";
+            AnswerQ1Dot1.Value = "SomeNewAnswer";
 
-            Validator.Setup(v => v.Validate(It.IsAny<Question>(), It.Is<Answer>(p => p.QuestionId == AnswerQ1.QuestionId)))
+            Validator.Setup(v => v.Validate(It.Is<string>(p => p == QuestionIdQ1), It.Is<Answer>(p => p.QuestionId == AnswerQ1.QuestionId)))
                 .Returns
-                ((Question question, Answer answer) => !string.IsNullOrEmpty(answer.Value)
+                ((string questionId, Answer answer) => !string.IsNullOrEmpty(answer.Value)
                     ? new List<KeyValuePair<string, string>>()
-                    : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(answer.QuestionId, $"{answer.QuestionId} is required") });
+                    : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(questionId, $"{questionId} is required") });
 
-            Validator.Setup(v => v.Validate(It.IsAny<Question>(), It.Is<Answer>(p => p.QuestionId == AnswerQ1Dot1.QuestionId)))
+            Validator.Setup(v => v.Validate(It.Is<string>(p => p == QuestionIdQ1Dot1), It.Is<Answer>(p => p.QuestionId == AnswerQ1Dot1.QuestionId)))
                 .Returns
-                ((Question question, Answer answer) => !string.IsNullOrEmpty(answer.Value)
+                ((string questionId, Answer answer) => !string.IsNullOrEmpty(answer.Value)
                     ? new List<KeyValuePair<string, string>>()
-                    : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(answer.QuestionId, $"{answer.QuestionId} is required") });
+                    : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(questionId, $"{questionId} is required") });
 
             var result = Handler.Handle(new UpdatePageAnswersRequest(ApplicationId, UserId, 1, 1, "1",
                 new List<Answer>()
@@ -49,8 +49,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
         [Test]
         public void Then_page_is_returned_with_second_next_condition_met()
         {
-            AnswerQ1 = new Answer() { QuestionId = "Q1", Value = "No" };
-            Validator.Setup(v => v.Validate(It.IsAny<Question>(), It.Is<Answer>(p => p.QuestionId == AnswerQ1.QuestionId))).Returns(new List<KeyValuePair<string, string>>());
+            AnswerQ1.Value = "No";
+            Validator.Setup(v => v.Validate(It.Is<string>(p => p == QuestionIdQ1), It.Is<Answer>(p => p.QuestionId == AnswerQ1.QuestionId))).Returns(new List<KeyValuePair<string, string>>());
 
             var result = Handler.Handle(new UpdatePageAnswersRequest(ApplicationId, UserId, 1, 1, "1",
                 new List<Answer>()

@@ -1,0 +1,20 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [{
+  "library": "jquery@1.12.4",
+  "destination": "wwwroot/lib/jquery/",
+  "files": [
+    "jquery.min.js"
+  ]
+}
+,
+{
+  "library": "jqueryui@1.12.1",
+  "destination": "wwwroot/jqueryui/",
+  "files": [
+    "jquery-ui.min.js"
+  ]
+}
+]
+}
