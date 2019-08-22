@@ -1094,7 +1094,17 @@ VALUES
                           "Name": "Required",
                           "Value": null,
                           "ErrorMessage": "Enter a website"
-                        }
+                        },
+						{
+                          "Name": "MaxLength",
+                          "Value": 100,
+                          "ErrorMessage": "Enter a website using 100 characters or less"
+                        },
+						{
+							"Name": "Regex",
+							"Value": "^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$",
+							"ErrorMessage" : "Enter a website using only letters numbers and - . /"
+						}
                       ]
                     },
                     "Order": null
