@@ -17,6 +17,8 @@ using SFA.DAS.ApplyService.InternalApi.Types;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
+    using Application.Apply.GetAnswers;
+
     public class ApplicationApiClient : IApplicationApiClient
     {
         private readonly ILogger<ApplicationApiClient> _logger;
@@ -203,6 +205,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task<Organisation> GetOrganisationByName(string name)
         {
             return await (await _httpClient.GetAsync($"organisations/name/{WebUtility.UrlEncode(name)}")).Content.ReadAsAsync<Organisation>();
+        }
+        public async Task<GetAnswersResponse> GetAnswer(Guid applicationId, string questionIdentifier)
+        {
+            return await (await _httpClient.GetAsync($"Answer/{WebUtility.UrlEncode(questionIdentifier)}/{applicationId}")).Content.ReadAsAsync<GetAnswersResponse>();
         }
     }
 }

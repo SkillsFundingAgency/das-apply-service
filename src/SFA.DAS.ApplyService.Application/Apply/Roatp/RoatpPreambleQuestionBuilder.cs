@@ -64,9 +64,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
     {
         public static class YourOrganisation
         {
-
             public static int ProviderRoute = 1;
             public static int WhatYouWillNeed = 2;
+            public static int OrganisationDetails = 3;
         }
 
         public static class FinancialEvidence
@@ -90,7 +90,15 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string YourOrganisationIntroductionMain = "10";
         public static string YourOrganisationIntroductionEmployer = "11";
         public static string YourOrganisationIntroductionSupporting = "12";
+        public static string YourOrganisationParentCompanyCheck = "20";
+        public static string YourOrganisationParentCompanyDetails = "21";
         public static string ConditionsOfAcceptance = "999999";
+    }
+
+    public static class RoatpWorkflowQuestionTags
+    {
+        public static string ProviderRoute = "Apply-ProviderRoute";
+        public static string UkrlpVerificationCompany = "UKRLP-Verification-Company";
     }
 
     public static class RoatpPreambleQuestionBuilder
