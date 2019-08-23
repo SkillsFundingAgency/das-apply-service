@@ -1132,159 +1132,6 @@ VALUES
       "Next": [      
 		{
           "Action": "NextPage",
-          "ReturnId": "40",
-          "Condition": {
-            "QuestionId": "PRE-31",
-            "MustEqual": "TRUE"
-          },
-          "ConditionMet": false
-        },
-		{
-          "Action": "NextPage",
-          "ReturnId": "60",
-          "Condition": {
-            "QuestionId": "YO-1",
-            "MustEqual": "3"
-          },
-          "ConditionMet": false
-        },
-        {
-          "Action": "NextPage",
-          "ReturnId": "50",
-          "Condition": {
-            "QuestionId": "YO-1",
-            "MustEqual": "1"
-          },
-          "ConditionMet": false
-        },
-		{
-          "Action": "NextPage",
-          "ReturnId": "50",
-          "Condition": {
-            "QuestionId": "YO-1",
-            "MustEqual": "2"
-          },
-          "ConditionMet": false
-        }
-      ],
-      "Complete": false,
-      "AllowMultipleAnswers": false,
-      "Order": null,
-      "Active": true,
-      "Visible": true,
-      "Feedback": null,
-      "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
-      "BodyText": ""
-    },
-	{
-      "PageId": "40",
-      "SequenceId": "1",
-      "SectionId": "3",
-      "Title": "PLACEHOLDER Website",
-      "LinkTitle": "",
-      "InfoText": "",
-      "Questions": [
-        {
-          "QuestionId": "YO-40",
-          "QuestionTag": "Has-Website",
-          "Label": "PLACEHOLDER Website",
-          "ShortLabel": "",
-          "QuestionBodyText": "",
-          "Hint": "",
-          "Input": {
-            "Type": "Hidden",
-			"Validations": []
-          },
-          "Order": null
-        }
-      ],
-      "PageOfAnswers": [],
-      "Next": [      
-        {
-          "Action": "NextPage",
-          "ReturnId": "999999",
-          "Condition": null,
-          "ConditionMet": false
-        }
-      ],
-      "Complete": false,
-      "AllowMultipleAnswers": false,
-      "Order": null,
-      "Active": true,
-      "Visible": true,
-      "Feedback": null,
-      "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
-      "BodyText": ""
-    },
-	{
-      "PageId": "50",
-      "SequenceId": "1",
-      "SectionId": "3",
-      "Title": "PLACEHOLDER Confirm Trading Main/Employer",
-      "LinkTitle": "",
-      "InfoText": "",
-      "Questions": [
-        {
-          "QuestionId": "YO-50",
-          "QuestionTag": "Confirm-Trading-MainEmployer",
-          "Label": "PLACEHOLDER Confirm Trading Main/Employer",
-          "ShortLabel": "",
-          "QuestionBodyText": "",
-          "Hint": "",
-          "Input": {
-            "Type": "Hidden",
-			"Validations": []
-          },
-          "Order": null
-        }
-      ],
-      "PageOfAnswers": [],
-      "Next": [      
-        {
-          "Action": "NextPage",
-          "ReturnId": "999999",
-          "Condition": null,
-          "ConditionMet": false
-        }
-      ],
-      "Complete": false,
-      "AllowMultipleAnswers": false,
-      "Order": null,
-      "Active": true,
-      "Visible": true,
-      "Feedback": null,
-      "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
-      "BodyText": ""
-    },
-	{
-      "PageId": "60",
-      "SequenceId": "1",
-      "SectionId": "3",
-      "Title": "PLACEHOLDER Confirm Trading Supporting",
-      "LinkTitle": "",
-      "InfoText": "",
-      "Questions": [
-        {
-          "QuestionId": "YO-60",
-          "QuestionTag": "Confirm-Trading-Supporting",
-          "Label": "PLACEHOLDER Confirm Trading Supporting",
-          "ShortLabel": "",
-          "QuestionBodyText": "",
-          "Hint": "",
-          "Input": {
-            "Type": "Hidden",
-			"Validations": []
-          },
-          "Order": null
-        }
-      ],
-      "PageOfAnswers": [],
-      "Next": [      
-        {
-          "Action": "NextPage",
           "ReturnId": "60",
           "Condition": {
             "QuestionId": "YO-1",
@@ -1388,8 +1235,29 @@ VALUES
       "Next": [      
         {
           "Action": "NextPage",
-          "ReturnId": "999999",
-          "Condition": null,
+          "ReturnId": "60",
+          "Condition": {
+            "QuestionId": "YO-1",
+            "MustEqual": "3"
+          },
+          "ConditionMet": false
+        },
+        {
+          "Action": "NextPage",
+          "ReturnId": "50",
+          "Condition": {
+            "QuestionId": "YO-1",
+            "MustEqual": "1"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "50",
+          "Condition": {
+            "QuestionId": "YO-1",
+            "MustEqual": "2"
+          },
           "ConditionMet": false
         }
       ],
