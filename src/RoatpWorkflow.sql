@@ -1103,7 +1103,7 @@ VALUES
 						{
 							"Name": "Regex",
 							"Value": "^(http:\\/\\/www\\.|https:\\/\\/www\\.|http:\\/\\/|https:\\/\\/)?[a-z0-9]+([\\-\\.]{1}[a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(\\/.*)?$",
-							"ErrorMessage" : "Enter a website using only letters numbers and - . /"
+							"ErrorMessage" : "Enter a website using the correct format. For example, www.company.co.uk"
 						}
                       ]
                     },
@@ -1121,7 +1121,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Select if your company has a website"
+                "ErrorMessage": "Tell us if your organisation has a website"
               }
             ]
           },
@@ -1334,7 +1334,7 @@ VALUES
       "Questions": [
         {
           "QuestionId": "SHUT-002",
-          "QuestionTag": "Shutter-TradingPeriod-Main",
+          "QuestionTag": "Shutter-TradingPeriod-Employer",
           "Label": "Your organisation is not eligible to apply to join the register of apprenticeship training providers",
           "ShortLabel": "",
           "QuestionBodyText": "<p class=\"govuk-body\">To apply as an employer provider, your organisation must have been trading for at least 12 months.</p><p class=\"govuk-body\">You can try again once your organisation has enough trading history.</p><p class=\"govuk-body\"><a href=\"https://www.gov.uk\">Back to GOV.UK</a></p>",
