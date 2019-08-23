@@ -886,13 +886,12 @@ VALUES
         {
           "QuestionId": "YO-21",
           "QuestionTag": "Add-ParentCompanyNumber",
-          "Label": "Company number",
+          "Label": "<span class=\"govuk-label\">Company number</span>",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
             "Type": "Text",
-			"HintText": "Company number",
 			"InputClasses": "app-uppercase",
             "Validations": [
               {
@@ -922,7 +921,7 @@ VALUES
 		{
           "QuestionId": "YO-22",
           "QuestionTag": "Add-ParentCompanyName",
-          "Label": "Company name",
+          "Label": "<span class=\"govuk-label\">Company name</span>",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
@@ -973,26 +972,182 @@ VALUES
       "PageId": "30",
       "SequenceId": "1",
       "SectionId": "3",
-      "Title": "What is your organisation’s Information Commissioner''s Office (ICO) registration number?",
+      "Title": "What is your organisation''s Information Commissioner''s Office (ICO) registration number?",
       "LinkTitle": "",
       "InfoText": "",
+	  "Details": {
+        "Title": "I do not have an ICO registration number",
+        "Body": "<p class=\"govuk-body\">To get an ICO registration number, you’ll need to <a href=\"https://ico.org.uk/registration/new\" target=\"_blank\">register with the ICO (opens in a new window or tab)</a>.</p><p class=\"govuk-body\">After you''ve registered and received an ICO registration number, sign back in to continue with this application.</p>"
+      },
       "Questions": [
         {
           "QuestionId": "YO-30",
           "QuestionTag": "ICO-Number",
-          "Label": "What is your organisation’s Information Commissioner''s Office (ICO) registration number?",
+          "Label": "What is your organisation''s Information Commissioner''s Office (ICO) registration number?",
           "ShortLabel": "",
-          "QuestionBodyText": "",
-          "Hint": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">This is an 8-digit registration number from the ICO data protection public register. Any organisation that processes personal data must have one.</p><p class=\"govuk-body\">If you''re not sure, <a href=\"https://ico.org.uk/ESDWebPages/Search\" target=\"_blank\">search for your organisation on the ICO data protection register (opens in a new window or tab)</a></p>",
+          "Hint": "<span class=\"govuk-label\">ICO registration number</span>",
           "Input": {
             "Type": "Text",
+			"InputClasses": "app-uppercase",
 			"Validations": [
               {
                 "Name": "Required",
                 "Value": null,
+                "ErrorMessage": "Enter an ICO registration number"
+              },
+			  {
+				"Name": "MinLength",
+                "Value": 8,
                 "ErrorMessage": "Enter an ICO registration number using 8 characters"
-              }
+			  },
+			  {
+				"Name": "MaxLength",
+                "Value": 8,
+                "ErrorMessage": "Enter an ICO registration number using 8 characters"
+			  }
             ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+		{
+          "Action": "NextPage",
+          "ReturnId": "40",
+          "Condition": {
+            "QuestionId": "PRE-31",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "60",
+          "Condition": {
+            "QuestionId": "YO-1",
+            "MustEqual": "3"
+          },
+          "ConditionMet": false
+        },
+        {
+          "Action": "NextPage",
+          "ReturnId": "50",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "40",
+      "SequenceId": "1",
+      "SectionId": "3",
+      "Title": "PLACEHOLDER Website",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-40",
+          "QuestionTag": "Has-Website",
+          "Label": "PLACEHOLDER Website",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+			"Validations": []
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "999999",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "50",
+      "SequenceId": "1",
+      "SectionId": "3",
+      "Title": "PLACEHOLDER Confirm Trading Main/Employer",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-50",
+          "QuestionTag": "Confirm-Trading-MainEmployer",
+          "Label": "",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+			"Validations": []
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "999999",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "60",
+      "SequenceId": "1",
+      "SectionId": "3",
+      "Title": "PLACEHOLDER Confirm Trading Supporting",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-60",
+          "QuestionTag": "Confirm-Trading-Supporting",
+          "Label": "PLACEHOLDER Confirm Trading Main/Employer",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+			"Validations": []
           },
           "Order": null
         }
