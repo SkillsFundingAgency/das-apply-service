@@ -1,14 +1,13 @@
 @using Newtonsoft.Json
-@using SFA.DAS.ApplyService.Domain.Apply;
-@model SFA.DAS.ApplyService.Web.Controllers.QuestionViewModel
+@model dynamic
 
 @{
     var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
 
-    var tableData = JsonConvert.DeserializeObject<TabularData>(Model.Value);
+    var tableData = JsonConvert.DeserializeObject<dynamic>(Model.Value);
 }
 
-@if (Model.ErrorMessages!=null && Model.ErrorMessages.Count > 0)
+@if (Model.ErrorMessages !=null && Model.ErrorMessages.Count > 0)
 {
     foreach (var errorMessage in Model.ErrorMessages)
     {
@@ -20,7 +19,7 @@
 }
 
 <table class="govuk-table">
-    @if (!String.IsNullOrWhiteSpace(tableData.Caption))
+    @if (tableData.Caption != null)
     {
         <caption class="govuk-table__caption">
             @tableData.Caption

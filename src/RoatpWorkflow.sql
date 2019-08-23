@@ -85,39 +85,14 @@ VALUES
           "QuestionBodyText": "SQ-1-SE-1-APR-PG-1-3",
           "Hint": "SQ-1-SE-1-APR-PG-1-3",
           "Input": {
-            "Type": "ComplexRadio",
-            "Options": [
-              {
-                "Label": "Main provider",
-				"HintText" : "Your organisation can train apprentices for other organisations, its own employees, employees of connected organisations or act as a subcontractor for other main and employer providers.",
-                "Value": "1",
-                "FurtherQuestions": null
-              },
-              {
-                "Label": "Employer provider",
-				"HintText": "Your organisation can train its own employees, employees of connected organisations or act as a subcontractor for other employer or main providers.",
-                "Value": "2",
-                "FurtherQuestions": null
-              },
-			  {
-                "Label": "Supporting provider",
-				"HintText": "Your organisation will act as a subcontractor for main and employer providers to train apprentices up to a maximum of £500,000 per year. If your organisation is new on the register, this will be limited to £100,000 in its first year.",
-                "Value": "3",
-                "FurtherQuestions": null
-              }
-            ],
-            "Validations": [
-              {
-                "Name": "Required",
-                "Value": null,
-                "ErrorMessage": "Choose your organisation''s provider route"
-              }
-            ]
+            "Type": "TabularData",
+            "Value": "",
+            "Validations": []
           },
           "Order": null
         }
       ],
-      "PageOfAnswers": [],
+      "PageOfAnswers": [ {"Answers": [ {"QuestionId": "APR-ORG-01", "Value": "{\"Caption\":\"Caption Text\", \"HeadingTitles\": [ \"Heading 1\", \"Heading 2\" ], DataRows: [ {\"Columns\": [\"Col 1\", \"Col 2\"] }] }" } ]}],
       "Next": [      
         {
           "Action": "NextPage",
