@@ -1087,7 +1087,7 @@ VALUES
                     "Hint": "",
                     "Label": "Enter main website address",
                     "Input": {
-                      "Type": "text",
+                      "Type": "Text",
                       "Options": null,
                       "Validations": [
                         {
@@ -1325,20 +1325,48 @@ VALUES
       "PageId": "50",
       "SequenceId": "1",
       "SectionId": "3",
-      "Title": "PLACEHOLDER Confirm Trading Main/Employer",
+      "Title": "How long has your organisation been trading for?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-50",
           "QuestionTag": "Confirm-Trading-MainEmployer",
-          "Label": "PLACEHOLDER Confirm Trading Main/Employer",
+          "Label": "How long has your organisation been trading for?",
           "ShortLabel": "",
-          "QuestionBodyText": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">Trading includes buying, selling, advertising, renting a property or employing someone.</p>",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
-			"Validations": []
+            "Type": "Radio",
+			"Options": [
+			{
+                "Label": "Less than 12 months",
+				"Value": "1",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "12 to 18 months",
+				"Value": "2",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "19 to 23 months",
+				"Value": "3",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "More than 23 months",
+				"Value": "4",
+                "FurtherQuestions": null
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us how long your organisation has been trading for"
+              }
+            ]
           },
           "Order": null
         }
