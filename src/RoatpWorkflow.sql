@@ -1222,8 +1222,20 @@ VALUES
       "Next": [      
         {
           "Action": "NextPage",
-          "ReturnId": "999999",
-          "Condition": null,
+          "ReturnId": "10001",
+          "Condition": {
+            "QuestionId": "YO-1",
+            "MustEqual": "1"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "10002",
+          "Condition": {
+            "QuestionId": "YO-1",
+            "MustEqual": "2"
+          },
           "ConditionMet": false
         }
       ],
@@ -1268,6 +1280,74 @@ VALUES
           "ConditionMet": false
         }
       ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "10001",
+      "SequenceId": "1",
+      "SectionId": "3",
+      "Title": "Your organisation is not eligible to apply to join the register of apprenticeship training providers",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "SHUT-001",
+          "QuestionTag": "Shutter-TradingPeriod-Main",
+          "Label": "Your organisation is not eligible to apply to join the register of apprenticeship training providers",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">To apply as a main provider, your organisation must have been trading for at least 12 months.</p><p class=\"govuk-body\">You can try again once your organisation has enough trading history.</p><p class=\"govuk-body\"><a href=\"https://www.gov.uk\">Back to GOV.UK</a></p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+			"Validations": []
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "10002",
+      "SequenceId": "1",
+      "SectionId": "3",
+      "Title": "Your organisation is not eligible to apply to join the register of apprenticeship training providers",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "SHUT-002",
+          "QuestionTag": "Shutter-TradingPeriod-Main",
+          "Label": "Your organisation is not eligible to apply to join the register of apprenticeship training providers",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">To apply as an employer provider, your organisation must have been trading for at least 12 months.</p><p class=\"govuk-body\">You can try again once your organisation has enough trading history.</p><p class=\"govuk-body\"><a href=\"https://www.gov.uk\">Back to GOV.UK</a></p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+			"Validations": []
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [],
       "Complete": false,
       "AllowMultipleAnswers": false,
       "Order": null,

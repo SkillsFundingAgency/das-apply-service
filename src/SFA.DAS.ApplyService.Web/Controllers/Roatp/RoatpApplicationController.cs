@@ -388,7 +388,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 var nextConditionMet = nextActions.FirstOrDefault(na => na.ConditionMet);
 
-                if (nextConditionMet == null) return RedirectToAction("Sequence", "Application", new {applicationId});
+                if (nextConditionMet == null) return RedirectToAction("TaskList", "RoatpApplication", new {applicationId});
 
                 if (nextConditionMet.Action == "NextPage")
                 {
