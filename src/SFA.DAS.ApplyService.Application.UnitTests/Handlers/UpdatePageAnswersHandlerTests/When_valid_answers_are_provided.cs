@@ -17,20 +17,20 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
         {
             base.Arrange();
 
-            AnswerQ2 = new Answer() { QuestionId = "Q2", Value = "SomeAnswer" };
-            AnswerQ3 = new Answer() { QuestionId = "Q3", Value = "SomeOtherAnswer" };
+            AnswerQ2.Value = "SomeAnswer";
+            AnswerQ3.Value = "SomeOtherAnswer";
 
-            Validator.Setup(v => v.Validate(It.IsAny<Question>(), It.Is<Answer>(p => p.QuestionId == AnswerQ2.QuestionId)))
+            Validator.Setup(v => v.Validate(It.Is<string>(p => p == QuestionIdQ2), It.Is<Answer>(p => p.QuestionId == AnswerQ2.QuestionId)))
                 .Returns
-                ((Question question, Answer answer) => !string.IsNullOrEmpty(answer.Value)
+                ((string questionId, Answer answer) => !string.IsNullOrEmpty(answer.Value)
                     ? new List<KeyValuePair<string, string>>()
-                    : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(answer.QuestionId, $"{answer.QuestionId} is required") });
+                    : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(questionId, $"{questionId} is required") });
 
-            Validator.Setup(v => v.Validate(It.IsAny<Question>(), It.Is<Answer>(p => p.QuestionId == AnswerQ3.QuestionId)))
+            Validator.Setup(v => v.Validate(It.Is<string>(p => p == QuestionIdQ3), It.Is<Answer>(p => p.QuestionId == AnswerQ3.QuestionId)))
                 .Returns
-                ((Question question, Answer answer) => !string.IsNullOrEmpty(answer.Value)
+                ((string questionId, Answer answer) => !string.IsNullOrEmpty(answer.Value)
                     ? new List<KeyValuePair<string, string>>()
-                    : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(answer.QuestionId, $"{answer.QuestionId} is required") });
+                    : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(questionId, $"{questionId} is required") });
         }
 
         [Test]
@@ -86,7 +86,10 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
                 false), new CancellationToken()).Wait();
 
             ValidatorFactory.Verify(v=>v.Build(It.Is<Question>(question => question.QuestionId == AnswerQ2.QuestionId)));
-            Validator.Verify(v => v.Validate(It.Is<Question>(question => question.QuestionId == AnswerQ2.QuestionId), AnswerQ2));
+            Validator.Verify(v => v.Validate(QuestionIdQ2, AnswerQ2));
+
+            ValidatorFactory.Verify(v => v.Build(It.Is<Question>(question => question.QuestionId == AnswerQ3.QuestionId)));
+            Validator.Verify(v => v.Validate(QuestionIdQ3, AnswerQ3));
         }
     }
 }

@@ -16,8 +16,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
         [Test]
         public void Then_validation_succeeds_if_application_is_still_in_draft()
         {
-            AnswerQ1 = new Answer() { QuestionId = "Q1", Value = "Yes" };
-            AnswerQ1Dot1 = new Answer() { QuestionId = "Q1.1", Value = "SomeAnswer" };
+            AnswerQ1.Value = "Yes";
+            AnswerQ1Dot1.Value = "SomeAnswer";
 
             ApplyRepository.Setup(r => r.GetSection(ApplicationId, 1, 1, UserId)).ReturnsAsync(new ApplicationSection()
             {
@@ -25,17 +25,17 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
                 QnAData = QnAData
             });
 
-            Validator.Setup(v => v.Validate(It.IsAny<Question>(), It.Is<Answer>(p => p.QuestionId == AnswerQ1.QuestionId)))
+            Validator.Setup(v => v.Validate(It.Is<string>(p => p == QuestionIdQ1), It.Is<Answer>(p => p.QuestionId == AnswerQ1.QuestionId)))
                 .Returns
-                ((Question question, Answer answer) => !string.IsNullOrEmpty(answer.Value)
+                ((string questionId, Answer answer) => !string.IsNullOrEmpty(answer.Value)
                     ? new List<KeyValuePair<string, string>>()
-                    : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(answer.QuestionId, $"{answer.QuestionId} is required") });
+                    : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(questionId, $"{questionId} is required") });
 
-            Validator.Setup(v => v.Validate(It.IsAny<Question>(), It.Is<Answer>(p => p.QuestionId == AnswerQ1Dot1.QuestionId)))
+            Validator.Setup(v => v.Validate(It.Is<string>(p => p == QuestionIdQ1Dot1), It.Is<Answer>(p => p.QuestionId == AnswerQ1Dot1.QuestionId)))
                 .Returns
-                ((Question question, Answer answer) => !string.IsNullOrEmpty(answer.Value)
+                ((string questionId, Answer answer) => !string.IsNullOrEmpty(answer.Value)
                     ? new List<KeyValuePair<string, string>>()
-                    : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(answer.QuestionId, $"{answer.QuestionId} is required") });
+                    : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(questionId, $"{questionId} is required") });
 
             var result = Handler.Handle(new UpdatePageAnswersRequest(ApplicationId, UserId, 1, 1, "1", 
                 new List<Answer>()
@@ -49,16 +49,17 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
 
             // Make sure it has verified the entirety of Question 1 
             ValidatorFactory.Verify(v => v.Build(It.Is<Question>(question => question.QuestionId == AnswerQ1.QuestionId)));
-            Validator.Verify(v => v.Validate(It.Is<Question>(question => question.QuestionId == AnswerQ1.QuestionId), AnswerQ1));
+            Validator.Verify(v => v.Validate(QuestionIdQ1, AnswerQ1));
+
             ValidatorFactory.Verify(v => v.Build(It.Is<Question>(question => question.QuestionId == AnswerQ1Dot1.QuestionId)));
-            Validator.Verify(v => v.Validate(It.Is<Question>(question => question.QuestionId == AnswerQ1Dot1.QuestionId), AnswerQ1Dot1));
+            Validator.Verify(v => v.Validate(QuestionIdQ1Dot1, AnswerQ1Dot1));
         }
 
         [Test]
         public void Then_validation_fail_if_application_is_not_still_in_draft()
         {
-            AnswerQ1 = new Answer() { QuestionId = "Q1", Value = "Yes" };
-            AnswerQ1Dot1 = new Answer() { QuestionId = "Q1.1", Value = "SomeAnswer" };
+            AnswerQ1.Value = "Yes";
+            AnswerQ1Dot1.Value = "SomeAnswer";
 
             ApplyRepository.Setup(r => r.GetSection(ApplicationId, 1, 1, UserId)).ReturnsAsync(new ApplicationSection()
             {
@@ -66,17 +67,17 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
                 QnAData = QnAData
             });
 
-            Validator.Setup(v => v.Validate(It.IsAny<Question>(), It.Is<Answer>(p => p.QuestionId == AnswerQ1.QuestionId)))
+            Validator.Setup(v => v.Validate(It.Is<string>(p => p == QuestionIdQ1), It.Is<Answer>(p => p.QuestionId == AnswerQ1.QuestionId)))
                 .Returns
-                ((Question question, Answer answer) => !string.IsNullOrEmpty(answer.Value)
+                ((string questionId, Answer answer) => !string.IsNullOrEmpty(answer.Value)
                     ? new List<KeyValuePair<string, string>>()
-                    : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(answer.QuestionId, $"{answer.QuestionId} is required") });
+                    : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(questionId, $"{questionId} is required") });
 
-            Validator.Setup(v => v.Validate(It.IsAny<Question>(), It.Is<Answer>(p => p.QuestionId == AnswerQ1Dot1.QuestionId)))
+            Validator.Setup(v => v.Validate(It.Is<string>(p => p == QuestionIdQ1Dot1), It.Is<Answer>(p => p.QuestionId == AnswerQ1Dot1.QuestionId)))
                 .Returns
-                ((Question question, Answer answer) => !string.IsNullOrEmpty(answer.Value)
+                ((string questionId, Answer answer) => !string.IsNullOrEmpty(answer.Value)
                     ? new List<KeyValuePair<string, string>>()
-                    : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(answer.QuestionId, $"{answer.QuestionId} is required") });
+                    : new List<KeyValuePair<string, string>>() { new KeyValuePair<string, string>(questionId, $"{questionId} is required") });
 
             var result = Handler.Handle(new UpdatePageAnswersRequest(ApplicationId, UserId, 1, 1, "1",
                 new List<Answer>()
@@ -90,9 +91,10 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
 
             // Make sure it has verified the entirety of Question 1 
             ValidatorFactory.Verify(v => v.Build(It.Is<Question>(question => question.QuestionId == AnswerQ1.QuestionId)));
-            Validator.Verify(v => v.Validate(It.Is<Question>(question => question.QuestionId == AnswerQ1.QuestionId), AnswerQ1));
+            Validator.Verify(v => v.Validate(QuestionIdQ1, AnswerQ1));
+
             ValidatorFactory.Verify(v => v.Build(It.Is<Question>(question => question.QuestionId == AnswerQ1Dot1.QuestionId)));
-            Validator.Verify(v => v.Validate(It.Is<Question>(question => question.QuestionId == AnswerQ1Dot1.QuestionId), AnswerQ1Dot1));
+            Validator.Verify(v => v.Validate(QuestionIdQ1Dot1, AnswerQ1Dot1));
         }
     }
 }

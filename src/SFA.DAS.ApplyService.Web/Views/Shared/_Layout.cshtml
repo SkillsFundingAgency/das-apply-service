@@ -28,6 +28,8 @@
     <!--[if IE 8]><link rel="stylesheet" href="/stylesheets/govuk-frontend-ie8-2.5.1.min.css"><![endif]-->
     <!--[if lt IE 9]><script src="/javascripts/html5shiv.min.js"></script><![endif]-->
 
+    @RenderSection("Styles", required: false)
+
     <environment include="Development">
         <link rel="stylesheet" href="/stylesheets/application.css">
     </environment>
@@ -43,6 +45,7 @@
 <body class="govuk-template__body ">
 
 <script>
+    /* append the .js-enabled class when this script block runs as javascript is enabled  */
     document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
 </script>
 

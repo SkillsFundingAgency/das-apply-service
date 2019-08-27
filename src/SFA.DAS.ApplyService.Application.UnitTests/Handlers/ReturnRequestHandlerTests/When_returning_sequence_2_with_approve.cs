@@ -48,6 +48,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.ReturnRequestHandl
         {
             var request = new ReturnRequest(Guid.NewGuid(), 2, "Approve");
 
+            OrganisationRepository.Setup(r => r.GetOrganisationByApplicationId(It.IsAny<Guid>())).ReturnsAsync(new Organisation() { RoEPAOApproved = false});
+            
             Handler.Handle(request, new CancellationToken()).Wait();
 
             ApplyRepository.Verify(r => r.DeleteRelatedApplications(request.ApplicationId), Times.Once);
@@ -62,6 +64,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.ReturnRequestHandl
 
             var request = new ReturnRequest(Guid.NewGuid(), 2, "Approve");
 
+            OrganisationRepository.Setup(r => r.GetOrganisationByApplicationId(It.IsAny<Guid>())).ReturnsAsync(new Organisation() { RoEPAOApproved = true});
+            
             Handler.Handle(request, new CancellationToken()).Wait();
 
             ApplyRepository.Verify(r => r.DeleteRelatedApplications(request.ApplicationId), Times.Never);
