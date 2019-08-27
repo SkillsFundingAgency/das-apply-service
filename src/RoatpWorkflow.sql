@@ -966,7 +966,8 @@ VALUES
       "Feedback": null,
       "HasFeedback": false,
       "NotRequiredOrgTypes": [],
-      "BodyText": ""
+      "BodyText": "",
+	  "NotRequired": true
     },
 	{
       "PageId": "30",
@@ -1289,7 +1290,8 @@ VALUES
       "Feedback": null,
       "HasFeedback": false,
       "NotRequiredOrgTypes": [],
-      "BodyText": ""
+      "BodyText": "",
+	  "NotRequired": true
     },
 	{
       "PageId": "51",
@@ -1412,7 +1414,8 @@ VALUES
       "Feedback": null,
       "HasFeedback": false,
       "NotRequiredOrgTypes": [],
-      "BodyText": ""
+      "BodyText": "",	  
+	  "NotRequired": true
     },
 	{
       "PageId": "60",
@@ -1453,7 +1456,8 @@ VALUES
       "Feedback": null,
       "HasFeedback": false,
       "NotRequiredOrgTypes": [],
-      "BodyText": ""
+      "BodyText": "",
+	  "NotRequired": true
     },	
 	{
       "PageId": "10001",
@@ -1487,7 +1491,8 @@ VALUES
       "Feedback": null,
       "HasFeedback": false,
       "NotRequiredOrgTypes": [],
-      "BodyText": ""
+      "BodyText": "",
+	  "NotRequired": true
     },
 	{
       "PageId": "10002",
@@ -1521,7 +1526,8 @@ VALUES
       "Feedback": null,
       "HasFeedback": false,
       "NotRequiredOrgTypes": [],
-      "BodyText": ""
+      "BodyText": "",
+	  "NotRequired": true
     }
   ]
 }
