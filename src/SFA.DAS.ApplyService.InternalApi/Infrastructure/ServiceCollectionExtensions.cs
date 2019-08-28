@@ -10,7 +10,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             ServiceLifetime lifetime = ServiceLifetime.Transient)
         {
             var typesFromAssemblies = assemblies.SelectMany(a => a.DefinedTypes.Where(x => x.GetInterfaces().Contains(typeof(T))));
-            foreach (var type in typesFromAssemblies)
+            foreach (var type in typesFromAssemblies.Where(t=>!t.IsAbstract))
                 services.Add(new ServiceDescriptor(typeof(T), type, lifetime));
         }
     }

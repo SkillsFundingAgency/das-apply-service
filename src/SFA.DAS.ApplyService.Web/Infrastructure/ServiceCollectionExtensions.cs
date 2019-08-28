@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using StructureMap.TypeRules;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
@@ -10,7 +11,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             ServiceLifetime lifetime = ServiceLifetime.Transient)
         {
             var typesFromAssemblies = assemblies.SelectMany(a => a.DefinedTypes.Where(x => x.GetInterfaces().Contains(typeof(T))));
-            foreach (var type in typesFromAssemblies)
+            foreach (var type in typesFromAssemblies.Where(t=>!t.IsAbstract))
                 services.Add(new ServiceDescriptor(typeof(T), type, lifetime));
         }
     }
