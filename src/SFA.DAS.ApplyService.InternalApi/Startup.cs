@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using System.Globalization;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -16,11 +14,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Logging;
-using SFA.DAS.ApplyService.Application;
 using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
 using SFA.DAS.ApplyService.Application.Apply.Validation;
+using SFA.DAS.ApplyService.Application.Email;
 using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Users;
@@ -30,11 +27,7 @@ using SFA.DAS.ApplyService.Data;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.Encryption;
-using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Storage;
-using StructureMap;
-using SFA.DAS.ApplyService.Application.Email;
-using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
 
 namespace SFA.DAS.ApplyService.InternalApi
 {
@@ -57,8 +50,6 @@ namespace SFA.DAS.ApplyService.InternalApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-
-        
             services.AddAuthentication(o =>
                 {
                     o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -144,7 +135,7 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddHealthChecks();
 
-            ConfigureIOC(services);
+            ConfigureDependencyInjection(services);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -174,8 +165,10 @@ namespace SFA.DAS.ApplyService.InternalApi
             });
         }
         
-        private void ConfigureIOC(IServiceCollection services)
+        private void ConfigureDependencyInjection(IServiceCollection services)
         {
+            services.RegisterAllTypes<IValidator>(new[] { typeof(IValidator).Assembly });
+            
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
                 
             services.AddSingleton<IConfigurationService>(sp => new ConfigurationService(
@@ -186,20 +179,7 @@ namespace SFA.DAS.ApplyService.InternalApi
                  _serviceName));
 
             services.AddTransient<IValidatorFactory, ValidatorFactory>();
-
-            services.AddTransient<IValidator, DateOfBirthNotInFutureValidator>();
-            services.AddTransient<IValidator, DateOfBirthValidator>();
-            services.AddTransient<IValidator, DateNotInFutureValidator>();
-            services.AddTransient<IValidator, DateValidator>();
-            services.AddTransient<IValidator, EmailAddressIsValidValidator>();
-            services.AddTransient<IValidator, MaxLengthValidator>();
-            services.AddTransient<IValidator, MaxWordCountValidator>();
-            services.AddTransient<IValidator, NullValidator>();
-            services.AddTransient<IValidator, RegexValidator>();
-            services.AddTransient<IValidator, RegisteredCharityNumberValidator>();
-            services.AddTransient<IValidator, RequiredValidator>();
-            services.AddTransient<IValidator, SimpleRadioNotNullValidator>();
-
+            
             services.AddTransient<IContactRepository,ContactRepository>();
             services.AddTransient<IApplyRepository,ApplyRepository>();
             services.AddTransient<IOrganisationRepository,OrganisationRepository>();

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Threading.Tasks;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
@@ -21,7 +19,6 @@ using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Validators;
-using StructureMap;
 using StackExchange.Redis;
 
 namespace SFA.DAS.ApplyService.Web
@@ -47,8 +44,6 @@ namespace SFA.DAS.ApplyService.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            IdentityModelEventSource.ShowPII = true;
-        
             ConfigureAuth(services);
             
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
@@ -111,33 +106,23 @@ namespace SFA.DAS.ApplyService.Web
 
             services.AddHealthChecks();
 
-            ConfigureIOC(services);
-
+            ConfigureDependencyInjection(services);
         }
-
-        private void ConfigureIOC(IServiceCollection services)
+        
+        private void ConfigureDependencyInjection(IServiceCollection services)
         {
-            services.AddTransient<IValidator, DateNotInFutureValidator>();
-            services.AddTransient<IValidator, DateValidator>();
-            services.AddTransient<IValidator, EmailAddressIsValidValidator>();
-            services.AddTransient<IValidator, MaxLengthValidator>();
-            services.AddTransient<IValidator, MaxWordCountValidator>();
-            services.AddTransient<IValidator, NullValidator>();
-            services.AddTransient<IValidator, RegexValidator>();
-            services.AddTransient<IValidator, RegisteredCharityNumberValidator>();
-            services.AddTransient<IValidator, RequiredValidator>();
-            services.AddTransient<IValidator, SimpleRadioNotNullValidator>();
-
+            services.RegisterAllTypes<IValidator>(new[] { typeof(IValidator).Assembly });
+            
             services.AddTransient<ITokenService, TokenService>();
             
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddSingleton<IConfigurationService>(sp => new ConfigurationService(
-                 sp.GetService<IHostingEnvironment>(),
-                 _configuration["EnvironmentName"],
-                 _configuration["ConfigurationStorageConnectionString"],
-                 "1.0",
-                 "SFA.DAS.ApplyService"));
+                sp.GetService<IHostingEnvironment>(),
+                _configuration["EnvironmentName"],
+                _configuration["ConfigurationStorageConnectionString"],
+                "1.0",
+                "SFA.DAS.ApplyService"));
 
             services.AddTransient<ISessionService>(s => new SessionService(
                 s.GetService<IHttpContextAccessor>(), 
