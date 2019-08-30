@@ -873,7 +873,8 @@ VALUES
       "Feedback": null,
       "HasFeedback": false,
       "NotRequiredOrgTypes": [],
-      "BodyText": ""
+      "BodyText": "",
+	  "NotRequired": true
     },
 	{
       "PageId": "21",
