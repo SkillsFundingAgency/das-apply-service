@@ -10,7 +10,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         public string ApplicationType { get; set; }
 
         public StartApplicationRequest(Guid userId, string applicationType)
-        {     
+        {
             UserId = userId;
             ApplicationType = applicationType;
         }
