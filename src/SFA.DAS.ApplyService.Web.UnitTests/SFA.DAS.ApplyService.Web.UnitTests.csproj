@@ -6,6 +6,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="Controllers\ApplicationControllerTests\**" />
+      <Content Remove="Controllers\ApplicationControllerTests\**" />
+      <EmbeddedResource Remove="Controllers\ApplicationControllerTests\**" />
+      <None Remove="Controllers\ApplicationControllerTests\**" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="nunit" Version="3.11.0" />
         <PackageReference Include="NUnit3TestAdapter" Version="3.11.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />

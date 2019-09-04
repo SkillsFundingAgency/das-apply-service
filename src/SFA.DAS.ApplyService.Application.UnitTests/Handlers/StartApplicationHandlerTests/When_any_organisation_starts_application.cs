@@ -29,7 +29,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
         {
             Init();
 
-            Handler.Handle(new StartApplicationRequest(UserId, ApplicationType), new CancellationToken()).Wait();
+            Handler.Handle(new StartApplicationRequest(ApplicationId, UserId, ApplicationType), new CancellationToken()).Wait();
 
             ApplyRepository.Verify(r => r.UpdateSections(It.Is<List<ApplicationSection>>(response => response.Any(
                 section =>
@@ -42,7 +42,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
         {
             Init();
 
-            Handler.Handle(new StartApplicationRequest(UserId, ApplicationType), new CancellationToken()).Wait();
+            Handler.Handle(new StartApplicationRequest(ApplicationId, UserId, ApplicationType), new CancellationToken()).Wait();
 
             ApplyRepository.Verify(r => r.UpdateSections(It.Is<List<ApplicationSection>>(response => response.Any(
                 section =>
@@ -55,7 +55,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
         {
             Init();
 
-            var result = await Handler.Handle(new StartApplicationRequest(UserId, ApplicationType), CancellationToken.None);
+            var result = await Handler.Handle(new StartApplicationRequest(ApplicationId, UserId, ApplicationType), CancellationToken.None);
 
             result.Should().BeOfType<StartApplicationResponse>();
             result.As<StartApplicationResponse>().ApplicationId.Should().Be(ApplicationId);

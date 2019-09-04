@@ -31,7 +31,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
         {
             Init();
             
-            Handler.Handle(new StartApplicationRequest(UserId, ApplicationType), new CancellationToken()).Wait();
+            Handler.Handle(new StartApplicationRequest(ApplicationId, UserId, ApplicationType), new CancellationToken()).Wait();
 
             ApplyRepository.Verify(r => r.UpdateSections(It.Is<List<ApplicationSection>>(response => 
                 response.Any(section => section.SectionId == 1 && section.NotRequired == true)
@@ -45,7 +45,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
         {
             Init();
             
-            Handler.Handle(new StartApplicationRequest(UserId, ApplicationType), new CancellationToken()).Wait();
+            Handler.Handle(new StartApplicationRequest(ApplicationId, UserId, ApplicationType), new CancellationToken()).Wait();
 
             ApplyRepository.Verify(r => r.UpdateSequences(It.Is<List<ApplicationSequence>>(
                 response => response.Any(sequence => sequence.SequenceId == SequenceId.Stage1 && sequence.NotRequired == true))));

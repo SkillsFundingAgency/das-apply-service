@@ -33,7 +33,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
 
             ApplyRepository.Setup(r => r.GetAssets()).ReturnsAsync(new List<Asset>());
             ApplyRepository.Setup(r => r.GetLatestWorkflow(ApplicationType)).ReturnsAsync(latestWorkflowId);
-            ApplyRepository.Setup(r => r.CreateApplication(ApplicationType, ApplyingOrganisationId, UserId, latestWorkflowId)).ReturnsAsync(ApplicationId);
+            ApplyRepository.Setup(r => r.CreateApplication(ApplicationId, ApplicationType, ApplyingOrganisationId, UserId, latestWorkflowId)).ReturnsAsync(ApplicationId);
             ApplyRepository.Setup(r => r.CopyWorkflowToApplication(ApplicationId, latestWorkflowId, It.IsAny<string>())).ReturnsAsync(new List<ApplicationSection>
             {
                 new ApplicationSection {SectionId = 1, QnAData = new QnAData {Pages = new List<Page>{new Page(){PageId = "1", Title = "REPLACEME"}, new Page() { PageId = "2", NotRequiredOrgTypes = new List<string> { "HEI" } } }}},

@@ -5,8 +5,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
 {
     public class UpdatePageAnswersResult
     {
-        public Page Page { get; set; }
         public bool ValidationPassed { get; set; }
         public List<KeyValuePair<string, string>> ValidationErrors { get; set; }
+        public string NextAction { get; set; }
+        public string NextActionId { get; set; }
     }
 }

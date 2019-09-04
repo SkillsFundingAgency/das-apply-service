@@ -9,7 +9,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
-    using Configuration;
+    using SFA.DAS.ApplyService.Configuration;
     using Microsoft.AspNetCore.Http;
     using SFA.DAS.ApplyService.Domain.CompaniesHouse;
 
