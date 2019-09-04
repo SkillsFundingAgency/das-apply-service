@@ -26,6 +26,9 @@ using StackExchange.Redis;
 
 namespace SFA.DAS.ApplyService.Web
 {
+    using Controllers;
+    using SFA.DAS.ApplyService.Web.Configuration;
+
     public class Startup
     {
         private readonly IConfiguration _configuration;
@@ -63,7 +66,11 @@ namespace SFA.DAS.ApplyService.Web
             
             services.AddMvc(options => { options.Filters.Add<PerformValidationFilter>(); })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            
+
+            services.AddOptions();
+
+            services.Configure<List<TaskListConfiguration>>(_configuration.GetSection("TaskListSequences"));
+
             if (_env.IsDevelopment())
             {
                 services.AddDataProtection()
