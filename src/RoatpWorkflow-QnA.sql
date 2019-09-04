@@ -895,12 +895,12 @@ VALUES
 			"Options": [
 			{
                 "Label": "Yes",
-				"Value": "Y",
+				"Value": "Yes",
                 "FurtherQuestions": null
               },
 			  {
                 "Label": "No",
-				"Value": "N",
+				"Value": "No",
                 "FurtherQuestions": null
               }
 			],
