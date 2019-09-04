@@ -5,6 +5,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Compile Remove="Handlers\UpdatePageAnswersHandlerTests\**" />
+      <EmbeddedResource Remove="Handlers\UpdatePageAnswersHandlerTests\**" />
+      <None Remove="Handlers\UpdatePageAnswersHandlerTests\**" />
+    </ItemGroup>
+
+    <ItemGroup>
       <PackageReference Include="FluentAssertions">
         <Version>5.4.2</Version>
       </PackageReference>
