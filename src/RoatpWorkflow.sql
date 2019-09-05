@@ -966,7 +966,8 @@ VALUES
       "Feedback": null,
       "HasFeedback": false,
       "NotRequiredOrgTypes": [],
-      "BodyText": ""
+      "BodyText": "",
+	  "NotRequired": true
     },
 	{
       "PageId": "30",
@@ -1042,7 +1043,7 @@ VALUES
         },
 		{
           "Action": "NextPage",
-          "ReturnId": "50",
+          "ReturnId": "51",
           "Condition": {
             "QuestionId": "YO-1",
             "MustEqual": "2"
@@ -1087,7 +1088,7 @@ VALUES
                     "Hint": "",
                     "Label": "Enter main website address",
                     "Input": {
-                      "Type": "text",
+                      "Type": "Text",
                       "Options": null,
                       "Validations": [
                         {
@@ -1150,7 +1151,7 @@ VALUES
         },
 		{
           "Action": "NextPage",
-          "ReturnId": "50",
+          "ReturnId": "51",
           "Condition": {
             "QuestionId": "YO-1",
             "MustEqual": "2"
@@ -1172,14 +1173,384 @@ VALUES
       "PageId": "50",
       "SequenceId": "1",
       "SectionId": "3",
-      "Title": "PLACEHOLDER Confirm Trading Main/Employer",
+      "Title": "How long has your organisation been trading for?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-50",
-          "QuestionTag": "Confirm-Trading-MainEmployer",
-          "Label": "PLACEHOLDER Confirm Trading Main/Employer",
+          "QuestionTag": "Confirm-Trading-Main",
+          "Label": "How long has your organisation been trading for?",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">Trading includes buying, selling, advertising, renting a property or employing someone.</p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			{
+                "Label": "Less than 12 months",
+				"Value": "1",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "12 to 18 months",
+				"Value": "2",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "19 to 23 months",
+				"Value": "3",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "More than 23 months",
+				"Value": "4",
+                "FurtherQuestions": null
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us how long your organisation has been trading for"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "10001",
+          "Condition": {
+            "QuestionId": "YO-50",
+            "MustEqual": "1"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "130",
+          "Condition": {
+            "QuestionId": "PRE-50",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "70",
+          "Condition": {
+            "QuestionId": "PRE-56",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "90",
+          "Condition": {
+            "QuestionId": "PRE-60",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "80",
+          "Condition": {
+            "QuestionId": "PRE-65",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "100",
+          "Condition": {
+            "QuestionId": "PRE-70",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "130",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": "",
+	  "NotRequired": true
+    },
+	{
+      "PageId": "51",
+      "SequenceId": "1",
+      "SectionId": "3",
+      "Title": "How long has your organisation been trading for?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-51",
+          "QuestionTag": "Confirm-Trading-Employer",
+          "Label": "How long has your organisation been trading for?",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">Trading includes buying, selling, advertising, renting a property or employing someone.</p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			{
+                "Label": "Less than 12 months",
+				"Value": "1",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "12 to 18 months",
+				"Value": "2",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "19 to 23 months",
+				"Value": "3",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "More than 23 months",
+				"Value": "4",
+                "FurtherQuestions": null
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us how long your organisation has been trading for"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "10002",
+          "Condition": {
+            "QuestionId": "YO-51",
+            "MustEqual": "1"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "130",
+          "Condition": {
+            "QuestionId": "PRE-50",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "70",
+          "Condition": {
+            "QuestionId": "PRE-56",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "90",
+          "Condition": {
+            "QuestionId": "PRE-60",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "80",
+          "Condition": {
+            "QuestionId": "PRE-65",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "100",
+          "Condition": {
+            "QuestionId": "PRE-70",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "130",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": "",	  
+	  "NotRequired": true
+    },
+	{
+      "PageId": "60",
+      "SequenceId": "1",
+      "SectionId": "3",
+      "Title": "PLACEHOLDER Confirm Trading Supporting",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-60",
+          "QuestionTag": "Confirm-Trading-Supporting",
+          "Label": "PLACEHOLDER Confirm Trading Supporting",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+			"Validations": []
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "999999",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": "",
+	  "NotRequired": true
+    },	
+	{
+      "PageId": "10001",
+      "SequenceId": "1",
+      "SectionId": "3",
+      "Title": "Your organisation is not eligible to apply to join the register of apprenticeship training providers",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "SHUT-001",
+          "QuestionTag": "Shutter-TradingPeriod-Main",
+          "Label": "Your organisation is not eligible to apply to join the register of apprenticeship training providers",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">To apply as a main provider, your organisation must have been trading for at least 12 months.</p><p class=\"govuk-body\">You can try again once your organisation has enough trading history.</p><p class=\"govuk-body\"><a href=\"https://www.gov.uk\">Back to GOV.UK</a></p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+			"Validations": []
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": "",
+	  "NotRequired": true
+    },
+	{
+      "PageId": "10002",
+      "SequenceId": "1",
+      "SectionId": "3",
+      "Title": "Your organisation is not eligible to apply to join the register of apprenticeship training providers",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "SHUT-002",
+          "QuestionTag": "Shutter-TradingPeriod-Employer",
+          "Label": "Your organisation is not eligible to apply to join the register of apprenticeship training providers",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">To apply as an employer provider, your organisation must have been trading for at least 12 months.</p><p class=\"govuk-body\">You can try again once your organisation has enough trading history.</p><p class=\"govuk-body\"><a href=\"https://www.gov.uk\">Back to GOV.UK</a></p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+			"Validations": []
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": "",
+	  "NotRequired": true
+    }
+  ]
+}
+', N'Organisation details', N'Organisation details', N'Draft', N'Pages', N'')
+
+INSERT [dbo].[WorkflowSections]
+  ([Id], [WorkflowId], [SequenceId], [SectionId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType], [DisallowedOrgTypes])
+VALUES
+  (N'D63ECC02-0F2A-4BC1-8F57-1738F8665FEE', N'86F83D58-8608-4462-9A4E-65837AF04287', 1, 4, N'
+{
+  "Pages": [
+  {
+      "PageId": "70",
+      "SequenceId": "1",
+      "SectionId": "4",
+      "Title": "PLACEHOLDER Confirm Directors PSCs",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-70",
+          "QuestionTag": "Confirm-Directors-PSCs",
+          "Label": "PLACEHOLDER Confirm Directors PSCs",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
@@ -1210,17 +1581,17 @@ VALUES
       "BodyText": ""
     },
 	{
-      "PageId": "60",
+      "PageId": "80",
       "SequenceId": "1",
-      "SectionId": "3",
-      "Title": "PLACEHOLDER Confirm Trading Supporting",
+      "SectionId": "4",
+      "Title": "PLACEHOLDER Confirm Trustees",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
-          "QuestionId": "YO-60",
-          "QuestionTag": "Confirm-Trading-Supporting",
-          "Label": "PLACEHOLDER Confirm Trading Supporting",
+          "QuestionId": "YO-80",
+          "QuestionTag": "Confirm-Trustees-NoDoB",
+          "Label": "PLACEHOLDER Confirm Trustees",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
@@ -1235,29 +1606,8 @@ VALUES
       "Next": [      
         {
           "Action": "NextPage",
-          "ReturnId": "60",
-          "Condition": {
-            "QuestionId": "YO-1",
-            "MustEqual": "3"
-          },
-          "ConditionMet": false
-        },
-        {
-          "Action": "NextPage",
-          "ReturnId": "50",
-          "Condition": {
-            "QuestionId": "YO-1",
-            "MustEqual": "1"
-          },
-          "ConditionMet": false
-        },
-		{
-          "Action": "NextPage",
-          "ReturnId": "50",
-          "Condition": {
-            "QuestionId": "YO-1",
-            "MustEqual": "2"
-          },
+          "ReturnId": "999999",
+          "Condition": null,
           "ConditionMet": false
         }
       ],
@@ -1270,10 +1620,92 @@ VALUES
       "HasFeedback": false,
       "NotRequiredOrgTypes": [],
       "BodyText": ""
-    }
+    },
+	{
+      "PageId": "90",
+      "SequenceId": "1",
+      "SectionId": "4",
+      "Title": "PLACEHOLDER Add Trustees",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-90",
+          "QuestionTag": "Add-Trustees",
+          "Label": "PLACEHOLDER Add Trustees",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+			"Validations": []
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "999999",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "100",
+      "SequenceId": "1",
+      "SectionId": "4",
+      "Title": "PLACEHOLDER Sole Trader Partnership",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-100",
+          "QuestionTag": "SoleTrade-or-Partnership",
+          "Label": "PLACEHOLDER Sole Trader Partnership",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+			"Validations": []
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "999999",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+	}
   ]
 }
-', N'Organisation details', N'Organisation details', N'Draft', N'Pages', N'')
+', N'Confirm who''s in control', N'Confirm who''s in control', N'Draft', N'Pages', N'')
 
 INSERT INTO [dbo].[WorkflowSequences]
            ([Id]
