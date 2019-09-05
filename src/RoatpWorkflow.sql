@@ -873,7 +873,8 @@ VALUES
       "Feedback": null,
       "HasFeedback": false,
       "NotRequiredOrgTypes": [],
-      "BodyText": ""
+      "BodyText": "",
+	  "NotRequired": true
     },
 	{
       "PageId": "21",
@@ -1421,20 +1422,48 @@ VALUES
       "PageId": "60",
       "SequenceId": "1",
       "SectionId": "3",
-      "Title": "PLACEHOLDER Confirm Trading Supporting",
+      "Title": "How long has your organisation been trading for?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-60",
           "QuestionTag": "Confirm-Trading-Supporting",
-          "Label": "PLACEHOLDER Confirm Trading Supporting",
+          "Label": "How long has your organisation been trading for?",
           "ShortLabel": "",
-          "QuestionBodyText": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">Trading includes buying, selling, advertising, renting a property or employing someone.</p>",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
-			"Validations": []
+            "Type": "Radio",
+			"Options": [
+			{
+                "Label": "Less than 3 months",
+				"Value": "1",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "3 to 6 months",
+				"Value": "2",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "7 to 11 months",
+				"Value": "3",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "More than 11 months",
+				"Value": "4",
+                "FurtherQuestions": null
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us how long your organisation has been trading for"
+              }
+            ]
           },
           "Order": null
         }
@@ -1443,7 +1472,61 @@ VALUES
       "Next": [      
         {
           "Action": "NextPage",
-          "ReturnId": "999999",
+          "ReturnId": "10003",
+          "Condition": {
+            "QuestionId": "YO-60",
+            "MustEqual": "1"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "130",
+          "Condition": {
+            "QuestionId": "PRE-50",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "70",
+          "Condition": {
+            "QuestionId": "PRE-56",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "90",
+          "Condition": {
+            "QuestionId": "PRE-60",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "80",
+          "Condition": {
+            "QuestionId": "PRE-65",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "100",
+          "Condition": {
+            "QuestionId": "PRE-70",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "130",
           "Condition": null,
           "ConditionMet": false
         }
@@ -1508,6 +1591,41 @@ VALUES
           "Label": "Your organisation is not eligible to apply to join the register of apprenticeship training providers",
           "ShortLabel": "",
           "QuestionBodyText": "<p class=\"govuk-body\">To apply as an employer provider, your organisation must have been trading for at least 12 months.</p><p class=\"govuk-body\">You can try again once your organisation has enough trading history.</p><p class=\"govuk-body\"><a href=\"https://www.gov.uk\">Back to GOV.UK</a></p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+			"Validations": []
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": "",
+	  "NotRequired": true
+    },
+	{
+      "PageId": "10003",
+      "SequenceId": "1",
+      "SectionId": "3",
+      "Title": "Your organisation is not eligible to apply to join the register of apprenticeship training providers",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "SHUT-003",
+          "QuestionTag": "Shutter-TradingPeriod-Supporting",
+          "Label": "Your organisation is not eligible to apply to join the register of apprenticeship training providers",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">To apply as a supporting provider, your organisation must have been trading for at least 3 months.</p><p class=\"govuk-body\">You can try again once your organisation has enough trading history.</p><p class=\"govuk-body\"><a href=\"https://www.gov.uk\">Back to GOV.UK</a></p>",
           "Hint": "",
           "Input": {
             "Type": "Hidden",
