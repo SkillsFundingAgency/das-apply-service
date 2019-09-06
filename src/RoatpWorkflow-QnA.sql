@@ -1581,7 +1581,7 @@ VALUES
       "NotRequiredOrgTypes": [],
       "BodyText": "",
 	  "NotRequired": true
-    },	
+    },
 	{
       "PageId": "10001",
       "SequenceId": "1",
@@ -1708,6 +1708,297 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,1
 		   ,3
 		   ,@OrgansiationDetailsSectionId
+           ,'Draft'
+           ,1)
+
+DECLARE @ConfirmWhosInControlSectionId UNIQUEIDENTIFIER
+SET @ConfirmWhosInControlSectionId = '81DF6266-13E4-4928-8774-0C9E0C74B551'
+
+INSERT [dbo].[WorkflowSections]
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
+VALUES
+  (@ConfirmWhosInControlSectionId, @ProjectId, N'
+{
+  "Pages": [   	
+	{
+      "PageId": "70",
+      "SequenceId": "1",
+      "SectionId": "3",
+      "Title": "Confirm who''s in control",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-70",
+          "QuestionTag": "Confirm-Directors-PSCs",
+          "Label": "Confirm who''s in control",
+          "ShortLabel": "",
+          "QuestionBodyText": "PLACEHOLDER Confirm Directors PSCs",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",			
+            "Validations": [              
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+		{
+          "Action": "NextPage",
+          "ReturnId": "130",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": "",
+	  "NotRequired": true
+    },
+	{
+      "PageId": "80",
+      "SequenceId": "1",
+      "SectionId": "3",
+      "Title": "Confirm who''s in control",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-80",
+          "QuestionTag": "Confirm-Trustees-NoDoB",
+          "Label": "Confirm who''s in control",
+          "ShortLabel": "",
+          "QuestionBodyText": "PLACEHOLDER Confirm Trustees DOB",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",			
+            "Validations": [              
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+		{
+          "Action": "NextPage",
+          "ReturnId": "130",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": "",
+	  "NotRequired": true
+    },		
+	{
+      "PageId": "90",
+      "SequenceId": "1",
+      "SectionId": "3",
+      "Title": "Confirm who''s in control",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-90",
+          "QuestionTag": "Add-Trustees",
+          "Label": "Confirm who''s in control",
+          "ShortLabel": "",
+          "QuestionBodyText": "PLACEHOLDER Add Trustees",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",			
+            "Validations": [              
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+		{
+          "Action": "NextPage",
+          "ReturnId": "130",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": "",
+	  "NotRequired": true
+    },
+	{
+      "PageId": "100",
+      "SequenceId": "1",
+      "SectionId": "3",
+      "Title": "Tell us your organisation''s type",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-100",
+          "QuestionTag": "SoleTrade-or-Partnership",
+          "Label": "Tell us your organisation''s type",
+          "ShortLabel": "",
+          "QuestionBodyText": "PLACEHOLDER Sole Trader or Partnership",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",			
+            "Validations": [              
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+		{
+          "Action": "NextPage",
+          "ReturnId": "130",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": "",
+	  "NotRequired": true
+    },	
+		{
+      "PageId": "140",
+      "SequenceId": "1",
+      "SectionId": "3",
+      "Title": "Tell us your organisation''s type",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-140",
+          "QuestionTag": "Organisation-Type-MainSupporting",
+          "Label": "Tell us your organisation''s type",
+          "ShortLabel": "",
+          "QuestionBodyText": "PLACEHOLDER Organisation Type Main/Supporting",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",			
+            "Validations": [              
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+		{
+          "Action": "NextPage",
+          "ReturnId": "130",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": "",
+	  "NotRequired": true
+    },	
+	{
+      "PageId": "150",
+      "SequenceId": "1",
+      "SectionId": "3",
+      "Title": "Tell us your organisation''s type",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-150",
+          "QuestionTag": "Organisation-Type-Employer",
+          "Label": "Tell us your organisation''s type",
+          "ShortLabel": "",
+          "QuestionBodyText": "PLACEHOLDER Organisation Type Employer",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",			
+            "Validations": [              
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+		{
+          "Action": "NextPage",
+          "ReturnId": "130",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": "",
+	  "NotRequired": true
+    }
+  ]
+}
+', N'Confirm who''s in control', N'Confirm who''s in control', N'Draft', N'Pages')
+
+DECLARE @ConfirmWhosInControlSequenceId UNIQUEIDENTIFIER
+SET @ConfirmWhosInControlSequenceId = '0B946C18-E335-4440-88D5-4345599F72E1'
+
+INSERT INTO [dbo].[WorkflowSequences]
+           ([Id]
+           ,[WorkflowId]
+           ,[SequenceNo]
+		   ,[SectionNo]
+		   ,[SectionId]
+           ,[Status]
+           ,[IsActive])
+     VALUES
+           (@ConfirmWhosInControlSequenceId
+           ,@WorkflowId
+           ,1
+		   ,4
+		   ,@ConfirmWhosInControlSectionId
            ,'Draft'
            ,1)
 
