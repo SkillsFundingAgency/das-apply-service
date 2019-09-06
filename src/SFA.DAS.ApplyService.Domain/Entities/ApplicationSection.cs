@@ -55,6 +55,8 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         }
 
         public bool NotRequired { get; set; }
+
+        public bool SectionCompleted { get; set; }
     }
 
     public class ApplicationSectionStatus

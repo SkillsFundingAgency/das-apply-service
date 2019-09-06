@@ -251,6 +251,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
                 if (page == null || page.Questions == null)
                 {
+                    var pageInSectionId = section.QnAData.Pages.FirstOrDefault(x => x.PageId == pageId);
+                    if (pageInSectionId == null)
+                    {
+                        await _apiClient.MarkSectionAsCompleted(applicationId, selectedSection.Id);
+                    }
                     return await TaskList(applicationId);
                 }
 
@@ -282,6 +287,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             foreach (var sequence in filteredSequences)
             {
                 var sections = await _qnaApiClient.GetSections(applicationId, sequence.Id);
+                foreach(var section in sections)
+                {
+                    section.SectionCompleted = await _apiClient.IsSectionCompleted(applicationId, section.Id);
+                }
                 sequence.Sections = sections.ToList();
             }
 
@@ -683,5 +692,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             return ControllerContext.HttpContext.Request.Method?.ToUpper() == "POST";
         }
+
     }
 }

@@ -76,6 +76,7 @@
     <Build Include="Tables\EmailTemplates.sql" />
     <Build Include="StoredProcedures\Update_ApplicationSections_QuestionTags.sql" />
     <Build Include="Sequences\AppRefSequence.sql" />
+    <Build Include="Tables\ApplicationWorkflow.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

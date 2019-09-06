@@ -30,7 +30,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
             var questionsCompleted = SectionHasCompletedQuestions(section);
             var questionsInSection = section.QnAData.Pages.Where(p => p.NotRequired == false).SelectMany(x => x.Questions).DistinctBy(q => q.QuestionId).Count();
-            return SectionText(questionsCompleted, questionsInSection, sequential);
+            return SectionText(questionsCompleted, questionsInSection, section.SectionCompleted, sequential);
         }
 
         public static bool PreviousSectionCompleted(ApplicationSequence sequence, int sectionId, bool sequential)
@@ -41,6 +41,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 if (previousSection == null)
                 {
                     return false;
+                }
+
+                if (previousSection.SectionCompleted)
+                {
+                    return true;
                 }
 
                 var previousSectionQuestionsCompleted = SectionHasCompletedQuestions(previousSection);
@@ -58,6 +63,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         private static int SectionHasCompletedQuestions(ApplicationSection section)
         {
             int answeredQuestions = 0;
+            
             var pages = section.QnAData.Pages.Where(p => p.NotRequired == false);
             foreach (var page in pages)
             {
@@ -78,8 +84,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             return answeredQuestions;
         }
 
-        private static string SectionText(int completedCount, int questionCount, bool sequential)
+        private static string SectionText(int completedCount, int questionCount, bool sectionCompleted, bool sequential)
         {
+            if (sectionCompleted)
+            {
+                return "Completed";
+            }
+
             if (completedCount < questionCount)
             {
                 if (sequential && completedCount == 0)

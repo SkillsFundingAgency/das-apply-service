@@ -48,5 +48,8 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         Task<int> GetNextAppReferenceSequence();
         Task<string> GetWorkflowReferenceFormat(Guid requestApplicationId);
+
+        Task<bool> MarkSectionAsCompleted(Guid applicationId, Guid applicationSectionId);
+        Task<bool> IsSectionCompleted(Guid applicationId, Guid applicationSectionId);
     }
 }

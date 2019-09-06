@@ -918,5 +918,37 @@ namespace SFA.DAS.ApplyService.Data
                     })).FirstOrDefault();
             }
         }
+
+        public async Task<bool> MarkSectionAsCompleted(Guid applicationId, Guid applicationSectionId)
+        {
+            var completed = true;
+
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var recordsAffected = await connection.ExecuteAsync(@"INSERT INTO ApplicationWorkflow 
+                                                (ApplicationId, ApplicationSectionId, Completed)
+                                                VALUES (@applicationId, @applicationSectionId, @completed)",
+                    new
+                    {
+                        applicationId, applicationSectionId, completed
+                    });
+
+                return await Task.FromResult(recordsAffected > 0);
+            }
+        }
+
+        public async Task<bool> IsSectionCompleted(Guid applicationId, Guid applicationSectionId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<bool>(@"SELECT Completed FROM ApplicationWorkflow 
+                                                            WHERE ApplicationId = @applicationId 
+                                                            AND ApplicationSectionId = @applicationSectionId",
+                    new
+                    {
+                        applicationId, applicationSectionId
+                    })).FirstOrDefault();
+            }
+        }
     }
 }
