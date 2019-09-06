@@ -29,8 +29,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             }
 
             var questionsCompleted = SectionHasCompletedQuestions(section);
-            var questionsInSection = section.QnAData.Pages.Where(p => p.NotRequired == false).SelectMany(x => x.Questions).DistinctBy(q => q.QuestionId).Count();
-            return SectionText(questionsCompleted, questionsInSection, section.SectionCompleted, sequential);
+            //var questionsInSection = section.QnAData.Pages.Where(p => p.NotRequired == false).SelectMany(x => x.Questions).DistinctBy(q => q.QuestionId).Count();
+            return SectionText(questionsCompleted, section.SectionCompleted, sequential);
         }
 
         public static bool PreviousSectionCompleted(ApplicationSequence sequence, int sectionId, bool sequential)
@@ -84,15 +84,15 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             return answeredQuestions;
         }
 
-        private static string SectionText(int completedCount, int questionCount, bool sectionCompleted, bool sequential)
+        private static string SectionText(int completedCount, bool sectionCompleted, bool sequential)
         {
             if (sectionCompleted)
             {
                 return "Completed";
             }
 
-            if (completedCount < questionCount)
-            {
+            //if (completedCount < questionCount)
+            //{
                 if (sequential && completedCount == 0)
                 {
                     return "Next";
@@ -104,9 +104,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 }
 
                 return string.Empty;
-            }
+            //}
 
-            return "Completed";
+            //return "Completed";
         }
     }
 }

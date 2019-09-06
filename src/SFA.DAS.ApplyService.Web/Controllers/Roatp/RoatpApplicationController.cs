@@ -673,7 +673,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute);
 
             updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, yourOrganisationSection.Id, RoatpWorkflowPageIds.YourOrganisation, yourOrganisationAnswers);
-            
+
+            await _apiClient.MarkSectionAsCompleted(applicationId, yourOrganisationSection.Id);
+
             var conditionsOfAcceptanceAnswers = questions
                 .Where(x => x.SequenceId == RoatpWorkflowSequenceIds.ConditionsOfAcceptance).AsEnumerable<Answer>()
                 .ToList();

@@ -135,6 +135,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                     }
                 }
             };
+            _providerRouteSection.SectionCompleted = true;
 
             _whatYouNeedSection.QnAData = new QnAData
             {
@@ -200,6 +201,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                     }
                 }
             };
+            _providerRouteSection.SectionCompleted = true;
 
             _whatYouNeedSection.QnAData = new QnAData
             {
@@ -229,6 +231,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                     }
                 }
             };
+            _whatYouNeedSection.SectionCompleted = true;
 
             var model = new TaskListViewModel
             {
@@ -287,6 +290,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                     }
                 }
             };
+            criminalWhatYouNeedSection.SectionCompleted = true;
             var criminalOrganisationChecksSection = new ApplicationSection
             {
                 SequenceId = RoatpWorkflowSequenceIds.CriminalComplianceChecks,
