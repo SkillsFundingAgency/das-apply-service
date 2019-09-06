@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using SFA.DAS.ApplyService.Application.Apply.Roatp;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -160,5 +161,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(new CheckOrganisationStandardStatusRequest(applicationId, standardId));
         }
 
+        [HttpPost("/Application/{applicationId}/SectionCompleted/{applicationSectionId}")]
+        public async Task<bool> MarkSectionAsCompleted(Guid applicationId, Guid applicationSectionId)
+        {
+            return await _mediator.Send(new MarkApplicationSectionAsCompletedRequest(applicationId, applicationSectionId));
+        }
+
+        [HttpGet("/Application/{applicationId}/IsSectionComplete/{applicationSectionId}")]
+        public async Task<bool> IsSectionCompleted(Guid applicationId, Guid applicationSectionId)
+        {
+            return await _mediator.Send(new GetApplicationSectionCompletedRequest(applicationId, applicationSectionId));
+        }
     }
 }
