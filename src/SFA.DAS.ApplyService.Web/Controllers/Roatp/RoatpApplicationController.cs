@@ -296,12 +296,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
 
+            var preambleSequence = sequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.Preamble);
+            var preambleSections = await _qnaApiClient.GetSections(applicationId, preambleSequence.Id);
+            var preambleSection = preambleSections.FirstOrDefault();
+            var verifiedCompaniesHouse = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany);
+            var verifiedCharityCommission = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity);
+
             var model = new TaskListViewModel
             {
                 ApplicationId = applicationId,
                 ApplicationSequences = filteredSequences,
                 UKPRN = organisationDetails.OrganisationUkprn?.ToString(),
-                OrganisationName = organisationDetails.Name
+                OrganisationName = organisationDetails.Name,
+                VerifiedCompaniesHouse = (verifiedCompaniesHouse.Value == "TRUE"),
+                VerifiedCharityCommision = (verifiedCharityCommission.Value == "TRUE")
             };
 
             return View("~/Views/Roatp/TaskList.cshtml", model);

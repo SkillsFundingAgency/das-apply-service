@@ -1712,7 +1712,7 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,1)
 
 DECLARE @ConfirmWhosInControlSectionId UNIQUEIDENTIFIER
-SET @ConfirmWhosInControlSectionId = '81DF6266-13E4-4928-8774-0C9E0C74B551'
+SET @ConfirmWhosInControlSectionId = 'A3DA075D-858F-4498-8BFF-0360BD5EC459'
 
 INSERT [dbo].[WorkflowSections]
   ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
@@ -1983,7 +1983,7 @@ VALUES
 ', N'Confirm who''s in control', N'Confirm who''s in control', N'Draft', N'Pages')
 
 DECLARE @ConfirmWhosInControlSequenceId UNIQUEIDENTIFIER
-SET @ConfirmWhosInControlSequenceId = '0B946C18-E335-4440-88D5-4345599F72E1'
+SET @ConfirmWhosInControlSequenceId = '2639B6CA-55F4-4578-9DDB-0B3E3F4A2139'
 
 INSERT INTO [dbo].[WorkflowSequences]
            ([Id]

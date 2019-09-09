@@ -67,6 +67,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static int ProviderRoute = 1;
             public static int WhatYouWillNeed = 2;
             public static int OrganisationDetails = 3;
+            public static int WhosInControl = 4;
         }
 
         public static class FinancialEvidence
@@ -93,6 +94,15 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string YourOrganisationParentCompanyCheck = "20";
         public static string YourOrganisationParentCompanyDetails = "21";
         public static string ConditionsOfAcceptance = "999999";
+
+        public static class WhosInControl
+        {
+            public static string CompaniesHouseStartPage = "70";
+            public static string CharityCommissionStartPage = "80";
+            public static string CharityCommissionNoTrustees = "90";
+            public static string SoleTraderPartnership = "100";
+            public static string AddPeopleInControl = "130";
+        }
     }
 
     public static class RoatpWorkflowQuestionTags
