@@ -463,6 +463,32 @@ VALUES
             "Validations": []            
           },
           "Order": null
+        },
+        {
+          "QuestionId": "PRE-100",
+          "QuestionTag": "Companies-House-Directors",
+          "Label": "",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Text",
+            "Validations": []            
+          },
+          "Order": null
+        },
+        {
+          "QuestionId": "PRE-101",
+          "QuestionTag": "Companies-House-PSCs",
+          "Label": "",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Text",
+            "Validations": []            
+          },
+          "Order": null
         }
       ],
       "PageOfAnswers": [],
