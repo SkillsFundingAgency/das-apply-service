@@ -152,6 +152,8 @@ namespace SFA.DAS.ApplyService.Web
                 config.For<OrganisationSearchApiClient>().Use<OrganisationSearchApiClient>();
                 config.For<CreateAccountValidator>().Use<CreateAccountValidator>();
                 config.For<UserService>().Use<UserService>();
+                config.For<IQnaTokenService>().Use<QnaTokenService>();
+                config.For<IQnaApiClient>().Use<QnaApiClient>();
                 config.Populate(services);
             });
 
