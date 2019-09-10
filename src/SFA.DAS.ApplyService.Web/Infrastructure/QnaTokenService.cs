@@ -7,13 +7,15 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
     public class QnaTokenService : IQnaTokenService
     {
-        private readonly IApplyConfig _configuration;
+        private readonly IConfigurationService _configurationService;
         private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IApplyConfig _configuration;
 
-        public QnaTokenService(IApplyConfig configuration, IHostingEnvironment hostingEnvironment)
+        public QnaTokenService(IConfigurationService configurationService, IHostingEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
-            _configuration = configuration;
+            _configurationService = configurationService;
+            _configuration = configurationService.GetConfig().Result;
         }
 
         public string GetToken()
