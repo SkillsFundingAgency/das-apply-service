@@ -17,10 +17,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     public class QnaApiClient : IQnaApiClient
     {
         private readonly ILogger<QnaApiClient> _logger;
-        private readonly ITokenService _tokenService;
+        private readonly IQnaTokenService _tokenService;
         private static readonly HttpClient _httpClient = new HttpClient();
 
-        public QnaApiClient(IConfigurationService configurationService, ILogger<QnaApiClient> logger, ITokenService tokenService)
+        public QnaApiClient(IConfigurationService configurationService, ILogger<QnaApiClient> logger, IQnaTokenService tokenService)
         {
             _logger = logger;
             _tokenService = tokenService;
