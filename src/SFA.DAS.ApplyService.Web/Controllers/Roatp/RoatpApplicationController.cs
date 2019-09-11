@@ -259,7 +259,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     return await TaskList(applicationId);
                 }
 
-                page = await GetDataFedOptions(page);
+                page = await GetDataFedOptions(applicationId, page);
 
                 viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, pageContext, redirectAction,
                     returnUrl, null);
@@ -367,7 +367,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return canUpdate;
         }
 
-        private async Task<Page> GetDataFedOptions(Page page)
+        private async Task<Page> GetDataFedOptions(Guid applicationId, Page page)
         {
             if (page != null)
             {
@@ -380,7 +380,21 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         question.Input.Options = questionOptions;
                         question.Input.Type = question.Input.Type.Replace("DataFed_", "");
                     }
+                    if (question.Input.Type == "TabularData")
+                    {
+                        var answer = await _qnaApiClient.GetAnswerByTag(applicationId, question.QuestionTag);
+                        if (page.PageOfAnswers == null || page.PageOfAnswers.Count < 1)
+                        {
+                            page.PageOfAnswers = new List<PageOfAnswers>();
+
+                            var pageOfAnswers = new PageOfAnswers { Id = Guid.NewGuid(), Answers = new List<Answer>() };
+                            page.PageOfAnswers.Add(pageOfAnswers);
+                        }
+                        var autoFilledAnswer = new Answer { QuestionId = question.QuestionId, Value = answer.Value };
+                        page.PageOfAnswers.First().Answers.Add(autoFilledAnswer);
+                    }
                 }
+                
             }
 
             return page;
@@ -457,7 +471,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
-            var invalidPage = await GetDataFedOptions(page);
+            var invalidPage = await GetDataFedOptions(applicationId, page);
             this.TempData["InvalidPage"] = JsonConvert.SerializeObject(invalidPage);
 
             return await Page(applicationId, sequenceId, sectionId, pageId, redirectAction);
