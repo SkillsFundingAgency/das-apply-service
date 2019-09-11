@@ -228,7 +228,20 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                     QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCompanyNumber,
                     Value = companiesHouseVerification.VerificationId
                 });
+            }
+            else
+            {
+                questions.Add(new PreambleAnswer
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCompanyNumber,
+                    Value = string.Empty
+                });
 
+                questions.Add(new PreambleAnswer
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany,
+                    Value = string.Empty
+                });
             }
 
             if (applicationDetails.UkrlpLookupDetails?.VerificationDetails?.FirstOrDefault(x => x.VerificationAuthority == VerificationAuthorities.CharityCommissionAuthority) != null)
@@ -237,6 +250,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 {
                     QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity,
                     Value = "TRUE"
+                });
+            }
+            else
+            {
+                questions.Add(new PreambleAnswer
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity,
+                    Value = string.Empty
                 });
             }
 
@@ -251,7 +272,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                     x.VerificationAuthority == VerificationAuthorities.SoleTraderPartnershipAuthority) != null)
             {
                 soleTraderPartnershipVerification = "TRUE";
-            }
+            }           
 
             questions.Add(new PreambleAnswer
             {
@@ -386,6 +407,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                     Value = applicationDetails.RoatpRegisterStatus.RemovedReasonId.ToString()
                 });
             }
+            else
+            {
+                questions.Add(new PreambleAnswer
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.RoatpRemovedReason,
+                    Value = string.Empty
+                });
+            }
 
             if (applicationDetails.RoatpRegisterStatus.StatusDate.HasValue)
             {
@@ -393,6 +422,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 {
                     QuestionId = RoatpPreambleQuestionIdConstants.RoatpStatusDate,
                     Value = applicationDetails.RoatpRegisterStatus.StatusDate.ToString()
+                });
+            }
+            else
+            {
+                questions.Add(new PreambleAnswer
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.RoatpStatusDate,
+                    Value = string.Empty
                 });
             }
            
