@@ -406,7 +406,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 Value = providerRoute
             });
 
-            if (applicationDetails.RoatpRegisterStatus.StatusId == OrganisationStatus.Removed)
+            if (onRoatpRegister == "TRUE" && applicationDetails.RoatpRegisterStatus.StatusId == OrganisationStatus.Removed)
             {
                 questions.Add(new PreambleAnswer
                 {
@@ -423,7 +423,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 });
             }
 
-            if (applicationDetails.RoatpRegisterStatus.StatusDate.HasValue)
+            if (onRoatpRegister == "TRUE" && applicationDetails.RoatpRegisterStatus.StatusDate.HasValue)
             {
                 questions.Add(new PreambleAnswer
                 {
