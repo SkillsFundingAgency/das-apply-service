@@ -1753,16 +1753,34 @@ VALUES
       "Title": "Confirm who''s in control",
       "LinkTitle": "",
       "InfoText": "",
+	  "Details": {
+        "Title": "What if these details are wrong?",
+        "Body": "<p class=\"govuk-body\">Contact Companies House to <a href=\"https://www.gov.uk/file-changes-to-a-company-with-companies-house\">change these details (opens in a new window or tab)</a>.</p><p class=\"govuk-body\">After your changes have been confirmed, sign back in to continue with this application.</p>"
+      },
       "Questions": [
         {
-          "QuestionId": "YO-70",
-          "QuestionTag": "Confirm-Directors-PSCs",
-          "Label": "Confirm who''s in control",
+          "QuestionId": "PRE-100",
+          "QuestionTag": "Companies-House-Directors",
+          "Label": "",
           "ShortLabel": "",
-          "QuestionBodyText": "PLACEHOLDER Confirm Directors PSCs",
+          "QuestionBodyText": "<p class=\"govuk-body\">These are the details we found on Companies House.</p>",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",			
+            "Type": "TabularData",			
+            "Validations": [              
+            ]
+          },
+          "Order": null
+        },
+		{
+          "QuestionId": "PRE-101",
+          "QuestionTag": "Companies-House-PSCs",
+          "Label": "",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "TabularData",			
             "Validations": [              
             ]
           },
