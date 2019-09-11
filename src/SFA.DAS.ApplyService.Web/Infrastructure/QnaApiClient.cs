@@ -13,6 +13,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     using Application.Apply.UpdatePageAnswers;
+    using Newtonsoft.Json.Linq;
 
     public class QnaApiClient : IQnaApiClient
     {
@@ -55,6 +56,26 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
 
             return await Task.FromResult(new Answer { QuestionId = questionId, Value = string.Empty });
+        }
+
+        public async Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag)
+        {
+            var answer = new Answer();
+            var applicationDataJson = await (await _httpClient.GetAsync(
+                    $"Applications/{applicationId}/applicationData")
+                )
+                .Content.ReadAsAsync<object>();
+            var applicationData = JObject.Parse(applicationDataJson.ToString());
+            if (applicationData != null)
+            {
+                var answerData = applicationData[questionTag];
+                if (answerData != null)
+                {
+                    answer.Value = answerData.Value<string>();
+                }
+            }
+
+            return await Task.FromResult(answer);
         }
 
         public async Task<Page> GetPage(Guid applicationId, Guid sectionId, string pageId)

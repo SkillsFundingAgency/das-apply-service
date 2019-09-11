@@ -14,14 +14,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     public class RoatpYourOrganisationApplicationController : Controller
     {
         private readonly ILogger<RoatpYourOrganisationApplicationController> _logger;
-        private readonly IApplicationApiClient _applicationApiClient;
+        private readonly IQnaApiClient _qnaApiClient;
         private readonly IOrganisationApiClient _organisationApiClient;
 
         public RoatpYourOrganisationApplicationController(ILogger<RoatpYourOrganisationApplicationController> logger,
-            IApplicationApiClient applicationApiClient)
+            IQnaApiClient qnaApiClient)
         {
             _logger = logger;
-            _applicationApiClient = applicationApiClient;
+            _qnaApiClient = qnaApiClient;
         }
 
         public async Task<IActionResult> ProviderRoute(Guid applicationId)
@@ -55,10 +55,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             int providerTypeId = 1;
             string pageId = RoatpWorkflowPageIds.YourOrganisationIntroductionMain;
 
-            var providerTypeAnswer = await _applicationApiClient.GetAnswer(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
-            if (providerTypeAnswer != null && !String.IsNullOrWhiteSpace(providerTypeAnswer.Answer))
+            var providerTypeAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
+            if (providerTypeAnswer != null && !String.IsNullOrWhiteSpace(providerTypeAnswer.Value))
             {
-                int.TryParse(providerTypeAnswer.Answer, out providerTypeId);
+                int.TryParse(providerTypeAnswer.Value, out providerTypeId);
             }
 
             switch (providerTypeId)
