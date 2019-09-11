@@ -74,7 +74,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                     answer.Value = answerData.Value<string>();
                 }
             }
-            
+
             return await Task.FromResult(answer);
         }
 
