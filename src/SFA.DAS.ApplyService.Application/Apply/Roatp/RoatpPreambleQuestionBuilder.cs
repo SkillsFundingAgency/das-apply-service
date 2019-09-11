@@ -382,21 +382,28 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 Value = onRoatpRegister
             });
 
-            if (onRoatpRegister == string.Empty)
+            string registerStatus = string.Empty;
+            if (onRoatpRegister == "TRUE")
             {
-                return;
+                registerStatus = applicationDetails.RoatpRegisterStatus.StatusId.ToString();
             }
 
             questions.Add(new PreambleAnswer
             {
                 QuestionId = RoatpPreambleQuestionIdConstants.RoatpCurrentStatus,
-                Value = applicationDetails.RoatpRegisterStatus.StatusId.ToString()
+                Value = registerStatus
             });
+
+            string providerRoute = string.Empty;
+            if (onRoatpRegister == "TRUE")
+            {
+                providerRoute = applicationDetails.RoatpRegisterStatus.ProviderTypeId.ToString();
+            }
 
             questions.Add(new PreambleAnswer
             {
                 QuestionId = RoatpPreambleQuestionIdConstants.RoatpProviderRoute,
-                Value = applicationDetails.RoatpRegisterStatus.ProviderTypeId.ToString()
+                Value = providerRoute
             });
 
             if (applicationDetails.RoatpRegisterStatus.StatusId == OrganisationStatus.Removed)
@@ -432,7 +439,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                     Value = string.Empty
                 });
             }
-           
+
         }
     }
 
