@@ -11,6 +11,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
 
     public class TabularDataRow
     {
+        public string Id { get; set; }
         public List<string> Columns { get; set; }
     }
 }

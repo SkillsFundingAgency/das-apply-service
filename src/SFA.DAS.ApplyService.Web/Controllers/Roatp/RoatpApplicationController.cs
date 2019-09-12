@@ -104,6 +104,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var preambleQuestions = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(applicationDetails);
 
             await SavePreambleQuestions(response.ApplicationId, userId, preambleQuestions);
+
+            var whosInControlQuestions = RoatpPreambleQuestionBuilder.CreateCompaniesHouseWhosInControlQuestions(applicationDetails);
+
+            await SaveCompaniesHouseWhosInControlQuestions(response.ApplicationId, userId, whosInControlQuestions);
             
             return RedirectToAction("Applications", new { applicationType = applicationType });
         }
@@ -391,7 +395,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                             page.PageOfAnswers.Add(pageOfAnswers);
                         }
                         var autoFilledAnswer = new Answer { QuestionId = question.QuestionId, Value = answer.Value };
-                        page.PageOfAnswers.First().Answers.Add(autoFilledAnswer);
+                        var answersCollection = page.PageOfAnswers.First().Answers;
+                        if (answersCollection.FirstOrDefault(x => x.QuestionId == question.QuestionId) == null)
+                        {
+                            answersCollection.Add(autoFilledAnswer);
+                        }
                     }
                 }
                 
@@ -710,6 +718,21 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 conditionsOfAcceptanceSections.FirstOrDefault(x => x.SectionId == DefaultSectionId);
 
             updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, conditionsOfAcceptanceSection.Id, RoatpWorkflowPageIds.ConditionsOfAcceptance, conditionsOfAcceptanceAnswers);
+        }
+
+        private async Task SaveCompaniesHouseWhosInControlQuestions(Guid applicationId, Guid userId, List<PreambleAnswer> questions)
+        {
+
+            var applicationSequences = await _qnaApiClient.GetSequences(applicationId);
+            
+            var yourOrganisationSequence =
+                applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
+            var yourOrganisationSections = await _qnaApiClient.GetSections(applicationId, yourOrganisationSequence.Id);
+            var whosInControlSection = yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+       
+            var whosInControlQuestions = questions.AsEnumerable<Answer>().ToList();                  
+
+            var updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, whosInControlQuestions);
         }
 
         private bool IsPostBack()

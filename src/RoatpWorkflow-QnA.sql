@@ -463,32 +463,6 @@ VALUES
             "Validations": []            
           },
           "Order": null
-        },
-        {
-          "QuestionId": "PRE-100",
-          "QuestionTag": "Companies-House-Directors",
-          "Label": "",
-          "ShortLabel": "",
-          "QuestionBodyText": "",
-          "Hint": "",
-          "Input": {
-            "Type": "Text",
-            "Validations": []            
-          },
-          "Order": null
-        },
-        {
-          "QuestionId": "PRE-101",
-          "QuestionTag": "Companies-House-PSCs",
-          "Label": "",
-          "ShortLabel": "",
-          "QuestionBodyText": "",
-          "Hint": "",
-          "Input": {
-            "Type": "Text",
-            "Validations": []            
-          },
-          "Order": null
         }
       ],
       "PageOfAnswers": [],
@@ -1759,7 +1733,7 @@ VALUES
       },
       "Questions": [
         {
-          "QuestionId": "PRE-100",
+          "QuestionId": "YO-70",
           "QuestionTag": "Companies-House-Directors",
           "Label": "",
           "ShortLabel": "",
@@ -1773,7 +1747,7 @@ VALUES
           "Order": null
         },
 		{
-          "QuestionId": "PRE-101",
+          "QuestionId": "YO-71",
           "QuestionTag": "Companies-House-PSCs",
           "Label": "",
           "ShortLabel": "",
@@ -1804,7 +1778,7 @@ VALUES
       "Next": [      
 		{
           "Action": "NextPage",
-          "ReturnId": "130",
+          "ReturnId": "140",
           "Condition": null,
           "ConditionMet": false
         }

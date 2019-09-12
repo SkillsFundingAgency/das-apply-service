@@ -7,7 +7,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
     using Domain.Apply;
     using Domain.Roatp;
     using Newtonsoft.Json;
-    using SFA.DAS.ApplyService.Domain.CompaniesHouse;
     using SFA.DAS.ApplyService.Domain.Ukrlp;
 
     public static class RoatpPreambleQuestionIdConstants
@@ -42,8 +41,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string RoatpRemovedReason = "PRE-92";
         public static string RoatpStatusDate = "PRE-93";
         public static string RoatpProviderRoute = "PRE-94";
-        public static string CompaniesHouseDirectors = "PRE-100";
-        public static string CompaniesHousePSCs = "PRE-101";
+        public static string CompaniesHouseDirectors = "YO-70";
+        public static string CompaniesHousePSCs = "YO-71";
         public static string ApplyProviderRoute = "YO-1";
         public static string ApplyProviderRouteMain = "YO-1.1";              
         public static string ApplyProviderRouteEmployer = "YO-1.2";
@@ -137,6 +136,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             CreateRoatpQuestionAnswers(applicationDetails, questions);
 
             CreateApplyQuestionAnswers(applicationDetails, questions);
+
+            return questions;
+        }
+
+        public static List<PreambleAnswer> CreateCompaniesHouseWhosInControlQuestions(ApplicationDetails applicationDetails)
+        {
+            var questions = new List<PreambleAnswer>();
+
+            CreateCompaniesHouseDirectorsData(applicationDetails, questions);
+            CreateCompaniesHousePscData(applicationDetails, questions);
 
             return questions;
         }
@@ -348,8 +357,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseIncorporationDate,
                 Value = incorporationDate
             });
-            CreateCompaniesHouseDirectorsData(applicationDetails, questions);
-            CreateCompaniesHousePscData(applicationDetails, questions);
         }
 
         private static void CreateCompaniesHouseDirectorsData(ApplicationDetails applicationDetails, List<PreambleAnswer> questions)
@@ -367,6 +374,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 {
                     var dataRow = new TabularDataRow
                     {
+                        Id = director.Id,
                         Columns = new List<string> { director.Name, FormatDateOfBirth(director.DateOfBirth) }
                     };
                     table.DataRows.Add(dataRow);
@@ -403,6 +411,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 {
                     var dataRow = new TabularDataRow
                     {
+                        Id = person.Id,
                         Columns = new List<string> { person.Name, FormatDateOfBirth(person.DateOfBirth) }
                     };
                     table.DataRows.Add(dataRow);
