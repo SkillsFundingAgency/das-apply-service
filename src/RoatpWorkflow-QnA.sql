@@ -1785,6 +1785,19 @@ VALUES
             ]
           },
           "Order": null
+        },
+		{
+          "QuestionId": "YO-75",
+          "QuestionTag": "Directors-PSCs-Confirmed",
+          "Label": "",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Validations": []
+          },
+          "Order": null
         }
       ],
       "PageOfAnswers": [],
