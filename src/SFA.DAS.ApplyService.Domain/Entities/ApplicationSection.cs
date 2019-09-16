@@ -16,7 +16,9 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     public class ApplicationSection : EntityBase
     {
         public Guid ApplicationId { get; set; }
+        [JsonProperty("SectionNo")]
         public int SectionId { get; set; }
+        [JsonProperty("SequenceNo")]
         public int SequenceId { get; set; }
 
         public QnAData QnAData { get; set; }
@@ -53,6 +55,8 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         }
 
         public bool NotRequired { get; set; }
+
+        public bool SectionCompleted { get; set; }
     }
 
     public class ApplicationSectionStatus

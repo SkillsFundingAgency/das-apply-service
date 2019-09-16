@@ -30,36 +30,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
             var workflowId = await _applyRepository.GetLatestWorkflow(request.ApplicationType);
             var applicationId =
-                await _applyRepository.CreateApplication(request.ApplicationType, org.Id, request.UserId, workflowId);
-
-            var sections =
-                await _applyRepository.CopyWorkflowToApplication(applicationId, workflowId, org.OrganisationType);
-
-            foreach (var applicationSection in sections)
-            {
-                var pagesToMakeNotRequired = applicationSection.QnAData.Pages.Where(p => p.NotRequiredOrgTypes != null && p.NotRequiredOrgTypes.Contains(org.OrganisationType));
-
-                foreach (var page in pagesToMakeNotRequired)
-                {
-                    page.NotRequired = true;
-                    page.Complete = true;
-                }
-
-                string QnADataJson = JsonConvert.SerializeObject(applicationSection.QnAData);
-                foreach (var asset in assets)
-                {
-                    QnADataJson = QnADataJson.Replace(asset.Reference, HttpUtility.JavaScriptStringEncode(asset.Text));
-                }
-
-                applicationSection.QnAData = JsonConvert.DeserializeObject<QnAData>(QnADataJson);
-            }
-
-            var sequences = await _applyRepository.GetSequences(applicationId);
-            
-            DisableSequencesAndSectionsAsAppropriate(org, sequences, sections);
-
-            await _applyRepository.UpdateSections(sections);
-            await _applyRepository.UpdateSequences(sequences);
+                await _applyRepository.CreateApplication(request.ApplicationId, request.ApplicationType, org.Id, request.UserId, workflowId);
 
             return new StartApplicationResponse() {ApplicationId = applicationId};
         }

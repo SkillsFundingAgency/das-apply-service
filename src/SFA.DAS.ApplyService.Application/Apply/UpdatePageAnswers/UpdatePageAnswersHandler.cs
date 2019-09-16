@@ -209,11 +209,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
                 await _applyRepository.SaveSection(section, request.UserId);
 
                 return new UpdatePageAnswersResult
-                    {Page = page, ValidationPassed = true};
+                    {NextActionId = page.PageId, ValidationPassed = true};
             }
 
             return new UpdatePageAnswersResult
-                { Page = page, ValidationPassed = false, ValidationErrors = validationErrors };
+                { NextActionId = page.PageId, ValidationPassed = false, ValidationErrors = validationErrors };
             
         }
 

@@ -124,7 +124,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<StartApplicationResponse> StartApplication(Guid userId, string applicationType)
         {
-            var request = new StartApplyRequest { UserId = userId, ApplicationType = applicationType };
+            return await StartApplication(Guid.NewGuid(), userId, applicationType);
+        }
+
+        public async Task<StartApplicationResponse> StartApplication(Guid applicationId, Guid userId, string applicationType)
+        {
+            var request = new StartApplyRequest { ApplicationId = applicationId, UserId = userId, ApplicationType = applicationType };
 
             var httpResponse = await _httpClient.PostAsJsonAsync("/Application/Start", request);
             var startApplicationResponse = await httpResponse.Content.ReadAsAsync<StartApplicationResponse>();
@@ -209,6 +214,19 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task<GetAnswersResponse> GetAnswer(Guid applicationId, string questionIdentifier)
         {
             return await (await _httpClient.GetAsync($"Answer/{WebUtility.UrlEncode(questionIdentifier)}/{applicationId}")).Content.ReadAsAsync<GetAnswersResponse>();
+        }
+
+        public async Task<bool> MarkSectionAsCompleted(Guid applicationId, Guid applicationSectionId)
+        {
+            await _httpClient.PostAsJsonAsync($"/Application/{applicationId}/SectionCompleted/{applicationSectionId}", new { applicationId, applicationSectionId });
+            //return await (await _httpClient.PostAsJsonAsync($"/Application/{applicationId}/SectionCompleted/{applicationSectionId}", new { applicationId, applicationSectionId })));
+
+            return await Task.FromResult<bool>(true);
+        }
+
+        public async Task<bool> IsSectionCompleted(Guid applicationId, Guid applicationSectionId)
+        {
+            return await (await _httpClient.GetAsync($"/Application/{applicationId}/IsSectionComplete/{applicationSectionId}")).Content.ReadAsAsync<bool>();
         }
     }
 }

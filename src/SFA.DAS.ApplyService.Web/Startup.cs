@@ -26,6 +26,9 @@ using StackExchange.Redis;
 
 namespace SFA.DAS.ApplyService.Web
 {
+    using Controllers;
+    using SFA.DAS.ApplyService.Web.Configuration;
+
     public class Startup
     {
         private readonly IConfiguration _configuration;
@@ -63,7 +66,11 @@ namespace SFA.DAS.ApplyService.Web
             
             services.AddMvc(options => { options.Filters.Add<PerformValidationFilter>(); })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            
+
+            services.AddOptions();
+
+            services.Configure<List<TaskListConfiguration>>(_configuration.GetSection("TaskListSequences"));
+
             if (_env.IsDevelopment())
             {
                 services.AddDataProtection()
@@ -145,6 +152,8 @@ namespace SFA.DAS.ApplyService.Web
                 config.For<OrganisationSearchApiClient>().Use<OrganisationSearchApiClient>();
                 config.For<CreateAccountValidator>().Use<CreateAccountValidator>();
                 config.For<UserService>().Use<UserService>();
+                config.For<IQnaTokenService>().Use<QnaTokenService>();
+                config.For<IQnaApiClient>().Use<QnaApiClient>();
                 config.Populate(services);
             });
 

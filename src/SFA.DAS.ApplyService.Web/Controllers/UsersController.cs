@@ -141,7 +141,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
             }
             
-            return RedirectToAction("Applications", "Application", new { applicationType = selectedApplicationType });
+            return RedirectToAction("Applications", "RoatpApplication", new { applicationType = selectedApplicationType });
 
         }
 
