@@ -43,6 +43,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string RoatpProviderRoute = "PRE-94";
         public static string CompaniesHouseDirectors = "YO-70";
         public static string CompaniesHousePSCs = "YO-71";
+        public static string CompaniesHouseDetailsConfirmed = "YO-75";
         public static string ApplyProviderRoute = "YO-1";
         public static string ApplyProviderRouteMain = "YO-1.1";              
         public static string ApplyProviderRouteEmployer = "YO-1.2";
@@ -146,10 +147,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
             CreateCompaniesHouseDirectorsData(applicationDetails, questions);
             CreateCompaniesHousePscData(applicationDetails, questions);
-
+            CreateBlankCompaniesHouseConfirmationQuestion(questions);
             return questions;
         }
-
+        
         private static void CreateApplyQuestionAnswers(ApplicationDetails applicationDetails, List<PreambleAnswer> questions)
         {
             questions.Add(new PreambleAnswer
@@ -472,6 +473,15 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             {
                 QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionRegistrationDate,
                 Value = incorporationDate
+            });
+        }
+        
+        private static void CreateBlankCompaniesHouseConfirmationQuestion(List<PreambleAnswer> questions)
+        {
+            questions.Add(new PreambleAnswer
+            {
+                QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseDetailsConfirmed,
+                Value = string.Empty
             });
         }
 

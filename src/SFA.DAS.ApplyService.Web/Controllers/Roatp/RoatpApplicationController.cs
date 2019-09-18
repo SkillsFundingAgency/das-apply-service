@@ -722,7 +722,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private async Task SaveCompaniesHouseWhosInControlQuestions(Guid applicationId, Guid userId, List<PreambleAnswer> questions)
         {
-
             var applicationSequences = await _qnaApiClient.GetSequences(applicationId);
             
             var yourOrganisationSequence =
