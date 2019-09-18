@@ -1723,7 +1723,7 @@ VALUES
 	{
       "PageId": "70",
       "SequenceId": "1",
-      "SectionId": "3",
+      "SectionId": "4",
       "Title": "Confirm who''s in control",
       "LinkTitle": "",
       "InfoText": "",
@@ -1797,7 +1797,7 @@ VALUES
 	{
       "PageId": "80",
       "SequenceId": "1",
-      "SectionId": "3",
+      "SectionId": "4",
       "Title": "Confirm who''s in control",
       "LinkTitle": "",
       "InfoText": "",
@@ -1840,7 +1840,7 @@ VALUES
 	{
       "PageId": "90",
       "SequenceId": "1",
-      "SectionId": "3",
+      "SectionId": "4",
       "Title": "Confirm who''s in control",
       "LinkTitle": "",
       "InfoText": "",
@@ -1883,7 +1883,7 @@ VALUES
 	{
       "PageId": "100",
       "SequenceId": "1",
-      "SectionId": "3",
+      "SectionId": "4",
       "Title": "Tell us your organisation''s type",
       "LinkTitle": "",
       "InfoText": "",
@@ -1926,7 +1926,7 @@ VALUES
 		{
       "PageId": "140",
       "SequenceId": "1",
-      "SectionId": "3",
+      "SectionId": "4",
       "Title": "Tell us your organisation''s type",
       "LinkTitle": "",
       "InfoText": "",
@@ -1969,7 +1969,7 @@ VALUES
 	{
       "PageId": "150",
       "SequenceId": "1",
-      "SectionId": "3",
+      "SectionId": "4",
       "Title": "Tell us your organisation''s type",
       "LinkTitle": "",
       "InfoText": "",
