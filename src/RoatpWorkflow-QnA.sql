@@ -1723,7 +1723,7 @@ VALUES
 	{
       "PageId": "70",
       "SequenceId": "1",
-      "SectionId": "3",
+      "SectionId": "4",
       "Title": "Confirm who''s in control",
       "LinkTitle": "",
       "InfoText": "",
@@ -1797,7 +1797,7 @@ VALUES
 	{
       "PageId": "80",
       "SequenceId": "1",
-      "SectionId": "3",
+      "SectionId": "4",
       "Title": "Confirm who''s in control",
       "LinkTitle": "",
       "InfoText": "",
@@ -1840,7 +1840,7 @@ VALUES
 	{
       "PageId": "90",
       "SequenceId": "1",
-      "SectionId": "3",
+      "SectionId": "4",
       "Title": "Confirm who''s in control",
       "LinkTitle": "",
       "InfoText": "",
@@ -1883,13 +1883,13 @@ VALUES
 	{
       "PageId": "100",
       "SequenceId": "1",
-      "SectionId": "3",
+      "SectionId": "4",
       "Title": "Tell us your organisation''s type",
       "LinkTitle": "",
       "InfoText": "",
 	  "Details": {
         "Title": "What is a sole trader or partnership?",
-        "Body": "<p class=\"govuk-body\">A sole trader is someone who''s self-employed and is the only owner of their business</p><p class=\"govuk-body\">A partnership is when two or more people agree to share the profits, costs and risks of running a business.</p>"
+        "Body": "<p class=\"govuk-body\">A sole trader is someone who''s self-employed and is the only owner of their business.</p><p class=\"govuk-body\">A partnership is when two or more people agree to share the profits, costs and risks of running a business.</p>"
       },
       "Questions": [
         {
@@ -1900,16 +1900,16 @@ VALUES
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Radio",
+            "Type": "ComplexRadio",
 			"Options": [
 			{
                 "Label": "Sole trader",
-				"Value": "S",
+				"Value": "Sole trader",
                 "FurtherQuestions": null
               },
 			  {
                 "Label": "Partnership",
-				"Value": "P",
+				"Value": "Partnership",
                 "FurtherQuestions": null
               }
 			]
@@ -1923,8 +1923,8 @@ VALUES
           "Action": "NextPage",
           "ReturnId": "110",
           "Condition": {
-            "QuestionTag": "SoleTrade-or-Partnership",
-            "MustEqual": "P"
+            "QuestionId": "YO-100",
+            "MustEqual": "Partnership"
           },
           "ConditionMet": false
         },
@@ -1932,8 +1932,8 @@ VALUES
           "Action": "NextPage",
           "ReturnId": "120",
           "Condition": {
-            "QuestionTag": "SoleTrade-or-Partnership",
-            "MustEqual": "S"
+            "QuestionId": "YO-100",
+            "MustEqual": "Sole trader"
           },
           "ConditionMet": false
         }
@@ -1952,7 +1952,7 @@ VALUES
 	{
       "PageId": "110",
       "SequenceId": "1",
-      "SectionId": "3",
+      "SectionId": "4",
       "Title": "PLACEHOLDER Add Partner",
       "LinkTitle": "",
       "InfoText": "",
@@ -1995,7 +1995,7 @@ VALUES
 	{
       "PageId": "120",
       "SequenceId": "1",
-      "SectionId": "3",
+      "SectionId": "4",
       "Title": "PLACEHOLDER Add Sole Trader DOB",
       "LinkTitle": "",
       "InfoText": "",
@@ -2038,7 +2038,7 @@ VALUES
 	{
       "PageId": "140",
       "SequenceId": "1",
-      "SectionId": "3",
+      "SectionId": "4",
       "Title": "Tell us your organisation''s type",
       "LinkTitle": "",
       "InfoText": "",
@@ -2081,7 +2081,7 @@ VALUES
 	{
       "PageId": "150",
       "SequenceId": "1",
-      "SectionId": "3",
+      "SectionId": "4",
       "Title": "Tell us your organisation''s type",
       "LinkTitle": "",
       "InfoText": "",
