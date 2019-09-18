@@ -105,9 +105,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             await SavePreambleQuestions(response.ApplicationId, userId, preambleQuestions);
 
-            var whosInControlQuestions = RoatpPreambleQuestionBuilder.CreateCompaniesHouseWhosInControlQuestions(applicationDetails);
+            if (applicationDetails.UkrlpLookupDetails.VerifiedByCompaniesHouse)
+            {
+                var whosInControlQuestions = RoatpPreambleQuestionBuilder.CreateCompaniesHouseWhosInControlQuestions(applicationDetails);
 
-            await SaveCompaniesHouseWhosInControlQuestions(response.ApplicationId, userId, whosInControlQuestions);
+                await SaveCompaniesHouseWhosInControlQuestions(response.ApplicationId, userId, whosInControlQuestions);
+            }
             
             return RedirectToAction("Applications", new { applicationType = applicationType });
         }
