@@ -1778,6 +1778,33 @@ VALUES
       "Next": [      
 		{
           "Action": "NextPage",
+          "ReturnId": "90",
+          "Condition": {
+            "QuestionTag": "CC-TrusteeManualEntry",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "80",
+          "Condition": {
+            "QuestionTag": "UKRLP-Verification-Charity",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "150",
+          "Condition": {
+            "QuestionTag": "Apply-ProviderRoute",
+            "MustEqual": "2"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
           "ReturnId": "140",
           "Condition": null,
           "ConditionMet": false
