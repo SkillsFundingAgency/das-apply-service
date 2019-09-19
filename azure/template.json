@@ -110,6 +110,14 @@
                             {
                                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                                 "value": "[reference('UIAppInsights').outputs.InstrumentationKey.value]"
+                            },
+                            {
+                                "name": "WEBSITE_SWAP_WARMUP_PING_PATH",
+                                "value": "/health"
+                            },
+                            {
+                                "name": "WEBSITE_SWAP_WARMUP_PING_STATUSES",
+                                "value": "200"
                             }
                         ]
                     },
@@ -171,6 +179,14 @@
                             {
                                 "name": "FileStorage:StorageConnectionString",
                                 "value": "[reference('StorageAccount').outputs.storageConnectionString.value]"
+                            },
+                            {
+                                "name": "WEBSITE_SWAP_WARMUP_PING_PATH",
+                                "value": "/health"
+                            },
+                            {
+                                "name": "WEBSITE_SWAP_WARMUP_PING_STATUSES",
+                                "value": "200"
                             }
                         ]
                     },

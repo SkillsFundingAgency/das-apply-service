@@ -49,7 +49,16 @@
             <h3 class="govuk-heading-m">What happens next</h3>
 
             <ul class="govuk-list govuk-list--bullet">
-                <li>if your application is successful, you will appear in our list of organisations for this standard</li>
+                <li>
+                    @if (string.IsNullOrEmpty(Model.StandardName))
+                    {
+                        <text>if your application is successful, you will be able to apply to assess your first standard</text>
+                    }
+                    else
+                    {
+                        <text>if your application is successful, it will be added to the next update of the Register</text>
+                    }
+                </li>
                 <li>if your application is not successful, we will ask you for additional information to reassess your application</li>
             </ul>
 

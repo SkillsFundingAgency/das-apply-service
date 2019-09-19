@@ -55,7 +55,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             foreach (var file in files)
             {
                 var fileContent = new StreamContent(file.OpenReadStream())
-                    {Headers = {ContentLength = file.Length, ContentType = new MediaTypeHeaderValue(file.ContentType)}};
+                { Headers = { ContentLength = file.Length, ContentType = new MediaTypeHeaderValue(file.ContentType) } };
                 formDataContent.Add(fileContent, file.Name, file.FileName);
             }
 
@@ -64,7 +64,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                     formDataContent)).Content
                 .ReadAsAsync<UploadResult>();
         }
-        
+
         public async Task<HttpResponseMessage> Download(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId,string filename)
         {
             var downloadResponse = await _httpClient.GetAsync(
