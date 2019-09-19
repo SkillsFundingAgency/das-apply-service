@@ -23,6 +23,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     using Configuration;
     using Microsoft.Extensions.Options;
     using MoreLinq;
+    using SFA.DAS.ApplyService.Web.Services;
     using ViewModels.Roatp;
 
     [Authorize]
@@ -35,6 +36,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IConfigurationService _configService;
         private readonly IUserService _userService;
         private readonly IQnaApiClient _qnaApiClient;
+        private readonly IQuestionPropertyTokeniser _questionPropertyTokeniser;
         private readonly List<TaskListConfiguration> _configuration;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
@@ -42,7 +44,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public RoatpApplicationController(IApplicationApiClient apiClient, ILogger<RoatpApplicationController> logger,
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
-            IQnaApiClient qnaApiClient, IOptions<List<TaskListConfiguration>> configuration)
+            IQnaApiClient qnaApiClient, IOptions<List<TaskListConfiguration>> configuration,
+            IQuestionPropertyTokeniser questionPropertyTokeniser)
         {
             _apiClient = apiClient;
             _logger = logger;
@@ -52,6 +55,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _usersApiClient = usersApiClient;
             _qnaApiClient = qnaApiClient;
             _configuration = configuration.Value;
+            _questionPropertyTokeniser = questionPropertyTokeniser;
         }
 
         public async Task<IActionResult> Applications(string applicationType)
@@ -273,6 +277,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             }
 
+            TokeniseViewModelProperties(viewModel);
+
             if (viewModel.AllowMultipleAnswers)
             {
                 return View("~/Views/Application/Pages/MultipleAnswers.cshtml", viewModel);
@@ -280,7 +286,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             return View("~/Views/Application/Pages/Index.cshtml", viewModel);
         }
-
+        
         [Route("apply-training-provider-tasklist")]
         [HttpGet]
         public async Task<IActionResult> TaskList(Guid applicationId)
@@ -741,6 +747,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             return ControllerContext.HttpContext.Request.Method?.ToUpper() == "POST";
         }
-
+        
+        private async void TokeniseViewModelProperties(PageViewModel viewModel)
+        {
+            viewModel.Title =  await _questionPropertyTokeniser.GetTokenisedValue(viewModel.ApplicationId, viewModel.Title);
+            foreach(var questionModel in viewModel.Questions)
+            {
+                questionModel.Hint = await _questionPropertyTokeniser.GetTokenisedValue(viewModel.ApplicationId, questionModel.Hint);
+                questionModel.Label = await _questionPropertyTokeniser.GetTokenisedValue(viewModel.ApplicationId, questionModel.Label);
+                questionModel.QuestionBodyText = await _questionPropertyTokeniser.GetTokenisedValue(viewModel.ApplicationId, questionModel.QuestionBodyText);
+                questionModel.ShortLabel = await _questionPropertyTokeniser.GetTokenisedValue(viewModel.ApplicationId, questionModel.ShortLabel);
+            }
+        }
     }
 }

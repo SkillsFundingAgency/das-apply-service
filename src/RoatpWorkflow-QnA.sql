@@ -1996,19 +1996,19 @@ VALUES
       "PageId": "120",
       "SequenceId": "1",
       "SectionId": "4",
-      "Title": "PLACEHOLDER Add Sole Trader DOB",
+      "Title": "What is {{UKRLP-LegalName}}''s date of birth?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-110",
           "QuestionTag": "Add-SoleTrade-DOB",
-          "Label": "PLACEHOLDER Add Sole Trader DOB",
-          "ShortLabel": "",
+          "Label": "What is {{UKRLP-LegalName}}''s date of birth?",
+          "ShortLabel": "Date of birth",
           "QuestionBodyText": "",
-          "Hint": "",
+          "Hint": "For example, 12 1993",
           "Input": {
-            "Type": "Hidden",			
+            "Type": "Text",			
             "Validations": [              
             ]
           },

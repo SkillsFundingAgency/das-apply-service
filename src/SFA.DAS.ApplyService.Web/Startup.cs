@@ -28,6 +28,7 @@ namespace SFA.DAS.ApplyService.Web
 {
     using Controllers;
     using SFA.DAS.ApplyService.Web.Configuration;
+    using SFA.DAS.ApplyService.Web.Services;
 
     public class Startup
     {
@@ -154,6 +155,7 @@ namespace SFA.DAS.ApplyService.Web
                 config.For<UserService>().Use<UserService>();
                 config.For<IQnaTokenService>().Use<QnaTokenService>();
                 config.For<IQnaApiClient>().Use<QnaApiClient>();
+                config.For<IQuestionPropertyTokeniser>().Use<QuestionPropertyTokeniser>();
                 config.Populate(services);
             });
 
