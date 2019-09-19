@@ -1,0 +1,42 @@
+@model dynamic
+
+<span class="govuk-hint">
+    For example, 3 1980
+</span>
+@{ 
+    var id = string.Format("{0}", Model.QuestionId);
+    var dateParts = (string.IsNullOrWhiteSpace(Model.Value) ? new string[] { } : Model.Value.Split(","));
+}
+<sfa-validationerror-detail sfa-validation-for="@(id)" sfa-validationerror-class="govuk-error-message"></sfa-validationerror-detail>
+<div class="govuk-date-input">
+    <div class="govuk-date-input__item">
+        <div class="govuk-form-group">
+            <label class="govuk-label govuk-label--m" for="@(id)">
+                Month
+            </label>
+            <input class="govuk-input govuk-date-input__input govuk-input--width-2"
+                   sfa-validation-for="@(id)"
+                   sfa-validationerror-class="govuk-input--error"
+                   type="number"
+                   pattern="[0-9]*" 
+                   id="@(id)"
+                   name="@(id)"
+                   value="@((dateParts.Length > 0) ? dateParts[0] : string.Empty)" />
+        </div>
+    </div>
+    <div class="govuk-date-input__item">
+        <div class="govuk-form-group">
+            <label class="govuk-label govuk-label--m" for="@(id + "_Year")">
+                Year
+            </label>
+            <input class="govuk-input govuk-date-input__input govuk-input--width-4"
+                   sfa-validation-for="@(id)"
+                   sfa-validationerror-class="govuk-input--error"
+                   type="number"
+                   pattern="[0-9]*" 
+                   id="@(id + "_Year")"
+                   name="@(id)"
+                   value="@((dateParts.Length > 1) ? dateParts[1] : string.Empty)" />
+        </div>
+    </div>
+</div>

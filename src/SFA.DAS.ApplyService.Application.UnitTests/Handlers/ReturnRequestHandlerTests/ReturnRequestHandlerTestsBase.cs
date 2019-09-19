@@ -8,6 +8,8 @@ using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
+using SFA.DAS.ApplyService.Application.Organisations;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.ReturnRequestHandlerTests
 {
@@ -20,6 +22,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.ReturnRequestHandl
         protected Mock<IEmailService> EmailService;
         protected Mock<IConfigurationService> ConfigService;
         protected ReturnRequestHandler Handler;
+        protected Mock<IOrganisationRepository> OrganisationRepository;
 
         [SetUp]
         public void Setup()
@@ -47,7 +50,11 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.ReturnRequestHandl
 
             EmailService = new Mock<IEmailService>();
 
-            Handler = new ReturnRequestHandler(ApplyRepository.Object, ContactRepository.Object, EmailService.Object,ConfigService.Object);
+            OrganisationRepository = new Mock<IOrganisationRepository>();
+            
+            OrganisationRepository.Setup(r => r.GetOrganisationByApplicationId(It.IsAny<Guid>())).ReturnsAsync(new Organisation() { RoEPAOApproved = true});
+            
+            Handler = new ReturnRequestHandler(ApplyRepository.Object, ContactRepository.Object, EmailService.Object,ConfigService.Object, OrganisationRepository.Object, new Mock<ILogger<ReturnRequestHandler>>().Object);
         }
     }
 }
