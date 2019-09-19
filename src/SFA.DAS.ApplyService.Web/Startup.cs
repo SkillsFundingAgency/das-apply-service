@@ -139,6 +139,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IDfeSignInService,DfeSignInService>();
 
             services.AddTransient<IUsersApiClient,UsersApiClient>();
+            services.AddTransient<UsersApiClient, UsersApiClient>();
             services.AddTransient<IApplicationApiClient,ApplicationApiClient>();
             services.AddTransient<OrganisationApiClient,OrganisationApiClient>();
             services.AddTransient<OrganisationSearchApiClient,OrganisationSearchApiClient>();
