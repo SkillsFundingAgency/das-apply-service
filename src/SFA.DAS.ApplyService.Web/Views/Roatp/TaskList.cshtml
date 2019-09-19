@@ -33,6 +33,10 @@
                         if (Model.VerifiedCompaniesHouse)
                         {
                             whosInControlStartPageId = RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage;
+                            if (Model.CompaniesHouseManualEntry)
+                            {
+                                whosInControlStartPageId = RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl;
+                            }
                         }
                         else
                         {
