@@ -500,6 +500,7 @@ namespace SFA.DAS.ApplyService.Data
                 // For now Reject them (and add deleted information)
                 foreach (var app in inProgressRelatedApplications)
                 {
+                    _logger.LogInformation($"Deleting application {app.Id} due to Application {applicationId} being submitted and the Creating Org not being on the Register.");
                     await connection.ExecuteAsync(@"UPDATE ApplicationSequences
                                                         SET  IsActive = 0, Status = @rejectedStatus
                                                         WHERE  ApplicationSequences.ApplicationId = @applicationId;

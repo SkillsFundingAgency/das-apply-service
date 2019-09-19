@@ -20,12 +20,23 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
         protected Mock<IValidatorFactory> ValidatorFactory;
         protected Mock<IValidator> Validator;
 
-        protected Answer AnswerQ1;
-        protected Answer AnswerQ1Dot1;
-        protected Answer AnswerQ2;
-        protected Answer AnswerQ3;
-        protected Answer AnswerQ4;
-        protected Answer AnswerQ5;
+        protected const string QuestionIdQ1 = "Q1";
+        protected const string QuestionIdQ1Dot1 = "Q1.1";
+        protected const string QuestionIdQ2 = "Q2";
+        protected const string QuestionIdQ3 = "Q3";
+        protected const string QuestionIdQ4 = "Q4";
+        protected const string QuestionIdQ5 = "Q5";
+        protected const string QuestionIdQ6 = "Q6";
+        protected const string QuestionIdQ7 = "Q7";
+
+        protected Answer AnswerQ1 = new Answer { QuestionId = QuestionIdQ1 };
+        protected Answer AnswerQ1Dot1 = new Answer { QuestionId = QuestionIdQ1Dot1 };
+        protected Answer AnswerQ2 = new Answer { QuestionId = QuestionIdQ2 };
+        protected Answer AnswerQ3 = new Answer { QuestionId = QuestionIdQ3 };
+        protected Answer AnswerQ4 = new Answer { QuestionId = QuestionIdQ4 };
+        protected Answer AnswerQ5 = new Answer { QuestionId = QuestionIdQ5 };
+        protected Answer AnswerQ6 = new Answer { QuestionId = QuestionIdQ6 };
+        protected Answer AnswerQ7 = new Answer { QuestionId = QuestionIdQ7 };
 
         protected QnAData QnAData;
 
@@ -207,11 +218,48 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdatePageAnswersH
                         {
                             new Next
                             {
+                                Action = "NextPage",
+                                ReturnId = "5"
+                            }
+                        }
+                    },
+                    new Page
+                    {
+                        PageId = "5",
+                        Questions = new List<Question>
+                        {
+                            new Question()
+                            {
+                                QuestionId = "Q7",
+                                Input = new Input
+                                {
+                                    Type = "ComplexRadio",
+                                    Options = new List<Option>
+                                    {
+                                        new Option
+                                        {
+                                            Label = "Yes",
+                                            Value = "Yes",
+                                        },
+                                        new Option
+                                        {
+                                            Label = "No",
+                                            Value = "No"
+                                        }
+                                    }
+                                }
+                            },
+                        },
+                        PageOfAnswers = new List<PageOfAnswers>(),
+                        Next = new List<Next>
+                        {
+                            new Next
+                            {
                                 Action = "ReturnToSection",
                                 ReturnId = "1"
                             }
                         }
-                    }
+                    },
                 },
                 FinancialApplicationGrade = null
             };

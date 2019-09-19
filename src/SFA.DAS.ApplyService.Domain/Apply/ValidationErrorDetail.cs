@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace SFA.DAS.ApplyService.Application.Apply.Validation
+﻿namespace SFA.DAS.ApplyService.Domain.Apply
 {
     public class ValidationErrorDetail
     {
@@ -20,7 +18,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Validation
         }
 
         public string Field { get; set; }
-        public string ErrorMessage { get; set; }
 
+        public string ErrorMessage { get; set; }
     }
 }
