@@ -1,4 +1,6 @@
 ﻿
+using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
+
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
     using System;
@@ -14,14 +16,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     public class RoatpYourOrganisationApplicationController : Controller
     {
         private readonly ILogger<RoatpYourOrganisationApplicationController> _logger;
-        private readonly IQnaApiClient _qnaApiClient;
         private readonly IOrganisationApiClient _organisationApiClient;
+        private readonly IGetCurrentApplicationDetailsService _getApplicationDetailsService;
 
         public RoatpYourOrganisationApplicationController(ILogger<RoatpYourOrganisationApplicationController> logger,
-            IQnaApiClient qnaApiClient)
+             IGetCurrentApplicationDetailsService getApplicationDetailsService)
         {
             _logger = logger;
-            _qnaApiClient = qnaApiClient;
+            _getApplicationDetailsService = getApplicationDetailsService;
         }
 
         public async Task<IActionResult> ProviderRoute(Guid applicationId)
@@ -52,14 +54,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         private async Task<string> GetIntroductionPageForApplication(Guid applicationId)
         {
-            int providerTypeId = 1;
-            string pageId = RoatpWorkflowPageIds.YourOrganisationIntroductionMain;
+            var providerTypeId = await _getApplicationDetailsService.GetProviderTypeId(applicationId);
 
-            var providerTypeAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
-            if (providerTypeAnswer != null && !String.IsNullOrWhiteSpace(providerTypeAnswer.Value))
-            {
-                int.TryParse(providerTypeAnswer.Value, out providerTypeId);
-            }
+            string pageId = RoatpWorkflowPageIds.YourOrganisationIntroductionMain;
 
             switch (providerTypeId)
             {

@@ -16,6 +16,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
+using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 using SFA.DAS.ApplyService.Web.ViewModels;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
@@ -35,6 +36,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IConfigurationService _configService;
         private readonly IUserService _userService;
         private readonly IQnaApiClient _qnaApiClient;
+        private readonly IProcessIntroductionPageService _processIntroductionPageService;
         private readonly List<TaskListConfiguration> _configuration;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
@@ -42,7 +44,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public RoatpApplicationController(IApplicationApiClient apiClient, ILogger<RoatpApplicationController> logger,
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
-            IQnaApiClient qnaApiClient, IOptions<List<TaskListConfiguration>> configuration)
+            IQnaApiClient qnaApiClient, IOptions<List<TaskListConfiguration>> configuration, IProcessIntroductionPageService processIntroductionPageService)
         {
             _apiClient = apiClient;
             _logger = logger;
@@ -51,6 +53,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _userService = userService;
             _usersApiClient = usersApiClient;
             _qnaApiClient = qnaApiClient;
+            _processIntroductionPageService = processIntroductionPageService;
             _configuration = configuration.Value;
         }
 
@@ -183,6 +186,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public async Task<IActionResult> Section(Guid applicationId, int sequenceId, int sectionId)
         {
+            if (sectionId == 1)
+            {
+                var introductionPageId = await
+                    _processIntroductionPageService.GetIntroductionPageId(applicationId, sequenceId);
+                if (introductionPageId!=null)
+                    return await Page(applicationId, sequenceId, sectionId, introductionPageId.ToString(), "TaskList");
+            }
+
             var sequences = await _qnaApiClient.GetSequences(applicationId);
             var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
             var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);

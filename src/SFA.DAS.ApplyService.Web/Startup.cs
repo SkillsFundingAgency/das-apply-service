@@ -19,7 +19,10 @@ using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.Session;
+using SFA.DAS.ApplyService.Web;
 using SFA.DAS.ApplyService.Web.Infrastructure;
+using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
+using SFA.DAS.ApplyService.Web.Infrastructure.Services;
 using SFA.DAS.ApplyService.Web.Validators;
 using StructureMap;
 using StackExchange.Redis;
@@ -154,6 +157,8 @@ namespace SFA.DAS.ApplyService.Web
                 config.For<UserService>().Use<UserService>();
                 config.For<IQnaTokenService>().Use<QnaTokenService>();
                 config.For<IQnaApiClient>().Use<QnaApiClient>();
+                config.For<IGetCurrentApplicationDetailsService>().Use<GetCurrentApplicationDetailsService>();
+                config.For<IProcessIntroductionPageService>().Use<ProcessIntroductionPageService>();
                 config.Populate(services);
             });
 
