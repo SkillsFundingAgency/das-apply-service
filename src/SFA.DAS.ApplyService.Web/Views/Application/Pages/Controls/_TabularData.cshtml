@@ -17,7 +17,7 @@
         }
     }
 }
-@if (tableData != null)
+@if (tableData != null && tableData.HeadingTitles != null && tableData.DataRows != null)
 {
     <table class="govuk-table">
         @if (tableData.Caption != null)
