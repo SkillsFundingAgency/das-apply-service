@@ -2026,7 +2026,7 @@ VALUES
           "QuestionBodyText": "",
           "Hint": "For example, 12 1993",
           "Input": {
-            "Type": "Text",			
+            "Type": "DateOfBirth",			
             "Validations": [              
             ]
           },
@@ -2035,12 +2035,7 @@ VALUES
       ],
       "PageOfAnswers": [],
       "Next": [      
-		{
-          "Action": "NextPage",
-          "ReturnId": "140",
-          "Condition": null,
-          "ConditionMet": false
-        }
+		
       ],
       "Complete": false,
       "AllowMultipleAnswers": false,
