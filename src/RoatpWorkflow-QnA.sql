@@ -1318,7 +1318,7 @@ VALUES
         },
 		{
           "Action": "NextPage",
-          "ReturnId": "130",
+          "ReturnId": "140",
           "Condition": null,
           "ConditionMet": false
         }
@@ -1442,7 +1442,7 @@ VALUES
         },
 		{
           "Action": "NextPage",
-          "ReturnId": "130",
+          "ReturnId": "140",
           "Condition": null,
           "ConditionMet": false
         }
@@ -1566,7 +1566,7 @@ VALUES
         },
 		{
           "Action": "NextPage",
-          "ReturnId": "130",
+          "ReturnId": "140",
           "Condition": null,
           "ConditionMet": false
         }
@@ -1778,6 +1778,24 @@ VALUES
       "Next": [      
 		{
           "Action": "NextPage",
+          "ReturnId": "90",
+          "Condition": {
+            "QuestionTag": "CC-TrusteeManualEntry",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "80",
+          "Condition": {
+            "QuestionTag": "UKRLP-Verification-Charity",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
           "ReturnId": "140",
           "Condition": null,
           "ConditionMet": false
@@ -1821,7 +1839,7 @@ VALUES
       "Next": [      
 		{
           "Action": "NextPage",
-          "ReturnId": "130",
+          "ReturnId": "140",
           "Condition": null,
           "ConditionMet": false
         }
@@ -1864,7 +1882,7 @@ VALUES
       "Next": [      
 		{
           "Action": "NextPage",
-          "ReturnId": "130",
+          "ReturnId": "140",
           "Condition": null,
           "ConditionMet": false
         }
@@ -1976,7 +1994,7 @@ VALUES
       "Next": [      
 		{
           "Action": "NextPage",
-          "ReturnId": "130",
+          "ReturnId": "140",
           "Condition": null,
           "ConditionMet": false
         }
@@ -2001,7 +2019,7 @@ VALUES
       "InfoText": "",
       "Questions": [
         {
-          "QuestionId": "YO-110",
+          "QuestionId": "YO-120",
           "QuestionTag": "Add-SoleTrade-DOB",
           "Label": "What is {{UKRLP-LegalName}}''s date of birth?",
           "ShortLabel": "Date of birth",
@@ -2019,7 +2037,7 @@ VALUES
       "Next": [      
 		{
           "Action": "NextPage",
-          "ReturnId": "130",
+          "ReturnId": "140",
           "Condition": null,
           "ConditionMet": false
         }
@@ -2062,7 +2080,7 @@ VALUES
       "Next": [      
 		{
           "Action": "NextPage",
-          "ReturnId": "130",
+          "ReturnId": "140",
           "Condition": null,
           "ConditionMet": false
         }
@@ -2077,21 +2095,21 @@ VALUES
       "NotRequiredOrgTypes": [],
       "BodyText": "",
 	  "NotRequired": true
-    },	
+    },
 	{
-      "PageId": "150",
+      "PageId": "130",
       "SequenceId": "1",
       "SectionId": "4",
-      "Title": "Tell us your organisation''s type",
+      "Title": "PLACEHOLDER Add People In Control",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
-          "QuestionId": "YO-150",
-          "QuestionTag": "Organisation-Type-Employer",
-          "Label": "Tell us your organisation''s type",
+          "QuestionId": "YO-130",
+          "QuestionTag": "Add-PeopleInControl",
+          "Label": "PLACEHOLDER Add People In Control",
           "ShortLabel": "",
-          "QuestionBodyText": "PLACEHOLDER Organisation Type Employer",
+          "QuestionBodyText": "",
           "Hint": "",
           "Input": {
             "Type": "Hidden",			
@@ -2105,7 +2123,7 @@ VALUES
       "Next": [      
 		{
           "Action": "NextPage",
-          "ReturnId": "130",
+          "ReturnId": "140",
           "Condition": null,
           "ConditionMet": false
         }

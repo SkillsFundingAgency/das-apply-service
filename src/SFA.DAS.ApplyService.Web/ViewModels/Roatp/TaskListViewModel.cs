@@ -42,6 +42,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         }
 
         public bool VerifiedCompaniesHouse { get; set; }
+        public bool CompaniesHouseManualEntry { get; set; }
         public bool VerifiedCharityCommision { get; set; }
     }
 }

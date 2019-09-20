@@ -4,18 +4,21 @@ using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Validation
 {
-    public class RegexValidator : IValidator
+    public class RegexValidator : Validator
     {
-        public ValidationDefinition ValidationDefinition { get; set; }
-        public List<KeyValuePair<string, string>> Validate(Question question, Answer answer)
+        public override List<KeyValuePair<string, string>> Validate(string questionId, Answer answer)
         {
-            if (string.IsNullOrEmpty(answer?.Value)) return new List<KeyValuePair<string, string>>();
+            var errorMessages = base.Validate(questionId, answer);
 
             var regex = new Regex(ValidationDefinition.Value.ToString());
-            return !regex.IsMatch(answer.Value)
-                ? new List<KeyValuePair<string, string>>
-                    {new KeyValuePair<string, string>(answer.QuestionId, ValidationDefinition.ErrorMessage)}
-                : new List<KeyValuePair<string, string>>();
+            var value = GetValue(answer);
+
+            if (!string.IsNullOrEmpty(value) && !regex.IsMatch(value))
+            {
+                errorMessages.Add(new KeyValuePair<string, string>(GetFieldId(questionId), ValidationDefinition.ErrorMessage));
+            }
+
+            return errorMessages;
         }
     }
 }

@@ -19,7 +19,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.GetAnswers
 
         public async Task<GetAnswersResponse> Handle(GetAnswersRequest request, CancellationToken cancellationToken)
         {
-            var answer = await _answersService.GetAnswersForQuestion(request.QuestionIdentifier, request.ApplicationId);
+            var answer = request.JsonAnswer
+                ? await _answersService.GetJsonAnswersForQuestion(request.QuestionIdentifier, request.ApplicationId)                
+                : await _answersService.GetAnswersForQuestion(request.QuestionIdentifier, request.ApplicationId);
 
             return new GetAnswersResponse {Answer=answer};
         }

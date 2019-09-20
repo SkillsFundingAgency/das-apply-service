@@ -16,11 +16,11 @@
     {
         private ILogger<UkrlpLookupController> _logger;
 
-        private IRoatpApiClient _apiClient;
+        private RoatpApiClient _apiClient;
 
         private AsyncRetryPolicy _retryPolicy;
 
-        public UkrlpLookupController(ILogger<UkrlpLookupController> logger, IRoatpApiClient apiClient)
+        public UkrlpLookupController(ILogger<UkrlpLookupController> logger, RoatpApiClient apiClient)
         {
             _logger = logger;
             _apiClient = apiClient;
