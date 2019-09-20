@@ -2024,10 +2024,20 @@ VALUES
           "Label": "What is {{UKRLP-LegalName}}''s date of birth?",
           "ShortLabel": "Date of birth",
           "QuestionBodyText": "",
-          "Hint": "For example, 12 1993",
+          "Hint": "",
           "Input": {
             "Type": "DateOfBirth",			
-            "Validations": [              
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Enter a date of birth"
+              },
+			  {
+                "Name": "DateOfBirth",
+                "Value": null,
+                "ErrorMessage": "Enter a date of birth using a month and year"
+              }
             ]
           },
           "Order": null
