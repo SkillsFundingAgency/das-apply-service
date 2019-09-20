@@ -441,6 +441,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 return string.Empty;
             }
 
+            if (dateOfBirth.Value.Year == 1 && dateOfBirth.Value.Month == 1)
+            {
+                return string.Empty;
+            }
+
             return dateOfBirth.Value.ToString("MMM yyyy");
         }
         
