@@ -148,6 +148,11 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IQnaTokenService, QnaTokenService>();
             services.AddTransient<IQnaApiClient, QnaApiClient>();
             services.AddTransient<IOrganisationApiClient, OrganisationApiClient>();
+            services.AddTransient<IRoatpApiClient, RoatpApiClient>();
+            services.AddTransient<IUkrlpApiClient, UkrlpApiClient>();
+            services.AddTransient<IRoatpStatusValidator, RoatpStatusValidator>();
+            services.AddTransient<ICompaniesHouseApiClient, CompaniesHouseApiClient>();
+            services.AddTransient<ICharityCommissionApiClient, CharityCommissionApiClient>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)
