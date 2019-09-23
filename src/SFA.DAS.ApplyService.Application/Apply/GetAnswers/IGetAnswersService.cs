@@ -7,5 +7,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.GetAnswers
     public interface IGetAnswersService
     {
         Task<string> GetAnswersForQuestion(string questionTag, Guid applicationId);
+        Task<string> GetJsonAnswersForQuestion(string questionTag, Guid applicationId);
     }
 }

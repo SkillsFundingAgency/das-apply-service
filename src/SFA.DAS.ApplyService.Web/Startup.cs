@@ -158,7 +158,7 @@ namespace SFA.DAS.ApplyService.Web
                 config.For<IQnaTokenService>().Use<QnaTokenService>();
                 config.For<IQnaApiClient>().Use<QnaApiClient>();
                 config.For<IGetCurrentApplicationDetailsService>().Use<GetCurrentApplicationDetailsService>();
-                config.For<IProcessIntroductionPageService>().Use<ProcessIntroductionPageService>();
+                config.For<IProcessPageFlowService>().Use<ProcessPageFlowService>();
                 config.Populate(services);
             });
 

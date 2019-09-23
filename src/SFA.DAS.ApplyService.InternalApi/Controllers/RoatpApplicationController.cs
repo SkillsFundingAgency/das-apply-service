@@ -17,11 +17,11 @@
     {
         private ILogger<RoatpApplicationController> _logger;
 
-        private IRoatpApiClient _apiClient;
+        private RoatpApiClient _apiClient;
         
         private AsyncRetryPolicy _retryPolicy;
 
-        public RoatpApplicationController(ILogger<RoatpApplicationController> logger, IRoatpApiClient apiClient)
+        public RoatpApplicationController(ILogger<RoatpApplicationController> logger, RoatpApiClient apiClient)
         {
             _logger = logger;
             _apiClient = apiClient;

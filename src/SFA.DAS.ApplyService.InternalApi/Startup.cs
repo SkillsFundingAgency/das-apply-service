@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using System.Globalization;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -16,11 +14,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Logging;
-using SFA.DAS.ApplyService.Application;
 using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
 using SFA.DAS.ApplyService.Application.Apply.Validation;
+using SFA.DAS.ApplyService.Application.Email;
 using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Application.Users;
@@ -31,7 +28,6 @@ using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.Encryption;
 using SFA.DAS.ApplyService.Storage;
-using StructureMap;
 
 namespace SFA.DAS.ApplyService.InternalApi
 {
@@ -55,12 +51,8 @@ namespace SFA.DAS.ApplyService.InternalApi
             _applyConfig = new ConfigurationService(_env, _configuration["EnvironmentName"], _configuration["ConfigurationStorageConnectionString"], _version, _serviceName).GetConfig().GetAwaiter().GetResult();
         }
 
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
-
-            IdentityModelEventSource.ShowPII = true;
-            
-        
             services.AddAuthentication(o =>
                 {
                     o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -124,6 +116,13 @@ namespace SFA.DAS.ApplyService.InternalApi
             })
             .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
+            services.AddHttpClient<RoatpApiClient>("RoatpApiClient", config =>
+            {
+                config.BaseAddress = new Uri(_applyConfig.RoatpApiAuthentication.ApiBaseAddress);          // "https://providers-api.apprenticeships.education.gov.uk"
+                config.DefaultRequestHeaders.Add("Accept", "Application/json");
+            })
+            .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 options.DefaultRequestCulture = new RequestCulture("en-GB");
@@ -144,7 +143,9 @@ namespace SFA.DAS.ApplyService.InternalApi
             
             services.AddDistributedMemoryCache();
 
-            return ConfigureIOC(services);
+            services.AddHealthChecks();
+
+            ConfigureDependencyInjection(services);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -165,7 +166,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             app.UseSecurityHeaders();
 
             app.UseAuthentication();
-            
+            app.UseHealthChecks("/health");
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -174,65 +175,42 @@ namespace SFA.DAS.ApplyService.InternalApi
             });
         }
         
-        private IServiceProvider ConfigureIOC(IServiceCollection services)
+        private void ConfigureDependencyInjection(IServiceCollection services)
         {
-            var container = new Container();
-
-            container.Configure(config =>
-            {
-                config.Scan(_ =>
-                {
-                    //_.AssemblyContainingType(typeof(Startup));
-                    _.AssembliesFromApplicationBaseDirectory(c => c.FullName.StartsWith("SFA"));
-                    _.WithDefaultConventions();
-
-                    _.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<>)); // Handlers with no response
-                    _.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>)); // Handlers with a response
-                    _.ConnectImplementationsToTypesClosing(typeof(INotificationHandler<>));
-
-                    _.AddAllTypesOf<IValidator>();
-                });
-
-                config.For<IMediator>().Use<Mediator>();
-
-                config.For<IHttpContextAccessor>().Use<HttpContextAccessor>();
+            services.RegisterAllTypes<IValidator>(new[] { typeof(IValidator).Assembly });
+            
+            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
                 
-                config.For<IConfigurationService>()
-                    .Use<ConfigurationService>().Singleton()
-                    .Ctor<string>("environment").Is(_configuration["EnvironmentName"])
-                    .Ctor<string>("storageConnectionString").Is(_configuration["ConfigurationStorageConnectionString"])
-                    .Ctor<string>("version").Is(_version)
-                    .Ctor<string>("serviceName").Is(_serviceName);
+            services.AddSingleton<IConfigurationService>(sp => new ConfigurationService(
+                 sp.GetService<IHostingEnvironment>(),
+                 _configuration["EnvironmentName"],
+                 _configuration["ConfigurationStorageConnectionString"],
+                 _version,
+                 _serviceName));
 
-                config.For<IContactRepository>().Use<ContactRepository>();
-                config.For<IApplyRepository>().Use<ApplyRepository>();
-                config.For<IOrganisationRepository>().Use<OrganisationRepository>();
-                config.For<IDfeSignInService>().Use<DfeSignInService>();
-                config.For<IEmailService>().Use<EmailService.EmailService>();
+            services.AddTransient<IValidatorFactory, ValidatorFactory>();
+            
+            services.AddTransient<IContactRepository,ContactRepository>();
+            services.AddTransient<IApplyRepository,ApplyRepository>();
+            services.AddTransient<IOrganisationRepository,OrganisationRepository>();
+            services.AddTransient<IDfeSignInService,DfeSignInService>();
+            services.AddTransient<IGetAnswersService, GetAnswersService>();
 
-                // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
-                config.For<CharityCommissionService.ISearchCharitiesV1SoapClient>()
-                    .Use<CharityCommissionService.SearchCharitiesV1SoapClient>()
-                    .Ctor<CharityCommissionService.SearchCharitiesV1SoapClient.EndpointConfiguration>(
-                        "endpointConfiguration")
-                    .Is(CharityCommissionService.SearchCharitiesV1SoapClient.EndpointConfiguration
-                        .SearchCharitiesV1Soap)
-                    .Ctor<string>("remoteAddress").Is(_applyConfig.CharityCommissionApiAuthentication.ApiBaseAddress);
-                config.For<CharityCommissionApiClient>().Use<CharityCommissionApiClient>();
-                
-                // End of SOAP Services
-                
-                config.For<IRoatpApiClient>().Use<RoatpApiClient>();
-                config.For<IRoatpTokenService>().Use<RoatpTokenService>();
-                config.For<IKeyProvider>().Use<PlaceholderKeyProvider>();
-                config.For<IStorageService>().Use<StorageService>();
-                
-                services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
-                
-                config.Populate(services);
-            });
+            services.AddTransient<IEmailService, EmailService.EmailService>();
+            services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();
 
-            return container.GetInstance<IServiceProvider>();
+            // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
+            services.AddTransient<CharityCommissionService.ISearchCharitiesV1SoapClient,CharityCommissionService.SearchCharitiesV1SoapClient>();
+            services.AddTransient<CharityCommissionApiClient,CharityCommissionApiClient>();
+            // End of SOAP Services
+
+            services.AddTransient<IRoatpApiClient, RoatpApiClient>();
+            services.AddTransient<IRoatpTokenService, RoatpTokenService>();
+            services.AddTransient<IKeyProvider,PlaceholderKeyProvider>();
+            services.AddTransient<IStorageService,StorageService>();
+            services.AddTransient<IEncryptionService, EncryptionService>();
+    
+            services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
         }
     }
 }

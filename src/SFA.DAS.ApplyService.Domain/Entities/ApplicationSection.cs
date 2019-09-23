@@ -56,6 +56,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
 
         public bool NotRequired { get; set; }
 
+        [JsonIgnore]
         public bool SectionCompleted { get; set; }
     }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,19 +11,20 @@ using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
 {
-    public class ProcessPageService : IProcessPageService
+    public class ProcessPageFlowService : IProcessPageFlowService
     {
         private readonly IQnaApiClient _qnaApiClient;
         private readonly List<TaskListConfiguration> _configuration;
 
-        public ProcessPageService(IQnaApiClient qnaApiClient,
+        public ProcessPageFlowService(IQnaApiClient qnaApiClient,
             IOptions<List<TaskListConfiguration>> configuration)
         {
             _qnaApiClient = qnaApiClient;
             _configuration = _configuration = configuration.Value;
         }
 
-        public async Task<string> GetIntroductionPageIdForSection(Guid applicationId, int sequenceId, int providerTypeId)
+        public async Task<string> GetIntroductionPageIdForSection(Guid applicationId, int sequenceId,
+            int providerTypeId)
         {
             var sequenceDescription = _configuration.FirstOrDefault(x => x.Id == sequenceId);
 
@@ -33,13 +35,16 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
             switch (providerTypeId)
             {
                 case ApplicationRoute.MainProviderApplicationRoute:
-                    return sequenceDescription.StartupPages.FirstOrDefault(x => x.ProviderType.ToLower().Contains("main"))
+                    return sequenceDescription.StartupPages
+                        .FirstOrDefault(x => x.ProviderType.ToLower().Contains("main"))
                         ?.PageId;
                 case ApplicationRoute.EmployerProviderApplicationRoute:
-                    return sequenceDescription.StartupPages.FirstOrDefault(x => x.ProviderType.ToLower().Contains("employer"))
+                    return sequenceDescription.StartupPages
+                        .FirstOrDefault(x => x.ProviderType.ToLower().Contains("employer"))
                         ?.PageId;
                 case ApplicationRoute.SupportingProviderApplicationRoute:
-                    return sequenceDescription.StartupPages.FirstOrDefault(x => x.ProviderType.ToLower().Contains("supporting"))
+                    return sequenceDescription.StartupPages
+                        .FirstOrDefault(x => x.ProviderType.ToLower().Contains("supporting"))
                         ?.PageId;
                 default:
                     return null;
@@ -61,57 +66,5 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
 
             return providerTypeId;
         }
-
-
-        //    private readonly List<IntroductionPageProviderTypeLookup> _lookups = new List<IntroductionPageProviderTypeLookup>
-        //    {
-        //        new IntroductionPageProviderTypeLookup
-        //        {
-        //            SequenceId = 1,
-        //            ProviderTypeId = 1,
-        //            PageId = "10"
-        //        },
-        //        new IntroductionPageProviderTypeLookup
-        //        {
-        //            SequenceId = 1,
-        //            ProviderTypeId = 2,
-        //            PageId = "11"
-        //        },
-        //        new IntroductionPageProviderTypeLookup
-        //        {
-        //            SequenceId = 1,
-        //            ProviderTypeId = 3,
-        //            PageId = "12"
-        //        },
-        //        new IntroductionPageProviderTypeLookup
-        //        {
-        //            SequenceId = 4,
-        //            ProviderTypeId = 1,
-        //            PageId = "500"
-        //        },
-        //        new IntroductionPageProviderTypeLookup
-        //        {
-        //            SequenceId = 4,
-        //            ProviderTypeId = 2,
-        //            PageId = "510"
-        //        },
-        //        new IntroductionPageProviderTypeLookup
-        //        {
-        //            SequenceId = 4,
-        //            ProviderTypeId = 3,
-        //            PageId = "520"
-        //        },
-        //    };
-        //}
-
-
-        //public class IntroductionPageProviderTypeLookup
-        //{
-        //    public  int SequenceId { get; set; }
-        //    public  int ProviderTypeId { get; set; }
-        //    public  string PageId { get; set; }
-        //}
-
     }
-
 }

@@ -40,5 +40,19 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
             return RoatpTaskListWorkflowHandler.PreviousSectionCompleted(sequence, sectionId, sequential);
         }
+
+        public bool IntroductionPageNextSectionHidden(int sequenceId, int sectionId)
+        {
+            var statusOfIntroductionPage = SectionStatus(sequenceId,1);
+            if (sequenceId == 4 && sectionId !=1 && statusOfIntroductionPage.ToLower() != "completed")
+                return true;
+
+            return false;
+        }
+
+        public bool VerifiedCompaniesHouse { get; set; }
+        public bool CompaniesHouseManualEntry { get; set; }
+        public bool VerifiedCharityCommision { get; set; }
+        public bool CharityCommissionManualEntry { get; set; }
     }
 }

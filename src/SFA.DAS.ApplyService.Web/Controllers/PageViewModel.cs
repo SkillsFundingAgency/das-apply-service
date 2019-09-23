@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Internal;
-using Newtonsoft.Json.Linq;
-using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
@@ -90,7 +88,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 Hint = q.Hint,
                 Options = q.Input.Options,
                 Value = page.AllowMultipleAnswers ? GetMultipleValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value,
-                ErrorMessages = errorMessages?.Where(f => f.Field == q.QuestionId).ToList(),
+                JsonValue = page.AllowMultipleAnswers ? GetMultipleJsonValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.JsonValue,
+                ErrorMessages = errorMessages?.Where(f => f.Field.Split("_Key_")[0] == q.QuestionId).ToList(),
                 SequenceId = int.Parse(SequenceId),
                 SectionId = SectionId,
                 ApplicationId = ApplicationId,
@@ -124,6 +123,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             if (errorMessages != null && errorMessages.Any())
             {
                 return answers?.LastOrDefault(a => a?.QuestionId == question.QuestionId)?.Value;
+            }
+
+            return null;
+        }
+
+        private dynamic GetMultipleJsonValue(List<Answer> answers, Question question, List<ValidationErrorDetail> errorMessages)
+        {
+            if (errorMessages != null && errorMessages.Any())
+            {
+                return answers?.LastOrDefault(a => a?.QuestionId == question.QuestionId)?.JsonValue;
             }
 
             return null;
