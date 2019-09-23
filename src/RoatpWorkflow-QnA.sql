@@ -2036,7 +2036,7 @@ VALUES
 			  {
                 "Name": "MonthAndYearNotInFuture",
                 "Value": null,
-                "ErrorMessage": "Enter a date of birth using a month and year"
+                "ErrorMessage": "Enter a date of birth using a month and year that''s in the past"
               }
             ]
           },
