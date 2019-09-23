@@ -150,7 +150,6 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IOrganisationApiClient, OrganisationApiClient>();
             services.AddTransient<IRoatpApiClient, RoatpApiClient>();
             services.AddTransient<IUkrlpApiClient, UkrlpApiClient>();
-            services.AddTransient<IRoatpStatusValidator, RoatpStatusValidator>();
             services.AddTransient<ICompaniesHouseApiClient, CompaniesHouseApiClient>();
             services.AddTransient<ICharityCommissionApiClient, CharityCommissionApiClient>();
         }

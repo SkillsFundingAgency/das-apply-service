@@ -32,7 +32,6 @@
         private readonly ICharityCommissionApiClient _charityCommissionApiClient;
         private readonly IOrganisationApiClient _organisationApiClient;
         private readonly IUsersApiClient _usersApiClient;
-        private readonly IRoatpStatusValidator _roatpStatusValidator;
         
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
         
@@ -45,8 +44,7 @@
                                                   ICompaniesHouseApiClient companiesHouseApiClient, 
                                                   ICharityCommissionApiClient charityCommissionApiClient,
                                                   IOrganisationApiClient organisationApiClient,
-                                                  IUsersApiClient usersApiClient,
-                                                  IRoatpStatusValidator roatpStatusValidator)
+                                                  IUsersApiClient usersApiClient)
         {
             _logger = logger;
             _roatpApiClient = roatpApiClient;
@@ -56,7 +54,6 @@
             _charityCommissionApiClient = charityCommissionApiClient;
             _organisationApiClient = organisationApiClient;
             _usersApiClient = usersApiClient;
-            _roatpStatusValidator = roatpStatusValidator;
         }
 
         [Route("terms-conditions-making-application")]
@@ -255,12 +252,6 @@
             return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
         }
 
-        [Route("not-eligible")]
-        public async Task<IActionResult> IneligibleToJoin()
-        {
-            return View("~/Views/Roatp/IneligibleToJoin.cshtml");
-        }
-
         public async Task<IActionResult> VerifyOrganisationDetails()
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
@@ -349,11 +340,6 @@
             applicationDetails.RoatpRegisterStatus = roatpRegisterStatus;
 
             _sessionService.Set(ApplicationDetailsKey, applicationDetails);
-
-            if (!_roatpStatusValidator.ProviderEligibleToJoinRegister(roatpRegisterStatus))
-            {
-                return RedirectToAction("IneligibleToJoin");
-            }
             
             return RedirectToAction("SelectApplicationRoute");           
         }
