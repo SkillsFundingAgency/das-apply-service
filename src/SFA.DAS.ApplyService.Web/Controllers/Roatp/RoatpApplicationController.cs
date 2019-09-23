@@ -278,7 +278,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             }
 
-            TokeniseViewModelProperties(viewModel);
+            viewModel = await TokeniseViewModelProperties(viewModel);
 
             if (viewModel.AllowMultipleAnswers)
             {
@@ -775,7 +775,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return ControllerContext.HttpContext.Request.Method?.ToUpper() == "POST";
         }
         
-        private async void TokeniseViewModelProperties(PageViewModel viewModel)
+        private async Task<PageViewModel> TokeniseViewModelProperties(PageViewModel viewModel)
         {
             viewModel.Title =  await _questionPropertyTokeniser.GetTokenisedValue(viewModel.ApplicationId, viewModel.Title);
             foreach(var questionModel in viewModel.Questions)
@@ -785,6 +785,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 questionModel.QuestionBodyText = await _questionPropertyTokeniser.GetTokenisedValue(viewModel.ApplicationId, questionModel.QuestionBodyText);
                 questionModel.ShortLabel = await _questionPropertyTokeniser.GetTokenisedValue(viewModel.ApplicationId, questionModel.ShortLabel);
             }
+
+            return viewModel;
         }
     }
 }
