@@ -429,9 +429,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return true;
             }
-  
-            var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, User.GetUserId());
-            return !page.PageOfAnswers.Any();
+            
+            var sequences = await _qnaApiClient.GetSequences(applicationId);
+            var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
+            var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
+            var selectedSection = sections.Single(x => x.SectionId == sectionId);
+
+            var page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
+            return (page == null || !page.PageOfAnswers.Any());
         }
 
         public async Task<IActionResult> SaveAnswers(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, string __formAction)
@@ -449,7 +454,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var answers = new List<Answer>();
 
             var fileValidationPassed = FileValidator.FileValidationPassed(answers, page, errorMessages, ModelState, HttpContext.Request.Form.Files);
-            GetAnswersFromForm(answers);
+            GetAnswersFromForm(page, answers);
             ApplyFormattingToAnswers(answers, page);
 
             var answersMustBeValidated = await CheckIfAnswersMustBeValidated(applicationId, sequenceId, sectionId, pageId, answers, new Regex(@"\w+"));
@@ -522,7 +527,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
         }
 
-        private void GetAnswersFromForm(List<Answer> answers)
+        private void GetAnswersFromForm(Page page, List<Answer> answers)
         {
             Dictionary<string, JObject> answerValues = new Dictionary<string, JObject>();
 
@@ -549,6 +554,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 {
                     answers.Add(new Answer() { QuestionId = answer.Key, Value = answer.Value.Value<string>(string.Empty) });
                 }
+            }
+            var unansweredQuestions = page.Questions.Where(x => !answers.Any(y => y.QuestionId == x.QuestionId));
+            foreach(var question in unansweredQuestions)
+            {
+                answers.Add(new Answer() { QuestionId = question.QuestionId, Value = string.Empty });
             }
         }
 
