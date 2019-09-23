@@ -2026,15 +2026,15 @@ VALUES
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "DateOfBirth",			
+            "Type": "MonthAndYear",			
             "Validations": [
               {
-                "Name": "Required",
+                "Name": "MonthAndYear",
                 "Value": null,
-                "ErrorMessage": "Enter a date of birth"
+                "ErrorMessage": "Enter a date of birth using a month and year"
               },
 			  {
-                "Name": "DateOfBirth",
+                "Name": "MonthAndYearNotInFuture",
                 "Value": null,
                 "ErrorMessage": "Enter a date of birth using a month and year"
               }
