@@ -316,6 +316,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var verifiedCompaniesHouse = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany);
             var companiesHouseManualEntry = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CompaniesHouseManualEntryRequired);
             var verifiedCharityCommission = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity);
+            var charityCommissionManualEntry = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CharityCommissionTrusteeManualEntry);
 
             var model = new TaskListViewModel
             {
@@ -325,7 +326,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 OrganisationName = organisationDetails.Name,
                 VerifiedCompaniesHouse = (verifiedCompaniesHouse.Value == "TRUE"),
                 VerifiedCharityCommision = (verifiedCharityCommission.Value == "TRUE"),
-                CompaniesHouseManualEntry = (companiesHouseManualEntry.Value == "TRUE")
+                CompaniesHouseManualEntry = (companiesHouseManualEntry.Value == "TRUE"),
+                CharityCommissionManualEntry = (charityCommissionManualEntry.Value == "TRUE")
             };
 
             return View("~/Views/Roatp/TaskList.cshtml", model);

@@ -43,6 +43,10 @@
                             if (Model.VerifiedCharityCommision)
                             {
                                 whosInControlStartPageId = RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage;
+                                if (Model.CharityCommissionManualEntry)
+                                {
+                                    whosInControlStartPageId = RoatpWorkflowPageIds.WhosInControl.CharityCommissionNoTrustees;
+                                }
                             }
                         }
 
