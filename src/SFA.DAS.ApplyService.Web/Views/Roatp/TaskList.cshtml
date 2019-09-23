@@ -33,12 +33,20 @@
                         if (Model.VerifiedCompaniesHouse)
                         {
                             whosInControlStartPageId = RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage;
+                            if (Model.CompaniesHouseManualEntry)
+                            {
+                                whosInControlStartPageId = RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl;
+                            }
                         }
                         else
                         {
                             if (Model.VerifiedCharityCommision)
                             {
                                 whosInControlStartPageId = RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage;
+                                if (Model.CharityCommissionManualEntry)
+                                {
+                                    whosInControlStartPageId = RoatpWorkflowPageIds.WhosInControl.CharityCommissionNoTrustees;
+                                }
                             }
                         }
 
