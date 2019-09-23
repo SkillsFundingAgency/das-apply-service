@@ -1318,7 +1318,7 @@ VALUES
         },
 		{
           "Action": "NextPage",
-          "ReturnId": "130",
+          "ReturnId": "140",
           "Condition": null,
           "ConditionMet": false
         }
@@ -1442,7 +1442,7 @@ VALUES
         },
 		{
           "Action": "NextPage",
-          "ReturnId": "130",
+          "ReturnId": "140",
           "Condition": null,
           "ConditionMet": false
         }
@@ -1566,7 +1566,7 @@ VALUES
         },
 		{
           "Action": "NextPage",
-          "ReturnId": "130",
+          "ReturnId": "140",
           "Condition": null,
           "ConditionMet": false
         }
@@ -1581,19 +1581,19 @@ VALUES
       "NotRequiredOrgTypes": [],
       "BodyText": "",
 	  "NotRequired": true
-    },	
+    },
 	{
       "PageId": "10001",
       "SequenceId": "1",
       "SectionId": "3",
-      "Title": "Your organisation is not eligible to apply to join the register of apprenticeship training providers",
+      "Title": "Your organisation is not eligible to apply to join RoATP",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "SHUT-001",
           "QuestionTag": "Shutter-TradingPeriod-Main",
-          "Label": "Your organisation is not eligible to apply to join the register of apprenticeship training providers",
+          "Label": "Your organisation is not eligible to apply to join RoATP",
           "ShortLabel": "",
           "QuestionBodyText": "<p class=\"govuk-body\">To apply as a main provider, your organisation must have been trading for at least 12 months.</p><p class=\"govuk-body\">You can try again once your organisation has enough trading history.</p><p class=\"govuk-body\"><a href=\"https://www.gov.uk\">Back to GOV.UK</a></p>",
           "Hint": "",
@@ -1621,14 +1621,14 @@ VALUES
       "PageId": "10002",
       "SequenceId": "1",
       "SectionId": "3",
-      "Title": "Your organisation is not eligible to apply to join the register of apprenticeship training providers",
+      "Title": "Your organisation is not eligible to apply to join RoATP",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "SHUT-002",
           "QuestionTag": "Shutter-TradingPeriod-Employer",
-          "Label": "Your organisation is not eligible to apply to join the register of apprenticeship training providers",
+          "Label": "Your organisation is not eligible to apply to join RoATP",
           "ShortLabel": "",
           "QuestionBodyText": "<p class=\"govuk-body\">To apply as an employer provider, your organisation must have been trading for at least 12 months.</p><p class=\"govuk-body\">You can try again once your organisation has enough trading history.</p><p class=\"govuk-body\"><a href=\"https://www.gov.uk\">Back to GOV.UK</a></p>",
           "Hint": "",
@@ -1656,14 +1656,14 @@ VALUES
       "PageId": "10003",
       "SequenceId": "1",
       "SectionId": "3",
-      "Title": "Your organisation is not eligible to apply to join the register of apprenticeship training providers",
+      "Title": "Your organisation is not eligible to apply to join RoATP",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "SHUT-003",
           "QuestionTag": "Shutter-TradingPeriod-Supporting",
-          "Label": "Your organisation is not eligible to apply to join the register of apprenticeship training providers",
+          "Label": "Your organisation is not eligible to apply to join RoATP",
           "ShortLabel": "",
           "QuestionBodyText": "<p class=\"govuk-body\">To apply as a supporting provider, your organisation must have been trading for at least 3 months.</p><p class=\"govuk-body\">You can try again once your organisation has enough trading history.</p><p class=\"govuk-body\"><a href=\"https://www.gov.uk\">Back to GOV.UK</a></p>",
           "Hint": "",
@@ -1708,6 +1708,303 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,1
 		   ,3
 		   ,@OrgansiationDetailsSectionId
+           ,'Draft'
+           ,1)
+
+DECLARE @ConfirmWhosInControlSectionId UNIQUEIDENTIFIER
+SET @ConfirmWhosInControlSectionId = 'A3DA075D-858F-4498-8BFF-0360BD5EC459'
+
+INSERT [dbo].[WorkflowSections]
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
+VALUES
+  (@ConfirmWhosInControlSectionId, @ProjectId, N'
+{
+  "Pages": [   	
+	{
+      "PageId": "70",
+      "SequenceId": "1",
+      "SectionId": "4",
+      "Title": "Confirm who''s in control",
+      "LinkTitle": "",
+      "InfoText": "",
+	  "Details": {
+        "Title": "What if these details are wrong?",
+        "Body": "<p class=\"govuk-body\">Contact Companies House to <a href=\"https://www.gov.uk/file-changes-to-a-company-with-companies-house\" target=\"_blank\">change these details (opens in a new window or tab)</a>.</p><p class=\"govuk-body\">After your changes have been confirmed, sign back in to continue with this application.</p>"
+      },
+      "Questions": [
+        {
+          "QuestionId": "YO-70",
+          "QuestionTag": "Companies-House-Directors",
+          "Label": "",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">These are the details we found on Companies House.</p>",
+          "Hint": "",
+          "Input": {
+            "Type": "TabularData",			
+            "Validations": [              
+            ]
+          },
+          "Order": null
+        },
+		{
+          "QuestionId": "YO-71",
+          "QuestionTag": "Companies-House-PSCs",
+          "Label": "",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "TabularData",			
+            "Validations": [              
+            ]
+          },
+          "Order": null
+        },
+		{
+          "QuestionId": "YO-75",
+          "QuestionTag": "Directors-PSCs-Confirmed",
+          "Label": "",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Validations": []
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+		{
+          "Action": "NextPage",
+          "ReturnId": "90",
+          "Condition": {
+            "QuestionTag": "CC-TrusteeManualEntry",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "80",
+          "Condition": {
+            "QuestionTag": "UKRLP-Verification-Charity",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "140",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": "",
+	  "NotRequired": true
+    },
+	{
+      "PageId": "80",
+      "SequenceId": "1",
+      "SectionId": "4",
+      "Title": "Confirm who''s in control",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-80",
+          "QuestionTag": "Confirm-Trustees-NoDoB",
+          "Label": "Confirm who''s in control",
+          "ShortLabel": "",
+          "QuestionBodyText": "PLACEHOLDER Confirm Trustees DOB",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",			
+            "Validations": [              
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+		{
+          "Action": "NextPage",
+          "ReturnId": "140",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": "",
+	  "NotRequired": true
+    },		
+	{
+      "PageId": "90",
+      "SequenceId": "1",
+      "SectionId": "4",
+      "Title": "Confirm who''s in control",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-90",
+          "QuestionTag": "Add-Trustees",
+          "Label": "Confirm who''s in control",
+          "ShortLabel": "",
+          "QuestionBodyText": "PLACEHOLDER Add Trustees",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",			
+            "Validations": [              
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+		{
+          "Action": "NextPage",
+          "ReturnId": "140",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": "",
+	  "NotRequired": true
+    },
+	{
+      "PageId": "100",
+      "SequenceId": "1",
+      "SectionId": "4",
+      "Title": "Tell us your organisation''s type",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-100",
+          "QuestionTag": "SoleTrade-or-Partnership",
+          "Label": "Tell us your organisation''s type",
+          "ShortLabel": "",
+          "QuestionBodyText": "PLACEHOLDER Sole Trader or Partnership",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",			
+            "Validations": [              
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+		{
+          "Action": "NextPage",
+          "ReturnId": "140",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": "",
+	  "NotRequired": true
+    },
+	{
+      "PageId": "130",
+      "SequenceId": "1",
+      "SectionId": "4",
+      "Title": "PLACEHOLDER Add People In Control",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-130",
+          "QuestionTag": "Add-PeopleInControl",
+          "Label": "PLACEHOLDER Add People In Control",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",			
+            "Validations": [              
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+		{
+          "Action": "NextPage",
+          "ReturnId": "140",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": "",
+	  "NotRequired": true
+    }
+  ]
+}
+', N'Confirm who''s in control', N'Confirm who''s in control', N'Draft', N'Pages')
+
+DECLARE @ConfirmWhosInControlSequenceId UNIQUEIDENTIFIER
+SET @ConfirmWhosInControlSequenceId = '2639B6CA-55F4-4578-9DDB-0B3E3F4A2139'
+
+INSERT INTO [dbo].[WorkflowSequences]
+           ([Id]
+           ,[WorkflowId]
+           ,[SequenceNo]
+		   ,[SectionNo]
+		   ,[SectionId]
+           ,[Status]
+           ,[IsActive])
+     VALUES
+           (@ConfirmWhosInControlSequenceId
+           ,@WorkflowId
+           ,1
+		   ,4
+		   ,@ConfirmWhosInControlSectionId
            ,'Draft'
            ,1)
 

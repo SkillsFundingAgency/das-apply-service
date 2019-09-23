@@ -105,6 +105,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var preambleQuestions = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(applicationDetails);
 
             await SavePreambleQuestions(response.ApplicationId, userId, preambleQuestions);
+
+            if (applicationDetails.UkrlpLookupDetails.VerifiedByCompaniesHouse)
+            {
+                var whosInControlQuestions = RoatpPreambleQuestionBuilder.CreateCompaniesHouseWhosInControlQuestions(applicationDetails);
+
+                await SaveCompaniesHouseWhosInControlQuestions(response.ApplicationId, userId, whosInControlQuestions);
+            }
             
             return RedirectToAction("Applications", new { applicationType = applicationType });
         }
@@ -260,7 +267,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     return await TaskList(applicationId);
                 }
 
-                page = await GetDataFedOptions(page);
+                page = await GetDataFedOptions(applicationId, page);
 
                 viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, pageContext, redirectAction,
                     returnUrl, null);
@@ -297,12 +304,24 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
 
+            var preambleSequence = sequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.Preamble);
+            var preambleSections = await _qnaApiClient.GetSections(applicationId, preambleSequence.Id);
+            var preambleSection = preambleSections.FirstOrDefault();
+            var verifiedCompaniesHouse = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany);
+            var companiesHouseManualEntry = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CompaniesHouseManualEntryRequired);
+            var verifiedCharityCommission = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity);
+            var charityCommissionManualEntry = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CharityCommissionTrusteeManualEntry);
+
             var model = new TaskListViewModel
             {
                 ApplicationId = applicationId,
                 ApplicationSequences = filteredSequences,
                 UKPRN = organisationDetails.OrganisationUkprn?.ToString(),
-                OrganisationName = organisationDetails.Name
+                OrganisationName = organisationDetails.Name,
+                VerifiedCompaniesHouse = (verifiedCompaniesHouse.Value == "TRUE"),
+                VerifiedCharityCommision = (verifiedCharityCommission.Value == "TRUE"),
+                CompaniesHouseManualEntry = (companiesHouseManualEntry.Value == "TRUE"),
+                CharityCommissionManualEntry = (charityCommissionManualEntry.Value == "TRUE")
             };
 
             return View("~/Views/Roatp/TaskList.cshtml", model);
@@ -360,7 +379,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return canUpdate;
         }
 
-        private async Task<Page> GetDataFedOptions(Page page)
+        private async Task<Page> GetDataFedOptions(Guid applicationId, Page page)
         {
             if (page != null)
             {
@@ -373,7 +392,25 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         question.Input.Options = questionOptions;
                         question.Input.Type = question.Input.Type.Replace("DataFed_", "");
                     }
+                    if (question.Input.Type == "TabularData")
+                    {
+                        var answer = await _qnaApiClient.GetAnswerByTag(applicationId, question.QuestionTag);
+                        if (page.PageOfAnswers == null || page.PageOfAnswers.Count < 1)
+                        {
+                            page.PageOfAnswers = new List<PageOfAnswers>();
+
+                            var pageOfAnswers = new PageOfAnswers { Id = Guid.NewGuid(), Answers = new List<Answer>() };
+                            page.PageOfAnswers.Add(pageOfAnswers);
+                        }
+                        var autoFilledAnswer = new Answer { QuestionId = question.QuestionId, Value = answer.Value };
+                        var answersCollection = page.PageOfAnswers.First().Answers;
+                        if (answersCollection.FirstOrDefault(x => x.QuestionId == question.QuestionId) == null)
+                        {
+                            answersCollection.Add(autoFilledAnswer);
+                        }
+                    }
                 }
+                
             }
 
             return page;
@@ -450,7 +487,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
-            var invalidPage = await GetDataFedOptions(page);
+            var invalidPage = await GetDataFedOptions(applicationId, page);
             this.TempData["InvalidPage"] = JsonConvert.SerializeObject(invalidPage);
 
             return await Page(applicationId, sequenceId, sectionId, pageId, redirectAction);
@@ -711,6 +748,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 conditionsOfAcceptanceSections.FirstOrDefault(x => x.SectionId == DefaultSectionId);
 
             updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, conditionsOfAcceptanceSection.Id, RoatpWorkflowPageIds.ConditionsOfAcceptance, conditionsOfAcceptanceAnswers);
+        }
+
+        private async Task SaveCompaniesHouseWhosInControlQuestions(Guid applicationId, Guid userId, List<PreambleAnswer> questions)
+        {
+            var applicationSequences = await _qnaApiClient.GetSequences(applicationId);
+            
+            var yourOrganisationSequence =
+                applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
+            var yourOrganisationSections = await _qnaApiClient.GetSections(applicationId, yourOrganisationSequence.Id);
+            var whosInControlSection = yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+       
+            var whosInControlQuestions = questions.AsEnumerable<Answer>().ToList();                  
+
+            var updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, whosInControlQuestions);
         }
 
         private bool IsPostBack()

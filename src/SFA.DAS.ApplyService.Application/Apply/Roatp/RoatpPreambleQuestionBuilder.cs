@@ -6,6 +6,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
     using System.Linq;
     using Domain.Apply;
     using Domain.Roatp;
+    using Newtonsoft.Json;
     using SFA.DAS.ApplyService.Domain.Ukrlp;
 
     public static class RoatpPreambleQuestionIdConstants
@@ -40,6 +41,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string RoatpRemovedReason = "PRE-92";
         public static string RoatpStatusDate = "PRE-93";
         public static string RoatpProviderRoute = "PRE-94";
+        public static string CompaniesHouseDirectors = "YO-70";
+        public static string CompaniesHousePSCs = "YO-71";
+        public static string CompaniesHouseDetailsConfirmed = "YO-75";
         public static string ApplyProviderRoute = "YO-1";
         public static string ApplyProviderRouteMain = "YO-1.1";              
         public static string ApplyProviderRouteEmployer = "YO-1.2";
@@ -67,6 +71,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static int ProviderRoute = 1;
             public static int WhatYouWillNeed = 2;
             public static int OrganisationDetails = 3;
+            public static int WhosInControl = 4;
         }
 
         public static class FinancialEvidence
@@ -93,6 +98,15 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string YourOrganisationParentCompanyCheck = "20";
         public static string YourOrganisationParentCompanyDetails = "21";
         public static string ConditionsOfAcceptance = "999999";
+
+        public static class WhosInControl
+        {
+            public static string CompaniesHouseStartPage = "70";
+            public static string CharityCommissionStartPage = "80";
+            public static string CharityCommissionNoTrustees = "90";
+            public static string SoleTraderPartnership = "100";
+            public static string AddPeopleInControl = "130";
+        }
     }
 
     public static class RoatpWorkflowQuestionTags
@@ -127,6 +141,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             return questions;
         }
 
+        public static List<PreambleAnswer> CreateCompaniesHouseWhosInControlQuestions(ApplicationDetails applicationDetails)
+        {
+            var questions = new List<PreambleAnswer>();
+
+            CreateCompaniesHouseDirectorsData(applicationDetails, questions);
+            CreateCompaniesHousePscData(applicationDetails, questions);
+            CreateBlankCompaniesHouseConfirmationQuestion(questions);
+            return questions;
+        }
+        
         private static void CreateApplyQuestionAnswers(ApplicationDetails applicationDetails, List<PreambleAnswer> questions)
         {
             questions.Add(new PreambleAnswer
@@ -336,6 +360,95 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             });
         }
 
+        private static void CreateCompaniesHouseDirectorsData(ApplicationDetails applicationDetails, List<PreambleAnswer> questions)
+        {
+            if (applicationDetails.CompanySummary.Directors != null & applicationDetails.CompanySummary.Directors.Count > 0)
+            {
+                var table = new TabularData
+                {
+                    Caption = "Company directors",
+                    HeadingTitles = new List<string> { "Name", "Date of birth" },
+                    DataRows = new List<TabularDataRow>()
+                };
+
+                foreach (var director in applicationDetails.CompanySummary.Directors)
+                {
+                    var dataRow = new TabularDataRow
+                    {
+                        Id = director.Id,
+                        Columns = new List<string> { director.Name, FormatDateOfBirth(director.DateOfBirth) }
+                    };
+                    table.DataRows.Add(dataRow);
+                }
+
+                questions.Add(new PreambleAnswer
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseDirectors,
+                    Value = JsonConvert.SerializeObject(table)
+                });
+            }
+            else
+            {
+                questions.Add(new PreambleAnswer
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseDirectors,
+                    Value = string.Empty
+                });
+            }
+        }
+
+        private static void CreateCompaniesHousePscData(ApplicationDetails applicationDetails, List<PreambleAnswer> questions)
+        {
+            if (applicationDetails.CompanySummary.PersonsSignificationControl != null & applicationDetails.CompanySummary.PersonsSignificationControl.Count > 0)
+            {
+                var table = new TabularData
+                {
+                    Caption = "People with significant control (PSCs)",
+                    HeadingTitles = new List<string> { "Name", "Date of birth" },
+                    DataRows = new List<TabularDataRow>()
+                };
+
+                foreach (var person in applicationDetails.CompanySummary.PersonsSignificationControl)
+                {
+                    var dataRow = new TabularDataRow
+                    {
+                        Id = person.Id,
+                        Columns = new List<string> { person.Name, FormatDateOfBirth(person.DateOfBirth) }
+                    };
+                    table.DataRows.Add(dataRow);
+                }
+
+                questions.Add(new PreambleAnswer
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHousePSCs,
+                    Value = JsonConvert.SerializeObject(table)
+                });
+            }
+            else
+            {
+                questions.Add(new PreambleAnswer
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHousePSCs,
+                    Value = string.Empty
+                });
+            }
+        }
+
+        private static string FormatDateOfBirth(DateTime? dateOfBirth)
+        {
+            if (!dateOfBirth.HasValue)
+            {
+                return string.Empty;
+            }
+
+            if (dateOfBirth.Value.Year == 1 && dateOfBirth.Value.Month == 1)
+            {
+                return string.Empty;
+            }
+
+            return dateOfBirth.Value.ToString("MMM yyyy");
+        }
+        
         private static void CreateCharityCommissionQuestionAnswers(ApplicationDetails applicationDetails, List<PreambleAnswer> questions)
         {
             var trusteeManualEntryRequired = string.Empty;
@@ -365,6 +478,15 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             {
                 QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionRegistrationDate,
                 Value = incorporationDate
+            });
+        }
+        
+        private static void CreateBlankCompaniesHouseConfirmationQuestion(List<PreambleAnswer> questions)
+        {
+            questions.Add(new PreambleAnswer
+            {
+                QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseDetailsConfirmed,
+                Value = string.Empty
             });
         }
 
