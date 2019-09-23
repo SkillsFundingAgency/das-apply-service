@@ -2045,47 +2045,9 @@ VALUES
       ],
       "PageOfAnswers": [],
       "Next": [      
-		
-      ],
-      "Complete": false,
-      "AllowMultipleAnswers": false,
-      "Order": null,
-      "Active": true,
-      "Visible": true,
-      "Feedback": null,
-      "HasFeedback": false,
-      "NotRequiredOrgTypes": [],
-      "BodyText": "",
-	  "NotRequired": true
-    },
-	{
-      "PageId": "140",
-      "SequenceId": "1",
-      "SectionId": "4",
-      "Title": "Tell us your organisation''s type",
-      "LinkTitle": "",
-      "InfoText": "",
-      "Questions": [
-        {
-          "QuestionId": "YO-140",
-          "QuestionTag": "Organisation-Type-MainSupporting",
-          "Label": "Tell us your organisation''s type",
-          "ShortLabel": "",
-          "QuestionBodyText": "PLACEHOLDER Organisation Type Main/Supporting",
-          "Hint": "",
-          "Input": {
-            "Type": "Hidden",			
-            "Validations": [              
-            ]
-          },
-          "Order": null
-        }
-      ],
-      "PageOfAnswers": [],
-      "Next": [      
 		{
           "Action": "NextPage",
-          "ReturnId": "140",
+          "ReturnId": null,
           "Condition": null,
           "ConditionMet": false
         }
@@ -2128,10 +2090,10 @@ VALUES
       "Next": [      
 		{
           "Action": "NextPage",
-          "ReturnId": "140",
+          "ReturnId": null,
           "Condition": null,
           "ConditionMet": false
-        }
+        }		
       ],
       "Complete": false,
       "AllowMultipleAnswers": false,
