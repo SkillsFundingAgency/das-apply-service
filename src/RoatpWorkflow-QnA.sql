@@ -1905,13 +1905,125 @@ VALUES
       "Title": "Tell us your organisation''s type",
       "LinkTitle": "",
       "InfoText": "",
+	  "Details": {
+        "Title": "What is a sole trader or partnership?",
+        "Body": "<p class=\"govuk-body\">A sole trader is someone who''s self-employed and is the only owner of their business.</p><p class=\"govuk-body\">A partnership is when two or more people agree to share the profits, costs and risks of running a business.</p>"
+      },
       "Questions": [
         {
           "QuestionId": "YO-100",
           "QuestionTag": "SoleTrade-or-Partnership",
           "Label": "Tell us your organisation''s type",
           "ShortLabel": "",
-          "QuestionBodyText": "PLACEHOLDER Sole Trader or Partnership",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "ComplexRadio",
+			"Options": [
+			{
+                "Label": "Sole trader",
+				"Value": "Sole trader",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "Partnership",
+				"Value": "Partnership",
+                "FurtherQuestions": null
+              }
+			]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+		{
+          "Action": "NextPage",
+          "ReturnId": "110",
+          "Condition": {
+            "QuestionId": "YO-100",
+            "MustEqual": "Partnership"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "120",
+          "Condition": {
+            "QuestionId": "YO-100",
+            "MustEqual": "Sole trader"
+          },
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": "",
+	  "NotRequired": true
+    },	
+	{
+      "PageId": "110",
+      "SequenceId": "1",
+      "SectionId": "4",
+      "Title": "PLACEHOLDER Add Partner",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-110",
+          "QuestionTag": "Add-Partner",
+          "Label": "PLACEHOLDER Add Partner",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",			
+            "Validations": [              
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+		{
+          "Action": "NextPage",
+          "ReturnId": "140",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": "",
+	  "NotRequired": true
+    },
+	{
+      "PageId": "120",
+      "SequenceId": "1",
+      "SectionId": "4",
+      "Title": "PLACEHOLDER Add Sole Trader DOB",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-110",
+          "QuestionTag": "Add-SoleTrade-DOB",
+          "Label": "PLACEHOLDER Add Sole Trader DOB",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
           "Hint": "",
           "Input": {
             "Type": "Hidden",			
