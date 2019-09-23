@@ -36,7 +36,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IConfigurationService _configService;
         private readonly IUserService _userService;
         private readonly IQnaApiClient _qnaApiClient;
-        private readonly IProcessIntroductionPageService _processIntroductionPageService;
+        private readonly IProcessPageService _processPageService;
         private readonly List<TaskListConfiguration> _configuration;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
@@ -44,7 +44,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public RoatpApplicationController(IApplicationApiClient apiClient, ILogger<RoatpApplicationController> logger,
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
-            IQnaApiClient qnaApiClient, IOptions<List<TaskListConfiguration>> configuration, IProcessIntroductionPageService processIntroductionPageService)
+            IQnaApiClient qnaApiClient, IOptions<List<TaskListConfiguration>> configuration, IProcessPageService processPageService)
         {
             _apiClient = apiClient;
             _logger = logger;
@@ -53,7 +53,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _userService = userService;
             _usersApiClient = usersApiClient;
             _qnaApiClient = qnaApiClient;
-            _processIntroductionPageService = processIntroductionPageService;
+            _processPageService = processPageService;
             _configuration = configuration.Value;
         }
 
@@ -186,10 +186,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public async Task<IActionResult> Section(Guid applicationId, int sequenceId, int sectionId)
         {
+
+            //var sequenceDescription = _configuration.FirstOrDefault(x => x.Id ==  sequenceId);
+
+
             if (sectionId == 1)
             {
+                var providerTypeId = await _processPageService.GetProviderTypeId(applicationId);
                 var introductionPageId = await
-                    _processIntroductionPageService.GetIntroductionPageId(applicationId, sequenceId);
+                    _processPageService.GetIntroductionPageIdForSection(applicationId, sequenceId, providerTypeId);
                 if (introductionPageId!=null)
                     return await Page(applicationId, sequenceId, sectionId, introductionPageId.ToString(), "TaskList");
             }
