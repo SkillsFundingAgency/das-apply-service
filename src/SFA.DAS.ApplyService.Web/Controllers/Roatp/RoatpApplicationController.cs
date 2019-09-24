@@ -24,6 +24,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     using Configuration;
     using Microsoft.Extensions.Options;
     using MoreLinq;
+    using SFA.DAS.ApplyService.Web.Services;
     using ViewModels.Roatp;
 
     [Authorize]
@@ -36,6 +37,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IConfigurationService _configService;
         private readonly IUserService _userService;
         private readonly IQnaApiClient _qnaApiClient;
+        private readonly IQuestionPropertyTokeniser _questionPropertyTokeniser;
         private readonly List<TaskListConfiguration> _configuration;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
@@ -43,7 +45,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public RoatpApplicationController(IApplicationApiClient apiClient, ILogger<RoatpApplicationController> logger,
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
-            IQnaApiClient qnaApiClient, IOptions<List<TaskListConfiguration>> configuration)
+            IQnaApiClient qnaApiClient, IOptions<List<TaskListConfiguration>> configuration,
+            IQuestionPropertyTokeniser questionPropertyTokeniser)
         {
             _apiClient = apiClient;
             _logger = logger;
@@ -53,6 +56,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _usersApiClient = usersApiClient;
             _qnaApiClient = qnaApiClient;
             _configuration = configuration.Value;
+            _questionPropertyTokeniser = questionPropertyTokeniser;
         }
 
         public async Task<IActionResult> Applications(string applicationType)
@@ -274,6 +278,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             }
 
+            viewModel = await TokeniseViewModelProperties(viewModel);
+
             if (viewModel.AllowMultipleAnswers)
             {
                 return View("~/Views/Application/Pages/MultipleAnswers.cshtml", viewModel);
@@ -281,7 +287,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             return View("~/Views/Application/Pages/Index.cshtml", viewModel);
         }
-
+        
         [Route("apply-training-provider-tasklist")]
         [HttpGet]
         public async Task<IActionResult> TaskList(Guid applicationId)
@@ -423,9 +429,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return true;
             }
-  
-            var page = await _apiClient.GetPage(applicationId, sequenceId, sectionId, pageId, User.GetUserId());
-            return !page.PageOfAnswers.Any();
+            
+            var sequences = await _qnaApiClient.GetSequences(applicationId);
+            var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
+            var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
+            var selectedSection = sections.Single(x => x.SectionId == sectionId);
+
+            var page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
+            return (page == null || !page.PageOfAnswers.Any());
         }
 
         public async Task<IActionResult> SaveAnswers(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, string __formAction)
@@ -443,7 +454,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var answers = new List<Answer>();
 
             var fileValidationPassed = FileValidator.FileValidationPassed(answers, page, errorMessages, ModelState, HttpContext.Request.Form.Files);
-            GetAnswersFromForm(answers);
+            GetAnswersFromForm(page, answers);
             ApplyFormattingToAnswers(answers, page);
 
             var answersMustBeValidated = await CheckIfAnswersMustBeValidated(applicationId, sequenceId, sectionId, pageId, answers, new Regex(@"\w+"));
@@ -469,6 +480,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 var nextActionsPage = updatePageResult.NextActionId;
                 if (nextActionsPage == null)
                 {
+                    await _apiClient.MarkSectionAsCompleted(applicationId, selectedSection.Id);
                     return await TaskList(applicationId);
                 }
         
@@ -516,7 +528,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
         }
 
-        private void GetAnswersFromForm(List<Answer> answers)
+        private void GetAnswersFromForm(Page page, List<Answer> answers)
         {
             Dictionary<string, JObject> answerValues = new Dictionary<string, JObject>();
 
@@ -543,6 +555,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 {
                     answers.Add(new Answer() { QuestionId = answer.Key, Value = answer.Value.Value<string>(string.Empty) });
                 }
+            }
+            var unansweredQuestions = page.Questions.Where(x => !answers.Any(y => y.QuestionId == x.QuestionId));
+            foreach(var question in unansweredQuestions)
+            {
+                answers.Add(new Answer() { QuestionId = question.QuestionId, Value = string.Empty });
             }
         }
 
@@ -768,6 +785,19 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             return ControllerContext.HttpContext.Request.Method?.ToUpper() == "POST";
         }
+        
+        private async Task<PageViewModel> TokeniseViewModelProperties(PageViewModel viewModel)
+        {
+            viewModel.Title =  await _questionPropertyTokeniser.GetTokenisedValue(viewModel.ApplicationId, viewModel.Title);
+            foreach(var questionModel in viewModel.Questions)
+            {
+                questionModel.Hint = await _questionPropertyTokeniser.GetTokenisedValue(viewModel.ApplicationId, questionModel.Hint);
+                questionModel.Label = await _questionPropertyTokeniser.GetTokenisedValue(viewModel.ApplicationId, questionModel.Label);
+                questionModel.QuestionBodyText = await _questionPropertyTokeniser.GetTokenisedValue(viewModel.ApplicationId, questionModel.QuestionBodyText);
+                questionModel.ShortLabel = await _questionPropertyTokeniser.GetTokenisedValue(viewModel.ApplicationId, questionModel.ShortLabel);
+            }
 
+            return viewModel;
+        }
     }
 }
