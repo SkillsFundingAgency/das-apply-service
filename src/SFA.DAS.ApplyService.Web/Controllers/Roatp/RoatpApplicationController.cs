@@ -480,6 +480,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 var nextActionsPage = updatePageResult.NextActionId;
                 if (nextActionsPage == null)
                 {
+                    await _apiClient.MarkSectionAsCompleted(applicationId, selectedSection.Id);
                     return await TaskList(applicationId);
                 }
         
