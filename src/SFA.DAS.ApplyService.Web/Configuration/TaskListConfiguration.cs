@@ -14,7 +14,7 @@ namespace SFA.DAS.ApplyService.Web.Configuration
 
     public class StartupPage
     {
-        public string ProviderType { get; set; }
+        public int ProviderTypeId { get; set; }
         public string PageId { get; set; }
     }
 }

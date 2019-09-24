@@ -58,7 +58,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             var providerTypeId = await _processPageFlowService.GetApplicationProviderTypeId(applicationId);
 
             var introductionPageId = await
-                _processPageFlowService.GetIntroductionPageIdForSection(applicationId, Sequence1Id, providerTypeId);
+                _processPageFlowService.GetIntroductionPageIdForSequence(applicationId, Sequence1Id, providerTypeId);
             if (introductionPageId != null)
                 return await Task.FromResult(introductionPageId);
 

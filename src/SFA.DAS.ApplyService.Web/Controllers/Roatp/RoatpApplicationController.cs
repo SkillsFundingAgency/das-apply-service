@@ -204,7 +204,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 var providerTypeId = await _processPageFlowService.GetApplicationProviderTypeId(applicationId);
                 var introductionPageId = await
-                    _processPageFlowService.GetIntroductionPageIdForSection(applicationId, sequenceId, providerTypeId);
+                    _processPageFlowService.GetIntroductionPageIdForSequence(applicationId, sequenceId, providerTypeId);
                 if (introductionPageId!=null)
                     return await Page(applicationId, sequenceId, sectionId, introductionPageId, "TaskList");
             }
