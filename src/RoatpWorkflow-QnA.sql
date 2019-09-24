@@ -1133,7 +1133,7 @@ VALUES
                       "Options": null,
                       "Validations": [
                         {
-                          "Name": "ComplexRadio",
+                          "Name": "Required",
                           "Value": null,
                           "ErrorMessage": "Enter a website"
                         },
@@ -1161,7 +1161,7 @@ VALUES
             ],
             "Validations": [
               {
-                "Name": "Required",
+                "Name": "ComplexRadioType",
                 "Value": null,
                 "ErrorMessage": "Tell us if your organisation has a website"
               }
