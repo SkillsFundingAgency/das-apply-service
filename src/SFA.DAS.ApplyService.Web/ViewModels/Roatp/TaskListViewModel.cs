@@ -46,9 +46,8 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             return RoatpTaskListWorkflowHandler.PreviousSectionCompleted(sequence, sectionId, sequential);
         }
 
-        public bool IntroductionPageNextSectionHidden(int sequenceId, int sectionId)
+        public bool IntroductionPageNextSectionUnavailable(int sequenceId, int sectionId)
         {
-
             var statusOfIntroductionPage = SectionStatus(sequenceId,IntroductionSectionId);
             if (sequenceId > Sequence1Id && sectionId != IntroductionSectionId && statusOfIntroductionPage.ToLower() != PageStatusCompleted)
                 return true;
