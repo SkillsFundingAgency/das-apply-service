@@ -25,6 +25,7 @@ namespace SFA.DAS.ApplyService.Web
 {
     using Controllers;
     using SFA.DAS.ApplyService.Web.Configuration;
+    using SFA.DAS.ApplyService.Web.Services;
 
     public class Startup
     {
@@ -153,6 +154,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IRoatpStatusValidator, RoatpStatusValidator>();
             services.AddTransient<ICompaniesHouseApiClient, CompaniesHouseApiClient>();
             services.AddTransient<ICharityCommissionApiClient, CharityCommissionApiClient>();
+            services.AddTransient<IQuestionPropertyTokeniser, QuestionPropertyTokeniser>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)
