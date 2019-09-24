@@ -864,7 +864,7 @@ VALUES
           "QuestionBodyText": "<p class=\"govuk-body\">Your organisation will only have an ultimate parent company if it’s part of a group.</p><p class=\"govuk-body\">An ultimate parent company sits at the top of your organisation’s group and has the most responsibility.</p>",
           "Hint": "",
           "Input": {
-            "Type": "ComplexRadio",
+            "Type": "Radio",
 			"Options": [
 			{
                 "Label": "Yes",
@@ -1161,7 +1161,7 @@ VALUES
             ],
             "Validations": [
               {
-                "Name": "Required",
+                "Name": "ComplexRadioType",
                 "Value": null,
                 "ErrorMessage": "Tell us if your organisation has a website"
               }
@@ -1918,7 +1918,7 @@ VALUES
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "ComplexRadio",
+            "Type": "Radio",
 			"Options": [
 			{
                 "Label": "Sole trader",
@@ -1930,7 +1930,14 @@ VALUES
 				"Value": "Partnership",
                 "FurtherQuestions": null
               }
-			]
+			],
+			"Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us what your organisation is"
+              }
+            ]
           },
           "Order": null
         }
@@ -2014,30 +2021,20 @@ VALUES
       "PageId": "120",
       "SequenceId": "1",
       "SectionId": "4",
-      "Title": "What is {{UKRLP-LegalName}}''s date of birth?",
+      "Title": "PLACEHOLDER Add Sole Trader DOB",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
-          "QuestionId": "YO-120",
+          "QuestionId": "YO-110",
           "QuestionTag": "Add-SoleTrade-DOB",
-          "Label": "What is {{UKRLP-LegalName}}''s date of birth?",
-          "ShortLabel": "Date of birth",
+          "Label": "PLACEHOLDER Add Sole Trader DOB",
+          "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "MonthAndYear",			
-            "Validations": [
-              {
-                "Name": "MonthAndYear",
-                "Value": null,
-                "ErrorMessage": "Enter a date of birth using a month and year"
-              },
-			  {
-                "Name": "MonthAndYearNotInFuture",
-                "Value": null,
-                "ErrorMessage": "Enter a date of birth using a month and year that''s in the past"
-              }
+            "Type": "Hidden",			
+            "Validations": [              
             ]
           },
           "Order": null
@@ -2047,7 +2044,7 @@ VALUES
       "Next": [      
 		{
           "Action": "NextPage",
-          "ReturnId": null,
+          "ReturnId": "140",
           "Condition": null,
           "ConditionMet": false
         }
@@ -2090,10 +2087,10 @@ VALUES
       "Next": [      
 		{
           "Action": "NextPage",
-          "ReturnId": null,
+          "ReturnId": "140",
           "Condition": null,
           "ConditionMet": false
-        }		
+        }
       ],
       "Complete": false,
       "AllowMultipleAnswers": false,
@@ -2129,6 +2126,166 @@ INSERT INTO [dbo].[WorkflowSequences]
 		   ,@ConfirmWhosInControlSectionId
            ,'Draft'
            ,1)
+
+DECLARE @DescribeYourOrganisationSectionId UNIQUEIDENTIFIER
+SET @DescribeYourOrganisationSectionId = 'D9A819CD-93F5-4312-ABCC-B272B35E09DA'
+
+INSERT [dbo].[WorkflowSections]
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
+VALUES
+  (@DescribeYourOrganisationSectionId, @ProjectId, N'
+{
+  "Pages": [
+    {
+      "PageId": "140",
+      "SequenceId": "1",
+      "SectionId": "5",
+      "Title": "What is your organisation?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-140",
+          "QuestionTag": "Organisation-Type-MainSupporting",
+          "Label": "What is your organisation?",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+            "Options": [
+              {
+                "Label": "A Group Training Association",
+                "Value": "1",
+                "FurtherQuestions": null
+              },
+              {
+                "Label": "A public body",
+                "Value": "2",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "An Apprenticeship Training Agency",
+                "Value": "3",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "An educational institute",
+                "Value": "4",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "An employer training apprentices in other organisations",
+                "Value": "5",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "An Independent Training Provider",
+                "Value": "6",
+                "FurtherQuestions": null
+              }
+            ],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us what your organisation is"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "150",
+      "SequenceId": "1",
+      "SectionId": "5",
+      "Title": "PLACEHOLDER Organisation Type Supporting",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-150",
+          "QuestionTag": "",
+          "Label": "",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Options": [
+              
+            ],
+            "Validations": [
+             
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    }
+  ]
+}
+', N'Describe your organisation', N'Describe your organisation', N'Draft', N'Pages')
+
+DECLARE @DescribeYourOrganisationSequenceId UNIQUEIDENTIFIER
+SET @DescribeYourOrganisationSequenceId = '9E5A819F-2C74-4302-897C-1883DF65701D'
+
+INSERT INTO [dbo].[WorkflowSequences]
+           ([Id]
+           ,[WorkflowId]
+           ,[SequenceNo]
+		   ,[SectionNo]
+		   ,[SectionId]
+           ,[Status]
+           ,[IsActive])
+     VALUES
+           (@DescribeYourOrganisationSequenceId
+           ,@WorkflowId
+           ,1
+		   ,5
+		   ,@DescribeYourOrganisationSectionId
+           ,'Draft'
+           ,1)
+
+
 
 --INSERT INTO [dbo].[WorkflowSequences]
 --           ([Id]
