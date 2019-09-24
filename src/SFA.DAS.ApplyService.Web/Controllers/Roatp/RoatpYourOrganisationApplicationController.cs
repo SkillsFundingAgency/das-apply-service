@@ -17,13 +17,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     {
         private readonly ILogger<RoatpYourOrganisationApplicationController> _logger;
         private readonly IOrganisationApiClient _organisationApiClient;
-        private readonly IGetCurrentApplicationDetailsService _getApplicationDetailsService;
+        private readonly IProcessPageFlowService _processPageFlowService;
 
         public RoatpYourOrganisationApplicationController(ILogger<RoatpYourOrganisationApplicationController> logger,
-             IGetCurrentApplicationDetailsService getApplicationDetailsService)
+             IProcessPageFlowService processPageFlowService)
         {
             _logger = logger;
-            _getApplicationDetailsService = getApplicationDetailsService;
+            _processPageFlowService = processPageFlowService;
         }
 
         public async Task<IActionResult> ProviderRoute(Guid applicationId)
@@ -54,7 +54,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         private async Task<string> GetIntroductionPageForApplication(Guid applicationId)
         {
-            var providerTypeId = await _getApplicationDetailsService.GetProviderTypeId(applicationId);
+            var providerTypeId = await _processPageFlowService.GetProviderTypeId(applicationId);
 
             string pageId = RoatpWorkflowPageIds.YourOrganisationIntroductionMain;
 

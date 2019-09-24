@@ -161,22 +161,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IRoatpStatusValidator, RoatpStatusValidator>();
             services.AddTransient<ICompaniesHouseApiClient, CompaniesHouseApiClient>();
             services.AddTransient<ICharityCommissionApiClient, CharityCommissionApiClient>();
-            services.AddTransient<IGetCurrentApplicationDetailsService, GetCurrentApplicationDetailsService>();
             services.AddTransient<IProcessPageFlowService, ProcessPageFlowService>();
-
-            //MFCMFC
-            //    config.For<IOrganisationApiClient>().Use<OrganisationApiClient>();
-            //    config.For<OrganisationSearchApiClient>().Use<OrganisationSearchApiClient>();
-            //    config.For<CreateAccountValidator>().Use<CreateAccountValidator>();
-            //    config.For<UserService>().Use<UserService>();
-            //    config.For<IQnaTokenService>().Use<QnaTokenService>();
-            //    config.For<IQnaApiClient>().Use<QnaApiClient>();
-            //    config.For<IGetCurrentApplicationDetailsService>().Use<GetCurrentApplicationDetailsService>();
-            //    config.For<IProcessPageFlowService>().Use<ProcessPageFlowService>();
-            //    config.Populate(services);
-            //});
-
-            //return container.GetInstance<IServiceProvider>();
             services.AddTransient<IQuestionPropertyTokeniser, QuestionPropertyTokeniser>();
         }
 
