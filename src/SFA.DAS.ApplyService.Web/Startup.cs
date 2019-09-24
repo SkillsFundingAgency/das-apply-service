@@ -52,7 +52,7 @@ namespace SFA.DAS.ApplyService.Web
             _configService =  new ConfigurationService(env, _configuration["EnvironmentName"], _configuration["ConfigurationStorageConnectionString"], Version, ServiceName).GetConfig().GetAwaiter().GetResult();
         }
 
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             IdentityModelEventSource.ShowPII = true;
         
@@ -120,50 +120,63 @@ namespace SFA.DAS.ApplyService.Web
             
             services.AddAntiforgery(options => options.Cookie = new CookieBuilder() { Name = ".Apply.AntiForgery", HttpOnly = true });
 
-            return ConfigureIOC(services);
+            services.AddHealthChecks();
+
+            ConfigureDependencyInjection(services);
         }
-        
-        private IServiceProvider ConfigureIOC(IServiceCollection services)
+
+        private void ConfigureDependencyInjection(IServiceCollection services)
         {
-            var container = new Container();
+            services.RegisterAllTypes<IValidator>(new[] { typeof(IValidator).Assembly });
 
-            container.Configure(config =>
-            {
-                config.Scan(_ =>
-                {
-                    _.AssembliesFromApplicationBaseDirectory(c => c.FullName.StartsWith("SFA"));
-                    _.WithDefaultConventions();
+            services.AddTransient<ITokenService, TokenService>();
 
-                    _.AddAllTypesOf<IValidator>();
-                });
+            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
-                config.For<IHttpContextAccessor>().Use<HttpContextAccessor>();
-                
-                config.For<IConfigurationService>()
-                    .Use<ConfigurationService>().Singleton()
-                    .Ctor<string>("environment").Is(_configuration["EnvironmentName"])
-                    .Ctor<string>("storageConnectionString").Is(_configuration["ConfigurationStorageConnectionString"])
-                    .Ctor<string>("version").Is("1.0")
-                    .Ctor<string>("serviceName").Is("SFA.DAS.ApplyService");
-                
-                config.For<ISessionService>().Use<SessionService>().Ctor<string>("environment")
-                    .Is(_configuration["EnvironmentName"]);
-                config.For<IDfeSignInService>().Use<DfeSignInService>();
+            services.AddSingleton<IConfigurationService>(sp => new ConfigurationService(
+                sp.GetService<IHostingEnvironment>(),
+                _configuration["EnvironmentName"],
+                _configuration["ConfigurationStorageConnectionString"],
+                "1.0",
+                "SFA.DAS.ApplyService"));
 
-                config.For<IUsersApiClient>().Use<UsersApiClient>();
-                config.For<IApplicationApiClient>().Use<ApplicationApiClient>();
-                config.For<IOrganisationApiClient>().Use<OrganisationApiClient>();
-                config.For<OrganisationSearchApiClient>().Use<OrganisationSearchApiClient>();
-                config.For<CreateAccountValidator>().Use<CreateAccountValidator>();
-                config.For<UserService>().Use<UserService>();
-                config.For<IQnaTokenService>().Use<QnaTokenService>();
-                config.For<IQnaApiClient>().Use<QnaApiClient>();
-                config.For<IGetCurrentApplicationDetailsService>().Use<GetCurrentApplicationDetailsService>();
-                config.For<IProcessPageFlowService>().Use<ProcessPageFlowService>();
-                config.Populate(services);
-            });
+            services.AddTransient<ISessionService>(s => new SessionService(
+                s.GetService<IHttpContextAccessor>(),
+                _configuration["EnvironmentName"]));
 
-            return container.GetInstance<IServiceProvider>();
+            services.AddTransient<IDfeSignInService, DfeSignInService>();
+
+            services.AddTransient<IUsersApiClient, UsersApiClient>();
+            services.AddTransient<UsersApiClient, UsersApiClient>();
+            services.AddTransient<IApplicationApiClient, ApplicationApiClient>();
+            services.AddTransient<OrganisationApiClient, OrganisationApiClient>();
+            services.AddTransient<OrganisationSearchApiClient, OrganisationSearchApiClient>();
+            services.AddTransient<CreateAccountValidator, CreateAccountValidator>();
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IQnaTokenService, QnaTokenService>();
+            services.AddTransient<IQnaApiClient, QnaApiClient>();
+            services.AddTransient<IOrganisationApiClient, OrganisationApiClient>();
+            services.AddTransient<IRoatpApiClient, RoatpApiClient>();
+            services.AddTransient<IUkrlpApiClient, UkrlpApiClient>();
+            services.AddTransient<IRoatpStatusValidator, RoatpStatusValidator>();
+            services.AddTransient<ICompaniesHouseApiClient, CompaniesHouseApiClient>();
+            services.AddTransient<ICharityCommissionApiClient, CharityCommissionApiClient>();
+            services.AddTransient<IGetCurrentApplicationDetailsService, GetCurrentApplicationDetailsService>();
+            services.AddTransient<IProcessPageFlowService, ProcessPageFlowService>();
+
+            //MFCMFC
+            //    config.For<IOrganisationApiClient>().Use<OrganisationApiClient>();
+            //    config.For<OrganisationSearchApiClient>().Use<OrganisationSearchApiClient>();
+            //    config.For<CreateAccountValidator>().Use<CreateAccountValidator>();
+            //    config.For<UserService>().Use<UserService>();
+            //    config.For<IQnaTokenService>().Use<QnaTokenService>();
+            //    config.For<IQnaApiClient>().Use<QnaApiClient>();
+            //    config.For<IGetCurrentApplicationDetailsService>().Use<GetCurrentApplicationDetailsService>();
+            //    config.For<IProcessPageFlowService>().Use<ProcessPageFlowService>();
+            //    config.Populate(services);
+            //});
+
+            //return container.GetInstance<IServiceProvider>();
             services.AddTransient<IQuestionPropertyTokeniser, QuestionPropertyTokeniser>();
         }
 
@@ -196,6 +209,7 @@ namespace SFA.DAS.ApplyService.Web
             app.UseAuthentication();
             app.UseRequestLocalization();
             app.UseSecurityHeaders();
+            app.UseHealthChecks("/health");
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
