@@ -44,6 +44,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
         private const string InputClassUpperCase = "app-uppercase";
+        private const int Section1Id = 1;
 
         public RoatpApplicationController(IApplicationApiClient apiClient, ILogger<RoatpApplicationController> logger,
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
@@ -199,13 +200,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> Section(Guid applicationId, int sequenceId, int sectionId)
         {
 
-            if (sectionId == 1)
+            if (sectionId == Section1Id)
             {
-                var providerTypeId = await _processPageFlowService.GetProviderTypeId(applicationId);
+                var providerTypeId = await _processPageFlowService.GetApplicationProviderTypeId(applicationId);
                 var introductionPageId = await
                     _processPageFlowService.GetIntroductionPageIdForSection(applicationId, sequenceId, providerTypeId);
                 if (introductionPageId!=null)
-                    return await Page(applicationId, sequenceId, sectionId, introductionPageId.ToString(), "TaskList");
+                    return await Page(applicationId, sequenceId, sectionId, introductionPageId, "TaskList");
             }
 
             var sequences = await _qnaApiClient.GetSequences(applicationId);

@@ -18,6 +18,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly ILogger<RoatpYourOrganisationApplicationController> _logger;
         private readonly IOrganisationApiClient _organisationApiClient;
         private readonly IProcessPageFlowService _processPageFlowService;
+        private const int Sequence1Id = 1;
 
         public RoatpYourOrganisationApplicationController(ILogger<RoatpYourOrganisationApplicationController> logger,
              IProcessPageFlowService processPageFlowService)
@@ -54,24 +55,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         private async Task<string> GetIntroductionPageForApplication(Guid applicationId)
         {
-            var providerTypeId = await _processPageFlowService.GetProviderTypeId(applicationId);
+            var providerTypeId = await _processPageFlowService.GetApplicationProviderTypeId(applicationId);
 
-            string pageId = RoatpWorkflowPageIds.YourOrganisationIntroductionMain;
+            var introductionPageId = await
+                _processPageFlowService.GetIntroductionPageIdForSection(applicationId, Sequence1Id, providerTypeId);
+            if (introductionPageId != null)
+                return await Task.FromResult(introductionPageId);
 
-            switch (providerTypeId)
-            {
-                case ApplicationRoute.MainProviderApplicationRoute:
-                    pageId = RoatpWorkflowPageIds.YourOrganisationIntroductionMain;
-                    break;
-                case ApplicationRoute.EmployerProviderApplicationRoute:
-                    pageId = RoatpWorkflowPageIds.YourOrganisationIntroductionEmployer;
-                    break;
-                case ApplicationRoute.SupportingProviderApplicationRoute:
-                    pageId = RoatpWorkflowPageIds.YourOrganisationIntroductionSupporting;
-                    break;
-            }
+            return await Task.FromResult(RoatpWorkflowPageIds.YourOrganisationIntroductionMain);
 
-            return await Task.FromResult(pageId);
         }
     }
 }

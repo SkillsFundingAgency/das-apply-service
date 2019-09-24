@@ -52,7 +52,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
         }
 
 
-        public async Task<int> GetProviderTypeId(Guid applicationId)
+        public async Task<int> GetApplicationProviderTypeId(Guid applicationId)
         {
             var providerTypeId = 1;
             string pageId = RoatpWorkflowPageIds.YourOrganisationIntroductionMain;
