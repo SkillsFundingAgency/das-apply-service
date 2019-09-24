@@ -2014,20 +2014,30 @@ VALUES
       "PageId": "120",
       "SequenceId": "1",
       "SectionId": "4",
-      "Title": "PLACEHOLDER Add Sole Trader DOB",
+      "Title": "What is {{UKRLP-LegalName}}''s date of birth?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
-          "QuestionId": "YO-110",
+          "QuestionId": "YO-120",
           "QuestionTag": "Add-SoleTrade-DOB",
-          "Label": "PLACEHOLDER Add Sole Trader DOB",
-          "ShortLabel": "",
+          "Label": "What is {{UKRLP-LegalName}}''s date of birth?",
+          "ShortLabel": "Date of birth",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",			
-            "Validations": [              
+            "Type": "MonthAndYear",			
+            "Validations": [
+              {
+                "Name": "MonthAndYear",
+                "Value": null,
+                "ErrorMessage": "Enter a date of birth using a month and year"
+              },
+			  {
+                "Name": "MonthAndYearNotInFuture",
+                "Value": null,
+                "ErrorMessage": "Enter a date of birth using a month and year that''s in the past"
+              }
             ]
           },
           "Order": null
@@ -2037,7 +2047,7 @@ VALUES
       "Next": [      
 		{
           "Action": "NextPage",
-          "ReturnId": "140",
+          "ReturnId": null,
           "Condition": null,
           "ConditionMet": false
         }
@@ -2080,10 +2090,10 @@ VALUES
       "Next": [      
 		{
           "Action": "NextPage",
-          "ReturnId": "140",
+          "ReturnId": null,
           "Condition": null,
           "ConditionMet": false
-        }
+        }		
       ],
       "Complete": false,
       "AllowMultipleAnswers": false,
