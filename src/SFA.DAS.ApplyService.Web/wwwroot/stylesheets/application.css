@@ -496,6 +496,11 @@
     .govuk-radios__conditional:last-child {
         margin-bottom: 0;
     }
+    
+@media (min-width: 40.0625em) {
+    .govuk-radios__item {
+        clear: left !important;
+    }
 }
 
 .govuk-table__cell--break-word {

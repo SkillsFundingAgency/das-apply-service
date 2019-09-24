@@ -864,7 +864,7 @@ VALUES
           "QuestionBodyText": "<p class=\"govuk-body\">Your organisation will only have an ultimate parent company if it’s part of a group.</p><p class=\"govuk-body\">An ultimate parent company sits at the top of your organisation’s group and has the most responsibility.</p>",
           "Hint": "",
           "Input": {
-            "Type": "ComplexRadio",
+            "Type": "Radio",
 			"Options": [
 			{
                 "Label": "Yes",
@@ -1133,7 +1133,7 @@ VALUES
                       "Options": null,
                       "Validations": [
                         {
-                          "Name": "Required",
+                          "Name": "ComplexRadio",
                           "Value": null,
                           "ErrorMessage": "Enter a website"
                         },
@@ -1918,7 +1918,7 @@ VALUES
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "ComplexRadio",
+            "Type": "Radio",
 			"Options": [
 			{
                 "Label": "Sole trader",
@@ -1930,7 +1930,14 @@ VALUES
 				"Value": "Partnership",
                 "FurtherQuestions": null
               }
-			]
+			],
+			"Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us what your organisation is"
+              }
+            ]
           },
           "Order": null
         }
