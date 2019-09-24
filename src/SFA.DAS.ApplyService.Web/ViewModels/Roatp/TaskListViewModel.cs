@@ -9,11 +9,13 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
     public class TaskListViewModel
     {
+        private const string SupportingProviderApplicationRouteId = "3";
+
         public Guid ApplicationId { get; set; }
         public string UKPRN { get; set; }
         public string OrganisationName { get; set; }
         public IEnumerable<ApplicationSequence> ApplicationSequences { get; set; }
-
+        
         public string CssClass(int sequenceId, int sectionId, bool sequential = false)
         {
             var status = RoatpTaskListWorkflowHandler.SectionStatus(ApplicationSequences, sequenceId, sectionId, sequential);
@@ -45,5 +47,49 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public bool CompaniesHouseManualEntry { get; set; }
         public bool VerifiedCharityCommision { get; set; }
         public bool CharityCommissionManualEntry { get; set; }
+        public string ApplicationRouteId { get; set; }
+
+        public string WhosInControlStartPageId
+        {
+            get
+            {
+                var whosInControlStartPageId = RoatpWorkflowPageIds.WhosInControl.SoleTraderPartnership;
+                if (VerifiedCompaniesHouse)
+                {
+                    whosInControlStartPageId = RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage;
+                    if (CompaniesHouseManualEntry)
+                    {
+                        whosInControlStartPageId = RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl;
+                    }
+                }
+                else
+                {
+                    if (VerifiedCharityCommision)
+                    {
+                        whosInControlStartPageId = RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage;
+                        if (CharityCommissionManualEntry)
+                        {
+                            whosInControlStartPageId = RoatpWorkflowPageIds.WhosInControl.CharityCommissionNoTrustees;
+                        }
+                    }
+                }
+                return whosInControlStartPageId;
+            }
+        }
+
+        public string DescribeOrganisationStartPageId
+        {
+            get
+            {
+                var describeOrganisationStartPageId = RoatpWorkflowPageIds.DescribeYourOrganisation.MainEmployerStartPage;
+
+                if (ApplicationRouteId == SupportingProviderApplicationRouteId)
+                {
+                    describeOrganisationStartPageId = RoatpWorkflowPageIds.DescribeYourOrganisation.SupportingStartPage;
+                }
+
+                return describeOrganisationStartPageId;
+            }
+        }
     }
 }

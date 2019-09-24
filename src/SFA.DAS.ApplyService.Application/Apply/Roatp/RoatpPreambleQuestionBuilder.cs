@@ -72,6 +72,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static int WhatYouWillNeed = 2;
             public static int OrganisationDetails = 3;
             public static int WhosInControl = 4;
+            public static int DescribeYourOrganisation = 5;
         }
 
         public static class FinancialEvidence
@@ -106,6 +107,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static string CharityCommissionNoTrustees = "90";
             public static string SoleTraderPartnership = "100";
             public static string AddPeopleInControl = "130";
+        }
+
+        public class DescribeYourOrganisation
+        {
+            public static string MainEmployerStartPage = "140";
+            public static string SupportingStartPage = "150";
         }
     }
 
