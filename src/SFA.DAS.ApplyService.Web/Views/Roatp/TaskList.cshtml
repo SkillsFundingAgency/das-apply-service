@@ -127,6 +127,13 @@
                                                  <strong class="govuk-tag app-task-list__task-@Model.CssClass(section.SequenceId, section.SectionId)" id="completed">@Model.SectionStatus(section.SequenceId, section.SectionId)</strong>
                                              </li>
                                          }
+                                         else
+                                         {
+                                             <li class="app-task-list__item">
+                                                 
+                                                     @Html.Raw(section.Title)
+                                             </li> 
+                                         }
                                      }
                                  </ul>
                              </li>

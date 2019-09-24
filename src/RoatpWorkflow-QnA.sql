@@ -2173,3 +2173,295 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,1)
 GO
 
+
+
+
+--- APR-719 adding sequence 4, section 1 interactions
+DECLARE @WorkflowId UNIQUEIDENTIFIER
+DECLARE @ProjectId UNIQUEIDENTIFIER
+
+SET @WorkflowId = '86F83D58-8608-4462-9A4E-65837AF04287'
+SET @ProjectId = '70A0871F-42C1-48EF-8689-E63F0C91A487'
+
+
+DECLARE @ProtectionOfApprenticesSequenceId UNIQUEIDENTIFIER
+SET @ProtectionOfApprenticesSequenceId = '61861411-1794-420d-ab04-788ea4db8072'
+
+DECLARE @ProtectionOfApprentices2SequenceId UNIQUEIDENTIFIER
+SET @ProtectionOfApprentices2SequenceId = '436b3fba-1abf-4d13-a883-a552e7c437d2'
+
+
+DECLARE @ProtectionOfApprentices2SectionId UNIQUEIDENTIFIER
+SET @ProtectionOfApprentices2SectionId = '5dc1e1f5-7b28-47eb-9702-2b25f5d5782d'
+
+DECLARE @ProtectionOfApprenticesSectionId UNIQUEIDENTIFIER
+SET @ProtectionOfApprenticesSectionId = '80616b64-ffb4-45b3-9d4e-0b449bb441eb'
+
+delete from workflowsequences where id = @ProtectionOfApprenticesSequenceId
+delete from WorkflowSequences where id = @ProtectionOfApprentices2SequenceId
+
+delete from workflowSections where id = @ProtectionOfApprenticesSectionId
+delete from workflowSections where id = @ProtectionOfApprentices2SectionId
+
+INSERT [dbo].[WorkflowSections]
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
+VALUES
+  (@ProtectionOfApprenticesSectionId, @ProjectId, N'
+{
+	"Pages": [
+		{
+			"PageId": "500",
+			"SequenceId": "4",
+			"SectionId": "1",
+			"Title": "",
+			"LinkTitle": "link title",
+			"InfoText": "info text",
+			 "Questions": [
+        {
+          "QuestionId": "PYA-10",
+          "QuestionTag": "ProtectApprentice-Introduction-Main",
+          "Label": "Protecting your apprentices",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">For this section you''ll need to upload your organisation''s:</p>
+       <ul class=\"govuk-list govuk-list--bullet\">
+	          <li>continuity plan for apprenticeship training</li>
+        <li>equality and diversity policy</li>
+        <li>safeguarding policy</li>
+        <li>prevent duty policy (if needed)</li>
+        <li>health and safety policy</li>
+      </ul>
+	  <div class=\"govuk-warning-text\">
+  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>
+  <strong class=\"govuk-warning-text__text\">
+    <span class=\"govuk-warning-text__assistive\">Warning</span>
+    All uploads must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept uploads that are generic or taken from a third party.
+  </strong>
+	</div>",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Validations": []
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+       "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "530",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+			"PageId": "510",
+			"SequenceId": "4",
+			"SectionId": "1",
+			"Title": "",
+			"LinkTitle": "link title",
+			"InfoText": "info text",
+			 "Questions": [
+        {
+          "QuestionId": "PYA-11",
+          "QuestionTag": "ProtectApprentice-Introduction-Employer",
+          "Label": "Protecting your apprentices",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">For this section you''ll need to upload your organisation''s:</p>
+       <ul class=\"govuk-list govuk-list--bullet\">
+	          <li>continuity plan for apprenticeship training</li>
+        <li>equality and diversity policy</li>
+        <li>safeguarding policy</li>
+        <li>prevent duty policy (if needed)</li>
+        <li>health and safety policy</li>
+      </ul>
+	  <div class=\"govuk-warning-text\">
+  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>
+  <strong class=\"govuk-warning-text__text\">
+    <span class=\"govuk-warning-text__assistive\">Warning</span>
+    All uploads must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept uploads that are generic or taken from a third party.
+  </strong>
+	</div>",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Validations": []
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+       "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "530",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+			"PageId": "520",
+			"SequenceId": "4",
+			"SectionId": "1",
+			"Title": "",
+			"LinkTitle": "link title",
+			"InfoText": "info text",
+			 "Questions": [
+        {
+          "QuestionId": "PYA-12",
+          "QuestionTag": "ProtectApprentice-Introduction-Supporting",
+          "Label": "Protecting your apprentices",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">For this section you''ll need to upload your organisation''s:</p>
+       <ul class=\"govuk-list govuk-list--bullet\">
+	          <li>continuity plan for apprenticeship training</li>
+        <li>equality and diversity policy</li>
+        <li>safeguarding policy</li>
+        <li>prevent duty policy (if needed)</li>
+        <li>health and safety policy</li>
+      </ul>
+	  <div class=\"govuk-warning-text\">
+  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>
+  <strong class=\"govuk-warning-text__text\">
+    <span class=\"govuk-warning-text__assistive\">Warning</span>
+    All uploads must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept uploads that are generic or taken from a third party.
+  </strong>
+	</div>",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Validations": []
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+       "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "530",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    }
+	]
+}
+', N'Introduction and what you''ll need', N'Introduction and what you''ll need', N'Draft', N'Pages')
+
+INSERT [dbo].[WorkflowSections]
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
+VALUES
+  (@ProtectionOfApprentices2SectionId, @ProjectId, N'
+{
+	"Pages": [
+		{
+			"PageId": "530",
+			"SequenceId": "4",
+			"SectionId": "2",
+			"Title": "Continuity plan for apprenticeship training",
+			"LinkTitle": "Continuity plan for apprenticeship training",
+			"InfoText": "Continuity plan for apprenticeship training",
+			 "Questions": [
+        {
+          "QuestionId": "PYA-20",
+          "QuestionTag": "ProtectApprentice-Continuity",
+          "Label": "Continuity plan for apprenticeship training",
+          "ShortLabel": "",
+          "QuestionBodyText": "Holding page",
+          "Hint": "This is a holding page",
+          "Input": {
+            "Type": "Hidden",
+            "Validations": []
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+       "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "540",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    }
+	]
+}
+', N'Continuity plan for apprenticeship training', N'Continuity plan for apprenticeship training', N'Draft', N'Pages')
+
+
+
+
+INSERT INTO [dbo].[WorkflowSequences]
+			([Id]
+			,[WorkflowId]
+			,[SequenceNo]
+			,[SectionNo]
+			,[SectionId]
+			,[Status]
+			,[IsActive])
+VALUES
+			(@ProtectionOfApprenticesSequenceId
+			,@WorkFlowId
+			,4
+			,1
+			,@ProtectionOfApprenticesSectionId
+			,'Draft'
+			,1)
+
+INSERT INTO [dbo].[WorkflowSequences]
+			([Id]
+			,[WorkflowId]
+			,[SequenceNo]
+			,[SectionNo]
+			,[SectionId]
+			,[Status]
+			,[IsActive])
+VALUES
+			(@ProtectionOfApprentices2SequenceId
+			,@WorkFlowId
+			,4
+			,2
+			,@ProtectionOfApprentices2SectionId
+			,'Draft'
+			,1)
