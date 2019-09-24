@@ -31,7 +31,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
             if (sequenceDescription == null)
                 return null;
 
-
             switch (providerTypeId)
             {
                 case ApplicationRoute.MainProviderApplicationRoute:

@@ -2293,17 +2293,6 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,@ConditionsOfAcceptanceSectionId
            ,'Draft'
            ,1)
-GO
-
-
-
-
---- APR-719 adding sequence 4, section 1 interactions
-DECLARE @WorkflowId UNIQUEIDENTIFIER
-DECLARE @ProjectId UNIQUEIDENTIFIER
-
-SET @WorkflowId = '86F83D58-8608-4462-9A4E-65837AF04287'
-SET @ProjectId = '70A0871F-42C1-48EF-8689-E63F0C91A487'
 
 
 DECLARE @ProtectionOfApprenticesSequenceId UNIQUEIDENTIFIER
@@ -2587,3 +2576,6 @@ VALUES
 			,@ProtectionOfApprentices2SectionId
 			,'Draft'
 			,1)
+
+
+GO
