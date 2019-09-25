@@ -18,9 +18,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         private Mock<IQnaApiClient> _qnaApiClient;
         private Mock<IOptions<List<TaskListConfiguration>>> _configuration;
 
-        //IQnaApiClient qnaApiClient,
-        //    IOptions<List<TaskListConfiguration>> configuration
-
         private Guid _applicationId;
     
 
@@ -30,7 +27,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _applicationId = Guid.NewGuid();
             _qnaApiClient = new Mock<IQnaApiClient>();
             _configuration = new Mock<IOptions<List<TaskListConfiguration>>>();
-          //  _service = new ProcessPageFlowService(_qnaApiClient.Object,_configuration.Object);
         }
 
 
