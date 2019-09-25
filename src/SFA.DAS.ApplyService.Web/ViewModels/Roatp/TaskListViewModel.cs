@@ -9,7 +9,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
     public class TaskListViewModel
     {
-        private const string SupportingProviderApplicationRouteId = "3";
+        private const string EmployerApplicationRouteId = "2";
 
         public Guid ApplicationId { get; set; }
         public string UKPRN { get; set; }
@@ -81,11 +81,11 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         {
             get
             {
-                var describeOrganisationStartPageId = RoatpWorkflowPageIds.DescribeYourOrganisation.MainEmployerStartPage;
+                var describeOrganisationStartPageId = RoatpWorkflowPageIds.DescribeYourOrganisation.MainSupportingStartPage;
 
-                if (ApplicationRouteId == SupportingProviderApplicationRouteId)
+                if (ApplicationRouteId == EmployerApplicationRouteId)
                 {
-                    describeOrganisationStartPageId = RoatpWorkflowPageIds.DescribeYourOrganisation.SupportingStartPage;
+                    describeOrganisationStartPageId = RoatpWorkflowPageIds.DescribeYourOrganisation.EmployerStartPage;
                 }
 
                 return describeOrganisationStartPageId;
