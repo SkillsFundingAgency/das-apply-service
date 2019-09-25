@@ -2431,24 +2431,62 @@ VALUES
       "PageId": "170",
       "SequenceId": "1",
       "SectionId": "5",
-      "Title": "PLACEHOLDER Organisation Public Body Main Supporting",
+      "Title": "What type of public body is your organisation?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-170",
           "QuestionTag": "Organisation-PublicBody-MS",
-          "Label": "PLACEHOLDER Organisation Public Body Main Supporting",
+          "Label": "What type of public body is your organisation?",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
+            "Type": "Radio",
             "Options": [
-              
+              {              
+                "Label": "Executive agency",
+                "Value": "Executive agency",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "Fire authority",
+                "Value": "Fire authority",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "Government department",
+                "Value": "Government department",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "Local authority",
+                "Value": "Local authority",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "NHS Trust",
+                "Value": "NHS Trust",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "Non-departmental public body (NDPB)",
+                "Value": "Non-departmental public body (NDPB)",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "Police",
+                "Value": "Police",
+                "FurtherQuestions": null
+              }
             ],
             "Validations": [
-             
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us what type of public body your organisation is"
+              }
             ]
           },
           "Order": null
@@ -2458,7 +2496,7 @@ VALUES
       "Next": [
 		{
           "Action": "NextPage",
-          "ReturnId": null,
+          "ReturnId": "230",
           "Condition": null,
           "ConditionMet": false
         }
@@ -2477,24 +2515,62 @@ VALUES
       "PageId": "171",
       "SequenceId": "1",
       "SectionId": "5",
-      "Title": "PLACEHOLDER Organisation Public Body Employer",
+      "Title": "What type of public body is your organisation?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-171",
           "QuestionTag": "Organisation-PublicBody-Emp",
-          "Label": "PLACEHOLDER Organisation Public Body Employer",
+          "Label": "What type of public body is your organisation?",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
+            "Type": "Radio",
             "Options": [
-              
+              {              
+                "Label": "Executive agency",
+                "Value": "Executive agency",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "Fire authority",
+                "Value": "Fire authority",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "Government department",
+                "Value": "Government department",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "Local authority",
+                "Value": "Local authority",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "NHS Trust",
+                "Value": "NHS Trust",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "Non-departmental public body (NDPB)",
+                "Value": "Non-departmental public body (NDPB)",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "Police",
+                "Value": "Police",
+                "FurtherQuestions": null
+              }
             ],
             "Validations": [
-             
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us what type of public body your organisation is"
+              }
             ]
           },
           "Order": null
@@ -2504,7 +2580,25 @@ VALUES
       "Next": [
 		{
           "Action": "NextPage",
-          "ReturnId": null,
+          "ReturnId": "220",
+          "Condition": {
+            "QuestionTag": "UKRLP-Verification-Company",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "220",
+          "Condition": {
+            "QuestionTag": "UKRLP-Verification-Charity",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "230",
           "Condition": null,
           "ConditionMet": false
         }
