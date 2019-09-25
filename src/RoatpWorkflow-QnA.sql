@@ -2312,7 +2312,7 @@ VALUES
       "Next": [
 		{
           "Action": "NextPage",
-          "ReturnId": "160",
+          "ReturnId": "161",
           "Condition": {
             "QuestionId": "YO-150",
             "MustEqual": "An educational institute"
@@ -2385,24 +2385,67 @@ VALUES
       "PageId": "160",
       "SequenceId": "1",
       "SectionId": "5",
-      "Title": "PLACEHOLDER Organisation Education Institute",
+      "Title": "What type of educational institute is your organisation?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-160",
-          "QuestionTag": "Organisation-EducationInstitute",
-          "Label": "PLACEHOLDER Organisation Education Institute",
+          "QuestionTag": "Organisation-EducationInstitute-MainSupporting",
+          "Label": "What type of educational institute is your organisation?",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
+            "Type": "Radio",
             "Options": [
-              
+              {              
+                "Label": "Academy",
+                "Value": "Academy",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "Further Education Institute",
+                "Value": "Further Education Institute",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "General Further Education College",
+                "Value": "General Further Education College",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "Higher Education Institute",
+                "Value": "Higher Education Institute",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "Multi-Academy Trust",
+                "Value": "Multi-Academy Trust",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "National College",
+                "Value": "National College",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "School",
+                "Value": "School",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "Sixth Form College",
+                "Value": "Sixth Form College",
+                "FurtherQuestions": null
+              }
             ],
             "Validations": [
-             
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us what type of educational institute your organisation is"
+              }
             ]
           },
           "Order": null
@@ -2412,8 +2455,229 @@ VALUES
       "Next": [
 		{
           "Action": "NextPage",
-          "ReturnId": null,
-          "Condition": null,
+          "ReturnId": "200",
+          "Condition": {
+            "QuestionId": "YO-160",
+            "MustEqual": "Academy"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "200",
+          "Condition": {
+            "QuestionId": "YO-160",
+            "MustEqual": "Further Education Institute"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "210",
+          "Condition": {
+            "QuestionId": "YO-160",
+            "MustEqual": "General Further Education College"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "190",
+          "Condition": {
+            "QuestionId": "YO-160",
+            "MustEqual": "Higher Education Institute"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "200",
+          "Condition": {
+            "QuestionId": "YO-160",
+            "MustEqual": "Multi-Academy Trust"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "210",
+          "Condition": {
+            "QuestionId": "YO-160",
+            "MustEqual": "National College"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "180",
+          "Condition": {
+            "QuestionId": "YO-160",
+            "MustEqual": "School"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "210",
+          "Condition": {
+            "QuestionId": "YO-160",
+            "MustEqual": "Sixth Form College"
+          },
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "161",
+      "SequenceId": "1",
+      "SectionId": "5",
+      "Title": "What type of educational institute is your organisation?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-161",
+          "QuestionTag": "Organisation-EducationInstitute-Employer",
+          "Label": "What type of educational institute is your organisation?",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+            "Options": [
+              {              
+                "Label": "Academy",
+                "Value": "Academy",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "Further Education Institute",
+                "Value": "Further Education Institute",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "General Further Education College",
+                "Value": "General Further Education College",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "Higher Education Institute",
+                "Value": "Higher Education Institute",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "Multi-Academy Trust",
+                "Value": "Multi-Academy Trust",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "National College",
+                "Value": "National College",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "School",
+                "Value": "School",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "Sixth Form College",
+                "Value": "Sixth Form College",
+                "FurtherQuestions": null
+              }
+            ],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us what type of educational institute your organisation is"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": "201",
+          "Condition": {
+            "QuestionId": "YO-161",
+            "MustEqual": "Academy"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "201",
+          "Condition": {
+            "QuestionId": "YO-161",
+            "MustEqual": "Further Education Institute"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "211",
+          "Condition": {
+            "QuestionId": "YO-161",
+            "MustEqual": "General Further Education College"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "191",
+          "Condition": {
+            "QuestionId": "YO-161",
+            "MustEqual": "Higher Education Institute"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "201",
+          "Condition": {
+            "QuestionId": "YO-161",
+            "MustEqual": "Multi-Academy Trust"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "211",
+          "Condition": {
+            "QuestionId": "YO-161",
+            "MustEqual": "National College"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "181",
+          "Condition": {
+            "QuestionId": "YO-161",
+            "MustEqual": "School"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "211",
+          "Condition": {
+            "QuestionId": "YO-161",
+            "MustEqual": "Sixth Form College"
+          },
           "ConditionMet": false
         }
       ],
