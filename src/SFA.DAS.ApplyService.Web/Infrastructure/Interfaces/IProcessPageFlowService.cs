@@ -7,7 +7,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Interfaces
 {
     public interface IProcessPageFlowService
     {
-        Task<string> GetIntroductionPageIdForSequence(Guid applicationId, int sequenceId, int providerTypeId);
+        Task<string> GetIntroductionPageIdForSequence(int sequenceId, int providerTypeId);
         Task<int> GetApplicationProviderTypeId(Guid applicationId);
     }
 }
