@@ -111,8 +111,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
         public class DescribeYourOrganisation
         {
-            public static string MainEmployerStartPage = "140";
-            public static string SupportingStartPage = "150";
+            public static string MainSupportingStartPage = "140";
+            public static string EmployerStartPage = "150";
         }
     }
 
