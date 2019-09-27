@@ -154,6 +154,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<ICompaniesHouseApiClient, CompaniesHouseApiClient>();
             services.AddTransient<ICharityCommissionApiClient, CharityCommissionApiClient>();
             services.AddTransient<IQuestionPropertyTokeniser, QuestionPropertyTokeniser>();
+            services.AddTransient<IPageNavigationTrackingService, PageNavigationTrackingService>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)
