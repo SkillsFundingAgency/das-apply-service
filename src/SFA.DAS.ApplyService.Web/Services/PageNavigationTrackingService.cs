@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 
 namespace SFA.DAS.ApplyService.Web.Services
 {
-    public class PageNavigationTrackingService : Controller, IPageNavigationTrackingService
+    public class PageNavigationTrackingService : IPageNavigationTrackingService
     {
         private readonly ISessionService _sessionService;
         private readonly IQnaApiClient _qnaApiClient;
