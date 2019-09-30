@@ -618,7 +618,7 @@ VALUES
       "PageId": "10",
       "SequenceId": "1",
       "SectionId": "2",
-      "Title": "Introduction and what you''ll need",
+      "Title": "Your organisation",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
@@ -627,7 +627,7 @@ VALUES
           "QuestionTag": "Organisation-Introduction-Main",
           "Label": "",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\">MAIN PROVIDER Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sed interdum diam, vitae ornare tortor. Etiam ac lectus placerat, porttitor.</p>",
+          "QuestionBodyText": "<p class=\"govuk-body\">In this section we''ll ask for:</p><ul class=\"govuk-list govuk-list--bullet\"><li>your organsiation''s ICO registration number</li><li>who''s in control and their date of births</li><li>your organisation''s trading history</li><li>details of what your organisation is</li><li>Ofsted or other educational accreditations</li></ul><p class=\"govuk-body\">Depending on your answers, we may ask further questions.</p> <div class=\"govuk-warning-text\"> <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span> <strong class=\"govuk-warning-text__text\"> <span class=\"govuk-warning-text__assistive\">Warning</span>Your organisation must have at least 12 months trading history and a training manager with at least 9 months experience in developing and delivering training. </strong> </div>",
           "Hint": "",
           "Input": {
             "Type": "Hidden",
@@ -685,7 +685,7 @@ VALUES
       "PageId": "11",
       "SequenceId": "1",
       "SectionId": "2",
-      "Title": "Introduction and what you''ll need",
+      "Title": "Your organisation",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
@@ -694,7 +694,7 @@ VALUES
           "QuestionTag": "Organisation-Introduction-Employer",
           "Label": "",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\">EMPLOYER PROVIDER Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sed interdum diam, vitae ornare tortor. Etiam ac lectus placerat, porttitor.</p>",
+          "QuestionBodyText": "<p class=\"govuk-body\">In this section we''ll ask for:</p><ul class=\"govuk-list govuk-list--bullet\"><li>your organsiation''s ICO registration number</li><li>who''s in control and their date of births</li><li>your organisation''s trading history</li><li>details of what your organisation is</li><li>Ofsted or other educational accreditations</li></ul><p class=\"govuk-body\">Depending on your answers, we may ask further questions.</p> <div class=\"govuk-warning-text\"> <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span> <strong class=\"govuk-warning-text__text\"> <span class=\"govuk-warning-text__assistive\">Warning</span>Your organisation must have at least 12 months trading history and a training manager with at least 9 months experience in developing and delivering training. </strong> </div>",
           "Hint": "",
           "Input": {
             "Type": "Hidden",
@@ -752,7 +752,7 @@ VALUES
       "PageId": "12",
       "SequenceId": "1",
       "SectionId": "2",
-      "Title": "Introduction and what you''ll need",
+      "Title": "Your organisation",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
@@ -761,7 +761,7 @@ VALUES
           "QuestionTag": "Organisation-Introduction-Supporting",
           "Label": "",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\">SUPPORTING PROVIDER Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sed interdum diam, vitae ornare tortor. Etiam ac lectus placerat, porttitor.</p>",
+          "QuestionBodyText": "<p class=\"govuk-body\">In this section we''ll ask for:</p><ul class=\"govuk-list govuk-list--bullet\"><li>your organsiation''s ICO registration number</li><li>who''s in control and their date of births</li><li>your organisation''s trading history</li><li>details of what your organisation is</li><li>Ofsted or other educational accreditations</li></ul><p class=\"govuk-body\">Depending on your answers, we may ask further questions.</p> <div class=\"govuk-warning-text\"> <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span> <strong class=\"govuk-warning-text__text\"> <span class=\"govuk-warning-text__assistive\">Warning</span>Your organisation must have at least 3 months trading history and a training manager with at least 3 months experience in developing and delivering training. </strong> </div>",
           "Hint": "",
           "Input": {
             "Type": "Hidden",
