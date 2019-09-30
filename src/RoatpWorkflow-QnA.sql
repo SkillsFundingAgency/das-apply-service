@@ -3303,24 +3303,35 @@ VALUES
       "PageId": "210",
       "SequenceId": "1",
       "SectionId": "5",
-      "Title": "PLACEHOLDER Organisation Funded ESFA Main Supporting",
+      "Title": "Is your organisation receiving funding from ESFA?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-210",
           "QuestionTag": "Organisation-FundedESFA-MS",
-          "Label": "PLACEHOLDER Organisation Funded ESFA Main Supporting",
+          "Label": "Is your organisation receiving funding from ESFA?",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
-            "Options": [
-              
-            ],
+            "Type": "Radio",
+			"Options": [
+			{
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
             "Validations": [
-             
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation is receiving funding from ESFA"
+              }
             ]
           },
           "Order": null
@@ -3330,7 +3341,7 @@ VALUES
       "Next": [
 		{
           "Action": "NextPage",
-          "ReturnId": null,
+          "ReturnId": "230",
           "Condition": null,
           "ConditionMet": false
         }
@@ -3349,24 +3360,35 @@ VALUES
       "PageId": "211",
       "SequenceId": "1",
       "SectionId": "5",
-      "Title": "PLACEHOLDER Organisation Funded ESFA Employer",
+      "Title": "Is your organisation receiving funding from ESFA?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-211",
           "QuestionTag": "Organisation-FundedESFA-Emp",
-          "Label": "PLACEHOLDER Organisation Funded ESFA Employer",
+          "Label": "Is your organisation receiving funding from ESFA?",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
-            "Options": [
-              
-            ],
+            "Type": "Radio",
+			"Options": [
+			{
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
             "Validations": [
-             
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation is receiving funding from ESFA"
+              }
             ]
           },
           "Order": null
@@ -3376,7 +3398,25 @@ VALUES
       "Next": [
 		{
           "Action": "NextPage",
-          "ReturnId": null,
+          "ReturnId": "220",
+          "Condition": {
+            "QuestionTag": "UKRLP-Verification-Company",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "220",
+          "Condition": {
+            "QuestionTag": "UKRLP-Verification-Charity",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "230",
           "Condition": null,
           "ConditionMet": false
         }
