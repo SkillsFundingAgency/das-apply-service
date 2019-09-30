@@ -3105,24 +3105,35 @@ VALUES
       "PageId": "200",
       "SequenceId": "1",
       "SectionId": "5",
-      "Title": "PLACEHOLDER Organisation Registered ESFA Main Supporting",
+      "Title": "Is your organisation already registered with ESFA?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-200",
-          "QuestionTag": "",
-          "Label": "PLACEHOLDER Organisation Registered ESFA Main Supporting",
+          "QuestionTag": "Organisation-RegisteredESFA-MS",
+          "Label": "Is your organisation already registered with ESFA?",
           "ShortLabel": "",
-          "QuestionBodyText": "Organisation-RegisteredESFA-MS",
+          "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
-            "Options": [
-              
-            ],
+            "Type": "Radio",
+			"Options": [
+			{
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
             "Validations": [
-             
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation is already registered with ESFA"
+              }
             ]
           },
           "Order": null
@@ -3132,7 +3143,7 @@ VALUES
       "Next": [
 		{
           "Action": "NextPage",
-          "ReturnId": null,
+          "ReturnId": "230",
           "Condition": null,
           "ConditionMet": false
         }
@@ -3151,24 +3162,35 @@ VALUES
       "PageId": "201",
       "SequenceId": "1",
       "SectionId": "5",
-      "Title": "PLACEHOLDER Organisation Registered ESFA Employer",
+      "Title": "Is your organisation already registered with ESFA?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-201",
-          "QuestionTag": "",
-          "Label": "PLACEHOLDER Organisation Registered ESFA Employer",
+          "QuestionTag": "Organisation-RegisteredESFA-Emp",
+          "Label": "Is your organisation already registered with ESFA?",
           "ShortLabel": "",
-          "QuestionBodyText": "Organisation-RegisteredESFA-Emp",
+          "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
-            "Options": [
-              
-            ],
+            "Type": "Radio",
+			"Options": [
+			{
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
             "Validations": [
-             
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation is already registered with ESFA"
+              }
             ]
           },
           "Order": null
@@ -3178,7 +3200,25 @@ VALUES
       "Next": [
 		{
           "Action": "NextPage",
-          "ReturnId": null,
+          "ReturnId": "220",
+          "Condition": {
+            "QuestionTag": "UKRLP-Verification-Company",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "220",
+          "Condition": {
+            "QuestionTag": "UKRLP-Verification-Charity",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "230",
           "Condition": null,
           "ConditionMet": false
         }
