@@ -3435,26 +3435,41 @@ VALUES
       "PageId": "220",
       "SequenceId": "1",
       "SectionId": "5",
-      "Title": "PLACEHOLDER Organisation Training Apprentices",
+      "Title": "How will your organisation train its apprentices?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-220",
           "QuestionTag": "Organisation-TrainingApprentices",
-          "Label": "PLACEHOLDER Organisation Training Apprentices",
+          "Label": "How will your organisation train its apprentices?",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
-            "Options": [
-              
-            ],
+            "Type": "Radio",
+			"Options": [
+			{
+                "Label": "In your organisation",
+				"Value": "In your organisation"
+              },
+			  {
+                "Label": "In connected companies or charities",
+				"Value": "In connected companies or charities"
+              },
+			  {
+                "Label": "In your organisation and connected companies or charities",
+				"Value": "In your organisation and connected companies or charities"
+              }
+			],
             "Validations": [
-             
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us how your organisation will train its apprentices"
+              }
             ]
-          },
+          ,
           "Order": null
         }
       ],
@@ -3462,7 +3477,7 @@ VALUES
       "Next": [
 		{
           "Action": "NextPage",
-          "ReturnId": null,
+          "ReturnId": "230",
           "Condition": null,
           "ConditionMet": false
         }
