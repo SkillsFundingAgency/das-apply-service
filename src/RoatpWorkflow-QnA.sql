@@ -3438,6 +3438,10 @@ VALUES
       "Title": "How will your organisation train its apprentices?",
       "LinkTitle": "",
       "InfoText": "",
+	  "Details": {
+		"Title": "What is a connected company or charity?",
+		"Body": "<p class=\"govuk-body\">A connected company is part of the same group and has the same ultimate parent company as your organisation.</p><p class=\"govuk-body\">A connected charity is part of the same group of charities and has a majority of the same controlling trustees as your organisation.</p>"
+	  },
       "Questions": [
         {
           "QuestionId": "YO-220",
@@ -3469,7 +3473,7 @@ VALUES
                 "ErrorMessage": "Tell us how your organisation will train its apprentices"
               }
             ]
-          ,
+          },
           "Order": null
         }
       ],
