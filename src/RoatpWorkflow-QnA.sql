@@ -3481,24 +3481,51 @@ VALUES
       "PageId": "230",
       "SequenceId": "1",
       "SectionId": "5",
-      "Title": "PLACEHOLDER Describe Organisation",
+      "Title": "How would you describe your organisation?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-230",
           "QuestionTag": "Organisation-DescribeOrganisation",
-          "Label": "PLACEHOLDER Describe Organisation",
+          "Label": "How would you describe your organisation?",
           "ShortLabel": "",
-          "QuestionBodyText": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">Select all that apply.</p>",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
-            "Options": [
-              
-            ],
+            "Type": "CheckBoxList",
+			"Options": [
+			  {
+                "Label": "A public service mutual",
+				"Value": "A public service mutual",
+				"HintText": "An organisation that’s left the public sector but still delivers public services."
+              },
+			  {
+                "Label": "A sheltered workshop",
+				"Value": "A sheltered workshop",
+				"HintText": "An organisation that provides employment opportunities for people who are developmentally, physically, or mentally impaired."
+              },
+			  {
+                "Label": "A small or medium enterprise (SME)",
+				"Value": "A small or medium enterprise (SME)",
+				"HintText": "As explained by the <a href=\"https://ec.europa.eu/growth/smes/business-friendly-environment/sme-definition_en\" target=\"blank\">European Commission (opens in a new window or tab).</a>"
+              },
+			  {
+                "Label": "A third sector organisation",
+				"Value": "A third sector organisation",
+				"HintText": "An organisation that does voluntary or community work. For example, a charity."
+			  },
+			  {
+                "Label": "None of the above",
+				"Value": "None of the above"
+              }
+			],
             "Validations": [
-             
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us how you would describe your organisation"
+              }
             ]
           },
           "Order": null
