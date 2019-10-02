@@ -10,7 +10,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
-using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -22,6 +21,7 @@ using SFA.DAS.ApplyService.Web.ViewModels;
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
     using Configuration;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Options;
     using MoreLinq;
     using SFA.DAS.ApplyService.Web.Services;
@@ -39,6 +39,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IQuestionPropertyTokeniser _questionPropertyTokeniser;
         private readonly List<TaskListConfiguration> _taskListConfiguration;
+        private readonly IPageNavigationTrackingService _pageNavigationTrackingService;
         private readonly List<QnaPageOverrideConfiguration> _pageOverrideConfiguration;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
@@ -47,7 +48,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public RoatpApplicationController(IApplicationApiClient apiClient, ILogger<RoatpApplicationController> logger,
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
             IQnaApiClient qnaApiClient, IOptions<List<TaskListConfiguration>> taskListConfiguration,
-            IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration)
+            IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
+            IPageNavigationTrackingService pageNavigationTrackingService)
         {
             _apiClient = apiClient;
             _logger = logger;
@@ -58,6 +60,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _qnaApiClient = qnaApiClient;
             _taskListConfiguration = taskListConfiguration.Value;
             _questionPropertyTokeniser = questionPropertyTokeniser;
+            _pageNavigationTrackingService = pageNavigationTrackingService;
             _pageOverrideConfiguration = pageOverrideConfiguration.Value;
         }
 
@@ -214,8 +217,22 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return await Page(applicationId, sequenceId, sectionId, pageId, "TaskList");
         }
 
+        public async Task<IActionResult> Back(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
+        {
+            string previousPageId = await _pageNavigationTrackingService.GetBackNavigationPageId(applicationId, sequenceId, sectionId, pageId);
+
+            if (previousPageId == null)
+            {
+                return RedirectToAction("TaskList", new { applicationId });
+            }
+
+            return RedirectToAction("Page", new { applicationId, sequenceId, sectionId, pageId = previousPageId, redirectAction });
+        }
+
         public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
+            _pageNavigationTrackingService.AddPageToNavigationStack(pageId);
+
             var sequences = await _qnaApiClient.GetSequences(applicationId);
             var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
             var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
