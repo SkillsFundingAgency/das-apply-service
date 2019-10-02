@@ -5,7 +5,7 @@
 }
 
 <div class="grid-row">
-    <a id="jsBackButton" href="javascript:history.back()" class="govuk-back-link">Back</a>
+    <a class="govuk-back-link" href="@Url.Action("Back", "RoatpApplication", new { Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = Model.PageId, redirectAction = "TaskList" })">Back</a>
 </div>
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -197,8 +197,11 @@
                         }
                     }
 
-                    <button type="submit" class="govuk-button">Save and continue</button>
-    
+                    @if (!Model.HideCTA)
+                    {
+                        <button type="submit" class="govuk-button">@Model.CTAButtonText</button>
+                    }
+
                     <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details" />
                 </form>
             }
