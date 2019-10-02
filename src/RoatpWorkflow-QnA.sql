@@ -952,7 +952,7 @@ VALUES
 			  },
 			  {
 				"Name": "Regex",
-				"Value": "[A-Za-z0-9]{2}[0-9]{5}[A-Za-z0-9]{1}",
+				"Value": "[A-Za-z0-9]{2}[0-9]{4}[A-Za-z0-9]{2}",
 				"ErrorMessage": "Enter a valid company number"
 			  }
             ]
