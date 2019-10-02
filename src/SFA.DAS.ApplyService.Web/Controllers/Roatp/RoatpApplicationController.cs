@@ -38,16 +38,18 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IUserService _userService;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IQuestionPropertyTokeniser _questionPropertyTokeniser;
-        private readonly List<TaskListConfiguration> _configuration;
+        private readonly List<TaskListConfiguration> _taskListConfiguration;
         private readonly IPageNavigationTrackingService _pageNavigationTrackingService;
+        private readonly List<QnaPageOverrideConfiguration> _pageOverrideConfiguration;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
         private const string InputClassUpperCase = "app-uppercase";
 
         public RoatpApplicationController(IApplicationApiClient apiClient, ILogger<RoatpApplicationController> logger,
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
-            IQnaApiClient qnaApiClient, IOptions<List<TaskListConfiguration>> configuration,
-            IQuestionPropertyTokeniser questionPropertyTokeniser, IPageNavigationTrackingService pageNavigationTrackingService)
+            IQnaApiClient qnaApiClient, IOptions<List<TaskListConfiguration>> taskListConfiguration,
+            IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
+            IPageNavigationTrackingService pageNavigationTrackingService)
         {
             _apiClient = apiClient;
             _logger = logger;
@@ -56,9 +58,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _userService = userService;
             _usersApiClient = usersApiClient;
             _qnaApiClient = qnaApiClient;
-            _configuration = configuration.Value;
+            _taskListConfiguration = taskListConfiguration.Value;
             _questionPropertyTokeniser = questionPropertyTokeniser;
             _pageNavigationTrackingService = pageNavigationTrackingService;
+            _pageOverrideConfiguration = pageOverrideConfiguration.Value;
         }
 
         public async Task<IActionResult> Applications(string applicationType)
@@ -256,7 +259,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     : null;
 
                 viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, pageContext, redirectAction,
-                    returnUrl, errorMessages);
+                    returnUrl, errorMessages, _pageOverrideConfiguration);
             }
             else
             {
@@ -290,7 +293,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 page = await GetDataFedOptions(applicationId, page);
 
                 viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, pageContext, redirectAction,
-                    returnUrl, null);
+                    returnUrl, null, _pageOverrideConfiguration);
 
             }
 
@@ -375,7 +378,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             foreach (var sequence in sequences)
             {
-                var sequenceDescription = _configuration.FirstOrDefault(x => x.Id == sequence.SequenceId);
+                var sequenceDescription = _taskListConfiguration.FirstOrDefault(x => x.Id == sequence.SequenceId);
                 if (sequenceDescription != null)
                 {
                     sequence.Description = sequenceDescription.Title;
