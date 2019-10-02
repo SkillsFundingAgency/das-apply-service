@@ -197,8 +197,11 @@
                         }
                     }
 
-                    <button type="submit" class="govuk-button">Save and continue</button>
-    
+                    @if (!Model.HideCTA)
+                    {
+                        <button type="submit" class="govuk-button">@Model.CTAButtonText</button>
+                    }
+
                     <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details" />
                 </form>
             }
