@@ -864,7 +864,7 @@ VALUES
           "QuestionBodyText": "<p class=\"govuk-body\">Your organisation will only have an ultimate parent company if it’s part of a group.</p><p class=\"govuk-body\">An ultimate parent company sits at the top of your organisation’s group and has the most responsibility.</p>",
           "Hint": "",
           "Input": {
-            "Type": "ComplexRadio",
+            "Type": "Radio",
 			"Options": [
 			{
                 "Label": "Yes",
@@ -1161,7 +1161,7 @@ VALUES
             ],
             "Validations": [
               {
-                "Name": "Required",
+                "Name": "ComplexRadioType",
                 "Value": null,
                 "ErrorMessage": "Tell us if your organisation has a website"
               }
@@ -1918,7 +1918,7 @@ VALUES
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "ComplexRadio",
+            "Type": "Radio",
 			"Options": [
 			{
                 "Label": "Sole trader",
@@ -1930,7 +1930,14 @@ VALUES
 				"Value": "Partnership",
                 "FurtherQuestions": null
               }
-			]
+			],
+			"Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us what your organisation is"
+              }
+            ]
           },
           "Order": null
         }
@@ -2014,30 +2021,20 @@ VALUES
       "PageId": "120",
       "SequenceId": "1",
       "SectionId": "4",
-      "Title": "What is {{UKRLP-LegalName}}''s date of birth?",
+      "Title": "PLACEHOLDER Add Sole Trader DOB",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
-          "QuestionId": "YO-120",
+          "QuestionId": "YO-110",
           "QuestionTag": "Add-SoleTrade-DOB",
-          "Label": "What is {{UKRLP-LegalName}}''s date of birth?",
-          "ShortLabel": "Date of birth",
+          "Label": "PLACEHOLDER Add Sole Trader DOB",
+          "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "MonthAndYear",			
-            "Validations": [
-              {
-                "Name": "MonthAndYear",
-                "Value": null,
-                "ErrorMessage": "Enter a date of birth using a month and year"
-              },
-			  {
-                "Name": "MonthAndYearNotInFuture",
-                "Value": null,
-                "ErrorMessage": "Enter a date of birth using a month and year that''s in the past"
-              }
+            "Type": "Hidden",			
+            "Validations": [              
             ]
           },
           "Order": null
@@ -2047,7 +2044,7 @@ VALUES
       "Next": [      
 		{
           "Action": "NextPage",
-          "ReturnId": null,
+          "ReturnId": "140",
           "Condition": null,
           "ConditionMet": false
         }
@@ -2090,10 +2087,10 @@ VALUES
       "Next": [      
 		{
           "Action": "NextPage",
-          "ReturnId": null,
+          "ReturnId": "140",
           "Condition": null,
           "ConditionMet": false
-        }		
+        }
       ],
       "Complete": false,
       "AllowMultipleAnswers": false,
@@ -2129,6 +2126,812 @@ INSERT INTO [dbo].[WorkflowSequences]
 		   ,@ConfirmWhosInControlSectionId
            ,'Draft'
            ,1)
+
+DECLARE @DescribeYourOrganisationSectionId UNIQUEIDENTIFIER
+SET @DescribeYourOrganisationSectionId = 'D9A819CD-93F5-4312-ABCC-B272B35E09DA'
+
+INSERT [dbo].[WorkflowSections]
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
+VALUES
+  (@DescribeYourOrganisationSectionId, @ProjectId, N'
+{
+  "Pages": [
+    {
+      "PageId": "140",
+      "SequenceId": "1",
+      "SectionId": "5",
+      "Title": "What is your organisation?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-140",
+          "QuestionTag": "Organisation-Type-MainSupporting",
+          "Label": "What is your organisation?",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+            "Options": [
+              {
+                "Label": "A Group Training Association",
+                "Value": "A Group Training Association",
+                "FurtherQuestions": null
+              },
+              {
+                "Label": "A public body",
+                "Value": "A public body",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "An Apprenticeship Training Agency",
+                "Value": "An Apprenticeship Training Agency",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "An educational institute",
+                "Value": "An educational institute",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "An employer training apprentices in other organisations",
+                "Value": "An employer training apprentices in other organisations",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "An Independent Training Provider",
+                "Value": "An Independent Training Provider",
+                "FurtherQuestions": null
+              }
+            ],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us what your organisation is"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+		{
+          "Action": "NextPage",
+          "ReturnId": "160",
+          "Condition": {
+            "QuestionId": "YO-140",
+            "MustEqual": "An educational institute"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "230",
+          "Condition": {
+            "QuestionId": "YO-140",
+            "MustEqual": "An employer training apprentices in other organisations"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "170",
+          "Condition": {
+            "QuestionId": "YO-140",
+            "MustEqual": "A public body"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "230",
+          "Condition": {
+            "QuestionId": "YO-140",
+            "MustEqual": "An Apprenticeship Training Agency"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "230",
+          "Condition": {
+            "QuestionId": "YO-140",
+            "MustEqual": "An Independent Training Provider"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "230",
+          "Condition": {
+            "QuestionId": "YO-140",
+            "MustEqual": "A Group Training Association"
+          },
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "150",
+      "SequenceId": "1",
+      "SectionId": "5",
+      "Title": "PLACEHOLDER Organisation Type Employer",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-150",
+          "QuestionTag": "Organisation-Type-Employer",
+          "Label": "PLACEHOLDER Organisation Type Employer",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Options": [
+              
+            ],
+            "Validations": [
+             
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "160",
+      "SequenceId": "1",
+      "SectionId": "5",
+      "Title": "PLACEHOLDER Organisation Education Institute",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-160",
+          "QuestionTag": "Organisation-EducationInstitute",
+          "Label": "PLACEHOLDER Organisation Education Institute",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Options": [
+              
+            ],
+            "Validations": [
+             
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "170",
+      "SequenceId": "1",
+      "SectionId": "5",
+      "Title": "PLACEHOLDER Organisation Public Body Main Supporting",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-170",
+          "QuestionTag": "Organisation-PublicBody-MS",
+          "Label": "PLACEHOLDER Organisation Public Body Main Supporting",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Options": [
+              
+            ],
+            "Validations": [
+             
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "171",
+      "SequenceId": "1",
+      "SectionId": "5",
+      "Title": "PLACEHOLDER Organisation Public Body Employer",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-171",
+          "QuestionTag": "Organisation-PublicBody-Emp",
+          "Label": "PLACEHOLDER Organisation Public Body Employer",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Options": [
+              
+            ],
+            "Validations": [
+             
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "180",
+      "SequenceId": "1",
+      "SectionId": "5",
+      "Title": "PLACEHOLDER Organisation School Main Supporting",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-180",
+          "QuestionTag": "Organisation-School-MS",
+          "Label": "PLACEHOLDER Organisation School Main Supporting",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Options": [
+              
+            ],
+            "Validations": [
+             
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "181",
+      "SequenceId": "1",
+      "SectionId": "5",
+      "Title": "PLACEHOLDER Organisation School Employer",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-181",
+          "QuestionTag": "Organisation-School-Emp",
+          "Label": "PLACEHOLDER Organisation School Employer",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Options": [
+              
+            ],
+            "Validations": [
+             
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "190",
+      "SequenceId": "1",
+      "SectionId": "5",
+      "Title": "PLACEHOLDER Organisation OFS Funded Main Supporting",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-190",
+          "QuestionTag": "Organisation-OfSFunded-MS",
+          "Label": "PLACEHOLDER Organisation OFS Funded Main Supporting",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Options": [
+              
+            ],
+            "Validations": [
+             
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "191",
+      "SequenceId": "1",
+      "SectionId": "5",
+      "Title": "PLACEHOLDER Organisation OFS Funded Employer",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-191",
+          "QuestionTag": "Organisation-OfSFunded-Emp",
+          "Label": "PLACEHOLDER Organisation OFS Funded Employer",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Options": [
+              
+            ],
+            "Validations": [
+             
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "200",
+      "SequenceId": "1",
+      "SectionId": "5",
+      "Title": "PLACEHOLDER Organisation Registered ESFA Main Supporting",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-200",
+          "QuestionTag": "",
+          "Label": "PLACEHOLDER Organisation Registered ESFA Main Supporting",
+          "ShortLabel": "",
+          "QuestionBodyText": "Organisation-RegisteredESFA-MS",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Options": [
+              
+            ],
+            "Validations": [
+             
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "201",
+      "SequenceId": "1",
+      "SectionId": "5",
+      "Title": "PLACEHOLDER Organisation Registered ESFA Employer",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-201",
+          "QuestionTag": "",
+          "Label": "PLACEHOLDER Organisation Registered ESFA Employer",
+          "ShortLabel": "",
+          "QuestionBodyText": "Organisation-RegisteredESFA-Emp",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Options": [
+              
+            ],
+            "Validations": [
+             
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "210",
+      "SequenceId": "1",
+      "SectionId": "5",
+      "Title": "PLACEHOLDER Organisation Funded ESFA Main Supporting",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-210",
+          "QuestionTag": "Organisation-FundedESFA-MS",
+          "Label": "PLACEHOLDER Organisation Funded ESFA Main Supporting",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Options": [
+              
+            ],
+            "Validations": [
+             
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "211",
+      "SequenceId": "1",
+      "SectionId": "5",
+      "Title": "PLACEHOLDER Organisation Funded ESFA Employer",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-211",
+          "QuestionTag": "Organisation-FundedESFA-Emp",
+          "Label": "PLACEHOLDER Organisation Funded ESFA Employer",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Options": [
+              
+            ],
+            "Validations": [
+             
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "220",
+      "SequenceId": "1",
+      "SectionId": "5",
+      "Title": "PLACEHOLDER Organisation Training Apprentices",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-220",
+          "QuestionTag": "Organisation-TrainingApprentices",
+          "Label": "PLACEHOLDER Organisation Training Apprentices",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Options": [
+              
+            ],
+            "Validations": [
+             
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "230",
+      "SequenceId": "1",
+      "SectionId": "5",
+      "Title": "PLACEHOLDER Describe Organisation",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-230",
+          "QuestionTag": "Organisation-DescribeOrganisation",
+          "Label": "PLACEHOLDER Describe Organisation",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Options": [
+              
+            ],
+            "Validations": [
+             
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    }
+  ]
+}
+', N'Describe your organisation', N'Describe your organisation', N'Draft', N'Pages')
+
+DECLARE @DescribeYourOrganisationSequenceId UNIQUEIDENTIFIER
+SET @DescribeYourOrganisationSequenceId = '9E5A819F-2C74-4302-897C-1883DF65701D'
+
+INSERT INTO [dbo].[WorkflowSequences]
+           ([Id]
+           ,[WorkflowId]
+           ,[SequenceNo]
+		   ,[SectionNo]
+		   ,[SectionId]
+           ,[Status]
+           ,[IsActive])
+     VALUES
+           (@DescribeYourOrganisationSequenceId
+           ,@WorkflowId
+           ,1
+		   ,5
+		   ,@DescribeYourOrganisationSectionId
+           ,'Draft'
+           ,1)
+
+
 
 --INSERT INTO [dbo].[WorkflowSequences]
 --           ([Id]
