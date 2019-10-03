@@ -804,3 +804,7 @@
 .app-uppercase {
     text-transform: uppercase;
 }
+
+.roatp .govuk-radios--inline .govuk-radios__item {
+    clear: both;
+}
