@@ -1,4 +1,4 @@
 # CODEOWNERS file for das-apply-service.
 # The following users will be automatically added as Reviewers to all PRs.
 
-* @MarkFCain @martin-hornsby @alandburns @davidgouge @gdbarnes @ArshedMust @ChrisJWoodcock
+* @MarkFCain @martin-hornsby @alandburns @davidgouge @gdbarnes @ArshedMust @ChrisJWoodcock @chrisjensenuk
