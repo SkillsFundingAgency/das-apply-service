@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Extensions.Options;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Web.Configuration;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
@@ -10,7 +12,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     {
         public Guid ApplicationId { get; }
 
-        public PageViewModel(Guid applicationId, int sequenceId, int sectionId, string pageId, Page page, string pageContext, string redirectAction, string returnUrl, List<ValidationErrorDetail> errorMessages)
+        public const string DefaultCTAButtonText = "Save and continue";
+
+        private List<QnaPageOverrideConfiguration> _pageOverrideConfiguration;               
+
+        public PageViewModel(Guid applicationId, int sequenceId, int sectionId, string pageId, Page page, string pageContext, string redirectAction, string returnUrl, List<ValidationErrorDetail> errorMessages, List<QnaPageOverrideConfiguration> pageOverrideConfiguration)
         {
             ApplicationId = applicationId;
             SequenceId = sequenceId.ToString();
@@ -20,7 +26,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             RedirectAction = redirectAction;
             ReturnUrl = returnUrl;
             ErrorMessages = errorMessages;
-
+            _pageOverrideConfiguration = pageOverrideConfiguration;
             if (page != null)
             {
                 SetupPage(page, errorMessages);
@@ -52,6 +58,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public string ReturnUrl { get; set; }
 
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
+
+        public string CTAButtonText { get; set; }
+        public bool HideCTA { get; set; }
 
         private void SetupPage(Page page, List<ValidationErrorDetail> errorMessages)
         {
@@ -103,6 +112,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             Details = page.Details;
 
+            SetupCallToActionButton();
+
             foreach (var question in Questions)
             {
                 if (question.Options == null) continue;
@@ -116,6 +127,27 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     }
                 }
             }
+        }
+
+        private void SetupCallToActionButton()
+        {
+            string ctaButtonText = DefaultCTAButtonText;
+
+            var pageOverride = _pageOverrideConfiguration.FirstOrDefault(p => p.PageId == PageId);
+
+            if (pageOverride != null)
+            {
+                if (!String.IsNullOrWhiteSpace(pageOverride.CTAButtonText))
+                {
+                    ctaButtonText = pageOverride.CTAButtonText;
+                }
+                if (pageOverride.HideCTA)
+                {
+                    HideCTA = true;
+                }
+            }
+
+            CTAButtonText = ctaButtonText;
         }
 
         private string GetMultipleValue(List<Answer> answers, Question question, List<ValidationErrorDetail> errorMessages)
