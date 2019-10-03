@@ -34,6 +34,15 @@
             }
         }
 
+        public bool SoleTraderOrPartnership
+        {
+            get
+            {
+                return VerificationDetails.Any(x =>
+                    x.VerificationAuthority == VerificationAuthorities.SoleTraderPartnershipAuthority);
+            }
+        }
+
         public ProviderContact PrimaryContactDetails
         {
             get { return ContactDetails.FirstOrDefault(x => x.ContactType == LegalAddressIdentifier); }

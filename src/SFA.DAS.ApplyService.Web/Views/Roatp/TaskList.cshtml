@@ -18,97 +18,9 @@
                     Organisation name: @Model.OrganisationName
                 </p>
                 <ol class="app-task-list">
-
-                    @{
-                        var yourOrganisationSequence = Model.ApplicationSequences
-                            .Single(seq => (int) seq.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
-
-                        var sequentialSections = yourOrganisationSequence.Sections
-                            .Where(section => section.SectionId != RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute
-                                           && section.SectionId != RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed
-                                           && section.SectionId != RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails
-                                           && section.SectionId != RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
-
-                        var whosInControlStartPageId = RoatpWorkflowPageIds.WhosInControl.SoleTraderPartnership;
-                        if (Model.VerifiedCompaniesHouse)
-                        {
-                            whosInControlStartPageId = RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage;
-                            if (Model.CompaniesHouseManualEntry)
-                            {
-                                whosInControlStartPageId = RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl;
-                            }
-                        }
-                        else
-                        {
-                            if (Model.VerifiedCharityCommision)
-                            {
-                                whosInControlStartPageId = RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage;
-                                if (Model.CharityCommissionManualEntry)
-                                {
-                                    whosInControlStartPageId = RoatpWorkflowPageIds.WhosInControl.CharityCommissionNoTrustees;
-                                }
-                            }
-                        }
-
-                        <li>
-                            <h2 class="app-task-list__section">
-                                @Html.Raw(Convert.ToInt32(yourOrganisationSequence.SequenceId)). @Html.Raw(yourOrganisationSequence.Description)
-                            </h2>
-
-                            <ul class="app-task-list__items">
-                                <li class="app-task-list__item">
-                                    <a class="app-task-list__task_name" href="@Url.Action("ProviderRoute", "RoatpYourOrganisationApplication", new {applicationId = Model.ApplicationId})">Provider route</a>
-                                    <strong class="govuk-tag app-task-list__task-@Model.CssClass(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute, true)">@Model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute, true)</strong>
-                                </li>
-                                <li class="app-task-list__item">
-                                    <a class="app-task-list__task_name" href="@Url.Action("WhatYouWillNeed", "RoatpYourOrganisationApplication", new {applicationId = Model.ApplicationId})">Introduction and what you'll need</a>
-                                    <strong class="govuk-tag app-task-list__task-@Model.CssClass(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed, true)">@Model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed, true)</strong>
-                                </li>
-                                <li class="app-task-list__item">
-                                    @if (Model.PreviousSectionCompleted(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails, true))
-                                    {
-                                        <a class="app-task-list__task_name" href="@Url.Action("Section", "RoatpApplication", new { Model.ApplicationId, sequenceId = RoatpWorkflowSequenceIds.YourOrganisation, sectionId = RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails })">
-                                            Organisation information
-                                            <strong class="govuk-tag app-task-list__task-@Model.CssClass(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails, true)">@Model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails, true)</strong>
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        @Html.Raw("Organisation information")
-                                    }
-                                    </li>
-                                <li class="app-task-list__item">
-                                    @if (Model.PreviousSectionCompleted(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, true))
-                                    {
-                                        <a class="app-task-list__task_name" href="@Url.Action("Page", "RoatpApplication", new { Model.ApplicationId, sequenceId = RoatpWorkflowSequenceIds.YourOrganisation, sectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, pageId = whosInControlStartPageId, redirectAction = "TaskList" })">
-                                            Tell us who's in control
-                                            <strong class="govuk-tag app-task-list__task-@Model.CssClass(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, true)">@Model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, true)</strong>
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        @Html.Raw("Tell us who's in control")
-                                    }
-                                </li>
-
-                                @foreach (var section in sequentialSections)
-                                {
-                                    <li class="app-task-list__item">
-                                        @if (Model.PreviousSectionCompleted(section.SequenceId, section.SectionId, true))
-                                        {
-                                            <a class="app-task-list__task_name" href="@Url.Action("Section", "RoatpApplication", new {section.ApplicationId, section.SequenceId, section.SectionId})">
-                                                @Html.Raw(section.Title)
-                                                <strong class="govuk-tag app-task-list__task-@Model.CssClass(section.SequenceId, section.SectionId, true)">@Model.SectionStatus(section.SequenceId, section.SectionId, true)</strong>
-                                            </a>
-                                        }
-                                        else
-                                        {
-                                            @Html.Raw(section.Title)
-                                        }
-                                    </li>
-                                }
-                                </ul>
-                        </li>
+                    @{ 
+                        await Html.RenderPartialAsync("~/Views/Roatp/TaskList/YourOrganisationSequence.cshtml", Model);
+                    }
                         @foreach (var applicationSequence in Model.ApplicationSequences.Where(sequence => (int)sequence.SequenceId != RoatpWorkflowSequenceIds.YourOrganisation).OrderBy(seq => seq.SequenceId))
                          {
                              <li>
@@ -138,7 +50,7 @@
                                  </ul>
                              </li>
                          }
-                    }
+                    
 
                 </ol>
             </div>

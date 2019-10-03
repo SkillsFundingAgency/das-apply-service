@@ -74,6 +74,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddOptions();
 
             services.Configure<List<TaskListConfiguration>>(_configuration.GetSection("TaskListSequences"));
+            services.Configure<List<QnaPageOverrideConfiguration>>(_configuration.GetSection("QnaPageOverrides"));
 
             if (_env.IsDevelopment())
             {
@@ -158,11 +159,11 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IOrganisationApiClient, OrganisationApiClient>();
             services.AddTransient<IRoatpApiClient, RoatpApiClient>();
             services.AddTransient<IUkrlpApiClient, UkrlpApiClient>();
-            services.AddTransient<IRoatpStatusValidator, RoatpStatusValidator>();
             services.AddTransient<ICompaniesHouseApiClient, CompaniesHouseApiClient>();
             services.AddTransient<ICharityCommissionApiClient, CharityCommissionApiClient>();
             services.AddTransient<IProcessPageFlowService, ProcessPageFlowService>();
             services.AddTransient<IQuestionPropertyTokeniser, QuestionPropertyTokeniser>();
+            services.AddTransient<IPageNavigationTrackingService, PageNavigationTrackingService>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)

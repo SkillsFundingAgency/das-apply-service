@@ -10,7 +10,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
-using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -23,6 +22,7 @@ using SFA.DAS.ApplyService.Web.ViewModels;
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
     using Configuration;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Options;
     using MoreLinq;
     using SFA.DAS.ApplyService.Web.Services;
@@ -41,6 +41,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IProcessPageFlowService _processPageFlowService;
         private readonly IQuestionPropertyTokeniser _questionPropertyTokeniser;
         private readonly List<TaskListConfiguration> _configuration;
+        private readonly IPageNavigationTrackingService _pageNavigationTrackingService;
+        private readonly List<QnaPageOverrideConfiguration> _pageOverrideConfiguration;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
         private const string InputClassUpperCase = "app-uppercase";
@@ -49,7 +51,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public RoatpApplicationController(IApplicationApiClient apiClient, ILogger<RoatpApplicationController> logger,
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
             IQnaApiClient qnaApiClient, IOptions<List<TaskListConfiguration>> configuration, IProcessPageFlowService processPageFlowService,
-            IQuestionPropertyTokeniser questionPropertyTokeniser)
+            IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
+            IPageNavigationTrackingService pageNavigationTrackingService)
         {
             _apiClient = apiClient;
             _logger = logger;
@@ -61,6 +64,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _processPageFlowService = processPageFlowService;
             _configuration = configuration.Value;
             _questionPropertyTokeniser = questionPropertyTokeniser;
+            _pageNavigationTrackingService = pageNavigationTrackingService;
+            _pageOverrideConfiguration = pageOverrideConfiguration.Value;
         }
 
         public async Task<IActionResult> Applications(string applicationType)
@@ -226,8 +231,22 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return await Page(applicationId, sequenceId, sectionId, pageId, "TaskList");
         }
 
+        public async Task<IActionResult> Back(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
+        {
+            string previousPageId = await _pageNavigationTrackingService.GetBackNavigationPageId(applicationId, sequenceId, sectionId, pageId);
+
+            if (previousPageId == null)
+            {
+                return RedirectToAction("TaskList", new { applicationId });
+            }
+
+            return RedirectToAction("Page", new { applicationId, sequenceId, sectionId, pageId = previousPageId, redirectAction });
+        }
+
         public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
+            _pageNavigationTrackingService.AddPageToNavigationStack(pageId);
+
             var sequences = await _qnaApiClient.GetSequences(applicationId);
             var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
             var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
@@ -254,7 +273,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     : null;
 
                 viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, pageContext, redirectAction,
-                    returnUrl, errorMessages);
+                    returnUrl, errorMessages, _pageOverrideConfiguration);
             }
             else
             {
@@ -288,7 +307,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 page = await GetDataFedOptions(applicationId, page);
 
                 viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, pageContext, redirectAction,
-                    returnUrl, null);
+                    returnUrl, null, _pageOverrideConfiguration);
 
             }
 
@@ -331,7 +350,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var companiesHouseManualEntry = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CompaniesHouseManualEntryRequired);
             var verifiedCharityCommission = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity);
             var charityCommissionManualEntry = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CharityCommissionTrusteeManualEntry);
-
+            var yourOrganisationSequence = sequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
+            var yourOrganisationSections = await _qnaApiClient.GetSections(applicationId, yourOrganisationSequence.Id);
+            var providerRouteSection = yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute);
+            var providerRoute = await _qnaApiClient.GetAnswer(applicationId, providerRouteSection.Id, RoatpWorkflowPageIds.YourOrganisation, RoatpPreambleQuestionIdConstants.ApplyProviderRoute);
+            
             var model = new TaskListViewModel
             {
                 ApplicationId = applicationId,
@@ -339,9 +362,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 UKPRN = organisationDetails.OrganisationUkprn?.ToString(),
                 OrganisationName = organisationDetails.Name,
                 VerifiedCompaniesHouse = (verifiedCompaniesHouse.Value == "TRUE"),
-                VerifiedCharityCommision = (verifiedCharityCommission.Value == "TRUE"),
+                VerifiedCharityCommission = (verifiedCharityCommission.Value == "TRUE"),
                 CompaniesHouseManualEntry = (companiesHouseManualEntry.Value == "TRUE"),
-                CharityCommissionManualEntry = (charityCommissionManualEntry.Value == "TRUE")
+                CharityCommissionManualEntry = (charityCommissionManualEntry.Value == "TRUE"),
+                ApplicationRouteId = providerRoute.Value
             };
 
             return View("~/Views/Roatp/TaskList.cshtml", model);

@@ -40,7 +40,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<ICharityCommissionApiClient> _charityCommissionApiClient;
         private Mock<IOrganisationApiClient> _organisationApiClient;
         private Mock<IUsersApiClient> _usersApiClient;
-        private Mock<IRoatpStatusValidator> _roatpStatusValidator;
 
         private RoatpApplicationPreambleController _controller;
 
@@ -62,17 +61,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _charityCommissionApiClient = new Mock<ICharityCommissionApiClient>();
             _organisationApiClient = new Mock<IOrganisationApiClient>();
             _usersApiClient = new Mock<IUsersApiClient>();
-            _roatpStatusValidator = new Mock<IRoatpStatusValidator>();
-            _roatpStatusValidator.Setup(x => x.ProviderEligibleToJoinRegister(It.IsAny<OrganisationRegisterStatus>()))
-                .Returns(true);
-
+            
             _controller = new RoatpApplicationPreambleController(_logger.Object, _roatpApiClient.Object,
                 _ukrlpApiClient.Object,
                 _sessionService.Object, _companiesHouseApiClient.Object,
                 _charityCommissionApiClient.Object,
                 _organisationApiClient.Object,
-                _usersApiClient.Object,
-                _roatpStatusValidator.Object);
+                _usersApiClient.Object);
+
             _activeCompany = new CompaniesHouseSummary
             {
                 CompanyNumber = "12345678",
@@ -1026,45 +1022,5 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                                                                && y.OrganisationDetails.CharityCommissionDetails ==
                                                                null), It.IsAny<Guid>()), Times.Once);
         }
-
-        [Test]
-        public void UKPRN_is_found_on_UKRLP_but_not_eligible_to_join_register()
-        {
-            _applicationDetails.UkrlpLookupDetails.VerificationDetails = new List<VerificationDetails>
-            {
-                new VerificationDetails
-                {
-                    VerificationAuthority = "Additional Source",
-                    VerificationId = "12345678"
-                }
-            };
-
-            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
-
-            var registerStatus = new OrganisationRegisterStatus
-            {
-                ProviderTypeId = ApplicationRoute.MainProviderApplicationRoute,
-                StatusId = OrganisationStatus.Removed,
-                RemovedReasonId = RemovedReason.Breach,
-                UkprnOnRegister = true
-            };
-            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(registerStatus);
-
-            _roatpStatusValidator.Setup(x => x.ProviderEligibleToJoinRegister(It.IsAny<OrganisationRegisterStatus>()))
-                .Returns(false);
-
-            var model = new SearchByUkprnViewModel
-            {
-                UKPRN = "10001000"
-            };
-
-            var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
-
-            result.Should().BeOfType<RedirectToActionResult>();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.ActionName.Should().Be("IneligibleToJoin");
-        }
-
     }
 }
