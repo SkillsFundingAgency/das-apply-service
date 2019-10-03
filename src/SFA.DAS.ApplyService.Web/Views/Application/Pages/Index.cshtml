@@ -7,7 +7,7 @@
 <div class="grid-row">
     <a class="govuk-back-link" href="@Url.Action("Back", "RoatpApplication", new { Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = Model.PageId, redirectAction = "TaskList" })">Back</a>
 </div>
-<main class="govuk-main-wrapper " id="main-content" role="main">
+<main class="govuk-main-wrapper roatp" id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             @if (Model.Questions == null)
