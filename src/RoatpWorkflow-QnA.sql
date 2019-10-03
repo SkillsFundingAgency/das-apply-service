@@ -2881,24 +2881,39 @@ VALUES
       "PageId": "180",
       "SequenceId": "1",
       "SectionId": "5",
-      "Title": "PLACEHOLDER Organisation School Main Supporting",
+      "Title": "What type of school is your organisation?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-180",
           "QuestionTag": "Organisation-School-MS",
-          "Label": "PLACEHOLDER Organisation School Main Supporting",
+          "Label": "What type of school is your organisation?",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
+            "Type": "Radio",
             "Options": [
-              
+              {              
+                "Label": "Free school",
+                "Value": "Free school"
+              },
+			  {
+                "Label": "Local Education Authority (LEA) school",
+                "Value": "Local Education Authority (LEA) school"
+              },
+			  {
+                "Label": "None of the above",
+                "Value": "None of the above"
+              }
             ],
             "Validations": [
-             
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us what type of school your organisation is"
+              }
             ]
           },
           "Order": null
@@ -2908,7 +2923,16 @@ VALUES
       "Next": [
 		{
           "Action": "NextPage",
-          "ReturnId": null,
+          "ReturnId": "200",
+          "Condition": {
+            "QuestionId": "YO-180",
+            "MustEqual": "Free school"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "230",
           "Condition": null,
           "ConditionMet": false
         }
@@ -2927,24 +2951,39 @@ VALUES
       "PageId": "181",
       "SequenceId": "1",
       "SectionId": "5",
-      "Title": "PLACEHOLDER Organisation School Employer",
+      "Title": "What type of school is your organisation?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-181",
           "QuestionTag": "Organisation-School-Emp",
-          "Label": "PLACEHOLDER Organisation School Employer",
+          "Label": "What type of school is your organisation?",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
+            "Type": "Radio",
             "Options": [
-              
+              {              
+                "Label": "Free school",
+                "Value": "Free school"
+              },
+			  {
+                "Label": "Local Education Authority (LEA) school",
+                "Value": "Local Education Authority (LEA) school"
+              },
+			  {
+                "Label": "None of the above",
+                "Value": "None of the above"
+              }
             ],
             "Validations": [
-             
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us what type of school your organisation is"
+              }
             ]
           },
           "Order": null
@@ -2954,7 +2993,34 @@ VALUES
       "Next": [
 		{
           "Action": "NextPage",
-          "ReturnId": null,
+          "ReturnId": "201",
+          "Condition": {
+            "QuestionId": "YO-181",
+            "MustEqual": "Free school"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "220",
+          "Condition": {
+            "QuestionTag": "UKRLP-Verification-Company",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "220",
+          "Condition": {
+            "QuestionTag": "UKRLP-Verification-Charity",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "230",
           "Condition": null,
           "ConditionMet": false
         }
