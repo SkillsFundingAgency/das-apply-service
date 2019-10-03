@@ -348,7 +348,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 UKPRN = organisationDetails.OrganisationUkprn?.ToString(),
                 OrganisationName = organisationDetails.Name,
                 VerifiedCompaniesHouse = (verifiedCompaniesHouse.Value == "TRUE"),
-                VerifiedCharityCommision = (verifiedCharityCommission.Value == "TRUE"),
+                VerifiedCharityCommission = (verifiedCharityCommission.Value == "TRUE"),
                 CompaniesHouseManualEntry = (companiesHouseManualEntry.Value == "TRUE"),
                 CharityCommissionManualEntry = (charityCommissionManualEntry.Value == "TRUE"),
                 ApplicationRouteId = providerRoute.Value

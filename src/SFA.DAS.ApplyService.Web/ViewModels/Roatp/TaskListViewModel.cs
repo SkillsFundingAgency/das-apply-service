@@ -45,7 +45,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         public bool VerifiedCompaniesHouse { get; set; }
         public bool CompaniesHouseManualEntry { get; set; }
-        public bool VerifiedCharityCommision { get; set; }
+        public bool VerifiedCharityCommission { get; set; }
         public bool CharityCommissionManualEntry { get; set; }
         public string ApplicationRouteId { get; set; }
 
@@ -64,7 +64,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                 }
                 else
                 {
-                    if (VerifiedCharityCommision)
+                    if (VerifiedCharityCommission)
                     {
                         whosInControlStartPageId = RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage;
                         if (CharityCommissionManualEntry)

@@ -2267,24 +2267,42 @@ VALUES
       "PageId": "150",
       "SequenceId": "1",
       "SectionId": "5",
-      "Title": "PLACEHOLDER Organisation Type Employer",
+      "Title": "What is your organisation?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-150",
           "QuestionTag": "Organisation-Type-Employer",
-          "Label": "PLACEHOLDER Organisation Type Employer",
+          "Label": "What is your organisation?",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
+            "Type": "Radio",
             "Options": [
-              
+              {              
+                "Label": "A public body",
+                "Value": "A public body",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "An educational institute",
+                "Value": "An educational institute",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "None of the above",
+                "Value": "None of the above",
+                "FurtherQuestions": null
+              }
             ],
             "Validations": [
-             
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us what your organisation is"
+              }
             ]
           },
           "Order": null
@@ -2294,7 +2312,61 @@ VALUES
       "Next": [
 		{
           "Action": "NextPage",
-          "ReturnId": null,
+          "ReturnId": "160",
+          "Condition": {
+            "QuestionId": "YO-150",
+            "MustEqual": "An educational institute"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "171",
+          "Condition": {
+            "QuestionId": "YO-150",
+            "MustEqual": "A public body"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "220",
+          "Condition": {
+            "QuestionTag": "CH-ManualEntryRequired",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "220",
+          "Condition": {
+            "QuestionTag": "UKRLP-Verification-Company",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "220",
+          "Condition": {
+            "QuestionTag": "CC-TrusteeManualEntry",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "220",
+          "Condition": {
+            "QuestionTag": "UKRLP-Verification-Charity",
+            "MustEqual": "TRUE"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "230",
           "Condition": null,
           "ConditionMet": false
         }
