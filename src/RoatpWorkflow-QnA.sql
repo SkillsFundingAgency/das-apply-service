@@ -3762,7 +3762,7 @@ VALUES
           "QuestionTag": "ProtectApprentice-Introduction-Main",
           "Label": "Protecting your apprentices",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\">For this section you''ll need to upload your organisation''s:</p>
+          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-intro-main\">For this section you''ll need to upload your organisation''s:</p>
        <ul class=\"govuk-list govuk-list--bullet\">
 	          <li>continuity plan for apprenticeship training</li>
         <li>equality and diversity policy</li>
@@ -3817,7 +3817,7 @@ VALUES
           "QuestionTag": "ProtectApprentice-Introduction-Employer",
           "Label": "Protecting your apprentices",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\">For this section you''ll need to upload your organisation''s:</p>
+          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-intro-emp\">For this section you''ll need to upload your organisation''s:</p>
        <ul class=\"govuk-list govuk-list--bullet\">
 	          <li>continuity plan for apprenticeship training</li>
         <li>equality and diversity policy</li>
@@ -3872,7 +3872,7 @@ VALUES
           "QuestionTag": "ProtectApprentice-Introduction-Supporting",
           "Label": "Protecting your apprentices",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\">For this section you''ll need to upload your organisation''s:</p>
+          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-intro-supp\">For this section you''ll need to upload your organisation''s:</p>
        <ul class=\"govuk-list govuk-list--bullet\">
 	          <li>continuity plan for apprenticeship training</li>
         <li>equality and diversity policy</li>
