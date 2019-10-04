@@ -3685,24 +3685,35 @@ VALUES
       "PageId": "250",
       "SequenceId": "1",
       "SectionId": "6",
-      "Title": "PLACEHOLDER ITT PGTA",
+      "Title": "Is the postgraduate teaching apprenticeship the only apprenticeship your organisation intends to deliver?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-250",
           "QuestionTag": "ITT-PGTA",
-          "Label": "PLACEHOLDER ITT PGTA",
+          "Label": "Is the postgraduate teaching apprenticeship the only apprenticeship your organisation intends to deliver?",
           "ShortLabel": "",
-          "QuestionBodyText": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">The postgraduate teaching apprenticeship is an employment-based initial teacher training route leading to qualified teacher status.</p>",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
-            "Options": [
-              
-            ],
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
             "Validations": [
-             
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation will only deliver post graduate teaching apprenticeships"
+              }
             ]
           },
           "Order": null
@@ -3710,6 +3721,15 @@ VALUES
       ],
       "PageOfAnswers": [],
       "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": "260",
+          "Condition": {
+            "QuestionId": "YO-250",
+            "MustEqual": "No"
+          },
+          "ConditionMet": false
+        },
 		{
           "Action": "NextPage",
           "ReturnId": null,
