@@ -3872,7 +3872,7 @@ VALUES
           "QuestionTag": "ProtectApprentice-Introduction-Supporting",
           "Label": "Protecting your apprentices",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-intro-supp\">For this section you''ll need to upload your organisation''s:</p>
+          "Ques	tionBodyText": "<p class=\"govuk-body\" id=\"pya-intro-supp\">For this section you''ll need to upload your organisation''s:</p>
        <ul class=\"govuk-list govuk-list--bullet\">
 	          <li>continuity plan for apprenticeship training</li>
         <li>equality and diversity policy</li>
@@ -3940,7 +3940,7 @@ VALUES
           "QuestionBodyText": "Holding page",
           "Hint": "This is a holding page",
           "Input": {
-            "Type": "Hidden",
+            "Type": "FileUpload",
             "Validations": []
           },
           "Order": null
