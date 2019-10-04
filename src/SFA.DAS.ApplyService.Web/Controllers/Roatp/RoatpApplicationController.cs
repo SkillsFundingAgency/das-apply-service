@@ -47,6 +47,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
         private const string InputClassUpperCase = "app-uppercase";
         private const int Section1Id = 1;
+        private const string NotApplicableAnswerText = "None of the above";
+        private const string InvalidCheckBoxListSelectionErrorMessage = "If your answer is 'none of the above', you must only select that option";
 
         public RoatpApplicationController(IApplicationApiClient apiClient, ILogger<RoatpApplicationController> logger,
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
@@ -495,6 +497,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             GetAnswersFromForm(page, answers);
             ApplyFormattingToAnswers(answers, page);
 
+            var checkBoxListQuestions = PageContainsCheckBoxListQuestions(page);
+            if (checkBoxListQuestions.Any())
+            {
+                var checkBoxListQuestionId = CheckBoxListHasInvalidSelections(checkBoxListQuestions, answers);
+                if (!String.IsNullOrWhiteSpace(checkBoxListQuestionId))
+                {
+                    ModelState.AddModelError(checkBoxListQuestionId, InvalidCheckBoxListSelectionErrorMessage);
+                    page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
+                    this.TempData["InvalidPage"] = JsonConvert.SerializeObject(page);
+
+                    return await Page(applicationId, sequenceId, sectionId, pageId, redirectAction);
+                }
+            }
+
             var answersMustBeValidated = await CheckIfAnswersMustBeValidated(applicationId, sequenceId, sectionId, pageId, answers, new Regex(@"\w+"));
             var saveNewAnswers = (__formAction == "Add" || answersMustBeValidated);
 
@@ -555,6 +571,29 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     answer.Value = answer.Value.ToUpper();
                 }
             }
+        }
+
+        private static IEnumerable<Question> PageContainsCheckBoxListQuestions(Page page)
+        {
+            return page.Questions.Where(q => q.Input.Type == "CheckBoxList");
+        }
+
+        private static string CheckBoxListHasInvalidSelections(IEnumerable<Question> checkBoxListQuestions, List<Answer> answers)
+        {
+            foreach (var question in checkBoxListQuestions)
+            {
+                var checkBoxListAnswer = answers.FirstOrDefault(x => x.QuestionId == question.QuestionId);
+                if (checkBoxListAnswer != null)
+                {
+                    if (checkBoxListAnswer.Value.Contains(NotApplicableAnswerText)
+                        && checkBoxListAnswer.Value != NotApplicableAnswerText)
+                    {
+                        return checkBoxListAnswer.QuestionId;
+                    }
+                }
+            }
+
+            return null;
         }
 
         private async Task UploadFilesToStorage(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid userId)

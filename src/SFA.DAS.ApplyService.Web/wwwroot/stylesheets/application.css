@@ -462,7 +462,7 @@
 }
 
 .js-enabled .js-check-all-container {
-    display: block;
+    display: none;
 }
 
 .hidden {
