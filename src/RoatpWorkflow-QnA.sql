@@ -3445,24 +3445,43 @@ VALUES
       "PageId": "220",
       "SequenceId": "1",
       "SectionId": "5",
-      "Title": "PLACEHOLDER Organisation Training Apprentices",
+      "Title": "How will your organisation train its apprentices?",
       "LinkTitle": "",
       "InfoText": "",
+	  "Details": {
+		"Title": "What is a connected company or charity?",
+		"Body": "<p class=\"govuk-body\">A connected company is part of the same group and has the same ultimate parent company as your organisation.</p><p class=\"govuk-body\">A connected charity is part of the same group of charities and has a majority of the same controlling trustees as your organisation.</p>"
+	  },
       "Questions": [
         {
           "QuestionId": "YO-220",
           "QuestionTag": "Organisation-TrainingApprentices",
-          "Label": "PLACEHOLDER Organisation Training Apprentices",
+          "Label": "How will your organisation train its apprentices?",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
-            "Options": [
-              
-            ],
+            "Type": "Radio",
+			"Options": [
+			{
+                "Label": "In your organisation",
+				"Value": "In your organisation"
+              },
+			  {
+                "Label": "In connected companies or charities",
+				"Value": "In connected companies or charities"
+              },
+			  {
+                "Label": "In your organisation and connected companies or charities",
+				"Value": "In your organisation and connected companies or charities"
+              }
+			],
             "Validations": [
-             
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us how your organisation will train its apprentices"
+              }
             ]
           },
           "Order": null
@@ -3472,7 +3491,7 @@ VALUES
       "Next": [
 		{
           "Action": "NextPage",
-          "ReturnId": null,
+          "ReturnId": "230",
           "Condition": null,
           "ConditionMet": false
         }
