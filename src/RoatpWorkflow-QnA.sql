@@ -3557,6 +3557,200 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,'Draft'
            ,1)
 
+DECLARE @ExperienceAccreditationsSectionId UNIQUEIDENTIFIER
+SET @ExperienceAccreditationsSectionId = '0CCD068A-EE62-4CE8-8E06-659E97FD3696'
+
+INSERT [dbo].[WorkflowSections]
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
+VALUES
+  (@ExperienceAccreditationsSectionId, @ProjectId, N'
+{
+  "Pages": [
+    {
+      "PageId": "240",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "Does your organisation offer initial teacher training?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-240",
+          "QuestionTag": "ITT-Accredited",
+          "Label": "Does your organisation offer initial teacher training?",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">This means your organisation has been accredited by the Department for Education (DfE) to offer initial teacher training</p><p class=\"govuk-body\">Find out more about <a href=\"https://www.gov.uk/government/collections/initial-teacher-training\" target=\"blank\">initial teacher training (opens in a new window or tab)</a>.</p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation is Initial Teacher Training (ITT) accredited"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "250",
+          "Condition": {
+            "QuestionId": "YO-240",
+            "MustEqual": "Yes"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "260",
+          "Condition": {
+            "QuestionId": "YO-240",
+            "MustEqual": "No"
+          },
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "250",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "PLACEHOLDER ITT PGTA",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-250",
+          "QuestionTag": "ITT-PGTA",
+          "Label": "PLACEHOLDER ITT PGTA",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Options": [
+              
+            ],
+            "Validations": [
+             
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "260",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "PLACEHOLDER Ofsted FE Skills",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-260",
+          "QuestionTag": "Ofsted-FE-Skills",
+          "Label": "PLACEHOLDER Ofsted FE Skills",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Options": [
+              
+            ],
+            "Validations": [
+             
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    }
+  ]
+}
+', N'Experience and accreditations', N'Experience and accreditations', N'Draft', N'Pages')
+
+DECLARE @ExperienceAccreditationsSequenceId UNIQUEIDENTIFIER
+SET @ExperienceAccreditationsSequenceId = '803C1398-7B76-4351-94C4-7F1B641053EA'
+
+INSERT INTO [dbo].[WorkflowSequences]
+           ([Id]
+           ,[WorkflowId]
+           ,[SequenceNo]
+		   ,[SectionNo]
+		   ,[SectionId]
+           ,[Status]
+           ,[IsActive])
+     VALUES
+           (@ExperienceAccreditationsSequenceId
+           ,@WorkflowId
+           ,1
+		   ,6
+		   ,@ExperienceAccreditationsSectionId
+           ,'Draft'
+           ,1)
+
 
 
 --INSERT INTO [dbo].[WorkflowSequences]
