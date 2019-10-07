@@ -3817,24 +3817,93 @@ VALUES
       "PageId": "270",
       "SequenceId": "1",
       "SectionId": "6",
-      "Title": "PLACEHOLDER Ofsted Apprenticeship Grade",
+      "Title": "Did your organisation get a grade for apprenticeships in this full Ofsted inspection?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-270",
           "QuestionTag": "Ofsted-Apprenticeship-Grade",
-          "Label": "PLACEHOLDER Ofsted Apprenticeship Grade",
+          "Label": "Did your organisation get a grade for apprenticeships in this full Ofsted inspection?",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">If you''re not sure, <a href=\"https://reports.ofsted.gov.uk/\" target=\"blank\">check your organisation''s Ofsted inspection report  (opens in a new window or tab)</a>.</p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation was awarded a grade for apprenticeships in this Ofsted inspection"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": "300",
+          "Condition": {
+            "QuestionId": "YO-270",
+            "MustEqual": "Yes"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "280",
+          "Condition": {
+            "QuestionId": "YO-270",
+            "MustEqual": "No"
+          },
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "280",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "PLACEHOLDER Ofsted OE Grade",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-280",
+          "QuestionTag": "Ofsted-OE-Grade",
+          "Label": "PLACEHOLDER Ofsted OE Grade",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
             "Type": "Hidden",
 			"Options": [
-			 
+			  
 			],
             "Validations": [
-             
+              
             ]
           },
           "Order": null
@@ -3892,6 +3961,52 @@ VALUES
                 "Value": null,
                 "ErrorMessage": "Tell us if your organisation has had a monitoring visit for apprenticeships in further education and skills"
               }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "300",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "PLACEHOLDER Ofsted Apprenticeships Grade",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-300",
+          "QuestionTag": "Ofsted-Apprenticeships-Grade",
+          "Label": "PLACEHOLDER Ofsted Apprenticeships Grade",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+			"Options": [
+			  
+			],
+            "Validations": [
+              
             ]
           },
           "Order": null
