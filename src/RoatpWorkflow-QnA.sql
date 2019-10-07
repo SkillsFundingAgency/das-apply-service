@@ -3445,24 +3445,43 @@ VALUES
       "PageId": "220",
       "SequenceId": "1",
       "SectionId": "5",
-      "Title": "PLACEHOLDER Organisation Training Apprentices",
+      "Title": "How will your organisation train its apprentices?",
       "LinkTitle": "",
       "InfoText": "",
+	  "Details": {
+		"Title": "What is a connected company or charity?",
+		"Body": "<p class=\"govuk-body\">A connected company is part of the same group and has the same ultimate parent company as your organisation.</p><p class=\"govuk-body\">A connected charity is part of the same group of charities and has a majority of the same controlling trustees as your organisation.</p>"
+	  },
       "Questions": [
         {
           "QuestionId": "YO-220",
           "QuestionTag": "Organisation-TrainingApprentices",
-          "Label": "PLACEHOLDER Organisation Training Apprentices",
+          "Label": "How will your organisation train its apprentices?",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
-            "Options": [
-              
-            ],
+            "Type": "Radio",
+			"Options": [
+			{
+                "Label": "In your organisation",
+				"Value": "In your organisation"
+              },
+			  {
+                "Label": "In connected companies or charities",
+				"Value": "In connected companies or charities"
+              },
+			  {
+                "Label": "In your organisation and connected companies or charities",
+				"Value": "In your organisation and connected companies or charities"
+              }
+			],
             "Validations": [
-             
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us how your organisation will train its apprentices"
+              }
             ]
           },
           "Order": null
@@ -3472,7 +3491,7 @@ VALUES
       "Next": [
 		{
           "Action": "NextPage",
-          "ReturnId": null,
+          "ReturnId": "230",
           "Condition": null,
           "ConditionMet": false
         }
@@ -3491,24 +3510,51 @@ VALUES
       "PageId": "230",
       "SequenceId": "1",
       "SectionId": "5",
-      "Title": "PLACEHOLDER Describe Organisation",
+      "Title": "How would you describe your organisation?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-230",
           "QuestionTag": "Organisation-DescribeOrganisation",
-          "Label": "PLACEHOLDER Describe Organisation",
+          "Label": "How would you describe your organisation?",
           "ShortLabel": "",
-          "QuestionBodyText": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">Select all that apply.</p>",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
-            "Options": [
-              
-            ],
+            "Type": "CheckBoxList",
+			"Options": [
+			  {
+                "Label": "A public service mutual",
+				"Value": "A public service mutual",
+				"HintText": "An organisation that’s left the public sector but still delivers public services."
+              },
+			  {
+                "Label": "A sheltered workshop",
+				"Value": "A sheltered workshop",
+				"HintText": "An organisation that provides employment opportunities for people who are developmentally, physically, or mentally impaired."
+              },
+			  {
+                "Label": "A small or medium enterprise (SME)",
+				"Value": "A small or medium enterprise (SME)",
+				"HintText": "As explained by the <a href=\"https://ec.europa.eu/growth/smes/business-friendly-environment/sme-definition_en\" target=\"blank\">European Commission (opens in a new window or tab).</a>"
+              },
+			  {
+                "Label": "A third sector organisation",
+				"Value": "A third sector organisation",
+				"HintText": "An organisation that does voluntary or community work. For example, a charity."
+			  },
+			  {
+                "Label": "None of the above",
+				"Value": "None of the above"
+              }
+			],
             "Validations": [
-             
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us how you would describe your organisation"
+              }
             ]
           },
           "Order": null

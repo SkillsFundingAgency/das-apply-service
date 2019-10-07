@@ -75,6 +75,7 @@ namespace SFA.DAS.ApplyService.Web
 
             services.Configure<List<TaskListConfiguration>>(_configuration.GetSection("TaskListSequences"));
             services.Configure<List<QnaPageOverrideConfiguration>>(_configuration.GetSection("QnaPageOverrides"));
+            services.Configure<List<QnaLinksConfiguration>>(_configuration.GetSection("QnaLinks"));
 
             if (_env.IsDevelopment())
             {
