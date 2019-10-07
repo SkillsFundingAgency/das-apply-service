@@ -208,14 +208,12 @@
                         {
 
                             @foreach (var link in linksConfiguration.Links)
-                            {
-                                @*<div class="gov-grid-row">*@
+                                {
                                 <p class="govuk-body govuk-!-margin-bottom-2">
                                     <a href="@Url.Action(link.Action, link.Controller, new { Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = Model.PageId})">@link.Caption</a>
                                 </p>
-                                    }
-                                
-                            }
+                                }
+                        }
 
 
                             <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details" />
