@@ -3445,24 +3445,43 @@ VALUES
       "PageId": "220",
       "SequenceId": "1",
       "SectionId": "5",
-      "Title": "PLACEHOLDER Organisation Training Apprentices",
+      "Title": "How will your organisation train its apprentices?",
       "LinkTitle": "",
       "InfoText": "",
+	  "Details": {
+		"Title": "What is a connected company or charity?",
+		"Body": "<p class=\"govuk-body\">A connected company is part of the same group and has the same ultimate parent company as your organisation.</p><p class=\"govuk-body\">A connected charity is part of the same group of charities and has a majority of the same controlling trustees as your organisation.</p>"
+	  },
       "Questions": [
         {
           "QuestionId": "YO-220",
           "QuestionTag": "Organisation-TrainingApprentices",
-          "Label": "PLACEHOLDER Organisation Training Apprentices",
+          "Label": "How will your organisation train its apprentices?",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
-            "Options": [
-              
-            ],
+            "Type": "Radio",
+			"Options": [
+			{
+                "Label": "In your organisation",
+				"Value": "In your organisation"
+              },
+			  {
+                "Label": "In connected companies or charities",
+				"Value": "In connected companies or charities"
+              },
+			  {
+                "Label": "In your organisation and connected companies or charities",
+				"Value": "In your organisation and connected companies or charities"
+              }
+			],
             "Validations": [
-             
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us how your organisation will train its apprentices"
+              }
             ]
           },
           "Order": null
@@ -3472,7 +3491,7 @@ VALUES
       "Next": [
 		{
           "Action": "NextPage",
-          "ReturnId": null,
+          "ReturnId": "230",
           "Condition": null,
           "ConditionMet": false
         }
@@ -3491,24 +3510,51 @@ VALUES
       "PageId": "230",
       "SequenceId": "1",
       "SectionId": "5",
-      "Title": "PLACEHOLDER Describe Organisation",
+      "Title": "How would you describe your organisation?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-230",
           "QuestionTag": "Organisation-DescribeOrganisation",
-          "Label": "PLACEHOLDER Describe Organisation",
+          "Label": "How would you describe your organisation?",
           "ShortLabel": "",
-          "QuestionBodyText": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">Select all that apply.</p>",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
-            "Options": [
-              
-            ],
+            "Type": "CheckBoxList",
+			"Options": [
+			  {
+                "Label": "A public service mutual",
+				"Value": "A public service mutual",
+				"HintText": "An organisation that’s left the public sector but still delivers public services."
+              },
+			  {
+                "Label": "A sheltered workshop",
+				"Value": "A sheltered workshop",
+				"HintText": "An organisation that provides employment opportunities for people who are developmentally, physically, or mentally impaired."
+              },
+			  {
+                "Label": "A small or medium enterprise (SME)",
+				"Value": "A small or medium enterprise (SME)",
+				"HintText": "As explained by the <a href=\"https://ec.europa.eu/growth/smes/business-friendly-environment/sme-definition_en\" target=\"blank\">European Commission (opens in a new window or tab).</a>"
+              },
+			  {
+                "Label": "A third sector organisation",
+				"Value": "A third sector organisation",
+				"HintText": "An organisation that does voluntary or community work. For example, a charity."
+			  },
+			  {
+                "Label": "None of the above",
+				"Value": "None of the above"
+              }
+			],
             "Validations": [
-             
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us how you would describe your organisation"
+              }
             ]
           },
           "Order": null
@@ -3730,9 +3776,15 @@ SET @ProtectionOfApprenticesSequenceId = '61861411-1794-420d-ab04-788ea4db8072'
 DECLARE @ProtectionOfApprentices2SequenceId UNIQUEIDENTIFIER
 SET @ProtectionOfApprentices2SequenceId = '436b3fba-1abf-4d13-a883-a552e7c437d2'
 
+DECLARE @ProtectionOfApprentices3SequenceId UNIQUEIDENTIFIER
+SET @ProtectionOfApprentices3SequenceId = '24bc1f2c-d2b2-4de0-b339-9d7664e091ab'
+
 
 DECLARE @ProtectionOfApprentices2SectionId UNIQUEIDENTIFIER
 SET @ProtectionOfApprentices2SectionId = '5dc1e1f5-7b28-47eb-9702-2b25f5d5782d'
+
+DECLARE @ProtectionOfApprentices3SectionId UNIQUEIDENTIFIER
+SET @ProtectionOfApprentices3SectionId = '82e510b7-ad91-4bd0-a60a-01b6ceef18d0'
 
 DECLARE @ProtectionOfApprenticesSectionId UNIQUEIDENTIFIER
 SET @ProtectionOfApprenticesSectionId = '80616b64-ffb4-45b3-9d4e-0b449bb441eb'
@@ -3774,7 +3826,7 @@ VALUES
   <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>
   <strong class=\"govuk-warning-text__text\">
     <span class=\"govuk-warning-text__assistive\">Warning</span>
-    All uploads must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept uploads that are generic or taken from a third party.
+    All policies and processes must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept policies or processes are generic or taken from a third party.
   </strong>
 	</div>",
           "Hint": "",
@@ -3829,7 +3881,7 @@ VALUES
   <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>
   <strong class=\"govuk-warning-text__text\">
     <span class=\"govuk-warning-text__assistive\">Warning</span>
-    All uploads must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept uploads that are generic or taken from a third party.
+    All policies and processes must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept policies or processes are generic or taken from a third party.
   </strong>
 	</div>",
           "Hint": "",
@@ -3874,7 +3926,6 @@ VALUES
           "ShortLabel": "",
           "Ques	tionBodyText": "<p class=\"govuk-body\" id=\"pya-intro-supp\">For this section you''ll need to upload your organisation''s:</p>
        <ul class=\"govuk-list govuk-list--bullet\">
-	          <li>continuity plan for apprenticeship training</li>
         <li>equality and diversity policy</li>
         <li>safeguarding policy</li>
         <li>prevent duty policy (if needed)</li>
@@ -3899,7 +3950,7 @@ VALUES
        "Next": [      
         {
           "Action": "NextPage",
-          "ReturnId": "530",
+          "ReturnId": "540",
           "Condition": null,
           "ConditionMet": false
         }
@@ -3970,6 +4021,57 @@ VALUES
 ', N'Continuity plan for apprenticeship training', N'Continuity plan for apprenticeship training', N'Draft', N'Pages')
 
 
+INSERT [dbo].[WorkflowSections]
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
+VALUES
+  (@ProtectionOfApprentices3SectionId, @ProjectId, N'
+{
+	"Pages": [
+		{
+			"PageId": "540",
+			"SequenceId": "4",
+			"SectionId": "3",
+			"Title": "Equality and Diversity policy",
+			"LinkTitle": "Equality and Diversity policy",
+			"InfoText": "Equality and Diversity policy",
+			 "Questions": [
+        {
+          "QuestionId": "PYA-30",
+          "QuestionTag": "ProtectApprentice-Equality",
+          "Label": "Equality and Diversity policy",
+          "ShortLabel": "",
+          "QuestionBodyText": "Holding page",
+          "Hint": "This is a holding page",
+          "Input": {
+            "Type": "Hidden",
+            "Validations": []
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+       "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "550",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    }
+	]
+}
+', N'Equality and Diversity policy', N'Equality and Diversity policy', N'Draft', N'Pages')
+
 
 
 INSERT INTO [dbo].[WorkflowSequences]
@@ -4006,5 +4108,21 @@ VALUES
 			,'Draft'
 			,1)
 
+INSERT INTO [dbo].[WorkflowSequences]
+			([Id]
+			,[WorkflowId]
+			,[SequenceNo]
+			,[SectionNo]
+			,[SectionId]
+			,[Status]
+			,[IsActive])
+VALUES
+			(@ProtectionOfApprentices3SequenceId
+			,@WorkFlowId
+			,4
+			,3
+			,@ProtectionOfApprentices3SectionId
+			,'Draft'
+			,1)
 
 GO
