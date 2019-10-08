@@ -4462,24 +4462,35 @@ VALUES
       "PageId": "340",
       "SequenceId": "1",
       "SectionId": "6",
-      "Title": "PLACEHOLDER Maintained Short Inspection Grade",
+      "Title": "Has your organisation maintained the grade it got in its full Ofsted inspection in its short Ofsted inspection?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-340",
           "QuestionTag": "Maintained-Short-Inspection-Grade",
-          "Label": "PLACEHOLDER Maintained Short Inspection Grade",
+          "Label": "Has your organisation maintained the grade it got in its full Ofsted inspection in its short Ofsted inspection?",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
+            "Type": "Radio",
 			"Options": [
-			  
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
 			],
             "Validations": [
-              
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation has maintained the grade it was awarded in its full Ofsted inspection"
+              }
             ]
           },
           "Order": null
