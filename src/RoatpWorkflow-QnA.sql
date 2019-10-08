@@ -4396,14 +4396,80 @@ VALUES
       "PageId": "330",
       "SequenceId": "1",
       "SectionId": "6",
-      "Title": "PLACEHOLDER Had Short Inspection",
+      "Title": "Has your organisation had a short Ofsted inspection within the last 3 years?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-330",
           "QuestionTag": "Had-Short-Inspection",
-          "Label": "PLACEHOLDER Had Short Inspection",
+          "Label": "Has your organisation had a short Ofsted inspection within the last 3 years?",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">If you''re not sure, <a href=\"https://reports.ofsted.gov.uk/\" target=\"_blank\">check if your organisation''s had a short Ofsted inspection (opens in a new window or tab)</a>.</p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation has had a short Ofsted inspection within the last 3 years"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [		
+		{
+          "Action": "NextPage",
+          "ReturnId": "340",
+          "Condition": {
+            "QuestionId": "YO-330",
+            "MustEqual": "Yes"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "340",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "PLACEHOLDER Maintained Short Inspection Grade",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-340",
+          "QuestionTag": "Maintained-Short-Inspection-Grade",
+          "Label": "PLACEHOLDER Maintained Short Inspection Grade",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
@@ -4413,14 +4479,14 @@ VALUES
 			  
 			],
             "Validations": [
-             
+              
             ]
           },
           "Order": null
         }
       ],
       "PageOfAnswers": [],
-      "Next": [		
+      "Next": [	
 		{
           "Action": "NextPage",
           "ReturnId": null,
