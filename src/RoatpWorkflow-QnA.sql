@@ -3795,6 +3795,7 @@ delete from WorkflowSequences where id = @ProtectionOfApprentices2SequenceId
 delete from workflowSections where id = @ProtectionOfApprenticesSectionId
 delete from workflowSections where id = @ProtectionOfApprentices2SectionId
 
+
 INSERT [dbo].[WorkflowSections]
   ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
 VALUES
