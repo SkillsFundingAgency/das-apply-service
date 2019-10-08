@@ -14,14 +14,17 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     using Application.Apply.UpdatePageAnswers;
     using Newtonsoft.Json.Linq;
+    using SFA.DAS.ApplyService.Session;
 
     public class QnaApiClient : IQnaApiClient
     {
         private readonly ILogger<QnaApiClient> _logger;
         private readonly IQnaTokenService _tokenService;
         private static readonly HttpClient _httpClient = new HttpClient();
+        private readonly ISessionService _sessionService;
 
-        public QnaApiClient(IConfigurationService configurationService, ILogger<QnaApiClient> logger, IQnaTokenService tokenService)
+        public QnaApiClient(IConfigurationService configurationService, ILogger<QnaApiClient> logger, 
+                            IQnaTokenService tokenService, ISessionService sessionService)
         {
             _logger = logger;
             _tokenService = tokenService;
@@ -30,6 +33,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 _httpClient.BaseAddress = new Uri(configurationService.GetConfig().Result.QnaApiAuthentication.ApiBaseAddress);
             }
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _sessionService = sessionService;
         }
 
         public async Task<Answer> GetAnswer(Guid applicationId, Guid sectionId, string pageId, string questionId)
@@ -88,34 +92,78 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<ApplicationSection> GetSection(Guid applicationId, Guid sectionId)
         {
-            return await (await _httpClient.GetAsync(
+            var cacheKey = $"Application_{applicationId}_Section_{sectionId}";
+
+            var applicationSection = _sessionService.Get<ApplicationSection>(cacheKey);
+
+            if (applicationSection == null)
+            {
+                applicationSection = await (await _httpClient.GetAsync(
                     $"Applications/{applicationId}/sections/{sectionId}")
                 )
                 .Content.ReadAsAsync<ApplicationSection>();
+
+                _sessionService.Set(cacheKey, applicationSection);
+            }
+
+            return await Task.FromResult(applicationSection);
         }
 
         public async Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId, Guid sequenceId)
         {
-            return await(await _httpClient.GetAsync(
+            var cacheKey = $"Application_{applicationId}_Sections_{sequenceId}";
+
+            var applicationSections = _sessionService.Get<IEnumerable<ApplicationSection>>(cacheKey);
+
+            if (applicationSections == null)
+            {
+                applicationSections = await (await _httpClient.GetAsync(
                     $"Applications/{applicationId}/Sequences/{sequenceId}/sections")
                 )
                 .Content.ReadAsAsync<IEnumerable<ApplicationSection>>();
+
+                _sessionService.Set(cacheKey, applicationSections);
+            }
+                       
+            return await Task.FromResult(applicationSections);
         }
 
         public async Task<ApplicationSequence> GetSequence(Guid applicationId, Guid sequenceId)
         {
-            return await(await _httpClient.GetAsync(
-                    $"Applications/{applicationId}/Sequences/{sequenceId}")
-                )
-                .Content.ReadAsAsync<ApplicationSequence>();
+            var cacheKey = $"Application_{applicationId}_Sequence_{sequenceId}";
+
+            var applicationSequence = _sessionService.Get<ApplicationSequence>(cacheKey);
+
+            if (applicationSequence == null)
+            {
+                applicationSequence = await (await _httpClient.GetAsync(
+                        $"Applications/{applicationId}/Sequences/{sequenceId}")
+                    )
+                    .Content.ReadAsAsync<ApplicationSequence>();
+
+                _sessionService.Set(cacheKey, applicationSequence);
+            }
+            
+            return await Task.FromResult(applicationSequence);
         }
 
         public async Task<IEnumerable<ApplicationSequence>> GetSequences(Guid applicationId)
         {
-            return await(await _httpClient.GetAsync(
-                    $"Applications/{applicationId}/Sequences")
-                )
-                .Content.ReadAsAsync<IEnumerable<ApplicationSequence>>();
+            var cacheKey = $"Application_{applicationId}_Sequences";
+
+            var applicationSequences = _sessionService.Get<IEnumerable<ApplicationSequence>>(cacheKey);
+
+            if (applicationSequences == null)
+            {
+                applicationSequences = await (await _httpClient.GetAsync(
+                        $"Applications/{applicationId}/Sequences")
+                    )
+                    .Content.ReadAsAsync<IEnumerable<ApplicationSequence>>();
+
+                _sessionService.Set(cacheKey, applicationSequences);
+            }
+            
+            return await Task.FromResult(applicationSequences);
         }
 
         public async Task<StartApplicationResponse> StartApplication(string userReference, string workflowType, string applicationData)
