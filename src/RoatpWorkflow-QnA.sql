@@ -3901,24 +3901,43 @@ VALUES
       "PageId": "280",
       "SequenceId": "1",
       "SectionId": "6",
-      "Title": "PLACEHOLDER Ofsted OE Grade",
+      "Title": "What grade did your organisation get for overall effectiveness in this full Ofsted inspection?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-280",
           "QuestionTag": "Ofsted-OE-Grade",
-          "Label": "PLACEHOLDER Ofsted OE Grade",
+          "Label": "What grade did your organisation get for overall effectiveness in this full Ofsted inspection?",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
+            "Type": "Radio",
 			"Options": [
-			  
+			  {
+                "Label": "Outstanding",
+				"Value": "Outstanding"
+              },
+			  {
+                "Label": "Good",
+				"Value": "Good"
+              },
+			  {
+                "Label": "Requires improvement",
+				"Value": "Requires improvement"
+              },
+			  {
+                "Label": "Inadequate",
+				"Value": "Inadequate"
+              }
 			],
             "Validations": [
-              
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us what grade your organisation got"
+              }
             ]
           },
           "Order": null
@@ -3929,6 +3948,15 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": null,
+          "Condition": {
+            "QuestionId": "YO-280",
+            "MustEqual": "Requires improvement"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "310",
           "Condition": null,
           "ConditionMet": false
         }
@@ -4124,7 +4152,7 @@ VALUES
       "Next": [
 		{
           "Action": "NextPage",
-          "ReturnId": "320",
+          "ReturnId": null,
           "Condition": {
             "QuestionId": "YO-301",
             "MustEqual": "Requires improvement"
@@ -4179,7 +4207,7 @@ VALUES
       "Next": [		
 		{
           "Action": "NextPage",
-          "ReturnId": "320",
+          "ReturnId": null,
           "Condition": null,
           "ConditionMet": false
         }
