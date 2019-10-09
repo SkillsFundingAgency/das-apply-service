@@ -3857,6 +3857,24 @@ VALUES
           "Action": "NextPage",
           "ReturnId": "300",
           "Condition": {
+            "QuestionTag": "Organisation-OfSFunded-MS",
+            "MustEqual": "Yes"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "301",
+          "Condition": {
+            "QuestionTag": "Organisation-OfSFunded-Emp",
+            "MustEqual": "Yes"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "300",
+          "Condition": {
             "QuestionId": "YO-270",
             "MustEqual": "Yes"
           },
@@ -3865,10 +3883,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "280",
-          "Condition": {
-            "QuestionId": "YO-270",
-            "MustEqual": "No"
-          },
+          "Condition": null,
           "ConditionMet": false
         }
       ],
@@ -3989,24 +4004,43 @@ VALUES
       "PageId": "300",
       "SequenceId": "1",
       "SectionId": "6",
-      "Title": "PLACEHOLDER Ofsted Apprenticeships Grade",
+      "Title": "What grade did your organisation get for apprenticeships in this full Ofsted inspection?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-300",
           "QuestionTag": "Ofsted-Apprenticeships-Grade",
-          "Label": "PLACEHOLDER Ofsted Apprenticeships Grade",
+          "Label": "What grade did your organisation get for apprenticeships in this full Ofsted inspection?",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
+            "Type": "Radio",
 			"Options": [
-			  
+			  {
+                "Label": "Outstanding",
+				"Value": "Outstanding"
+              },
+			  {
+                "Label": "Good",
+				"Value": "Good"
+              },
+			  {
+                "Label": "Requires improvement",
+				"Value": "Requires improvement"
+              },
+			  {
+                "Label": "Inadequate",
+				"Value": "Inadequate"
+              }
 			],
             "Validations": [
-              
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us what grade your organisation got"
+              }
             ]
           },
           "Order": null
@@ -4016,7 +4050,136 @@ VALUES
       "Next": [
 		{
           "Action": "NextPage",
-          "ReturnId": null,
+          "ReturnId": "280",
+          "Condition": {
+            "QuestionId": "YO-300",
+            "MustEqual": "Requires improvement"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "310",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "301",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "What grade did your organisation get for apprenticeships in this full Ofsted inspection?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-301",
+          "QuestionTag": "Ofsted-Apprenticeships-Grade-OFS",
+          "Label": "What grade did your organisation get for apprenticeships in this full Ofsted inspection?",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Outstanding",
+				"Value": "Outstanding"
+              },
+			  {
+                "Label": "Good",
+				"Value": "Good"
+              },
+			  {
+                "Label": "Requires improvement",
+				"Value": "Requires improvement"
+              },
+			  {
+                "Label": "Inadequate",
+				"Value": "Inadequate"
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us what grade your organisation got"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": "320",
+          "Condition": {
+            "QuestionId": "YO-301",
+            "MustEqual": "Requires improvement"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "310",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "310",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "PLACEHOLDER Ofsted Grade Last 3 Years",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-310",
+          "QuestionTag": "Ofsted-Grade-Last3Years",
+          "Label": "PLACEHOLDER Ofsted Grade Last 3 Years",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+			"Options": [
+			 
+			],
+            "Validations": [
+              
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [		
+		{
+          "Action": "NextPage",
+          "ReturnId": "320",
           "Condition": null,
           "ConditionMet": false
         }
