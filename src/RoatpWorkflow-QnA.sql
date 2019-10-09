@@ -3591,6 +3591,621 @@ INSERT INTO [dbo].[WorkflowSequences]
 		   ,@DescribeYourOrganisationSectionId
            ,1)
 
+DECLARE @ExperienceAccreditationsSectionId UNIQUEIDENTIFIER
+SET @ExperienceAccreditationsSectionId = '0CCD068A-EE62-4CE8-8E06-659E97FD3696'
+
+INSERT [dbo].[WorkflowSections]
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
+VALUES
+  (@ExperienceAccreditationsSectionId, @ProjectId, N'
+{
+  "Pages": [
+    {
+      "PageId": "240",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "Does your organisation offer initial teacher training?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-240",
+          "QuestionTag": "ITT-Accredited",
+          "Label": "Does your organisation offer initial teacher training?",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">This means your organisation has been accredited by the Department for Education (DfE) to offer initial teacher training</p><p class=\"govuk-body\">Find out more about <a href=\"https://www.gov.uk/government/collections/initial-teacher-training\" target=\"blank\">initial teacher training (opens in a new window or tab)</a>.</p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation is Initial Teacher Training (ITT) accredited"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "250",
+          "Condition": {
+            "QuestionId": "YO-240",
+            "MustEqual": "Yes"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "260",
+          "Condition": {
+            "QuestionId": "YO-240",
+            "MustEqual": "No"
+          },
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "250",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "Is the postgraduate teaching apprenticeship the only apprenticeship your organisation intends to deliver?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-250",
+          "QuestionTag": "ITT-PGTA",
+          "Label": "Is the postgraduate teaching apprenticeship the only apprenticeship your organisation intends to deliver?",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">The postgraduate teaching apprenticeship is an employment-based initial teacher training route leading to qualified teacher status.</p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation will only deliver post graduate teaching apprenticeships"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": "260",
+          "Condition": {
+            "QuestionId": "YO-250",
+            "MustEqual": "No"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "260",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "Has your organisation had a full Ofsted inspection in further education and skills?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-260",
+          "QuestionTag": "Ofsted-FE-Skills",
+          "Label": "Has your organisation had a full Ofsted inspection in further education and skills?",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">If you’re not sure, <a href=\"https://reports.ofsted.gov.uk/\" target=\"_blank\">check if your organisation’s had an Ofsted inspection (opens in a new window or tab)</a>.</p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation has had an Ofsted inspection in further education and skills"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": "270",
+          "Condition": {
+            "QuestionId": "YO-260",
+            "MustEqual": "Yes"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "290",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "270",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "Did your organisation get a grade for apprenticeships in this full Ofsted inspection?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-270",
+          "QuestionTag": "Ofsted-Apprenticeship-Grade",
+          "Label": "Did your organisation get a grade for apprenticeships in this full Ofsted inspection?",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">If you''re not sure, <a href=\"https://reports.ofsted.gov.uk/\" target=\"blank\">check your organisation''s Ofsted inspection report  (opens in a new window or tab)</a>.</p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation was awarded a grade for apprenticeships in this Ofsted inspection"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": "300",
+          "Condition": {
+            "QuestionTag": "Organisation-OfSFunded-MS",
+            "MustEqual": "Yes"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "301",
+          "Condition": {
+            "QuestionTag": "Organisation-OfSFunded-Emp",
+            "MustEqual": "Yes"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "300",
+          "Condition": {
+            "QuestionId": "YO-270",
+            "MustEqual": "Yes"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "280",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "280",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "PLACEHOLDER Ofsted OE Grade",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-280",
+          "QuestionTag": "Ofsted-OE-Grade",
+          "Label": "PLACEHOLDER Ofsted OE Grade",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+			"Options": [
+			  
+			],
+            "Validations": [
+              
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "290",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "Has your organisation had a monitoring visit for apprenticeships in further education and skills?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-290",
+          "QuestionTag": "Monitoring-Visit",
+          "Label": "Has your organisation had a monitoring visit for apprenticeships in further education and skills?",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation has had a monitoring visit for apprenticeships in further education and skills"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "300",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "What grade did your organisation get for apprenticeships in this full Ofsted inspection?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-300",
+          "QuestionTag": "Ofsted-Apprenticeships-Grade",
+          "Label": "What grade did your organisation get for apprenticeships in this full Ofsted inspection?",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Outstanding",
+				"Value": "Outstanding"
+              },
+			  {
+                "Label": "Good",
+				"Value": "Good"
+              },
+			  {
+                "Label": "Requires improvement",
+				"Value": "Requires improvement"
+              },
+			  {
+                "Label": "Inadequate",
+				"Value": "Inadequate"
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us what grade your organisation got"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": "280",
+          "Condition": {
+            "QuestionId": "YO-300",
+            "MustEqual": "Requires improvement"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "310",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "301",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "What grade did your organisation get for apprenticeships in this full Ofsted inspection?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-301",
+          "QuestionTag": "Ofsted-Apprenticeships-Grade-OFS",
+          "Label": "What grade did your organisation get for apprenticeships in this full Ofsted inspection?",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Outstanding",
+				"Value": "Outstanding"
+              },
+			  {
+                "Label": "Good",
+				"Value": "Good"
+              },
+			  {
+                "Label": "Requires improvement",
+				"Value": "Requires improvement"
+              },
+			  {
+                "Label": "Inadequate",
+				"Value": "Inadequate"
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us what grade your organisation got"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": "320",
+          "Condition": {
+            "QuestionId": "YO-301",
+            "MustEqual": "Requires improvement"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "310",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "310",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "PLACEHOLDER Ofsted Grade Last 3 Years",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-310",
+          "QuestionTag": "Ofsted-Grade-Last3Years",
+          "Label": "PLACEHOLDER Ofsted Grade Last 3 Years",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+			"Options": [
+			 
+			],
+            "Validations": [
+              
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [		
+		{
+          "Action": "NextPage",
+          "ReturnId": "320",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    }
+  ]
+}
+', N'Experience and accreditations', N'Experience and accreditations', N'Draft', N'Pages')
+
+DECLARE @ExperienceAccreditationsSequenceId UNIQUEIDENTIFIER
+SET @ExperienceAccreditationsSequenceId = '803C1398-7B76-4351-94C4-7F1B641053EA'
+
+INSERT INTO [dbo].[WorkflowSequences]
+           ([Id]
+           ,[WorkflowId]
+           ,[SequenceNo]
+		   ,[SectionNo]
+		   ,[SectionId]
+           ,[Status]
+           ,[IsActive])
+     VALUES
+           (@ExperienceAccreditationsSequenceId
+           ,@WorkflowId
+           ,1
+		   ,6
+		   ,@ExperienceAccreditationsSectionId
+           ,'Draft'
+           ,1)
+
 
 
 --INSERT INTO [dbo].[WorkflowSequences]

@@ -48,14 +48,27 @@
             <li class="app-task-list__item">
                 @if (Model.PreviousSectionCompleted(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation, true))
                 {
-                <a class="app-task-list__task_name" href="@Url.Action("Page", "RoatpApplication", new { Model.ApplicationId, sequenceId = RoatpWorkflowSequenceIds.YourOrganisation, sectionId = RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation, pageId = Model.DescribeOrganisationStartPageId, redirectAction = "TaskList" })">
-                    Describe your organisation
-                    <strong class="govuk-tag app-task-list__task-@Model.CssClass(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation, true)">@Model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation, true)</strong>
-                </a>
+                    <a class="app-task-list__task_name" href="@Url.Action("Page", "RoatpApplication", new { Model.ApplicationId, sequenceId = RoatpWorkflowSequenceIds.YourOrganisation, sectionId = RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation, pageId = Model.DescribeOrganisationStartPageId, redirectAction = "TaskList" })">
+                        Describe your organisation
+                        <strong class="govuk-tag app-task-list__task-@Model.CssClass(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation, true)">@Model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation, true)</strong>
+                    </a>
                 }
                 else
                 {
                     @Html.Raw("Describe your organisation")
+                }
+            </li>
+            <li class="app-task-list__item">
+                @if (Model.PreviousSectionCompleted(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations, true))
+                {
+                    <a class="app-task-list__task_name" href="@Url.Action("Page", "RoatpApplication", new { Model.ApplicationId, sequenceId = RoatpWorkflowSequenceIds.YourOrganisation, sectionId = RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations, pageId = RoatpWorkflowPageIds.ExperienceAndAccreditations.StartPage, redirectAction = "TaskList" })">
+                        Experience and accreditations
+                        <strong class="govuk-tag app-task-list__task-@Model.CssClass(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations, true)">@Model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations, true)</strong>
+                    </a>
+                }
+                else
+                {
+                    @Html.Raw("Experience and accreditations")
                 }
             </li>
 
