@@ -3863,24 +3863,35 @@ VALUES
       "PageId": "290",
       "SequenceId": "1",
       "SectionId": "6",
-      "Title": "PLACEHOLDER Monitoring Visit",
+      "Title": "Has your organisation had a monitoring visit for apprenticeships in further education and skills?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-290",
           "QuestionTag": "Monitoring-Visit",
-          "Label": "PLACEHOLDER Monitoring Visit",
+          "Label": "Has your organisation had a monitoring visit for apprenticeships in further education and skills?",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
+            "Type": "Radio",
 			"Options": [
-			 
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
 			],
             "Validations": [
-             
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation has had a monitoring visit for apprenticeships in further education and skills"
+              }
             ]
           },
           "Order": null
