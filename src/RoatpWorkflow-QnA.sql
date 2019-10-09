@@ -3751,22 +3751,134 @@ VALUES
       "PageId": "260",
       "SequenceId": "1",
       "SectionId": "6",
-      "Title": "PLACEHOLDER Ofsted FE Skills",
+      "Title": "Has your organisation had a full Ofsted inspection in further education and skills?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-260",
           "QuestionTag": "Ofsted-FE-Skills",
-          "Label": "PLACEHOLDER Ofsted FE Skills",
+          "Label": "Has your organisation had a full Ofsted inspection in further education and skills?",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">If you’re not sure, <a href=\"https://reports.ofsted.gov.uk/\" target=\"_blank\">check if your organisation’s had an Ofsted inspection (opens in a new window or tab)</a>.</p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation has had an Ofsted inspection in further education and skills"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": "270",
+          "Condition": {
+            "QuestionId": "YO-260",
+            "MustEqual": "Yes"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "290",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "270",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "PLACEHOLDER Ofsted Apprenticeship Grade",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-270",
+          "QuestionTag": "Ofsted-Apprenticeship-Grade",
+          "Label": "PLACEHOLDER Ofsted Apprenticeship Grade",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
             "Type": "Hidden",
-            "Options": [
-              
-            ],
+			"Options": [
+			 
+			],
+            "Validations": [
+             
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "290",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "PLACEHOLDER Monitoring Visit",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-290",
+          "QuestionTag": "Monitoring-Visit",
+          "Label": "PLACEHOLDER Monitoring Visit",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+			"Options": [
+			 
+			],
             "Validations": [
              
             ]
