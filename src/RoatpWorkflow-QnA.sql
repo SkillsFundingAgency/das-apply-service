@@ -3827,7 +3827,7 @@ VALUES
   <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>
   <strong class=\"govuk-warning-text__text\">
     <span class=\"govuk-warning-text__assistive\">Warning</span>
-    All policies and processes must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept policies or processes are generic or taken from a third party.
+    All policies and processes must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept policies or processes that are generic or taken from a third party.
   </strong>
 	</div>",
           "Hint": "",
@@ -3882,7 +3882,7 @@ VALUES
   <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>
   <strong class=\"govuk-warning-text__text\">
     <span class=\"govuk-warning-text__assistive\">Warning</span>
-    All policies and processes must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept policies or processes are generic or taken from a third party.
+    All policies and processes must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept policies or processes that are generic or taken from a third party.
   </strong>
 	</div>",
           "Hint": "",
