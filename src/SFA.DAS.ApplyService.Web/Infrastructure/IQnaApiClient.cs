@@ -1,4 +1,7 @@
 ﻿
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     using System;
@@ -20,5 +23,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<IEnumerable<ApplicationSequence>> GetSequences(Guid applicationId);
         Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId, Guid sequenceId);
         Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag);
+
+        Task<UploadPageAnswersResult> Upload(Guid applicationId, Guid sectionId, string pageId, IFormFileCollection files);
     }
 }

@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Configuration;
@@ -76,6 +78,23 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
 
             return await Task.FromResult(answer);
+        }
+
+        public async Task<UploadPageAnswersResult> Upload(Guid applicationId, Guid sectionId, string pageId, IFormFileCollection files)
+        {
+
+            var formDataContent = new MultipartFormDataContent();
+            foreach (var file in files)
+            {
+                var fileContent = new StreamContent(file.OpenReadStream())
+                    { Headers = { ContentLength = file.Length, ContentType = new MediaTypeHeaderValue(file.ContentType) } };
+                formDataContent.Add(fileContent, file.Name, file.FileName);
+            }
+
+            return await (await _httpClient.PostAsync(
+                    $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/upload",
+                    formDataContent)).Content
+                .ReadAsAsync<UploadPageAnswersResult>();
         }
 
         public async Task<Page> GetPage(Guid applicationId, Guid sectionId, string pageId)

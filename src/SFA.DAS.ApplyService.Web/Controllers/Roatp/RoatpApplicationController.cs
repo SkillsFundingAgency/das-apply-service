@@ -521,7 +521,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (updatePageResult.ValidationPassed && fileValidationPassed)
             {
-                await UploadFilesToStorage(applicationId, sequenceId, sectionId, pageId, userId);
+                await UploadFilesToStorage(applicationId, selectedSection.Id,pageId);
 
                 if (__formAction == "Add" && page.AllowMultipleAnswers)
                 {
@@ -599,12 +599,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return null;
         }
 
-        private async Task UploadFilesToStorage(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid userId)
+        private async Task UploadFilesToStorage(Guid applicationId, Guid sectionId, string pageId)
         {
             if (HttpContext.Request.Form.Files.Any())
             {
-                await _apiClient.Upload(applicationId, userId.ToString(), sequenceId, sectionId, pageId,
-                    HttpContext.Request.Form.Files);
+               await _qnaApiClient.Upload(applicationId, sectionId, pageId, HttpContext.Request.Form.Files);
             }
         }
 
