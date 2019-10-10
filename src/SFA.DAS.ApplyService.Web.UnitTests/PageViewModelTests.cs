@@ -12,6 +12,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
     public class PageViewModelTests
     {
         private List<QnaPageOverrideConfiguration> _config;
+        private List<QnaLinksConfiguration> _configLinks;
         private Guid _applicationId;
         private int _sequenceId;
         private int _sectionId;
@@ -50,6 +51,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 }
             };
 
+            _configLinks = new List<QnaLinksConfiguration>();
         }
 
         [Test]
@@ -67,7 +69,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 _redirectAction,
                 _returnUrl,
                 new List<ValidationErrorDetail>(),
-                _config);
+                _config,
+                _configLinks);
 
             model.CTAButtonText.Should().Be(PageViewModel.DefaultCTAButtonText);
         }
@@ -87,7 +90,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 _redirectAction,
                 _returnUrl,
                 new List<ValidationErrorDetail>(),
-                _config);
+                _config,
+                _configLinks);
 
             model.CTAButtonText.Should().Be(PageViewModel.DefaultCTAButtonText);
         }
@@ -107,7 +111,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 _redirectAction,
                 _returnUrl,
                 new List<ValidationErrorDetail>(),
-                _config);
+                _config,
+                _configLinks);
             
             model.CTAButtonText.Should().Be(_config[0].CTAButtonText);
         }
@@ -127,7 +132,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 _redirectAction,
                 _returnUrl,
                 new List<ValidationErrorDetail>(),
-                _config);
+                _config,
+                _configLinks);
 
             model.HideCTA.Should().BeTrue();
         }
