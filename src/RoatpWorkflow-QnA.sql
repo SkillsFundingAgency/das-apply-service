@@ -3595,7 +3595,7 @@ DECLARE @ExperienceAccreditationsSectionId UNIQUEIDENTIFIER
 SET @ExperienceAccreditationsSectionId = '0CCD068A-EE62-4CE8-8E06-659E97FD3696'
 
 INSERT [dbo].[WorkflowSections]
-  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
 VALUES
   (@ExperienceAccreditationsSectionId, @ProjectId, N'
 {
@@ -4184,7 +4184,7 @@ VALUES
     }
   ]
 }
-', N'Experience and accreditations', N'Experience and accreditations', N'Draft', N'Pages')
+', N'Experience and accreditations', N'Experience and accreditations', N'Pages')
 
 DECLARE @ExperienceAccreditationsSequenceId UNIQUEIDENTIFIER
 SET @ExperienceAccreditationsSequenceId = '803C1398-7B76-4351-94C4-7F1B641053EA'
@@ -4195,7 +4195,6 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,[SequenceNo]
 		   ,[SectionNo]
 		   ,[SectionId]
-           ,[Status]
            ,[IsActive])
      VALUES
            (@ExperienceAccreditationsSequenceId
@@ -4203,7 +4202,6 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,1
 		   ,6
 		   ,@ExperienceAccreditationsSectionId
-           ,'Draft'
            ,1)
 
 
