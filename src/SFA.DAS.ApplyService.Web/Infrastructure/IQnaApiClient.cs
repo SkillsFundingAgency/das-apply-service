@@ -1,6 +1,9 @@
 ﻿
+using System.IO;
+using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NPOI.HPSF.Wellknown;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
@@ -25,5 +28,16 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag);
 
         Task<UploadPageAnswersResult> Upload(Guid applicationId, Guid sectionId, string pageId, IFormFileCollection files);
+
+        Task<HttpResponseMessage> DownloadFile(Guid applicationId, Guid sectionId, string pageId, string questionId,
+            string filename);
+
+        Task DeleteFile(Guid applicationId, Guid sectionId, string pageId, string questionId, string fileName);
+        Task<Page> RemovePageAnswer(Guid applicationId, Guid sectionId, string pageId, Guid answerId);
+
+        Task<ApplicationData> GetApplicationData(Guid applicationId);
+        Task<ApplicationData> UpdateApplicationData(Guid applicationId, ApplicationData applicationData);
+
+
     }
 }

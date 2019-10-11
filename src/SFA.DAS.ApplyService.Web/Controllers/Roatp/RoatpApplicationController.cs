@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Configuration;
@@ -680,20 +682,30 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public async Task<IActionResult> Download(Guid applicationId, int sequenceId, int sectionId, string pageId, string questionId, string filename)
         {
-            var userId = User.GetUserId();
+            var sequences = await _qnaApiClient.GetSequences(applicationId);
+            var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
+            var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
+            var selectedSection = sections.Single(x => x.SectionId == sectionId);
+            var response = await _qnaApiClient.DownloadFile(applicationId, selectedSection.Id, pageId, questionId, filename);
+            var fileStream = await response.Content.ReadAsStreamAsync();
 
-            var fileInfo = await _apiClient.FileInfo(applicationId, userId, sequenceId, sectionId, pageId, questionId, filename);
-            
-            var file = await _apiClient.Download(applicationId, userId, sequenceId,sectionId, pageId, questionId, filename);
+            return File(fileStream, response.Content.Headers.ContentType.MediaType, filename);
 
-            var fileStream = await file.Content.ReadAsStreamAsync();
-            
-            return File(fileStream, fileInfo.ContentType, fileInfo.Filename);
         }
 
-        public async Task<IActionResult> DeleteFile(Guid applicationId, int sequenceId, int sectionId, string pageId, string questionId, string redirectAction)
+        public async Task<IActionResult> DeleteFile(Guid applicationId, int sequenceId, int sectionId, string pageId, string questionId, string filename, string redirectAction)
         {
-            await _apiClient.DeleteFile(applicationId, User.GetUserId(), sequenceId, sectionId, pageId, questionId);
+
+            var sequences = await _qnaApiClient.GetSequences(applicationId);
+            var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
+            var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
+            var selectedSection = sections.Single(x => x.SectionId == sectionId);
+
+            //MFCMFC talk to Dave G about this.... is leaving it as empty string good enough???
+            var answers = new List<Answer> {new Answer {Value = string.Empty, QuestionId = questionId}};
+            await _qnaApiClient.UpdatePageAnswers(applicationId, selectedSection.Id, pageId, answers);
+
+            await _qnaApiClient.DeleteFile(applicationId,  selectedSection.Id, pageId, questionId, filename);
             
             return RedirectToAction("Page", new {applicationId, sequenceId, sectionId, pageId, redirectAction});
         }
