@@ -4592,7 +4592,18 @@ VALUES
           "Hint": "This is a holding page",
           "Input": {
             "Type": "FileUpload",
-            "Validations": []
+            "Validations": [
+			    {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Select your organisation''s continuity plan for apprenticeship training"
+                },
+				{
+                "Name": "FileType",
+                "Value": "pdf",
+                "ErrorMessage": "The selected file must be a PDF"
+              }
+			]
           },
           "Order": null
         }
