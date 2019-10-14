@@ -724,10 +724,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
             var selectedSection = sections.Single(x => x.SectionId == sectionId);
 
-            //MFCMFC talk to Dave G about this.... is leaving it as empty string good enough???
-            var answers = new List<Answer> {new Answer {Value = string.Empty, QuestionId = questionId}};
-            await _qnaApiClient.UpdatePageAnswers(applicationId, selectedSection.Id, pageId, answers);
-
             await _qnaApiClient.DeleteFile(applicationId,  selectedSection.Id, pageId, questionId, filename);
             
             return RedirectToAction("Page", new {applicationId, sequenceId, sectionId, pageId, redirectAction});
