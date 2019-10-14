@@ -32,7 +32,6 @@ BEGIN
            ,[Description]
            ,[Version]
            ,[Type]
-           ,[Status]
            ,[CreatedAt]
            ,[CreatedBy]           
            ,[ReferenceFormat]
@@ -43,7 +42,6 @@ BEGIN
            ,'RoATP Workflow'
            ,'1.0'
            ,'RoATP'
-           ,'Live'
            ,GETDATE()
            ,'Import'
            ,'AAD',
@@ -61,7 +59,7 @@ DECLARE @PreambleSectionId UNIQUEIDENTIFIER
 SET @PreambleSectionId = '076D997E-7F59-4C66-91A3-CC9B63231413'
 	 		  	
 INSERT [dbo].[WorkflowSections]
-  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
 VALUES
   (@PreambleSectionId, @ProjectId, N'
 {
@@ -470,7 +468,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "2",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -486,7 +484,7 @@ VALUES
     }
   ]
 }
-', N'Preamble', N'Preamble', N'Draft', N'Pages')
+', N'Preamble', N'Preamble', N'Pages')
 
 INSERT INTO [dbo].[WorkflowSequences]
            ([Id]
@@ -494,7 +492,6 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,[SequenceNo]
 		   ,[SectionNo]
 		   ,[SectionId]
-           ,[Status]
            ,[IsActive])
      VALUES
            (NEWID()
@@ -502,14 +499,13 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,0
 		   ,1
 		   ,@PreambleSectionId
-           ,'Draft'
            ,1)
 
 DECLARE @ProviderRouteSectionId UNIQUEIDENTIFIER
 SET @ProviderRouteSectionId = '369F8A6A-DC8D-489C-9E1B-CDB5EF690EB9'
 
 INSERT [dbo].[WorkflowSections]
-  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
 VALUES
   (@ProviderRouteSectionId, @ProjectId, N'
 {
@@ -567,7 +563,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": null,
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -583,7 +579,7 @@ VALUES
     }
   ]
 }
-', N'Provider route', N'Provider route', N'Draft', N'Pages')
+', N'Provider route', N'Provider route', N'Pages')
 
 DECLARE @ProviderRouteSequenceId UNIQUEIDENTIFIER
 SET @ProviderRouteSequenceId = '5B212C41-9A23-48F4-A58F-2868D1A04A0E'
@@ -594,7 +590,6 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,[SequenceNo]
 		   ,[SectionNo]
 		   ,[SectionId]
-           ,[Status]
            ,[IsActive])
      VALUES
            (@ProviderRouteSequenceId
@@ -602,14 +597,13 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,1
 		   ,1
 		   ,@ProviderRouteSectionId
-           ,'Draft'
            ,1)
 
 DECLARE @OrganisationIntroductionSectionId UNIQUEIDENTIFIER
 SET @OrganisationIntroductionSectionId = '31532459-B353-474D-B24A-8CE5C9BDEA52'
 
 INSERT [dbo].[WorkflowSections]
-  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
 VALUES
   (@OrganisationIntroductionSectionId, @ProjectId, N'
 {
@@ -667,7 +661,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "20",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -734,7 +728,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "20",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -801,7 +795,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "20",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -817,7 +811,7 @@ VALUES
     }
   ]
 }
-', N'Introduction and what you''ll need', N'Introduction and what you''ll need', N'Draft', N'Pages')
+', N'Introduction and what you''ll need', N'Introduction and what you''ll need', N'Pages')
 
 DECLARE @OrganisationIntroductionSequenceId UNIQUEIDENTIFIER
 SET @OrganisationIntroductionSequenceId = 'B9A63CBD-4456-4DA4-8FAD-63D2F79D33F4'
@@ -828,7 +822,6 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,[SequenceNo]
 		   ,[SectionNo]
 		   ,[SectionId]
-           ,[Status]
            ,[IsActive])
      VALUES
            (@OrganisationIntroductionSequenceId
@@ -836,14 +829,13 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,1
 		   ,2
 		   ,@OrganisationIntroductionSectionId
-           ,'Draft'
            ,1)
 
 DECLARE @OrgansiationDetailsSectionId UNIQUEIDENTIFIER
 SET @OrgansiationDetailsSectionId = '81DF6266-13E4-4928-8774-0C9E0C74B551'
 
 INSERT [dbo].[WorkflowSections]
-  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
 VALUES
   (@OrgansiationDetailsSectionId, @ProjectId, N'
 {
@@ -893,16 +885,18 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "21",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-20",
             "MustEqual": "Yes"
-          },
+          }
+		  ],
           "ConditionMet": false
         },	  
         {
           "Action": "NextPage",
           "ReturnId": "30",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -995,7 +989,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "30",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -1058,37 +1052,45 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "40",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-NoWebsite",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "60",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "Apply-ProviderRoute",
             "MustEqual": "3"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
         {
           "Action": "NextPage",
           "ReturnId": "50",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "Apply-ProviderRoute",
             "MustEqual": "1"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "51",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "Apply-ProviderRoute",
             "MustEqual": "2"
-          },
+          }
+		  ],
           "ConditionMet": false
         }
       ],
@@ -1175,28 +1177,34 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "60",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "Apply-ProviderRoute",
             "MustEqual": "3"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
         {
           "Action": "NextPage",
           "ReturnId": "50",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "Apply-ProviderRoute",
             "MustEqual": "1"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "51",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "Apply-ProviderRoute",
             "MustEqual": "2"
-          },
+          }
+		  ],
           "ConditionMet": false
         }
       ],
@@ -1265,61 +1273,73 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "10001",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-50",
             "MustEqual": "1"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "130",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "CH-ManualEntryRequired",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "70",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Company",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "90",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "CC-TrusteeManualEntry",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "80",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Charity",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "100",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-SoleTradePartnership",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "140",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -1389,61 +1409,73 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "10002",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-51",
             "MustEqual": "1"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "130",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "CH-ManualEntryRequired",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "70",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Company",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "90",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "CC-TrusteeManualEntry",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "80",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Charity",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "100",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-SoleTradePartnership",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "140",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -1513,61 +1545,73 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "10003",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-60",
             "MustEqual": "1"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "130",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "CH-ManualEntryRequired",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "70",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Company",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "90",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "CC-TrusteeManualEntry",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "80",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Charity",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "100",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-SoleTradePartnership",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "140",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -1689,7 +1733,7 @@ VALUES
     }
   ]
 }
-', N'Organisation details', N'Organisation details', N'Draft', N'Pages')
+', N'Organisation details', N'Organisation details', N'Pages')
 
 DECLARE @OrganisationDetailsSequenceId UNIQUEIDENTIFIER
 SET @OrganisationDetailsSequenceId = '0B946C18-E335-4440-88D5-4345599F72E1'
@@ -1700,7 +1744,6 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,[SequenceNo]
 		   ,[SectionNo]
 		   ,[SectionId]
-           ,[Status]
            ,[IsActive])
      VALUES
            (@OrganisationDetailsSequenceId
@@ -1708,14 +1751,13 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,1
 		   ,3
 		   ,@OrgansiationDetailsSectionId
-           ,'Draft'
            ,1)
 
 DECLARE @ConfirmWhosInControlSectionId UNIQUEIDENTIFIER
 SET @ConfirmWhosInControlSectionId = 'A3DA075D-858F-4498-8BFF-0360BD5EC459'
 
 INSERT [dbo].[WorkflowSections]
-  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
 VALUES
   (@ConfirmWhosInControlSectionId, @ProjectId, N'
 {
@@ -1779,25 +1821,29 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "90",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "CC-TrusteeManualEntry",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "80",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Charity",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "140",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -1840,7 +1886,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "140",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -1883,7 +1929,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "140",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -1947,19 +1993,23 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "110",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-100",
             "MustEqual": "Partnership"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "120",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-100",
             "MustEqual": "Sole trader"
-          },
+          }
+		  ],
           "ConditionMet": false
         }
       ],
@@ -2002,7 +2052,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "140",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -2055,7 +2105,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": null,
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -2098,7 +2148,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "140",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -2115,7 +2165,7 @@ VALUES
     }
   ]
 }
-', N'Confirm who''s in control', N'Confirm who''s in control', N'Draft', N'Pages')
+', N'Confirm who''s in control', N'Confirm who''s in control', N'Pages')
 
 DECLARE @ConfirmWhosInControlSequenceId UNIQUEIDENTIFIER
 SET @ConfirmWhosInControlSequenceId = '2639B6CA-55F4-4578-9DDB-0B3E3F4A2139'
@@ -2126,7 +2176,6 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,[SequenceNo]
 		   ,[SectionNo]
 		   ,[SectionId]
-           ,[Status]
            ,[IsActive])
      VALUES
            (@ConfirmWhosInControlSequenceId
@@ -2134,14 +2183,13 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,1
 		   ,4
 		   ,@ConfirmWhosInControlSectionId
-           ,'Draft'
            ,1)
 
 DECLARE @DescribeYourOrganisationSectionId UNIQUEIDENTIFIER
 SET @DescribeYourOrganisationSectionId = 'D9A819CD-93F5-4312-ABCC-B272B35E09DA'
 
 INSERT [dbo].[WorkflowSections]
-  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
 VALUES
   (@DescribeYourOrganisationSectionId, @ProjectId, N'
 {
@@ -2211,55 +2259,67 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "160",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-140",
             "MustEqual": "An educational institute"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-140",
             "MustEqual": "An employer training apprentices in other organisations"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "170",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-140",
             "MustEqual": "A public body"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-140",
             "MustEqual": "An Apprenticeship Training Agency"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-140",
             "MustEqual": "An Independent Training Provider"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-140",
             "MustEqual": "A Group Training Association"
-          },
+          }
+		  ],
           "ConditionMet": false
         }
       ],
@@ -2323,61 +2383,73 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "161",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-150",
             "MustEqual": "An educational institute"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "171",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-150",
             "MustEqual": "A public body"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "CH-ManualEntryRequired",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Company",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "CC-TrusteeManualEntry",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Charity",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -2466,73 +2538,89 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "200",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-160",
             "MustEqual": "Academy"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "200",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-160",
             "MustEqual": "Further Education Institute"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "210",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-160",
             "MustEqual": "General Further Education College"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "190",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-160",
             "MustEqual": "Higher Education Institute"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "200",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-160",
             "MustEqual": "Multi-Academy Trust"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "210",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-160",
             "MustEqual": "National College"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "180",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-160",
             "MustEqual": "School"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "210",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-160",
             "MustEqual": "Sixth Form College"
-          },
+          }
+		  ],
           "ConditionMet": false
         }
       ],
@@ -2621,73 +2709,89 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "201",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-161",
             "MustEqual": "Academy"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "201",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-161",
             "MustEqual": "Further Education Institute"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "211",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-161",
             "MustEqual": "General Further Education College"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "191",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-161",
             "MustEqual": "Higher Education Institute"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "201",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-161",
             "MustEqual": "Multi-Academy Trust"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "211",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-161",
             "MustEqual": "National College"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "181",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-161",
             "MustEqual": "School"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "211",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-161",
             "MustEqual": "Sixth Form College"
-          },
+          }
+		  ],
           "ConditionMet": false
         }
       ],
@@ -2771,7 +2875,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -2855,25 +2959,29 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Company",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Charity",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -2934,16 +3042,18 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "200",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-180",
             "MustEqual": "Free school"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3004,34 +3114,40 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "201",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-181",
             "MustEqual": "Free school"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Company",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Charity",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3088,7 +3204,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3145,25 +3261,29 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Company",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Charity",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3220,7 +3340,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3277,25 +3397,29 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Company",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Charity",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3352,7 +3476,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3409,25 +3533,29 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Company",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Charity",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3492,7 +3620,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3565,7 +3693,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": null,
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3581,7 +3709,7 @@ VALUES
     }
   ]
 }
-', N'Describe your organisation', N'Describe your organisation', N'Draft', N'Pages')
+', N'Describe your organisation', N'Describe your organisation', N'Pages')
 
 DECLARE @DescribeYourOrganisationSequenceId UNIQUEIDENTIFIER
 SET @DescribeYourOrganisationSequenceId = '9E5A819F-2C74-4302-897C-1883DF65701D'
@@ -3592,7 +3720,6 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,[SequenceNo]
 		   ,[SectionNo]
 		   ,[SectionId]
-           ,[Status]
            ,[IsActive])
      VALUES
            (@DescribeYourOrganisationSequenceId
@@ -3600,14 +3727,13 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,1
 		   ,5
 		   ,@DescribeYourOrganisationSectionId
-           ,'Draft'
            ,1)
 
 DECLARE @ExperienceAccreditationsSectionId UNIQUEIDENTIFIER
 SET @ExperienceAccreditationsSectionId = '0CCD068A-EE62-4CE8-8E06-659E97FD3696'
 
 INSERT [dbo].[WorkflowSections]
-  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
 VALUES
   (@ExperienceAccreditationsSectionId, @ProjectId, N'
 {
@@ -3655,19 +3781,23 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "250",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-240",
             "MustEqual": "Yes"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "260",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-240",
             "MustEqual": "No"
-          },
+          }
+		  ],
           "ConditionMet": false
         }
       ],
@@ -3724,16 +3854,18 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "260",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-250",
             "MustEqual": "No"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": null,
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3790,16 +3922,18 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "270",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-260",
             "MustEqual": "Yes"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "290",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3856,43 +3990,51 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "280",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-270",
             "MustEqual": "No"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "301",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "Organisation-OfSFunded-MS",
             "MustEqual": "Yes"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "301",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "Organisation-OfSFunded-Emp",
             "MustEqual": "Yes"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "300",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-270",
             "MustEqual": "Yes"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "280",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3957,25 +4099,29 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": null,
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-280",
             "MustEqual": "Requires improvement"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "311",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-280",
             "MustEqual": "Inadequate"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "310",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -4032,7 +4178,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": null,
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -4097,25 +4243,29 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "280",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-300",
             "MustEqual": "Requires improvement"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "311",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-300",
             "MustEqual": "Inadequate"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "310",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -4180,25 +4330,29 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": null,
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-301",
             "MustEqual": "Requires improvement"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "311",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-301",
             "MustEqual": "Inadequate"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "310",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -4255,16 +4409,18 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "320",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-310",
             "MustEqual": "Yes"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "330",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -4321,16 +4477,18 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "10004",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-311",
             "MustEqual": "Yes"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": null,
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -4387,7 +4545,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": null,
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -4444,16 +4602,18 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "340",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-330",
             "MustEqual": "Yes"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": null,
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -4510,16 +4670,18 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "320",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-340",
             "MustEqual": "Yes"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": null,
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -4570,7 +4732,7 @@ VALUES
     }
   ]
 }
-', N'Experience and accreditations', N'Experience and accreditations', N'Draft', N'Pages')
+', N'Experience and accreditations', N'Experience and accreditations', N'Pages')
 
 DECLARE @ExperienceAccreditationsSequenceId UNIQUEIDENTIFIER
 SET @ExperienceAccreditationsSequenceId = '803C1398-7B76-4351-94C4-7F1B641053EA'
@@ -4581,7 +4743,6 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,[SequenceNo]
 		   ,[SectionNo]
 		   ,[SectionId]
-           ,[Status]
            ,[IsActive])
      VALUES
            (@ExperienceAccreditationsSequenceId
@@ -4589,7 +4750,6 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,1
 		   ,6
 		   ,@ExperienceAccreditationsSectionId
-           ,'Draft'
            ,1)
 
 
@@ -4598,14 +4758,12 @@ INSERT INTO [dbo].[WorkflowSequences]
 --           ([Id]
 --           ,[WorkflowId]
 --           ,[SequenceId]
---           ,[Status]
 --           ,[IsActive]
 --		   ,[Description])
 --     VALUES
 --           ('DEF40E31-71DA-40EC-8F33-9856C76C67DA'
 --           ,'86F83D58-8608-4462-9A4E-65837AF04287'
 --           ,2
---           ,'Draft'
 --           ,1
 --		   ,'Financial evidence')
 		   
@@ -4613,14 +4771,12 @@ INSERT INTO [dbo].[WorkflowSequences]
 --			([Id]
 --			,[WorkflowId]
 --			,[SequenceId]
---			,[Status]
 --			,[IsActive]
 --			,[Description])
 --VALUES
 --			('B9FFC03D-2B9F-46C0-9481-44CD4C2E1E4F'
 --			,'86F83D58-8608-4462-9A4E-65837AF04287'
 --			,3
---			,'Draft'
 --			,1
 --			,'Criminal and compliance checks')
 
@@ -4628,14 +4784,12 @@ INSERT INTO [dbo].[WorkflowSequences]
 --			([Id]
 --			,[WorkflowId]
 --			,[SequenceId]
---			,[Status]
 --			,[IsActive]
 --			,[Description])
 --VALUES
 --			('4904E35B-6AF2-45C5-825B-EA41617287E1'
 --			,'86F83D58-8608-4462-9A4E-65837AF04287'
 --			,4
---			,'Draft'
 --			,1
 --			,'Apprenticeship welfare')
 			
@@ -4643,14 +4797,12 @@ INSERT INTO [dbo].[WorkflowSequences]
 --			([Id]
 --			,[WorkflowId]
 --			,[SequenceId]
---			,[Status]
 --			,[IsActive]
 --			,[Description])
 --VALUES
 --			('8FA9490D-E7C0-40AE-97AF-38F0976B2A88'
 --			,'86F83D58-8608-4462-9A4E-65837AF04287'
 --			,5
---			,'Draft'
 --			,1
 --			,'Readiness to engage')
 
@@ -4658,14 +4810,12 @@ INSERT INTO [dbo].[WorkflowSequences]
 --			([Id]
 --			,[WorkflowId]
 --			,[SequenceId]
---			,[Status]
 --			,[IsActive]
 --			,[Description])
 --VALUES
 --			('C0D1550F-1372-404E-9CA9-D0021D190E7E'
 --			,'86F83D58-8608-4462-9A4E-65837AF04287'
 --			,6
---			,'Draft'
 --			,1
 --			,'People and planning')
 
@@ -4673,14 +4823,12 @@ INSERT INTO [dbo].[WorkflowSequences]
 --			([Id]
 --			,[WorkflowId]
 --			,[SequenceId]
---			,[Status]
 --			,[IsActive]
 --			,[Description])
 --VALUES
 --			('A8DC9146-4BEC-4B1E-B5AC-6D1698AF5FDF'
 --			,'86F83D58-8608-4462-9A4E-65837AF04287'
 --			,7
---			,'Draft'
 --			,1
 --			,'Leaders and managers')
 
@@ -4688,7 +4836,7 @@ DECLARE @ConditionsOfAcceptanceSectionId UNIQUEIDENTIFIER
 SET @ConditionsOfAcceptanceSectionId = 'A56E170E-F602-47DB-97DE-A5765B86C97A'
            
 INSERT [dbo].[WorkflowSections]
-  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
 VALUES
   (@ConditionsOfAcceptanceSectionId, @ProjectId, N'
 {
@@ -4720,7 +4868,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "3",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -4736,7 +4884,7 @@ VALUES
     }
   ]
 }
-', N'Conditions of acceptance', N'Conditions of acceptance', N'Draft', N'Pages')
+', N'Conditions of acceptance', N'Conditions of acceptance', N'Pages')
 
 DECLARE @ConditionsOfAcceptanceSequenceId UNIQUEIDENTIFIER
 SET @ConditionsOfAcceptanceSequenceId = 'C636D66B-818C-478F-9970-68BFCED4F89A'
@@ -4747,7 +4895,6 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,[SequenceNo]
            ,[SectionNo]
            ,[SectionId]
-           ,[Status]
            ,[IsActive])
      VALUES
            (@ConditionsOfAcceptanceSequenceId
@@ -4755,7 +4902,6 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,99
            ,1
            ,@ConditionsOfAcceptanceSectionId
-           ,'Draft'
            ,1)
 
 
@@ -4786,7 +4932,7 @@ delete from workflowSections where id = @ProtectionOfApprentices2SectionId
 
 
 INSERT [dbo].[WorkflowSections]
-  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
 VALUES
   (@ProtectionOfApprenticesSectionId, @ProjectId, N'
 {
@@ -4832,7 +4978,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "530",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -4887,7 +5033,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "530",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -4941,7 +5087,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "540",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -4957,10 +5103,10 @@ VALUES
     }
 	]
 }
-', N'Introduction and what you''ll need', N'Introduction and what you''ll need', N'Draft', N'Pages')
+', N'Introduction and what you''ll need', N'Introduction and what you''ll need', N'Pages')
 
 INSERT [dbo].[WorkflowSections]
-  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
 VALUES
   (@ProtectionOfApprentices2SectionId, @ProjectId, N'
 {
@@ -4992,7 +5138,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "540",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -5008,11 +5154,11 @@ VALUES
     }
 	]
 }
-', N'Continuity plan for apprenticeship training', N'Continuity plan for apprenticeship training', N'Draft', N'Pages')
+', N'Continuity plan for apprenticeship training', N'Continuity plan for apprenticeship training', N'Pages')
 
 
 INSERT [dbo].[WorkflowSections]
-  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
 VALUES
   (@ProtectionOfApprentices3SectionId, @ProjectId, N'
 {
@@ -5044,7 +5190,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "550",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -5060,7 +5206,7 @@ VALUES
     }
 	]
 }
-', N'Equality and Diversity policy', N'Equality and Diversity policy', N'Draft', N'Pages')
+', N'Equality and Diversity policy', N'Equality and Diversity policy', N'Pages')
 
 
 
@@ -5070,7 +5216,6 @@ INSERT INTO [dbo].[WorkflowSequences]
 			,[SequenceNo]
 			,[SectionNo]
 			,[SectionId]
-			,[Status]
 			,[IsActive])
 VALUES
 			(@ProtectionOfApprenticesSequenceId
@@ -5078,7 +5223,6 @@ VALUES
 			,4
 			,1
 			,@ProtectionOfApprenticesSectionId
-			,'Draft'
 			,1)
 
 INSERT INTO [dbo].[WorkflowSequences]
@@ -5087,7 +5231,6 @@ INSERT INTO [dbo].[WorkflowSequences]
 			,[SequenceNo]
 			,[SectionNo]
 			,[SectionId]
-			,[Status]
 			,[IsActive])
 VALUES
 			(@ProtectionOfApprentices2SequenceId
@@ -5095,7 +5238,6 @@ VALUES
 			,4
 			,2
 			,@ProtectionOfApprentices2SectionId
-			,'Draft'
 			,1)
 
 INSERT INTO [dbo].[WorkflowSequences]
@@ -5104,7 +5246,6 @@ INSERT INTO [dbo].[WorkflowSequences]
 			,[SequenceNo]
 			,[SectionNo]
 			,[SectionId]
-			,[Status]
 			,[IsActive])
 VALUES
 			(@ProtectionOfApprentices3SequenceId
@@ -5112,7 +5253,6 @@ VALUES
 			,4
 			,3
 			,@ProtectionOfApprentices3SectionId
-			,'Draft'
 			,1)
 
 GO
