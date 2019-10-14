@@ -3855,7 +3855,16 @@ VALUES
       "Next": [
 		{
           "Action": "NextPage",
-          "ReturnId": "300",
+          "ReturnId": "280",
+          "Condition": {
+            "QuestionId": "YO-270",
+            "MustEqual": "No"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "301",
           "Condition": {
             "QuestionTag": "Organisation-OfSFunded-MS",
             "MustEqual": "Yes"
@@ -3951,6 +3960,15 @@ VALUES
           "Condition": {
             "QuestionId": "YO-280",
             "MustEqual": "Requires improvement"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "311",
+          "Condition": {
+            "QuestionId": "YO-280",
+            "MustEqual": "Inadequate"
           },
           "ConditionMet": false
         },
@@ -4087,6 +4105,15 @@ VALUES
         },
 		{
           "Action": "NextPage",
+          "ReturnId": "311",
+          "Condition": {
+            "QuestionId": "YO-300",
+            "MustEqual": "Inadequate"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
           "ReturnId": "310",
           "Condition": null,
           "ConditionMet": false
@@ -4161,6 +4188,15 @@ VALUES
         },
 		{
           "Action": "NextPage",
+          "ReturnId": "311",
+          "Condition": {
+            "QuestionId": "YO-301",
+            "MustEqual": "Inadequate"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
           "ReturnId": "310",
           "Condition": null,
           "ConditionMet": false
@@ -4180,24 +4216,156 @@ VALUES
       "PageId": "310",
       "SequenceId": "1",
       "SectionId": "6",
-      "Title": "PLACEHOLDER Ofsted Grade Last 3 Years",
+      "Title": "Did your organisation get this grade within the last 3 years?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-310",
           "QuestionTag": "Ofsted-Grade-Last3Years",
-          "Label": "PLACEHOLDER Ofsted Grade Last 3 Years",
+          "Label": "Did your organisation get this grade within the last 3 years?",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">If you''re not sure, <a href=\"https://reports.ofsted.gov.uk/\" target=\"blank\">check your organisation''s Ofsted inspection report  (opens in a new window or tab)</a>.</p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation was awarded this grade within the last 3 years"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [		
+		{
+          "Action": "NextPage",
+          "ReturnId": "320",
+          "Condition": {
+            "QuestionId": "YO-310",
+            "MustEqual": "Yes"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "330",
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "311",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "Did your organisation get this grade within the last 3 years?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-311",
+          "QuestionTag": "Ofsted-Grade-Last3Years",
+          "Label": "Did your organisation get this grade within the last 3 years?",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">If you''re not sure, <a href=\"https://reports.ofsted.gov.uk/\" target=\"blank\">check your organisation''s Ofsted inspection report  (opens in a new window or tab)</a>.</p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation was awarded this grade within the last 3 years"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [		
+		{
+          "Action": "NextPage",
+          "ReturnId": "10004",
+          "Condition": {
+            "QuestionId": "YO-311",
+            "MustEqual": "Yes"
+          },
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "320",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "PLACEHOLDER Maintained Funding",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-320",
+          "QuestionTag": "Maintained-Funding",
+          "Label": "PLACEHOLDER Maintained Funding",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
             "Type": "Hidden",
 			"Options": [
-			 
+			  
 			],
             "Validations": [
-              
+             
             ]
           },
           "Order": null
@@ -4221,6 +4389,87 @@ VALUES
       "HasFeedback": false,
       "NotRequiredOrgTypes": [],
       "BodyText": ""
+    },
+	{
+      "PageId": "330",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "PLACEHOLDER Had Short Inspection",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-330",
+          "QuestionTag": "Had-Short-Inspection",
+          "Label": "PLACEHOLDER Had Short Inspection",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+			"Options": [
+			  
+			],
+            "Validations": [
+             
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [		
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Condition": null,
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "10004",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "Your organisation is not eligible to apply to join RoATP",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "SHUT-004",
+          "QuestionTag": "Shutter-Inadequate-Grade-3-Years",
+          "Label": "Your organisation is not eligible to apply to join RoATP",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">This is because your organisation got an ''inadequate'' grade within the last 3 years.</p><p class=\"govuk-body\"><a href=\"https://www.gov.uk\">Back to GOV.UK</a></p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+			"Validations": []
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": "",
+	  "NotRequired": true
     }
   ]
 }
