@@ -4348,24 +4348,35 @@ VALUES
       "PageId": "320",
       "SequenceId": "1",
       "SectionId": "6",
-      "Title": "PLACEHOLDER Maintained Funding",
+      "Title": "Has your organisation maintained funding from an education agency since its full Ofsted inspection?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-320",
           "QuestionTag": "Maintained-Funding",
-          "Label": "PLACEHOLDER Maintained Funding",
+          "Label": "Has your organisation maintained funding from an education agency since its full Ofsted inspection?",
           "ShortLabel": "",
-          "QuestionBodyText": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">This means your organisation already has an existing relationship with and has maintained funding from:</p><ul class=\"govuk-list govuk-list--bullet\"> <li>ESFA</li> <li>Skills Funding Agency (SFA)</li> <li>Education Funding Agency (EFA)</li> </ul>",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
+            "Type": "Radio",
 			"Options": [
-			  
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
 			],
             "Validations": [
-             
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation has maintained funding from an education agency since being awarded this grade"
+              }
             ]
           },
           "Order": null
