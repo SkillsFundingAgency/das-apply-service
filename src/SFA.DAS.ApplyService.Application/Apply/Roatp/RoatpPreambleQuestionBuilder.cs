@@ -73,6 +73,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static int OrganisationDetails = 3;
             public static int WhosInControl = 4;
             public static int DescribeYourOrganisation = 5;
+            public static int ExperienceAndAccreditations = 6;
         }
 
         public static class FinancialEvidence
@@ -113,6 +114,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         {
             public static string MainSupportingStartPage = "140";
             public static string EmployerStartPage = "150";
+        }
+
+        public class ExperienceAndAccreditations
+        {
+            public static string StartPage = "240";
         }
     }
 

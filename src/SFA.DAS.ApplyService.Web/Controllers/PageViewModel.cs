@@ -14,9 +14,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public const string DefaultCTAButtonText = "Save and continue";
 
-        private List<QnaPageOverrideConfiguration> _pageOverrideConfiguration;               
-
-        public PageViewModel(Guid applicationId, int sequenceId, int sectionId, string pageId, Page page, string pageContext, string redirectAction, string returnUrl, List<ValidationErrorDetail> errorMessages, List<QnaPageOverrideConfiguration> pageOverrideConfiguration)
+        private List<QnaPageOverrideConfiguration> _pageOverrideConfiguration;
+        public List<QnaLinksConfiguration> LinksConfiguration;
+        public PageViewModel(Guid applicationId, int sequenceId, int sectionId, string pageId, Page page, string pageContext, string redirectAction, string returnUrl, List<ValidationErrorDetail> errorMessages, List<QnaPageOverrideConfiguration> pageOverrideConfiguration, List<QnaLinksConfiguration> linksConfiguration)
         {
             ApplicationId = applicationId;
             SequenceId = sequenceId.ToString();
@@ -27,6 +27,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             ReturnUrl = returnUrl;
             ErrorMessages = errorMessages;
             _pageOverrideConfiguration = pageOverrideConfiguration;
+            LinksConfiguration = linksConfiguration.Where(x=>x.PageId == pageId).ToList();
             if (page != null)
             {
                 SetupPage(page, errorMessages);

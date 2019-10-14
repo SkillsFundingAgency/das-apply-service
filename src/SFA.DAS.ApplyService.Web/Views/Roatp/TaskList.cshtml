@@ -30,12 +30,22 @@
                                  <ul class="app-task-list__items">
                                      @foreach (var section in applicationSequence.Sections.OrderBy(sec => sec.SectionId))
                                      {
-                                         <li class="app-task-list__item">
-                                             <a class="app-task-list__task_name" href="@Url.Action("Section", "RoatpApplication", new {section.ApplicationId, section.SequenceId, section.SectionId})">
-                                                 @Html.Raw(section.Title)
-                                             </a>
-                                             <strong class="govuk-tag app-task-list__task-@Model.CssClass(section.SequenceId, section.SectionId)" id="completed">@Model.SectionStatus(section.SequenceId, section.SectionId)</strong>
-                                         </li>
+                                         @if (!Model.IntroductionPageNextSectionUnavailable(section.SequenceId, section.SectionId))
+                                         {
+                                             <li class="app-task-list__item">
+                                                 <a class="app-task-list__task_name" href="@Url.Action("Section", "RoatpApplication", new {section.ApplicationId, section.SequenceId, section.SectionId})">
+                                                     @Html.Raw(section.Title)
+                                                 </a>
+                                                 <strong class="govuk-tag app-task-list__task-@Model.CssClass(section.SequenceId, section.SectionId)" id="completed">@Model.SectionStatus(section.SequenceId, section.SectionId)</strong>
+                                             </li>
+                                         }
+                                         else
+                                         {
+                                             <li class="app-task-list__item">
+                                                 
+                                                     @Html.Raw(section.Title)
+                                             </li> 
+                                         }
                                      }
                                  </ul>
                              </li>

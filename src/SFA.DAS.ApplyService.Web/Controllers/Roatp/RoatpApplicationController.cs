@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
@@ -16,6 +17,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
+using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 using SFA.DAS.ApplyService.Web.ViewModels;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
@@ -37,21 +39,24 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IConfigurationService _configService;
         private readonly IUserService _userService;
         private readonly IQnaApiClient _qnaApiClient;
+        private readonly IProcessPageFlowService _processPageFlowService;
         private readonly IQuestionPropertyTokeniser _questionPropertyTokeniser;
-        private readonly List<TaskListConfiguration> _taskListConfiguration;
+        private readonly List<TaskListConfiguration> _configuration;
         private readonly IPageNavigationTrackingService _pageNavigationTrackingService;
         private readonly List<QnaPageOverrideConfiguration> _pageOverrideConfiguration;
+        private readonly List<QnaLinksConfiguration> _qnaLinks;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
         private const string InputClassUpperCase = "app-uppercase";
+        private const int Section1Id = 1;
         private const string NotApplicableAnswerText = "None of the above";
         private const string InvalidCheckBoxListSelectionErrorMessage = "If your answer is 'none of the above', you must only select that option";
 
         public RoatpApplicationController(IApplicationApiClient apiClient, ILogger<RoatpApplicationController> logger,
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
-            IQnaApiClient qnaApiClient, IOptions<List<TaskListConfiguration>> taskListConfiguration,
+            IQnaApiClient qnaApiClient, IOptions<List<TaskListConfiguration>> configuration, IProcessPageFlowService processPageFlowService,
             IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
-            IPageNavigationTrackingService pageNavigationTrackingService)
+            IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks)
         {
             _apiClient = apiClient;
             _logger = logger;
@@ -60,9 +65,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _userService = userService;
             _usersApiClient = usersApiClient;
             _qnaApiClient = qnaApiClient;
-            _taskListConfiguration = taskListConfiguration.Value;
+            _processPageFlowService = processPageFlowService;
+            _configuration = configuration.Value;
             _questionPropertyTokeniser = questionPropertyTokeniser;
             _pageNavigationTrackingService = pageNavigationTrackingService;
+            _qnaLinks = qnaLinks.Value;
             _pageOverrideConfiguration = pageOverrideConfiguration.Value;
         }
 
@@ -202,6 +209,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public async Task<IActionResult> Section(Guid applicationId, int sequenceId, int sectionId)
         {
+
+            if (sectionId == Section1Id)
+            {
+                var providerTypeId = await _processPageFlowService.GetApplicationProviderTypeId(applicationId);
+                var introductionPageId = await
+                    _processPageFlowService.GetIntroductionPageIdForSequence(sequenceId, providerTypeId);
+                if (introductionPageId!=null)
+                    return await Page(applicationId, sequenceId, sectionId, introductionPageId, "TaskList");
+            }
+
             var sequences = await _qnaApiClient.GetSequences(applicationId);
             var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
             var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
@@ -261,7 +278,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     : null;
 
                 viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, pageContext, redirectAction,
-                    returnUrl, errorMessages, _pageOverrideConfiguration);
+                    returnUrl, errorMessages, _pageOverrideConfiguration, _qnaLinks);
             }
             else
             {
@@ -295,7 +312,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 page = await GetDataFedOptions(applicationId, page);
 
                 viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, pageContext, redirectAction,
-                    returnUrl, null, _pageOverrideConfiguration);
+                    returnUrl, null, _pageOverrideConfiguration, _qnaLinks);
 
             }
 
@@ -385,7 +402,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             foreach (var sequence in sequences)
             {
-                var sequenceDescription = _taskListConfiguration.FirstOrDefault(x => x.Id == sequence.SequenceId);
+                var sequenceDescription = _configuration.FirstOrDefault(x => x.Id == sequence.SequenceId);
                 if (sequenceDescription != null)
                 {
                     sequence.Description = sequenceDescription.Title;
