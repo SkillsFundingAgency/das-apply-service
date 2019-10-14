@@ -4375,7 +4375,7 @@ VALUES
               {
                 "Name": "Required",
                 "Value": null,
-                "ErrorMessage": "Tell us if your organisation has maintained funding from an education agency since being awarded this grade"
+                "ErrorMessage": "Tell us if your organisation has maintained funding from an education agency since its full Ofsted inspection"
               }
             ]
           },
