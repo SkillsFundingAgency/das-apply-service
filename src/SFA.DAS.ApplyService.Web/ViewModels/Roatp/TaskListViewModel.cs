@@ -14,6 +14,11 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public Guid ApplicationId { get; set; }
         public string UKPRN { get; set; }
         public string OrganisationName { get; set; }
+
+        public string PageStatusCompleted => "completed";
+        public int IntroductionSectionId => 1;
+        public int Sequence1Id => 1;
+
         public IEnumerable<ApplicationSequence> ApplicationSequences { get; set; }
         
         public string CssClass(int sequenceId, int sectionId, bool sequential = false)
@@ -41,6 +46,15 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             var sequence = ApplicationSequences.FirstOrDefault(x => x.SequenceId == sequenceId);
 
             return RoatpTaskListWorkflowHandler.PreviousSectionCompleted(sequence, sectionId, sequential);
+        }
+
+        public bool IntroductionPageNextSectionUnavailable(int sequenceId, int sectionId)
+        {
+            var statusOfIntroductionPage = SectionStatus(sequenceId,IntroductionSectionId);
+            if (sequenceId > Sequence1Id && sectionId != IntroductionSectionId && statusOfIntroductionPage.ToLower() != PageStatusCompleted)
+                return true;
+
+            return false;
         }
 
         public bool VerifiedCompaniesHouse { get; set; }
