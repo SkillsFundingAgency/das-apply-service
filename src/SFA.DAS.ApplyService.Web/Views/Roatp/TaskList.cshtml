@@ -23,10 +23,61 @@
             <div class="govuk-grid-column-two-thirds">
                 <h1 class="govuk-heading-l">Application overview</h1>
                 <p class="govuk-body">Make sure you have read <a href="https://www.gov.uk/guidance/register-of-apprenticeship-training-providers" target="_blank">the RoATP GOV.UK page (opens in a new window or tab)</a> and <a href="https://www.gov.uk/guidance/becoming-an-apprenticeship-training-provider" target="_blank">the becoming an apprenticeship training provider GOV.UK page (opens in a new window or tab)</a></a>.</p>
-                <p class="govuk-body">
+                @*<p class="govuk-body">
                     UKPRN: @Model.UKPRN <br />
                     Organisation name: @Model.OrganisationName
-                </p>
+                </p>*@
+                <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Organisation name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.OrganisationName
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                        </dd>
+                    </div>
+                    @if (!String.IsNullOrWhiteSpace(Model.TradingName))
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Trading name
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.TradingName
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                            </dd>
+                        </div>
+                    }
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            UKPRN
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.UKPRN
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" href="#">
+                                Change<span class="govuk-visually-hidden"> UKPRN</span>
+                            </a>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Provider route
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.ApplicationRouteShortText
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" href="#">
+                                Change<span class="govuk-visually-hidden"> provider route</span>
+                            </a>
+                        </dd>
+                    </div>
+                </dl>
                 <ol class="app-task-list">
                     @{
                         await Html.RenderPartialAsync("~/Views/Roatp/TaskList/YourOrganisationSequence.cshtml", Model);
