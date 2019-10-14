@@ -366,6 +366,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 ApplicationSequences = filteredSequences,
                 UKPRN = organisationDetails.OrganisationUkprn?.ToString(),
                 OrganisationName = organisationDetails.Name,
+                TradingName = organisationDetails.OrganisationDetails?.TradingName,
                 VerifiedCompaniesHouse = (verifiedCompaniesHouse.Value == "TRUE"),
                 VerifiedCharityCommission = (verifiedCharityCommission.Value == "TRUE"),
                 CompaniesHouseManualEntry = (companiesHouseManualEntry.Value == "TRUE"),
