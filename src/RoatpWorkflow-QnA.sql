@@ -4789,7 +4789,7 @@ VALUES
     }
   ]
 }
-', N'Experience and accreditations', N'Experience and accreditations', N'Pages')
+', N'Experience and accreditations', N'Experience and accreditation', N'Pages')
 
 DECLARE @ExperienceAccreditationsSequenceId UNIQUEIDENTIFIER
 SET @ExperienceAccreditationsSequenceId = '803C1398-7B76-4351-94C4-7F1B641053EA'
