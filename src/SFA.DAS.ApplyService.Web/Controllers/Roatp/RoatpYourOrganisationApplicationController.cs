@@ -1,4 +1,6 @@
 ﻿
+using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
+
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
     using System;
@@ -14,14 +16,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     public class RoatpYourOrganisationApplicationController : Controller
     {
         private readonly ILogger<RoatpYourOrganisationApplicationController> _logger;
-        private readonly IQnaApiClient _qnaApiClient;
         private readonly IOrganisationApiClient _organisationApiClient;
+        private readonly IProcessPageFlowService _processPageFlowService;
+        private const int Sequence1Id = 1;
 
         public RoatpYourOrganisationApplicationController(ILogger<RoatpYourOrganisationApplicationController> logger,
-            IQnaApiClient qnaApiClient)
+             IProcessPageFlowService processPageFlowService)
         {
             _logger = logger;
-            _qnaApiClient = qnaApiClient;
+            _processPageFlowService = processPageFlowService;
         }
 
         public async Task<IActionResult> ProviderRoute(Guid applicationId)
@@ -52,29 +55,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         private async Task<string> GetIntroductionPageForApplication(Guid applicationId)
         {
-            int providerTypeId = 1;
-            string pageId = RoatpWorkflowPageIds.YourOrganisationIntroductionMain;
+            var providerTypeId = await _processPageFlowService.GetApplicationProviderTypeId(applicationId);
 
-            var providerTypeAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
-            if (providerTypeAnswer != null && !String.IsNullOrWhiteSpace(providerTypeAnswer.Value))
-            {
-                int.TryParse(providerTypeAnswer.Value, out providerTypeId);
-            }
+            var introductionPageId = await
+                _processPageFlowService.GetIntroductionPageIdForSequence(Sequence1Id, providerTypeId);
+            if (introductionPageId != null)
+                return await Task.FromResult(introductionPageId);
 
-            switch (providerTypeId)
-            {
-                case ApplicationRoute.MainProviderApplicationRoute:
-                    pageId = RoatpWorkflowPageIds.YourOrganisationIntroductionMain;
-                    break;
-                case ApplicationRoute.EmployerProviderApplicationRoute:
-                    pageId = RoatpWorkflowPageIds.YourOrganisationIntroductionEmployer;
-                    break;
-                case ApplicationRoute.SupportingProviderApplicationRoute:
-                    pageId = RoatpWorkflowPageIds.YourOrganisationIntroductionSupporting;
-                    break;
-            }
+            return await Task.FromResult(RoatpWorkflowPageIds.YourOrganisationIntroductionMain);
 
-            return await Task.FromResult(pageId);
         }
     }
 }

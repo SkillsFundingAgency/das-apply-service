@@ -61,7 +61,7 @@ DECLARE @PreambleSectionId UNIQUEIDENTIFIER
 SET @PreambleSectionId = '076D997E-7F59-4C66-91A3-CC9B63231413'
 	 		  	
 INSERT [dbo].[WorkflowSections]
-  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
 VALUES
   (@PreambleSectionId, @ProjectId, N'
 {
@@ -486,14 +486,15 @@ VALUES
     }
   ]
 }
-', N'Preamble', N'Preamble', N'Pages')
+', N'Preamble', N'Preamble', N'Draft', N'Pages')
 
 INSERT INTO [dbo].[WorkflowSequences]
            ([Id]
            ,[WorkflowId]
            ,[SequenceNo]
 		   ,[SectionNo]
-		   ,[SectionId]           
+		   ,[SectionId]
+           ,[Status]
            ,[IsActive])
      VALUES
            (NEWID()
@@ -501,13 +502,14 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,0
 		   ,1
 		   ,@PreambleSectionId
+           ,'Draft'
            ,1)
 
 DECLARE @ProviderRouteSectionId UNIQUEIDENTIFIER
 SET @ProviderRouteSectionId = '369F8A6A-DC8D-489C-9E1B-CDB5EF690EB9'
 
 INSERT [dbo].[WorkflowSections]
-  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
 VALUES
   (@ProviderRouteSectionId, @ProjectId, N'
 {
@@ -581,7 +583,7 @@ VALUES
     }
   ]
 }
-', N'Provider route', N'Provider route', N'Pages')
+', N'Provider route', N'Provider route', N'Draft', N'Pages')
 
 DECLARE @ProviderRouteSequenceId UNIQUEIDENTIFIER
 SET @ProviderRouteSequenceId = '5B212C41-9A23-48F4-A58F-2868D1A04A0E'
@@ -592,6 +594,7 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,[SequenceNo]
 		   ,[SectionNo]
 		   ,[SectionId]
+           ,[Status]
            ,[IsActive])
      VALUES
            (@ProviderRouteSequenceId
@@ -599,13 +602,14 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,1
 		   ,1
 		   ,@ProviderRouteSectionId
+           ,'Draft'
            ,1)
 
 DECLARE @OrganisationIntroductionSectionId UNIQUEIDENTIFIER
 SET @OrganisationIntroductionSectionId = '31532459-B353-474D-B24A-8CE5C9BDEA52'
 
 INSERT [dbo].[WorkflowSections]
-  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
 VALUES
   (@OrganisationIntroductionSectionId, @ProjectId, N'
 {
@@ -813,7 +817,7 @@ VALUES
     }
   ]
 }
-', N'Introduction and what you''ll need', N'Introduction and what you''ll need', N'Pages')
+', N'Introduction and what you''ll need', N'Introduction and what you''ll need', N'Draft', N'Pages')
 
 DECLARE @OrganisationIntroductionSequenceId UNIQUEIDENTIFIER
 SET @OrganisationIntroductionSequenceId = 'B9A63CBD-4456-4DA4-8FAD-63D2F79D33F4'
@@ -824,6 +828,7 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,[SequenceNo]
 		   ,[SectionNo]
 		   ,[SectionId]
+           ,[Status]
            ,[IsActive])
      VALUES
            (@OrganisationIntroductionSequenceId
@@ -831,13 +836,14 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,1
 		   ,2
 		   ,@OrganisationIntroductionSectionId
+           ,'Draft'
            ,1)
 
 DECLARE @OrgansiationDetailsSectionId UNIQUEIDENTIFIER
 SET @OrgansiationDetailsSectionId = '81DF6266-13E4-4928-8774-0C9E0C74B551'
 
 INSERT [dbo].[WorkflowSections]
-  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
 VALUES
   (@OrgansiationDetailsSectionId, @ProjectId, N'
 {
@@ -1735,7 +1741,7 @@ VALUES
     }
   ]
 }
-', N'Organisation details', N'Organisation details', N'Pages')
+', N'Organisation details', N'Organisation details', N'Draft', N'Pages')
 
 DECLARE @OrganisationDetailsSequenceId UNIQUEIDENTIFIER
 SET @OrganisationDetailsSequenceId = '0B946C18-E335-4440-88D5-4345599F72E1'
@@ -1746,6 +1752,7 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,[SequenceNo]
 		   ,[SectionNo]
 		   ,[SectionId]
+           ,[Status]
            ,[IsActive])
      VALUES
            (@OrganisationDetailsSequenceId
@@ -1753,13 +1760,14 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,1
 		   ,3
 		   ,@OrgansiationDetailsSectionId
+           ,'Draft'
            ,1)
 
 DECLARE @ConfirmWhosInControlSectionId UNIQUEIDENTIFIER
 SET @ConfirmWhosInControlSectionId = 'A3DA075D-858F-4498-8BFF-0360BD5EC459'
 
 INSERT [dbo].[WorkflowSections]
-  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
 VALUES
   (@ConfirmWhosInControlSectionId, @ProjectId, N'
 {
@@ -2167,7 +2175,7 @@ VALUES
     }
   ]
 }
-', N'Confirm who''s in control', N'Confirm who''s in control',  N'Pages')
+', N'Confirm who''s in control', N'Confirm who''s in control', N'Draft', N'Pages')
 
 DECLARE @ConfirmWhosInControlSequenceId UNIQUEIDENTIFIER
 SET @ConfirmWhosInControlSequenceId = '2639B6CA-55F4-4578-9DDB-0B3E3F4A2139'
@@ -2178,6 +2186,7 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,[SequenceNo]
 		   ,[SectionNo]
 		   ,[SectionId]
+           ,[Status]
            ,[IsActive])
      VALUES
            (@ConfirmWhosInControlSequenceId
@@ -2185,13 +2194,14 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,1
 		   ,4
 		   ,@ConfirmWhosInControlSectionId
+           ,'Draft'
            ,1)
 
 DECLARE @DescribeYourOrganisationSectionId UNIQUEIDENTIFIER
 SET @DescribeYourOrganisationSectionId = 'D9A819CD-93F5-4312-ABCC-B272B35E09DA'
 
 INSERT [dbo].[WorkflowSections]
-  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
 VALUES
   (@DescribeYourOrganisationSectionId, @ProjectId, N'
 {
@@ -3711,7 +3721,7 @@ VALUES
     }
   ]
 }
-', N'Describe your organisation', N'Describe your organisation', N'Pages')
+', N'Describe your organisation', N'Describe your organisation', N'Draft', N'Pages')
 
 DECLARE @DescribeYourOrganisationSequenceId UNIQUEIDENTIFIER
 SET @DescribeYourOrganisationSequenceId = '9E5A819F-2C74-4302-897C-1883DF65701D'
@@ -3722,6 +3732,7 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,[SequenceNo]
 		   ,[SectionNo]
 		   ,[SectionId]
+           ,[Status]
            ,[IsActive])
      VALUES
            (@DescribeYourOrganisationSequenceId
@@ -3729,13 +3740,14 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,1
 		   ,5
 		   ,@DescribeYourOrganisationSectionId
+           ,'Draft'
            ,1)
 
 DECLARE @ExperienceAccreditationsSectionId UNIQUEIDENTIFIER
 SET @ExperienceAccreditationsSectionId = '0CCD068A-EE62-4CE8-8E06-659E97FD3696'
 
 INSERT [dbo].[WorkflowSections]
-  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
 VALUES
   (@ExperienceAccreditationsSectionId, @ProjectId, N'
 {
@@ -3991,7 +4003,18 @@ VALUES
       "Next": [
 		{
           "Action": "NextPage",
-          "ReturnId": "300",
+          "ReturnId": "280",
+          "Conditions": [
+		  {
+            "QuestionId": "YO-270",
+            "MustEqual": "No"
+          }
+		  ],
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "301",
           "Conditions": [
 		  {
             "QuestionTag": "Organisation-OfSFunded-MS",
@@ -4043,24 +4066,43 @@ VALUES
       "PageId": "280",
       "SequenceId": "1",
       "SectionId": "6",
-      "Title": "PLACEHOLDER Ofsted OE Grade",
+      "Title": "What grade did your organisation get for overall effectiveness in this full Ofsted inspection?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-280",
           "QuestionTag": "Ofsted-OE-Grade",
-          "Label": "PLACEHOLDER Ofsted OE Grade",
+          "Label": "What grade did your organisation get for overall effectiveness in this full Ofsted inspection?",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
+            "Type": "Radio",
 			"Options": [
-			  
+			  {
+                "Label": "Outstanding",
+				"Value": "Outstanding"
+              },
+			  {
+                "Label": "Good",
+				"Value": "Good"
+              },
+			  {
+                "Label": "Requires improvement",
+				"Value": "Requires improvement"
+              },
+			  {
+                "Label": "Inadequate",
+				"Value": "Inadequate"
+              }
 			],
             "Validations": [
-              
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us what grade your organisation got"
+              }
             ]
           },
           "Order": null
@@ -4071,6 +4113,28 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": null,
+          "Conditions": [
+		  {
+            "QuestionId": "YO-280",
+            "MustEqual": "Requires improvement"
+          }
+		  ],
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "311",
+          "Conditions": [
+		  {
+            "QuestionId": "YO-280",
+            "MustEqual": "Inadequate"
+          }
+		  ],
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "310",
           "Conditions": [],
           "ConditionMet": false
         }
@@ -4203,6 +4267,17 @@ VALUES
         },
 		{
           "Action": "NextPage",
+          "ReturnId": "311",
+          "Conditions": [
+		  {
+            "QuestionId": "YO-300",
+            "MustEqual": "Inadequate"
+          }
+		  ],
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
           "ReturnId": "310",
           "Conditions": [],
           "ConditionMet": false
@@ -4268,11 +4343,22 @@ VALUES
       "Next": [
 		{
           "Action": "NextPage",
-          "ReturnId": "320",
+          "ReturnId": null,
           "Conditions": [
 		  {
             "QuestionId": "YO-301",
             "MustEqual": "Requires improvement"
+          }
+		  ],
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "311",
+          "Conditions": [
+		  {
+            "QuestionId": "YO-301",
+            "MustEqual": "Inadequate"
           }
 		  ],
           "ConditionMet": false
@@ -4298,24 +4384,35 @@ VALUES
       "PageId": "310",
       "SequenceId": "1",
       "SectionId": "6",
-      "Title": "PLACEHOLDER Ofsted Grade Last 3 Years",
+      "Title": "Did your organisation get this grade within the last 3 years?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-310",
           "QuestionTag": "Ofsted-Grade-Last3Years",
-          "Label": "PLACEHOLDER Ofsted Grade Last 3 Years",
+          "Label": "Did your organisation get this grade within the last 3 years?",
           "ShortLabel": "",
-          "QuestionBodyText": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">If you''re not sure, <a href=\"https://reports.ofsted.gov.uk/\" target=\"blank\">check your organisation''s Ofsted inspection report  (opens in a new window or tab)</a>.</p>",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
+            "Type": "Radio",
 			"Options": [
-			 
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
 			],
             "Validations": [
-              
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation was awarded this grade within the last 3 years"
+              }
             ]
           },
           "Order": null
@@ -4326,6 +4423,17 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "320",
+          "Conditions": [
+		  {
+            "QuestionId": "YO-310",
+            "MustEqual": "Yes"
+          }
+		  ],
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "330",
           "Conditions": [],
           "ConditionMet": false
         }
@@ -4339,10 +4447,306 @@ VALUES
       "HasFeedback": false,
       "NotRequiredOrgTypes": [],
       "BodyText": ""
+    },
+	{
+      "PageId": "311",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "Did your organisation get this grade within the last 3 years?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-311",
+          "QuestionTag": "Ofsted-Grade-Last3Years",
+          "Label": "Did your organisation get this grade within the last 3 years?",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">If you''re not sure, <a href=\"https://reports.ofsted.gov.uk/\" target=\"blank\">check your organisation''s Ofsted inspection report  (opens in a new window or tab)</a>.</p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation was awarded this grade within the last 3 years"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [		
+		{
+          "Action": "NextPage",
+          "ReturnId": "10004",
+          "Conditions": [
+		  {
+            "QuestionId": "YO-311",
+            "MustEqual": "Yes"
+          }
+		  ],
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Conditions": [],
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "320",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "Has your organisation maintained funding from an education agency since its full Ofsted inspection?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-320",
+          "QuestionTag": "Maintained-Funding",
+          "Label": "Has your organisation maintained funding from an education agency since its full Ofsted inspection?",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">This means your organisation already has an existing relationship with and has maintained funding from:</p><ul class=\"govuk-list govuk-list--bullet\"> <li>ESFA</li> <li>Skills Funding Agency (SFA)</li> <li>Education Funding Agency (EFA)</li> </ul>",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation has maintained funding from an education agency since its full Ofsted inspection"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [		
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Conditions": [],
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "330",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "Has your organisation had a short Ofsted inspection within the last 3 years?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-330",
+          "QuestionTag": "Had-Short-Inspection",
+          "Label": "Has your organisation had a short Ofsted inspection within the last 3 years?",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">If you''re not sure, <a href=\"https://reports.ofsted.gov.uk/\" target=\"_blank\">check if your organisation''s had a short Ofsted inspection (opens in a new window or tab)</a>.</p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation has had a short Ofsted inspection within the last 3 years"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [		
+		{
+          "Action": "NextPage",
+          "ReturnId": "340",
+          "Conditions": [
+		  {
+            "QuestionId": "YO-330",
+            "MustEqual": "Yes"
+          }
+		  ],
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Conditions": [],
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "340",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "Has your organisation maintained the grade it got in its full Ofsted inspection in its short Ofsted inspection?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-340",
+          "QuestionTag": "Maintained-Short-Inspection-Grade",
+          "Label": "Has your organisation maintained the grade it got in its full Ofsted inspection in its short Ofsted inspection?",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation has maintained the grade it was awarded in its full Ofsted inspection"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [	
+		{
+          "Action": "NextPage",
+          "ReturnId": "320",
+          "Conditions": [
+		  {
+            "QuestionId": "YO-340",
+            "MustEqual": "Yes"
+          }
+		  ],
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Conditions": [],
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "10004",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "Your organisation is not eligible to apply to join RoATP",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "SHUT-004",
+          "QuestionTag": "Shutter-Inadequate-Grade-3-Years",
+          "Label": "Your organisation is not eligible to apply to join RoATP",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">This is because your organisation got an ''inadequate'' grade within the last 3 years.</p><p class=\"govuk-body\"><a href=\"https://www.gov.uk\">Back to GOV.UK</a></p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+			"Validations": []
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": "",
+	  "NotRequired": true
     }
   ]
 }
-', N'Experience and accreditations', N'Experience and accreditations', N'Pages')
+', N'Experience and accreditations', N'Experience and accreditations', N'Draft', N'Pages')
 
 DECLARE @ExperienceAccreditationsSequenceId UNIQUEIDENTIFIER
 SET @ExperienceAccreditationsSequenceId = '803C1398-7B76-4351-94C4-7F1B641053EA'
@@ -4353,6 +4757,7 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,[SequenceNo]
 		   ,[SectionNo]
 		   ,[SectionId]
+           ,[Status]
            ,[IsActive])
      VALUES
            (@ExperienceAccreditationsSequenceId
@@ -4360,6 +4765,7 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,1
 		   ,6
 		   ,@ExperienceAccreditationsSectionId
+           ,'Draft'
            ,1)
 
 
@@ -4458,7 +4864,7 @@ DECLARE @ConditionsOfAcceptanceSectionId UNIQUEIDENTIFIER
 SET @ConditionsOfAcceptanceSectionId = 'A56E170E-F602-47DB-97DE-A5765B86C97A'
            
 INSERT [dbo].[WorkflowSections]
-  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
 VALUES
   (@ConditionsOfAcceptanceSectionId, @ProjectId, N'
 {
@@ -4506,7 +4912,7 @@ VALUES
     }
   ]
 }
-', N'Conditions of acceptance', N'Conditions of acceptance', N'Pages')
+', N'Conditions of acceptance', N'Conditions of acceptance', N'Draft', N'Pages')
 
 DECLARE @ConditionsOfAcceptanceSequenceId UNIQUEIDENTIFIER
 SET @ConditionsOfAcceptanceSequenceId = 'C636D66B-818C-478F-9970-68BFCED4F89A'
@@ -4517,6 +4923,7 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,[SequenceNo]
            ,[SectionNo]
            ,[SectionId]
+           ,[Status]
            ,[IsActive])
      VALUES
            (@ConditionsOfAcceptanceSequenceId
@@ -4524,6 +4931,364 @@ INSERT INTO [dbo].[WorkflowSequences]
            ,99
            ,1
            ,@ConditionsOfAcceptanceSectionId
+           ,'Draft'
            ,1)
-GO
 
+
+DECLARE @ProtectionOfApprenticesSequenceId UNIQUEIDENTIFIER
+SET @ProtectionOfApprenticesSequenceId = '61861411-1794-420d-ab04-788ea4db8072'
+
+DECLARE @ProtectionOfApprentices2SequenceId UNIQUEIDENTIFIER
+SET @ProtectionOfApprentices2SequenceId = '436b3fba-1abf-4d13-a883-a552e7c437d2'
+
+DECLARE @ProtectionOfApprentices3SequenceId UNIQUEIDENTIFIER
+SET @ProtectionOfApprentices3SequenceId = '24bc1f2c-d2b2-4de0-b339-9d7664e091ab'
+
+
+DECLARE @ProtectionOfApprentices2SectionId UNIQUEIDENTIFIER
+SET @ProtectionOfApprentices2SectionId = '5dc1e1f5-7b28-47eb-9702-2b25f5d5782d'
+
+DECLARE @ProtectionOfApprentices3SectionId UNIQUEIDENTIFIER
+SET @ProtectionOfApprentices3SectionId = '82e510b7-ad91-4bd0-a60a-01b6ceef18d0'
+
+DECLARE @ProtectionOfApprenticesSectionId UNIQUEIDENTIFIER
+SET @ProtectionOfApprenticesSectionId = '80616b64-ffb4-45b3-9d4e-0b449bb441eb'
+
+delete from workflowsequences where id = @ProtectionOfApprenticesSequenceId
+delete from WorkflowSequences where id = @ProtectionOfApprentices2SequenceId
+
+delete from workflowSections where id = @ProtectionOfApprenticesSectionId
+delete from workflowSections where id = @ProtectionOfApprentices2SectionId
+
+
+INSERT [dbo].[WorkflowSections]
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
+VALUES
+  (@ProtectionOfApprenticesSectionId, @ProjectId, N'
+{
+	"Pages": [
+		{
+			"PageId": "500",
+			"SequenceId": "4",
+			"SectionId": "1",
+			"Title": "",
+			"LinkTitle": "link title",
+			"InfoText": "info text",
+			 "Questions": [
+        {
+          "QuestionId": "PYA-10",
+          "QuestionTag": "ProtectApprentice-Introduction-Main",
+          "Label": "Protecting your apprentices",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-intro-main\">For this section you''ll need to upload your organisation''s:</p>
+       <ul class=\"govuk-list govuk-list--bullet\">
+	          <li>continuity plan for apprenticeship training</li>
+        <li>equality and diversity policy</li>
+        <li>safeguarding policy</li>
+        <li>prevent duty policy (if needed)</li>
+        <li>health and safety policy</li>
+      </ul>
+	  <div class=\"govuk-warning-text\">
+  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>
+  <strong class=\"govuk-warning-text__text\">
+    <span class=\"govuk-warning-text__assistive\">Warning</span>
+    All policies and processes must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept policies or processes that are generic or taken from a third party.
+  </strong>
+	</div>",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Validations": []
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+       "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "530",
+          "Conditions": [],
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+			"PageId": "510",
+			"SequenceId": "4",
+			"SectionId": "1",
+			"Title": "",
+			"LinkTitle": "link title",
+			"InfoText": "info text",
+			 "Questions": [
+        {
+          "QuestionId": "PYA-11",
+          "QuestionTag": "ProtectApprentice-Introduction-Employer",
+          "Label": "Protecting your apprentices",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-intro-emp\">For this section you''ll need to upload your organisation''s:</p>
+       <ul class=\"govuk-list govuk-list--bullet\">
+	          <li>continuity plan for apprenticeship training</li>
+        <li>equality and diversity policy</li>
+        <li>safeguarding policy</li>
+        <li>prevent duty policy (if needed)</li>
+        <li>health and safety policy</li>
+      </ul>
+	  <div class=\"govuk-warning-text\">
+  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>
+  <strong class=\"govuk-warning-text__text\">
+    <span class=\"govuk-warning-text__assistive\">Warning</span>
+    All policies and processes must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept policies or processes that are generic or taken from a third party.
+  </strong>
+	</div>",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Validations": []
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+       "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "530",
+          "Conditions": [],
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+			"PageId": "520",
+			"SequenceId": "4",
+			"SectionId": "1",
+			"Title": "",
+			"LinkTitle": "link title",
+			"InfoText": "info text",
+			 "Questions": [
+        {
+          "QuestionId": "PYA-12",
+          "QuestionTag": "ProtectApprentice-Introduction-Supporting",
+          "Label": "Protecting your apprentices",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-intro-supp\">For this section you''ll need to upload your organisation''s:</p>
+       <ul class=\"govuk-list govuk-list--bullet\">
+        <li>equality and diversity policy</li>
+        <li>safeguarding policy</li>
+        <li>prevent duty policy (if needed)</li>
+        <li>health and safety policy</li>
+      </ul>
+	  <div class=\"govuk-warning-text\">
+  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>
+  <strong class=\"govuk-warning-text__text\">
+    <span class=\"govuk-warning-text__assistive\">Warning</span>
+    All uploads must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept uploads that are generic or taken from a third party.
+  </strong>
+	</div>",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Validations": []
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+       "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "540",
+          "Conditions": [],
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    }
+	]
+}
+', N'Introduction and what you''ll need', N'Introduction and what you''ll need', N'Draft', N'Pages')
+
+INSERT [dbo].[WorkflowSections]
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
+VALUES
+  (@ProtectionOfApprentices2SectionId, @ProjectId, N'
+{
+	"Pages": [
+		{
+			"PageId": "530",
+			"SequenceId": "4",
+			"SectionId": "2",
+			"Title": "Continuity plan for apprenticeship training",
+			"LinkTitle": "Continuity plan for apprenticeship training",
+			"InfoText": "Continuity plan for apprenticeship training",
+			 "Questions": [
+        {
+          "QuestionId": "PYA-20",
+          "QuestionTag": "ProtectApprentice-Continuity",
+          "Label": "Continuity plan for apprenticeship training",
+          "ShortLabel": "",
+          "QuestionBodyText": "Holding page",
+          "Hint": "This is a holding page",
+          "Input": {
+            "Type": "Hidden",
+            "Validations": []
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+       "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "540",
+          "Conditions": [],
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    }
+	]
+}
+', N'Continuity plan for apprenticeship training', N'Continuity plan for apprenticeship training', N'Draft', N'Pages')
+
+
+INSERT [dbo].[WorkflowSections]
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [Status], [DisplayType])
+VALUES
+  (@ProtectionOfApprentices3SectionId, @ProjectId, N'
+{
+	"Pages": [
+		{
+			"PageId": "540",
+			"SequenceId": "4",
+			"SectionId": "3",
+			"Title": "Equality and Diversity policy",
+			"LinkTitle": "Equality and Diversity policy",
+			"InfoText": "Equality and Diversity policy",
+			 "Questions": [
+        {
+          "QuestionId": "PYA-30",
+          "QuestionTag": "ProtectApprentice-Equality",
+          "Label": "Equality and Diversity policy",
+          "ShortLabel": "",
+          "QuestionBodyText": "Holding page",
+          "Hint": "This is a holding page",
+          "Input": {
+            "Type": "Hidden",
+            "Validations": []
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+       "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "550",
+          "Conditions": [],
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    }
+	]
+}
+', N'Equality and Diversity policy', N'Equality and Diversity policy', N'Draft', N'Pages')
+
+
+
+INSERT INTO [dbo].[WorkflowSequences]
+			([Id]
+			,[WorkflowId]
+			,[SequenceNo]
+			,[SectionNo]
+			,[SectionId]
+			,[Status]
+			,[IsActive])
+VALUES
+			(@ProtectionOfApprenticesSequenceId
+			,@WorkFlowId
+			,4
+			,1
+			,@ProtectionOfApprenticesSectionId
+			,'Draft'
+			,1)
+
+INSERT INTO [dbo].[WorkflowSequences]
+			([Id]
+			,[WorkflowId]
+			,[SequenceNo]
+			,[SectionNo]
+			,[SectionId]
+			,[Status]
+			,[IsActive])
+VALUES
+			(@ProtectionOfApprentices2SequenceId
+			,@WorkFlowId
+			,4
+			,2
+			,@ProtectionOfApprentices2SectionId
+			,'Draft'
+			,1)
+
+INSERT INTO [dbo].[WorkflowSequences]
+			([Id]
+			,[WorkflowId]
+			,[SequenceNo]
+			,[SectionNo]
+			,[SectionId]
+			,[Status]
+			,[IsActive])
+VALUES
+			(@ProtectionOfApprentices3SequenceId
+			,@WorkFlowId
+			,4
+			,3
+			,@ProtectionOfApprentices3SectionId
+			,'Draft'
+			,1)
+
+GO
