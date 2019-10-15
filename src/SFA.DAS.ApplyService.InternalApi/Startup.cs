@@ -26,8 +26,6 @@ using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
-using SFA.DAS.ApplyService.Encryption;
-using SFA.DAS.ApplyService.Storage;
 
 namespace SFA.DAS.ApplyService.InternalApi
 {
@@ -206,9 +204,8 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddTransient<IRoatpApiClient, RoatpApiClient>();
             services.AddTransient<IRoatpTokenService, RoatpTokenService>();
-            services.AddTransient<IKeyProvider,PlaceholderKeyProvider>();
-            services.AddTransient<IStorageService,StorageService>();
-            services.AddTransient<IEncryptionService, EncryptionService>();
+            //services.AddTransient<IKeyProvider,PlaceholderKeyProvider>();
+            //services.AddTransient<IEncryptionService, EncryptionService>();
     
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
         }
