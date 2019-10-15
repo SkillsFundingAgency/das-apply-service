@@ -26,7 +26,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
     using InternalApi.Types.CharityCommission;
     using SFA.DAS.ApplyService.Domain.CompaniesHouse;
     using SFA.DAS.ApplyService.Web.AutoMapper;
-    using Validators;
     using Trustee = InternalApi.Types.CharityCommission.Trustee;
 
     [TestFixture]
@@ -116,8 +115,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                     DissolvedOn = null
                 }
             };
-
-
+            
             _applicationDetails = new ApplicationDetails
             {
                 CompanySummary = null,
@@ -160,14 +158,21 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 },
                 RoatpRegisterStatus = new OrganisationRegisterStatus
                 {
-                    UkprnOnRegister = true,
-                    OrganisationId = Guid.NewGuid(),
-                    ProviderTypeId = 1,
-                    StatusDate = new DateTime(2017, 2, 4),
-                    StatusId = 1
+                    UkprnOnRegister = false
                 }
             };
 
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(_applicationDetails.RoatpRegisterStatus);
+
+            var applicationRoutes = new List<ApplicationRoute>
+            {
+                new ApplicationRoute { Id = 1, RouteName = "Main provider" },
+                new ApplicationRoute { Id = 2, RouteName = "Employer provider" },
+                new ApplicationRoute { Id = 3, RouteName = "Supporting provider" }
+            };
+
+            _roatpApiClient.Setup(x => x.GetApplicationRoutes()).ReturnsAsync(applicationRoutes);
+            
             _user = new Contact {Id = Guid.NewGuid()};
 
             var webUser = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
@@ -1022,5 +1027,202 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                                                                && y.OrganisationDetails.CharityCommissionDetails ==
                                                                null), It.IsAny<Guid>()), Times.Once);
         }
+
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        public void UKPRN_is_already_active_on_register(int statusId)
+        {
+            var providerDetails = new ProviderDetails
+            {
+                UKPRN = "10001000",
+                ProviderName = "Test Provider",
+                VerificationDetails = new List<VerificationDetails>
+                {
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CompaniesHouseAuthority,
+                        VerificationId = "12345678"
+                    },
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CharityCommissionAuthority,
+                        VerificationId = "0123456"
+                    }
+                }
+            };
+
+            var applicationDetails = new ApplicationDetails
+            {
+                UKPRN = 10001000,
+                UkrlpLookupDetails = providerDetails
+            };
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+
+            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
+                .Returns(Task.FromResult(_activeCompany)).Verifiable();
+            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
+                .Returns(Task.FromResult(_activeCharity)).Verifiable();
+
+            var registerStatus = new OrganisationRegisterStatus
+            {
+                OrganisationId = Guid.NewGuid(),
+                ProviderTypeId = ApplicationRoute.MainProviderApplicationRoute,
+                RemovedReasonId = null,
+                StatusDate = new DateTime(2018, 1, 2),
+                StatusId = statusId,
+                UkprnOnRegister = true
+            };
+
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(registerStatus);
+
+            var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("ProviderAlreadyOnRegister");
+
+        }
+
+        [TestCase(0)]
+        public void UKPRN_is_already_on_register_but_was_removed(int statusId)
+        {
+            var providerDetails = new ProviderDetails
+            {
+                UKPRN = "10001000",
+                ProviderName = "Test Provider",
+                VerificationDetails = new List<VerificationDetails>
+                {
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CompaniesHouseAuthority,
+                        VerificationId = "12345678"
+                    },
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CharityCommissionAuthority,
+                        VerificationId = "0123456"
+                    }
+                }
+            };
+
+            var applicationDetails = new ApplicationDetails
+            {
+                UKPRN = 10001000,
+                UkrlpLookupDetails = providerDetails
+            };
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+
+            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
+                .Returns(Task.FromResult(_activeCompany)).Verifiable();
+            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
+                .Returns(Task.FromResult(_activeCharity)).Verifiable();
+
+            var registerStatus = new OrganisationRegisterStatus
+            {
+                OrganisationId = Guid.NewGuid(),
+                ProviderTypeId = ApplicationRoute.MainProviderApplicationRoute,
+                RemovedReasonId = RemovedReason.MinimumStandardsNotMet,
+                StatusDate = new DateTime(2018, 1, 2),
+                StatusId = statusId,
+                UkprnOnRegister = true
+            };
+
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(registerStatus);
+
+            var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("SelectApplicationRoute");
+
+        }
+
+        [TestCase(OrganisationStatus.Active)]
+        [TestCase(OrganisationStatus.ActiveNotTakingOnApprentices)]
+        [TestCase(OrganisationStatus.Onboarding)]
+        public void Provider_already_on_register_changes_route_and_cannot_select_current_route(int statusId)
+        {
+            var registerStatus = new OrganisationRegisterStatus
+            {
+                OrganisationId = Guid.NewGuid(),
+                ProviderTypeId = ApplicationRoute.MainProviderApplicationRoute,
+                RemovedReasonId = null,
+                StatusDate = new DateTime(2018, 1, 2),
+                StatusId = statusId,
+                UkprnOnRegister = true
+            };
+
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(registerStatus);
+
+            var applicationDetails = new ApplicationDetails
+            {
+                UKPRN = 10001000,
+                RoatpRegisterStatus = registerStatus            
+            };
+
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+
+            var result = _controller.SelectApplicationRoute().GetAwaiter().GetResult();
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var model = viewResult.Model as SelectApplicationRouteViewModel;
+
+            var currentApplicationRoute = model.ApplicationRoutes.FirstOrDefault(x => x.Id == registerStatus.ProviderTypeId);
+
+            currentApplicationRoute.Should().BeNull();
+        }
+
+        [Test]
+        public void Provider_already_on_register_but_previously_removed_can_select_any_route()
+        {
+            var registerStatus = new OrganisationRegisterStatus
+            {
+                OrganisationId = Guid.NewGuid(),
+                ProviderTypeId = ApplicationRoute.MainProviderApplicationRoute,
+                RemovedReasonId = RemovedReason.MinimumStandardsNotMet,
+                StatusDate = new DateTime(2018, 1, 2),
+                StatusId = OrganisationStatus.Removed,
+                UkprnOnRegister = true
+            };
+
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(registerStatus);
+
+            var result = _controller.SelectApplicationRoute().GetAwaiter().GetResult();
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var model = viewResult.Model as SelectApplicationRouteViewModel;
+
+            var currentApplicationRoute = model.ApplicationRoutes.FirstOrDefault(x => x.Id == registerStatus.ProviderTypeId);
+
+            currentApplicationRoute.Should().NotBeNull();
+        }
+
+        [Test]
+        public void Provider_already_on_register_opts_to_change_route()
+        {
+            var model = new ChangeProviderRouteViewModel { ChangeApplicationRoute = "Y" };
+
+            var result = _controller.ChangeProviderRoute(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+
+            redirectResult.Should().NotBeNull();
+
+            redirectResult.ActionName.Should().Be("SelectApplicationRoute");
+        }
+
+        [Test]
+        public void Provider_already_on_register_opts_to_stay_on_register_in_same_route()
+        {
+            var model = new ChangeProviderRouteViewModel { ChangeApplicationRoute = "N" };
+
+            var result = _controller.ChangeProviderRoute(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+
+            redirectResult.Should().NotBeNull();
+
+            redirectResult.ActionName.Should().Be("ChosenToRemainOnRegister");
+        }
+
     }
 }
