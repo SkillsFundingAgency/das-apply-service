@@ -5,6 +5,8 @@
     Layout = "_Layout";
 }
 
+@{ await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml"); }
+
 <div class="grid-row">
     <form asp-controller="RoatpApplicationPreamble" asp-action="EnterApplicationUkprn" method="get" name="backForm">
         <input type="hidden" asp-for="UKPRN" />
