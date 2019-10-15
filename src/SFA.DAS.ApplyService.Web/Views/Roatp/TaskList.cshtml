@@ -5,6 +5,15 @@
     ViewBag.Title = "Application overview";
     Layout = "_Layout";
 }
+<div class="govuk-phase-banner govuk-width-container roatp__navigation">
+    <nav>
+        <ul id="navigation" class="roatp__navigation " aria-label="Top Level Navigation">
+            <li class="roatp__navigation-item roatp__navigation-item--active">
+                <a class="govuk-header__link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Application overview</a>
+            </li>
+        </ul>
+    </nav>
+</div>
 
 <div class="govuk-width-container">
 
