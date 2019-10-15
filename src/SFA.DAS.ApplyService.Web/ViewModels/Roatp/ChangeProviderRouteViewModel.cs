@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.ApplyService.Domain.Roatp;
 using System.ComponentModel.DataAnnotations;
+using SFA.DAS.ApplyService.Web.Services;
 
 namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
@@ -8,7 +9,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string UKPRN { get; set; }
         public ApplicationRoute CurrentProviderType { get; set; }
 
-        public string IndefiniteArticle
+        public string CurrentProviderTypeText
         {
             get
             {
@@ -17,15 +18,17 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                     return string.Empty;
                 }
 
-                if (CurrentProviderType.Id == ApplicationRoute.EmployerProviderApplicationRoute)
+                string prefix = "a";
+
+                if (CurrentProviderType.RouteName.StartsWithVowel())
                 {
-                    return "an";
+                    prefix = "an";
                 }
-                     
-                return "a";
+
+                return $"{prefix} {CurrentProviderType.RouteName.ToLower()}";
             }
         }
-
+        
         [Required(ErrorMessage = "Tell us if your organisation wants to change provider route")]
         public string ChangeApplicationRoute { get; set; }
     }
