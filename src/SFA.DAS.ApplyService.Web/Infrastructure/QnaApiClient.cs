@@ -21,8 +21,8 @@ using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    using Application.Apply.UpdatePageAnswers;
     using Newtonsoft.Json.Linq;
+    using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 
     public class QnaApiClient : IQnaApiClient
     {
