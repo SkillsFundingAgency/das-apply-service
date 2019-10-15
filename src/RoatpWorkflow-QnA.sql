@@ -32,7 +32,6 @@ BEGIN
            ,[Description]
            ,[Version]
            ,[Type]
-           ,[Status]
            ,[CreatedAt]
            ,[CreatedBy]           
            ,[ReferenceFormat]
@@ -43,7 +42,6 @@ BEGIN
            ,'RoATP Workflow'
            ,'1.0'
            ,'RoATP'
-           ,'Live'
            ,GETDATE()
            ,'Import'
            ,'AAD',
@@ -61,7 +59,7 @@ DECLARE @PreambleSectionId UNIQUEIDENTIFIER
 SET @PreambleSectionId = '076D997E-7F59-4C66-91A3-CC9B63231413'
 	 		  	
 INSERT [dbo].[WorkflowSections]
-  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle],  [DisplayType])
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
 VALUES
   (@PreambleSectionId, @ProjectId, N'
 {
@@ -470,7 +468,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "2",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -486,7 +484,7 @@ VALUES
     }
   ]
 }
-', N'Preamble', N'Preamble',  N'Pages')
+', N'Preamble', N'Preamble', N'Pages')
 
 INSERT INTO [dbo].[WorkflowSequences]
            ([Id]
@@ -565,7 +563,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": null,
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -663,7 +661,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "20",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -730,7 +728,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "20",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -797,7 +795,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "20",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -813,7 +811,7 @@ VALUES
     }
   ]
 }
-', N'Introduction and what you''ll need', N'Introduction and what you''ll need',  N'Pages')
+', N'Introduction and what you''ll need', N'Introduction and what you''ll need', N'Pages')
 
 DECLARE @OrganisationIntroductionSequenceId UNIQUEIDENTIFIER
 SET @OrganisationIntroductionSequenceId = 'B9A63CBD-4456-4DA4-8FAD-63D2F79D33F4'
@@ -887,16 +885,18 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "21",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-20",
             "MustEqual": "Yes"
-          },
+          }
+		  ],
           "ConditionMet": false
         },	  
         {
           "Action": "NextPage",
           "ReturnId": "30",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -989,7 +989,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "30",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -1052,37 +1052,45 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "40",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-NoWebsite",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "60",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "Apply-ProviderRoute",
             "MustEqual": "3"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
         {
           "Action": "NextPage",
           "ReturnId": "50",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "Apply-ProviderRoute",
             "MustEqual": "1"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "51",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "Apply-ProviderRoute",
             "MustEqual": "2"
-          },
+          }
+		  ],
           "ConditionMet": false
         }
       ],
@@ -1169,28 +1177,34 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "60",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "Apply-ProviderRoute",
             "MustEqual": "3"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
         {
           "Action": "NextPage",
           "ReturnId": "50",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "Apply-ProviderRoute",
             "MustEqual": "1"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "51",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "Apply-ProviderRoute",
             "MustEqual": "2"
-          },
+          }
+		  ],
           "ConditionMet": false
         }
       ],
@@ -1259,61 +1273,73 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "10001",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-50",
             "MustEqual": "1"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "130",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "CH-ManualEntryRequired",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "70",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Company",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "90",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "CC-TrusteeManualEntry",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "80",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Charity",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "100",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-SoleTradePartnership",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "140",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -1383,61 +1409,73 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "10002",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-51",
             "MustEqual": "1"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "130",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "CH-ManualEntryRequired",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "70",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Company",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "90",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "CC-TrusteeManualEntry",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "80",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Charity",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "100",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-SoleTradePartnership",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "140",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -1507,61 +1545,73 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "10003",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-60",
             "MustEqual": "1"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "130",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "CH-ManualEntryRequired",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "70",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Company",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "90",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "CC-TrusteeManualEntry",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "80",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Charity",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "100",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-SoleTradePartnership",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "140",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -1683,7 +1733,7 @@ VALUES
     }
   ]
 }
-', N'Organisation details', N'Organisation details',  N'Pages')
+', N'Organisation details', N'Organisation details', N'Pages')
 
 DECLARE @OrganisationDetailsSequenceId UNIQUEIDENTIFIER
 SET @OrganisationDetailsSequenceId = '0B946C18-E335-4440-88D5-4345599F72E1'
@@ -1707,7 +1757,7 @@ DECLARE @ConfirmWhosInControlSectionId UNIQUEIDENTIFIER
 SET @ConfirmWhosInControlSectionId = 'A3DA075D-858F-4498-8BFF-0360BD5EC459'
 
 INSERT [dbo].[WorkflowSections]
-  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle],  [DisplayType])
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
 VALUES
   (@ConfirmWhosInControlSectionId, @ProjectId, N'
 {
@@ -1771,25 +1821,29 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "90",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "CC-TrusteeManualEntry",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "80",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Charity",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "140",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -1832,7 +1886,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "140",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -1875,7 +1929,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "140",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -1939,19 +1993,23 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "110",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-100",
             "MustEqual": "Partnership"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "120",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-100",
             "MustEqual": "Sole trader"
-          },
+          }
+		  ],
           "ConditionMet": false
         }
       ],
@@ -1994,7 +2052,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "140",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -2047,7 +2105,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": null,
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -2090,7 +2148,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "140",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -2107,7 +2165,7 @@ VALUES
     }
   ]
 }
-', N'Confirm who''s in control', N'Confirm who''s in control',  N'Pages')
+', N'Confirm who''s in control', N'Confirm who''s in control', N'Pages')
 
 DECLARE @ConfirmWhosInControlSequenceId UNIQUEIDENTIFIER
 SET @ConfirmWhosInControlSequenceId = '2639B6CA-55F4-4578-9DDB-0B3E3F4A2139'
@@ -2201,55 +2259,67 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "160",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-140",
             "MustEqual": "An educational institute"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-140",
             "MustEqual": "An employer training apprentices in other organisations"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "170",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-140",
             "MustEqual": "A public body"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-140",
             "MustEqual": "An Apprenticeship Training Agency"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-140",
             "MustEqual": "An Independent Training Provider"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-140",
             "MustEqual": "A Group Training Association"
-          },
+          }
+		  ],
           "ConditionMet": false
         }
       ],
@@ -2313,61 +2383,73 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "161",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-150",
             "MustEqual": "An educational institute"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "171",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-150",
             "MustEqual": "A public body"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "CH-ManualEntryRequired",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Company",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "CC-TrusteeManualEntry",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Charity",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -2456,73 +2538,89 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "200",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-160",
             "MustEqual": "Academy"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "200",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-160",
             "MustEqual": "Further Education Institute"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "210",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-160",
             "MustEqual": "General Further Education College"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "190",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-160",
             "MustEqual": "Higher Education Institute"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "200",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-160",
             "MustEqual": "Multi-Academy Trust"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "210",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-160",
             "MustEqual": "National College"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "180",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-160",
             "MustEqual": "School"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "210",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-160",
             "MustEqual": "Sixth Form College"
-          },
+          }
+		  ],
           "ConditionMet": false
         }
       ],
@@ -2611,73 +2709,89 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "201",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-161",
             "MustEqual": "Academy"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "201",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-161",
             "MustEqual": "Further Education Institute"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "211",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-161",
             "MustEqual": "General Further Education College"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "191",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-161",
             "MustEqual": "Higher Education Institute"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "201",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-161",
             "MustEqual": "Multi-Academy Trust"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "211",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-161",
             "MustEqual": "National College"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "181",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-161",
             "MustEqual": "School"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "211",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-161",
             "MustEqual": "Sixth Form College"
-          },
+          }
+		  ],
           "ConditionMet": false
         }
       ],
@@ -2761,7 +2875,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -2845,25 +2959,29 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Company",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Charity",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -2924,16 +3042,18 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "200",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-180",
             "MustEqual": "Free school"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -2994,34 +3114,40 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "201",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-181",
             "MustEqual": "Free school"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Company",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Charity",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3078,7 +3204,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3135,25 +3261,29 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Company",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Charity",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3210,7 +3340,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3267,25 +3397,29 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Company",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Charity",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3342,7 +3476,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3399,25 +3533,29 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Company",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "220",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionTag": "UKRLP-Verification-Charity",
             "MustEqual": "TRUE"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3482,7 +3620,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "230",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3555,7 +3693,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": null,
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3571,7 +3709,7 @@ VALUES
     }
   ]
 }
-', N'Describe your organisation', N'Describe your organisation',  N'Pages')
+', N'Describe your organisation', N'Describe your organisation', N'Pages')
 
 DECLARE @DescribeYourOrganisationSequenceId UNIQUEIDENTIFIER
 SET @DescribeYourOrganisationSequenceId = '9E5A819F-2C74-4302-897C-1883DF65701D'
@@ -3643,19 +3781,23 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "250",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-240",
             "MustEqual": "Yes"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "260",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-240",
             "MustEqual": "No"
-          },
+          }
+		  ],
           "ConditionMet": false
         }
       ],
@@ -3712,16 +3854,18 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "260",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-250",
             "MustEqual": "No"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": null,
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3778,16 +3922,18 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "270",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-260",
             "MustEqual": "Yes"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "290",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3843,35 +3989,52 @@ VALUES
       "Next": [
 		{
           "Action": "NextPage",
-          "ReturnId": "300",
-          "Condition": {
-            "QuestionTag": "Organisation-OfSFunded-MS",
-            "MustEqual": "Yes"
-          },
+          "ReturnId": "280",
+          "Conditions": [
+		  {
+            "QuestionId": "YO-270",
+            "MustEqual": "No"
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "301",
-          "Condition": {
+          "Conditions": [
+		  {
+            "QuestionTag": "Organisation-OfSFunded-MS",
+            "MustEqual": "Yes"
+          }
+		  ],
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "301",
+          "Conditions": [
+		  {
             "QuestionTag": "Organisation-OfSFunded-Emp",
             "MustEqual": "Yes"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "300",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-270",
             "MustEqual": "Yes"
-          },
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "280",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3889,24 +4052,43 @@ VALUES
       "PageId": "280",
       "SequenceId": "1",
       "SectionId": "6",
-      "Title": "PLACEHOLDER Ofsted OE Grade",
+      "Title": "What grade did your organisation get for overall effectiveness in this full Ofsted inspection?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-280",
           "QuestionTag": "Ofsted-OE-Grade",
-          "Label": "PLACEHOLDER Ofsted OE Grade",
+          "Label": "What grade did your organisation get for overall effectiveness in this full Ofsted inspection?",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
+            "Type": "Radio",
 			"Options": [
-			  
+			  {
+                "Label": "Outstanding",
+				"Value": "Outstanding"
+              },
+			  {
+                "Label": "Good",
+				"Value": "Good"
+              },
+			  {
+                "Label": "Requires improvement",
+				"Value": "Requires improvement"
+              },
+			  {
+                "Label": "Inadequate",
+				"Value": "Inadequate"
+              }
 			],
             "Validations": [
-              
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us what grade your organisation got"
+              }
             ]
           },
           "Order": null
@@ -3917,7 +4099,29 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": null,
-          "Condition": null,
+          "Conditions": [
+		  {
+            "QuestionId": "YO-280",
+            "MustEqual": "Requires improvement"
+          }
+		  ],
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "311",
+          "Conditions": [
+		  {
+            "QuestionId": "YO-280",
+            "MustEqual": "Inadequate"
+          }
+		  ],
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "310",
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -3974,7 +4178,7 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": null,
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -4039,16 +4243,29 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "280",
-          "Condition": {
+          "Conditions": [
+		  {
             "QuestionId": "YO-300",
             "MustEqual": "Requires improvement"
-          },
+          }
+		  ],
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "311",
+          "Conditions": [
+		  {
+            "QuestionId": "YO-300",
+            "MustEqual": "Inadequate"
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "310",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -4112,17 +4329,30 @@ VALUES
       "Next": [
 		{
           "Action": "NextPage",
-          "ReturnId": "320",
-          "Condition": {
+          "ReturnId": null,
+          "Conditions": [
+		  {
             "QuestionId": "YO-301",
             "MustEqual": "Requires improvement"
-          },
+          }
+		  ],
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "311",
+          "Conditions": [
+		  {
+            "QuestionId": "YO-301",
+            "MustEqual": "Inadequate"
+          }
+		  ],
           "ConditionMet": false
         },
 		{
           "Action": "NextPage",
           "ReturnId": "310",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -4140,24 +4370,35 @@ VALUES
       "PageId": "310",
       "SequenceId": "1",
       "SectionId": "6",
-      "Title": "PLACEHOLDER Ofsted Grade Last 3 Years",
+      "Title": "Did your organisation get this grade within the last 3 years?",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-310",
           "QuestionTag": "Ofsted-Grade-Last3Years",
-          "Label": "PLACEHOLDER Ofsted Grade Last 3 Years",
+          "Label": "Did your organisation get this grade within the last 3 years?",
           "ShortLabel": "",
-          "QuestionBodyText": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">If you''re not sure, <a href=\"https://reports.ofsted.gov.uk/\" target=\"blank\">check your organisation''s Ofsted inspection report  (opens in a new window or tab)</a>.</p>",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",
+            "Type": "Radio",
 			"Options": [
-			 
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
 			],
             "Validations": [
-              
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation was awarded this grade within the last 3 years"
+              }
             ]
           },
           "Order": null
@@ -4168,7 +4409,18 @@ VALUES
 		{
           "Action": "NextPage",
           "ReturnId": "320",
-          "Condition": null,
+          "Conditions": [
+		  {
+            "QuestionId": "YO-310",
+            "MustEqual": "Yes"
+          }
+		  ],
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "330",
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -4181,6 +4433,302 @@ VALUES
       "HasFeedback": false,
       "NotRequiredOrgTypes": [],
       "BodyText": ""
+    },
+	{
+      "PageId": "311",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "Did your organisation get this grade within the last 3 years?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-311",
+          "QuestionTag": "Ofsted-Grade-Last3Years",
+          "Label": "Did your organisation get this grade within the last 3 years?",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">If you''re not sure, <a href=\"https://reports.ofsted.gov.uk/\" target=\"blank\">check your organisation''s Ofsted inspection report  (opens in a new window or tab)</a>.</p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation was awarded this grade within the last 3 years"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [		
+		{
+          "Action": "NextPage",
+          "ReturnId": "10004",
+          "Conditions": [
+		  {
+            "QuestionId": "YO-311",
+            "MustEqual": "Yes"
+          }
+		  ],
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Conditions": [],
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "320",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "Has your organisation maintained funding from an education agency since its full Ofsted inspection?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-320",
+          "QuestionTag": "Maintained-Funding",
+          "Label": "Has your organisation maintained funding from an education agency since its full Ofsted inspection?",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">This means your organisation already has an existing relationship with and has maintained funding from:</p><ul class=\"govuk-list govuk-list--bullet\"> <li>ESFA</li> <li>Skills Funding Agency (SFA)</li> <li>Education Funding Agency (EFA)</li> </ul>",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation has maintained funding from an education agency since its full Ofsted inspection"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [		
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Conditions": [],
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "330",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "Has your organisation had a short Ofsted inspection within the last 3 years?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-330",
+          "QuestionTag": "Had-Short-Inspection",
+          "Label": "Has your organisation had a short Ofsted inspection within the last 3 years?",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">If you''re not sure, <a href=\"https://reports.ofsted.gov.uk/\" target=\"_blank\">check if your organisation''s had a short Ofsted inspection (opens in a new window or tab)</a>.</p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation has had a short Ofsted inspection within the last 3 years"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [		
+		{
+          "Action": "NextPage",
+          "ReturnId": "340",
+          "Conditions": [
+		  {
+            "QuestionId": "YO-330",
+            "MustEqual": "Yes"
+          }
+		  ],
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Conditions": [],
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "340",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "Has your organisation maintained the grade it got in its full Ofsted inspection in its short Ofsted inspection?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-340",
+          "QuestionTag": "Maintained-Short-Inspection-Grade",
+          "Label": "Has your organisation maintained the grade it got in its full Ofsted inspection in its short Ofsted inspection?",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation has maintained the grade it was awarded in its full Ofsted inspection"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [	
+		{
+          "Action": "NextPage",
+          "ReturnId": "320",
+          "Conditions": [
+		  {
+            "QuestionId": "YO-340",
+            "MustEqual": "Yes"
+          }
+		  ],
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Conditions": [],
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+      "PageId": "10004",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "Your organisation is not eligible to apply to join RoATP",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "SHUT-004",
+          "QuestionTag": "Shutter-Inadequate-Grade-3-Years",
+          "Label": "Your organisation is not eligible to apply to join RoATP",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">This is because your organisation got an ''inadequate'' grade within the last 3 years.</p><p class=\"govuk-body\"><a href=\"https://www.gov.uk\">Back to GOV.UK</a></p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+			"Validations": []
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": "",
+	  "NotRequired": true
     }
   ]
 }
@@ -4210,14 +4758,12 @@ INSERT INTO [dbo].[WorkflowSequences]
 --           ([Id]
 --           ,[WorkflowId]
 --           ,[SequenceId]
---           ,[Status]
 --           ,[IsActive]
 --		   ,[Description])
 --     VALUES
 --           ('DEF40E31-71DA-40EC-8F33-9856C76C67DA'
 --           ,'86F83D58-8608-4462-9A4E-65837AF04287'
 --           ,2
---           ,'Draft'
 --           ,1
 --		   ,'Financial evidence')
 		   
@@ -4225,14 +4771,12 @@ INSERT INTO [dbo].[WorkflowSequences]
 --			([Id]
 --			,[WorkflowId]
 --			,[SequenceId]
---			,[Status]
 --			,[IsActive]
 --			,[Description])
 --VALUES
 --			('B9FFC03D-2B9F-46C0-9481-44CD4C2E1E4F'
 --			,'86F83D58-8608-4462-9A4E-65837AF04287'
 --			,3
---			,'Draft'
 --			,1
 --			,'Criminal and compliance checks')
 
@@ -4240,14 +4784,12 @@ INSERT INTO [dbo].[WorkflowSequences]
 --			([Id]
 --			,[WorkflowId]
 --			,[SequenceId]
---			,[Status]
 --			,[IsActive]
 --			,[Description])
 --VALUES
 --			('4904E35B-6AF2-45C5-825B-EA41617287E1'
 --			,'86F83D58-8608-4462-9A4E-65837AF04287'
 --			,4
---			,'Draft'
 --			,1
 --			,'Apprenticeship welfare')
 			
@@ -4255,14 +4797,12 @@ INSERT INTO [dbo].[WorkflowSequences]
 --			([Id]
 --			,[WorkflowId]
 --			,[SequenceId]
---			,[Status]
 --			,[IsActive]
 --			,[Description])
 --VALUES
 --			('8FA9490D-E7C0-40AE-97AF-38F0976B2A88'
 --			,'86F83D58-8608-4462-9A4E-65837AF04287'
 --			,5
---			,'Draft'
 --			,1
 --			,'Readiness to engage')
 
@@ -4270,14 +4810,12 @@ INSERT INTO [dbo].[WorkflowSequences]
 --			([Id]
 --			,[WorkflowId]
 --			,[SequenceId]
---			,[Status]
 --			,[IsActive]
 --			,[Description])
 --VALUES
 --			('C0D1550F-1372-404E-9CA9-D0021D190E7E'
 --			,'86F83D58-8608-4462-9A4E-65837AF04287'
 --			,6
---			,'Draft'
 --			,1
 --			,'People and planning')
 
@@ -4285,14 +4823,12 @@ INSERT INTO [dbo].[WorkflowSequences]
 --			([Id]
 --			,[WorkflowId]
 --			,[SequenceId]
---			,[Status]
 --			,[IsActive]
 --			,[Description])
 --VALUES
 --			('A8DC9146-4BEC-4B1E-B5AC-6D1698AF5FDF'
 --			,'86F83D58-8608-4462-9A4E-65837AF04287'
 --			,7
---			,'Draft'
 --			,1
 --			,'Leaders and managers')
 
@@ -4300,7 +4836,7 @@ DECLARE @ConditionsOfAcceptanceSectionId UNIQUEIDENTIFIER
 SET @ConditionsOfAcceptanceSectionId = 'A56E170E-F602-47DB-97DE-A5765B86C97A'
            
 INSERT [dbo].[WorkflowSections]
-  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle],  [DisplayType])
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
 VALUES
   (@ConditionsOfAcceptanceSectionId, @ProjectId, N'
 {
@@ -4332,7 +4868,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "3",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -4348,7 +4884,7 @@ VALUES
     }
   ]
 }
-', N'Conditions of acceptance', N'Conditions of acceptance',  N'Pages')
+', N'Conditions of acceptance', N'Conditions of acceptance', N'Pages')
 
 DECLARE @ConditionsOfAcceptanceSequenceId UNIQUEIDENTIFIER
 SET @ConditionsOfAcceptanceSequenceId = 'C636D66B-818C-478F-9970-68BFCED4F89A'
@@ -4442,7 +4978,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "530",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -4497,7 +5033,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "530",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -4551,7 +5087,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "540",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -4567,8 +5103,7 @@ VALUES
     }
 	]
 }
-', N'Introduction and what you''ll need', N'Introduction and what you''ll need',  N'Pages')
-
+', N'Introduction and what you''ll need', N'Introduction and what you''ll need', N'Pages')
 INSERT [dbo].[WorkflowSections]
   ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
 VALUES
@@ -4627,7 +5162,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "540",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
@@ -4679,7 +5214,7 @@ VALUES
         {
           "Action": "NextPage",
           "ReturnId": "550",
-          "Condition": null,
+          "Conditions": [],
           "ConditionMet": false
         }
       ],
