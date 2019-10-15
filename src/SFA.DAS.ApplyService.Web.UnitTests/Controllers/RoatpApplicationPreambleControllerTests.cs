@@ -166,9 +166,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var applicationRoutes = new List<ApplicationRoute>
             {
-                new ApplicationRoute { Id = 1, RouteName = "Main provider" },
-                new ApplicationRoute { Id = 2, RouteName = "Employer provider" },
-                new ApplicationRoute { Id = 3, RouteName = "Supporting provider" }
+                new ApplicationRoute { Id = ApplicationRoute.MainProviderApplicationRoute, RouteName = "Main provider" },
+                new ApplicationRoute { Id = ApplicationRoute.EmployerProviderApplicationRoute, RouteName = "Employer provider" },
+                new ApplicationRoute { Id = ApplicationRoute.SupportingProviderApplicationRoute, RouteName = "Supporting provider" }
             };
 
             _roatpApiClient.Setup(x => x.GetApplicationRoutes()).ReturnsAsync(applicationRoutes);
@@ -1028,9 +1028,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                                                                null), It.IsAny<Guid>()), Times.Once);
         }
 
-        [TestCase(1)]
-        [TestCase(2)]
-        [TestCase(3)]
+        [TestCase(OrganisationStatus.Active)]
+        [TestCase(OrganisationStatus.ActiveNotTakingOnApprentices)]
+        [TestCase(OrganisationStatus.Onboarding)]
         public void UKPRN_is_already_active_on_register(int statusId)
         {
             var providerDetails = new ProviderDetails
@@ -1083,7 +1083,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
         }
 
-        [TestCase(0)]
+        [TestCase(OrganisationStatus.Removed)]
         public void UKPRN_is_already_on_register_but_was_removed(int statusId)
         {
             var providerDetails = new ProviderDetails
