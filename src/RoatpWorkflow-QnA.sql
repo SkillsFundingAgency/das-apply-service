@@ -853,7 +853,7 @@ VALUES
           "QuestionTag": "Has-ParentCompany",
           "Label": "Does your organisation have an ultimate parent company in the UK?",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\">Your organisation will only have an ultimate parent company if it’s part of a group.</p><p class=\"govuk-body\">An ultimate parent company sits at the top of your organisation’s group and has the most responsibility.</p>",
+          "QuestionBodyText": "<p class=\"govuk-body\">Your organisation will only have an ultimate parent company if it''s part of a group.</p><p class=\"govuk-body\">An ultimate parent company sits at the top of your organisation''s group and has the most responsibility.</p>",
           "Hint": "",
           "Input": {
             "Type": "Radio",
@@ -914,7 +914,7 @@ VALUES
       "PageId": "21",
       "SequenceId": "1",
       "SectionId": "3",
-      "Title": "Enter your organisation’s ultimate parent company details",
+      "Title": "Enter your organisation''s ultimate parent company details",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
@@ -1013,7 +1013,7 @@ VALUES
       "InfoText": "",
 	  "Details": {
         "Title": "I do not have an ICO registration number",
-        "Body": "<p class=\"govuk-body\">To get an ICO registration number, you’ll need to <a href=\"https://ico.org.uk/registration/new\" target=\"_blank\">register with the ICO (opens in a new window or tab)</a>.</p><p class=\"govuk-body\">After you''ve registered and received an ICO registration number, sign back in to continue with this application.</p>"
+        "Body": "<p class=\"govuk-body\">To get an ICO registration number, you''ll need to <a href=\"https://ico.org.uk/registration/new\" target=\"_blank\">register with the ICO (opens in a new window or tab)</a>.</p><p class=\"govuk-body\">After you''ve registered and received an ICO registration number, sign back in to continue with this application.</p>"
       },
       "Questions": [
         {
@@ -3655,7 +3655,7 @@ VALUES
 			  {
                 "Label": "A public service mutual",
 				"Value": "A public service mutual",
-				"HintText": "An organisation that’s left the public sector but still delivers public services."
+				"HintText": "An organisation that''s left the public sector but still delivers public services."
               },
 			  {
                 "Label": "A sheltered workshop",
@@ -3892,7 +3892,7 @@ VALUES
           "QuestionTag": "Ofsted-FE-Skills",
           "Label": "Has your organisation had a full Ofsted inspection in further education and skills?",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\">If you’re not sure, <a href=\"https://reports.ofsted.gov.uk/\" target=\"_blank\">check if your organisation’s had an Ofsted inspection (opens in a new window or tab)</a>.</p>",
+          "QuestionBodyText": "<p class=\"govuk-body\">If you''re not sure, <a href=\"https://reports.ofsted.gov.uk/\" target=\"_blank\">check if your organisation''s had an Ofsted inspection (opens in a new window or tab)</a>.</p>",
           "Hint": "",
           "Input": {
             "Type": "Radio",
@@ -5125,7 +5125,7 @@ VALUES
         {
           "QuestionId": "PYA-20",
           "QuestionTag": "ProtectApprentice-Continuity",
-          "Label": "Upload your organisation’s continuity plan for apprenticeship training",
+          "Label": "Upload your organisation''s continuity plan for apprenticeship training",
           "ShortLabel": "",
           "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-continuity-plan\">A continuity plan for apprenticeship training shows how your organisation will continue to deliver in case of a significant event.</p>
 		  <p class=\"govuk-body\" id=\"pya-continuity-plan-2\">This must include how your organisation will:</p>
