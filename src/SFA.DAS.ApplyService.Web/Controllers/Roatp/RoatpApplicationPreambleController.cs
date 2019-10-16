@@ -203,25 +203,64 @@
                 return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
             }
 
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-            applicationDetails.ApplicationRoute = new ApplicationRoute { Id = model.ApplicationRouteId };
-
-            var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
-
-            applicationDetails.CreatedBy = user.Id;
-            
-            var createOrganisationRequest = Mapper.Map<CreateOrganisationRequest>(applicationDetails);
-
-            var organisation = await _organisationApiClient.Create(createOrganisationRequest, user.Id);          
-
-            _sessionService.Set(ApplicationDetailsKey, applicationDetails);
-
-            if (!user.IsApproved)
+            if (model.ApplicationRouteId == ApplicationRoute.EmployerProviderApplicationRoute)
             {
-                await _usersApiClient.ApproveUser(user.Id);
+                var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+                var viewModel = new EmployerLevyStatusViewModel
+                {
+                    UKPRN = applicationDetails.UKPRN.ToString(),
+                    ApplicationRouteId = model.ApplicationRouteId
+                };
+                return await ConfirmLevyStatus(viewModel);
             }
 
-            return RedirectToAction("Applications", "RoatpApplication", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
+            return await StartRoatpApplication(model);
+        }
+
+        [Route("organisation-levy-paying-employer")]
+        public async Task<IActionResult> ConfirmLevyStatus(EmployerLevyStatusViewModel model)
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            return View("~/Views/Roatp/ConfirmLevyStatus.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SubmitLevyStatus(EmployerLevyStatusViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/ConfirmLevyStatus.cshtml", model);
+            }
+
+            if (model.LevyPayingEmployer == "Y")
+            {
+                var viewModel = new SelectApplicationRouteViewModel
+                {
+                    ApplicationRouteId = model.ApplicationRouteId
+                };
+                return await StartRoatpApplication(viewModel);
+            }
+
+            return await IneligibleNonLevy();
+        }
+
+        [Route("organisation-cannot-apply-employer")]
+        public async Task<IActionResult> IneligibleNonLevy()
+        {
+            return View("~/Views/Roatp/IneligibleNonLevy.cshtml");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmNonLevyContinue()
+        {
+            return null;
+        }
+        
+        [Route("chosen-not-apply-roatp")]
+        public async Task<IActionResult> NonLevyAbandonedApplication()
+        {
+            return View("~/Views/Roatp/NonLevyAbandonedApplication.cshtml");
         }
 
         [Route("ukrlp-unavailable")]
@@ -342,6 +381,29 @@
             _sessionService.Set(ApplicationDetailsKey, applicationDetails);
             
             return RedirectToAction("SelectApplicationRoute");           
+        }
+
+        private async Task<IActionResult> StartRoatpApplication(SelectApplicationRouteViewModel model)
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+            applicationDetails.ApplicationRoute = new ApplicationRoute { Id = model.ApplicationRouteId };
+
+            var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
+
+            applicationDetails.CreatedBy = user.Id;
+
+            var createOrganisationRequest = Mapper.Map<CreateOrganisationRequest>(applicationDetails);
+
+            var organisation = await _organisationApiClient.Create(createOrganisationRequest, user.Id);
+
+            _sessionService.Set(ApplicationDetailsKey, applicationDetails);
+
+            if (!user.IsApproved)
+            {
+                await _usersApiClient.ApproveUser(user.Id);
+            }
+
+            return RedirectToAction("Applications", "RoatpApplication", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
         }
 
         private bool IsEnglandAndWalesCharityCommissionNumber(string charityNumber)

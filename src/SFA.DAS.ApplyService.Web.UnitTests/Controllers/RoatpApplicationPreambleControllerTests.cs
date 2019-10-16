@@ -1022,5 +1022,20 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                                                                && y.OrganisationDetails.CharityCommissionDetails ==
                                                                null), It.IsAny<Guid>()), Times.Once);
         }
+        
+        [Test]
+        public void Provider_asked_to_confirm_levy_status_if_choose_employer_application_route()
+        {
+            var model = new SelectApplicationRouteViewModel
+            {
+                ApplicationRouteId = ApplicationRoute.EmployerProviderApplicationRoute
+            };
+
+            var result = _controller.StartApplication(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("ConfirmLevyStatus");
+        }
     }
+
 }
