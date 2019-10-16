@@ -204,8 +204,7 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddTransient<IRoatpApiClient, RoatpApiClient>();
             services.AddTransient<IRoatpTokenService, RoatpTokenService>();
-            //services.AddTransient<IKeyProvider,PlaceholderKeyProvider>();
-            //services.AddTransient<IEncryptionService, EncryptionService>();
+
     
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
         }
