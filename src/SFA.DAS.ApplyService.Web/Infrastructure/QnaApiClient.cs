@@ -174,12 +174,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .ReadAsAsync<StartApplicationResponse>();
         }
 
-        public async Task<UpdatePageAnswersResult> UpdatePageAnswers(Guid applicationId, Guid sectionId, string pageId, List<Answer> answers)
+        public async Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, Guid sectionId, string pageId, List<Answer> answers)
         {
             return await (await _httpClient.PostAsJsonAsync(
                         $"/Applications/{applicationId}/sections/{sectionId}/pages/{pageId}",
                         answers)).Content
-                    .ReadAsAsync<UpdatePageAnswersResult>();
+                    .ReadAsAsync<SetPageAnswersResponse>();
         }
 
         public async Task<HttpResponseMessage> DownloadFile(Guid applicationId, Guid sectionId, string pageId, string questionId, string fileName)

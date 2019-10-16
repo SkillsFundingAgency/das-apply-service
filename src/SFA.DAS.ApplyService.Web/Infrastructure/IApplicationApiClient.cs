@@ -22,7 +22,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid userId);
         Task<Domain.Apply.Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid userId);
 
-        Task<UpdatePageAnswersResult> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId, int sectionId,
+        Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId, int sectionId,
             string pageId, List<Answer> answers, bool saveNewAnswers);
 
         Task<StartApplicationResponse> StartApplication(Guid userId, string applicationType);

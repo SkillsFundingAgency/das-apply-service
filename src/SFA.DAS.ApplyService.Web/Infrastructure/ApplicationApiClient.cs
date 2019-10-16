@@ -83,13 +83,13 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .Content.ReadAsAsync<Page>();
         }
 
-        public async Task<UpdatePageAnswersResult> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId,
+        public async Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId,
             int sectionId, string pageId, List<Answer> answers, bool saveNewAnswers)
         {
             return await (await _httpClient.PostAsJsonAsync(
                     $"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}",
                     new { answers, saveNewAnswers })).Content
-                .ReadAsAsync<UpdatePageAnswersResult>();
+                .ReadAsAsync<SetPageAnswersResponse>();
         }
 
         public async Task<StartApplicationResponse> StartApplication(Guid userId, string applicationType)
