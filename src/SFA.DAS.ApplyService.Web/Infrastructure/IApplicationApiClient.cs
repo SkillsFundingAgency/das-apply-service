@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types;
+using SFA.DAS.QnA.Api.Types;
+using StartApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartApplicationResponse;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {

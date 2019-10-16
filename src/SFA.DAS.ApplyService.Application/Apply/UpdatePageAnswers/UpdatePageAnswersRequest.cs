@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using MediatR;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.QnA.Api.Types;
 
 namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
 {

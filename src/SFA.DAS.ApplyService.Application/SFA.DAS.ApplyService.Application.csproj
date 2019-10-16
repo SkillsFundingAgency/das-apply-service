@@ -24,6 +24,7 @@
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions">
             <Version>2.1.1</Version>
         </PackageReference>
+        <PackageReference Include="SFA.DAS.QnA.Api.Types" Version="0.2.40" />
     </ItemGroup>
 
     <ItemGroup>
