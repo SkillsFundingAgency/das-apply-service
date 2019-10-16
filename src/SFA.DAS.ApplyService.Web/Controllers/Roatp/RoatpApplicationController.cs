@@ -724,8 +724,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
             var selectedSection = sections.Single(x => x.SectionId == sectionId);
 
+            //MFCMFC
+            await _apiClient.RemoveSectionCompleted(applicationId, selectedSection.Id);
             await _qnaApiClient.DeleteFile(applicationId,  selectedSection.Id, pageId, questionId, filename);
-            
+           
+
             return RedirectToAction("Page", new {applicationId, sequenceId, sectionId, pageId, redirectAction});
         }
         

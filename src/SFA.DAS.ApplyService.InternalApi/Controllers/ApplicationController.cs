@@ -180,5 +180,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             return await _mediator.Send(new GetApplicationSectionCompletedRequest(applicationId, applicationSectionId));
         }
+
+        [HttpDelete("/Application/{applicationId}/RemoveSectionComplete/{applicationSectionId}")]
+        public async Task RemoveSectionCompleted(Guid applicationId, Guid applicationSectionId)
+        {
+            await _mediator.Send(new RemoveApplicationSectionCompletedRequest(applicationId, applicationSectionId));
+        }
     }
 }

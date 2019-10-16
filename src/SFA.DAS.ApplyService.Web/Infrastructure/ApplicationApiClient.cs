@@ -199,5 +199,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         {
             return await (await _httpClient.GetAsync($"/Application/{applicationId}/IsSectionComplete/{applicationSectionId}")).Content.ReadAsAsync<bool>();
         }
+
+        public async Task RemoveSectionCompleted(Guid applicationId, Guid applicationSectionId)
+        {
+            await _httpClient.DeleteAsync($"/Application/{applicationId}/RemoveSectionComplete/{applicationSectionId}");
+        }
     }
 }
