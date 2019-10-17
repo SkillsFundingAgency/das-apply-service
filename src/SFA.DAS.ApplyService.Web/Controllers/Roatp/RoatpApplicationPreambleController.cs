@@ -235,26 +235,35 @@
 
             if (model.LevyPayingEmployer == "Y")
             {
-                var viewModel = new SelectApplicationRouteViewModel
+                var selectApplicationRouteModel = new SelectApplicationRouteViewModel
                 {
                     ApplicationRouteId = model.ApplicationRouteId
                 };
-                return await StartRoatpApplication(viewModel);
+                return await StartRoatpApplication(selectApplicationRouteModel);
             }
-
             return await IneligibleNonLevy();
         }
 
         [Route("organisation-cannot-apply-employer")]
         public async Task<IActionResult> IneligibleNonLevy()
         {
-            return View("~/Views/Roatp/IneligibleNonLevy.cshtml");
+            return View("~/Views/Roatp/IneligibleNonLevy.cshtml", new EmployerProviderContinueApplicationViewModel());
         }
 
         [HttpPost]
-        public async Task<IActionResult> ConfirmNonLevyContinue()
+        public async Task<IActionResult> ConfirmNonLevyContinue(EmployerProviderContinueApplicationViewModel model)
         {
-            return null;
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/IneligibleNonLevy.cshtml", model);
+            }
+
+            if (model.ContinueWithApplication == "Y")
+            {
+                return RedirectToAction("SelectApplicationRoute");
+            }
+
+            return RedirectToAction("NonLevyAbandonedApplication");
         }
         
         [Route("chosen-not-apply-roatp")]

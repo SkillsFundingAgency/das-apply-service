@@ -1,4 +1,81 @@
-﻿
-@*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.EmployerProviderContinueApplicationViewModel
+
+@{
+    ViewBag.Title = "Your organisation cannot apply to join the RoATP as an employer provider ";
+    Layout = "_Layout";
+
+}
+
+@{ await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml"); }
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+        <h2 class="govuk-error-summary__title" id="error-summary-title">
+            There is a problem
+        </h2>
+        <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+                <li><a sfa-validation-for="LevyPayingEmployer"></a></li>
+            </ul>
+        </div>
+    </div>
+}
+
+<div class="govuk-width-container">
+
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-l">Your organisation cannot apply to join the RoATP as an employer provider </h1>
+                <p class="govuk-body">This is because your organisation is not a levy-paying employer.</p>
+                <p class="govuk-body"Your organisation can still apply to join the RoATP as either a main or supporting provider.</p>
+            </div>
+        </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <form method="post" asp-action="ConfirmNonLevyContinue" asp-controller="RoatpApplicationPreamble">
+
+                    <div class="govuk-form-group" sfa-validation-for="ContinueWithApplication" sfa-validationerror-class="govuk-error-message">
+
+                        <fieldset class="govuk-fieldset">
+
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                                Do you want to continue with this application?
+                            </legend>
+
+                            <div class="govuk-radios">
+
+                                <div class="govuk-radios__item">
+
+                                    <input asp-for="ContinueWithApplication" class="govuk-radios__input" id="ContinueWithApplication-Yes"
+                                           name="ContinueWithApplication" type="radio" value="Y"
+                                           sfa-validation-for="ContinueWithApplication" sfa-validationerror-class="form-control-error">
+                                    <label class="govuk-label govuk-radios__label" for="ContinueWithApplication-Yes">
+                                        Yes
+                                    </label>
+
+                                </div>
+
+                                <div class="govuk-radios__item">
+
+                                    <input asp-for="ContinueWithApplication" class="govuk-radios__input" id="ContinueWithApplication-No"
+                                           name="ContinueWithApplication" type="radio" value="N"
+                                           sfa-validation-for="ContinueWithApplication" sfa-validationerror-class="form-control-error">
+                                    <label class="govuk-label govuk-radios__label" for="ContinueWithApplication-No">
+                                        No
+                                    </label>
+
+                                </div>
+
+                            </div>
+                        </fieldset>
+                    </div>
+                    <input type="submit" class="govuk-button" value="Save and continue" />
+                </form>
+            </div>
+        </div>
+    </main>
+</div>

@@ -1026,6 +1026,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Provider_asked_to_confirm_levy_status_if_choose_employer_application_route()
         {
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
+
             var model = new SelectApplicationRouteViewModel
             {
                 ApplicationRouteId = ApplicationRoute.EmployerProviderApplicationRoute
@@ -1033,8 +1035,72 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var result = _controller.StartApplication(model).GetAwaiter().GetResult();
 
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ConfirmLevyStatus");
+        }
+
+        [Test]
+        public void Provider_routed_to_confirmation_page_if_non_levy_employer()
+        {
+            var model = new EmployerLevyStatusViewModel
+            {
+                ApplicationRouteId = ApplicationRoute.EmployerProviderApplicationRoute,
+                LevyPayingEmployer = "N",
+                UKPRN = "10001234"
+            };
+
+            var result = _controller.SubmitLevyStatus(model).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("IneligibleNonLevy");
+        }
+
+        [Test]
+        public void Provider_routed_to_task_list_if_levy_paying_employer()
+        {
+            var model = new EmployerLevyStatusViewModel
+            {
+                ApplicationRouteId = ApplicationRoute.EmployerProviderApplicationRoute,
+                LevyPayingEmployer = "Y",
+                UKPRN = "10001234"
+            };
+
+            var result = _controller.SubmitLevyStatus(model).GetAwaiter().GetResult();
+
             var redirectResult = result as RedirectToActionResult;
-            redirectResult.ActionName.Should().Be("ConfirmLevyStatus");
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("Applications");
+            redirectResult.ControllerName.Should().Be("RoatpApplication");
+        }
+
+        [Test]
+        public void Provider_asked_to_choose_application_route_again_if_non_levy_and_want_to_continue_with_application()
+        {
+            var model = new EmployerProviderContinueApplicationViewModel
+            {
+                ContinueWithApplication = "Y"
+            };
+
+            var result = _controller.ConfirmNonLevyContinue(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().Be("SelectApplicationRoute");
+        }
+
+        [Test]
+        public void Provider_shown_shutter_page_if_non_levy_and_choose_not_to_continue_with_application()
+        {
+            var model = new EmployerProviderContinueApplicationViewModel
+            {
+                ContinueWithApplication = "N"
+            };
+
+            var result = _controller.ConfirmNonLevyContinue(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().Be("NonLevyAbandonedApplication");
         }
     }
 
