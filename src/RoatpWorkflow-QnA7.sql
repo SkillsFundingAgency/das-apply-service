@@ -1,0 +1,9 @@
+-- Section 7 setup: Delivering apprenticeship training
+DECLARE @WorkflowId7 UNIQUEIDENTIFIER
+DECLARE @ProjectId7 UNIQUEIDENTIFIER
+
+SET @WorkflowId7 = '86F83D58-8608-4462-9A4E-65837AF04287'
+SET @ProjectId7 = '70A0871F-42C1-48EF-8689-E63F0C91A487'
+
+
+GO
