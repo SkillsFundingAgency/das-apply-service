@@ -7,6 +7,8 @@
     bool showErrors = TempData["ShowErrors"] as bool? ?? false;
 }
 
+@{ await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml"); }
+
 <div class="grid-row">
     <form asp-controller="RoatpApplicationPreamble" asp-action="ConfirmOrganisation" method="get" name="backForm">
         <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
@@ -28,9 +30,9 @@
 }
 
 <div class="govuk-width-container">
-    
+
     <main class="govuk-main-wrapper " id="main-content" role="main">
-        
+
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <h1 class="govuk-heading-l">Choose your organisation's provider route</h1>
@@ -42,7 +44,7 @@
                 <form method="post" asp-action="StartApplication" asp-controller="RoatpApplicationPreamble">
 
                     <div class="govuk-form-group" sfa-validation-for="ApplicationRouteId" sfa-validationerror-class="govuk-error-message">
-                        
+
                         <fieldset class="govuk-fieldset">
 
                             <div class="govuk-radios">
