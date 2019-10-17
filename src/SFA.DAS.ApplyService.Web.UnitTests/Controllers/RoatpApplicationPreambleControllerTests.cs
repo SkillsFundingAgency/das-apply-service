@@ -1011,7 +1011,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var applicationRouteModel = new SelectApplicationRouteViewModel
             {
-                ApplicationRouteId = ApplicationRoute.EmployerProviderApplicationRoute
+                ApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute
             };
 
             var result = _controller.StartApplication(applicationRouteModel).GetAwaiter().GetResult();
@@ -1060,6 +1060,20 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Provider_routed_to_task_list_if_levy_paying_employer()
         {
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
+
+            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<string>())).ReturnsAsync(_user);
+            _usersApiClient.Setup(x => x.ApproveUser(It.IsAny<Guid>())).ReturnsAsync(true);
+
+            _organisationApiClient.Setup(x => x.Create(It.IsAny<CreateOrganisationRequest>(), It.IsAny<Guid>()))
+                .ReturnsAsync(new Organisation()).Verifiable();
+
+            _expectedRequest.OrganisationDetails.UKRLPDetails.VerificationDetails.Add(new VerificationDetails
+            {
+                VerificationAuthority = "National Audit Office",
+                VerificationId = "12345678"
+            });
+
             var model = new EmployerLevyStatusViewModel
             {
                 ApplicationRouteId = ApplicationRoute.EmployerProviderApplicationRoute,
@@ -1086,7 +1100,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var result = _controller.ConfirmNonLevyContinue(model).GetAwaiter().GetResult();
 
             var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().Be("SelectApplicationRoute");
+            redirectResult.ActionName.Should().Be("SelectApplicationRoute");
         }
 
         [Test]
@@ -1100,7 +1114,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var result = _controller.ConfirmNonLevyContinue(model).GetAwaiter().GetResult();
 
             var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().Be("NonLevyAbandonedApplication");
+            redirectResult.ActionName.Should().Be("NonLevyAbandonedApplication");
         }
     }
 
