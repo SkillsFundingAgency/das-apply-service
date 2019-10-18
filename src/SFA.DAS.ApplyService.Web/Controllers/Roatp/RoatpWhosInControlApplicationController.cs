@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
+    [Authorize]
     public class RoatpWhosInControlApplicationController : Controller
     {
         private readonly IQnaApiClient _qnaApiClient;
@@ -86,14 +88,25 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
             var updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, yourOrganisationSection.Id, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, answers);
-
-
-
+                       
             return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
         }
 
         public async Task<IActionResult> ConfirmTrusteesNoDob(Guid applicationId)
         {
+            var charityTrusteesAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
+            var trusteesData = JsonConvert.DeserializeObject<dynamic>(charityTrusteesAnswer.Value);
+
+            var model = new ConfirmTrusteesViewModel
+            {
+                ApplicationId = applicationId,
+                Trustees = new PeopleInControl
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionTrustees,
+                    TableData = trusteesData
+                }
+            };
+
             return View("~/Views/Roatp/WhosInControl/ConfirmTrusteesNoDob.cshtml");
         }
 
