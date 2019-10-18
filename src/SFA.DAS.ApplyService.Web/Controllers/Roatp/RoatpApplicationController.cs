@@ -725,6 +725,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var selectedSection = sections.Single(x => x.SectionId == sectionId);
 
             //MFCMFC
+            var answers = new List<Answer>();
+            var updatePageResult = await _qnaApiClient.UpdatePageAnswers(applicationId, selectedSection.Id, pageId, answers);
             await _apiClient.RemoveSectionCompleted(applicationId, selectedSection.Id);
             await _qnaApiClient.DeleteFile(applicationId,  selectedSection.Id, pageId, questionId, filename);
            
