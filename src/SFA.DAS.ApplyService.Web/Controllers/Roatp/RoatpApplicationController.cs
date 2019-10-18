@@ -371,6 +371,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 ApplicationSequences = filteredSequences,
                 UKPRN = organisationDetails.OrganisationUkprn?.ToString(),
                 OrganisationName = organisationDetails.Name,
+                TradingName = organisationDetails.OrganisationDetails?.TradingName,
                 VerifiedCompaniesHouse = (verifiedCompaniesHouse.Value == "TRUE"),
                 VerifiedCharityCommission = (verifiedCharityCommission.Value == "TRUE"),
                 CompaniesHouseManualEntry = (companiesHouseManualEntry.Value == "TRUE"),
@@ -724,9 +725,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
             var selectedSection = sections.Single(x => x.SectionId == sectionId);
 
-            //MFCMFC
-            var answers = new List<Answer>();
-            var updatePageResult = await _qnaApiClient.UpdatePageAnswers(applicationId, selectedSection.Id, pageId, answers);
             await _apiClient.RemoveSectionCompleted(applicationId, selectedSection.Id);
             await _qnaApiClient.DeleteFile(applicationId,  selectedSection.Id, pageId, questionId, filename);
            
