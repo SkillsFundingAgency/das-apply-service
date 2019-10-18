@@ -1163,7 +1163,7 @@ VALUES
             ],
             "Validations": [
               {
-                "Name": "ComplexRadioType",
+                "Name": "Required",
                 "Value": null,
                 "ErrorMessage": "Tell us if your organisation has a website"
               }
@@ -4696,6 +4696,63 @@ VALUES
       "BodyText": ""
     },
 	{
+      "PageId": "350",
+      "SequenceId": "1",
+      "SectionId": "6",
+      "Title": "Has your organisation delivered apprenticeship training as a subcontractor in the last 12 months?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-350",
+          "QuestionTag": "Subcontractor-Supporting",
+          "Label": "Has your organisation delivered apprenticeship training as a subcontractor in the last 12 months?",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">To confirm your answer, we''ll review your main or employer provider''s subcontractor declaration.</p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation has delivered apprenticeship training as a subcontractor in the last 12 months"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [			
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Conditions": [],
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
       "PageId": "10004",
       "SequenceId": "1",
       "SectionId": "6",
@@ -4732,7 +4789,7 @@ VALUES
     }
   ]
 }
-', N'Experience and accreditations', N'Experience and accreditations', N'Pages')
+', N'Experience and accreditations', N'Experience and accreditation', N'Pages')
 
 DECLARE @ExperienceAccreditationsSequenceId UNIQUEIDENTIFIER
 SET @ExperienceAccreditationsSequenceId = '803C1398-7B76-4351-94C4-7F1B641053EA'

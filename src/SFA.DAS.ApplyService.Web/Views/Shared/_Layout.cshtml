@@ -76,40 +76,12 @@
             </a>
         </div>
         <div class="govuk-header__content">
-            <a href="@config.AssessorServiceBaseUrl/" class="govuk-header__link govuk-header__link--service-name">
-                Apprenticeship assessment service
+            <a asp-controller="Home" asp-action="Index" class="govuk-header__link govuk-header__link--service-name">
+                Apply to join the register of apprenticeship training providers
             </a>
         </div>
     </div>
 </header>
-
-@if (User.Identity.IsAuthenticated)
-{
-    <div class="das-user-panel">
-        <div class="govuk-width-container">
-            <div class="das-user-panel__content">
-                <div class="govuk-body-s das-user-panel__item das-user-panel__item--grow">
-                    <p class="govuk-!-margin-top-0 govuk-!-margin-bottom-0 das-no-wrap">
-                        <span class="govuk-visually-hidden">Signed in as </span>
-                        <span class="nowrap">@User.Identity.Name</span>
-                    </p>
-                    @if (@SessionService.Get("OrganisationName") != null)
-                    {
-                        <p class="govuk-!-font-weight-bold govuk-!-margin-top-0 govuk-!-margin-bottom-0">@SessionService.Get("OrganisationName")</p>
-                    }
-                </div>
-                <div>
-                    <span class="govuk-body-s das-user-panel__item">
-                        <a class="govuk-link govuk-link--white" asp-controller="Home" asp-action="ContactUs">Contact us</a>
-                    </span>
-                    <span class="govuk-body-s das-user-panel__item">
-                        <a class="govuk-link govuk-link--white" href="@Url.Action("SignOut","Users")">Sign out</a>
-                    </span>
-                </div>
-            </div>
-        </div>
-    </div>
-}
 
 <div class="govuk-width-container">
     <div class="govuk-phase-banner">
@@ -118,43 +90,13 @@
                 beta
             </strong>
             <span class="govuk-phase-banner__text">
-                This is a new service
+                This is a new service - your <a href="#">feedback</a> will help us to improve it.
             </span>
         </p>
     </div>
 </div>
 
 <div class="govuk-width-container">
-    @if (User.Identity.IsAuthenticated && @SessionService.Get<bool>("UserRegWithEPAO"))
-    {
-        <div class="grid-row">
-            <div class="column-full">
-                <nav class="app-navigation govuk-clearfix">
-                    <ul class="app-navigation__list">
-                        <li>
-                            <a href="@config.AssessorServiceBaseUrl/Dashboard">Home</a>
-                        </li>
-                        <li>
-                            <a  href="@config.AssessorServiceBaseUrl/OrganisationStandards/pipelines">Pipeline</a>
-                        </li>
-                        <li>
-                            <a  href="@config.AssessorServiceBaseUrl/Search">Record a grade</a>
-                        </li>
-                        <li>
-                            <a  href="@config.AssessorServiceBaseUrl/CertificateHistory">Completed assessments</a>
-                        </li>
-                        <li  class="app-navigation--current-page">
-                            <a  href="@config.AssessorServiceBaseUrl/OrganisationStandards">Standards</a>
-                        </li>
-                        <li>
-                            <a  href="@config.AssessorServiceBaseUrl/Organisation/OrganisationDetails">Organisation details</a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-    }
-
     @RenderBody()
 </div>
 
