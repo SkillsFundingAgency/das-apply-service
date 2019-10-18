@@ -34,7 +34,6 @@ BEGIN
            ,[Type]
            ,[CreatedAt]
            ,[CreatedBy]           
-           ,[ReferenceFormat]
 		   ,[ApplicationDataSchema])
      VALUES
            (@WorkflowId
@@ -44,8 +43,7 @@ BEGIN
            ,'RoATP'
            ,GETDATE()
            ,'Import'
-           ,'AAD',
-		   '{}')
+		   ,'{}')
 END
 
 
