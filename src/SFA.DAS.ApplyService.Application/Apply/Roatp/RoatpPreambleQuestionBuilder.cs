@@ -44,6 +44,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string CompaniesHouseDirectors = "YO-70";
         public static string CompaniesHousePSCs = "YO-71";
         public static string CompaniesHouseDetailsConfirmed = "YO-75";
+        public static string CharityCommissionTrustees = "YO-80";
+        public static string CharityCommissionDetailsConfirmed = "YO-85";
         public static string ApplyProviderRoute = "YO-1";
         public static string ApplyProviderRouteMain = "YO-1.1";              
         public static string ApplyProviderRouteEmployer = "YO-1.2";
@@ -130,6 +132,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string CompaniesHouseDirectors = "Companies-House-Directors";
         public static string CompaniesHousePscs = "Companies-House-PSCs";
         public static string UkrlpVerificationCharity = "UKRLP-Verification-Charity";
+        public static string CharityCommissionTrustees = "Charity-Trustees";
     }
 
     public static class RoatpPreambleQuestionBuilder
@@ -167,7 +170,17 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             CreateBlankCompaniesHouseConfirmationQuestion(questions);
             return questions;
         }
-        
+
+        public static List<PreambleAnswer> CreateCharityCommissionWhosInControlQuestions(ApplicationDetails applicationDetails)
+        {
+            var questions = new List<PreambleAnswer>();
+
+            CreateCompaniesHouseDirectorsData(applicationDetails, questions);
+            CreateCompaniesHousePscData(applicationDetails, questions);
+            CreateBlankCompaniesHouseConfirmationQuestion(questions);
+            return questions;
+        }
+
         private static void CreateApplyQuestionAnswers(ApplicationDetails applicationDetails, List<PreambleAnswer> questions)
         {
             questions.Add(new PreambleAnswer
@@ -451,6 +464,42 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             }
         }
 
+        private static void CreateCharityTrusteeData(ApplicationDetails applicationDetails, List<PreambleAnswer> questions)
+        {
+            if (applicationDetails.CharitySummary.Trustees != null & applicationDetails.CharitySummary.Trustees.Count > 0)
+            {
+                var table = new TabularData
+                {
+                    HeadingTitles = new List<string> { "Name" },
+                    DataRows = new List<TabularDataRow>()
+                };
+
+                foreach (var trustee in applicationDetails.CharitySummary.Trustees)
+                {
+                    var dataRow = new TabularDataRow
+                    {
+                        Id = trustee.Id,
+                        Columns = new List<string> { trustee.Name }
+                    };
+                    table.DataRows.Add(dataRow);
+                }
+
+                questions.Add(new PreambleAnswer
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionTrustees,
+                    Value = JsonConvert.SerializeObject(table)
+                });
+            }
+            else
+            {
+                questions.Add(new PreambleAnswer
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionTrustees,
+                    Value = string.Empty
+                });
+            }
+        }
+
         private static string FormatDateOfBirth(DateTime? dateOfBirth)
         {
             if (!dateOfBirth.HasValue)
@@ -503,6 +552,15 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             questions.Add(new PreambleAnswer
             {
                 QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseDetailsConfirmed,
+                Value = string.Empty
+            });
+        }
+
+        private static void CreateBlankCharityCommissionConfirmationQuestion(List<PreambleAnswer> questions)
+        {
+            questions.Add(new PreambleAnswer
+            {
+                QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionDetailsConfirmed,
                 Value = string.Empty
             });
         }
