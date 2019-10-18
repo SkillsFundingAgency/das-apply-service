@@ -201,31 +201,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
         }
 
-        public async Task<Page> RemovePageAnswer(Guid applicationId, Guid sectionId, string pageId, Guid answerId)
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Delete, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/multiple/{answerId}"))
-            {
-                return await Delete<Page>(request);
-            }
-        }
-
-        public async Task<ApplicationData> GetApplicationData(Guid applicationId)
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/applicationData"))
-            {
-                return await RequestAndDeserialiseAsync<ApplicationData>(request,
-                    $"Could not find the application");
-            }
-        }
-
-        public async Task<ApplicationData> UpdateApplicationData(Guid applicationId, ApplicationData applicationData)
-        {
-            using (var request = new HttpRequestMessage(HttpMethod.Post, $"/applications/{applicationId}/applicationData"))
-            {
-                return await PostPutRequestWithResponse<ApplicationData, ApplicationData>(request, applicationData);
-            }
-        }
-
         protected async Task<HttpResponseMessage> RequestToDownloadFile(HttpRequestMessage request, string message = null)
         {
             HttpRequestMessage clonedRequest = null;
@@ -307,103 +282,104 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
         }
 
+        //MFCMFC
 
-        protected async Task<U> Delete<U>(HttpRequestMessage requestMessage)
-        {
-            HttpRequestMessage clonedRequest = null;
-            var response = await _retryPolicy.ExecuteAsync(async () =>
-            {
-                clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
-                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+        //protected async Task<U> Delete<U>(HttpRequestMessage requestMessage)
+        //{
+        //    HttpRequestMessage clonedRequest = null;
+        //    var response = await _retryPolicy.ExecuteAsync(async () =>
+        //    {
+        //        clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
+        //        clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-                return await _httpClient.SendAsync(clonedRequest);
+        //        return await _httpClient.SendAsync(clonedRequest);
 
-            });
+        //    });
 
-            var json = await response.Content.ReadAsStringAsync();
-            //var result = await response;
-            if (response.StatusCode == HttpStatusCode.OK
-                || response.StatusCode == HttpStatusCode.NoContent)
-            {
+        //    var json = await response.Content.ReadAsStringAsync();
+        //    //var result = await response;
+        //    if (response.StatusCode == HttpStatusCode.OK
+        //        || response.StatusCode == HttpStatusCode.NoContent)
+        //    {
 
-                return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json));
-            }
-            else
-            {
-                _logger.LogInformation($"HttpRequestException: Status Code: {response.StatusCode} Body: {json}");
-                throw new HttpRequestException(json);
-            }
-        }
+        //        return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json));
+        //    }
+        //    else
+        //    {
+        //        _logger.LogInformation($"HttpRequestException: Status Code: {response.StatusCode} Body: {json}");
+        //        throw new HttpRequestException(json);
+        //    }
+        //}
 
-        protected async Task<T> RequestAndDeserialiseAsync<T>(HttpRequestMessage request, string message = null)
-        {
-            HttpRequestMessage clonedRequest = null;
+        //protected async Task<T> RequestAndDeserialiseAsync<T>(HttpRequestMessage request, string message = null)
+        //{
+        //    HttpRequestMessage clonedRequest = null;
 
-            var result = await _retryPolicy.ExecuteAsync(async () =>
-            {
-                clonedRequest = new HttpRequestMessage(request.Method, request.RequestUri);
-                clonedRequest.Headers.Add("Accept", "application/json");
-                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+        //    var result = await _retryPolicy.ExecuteAsync(async () =>
+        //    {
+        //        clonedRequest = new HttpRequestMessage(request.Method, request.RequestUri);
+        //        clonedRequest.Headers.Add("Accept", "application/json");
+        //        clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-                return await _httpClient.SendAsync(clonedRequest);
+        //        return await _httpClient.SendAsync(clonedRequest);
 
-            });
+        //    });
 
-            if (result.StatusCode == HttpStatusCode.OK)
-            {
-                // NOTE: Struct values are valid JSON. For example: 'True'
-                var json = await result.Content.ReadAsStringAsync();
-                return await Task.Factory.StartNew<T>(() => JsonConvert.DeserializeObject<T>(json, JsonSettings));
-            }
+        //    if (result.StatusCode == HttpStatusCode.OK)
+        //    {
+        //        // NOTE: Struct values are valid JSON. For example: 'True'
+        //        var json = await result.Content.ReadAsStringAsync();
+        //        return await Task.Factory.StartNew<T>(() => JsonConvert.DeserializeObject<T>(json, JsonSettings));
+        //    }
 
-            if (result.StatusCode == HttpStatusCode.NotFound)
-            {
-                if (message == null)
-                {
-                    if (!request.RequestUri.IsAbsoluteUri)
-                        message = "Could not find " + request.RequestUri;
-                    else
-                        message = "Could not find " + request.RequestUri.PathAndQuery;
-                }
+        //    if (result.StatusCode == HttpStatusCode.NotFound)
+        //    {
+        //        if (message == null)
+        //        {
+        //            if (!request.RequestUri.IsAbsoluteUri)
+        //                message = "Could not find " + request.RequestUri;
+        //            else
+        //                message = "Could not find " + request.RequestUri.PathAndQuery;
+        //        }
 
-                RaiseResponseError(message, clonedRequest, result);
-            }
+        //        RaiseResponseError(message, clonedRequest, result);
+        //    }
 
-            RaiseResponseError(clonedRequest, result);
+        //    RaiseResponseError(clonedRequest, result);
 
-            return default(T);
-        }
+        //    return default(T);
+        //}
 
-        protected async Task<U> PostPutRequestWithResponse<T, U>(HttpRequestMessage requestMessage, T model)
-        {
-            var serializeObject = JsonConvert.SerializeObject(model);
+        //protected async Task<U> PostPutRequestWithResponse<T, U>(HttpRequestMessage requestMessage, T model)
+        //{
+        //    var serializeObject = JsonConvert.SerializeObject(model);
 
-            HttpRequestMessage clonedRequest = null;
-            var response = await _retryPolicy.ExecuteAsync(async () =>
-            {
-                clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
-                clonedRequest.Headers.Add("Accept", "application/json");
-                clonedRequest.Content = new StringContent(serializeObject,
-                    System.Text.Encoding.UTF8, "application/json");
-                clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+        //    HttpRequestMessage clonedRequest = null;
+        //    var response = await _retryPolicy.ExecuteAsync(async () =>
+        //    {
+        //        clonedRequest = new HttpRequestMessage(requestMessage.Method, requestMessage.RequestUri);
+        //        clonedRequest.Headers.Add("Accept", "application/json");
+        //        clonedRequest.Content = new StringContent(serializeObject,
+        //            System.Text.Encoding.UTF8, "application/json");
+        //        clonedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
 
-                return await _httpClient.SendAsync(clonedRequest);
+        //        return await _httpClient.SendAsync(clonedRequest);
 
-            });
+        //    });
 
-            var json = await response.Content.ReadAsStringAsync();
-            if (response.StatusCode == HttpStatusCode.OK
-                || response.StatusCode == HttpStatusCode.Created
-                || response.StatusCode == HttpStatusCode.NoContent)
-            {
-                return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json));
-            }
-            else
-            {
-                _logger.LogInformation($"HttpRequestException: Status Code: {response.StatusCode} Body: {json}");
-                throw new HttpRequestException(json);
-            }
-        }
+        //    var json = await response.Content.ReadAsStringAsync();
+        //    if (response.StatusCode == HttpStatusCode.OK
+        //        || response.StatusCode == HttpStatusCode.Created
+        //        || response.StatusCode == HttpStatusCode.NoContent)
+        //    {
+        //        return await Task.Factory.StartNew<U>(() => JsonConvert.DeserializeObject<U>(json));
+        //    }
+        //    else
+        //    {
+        //        _logger.LogInformation($"HttpRequestException: Status Code: {response.StatusCode} Body: {json}");
+        //        throw new HttpRequestException(json);
+        //    }
+        //}
 
 
 
