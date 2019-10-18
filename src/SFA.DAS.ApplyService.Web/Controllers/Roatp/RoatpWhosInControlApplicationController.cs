@@ -22,6 +22,22 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         public async Task<IActionResult> StartPage(Guid applicationId)
         {
+            var verificationCompanyAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpVerificationCompany);
+            if (verificationCompanyAnswer.Value == "TRUE")
+            {
+                return await ConfirmDirectorsPscs(applicationId);
+            }
+            var verificationCharityAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpVerificationCharity);
+            if (verificationCharityAnswer.Value == "TRUE")
+            {
+                return await ConfirmTrusteesNoDob(applicationId);
+            }
+
+            return await AddPeopleInControl(applicationId);
+        }
+
+        public async Task<IActionResult> ConfirmDirectorsPscs(Guid applicationId)
+        {
             var companiesHouseDirectorsAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.CompaniesHouseDirectors);
             var directorsData = JsonConvert.DeserializeObject<dynamic>(companiesHouseDirectorsAnswer.Value);
 
@@ -76,9 +92,34 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
         }
 
+        public async Task<IActionResult> ConfirmTrusteesNoDob(Guid applicationId)
+        {
+            return View("~/Views/Roatp/WhosInControl/ConfirmTrusteesNoDob.cshtml");
+        }
+
+        public async Task<IActionResult> ConfirmTrusteesDob(Guid applicationId)
+        {
+            return View("~/Views/Roatp/WhosInControl/ConfirmTrusteesDob.cshtml");
+        }
+
         public async Task<IActionResult> AddTrustees(Guid applicationId)
         {
             return View("~/Views/Roatp/WhosInControl/AddTrustees.cshtml");
+        }
+
+        public async Task<IActionResult> AddPartner(Guid applicationId)
+        {
+            return View("~/Views/Roatp/WhosInControl/AddPartner.cshtml");
+        }
+
+        public async Task<IActionResult> AddSoleTradeDob(Guid applicationId)
+        {
+            return View("~/Views/Roatp/WhosInControl/AddSoleTradeDob.cshtml");
+        }
+
+        public async Task<IActionResult> AddPeopleInControl(Guid applicationId)
+        {
+            return View("~/Views/Roatp/WhosInControl/AddPeopleInControl.cshtml");
         }
     }
 }

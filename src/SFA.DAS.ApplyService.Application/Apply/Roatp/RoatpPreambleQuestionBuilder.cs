@@ -129,6 +129,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string UkrlpVerificationCompany = "UKRLP-Verification-Company";
         public static string CompaniesHouseDirectors = "Companies-House-Directors";
         public static string CompaniesHousePscs = "Companies-House-PSCs";
+        public static string UkrlpVerificationCharity = "UKRLP-Verification-Charity";
     }
 
     public static class RoatpPreambleQuestionBuilder
