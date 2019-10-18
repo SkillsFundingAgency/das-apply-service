@@ -48,6 +48,14 @@ BEGIN
            ,'AAD',
 		   '{}')
 END
+
+
+DELETE FROM [dbo].[WorkflowSections]
+WHERE ProjectId = @ProjectId
+
+DELETE FROM [dbo].[WorkflowSequences]
+WHERE WorkflowId = @WorkflowId
+
 GO
 
 

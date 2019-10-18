@@ -1,4 +1,6 @@
 ﻿
+using System.Data.Common;
+
 namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 {
     using System;
@@ -29,6 +31,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             }
 
             var questionsCompleted = SectionHasCompletedQuestions(section);
+
+            //MFCMFC
+            var providerType = 3;
+            if (sectionId == 2 && sequenceId == 4 && providerType ==3)
+                return "Not required";
+
             //var questionsInSection = section.QnAData.Pages.Where(p => p.NotRequired == false).SelectMany(x => x.Questions).DistinctBy(q => q.QuestionId).Count();
             return SectionText(questionsCompleted, section.SectionCompleted, sequential);
         }
