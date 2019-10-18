@@ -34,7 +34,6 @@ BEGIN
            ,[Type]
            ,[CreatedAt]
            ,[CreatedBy]           
-           ,[ReferenceFormat]
 		   ,[ApplicationDataSchema])
      VALUES
            (@WorkflowId
@@ -44,8 +43,7 @@ BEGIN
            ,'RoATP'
            ,GETDATE()
            ,'Import'
-           ,'AAD',
-		   '{}')
+		   ,'{}')
 END
 
 
@@ -1163,7 +1161,7 @@ VALUES
             ],
             "Validations": [
               {
-                "Name": "ComplexRadioType",
+                "Name": "Required",
                 "Value": null,
                 "ErrorMessage": "Tell us if your organisation has a website"
               }
