@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using SFA.DAS.ApplyService.Application.Apply;
-using SFA.DAS.ApplyService.Application.Apply.Download;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
-using SFA.DAS.ApplyService.Application.Apply.Upload;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types;
+using SFA.DAS.QnA.Api.Types;
+using StartApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartApplicationResponse;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
@@ -18,18 +17,13 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     public interface IApplicationApiClient
     {
         Task<List<Domain.Entities.Application>> GetApplications(Guid userId, bool createdBy);
-
-        Task<UploadResult> Upload(Guid applicationId, string userId, int sequenceId, int sectionId, string pageId, IFormFileCollection files);
-
-        Task<HttpResponseMessage> Download(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string filename);
-        Task<FileInfoResponse> FileInfo(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId, string filename);
         Task<ApplicationSequence> GetSequence(Guid applicationId, Guid userId);
         Task<IEnumerable<ApplicationSequence>> GetSequences(Guid applicationId);
         Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId, int sectionId, Guid userId);
         Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid userId);
         Task<Domain.Apply.Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid userId);
 
-        Task<UpdatePageAnswersResult> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId, int sectionId,
+        Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId, int sectionId,
             string pageId, List<Answer> answers, bool saveNewAnswers);
 
         Task<StartApplicationResponse> StartApplication(Guid userId, string applicationType);
@@ -52,5 +46,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         Task<bool> MarkSectionAsCompleted(Guid applicationId, Guid applicationSectionId);
         Task<bool> IsSectionCompleted(Guid applicationId, Guid applicationSectionId);
+        Task RemoveSectionCompleted(Guid applicationId, Guid applicationSectionId);
     }
 }

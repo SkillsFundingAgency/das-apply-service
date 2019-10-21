@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Configuration;
@@ -26,6 +28,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Options;
     using MoreLinq;
+    using SFA.DAS.ApplyService.Web.Infrastructure.Validations;
     using SFA.DAS.ApplyService.Web.Services;
     using ViewModels.Roatp;
 
@@ -45,6 +48,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IPageNavigationTrackingService _pageNavigationTrackingService;
         private readonly List<QnaPageOverrideConfiguration> _pageOverrideConfiguration;
         private readonly List<QnaLinksConfiguration> _qnaLinks;
+        private readonly ICustomValidatorFactory _customValidatorFactory;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
         private const string InputClassUpperCase = "app-uppercase";
@@ -56,7 +60,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
             IQnaApiClient qnaApiClient, IOptions<List<TaskListConfiguration>> configuration, IProcessPageFlowService processPageFlowService,
             IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
-            IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks)
+            IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks, ICustomValidatorFactory customValidatorFactory)
         {
             _apiClient = apiClient;
             _logger = logger;
@@ -71,6 +75,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _pageNavigationTrackingService = pageNavigationTrackingService;
             _qnaLinks = qnaLinks.Value;
             _pageOverrideConfiguration = pageOverrideConfiguration.Value;
+            _customValidatorFactory = customValidatorFactory;
         }
 
         public async Task<IActionResult> Applications(string applicationType)
@@ -497,10 +502,18 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var errorMessages = new List<ValidationErrorDetail>();
             var answers = new List<Answer>();
 
-            var fileValidationPassed = FileValidator.FileValidationPassed(answers, page, errorMessages, ModelState, HttpContext.Request.Form.Files);
             GetAnswersFromForm(page, answers);
             ApplyFormattingToAnswers(answers, page);
+            
+            RunCustomValidations(page, answers);
+            if(ModelState.IsValid == false)
+            {
+                page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
+                this.TempData["InvalidPage"] = JsonConvert.SerializeObject(page);
+                return await Page(applicationId, sequenceId, sectionId, pageId, redirectAction);
+            }
 
+            //todo: Should we convert this to a custom validation?
             var checkBoxListQuestions = PageContainsCheckBoxListQuestions(page);
             if (checkBoxListQuestions.Any())
             {
@@ -508,21 +521,23 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 if (!String.IsNullOrWhiteSpace(checkBoxListQuestionId))
                 {
                     ModelState.AddModelError(checkBoxListQuestionId, InvalidCheckBoxListSelectionErrorMessage);
+
+                    //Can this be made common? What about DataFedOptions?
                     page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
                     this.TempData["InvalidPage"] = JsonConvert.SerializeObject(page);
-
                     return await Page(applicationId, sequenceId, sectionId, pageId, redirectAction);
                 }
             }
 
+            //todo: do we need these two lines???
             var answersMustBeValidated = await CheckIfAnswersMustBeValidated(applicationId, sequenceId, sectionId, pageId, answers, new Regex(@"\w+"));
             var saveNewAnswers = (__formAction == "Add" || answersMustBeValidated);
 
             var updatePageResult = await _qnaApiClient.UpdatePageAnswers(applicationId, selectedSection.Id, pageId, answers); 
 
-            if (updatePageResult.ValidationPassed && fileValidationPassed)
+            if (updatePageResult.ValidationPassed)
             {
-                await UploadFilesToStorage(applicationId, sequenceId, sectionId, pageId, userId);
+                await UploadFilesToStorage(applicationId, selectedSection.Id,pageId);
 
                 if (__formAction == "Add" && page.AllowMultipleAnswers)
                 {
@@ -600,12 +615,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return null;
         }
 
-        private async Task UploadFilesToStorage(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid userId)
+        private async Task UploadFilesToStorage(Guid applicationId, Guid sectionId, string pageId)
         {
             if (HttpContext.Request.Form.Files.Any())
             {
-                await _apiClient.Upload(applicationId, userId.ToString(), sequenceId, sectionId, pageId,
-                    HttpContext.Request.Form.Files);
+               await _qnaApiClient.Upload(applicationId, sectionId, pageId, HttpContext.Request.Form.Files);
             }
         }
 
@@ -624,6 +638,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 answerValues[answerKey[0]].Add(
                     answerKey.Count() == 1 ? string.Empty : answerKey[1],
                     formVariable.Value.ToString());
+            }
+
+            foreach(var file in HttpContext.Request.Form.Files)
+            {
+                if (!answerValues.ContainsKey(file.Name))
+                {
+                    answerValues.Add(file.Name, new JObject());
+                }
+
+                answerValues[file.Name].Add(string.Empty, file.FileName);
             }
 
             foreach (var answer in answerValues)
@@ -682,21 +706,30 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public async Task<IActionResult> Download(Guid applicationId, int sequenceId, int sectionId, string pageId, string questionId, string filename)
         {
-            var userId = User.GetUserId();
+            var sequences = await _qnaApiClient.GetSequences(applicationId);
+            var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
+            var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
+            var selectedSection = sections.Single(x => x.SectionId == sectionId);
+            var response = await _qnaApiClient.DownloadFile(applicationId, selectedSection.Id, pageId, questionId, filename);
+            var fileStream = await response.Content.ReadAsStreamAsync();
 
-            var fileInfo = await _apiClient.FileInfo(applicationId, userId, sequenceId, sectionId, pageId, questionId, filename);
-            
-            var file = await _apiClient.Download(applicationId, userId, sequenceId,sectionId, pageId, questionId, filename);
+            return File(fileStream, response.Content.Headers.ContentType.MediaType, filename);
 
-            var fileStream = await file.Content.ReadAsStreamAsync();
-            
-            return File(fileStream, fileInfo.ContentType, fileInfo.Filename);
         }
 
-        public async Task<IActionResult> DeleteFile(Guid applicationId, int sequenceId, int sectionId, string pageId, string questionId, string redirectAction)
+        public async Task<IActionResult> DeleteFile(Guid applicationId, int sequenceId, int sectionId, string pageId, string questionId, string filename, string redirectAction)
         {
-            await _apiClient.DeleteFile(applicationId, User.GetUserId(), sequenceId, sectionId, pageId, questionId);
-            
+
+            var sequences = await _qnaApiClient.GetSequences(applicationId);
+            var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
+            var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
+            var selectedSection = sections.Single(x => x.SectionId == sectionId);
+
+
+            await _apiClient.RemoveSectionCompleted(applicationId, selectedSection.Id);
+            await _qnaApiClient.DeleteFile(applicationId,  selectedSection.Id, pageId, questionId, filename);
+           
+
             return RedirectToAction("Page", new {applicationId, sequenceId, sectionId, pageId, redirectAction});
         }
         
@@ -879,6 +912,24 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return viewModel;
+        }
+
+        private void RunCustomValidations(Page page, List<Answer> answers)
+        {
+            foreach (var answer in answers)
+            {
+                var customValidations = _customValidatorFactory.GetCustomValidationsForQuestion(page.PageId, answer.QuestionId, HttpContext.Request.Form.Files);
+
+                foreach (var customValidation in customValidations)
+                {
+                    var result = customValidation.Validate();
+
+                    if(result.IsValid == false)
+                    {
+                        ModelState.AddModelError(result.QuestionId, result.ErrorMessage);
+                    }
+                }
+            }
         }
     }
 }

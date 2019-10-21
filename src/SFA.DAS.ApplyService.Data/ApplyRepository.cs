@@ -951,5 +951,19 @@ namespace SFA.DAS.ApplyService.Data
                     })).FirstOrDefault();
             }
         }
+
+        public async Task RemoveSectionCompleted(Guid applicationId, Guid applicationSectionId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"DELETE FROM ApplicationWorkflow 
+                                                Where ApplicationId = @ApplicationId and ApplicationSectionId = @ApplicationSectionId",
+                    new
+                    {
+                        applicationId,
+                        applicationSectionId
+                    });
+            }
+        }
     }
 }

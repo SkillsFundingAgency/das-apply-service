@@ -1,6 +1,5 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.CheckOrganisationStandardStatus;
 using SFA.DAS.ApplyService.Application.Apply.DeleteAnswer;
 using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
@@ -20,6 +19,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
+using SFA.DAS.QnA.Api.Types;
+using StartApplicationRequest = SFA.DAS.ApplyService.Application.Apply.StartApplicationRequest;
+using StartApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartApplicationResponse;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -127,7 +129,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpPost("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
-        public async Task<ActionResult<UpdatePageAnswersResult>> Page(string applicationId, string userId, int sequenceId, int sectionId, string pageId, [FromBody] PageApplyRequest request)
+        public async Task<ActionResult<SetPageAnswersResponse>> Page(string applicationId, string userId, int sequenceId, int sectionId, string pageId, [FromBody] PageApplyRequest request)
         {
             var updatedPage = await _mediator.Send(
                 new UpdatePageAnswersRequest(Guid.Parse(applicationId), Guid.Parse(userId), sequenceId, sectionId, pageId, request.Answers, request.SaveNewAnswers));
@@ -177,6 +179,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<bool> IsSectionCompleted(Guid applicationId, Guid applicationSectionId)
         {
             return await _mediator.Send(new GetApplicationSectionCompletedRequest(applicationId, applicationSectionId));
+        }
+
+        [HttpDelete("/Application/{applicationId}/RemoveSectionComplete/{applicationSectionId}")]
+        public async Task RemoveSectionCompleted(Guid applicationId, Guid applicationSectionId)
+        {
+            await _mediator.Send(new RemoveApplicationSectionCompletedRequest(applicationId, applicationSectionId));
         }
     }
 }
