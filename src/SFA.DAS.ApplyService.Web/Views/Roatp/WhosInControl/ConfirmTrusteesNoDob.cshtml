@@ -1,4 +1,4 @@
-﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ConfirmDirectorsPscsViewModel
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ConfirmTrusteesViewModel
 
 <div class="govuk-phase-banner govuk-width-container roatp__navigation">
     <nav>
@@ -21,14 +21,21 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            <h1 class="govuk-heading-xl">Confirm your organisation's trustees</h1>
+            @if (Model.Trustees.TableData.DataRows.Count == 1)
+            {
+                <h1 class="govuk-heading-xl">Confirm your organisation's trustee</h1>
+            }
+            else
+            {
+                <h1 class="govuk-heading-xl">Confirm your organisation's trustees</h1>
+            }
             <p class="govuk-body">These are the details we found on the Charity Commission for England and Wales.</p>
 
-            <form method="post" asp-action="DirectorsPscsConfirmed" novalidate enctype="multipart/form-data">
+            <form method="post" asp-action="TrusteesConfirmed" novalidate enctype="multipart/form-data">
 
                 @Html.HiddenFor(x => x.ApplicationId)
 
-                @{ await Html.RenderPartialAsync("~/Views/Roatp/WhosInControl/PeopleInControl.cshtml", Model.CompaniesHouseDirectors); }
+                @{ await Html.RenderPartialAsync("~/Views/Roatp/WhosInControl/PeopleInControl.cshtml", Model.Trustees); }
 
                 <button type="submit" class="govuk-button">Confirm and continue</button>
 

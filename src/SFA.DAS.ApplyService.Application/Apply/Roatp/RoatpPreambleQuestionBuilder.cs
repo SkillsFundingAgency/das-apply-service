@@ -174,10 +174,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static List<PreambleAnswer> CreateCharityCommissionWhosInControlQuestions(ApplicationDetails applicationDetails)
         {
             var questions = new List<PreambleAnswer>();
+            CreateCharityTrusteeData(applicationDetails, questions);
+            CreateBlankCharityCommissionConfirmationQuestion(questions);
 
-            CreateCompaniesHouseDirectorsData(applicationDetails, questions);
-            CreateCompaniesHousePscData(applicationDetails, questions);
-            CreateBlankCompaniesHouseConfirmationQuestion(questions);
             return questions;
         }
 

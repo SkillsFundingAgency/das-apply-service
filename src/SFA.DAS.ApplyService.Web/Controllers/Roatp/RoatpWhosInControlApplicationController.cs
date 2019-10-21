@@ -22,6 +22,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _qnaApiClient = qnaApiClient;
         }
 
+        [Route("confirm-who-control")]
         public async Task<IActionResult> StartPage(Guid applicationId)
         {
             var verificationCompanyAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpVerificationCompany);
@@ -38,6 +39,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return await AddPeopleInControl(applicationId);
         }
 
+        [Route("confirm-directors-pscs")]
         public async Task<IActionResult> ConfirmDirectorsPscs(Guid applicationId)
         {
             var companiesHouseDirectorsAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.CompaniesHouseDirectors);
@@ -64,6 +66,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return View("~/Views/Roatp/WhosInControl/ConfirmDirectorsPscs.cshtml", model);
         }
 
+        [HttpPost]
         public async Task<IActionResult> DirectorsPscsConfirmed(Guid applicationId)
         {
             var companiesHouseDirectorsAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.CompaniesHouseDirectors);
@@ -88,10 +91,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
             var updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, yourOrganisationSection.Id, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, answers);
-                       
+
+            var verificationCharityAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpVerificationCharity);
+            if (verificationCharityAnswer.Value == "TRUE")
+            {
+                return RedirectToAction("ConfirmTrusteesNoDob", new { applicationId });
+            }
+
             return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
         }
 
+        [Route("confirm-trustees")]
         public async Task<IActionResult> ConfirmTrusteesNoDob(Guid applicationId)
         {
             var charityTrusteesAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
@@ -107,7 +117,34 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 }
             };
 
-            return View("~/Views/Roatp/WhosInControl/ConfirmTrusteesNoDob.cshtml");
+            return View("~/Views/Roatp/WhosInControl/ConfirmTrusteesNoDob.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> TrusteesConfirmed(Guid applicationId)
+        {
+            var trusteesAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
+
+            var answers = new List<Answer>()
+            {
+                trusteesAnswer,
+                new Answer
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionDetailsConfirmed,
+                    Value = "Y"
+                }
+            };
+
+            var applicationSequences = await _qnaApiClient.GetSequences(applicationId);
+            var yourOrganisationSequence =
+                applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
+            var yourOrganisationSections = await _qnaApiClient.GetSections(applicationId, yourOrganisationSequence.Id);
+            var yourOrganisationSection =
+                yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+
+            var updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, yourOrganisationSection.Id, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, answers);
+
+            return RedirectToAction("ConfirmTrusteesDob", new { applicationId });
         }
 
         public async Task<IActionResult> ConfirmTrusteesDob(Guid applicationId)
