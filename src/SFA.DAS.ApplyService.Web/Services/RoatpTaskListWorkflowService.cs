@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using MoreLinq;
@@ -13,9 +12,9 @@ namespace SFA.DAS.ApplyService.Web.Services
     {
         public  string SectionStatus(IEnumerable<ApplicationSequence> applicationSequences, List<NotRequiredOverrideConfiguration> notRequiredOverrides, int sequenceId, int sectionId, string applicationRouteId, bool sequential = false)
         {
-            var sequence = applicationSequences.FirstOrDefault(x => (int)x.SequenceId == sequenceId);
+            var sequence = applicationSequences?.FirstOrDefault(x => (int)x.SequenceId == sequenceId);
 
-            var section = sequence?.Sections.FirstOrDefault(x => x.SectionId == sectionId);
+            var section = sequence?.Sections?.FirstOrDefault(x => x.SectionId == sectionId);
             if (section == null)
             {
                 return string.Empty;
@@ -36,8 +35,6 @@ namespace SFA.DAS.ApplyService.Web.Services
             }
 
             var questionsCompleted = SectionHasCompletedQuestions(section);
-
-            //var questionsInSection = section.QnAData.Pages.Where(p => p.NotRequired == false).SelectMany(x => x.Questions).DistinctBy(q => q.QuestionId).Count();
 
             return SectionText(questionsCompleted, section.SectionCompleted, sequential);
         }
@@ -100,22 +97,18 @@ namespace SFA.DAS.ApplyService.Web.Services
                 return "Completed";
             }
 
-            //if (completedCount < questionCount)
-            //{
-                if (sequential && completedCount == 0)
-                {
-                    return "Next";
-                }
+            if (sequential && completedCount == 0)
+            {
+                return "Next";
+            }
 
-                if (completedCount > 0)
-                {
-                    return "In Progress";
-                }
+            if (completedCount > 0)
+            {
+                return "In Progress";
+            }
 
-                return string.Empty;
-            //}
+            return string.Empty;
 
-            //return "Completed";
         }
     }
 }
