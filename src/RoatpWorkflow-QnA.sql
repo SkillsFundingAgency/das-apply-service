@@ -459,6 +459,19 @@ VALUES
             "Validations": []            
           },
           "Order": null
+        },
+        {
+          "QuestionId": "PRE-95",
+          "QuestionTag": "EmployerProvider-LevyPaying",
+          "Label": "",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Text",
+            "Validations": []            
+          },
+          "Order": null
         }
       ],
       "PageOfAnswers": [],
