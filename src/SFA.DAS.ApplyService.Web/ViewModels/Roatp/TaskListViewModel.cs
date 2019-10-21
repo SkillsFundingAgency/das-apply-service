@@ -14,7 +14,32 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public Guid ApplicationId { get; set; }
         public string UKPRN { get; set; }
         public string OrganisationName { get; set; }
+        public string TradingName { get; set; }
 
+        public string ApplicationRouteShortText
+        {
+            get
+            {
+                switch(ApplicationRouteId)
+                {
+                    case "1":
+                        {
+                            return "Main";                            
+                        }
+                    case "2":
+                        {
+                            return "Employer";
+                        }
+                    case "3":
+                        {
+                            return "Supporting";
+                        }
+                }
+
+                return string.Empty;
+            }
+        }
+    
         public string PageStatusCompleted => "completed";
         public int IntroductionSectionId => 1;
         public int Sequence1Id => 1;
