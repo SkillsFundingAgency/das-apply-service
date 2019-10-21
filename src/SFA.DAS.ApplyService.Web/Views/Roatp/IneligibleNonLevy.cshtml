@@ -8,6 +8,12 @@
 
 @{ await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml"); }
 
+<div class="grid-row">
+    <form asp-controller="RoatpApplicationPreamble" asp-action="ConfirmLevyStatus" method="get" name="backForm">
+        <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+    </form>
+</div>
+
 @if (!ViewData.ModelState.IsValid)
 {
     <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
