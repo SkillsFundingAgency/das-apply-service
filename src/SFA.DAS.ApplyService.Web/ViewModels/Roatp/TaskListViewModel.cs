@@ -1,4 +1,6 @@
 ﻿
+using SFA.DAS.ApplyService.Web.Services;
+
 namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
     using System;
@@ -9,6 +11,14 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
     public class TaskListViewModel
     {
+        private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
+
+        public TaskListViewModel(IRoatpTaskListWorkflowService roatpTaskListWorkflowService)
+        {
+            _roatpTaskListWorkflowService = roatpTaskListWorkflowService;
+        }
+
+
         private const string EmployerApplicationRouteId = "2";
 
         public Guid ApplicationId { get; set; }
@@ -48,7 +58,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         
         public string CssClass(int sequenceId, int sectionId, bool sequential = false)
         {
-            var status = RoatpTaskListWorkflowHandler.SectionStatus(ApplicationSequences, sequenceId, sectionId, sequential);
+            var status = _roatpTaskListWorkflowService.SectionStatus(ApplicationSequences, sequenceId, sectionId, ApplicationRouteId, sequential);
 
             if (status == String.Empty)
             {
@@ -63,14 +73,14 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         public string SectionStatus(int sequenceId, int sectionId, bool sequential = false)
         {
-            return RoatpTaskListWorkflowHandler.SectionStatus(ApplicationSequences, sequenceId, sectionId, sequential);
+            return _roatpTaskListWorkflowService.SectionStatus(ApplicationSequences, sequenceId, sectionId, ApplicationRouteId, sequential);
         }
 
         public bool PreviousSectionCompleted(int sequenceId, int sectionId, bool sequential = false)
         {
             var sequence = ApplicationSequences.FirstOrDefault(x => x.SequenceId == sequenceId);
 
-            return RoatpTaskListWorkflowHandler.PreviousSectionCompleted(sequence, sectionId, sequential);
+            return _roatpTaskListWorkflowService.PreviousSectionCompleted(sequence, sectionId, sequential);
         }
 
         public bool IntroductionPageNextSectionUnavailable(int sequenceId, int sectionId)

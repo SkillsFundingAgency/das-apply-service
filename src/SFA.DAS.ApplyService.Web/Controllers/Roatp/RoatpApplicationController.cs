@@ -49,6 +49,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly List<QnaPageOverrideConfiguration> _pageOverrideConfiguration;
         private readonly List<QnaLinksConfiguration> _qnaLinks;
         private readonly ICustomValidatorFactory _customValidatorFactory;
+        private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
         private const string InputClassUpperCase = "app-uppercase";
@@ -60,7 +61,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
             IQnaApiClient qnaApiClient, IOptions<List<TaskListConfiguration>> configuration, IProcessPageFlowService processPageFlowService,
             IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
-            IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks, ICustomValidatorFactory customValidatorFactory)
+            IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks, ICustomValidatorFactory customValidatorFactory, IRoatpTaskListWorkflowService roatpTaskListWorkflowService)
         {
             _apiClient = apiClient;
             _logger = logger;
@@ -76,6 +77,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _qnaLinks = qnaLinks.Value;
             _pageOverrideConfiguration = pageOverrideConfiguration.Value;
             _customValidatorFactory = customValidatorFactory;
+            _roatpTaskListWorkflowService = roatpTaskListWorkflowService;
         }
 
         public async Task<IActionResult> Applications(string applicationType)
@@ -364,8 +366,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var yourOrganisationSections = await _qnaApiClient.GetSections(applicationId, yourOrganisationSequence.Id);
             var providerRouteSection = yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute);
             var providerRoute = await _qnaApiClient.GetAnswer(applicationId, providerRouteSection.Id, RoatpWorkflowPageIds.YourOrganisation, RoatpPreambleQuestionIdConstants.ApplyProviderRoute);
-            
-            var model = new TaskListViewModel
+        
+            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
             {
                 ApplicationId = applicationId,
                 ApplicationSequences = filteredSequences,

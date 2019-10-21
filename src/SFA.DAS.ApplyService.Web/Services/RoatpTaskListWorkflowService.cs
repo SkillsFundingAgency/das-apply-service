@@ -1,17 +1,15 @@
 ﻿
-using System.Data.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using MoreLinq;
+using SFA.DAS.ApplyService.Domain.Entities;
 
-namespace SFA.DAS.ApplyService.Application.Apply.Roatp
+namespace SFA.DAS.ApplyService.Web.Services
 {
-    using System;
-    using System.Linq;
-    using System.Collections.Generic;
-    using MoreLinq;
-    using SFA.DAS.ApplyService.Domain.Entities;
-
-    public static class RoatpTaskListWorkflowHandler
+    public class RoatpTaskListWorkflowService: IRoatpTaskListWorkflowService
     {
-        public static string SectionStatus(IEnumerable<ApplicationSequence> applicationSequences, int sequenceId, int sectionId, bool sequential = false)
+        public  string SectionStatus(IEnumerable<ApplicationSequence> applicationSequences, int sequenceId, int sectionId, string applicationRouteId, bool sequential = false)
         {
             var sequence = applicationSequences.FirstOrDefault(x => (int)x.SequenceId == sequenceId);
             if (sequence == null)
@@ -25,6 +23,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 return string.Empty;
             }
 
+
+            //MFCMFC
+            if (sectionId == 2 && sequenceId == 4 && applicationRouteId == "3")
+                return "Not required";
+
             if (!PreviousSectionCompleted(sequence, sectionId, sequential))
             {
                 return string.Empty;
@@ -32,16 +35,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
             var questionsCompleted = SectionHasCompletedQuestions(section);
 
-            //MFCMFC
-            var providerType = 3;
-            if (sectionId == 2 && sequenceId == 4 && providerType ==3)
-                return "Not required";
+           
 
             //var questionsInSection = section.QnAData.Pages.Where(p => p.NotRequired == false).SelectMany(x => x.Questions).DistinctBy(q => q.QuestionId).Count();
             return SectionText(questionsCompleted, section.SectionCompleted, sequential);
         }
 
-        public static bool PreviousSectionCompleted(ApplicationSequence sequence, int sectionId, bool sequential)
+        public  bool PreviousSectionCompleted(ApplicationSequence sequence, int sectionId, bool sequential)
         {
             if (sequential && sectionId > 1)
             {
@@ -68,7 +68,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             return true;
         }
 
-        private static int SectionHasCompletedQuestions(ApplicationSection section)
+        private  int SectionHasCompletedQuestions(ApplicationSection section)
         {
             int answeredQuestions = 0;
             
@@ -92,7 +92,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             return answeredQuestions;
         }
 
-        private static string SectionText(int completedCount, bool sectionCompleted, bool sequential)
+        private  string SectionText(int completedCount, bool sectionCompleted, bool sequential)
         {
             if (sectionCompleted)
             {
