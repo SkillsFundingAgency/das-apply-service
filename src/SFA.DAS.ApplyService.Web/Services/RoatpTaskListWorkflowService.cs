@@ -3,30 +3,32 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MoreLinq;
+using NPOI.POIFS.Storage;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Web.Configuration;
 
 namespace SFA.DAS.ApplyService.Web.Services
 {
     public class RoatpTaskListWorkflowService: IRoatpTaskListWorkflowService
     {
-        public  string SectionStatus(IEnumerable<ApplicationSequence> applicationSequences, int sequenceId, int sectionId, string applicationRouteId, bool sequential = false)
+        public  string SectionStatus(IEnumerable<ApplicationSequence> applicationSequences, List<NotRequiredOverrideConfiguration> notRequiredOverrides, int sequenceId, int sectionId, string applicationRouteId, bool sequential = false)
         {
             var sequence = applicationSequences.FirstOrDefault(x => (int)x.SequenceId == sequenceId);
-            if (sequence == null)
-            {
-                return String.Empty;
-            }
 
-            var section = sequence.Sections.FirstOrDefault(x => x.SectionId == sectionId);
+            var section = sequence?.Sections.FirstOrDefault(x => x.SectionId == sectionId);
             if (section == null)
             {
                 return string.Empty;
             }
 
-
-            //MFCMFC
-            if (sectionId == 2 && sequenceId == 4 && applicationRouteId == "3")
+            if (notRequiredOverrides!=null && notRequiredOverrides.Any(condition => condition.ConditionalCheckField == "ProviderTypeId" &&
+                                                          applicationRouteId == condition.MustEqual &&
+                                                          sectionId == condition.SectionId &&
+                                                          sequenceId == condition.SequenceId))
+            {
                 return "Not required";
+            }
+
 
             if (!PreviousSectionCompleted(sequence, sectionId, sequential))
             {
@@ -35,9 +37,8 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             var questionsCompleted = SectionHasCompletedQuestions(section);
 
-           
-
             //var questionsInSection = section.QnAData.Pages.Where(p => p.NotRequired == false).SelectMany(x => x.Questions).DistinctBy(q => q.QuestionId).Count();
+
             return SectionText(questionsCompleted, section.SectionCompleted, sequential);
         }
 

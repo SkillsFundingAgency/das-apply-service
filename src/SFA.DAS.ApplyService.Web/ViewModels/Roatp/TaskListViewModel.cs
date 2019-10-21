@@ -1,4 +1,4 @@
-﻿
+﻿using SFA.DAS.ApplyService.Web.Configuration;
 using SFA.DAS.ApplyService.Web.Services;
 
 namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
@@ -25,6 +25,9 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string UKPRN { get; set; }
         public string OrganisationName { get; set; }
         public string TradingName { get; set; }
+
+        public List<NotRequiredOverrideConfiguration> NotRequiredOverrides { get; set; }
+
 
         public string ApplicationRouteShortText
         {
@@ -58,7 +61,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         
         public string CssClass(int sequenceId, int sectionId, bool sequential = false)
         {
-            var status = _roatpTaskListWorkflowService.SectionStatus(ApplicationSequences, sequenceId, sectionId, ApplicationRouteId, sequential);
+            var status = _roatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, sequenceId, sectionId, ApplicationRouteId, sequential);
 
             if (status == String.Empty)
             {
@@ -73,7 +76,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         public string SectionStatus(int sequenceId, int sectionId, bool sequential = false)
         {
-            return _roatpTaskListWorkflowService.SectionStatus(ApplicationSequences, sequenceId, sectionId, ApplicationRouteId, sequential);
+            return _roatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, sequenceId, sectionId, ApplicationRouteId, sequential);
         }
 
         public bool PreviousSectionCompleted(int sequenceId, int sectionId, bool sequential = false)
