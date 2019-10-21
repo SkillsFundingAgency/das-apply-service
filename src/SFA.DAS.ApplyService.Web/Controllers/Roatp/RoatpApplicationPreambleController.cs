@@ -222,6 +222,11 @@
         public async Task<IActionResult> ConfirmLevyStatus(EmployerLevyStatusViewModel model)
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+            if (applicationDetails.ApplicationRoute == null)
+            {
+                applicationDetails.ApplicationRoute = new ApplicationRoute { Id = model.ApplicationRouteId };
+                _sessionService.Set(ApplicationDetailsKey, applicationDetails);
+            }
 
             return View("~/Views/Roatp/ConfirmLevyStatus.cshtml", model);
         }
@@ -229,16 +234,21 @@
         [HttpPost]
         public async Task<IActionResult> SubmitLevyStatus(EmployerLevyStatusViewModel model)
         {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
             if (!ModelState.IsValid)
             {
                 return View("~/Views/Roatp/ConfirmLevyStatus.cshtml", model);
             }
+            
+            applicationDetails.LevyPayingEmployer = model.LevyPayingEmployer;
+            _sessionService.Set(ApplicationDetailsKey, applicationDetails);
 
-            if (model.LevyPayingEmployer == "Y")
+            if (applicationDetails.LevyPayingEmployer == "Y")
             {
                 var selectApplicationRouteModel = new SelectApplicationRouteViewModel
                 {
-                    ApplicationRouteId = model.ApplicationRouteId
+                    ApplicationRouteId = applicationDetails.ApplicationRoute.Id
                 };
                 return await StartRoatpApplication(selectApplicationRouteModel);
             }
@@ -298,6 +308,12 @@
             var applicationRoutes = await GetApplicationRoutesForOrganisation();
 
             model.ApplicationRoutes = applicationRoutes;
+
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+            if (applicationDetails.ApplicationRoute != null)
+            {
+                model.ApplicationRouteId = applicationDetails.ApplicationRoute.Id;
+            }
 
             return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
         }

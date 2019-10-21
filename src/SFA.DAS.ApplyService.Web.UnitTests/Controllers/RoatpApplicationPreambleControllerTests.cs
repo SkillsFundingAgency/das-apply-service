@@ -1055,6 +1055,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 UKPRN = "10001234"
             };
 
+            var applicationDetails = new ApplicationDetails
+            {
+                UKPRN = 10001000,
+                ApplicationRoute = new ApplicationRoute { Id = ApplicationRoute.EmployerProviderApplicationRoute }
+            };
+
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
             var result = _controller.SubmitLevyStatus(model).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
@@ -1085,6 +1092,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 LevyPayingEmployer = "Y",
                 UKPRN = "10001234"
             };
+
+            _applicationDetails.ApplicationRoute = new ApplicationRoute { Id = ApplicationRoute.EmployerProviderApplicationRoute };
+            
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
 
             var result = _controller.SubmitLevyStatus(model).GetAwaiter().GetResult();
 
@@ -1266,6 +1277,15 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(registerStatus);
+
+            var applicationDetails = new ApplicationDetails
+            {
+                UKPRN = 10001000,
+                RoatpRegisterStatus = registerStatus,
+                ApplicationRoute = new ApplicationRoute {  Id = ApplicationRoute.MainProviderApplicationRoute }
+            };
+
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
 
             var result = _controller.SelectApplicationRoute().GetAwaiter().GetResult();
             var viewResult = result as ViewResult;
