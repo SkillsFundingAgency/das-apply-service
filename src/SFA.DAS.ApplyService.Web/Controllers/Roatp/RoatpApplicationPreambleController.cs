@@ -20,6 +20,7 @@
     using Microsoft.AspNetCore.Authorization;
     using SFA.DAS.ApplyService.InternalApi.Types;
     using SFA.DAS.ApplyService.Web.Resources;
+    using System.Collections.Generic;
 
     [Authorize]
     public class RoatpApplicationPreambleController : Controller
@@ -198,7 +199,7 @@
         {
             if (!ModelState.IsValid)
             {
-                model.ApplicationRoutes = await _roatpApiClient.GetApplicationRoutes();
+                model.ApplicationRoutes = await GetApplicationRoutesForOrganisation();
 
                 return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
             }
@@ -294,8 +295,9 @@
         public async Task<IActionResult> SelectApplicationRoute()
         {
             var model = new SelectApplicationRouteViewModel();
+            var applicationRoutes = await GetApplicationRoutesForOrganisation();
 
-            model.ApplicationRoutes = await _roatpApiClient.GetApplicationRoutes();
+            model.ApplicationRoutes = applicationRoutes;
 
             return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
         }
@@ -386,9 +388,15 @@
             var roatpRegisterStatus = await _roatpApiClient.GetOrganisationRegisterStatus(applicationDetails.UKPRN);
 
             applicationDetails.RoatpRegisterStatus = roatpRegisterStatus;
-
-            _sessionService.Set(ApplicationDetailsKey, applicationDetails);
             
+            _sessionService.Set(ApplicationDetailsKey, applicationDetails);
+
+
+            if (ProviderEligibleToChangeRoute(roatpRegisterStatus))
+            {
+                return RedirectToAction("ProviderAlreadyOnRegister");
+            }
+
             return RedirectToAction("SelectApplicationRoute");           
         }
 
@@ -413,6 +421,85 @@
             }
 
             return RedirectToAction("Applications", "RoatpApplication", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
+		}
+		
+        [Route("already-on-roatp")]
+        public async Task<IActionResult> ProviderAlreadyOnRegister()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var providerRoutes = await _roatpApiClient.GetApplicationRoutes();
+
+            var existingProviderRoute = providerRoutes.FirstOrDefault(x => x.Id == applicationDetails.RoatpRegisterStatus.ProviderTypeId);
+
+            var model = new ChangeProviderRouteViewModel
+            {
+                UKPRN = applicationDetails.UKPRN.ToString(),
+                CurrentProviderType = existingProviderRoute
+            };
+
+            return View("~/Views/Roatp/ProviderAlreadyOnRegister.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeProviderRoute(ChangeProviderRouteViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+                var providerRoutes = await _roatpApiClient.GetApplicationRoutes();
+
+                var existingProviderRoute = providerRoutes.FirstOrDefault(x => x.Id == applicationDetails.RoatpRegisterStatus.ProviderTypeId);
+
+                model = new ChangeProviderRouteViewModel
+                {
+                    UKPRN = applicationDetails.UKPRN.ToString(),
+                    CurrentProviderType = existingProviderRoute
+                };
+
+                return View("~/Views/Roatp/ProviderAlreadyOnRegister.cshtml", model);
+            }
+
+            if (model.ChangeApplicationRoute != "Y")
+            {                            
+                return RedirectToAction("ChosenToRemainOnRegister", model);
+            }
+            else
+            {
+                return RedirectToAction("SelectApplicationRoute");
+            }
+        }
+        
+        [Route("chosen-stay-on-roatp")]
+        public async Task<IActionResult> ChosenToRemainOnRegister()
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            var providerRoutes = await _roatpApiClient.GetApplicationRoutes();
+
+            var existingProviderRoute = providerRoutes.FirstOrDefault(x => x.Id == applicationDetails.RoatpRegisterStatus.ProviderTypeId);
+
+            var model = new ChangeProviderRouteViewModel
+            {
+                UKPRN = applicationDetails.UKPRN.ToString(),
+                CurrentProviderType = existingProviderRoute
+            };
+
+            return View("~/Views/Roatp/ChosenToRemainOnRegister.cshtml", model);
+        }
+
+        private bool ProviderEligibleToChangeRoute(OrganisationRegisterStatus roatpRegisterStatus)
+        {
+            if (roatpRegisterStatus.UkprnOnRegister 
+                && (roatpRegisterStatus.StatusId == OrganisationStatus.Active 
+                || roatpRegisterStatus.StatusId == OrganisationStatus.ActiveNotTakingOnApprentices
+                || roatpRegisterStatus.StatusId == OrganisationStatus.Onboarding))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private bool IsEnglandAndWalesCharityCommissionNumber(string charityNumber)
@@ -432,6 +519,26 @@
 
             return true;
         }
-        
+               
+        private async Task<List<ApplicationRoute>> GetApplicationRoutesForOrganisation()
+        {
+            var applicationRoutes = (await _roatpApiClient.GetApplicationRoutes()).ToList();
+
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+            if (applicationDetails != null 
+                && applicationDetails.RoatpRegisterStatus !=null 
+                && applicationDetails.RoatpRegisterStatus.UkprnOnRegister
+                && applicationDetails.RoatpRegisterStatus.StatusId != OrganisationStatus.Removed)
+            {
+                var existingRoute = applicationRoutes.FirstOrDefault(x => x.Id == applicationDetails.RoatpRegisterStatus.ProviderTypeId);
+                if (existingRoute != null)
+                {
+                    applicationRoutes.Remove(existingRoute);
+                }
+            }
+
+            return applicationRoutes;
+        }
+
     }
 }
