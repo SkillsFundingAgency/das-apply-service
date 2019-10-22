@@ -293,20 +293,36 @@ VALUES
 			"PageId": "540",
 			"SequenceId": "4",
 			"SectionId": "3",
-			"Title": "Equality and Diversity policy",
-			"LinkTitle": "Equality and Diversity policy",
-			"InfoText": "Equality and Diversity policy",
+			"Title": "Equality and diversity policy",
+			"LinkTitle": "Equality and diversity policy",
+			"InfoText": "Equality and diversity policy",
 			 "Questions": [
         {
           "QuestionId": "PYA-30",
           "QuestionTag": "ProtectApprentice-Equality",
-          "Label": "Equality and Diversity policy",
+          "Label": "Upload your organisation''s equality and diversity policy",
           "ShortLabel": "",
-          "QuestionBodyText": "Holding page",
-          "Hint": "This is a holding page",
+          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-equality-policy\">This must include how your organisation will:</p>
+	  <ul class=\"govuk-list govuk-list--bullet\">
+		  <li>promote the policy</li>
+		  <li>get engagement towards the policy</li>
+		  <li>train its employees in implementing the policy</li>
+		  <li>consider the policy when recruiting, delivering apprenticeship training and working with employers and apprentices</li>
+		</ul>
+	  <p class=\"govuk-body\">The file must be a PDF and smaller than 5MB.</p>",
+          "Hint": "",
           "Input": {
-            "Type": "Hidden",
-            "Validations": []
+            "Type": "fileUpload",
+            "Validations": [{
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Select your organisation''s equality and diversity policy"
+                },
+				{
+                "Name": "FileType",
+                "Value": "pdf",
+                "ErrorMessage": "The selected file must be a PDF"
+              }]
           },
           "Order": null
         }
@@ -332,7 +348,7 @@ VALUES
     }
 	]
 }
-', N'Equality and Diversity policy', N'Equality and Diversity policy',  N'Pages')
+', N'Equality and diversity policy', N'Equality and diversity policy',  N'Pages')
 
 
 
