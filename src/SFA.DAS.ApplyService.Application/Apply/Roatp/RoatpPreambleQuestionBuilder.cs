@@ -41,6 +41,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string RoatpRemovedReason = "PRE-92";
         public static string RoatpStatusDate = "PRE-93";
         public static string RoatpProviderRoute = "PRE-94";
+        public static string LevyPayingEmployer = "PRE-95";
         public static string CompaniesHouseDirectors = "YO-70";
         public static string CompaniesHousePSCs = "YO-71";
         public static string CompaniesHouseDetailsConfirmed = "YO-75";
@@ -157,10 +158,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             CreateRoatpQuestionAnswers(applicationDetails, questions);
 
             CreateApplyQuestionAnswers(applicationDetails, questions);
+            CreateLevyEmployerQuestionAnswers(applicationDetails, questions);
 
             return questions;
         }
-
+        
         public static List<PreambleAnswer> CreateCompaniesHouseWhosInControlQuestions(ApplicationDetails applicationDetails)
         {
             var questions = new List<PreambleAnswer>();
@@ -636,6 +638,21 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 });
             }
 
+        }
+
+        private static void CreateLevyEmployerQuestionAnswers(ApplicationDetails applicationDetails, List<PreambleAnswer> questions)
+        {
+            var levyPayingEmployer = string.Empty;
+            if (applicationDetails.LevyPayingEmployer == "Y")
+            {
+                levyPayingEmployer = "TRUE";
+            }
+            questions.Add(new PreambleAnswer
+            {
+                QuestionId = RoatpPreambleQuestionIdConstants.LevyPayingEmployer,
+                Value = levyPayingEmployer,
+                SequenceId = RoatpWorkflowSequenceIds.Preamble
+            });
         }
     }
 
