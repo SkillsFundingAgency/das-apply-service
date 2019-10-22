@@ -26,7 +26,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
     using InternalApi.Types.CharityCommission;
     using SFA.DAS.ApplyService.Domain.CompaniesHouse;
     using SFA.DAS.ApplyService.Web.AutoMapper;
-    using Validators;
     using Trustee = InternalApi.Types.CharityCommission.Trustee;
 
     [TestFixture]
@@ -116,8 +115,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                     DissolvedOn = null
                 }
             };
-
-
+            
             _applicationDetails = new ApplicationDetails
             {
                 CompanySummary = null,
@@ -160,14 +158,21 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 },
                 RoatpRegisterStatus = new OrganisationRegisterStatus
                 {
-                    UkprnOnRegister = true,
-                    OrganisationId = Guid.NewGuid(),
-                    ProviderTypeId = 1,
-                    StatusDate = new DateTime(2017, 2, 4),
-                    StatusId = 1
+                    UkprnOnRegister = false
                 }
             };
 
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(_applicationDetails.RoatpRegisterStatus);
+
+            var applicationRoutes = new List<ApplicationRoute>
+            {
+                new ApplicationRoute { Id = ApplicationRoute.MainProviderApplicationRoute, RouteName = "Main provider" },
+                new ApplicationRoute { Id = ApplicationRoute.EmployerProviderApplicationRoute, RouteName = "Employer provider" },
+                new ApplicationRoute { Id = ApplicationRoute.SupportingProviderApplicationRoute, RouteName = "Supporting provider" }
+            };
+
+            _roatpApiClient.Setup(x => x.GetApplicationRoutes()).ReturnsAsync(applicationRoutes);
+            
             _user = new Contact {Id = Guid.NewGuid()};
 
             var webUser = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
@@ -1011,7 +1016,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var applicationRouteModel = new SelectApplicationRouteViewModel
             {
-                ApplicationRouteId = ApplicationRoute.EmployerProviderApplicationRoute
+                ApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute
             };
 
             var result = _controller.StartApplication(applicationRouteModel).GetAwaiter().GetResult();
@@ -1022,5 +1027,318 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                                                                && y.OrganisationDetails.CharityCommissionDetails ==
                                                                null), It.IsAny<Guid>()), Times.Once);
         }
+        
+        [Test]
+        public void Provider_asked_to_confirm_levy_status_if_choose_employer_application_route()
+        {
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
+
+            var model = new SelectApplicationRouteViewModel
+            {
+                ApplicationRouteId = ApplicationRoute.EmployerProviderApplicationRoute
+            };
+
+            var result = _controller.StartApplication(model).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ConfirmLevyStatus");
+        }
+
+        [Test]
+        public void Provider_routed_to_confirmation_page_if_non_levy_employer()
+        {
+            var model = new EmployerLevyStatusViewModel
+            {
+                ApplicationRouteId = ApplicationRoute.EmployerProviderApplicationRoute,
+                LevyPayingEmployer = "N",
+                UKPRN = "10001234"
+            };
+
+            var applicationDetails = new ApplicationDetails
+            {
+                UKPRN = 10001000,
+                ApplicationRoute = new ApplicationRoute { Id = ApplicationRoute.EmployerProviderApplicationRoute }
+            };
+
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+            var result = _controller.SubmitLevyStatus(model).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("IneligibleNonLevy");
+        }
+
+        [Test]
+        public void Provider_routed_to_task_list_if_levy_paying_employer()
+        {
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
+
+            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<string>())).ReturnsAsync(_user);
+            _usersApiClient.Setup(x => x.ApproveUser(It.IsAny<Guid>())).ReturnsAsync(true);
+
+            _organisationApiClient.Setup(x => x.Create(It.IsAny<CreateOrganisationRequest>(), It.IsAny<Guid>()))
+                .ReturnsAsync(new Organisation()).Verifiable();
+
+            _expectedRequest.OrganisationDetails.UKRLPDetails.VerificationDetails.Add(new VerificationDetails
+            {
+                VerificationAuthority = "National Audit Office",
+                VerificationId = "12345678"
+            });
+
+            var model = new EmployerLevyStatusViewModel
+            {
+                ApplicationRouteId = ApplicationRoute.EmployerProviderApplicationRoute,
+                LevyPayingEmployer = "Y",
+                UKPRN = "10001234"
+            };
+
+            _applicationDetails.ApplicationRoute = new ApplicationRoute { Id = ApplicationRoute.EmployerProviderApplicationRoute };
+            
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
+
+            var result = _controller.SubmitLevyStatus(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("Applications");
+            redirectResult.ControllerName.Should().Be("RoatpApplication");
+        }
+
+        [Test]
+        public void Provider_asked_to_choose_application_route_again_if_non_levy_and_want_to_continue_with_application()
+        {
+            var model = new EmployerProviderContinueApplicationViewModel
+            {
+                ContinueWithApplication = "Y"
+            };
+
+            var result = _controller.ConfirmNonLevyContinue(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+
+			redirectResult.ActionName.Should().Be("SelectApplicationRoute");
+        }
+
+        [TestCase(OrganisationStatus.Active)]
+        [TestCase(OrganisationStatus.ActiveNotTakingOnApprentices)]
+        [TestCase(OrganisationStatus.Onboarding)]
+        public void UKPRN_is_already_active_on_register(int statusId)
+        {
+            var providerDetails = new ProviderDetails
+            {
+                UKPRN = "10001000",
+                ProviderName = "Test Provider",
+                VerificationDetails = new List<VerificationDetails>
+                {
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CompaniesHouseAuthority,
+                        VerificationId = "12345678"
+                    },
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CharityCommissionAuthority,
+                        VerificationId = "0123456"
+                    }
+                }
+            };
+
+            var applicationDetails = new ApplicationDetails
+            {
+                UKPRN = 10001000,
+                UkrlpLookupDetails = providerDetails
+            };
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+
+            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
+                .Returns(Task.FromResult(_activeCompany)).Verifiable();
+            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
+                .Returns(Task.FromResult(_activeCharity)).Verifiable();
+
+            var registerStatus = new OrganisationRegisterStatus
+            {
+                OrganisationId = Guid.NewGuid(),
+                ProviderTypeId = ApplicationRoute.MainProviderApplicationRoute,
+                RemovedReasonId = null,
+                StatusDate = new DateTime(2018, 1, 2),
+                StatusId = statusId,
+                UkprnOnRegister = true
+            };
+
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(registerStatus);
+
+            var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("ProviderAlreadyOnRegister");
+
+        }
+
+        [TestCase(OrganisationStatus.Removed)]
+        public void UKPRN_is_already_on_register_but_was_removed(int statusId)
+        {
+            var providerDetails = new ProviderDetails
+            {
+                UKPRN = "10001000",
+                ProviderName = "Test Provider",
+                VerificationDetails = new List<VerificationDetails>
+                {
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CompaniesHouseAuthority,
+                        VerificationId = "12345678"
+                    },
+                    new VerificationDetails
+                    {
+                        VerificationAuthority = VerificationAuthorities.CharityCommissionAuthority,
+                        VerificationId = "0123456"
+                    }
+                }
+            };
+
+            var applicationDetails = new ApplicationDetails
+            {
+                UKPRN = 10001000,
+                UkrlpLookupDetails = providerDetails
+            };
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+
+            _companiesHouseApiClient.Setup(x => x.GetCompanyDetails(It.IsAny<string>()))
+                .Returns(Task.FromResult(_activeCompany)).Verifiable();
+            _charityCommissionApiClient.Setup(x => x.GetCharityDetails(It.IsAny<int>()))
+                .Returns(Task.FromResult(_activeCharity)).Verifiable();
+
+            var registerStatus = new OrganisationRegisterStatus
+            {
+                OrganisationId = Guid.NewGuid(),
+                ProviderTypeId = ApplicationRoute.MainProviderApplicationRoute,
+                RemovedReasonId = RemovedReason.MinimumStandardsNotMet,
+                StatusDate = new DateTime(2018, 1, 2),
+                StatusId = statusId,
+                UkprnOnRegister = true
+            };
+
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(registerStatus);
+
+            var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("SelectApplicationRoute");
+
+        }
+
+        [TestCase(OrganisationStatus.Active)]
+        [TestCase(OrganisationStatus.ActiveNotTakingOnApprentices)]
+        [TestCase(OrganisationStatus.Onboarding)]
+        public void Provider_already_on_register_changes_route_and_cannot_select_current_route(int statusId)
+        {
+            var registerStatus = new OrganisationRegisterStatus
+            {
+                OrganisationId = Guid.NewGuid(),
+                ProviderTypeId = ApplicationRoute.MainProviderApplicationRoute,
+                RemovedReasonId = null,
+                StatusDate = new DateTime(2018, 1, 2),
+                StatusId = statusId,
+                UkprnOnRegister = true
+            };
+
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(registerStatus);
+
+            var applicationDetails = new ApplicationDetails
+            {
+                UKPRN = 10001000,
+                RoatpRegisterStatus = registerStatus            
+            };
+
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+
+            var result = _controller.SelectApplicationRoute().GetAwaiter().GetResult();
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var model = viewResult.Model as SelectApplicationRouteViewModel;
+
+            var currentApplicationRoute = model.ApplicationRoutes.FirstOrDefault(x => x.Id == registerStatus.ProviderTypeId);
+
+            currentApplicationRoute.Should().BeNull();
+        }
+
+        [Test]
+        public void Provider_already_on_register_but_previously_removed_can_select_any_route()
+        {
+            var registerStatus = new OrganisationRegisterStatus
+            {
+                OrganisationId = Guid.NewGuid(),
+                ProviderTypeId = ApplicationRoute.MainProviderApplicationRoute,
+                RemovedReasonId = RemovedReason.MinimumStandardsNotMet,
+                StatusDate = new DateTime(2018, 1, 2),
+                StatusId = OrganisationStatus.Removed,
+                UkprnOnRegister = true
+            };
+
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(registerStatus);
+
+            var applicationDetails = new ApplicationDetails
+            {
+                UKPRN = 10001000,
+                RoatpRegisterStatus = registerStatus,
+                ApplicationRoute = new ApplicationRoute {  Id = ApplicationRoute.MainProviderApplicationRoute }
+            };
+
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+
+            var result = _controller.SelectApplicationRoute().GetAwaiter().GetResult();
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var model = viewResult.Model as SelectApplicationRouteViewModel;
+
+            var currentApplicationRoute = model.ApplicationRoutes.FirstOrDefault(x => x.Id == registerStatus.ProviderTypeId);
+
+            currentApplicationRoute.Should().NotBeNull();
+        }
+
+        [Test]
+        public void Provider_already_on_register_opts_to_change_route()
+        {
+            var model = new ChangeProviderRouteViewModel { ChangeApplicationRoute = "Y" };
+
+            var result = _controller.ChangeProviderRoute(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+
+            redirectResult.Should().NotBeNull();
+
+            redirectResult.ActionName.Should().Be("SelectApplicationRoute");
+        }
+
+        [Test]
+        public void Provider_shown_shutter_page_if_non_levy_and_choose_not_to_continue_with_application()
+        {
+            var model = new EmployerProviderContinueApplicationViewModel
+            {
+                ContinueWithApplication = "N"
+            };
+
+            var result = _controller.ConfirmNonLevyContinue(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("NonLevyAbandonedApplication");
+        }
+
+		[Test]
+        public void Provider_already_on_register_opts_to_stay_on_register_in_same_route()
+        {
+            var model = new ChangeProviderRouteViewModel { ChangeApplicationRoute = "N" };
+
+            var result = _controller.ChangeProviderRoute(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+
+            redirectResult.Should().NotBeNull();
+
+            redirectResult.ActionName.Should().Be("ChosenToRemainOnRegister");
+        }
+
     }
+
 }
