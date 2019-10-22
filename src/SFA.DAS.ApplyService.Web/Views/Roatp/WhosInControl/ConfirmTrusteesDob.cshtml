@@ -1,34 +1,75 @@
-﻿<div class="govuk-phase-banner govuk-width-container roatp__navigation">
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ConfirmTrusteesDateOfBirthViewModel
+
+@{ 
+    var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
+}
+
+<div class="govuk-phase-banner govuk-width-container roatp__navigation">
     <nav>
         <ul id="navigation" class="roatp__navigation " aria-label="Top Level Navigation">
-
             <li class="roatp__navigation-item">
-
-                <a class="govuk-header__link" href="#">Application overview</a>
-
+                <a class="govuk-header__link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Application overview</a>
             </li>
-
         </ul>
     </nav>
 </div>
 
 <div class="grid-row">
-    <a class="govuk-back-link" href="#">Back</a>
+    <a class="govuk-back-link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Back</a>
 </div>
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            <h1 class="govuk-heading-xl">PLACEHOLDER Confirm Trustees Dates Of Birth</h1>
+            @if (Model.Trustees.TableData.DataRows.Count == 1)
+            {
+                <h1 class="govuk-heading-xl">Enter the date of birth for trustee</h1>
+            }
+            else
+            {
+                <h1 class="govuk-heading-xl">Enter the date of birth for trustees</h1>
+            }
 
-            <form method="post" asp-action="TrusteesDobConfirmed" novalidate enctype="multipart/form-data">
+            <form method="post" asp-action="TrusteesDobsConfirmed" novalidate enctype="multipart/form-data">
 
+                @Html.HiddenFor(x => x.ApplicationId)
 
-                <button type="submit" class="govuk-button">Confirm and continue</button>
+                @foreach (var trustee in Model.Trustees.TableData.DataRows)
+                {
+                    <p class="govuk-body">@Html.Raw(trustee.Columns[0])</p>
 
+                    <span class="govuk-hint" id="dob-hint">
+                        For example, 3 1980
+                    </span>
+                    <div class="govuk-date-input" id="dob">
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" for="@(trustee.Id + "_Month")">Month</label>
+                                <input value=""
+                                        class="govuk-input govuk-date-input__input govuk-input--width-2 @isError"
+                                        id="@(trustee.Id + "_Month")"
+                                        name="@(trustee.Id + "_Month")"
+                                        type="number"
+                                        pattern="[0-9]*" />
+                            </div>
+                        </div>
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" for="@(trustee.Id + "_Year")">Year</label>
+                                <input value=""
+                                        class="govuk-input govuk-date-input__input govuk-input--width-4 @isError"
+                                        id="@(trustee.Id + "_Year")"
+                                        name="@(trustee.Id + "_Year")"
+                                        type="number"
+                                        pattern="[0-9]*" />
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <button type="submit" class="govuk-button">Save and continue</button>
 
             </form>
         </div>
     </div>
 </main>
-

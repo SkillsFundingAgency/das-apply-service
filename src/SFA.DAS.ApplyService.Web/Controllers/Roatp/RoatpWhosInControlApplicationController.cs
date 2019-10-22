@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Web.Infrastructure;
+using SFA.DAS.ApplyService.Web.Validators;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
 using System.Collections.Generic;
@@ -147,11 +149,52 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return RedirectToAction("ConfirmTrusteesDob", new { applicationId });
         }
 
+        [Route("confirm-trustees-dob")]
         public async Task<IActionResult> ConfirmTrusteesDob(Guid applicationId)
         {
-            return View("~/Views/Roatp/WhosInControl/ConfirmTrusteesDob.cshtml");
+            var trusteesAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
+            var trusteesData = JsonConvert.DeserializeObject<dynamic>(trusteesAnswer.Value);
+
+            var model = new ConfirmTrusteesDateOfBirthViewModel
+            {
+                ApplicationId = applicationId,
+                Trustees = new PeopleInControl
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionTrustees,
+                    TableData = trusteesData
+                }
+            };
+
+            return View("~/Views/Roatp/WhosInControl/ConfirmTrusteesDob.cshtml", model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> TrusteesDobsConfirmed(Guid applicationId)
+        {
+            var answers = GetAnswersFromForm();
+
+            var trusteesAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
+            var trusteesData = JsonConvert.DeserializeObject<dynamic>(trusteesAnswer.Value);
+
+            var model = new ConfirmTrusteesDateOfBirthViewModel
+            {
+                ApplicationId = applicationId,
+                Trustees = new PeopleInControl
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionTrustees,
+                    TableData = trusteesData
+                }
+            };
+            model.ErrorMessages = TrusteeDateOfBirthValidator.ValidateTrusteeDatesOfBirth(answers, trusteesData);
+
+            if (model.ErrorMessages != null & model.ErrorMessages.Count > 0)
+            {
+                return View("~/Views/Roatp/WhosInControl/ConfirmTrusteesDob.cshtml", model);
+            }
+
+            return null;
+        }
+                
         public async Task<IActionResult> AddTrustees(Guid applicationId)
         {
             return View("~/Views/Roatp/WhosInControl/AddTrustees.cshtml");
@@ -170,6 +213,40 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public async Task<IActionResult> AddPeopleInControl(Guid applicationId)
         {
             return View("~/Views/Roatp/WhosInControl/AddPeopleInControl.cshtml");
+        }
+
+        private List<Answer> GetAnswersFromForm()
+        {
+            var answers = new List<Answer>();
+
+            Dictionary<string, JObject> answerValues = new Dictionary<string, JObject>();
+
+            foreach (var formVariable in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__")))
+            {
+                var answerKey = formVariable.Key.Split("_Key_");
+                if (!answerValues.ContainsKey(answerKey[0]))
+                {
+                    answerValues.Add(answerKey[0], new JObject());
+                }
+
+                answerValues[answerKey[0]].Add(
+                    answerKey.Count() == 1 ? string.Empty : answerKey[1],
+                    formVariable.Value.ToString());
+            }
+
+            foreach (var answer in answerValues)
+            {
+                if (answer.Value.Count > 1)
+                {
+                    answers.Add(new Answer() { QuestionId = answer.Key, JsonValue = answer.Value });
+                }
+                else
+                {
+                    answers.Add(new Answer() { QuestionId = answer.Key, Value = answer.Value.Value<string>(string.Empty) });
+                }
+            }
+
+            return answers;
         }
     }
 }
