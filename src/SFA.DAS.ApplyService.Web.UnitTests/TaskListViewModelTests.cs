@@ -28,7 +28,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             {
                 Id = Guid.NewGuid(),
                 ApplicationId = _applicationId,
-                SequenceNo = RoatpWorkflowSequenceIds.YourOrganisation,
+                SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
                 Sections = new List<ApplicationSection>()
             };
             _providerRouteSection = new ApplicationSection
@@ -254,7 +254,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             {
                 Id = Guid.NewGuid(),
                 ApplicationId = _applicationId,
-                SequenceNo = RoatpWorkflowSequenceIds.CriminalComplianceChecks,
+                SequenceId = RoatpWorkflowSequenceIds.CriminalComplianceChecks,
                 Sections = new List<ApplicationSection>()
             };
             var criminalWhatYouNeedSection = new ApplicationSection

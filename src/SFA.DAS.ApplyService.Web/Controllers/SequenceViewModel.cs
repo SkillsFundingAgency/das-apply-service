@@ -11,7 +11,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             ApplicationId = applicationId;
             Sections = sequence.Sections;
-            SequenceId = (int)sequence.SequenceNo;
+            SequenceId = (int)sequence.SequenceId;
             Status = sequence.Status;
             ErrorMessages = errorMessages;
         }

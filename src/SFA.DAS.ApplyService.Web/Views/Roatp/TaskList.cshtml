@@ -82,11 +82,11 @@
                     @{
                         await Html.RenderPartialAsync("~/Views/Roatp/TaskList/YourOrganisationSequence.cshtml", Model);
                     }
-                    @foreach (var applicationSequence in Model.ApplicationSequences.Where(sequence => (int)sequence.SequenceNo != RoatpWorkflowSequenceIds.YourOrganisation).OrderBy(seq => seq.SequenceNo))
+                    @foreach (var applicationSequence in Model.ApplicationSequences.Where(sequence => (int)sequence.SequenceId != RoatpWorkflowSequenceIds.YourOrganisation).OrderBy(seq => seq.SequenceId))
                     {
                         <li>
                             <h2 class="app-task-list__section">
-                                @Html.Raw(Convert.ToInt32(applicationSequence.SequenceNo)). @Html.Raw(applicationSequence.Description)
+                                @Html.Raw(Convert.ToInt32(applicationSequence.SequenceId)). @Html.Raw(applicationSequence.Description)
                             </h2>
                             <ul class="app-task-list__items">
                                 @foreach (var section in applicationSequence.Sections.OrderBy(sec => sec.SectionId))

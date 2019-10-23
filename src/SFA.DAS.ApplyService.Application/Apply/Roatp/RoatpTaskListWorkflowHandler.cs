@@ -11,7 +11,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
     {
         public static string SectionStatus(IEnumerable<ApplicationSequence> applicationSequences, int sequenceId, int sectionId, bool sequential = false)
         {
-            var sequence = applicationSequences.FirstOrDefault(x => (int)x.SequenceNo == sequenceId);
+            var sequence = applicationSequences.FirstOrDefault(x => (int)x.SequenceId == sequenceId);
             if (sequence == null)
             {
                 return String.Empty;

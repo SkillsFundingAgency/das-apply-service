@@ -168,7 +168,7 @@ namespace SFA.DAS.ApplyService.Data
 
                 if (sequence != null)
                 {
-                    sequence.Sections = await GetSections(applicationId, (int)sequence.SequenceNo, null);
+                    sequence.Sections = await GetSections(applicationId, (int)sequence.SequenceId, null);
                 }
 
                 return sequence;

@@ -58,8 +58,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.ReturnRequestHandl
         [Test]
         public void Then_dont_close_down_related_applications_if_not_the_initial_application()
         {
-            var sequence1 = new ApplicationSequence { SequenceNo = SequenceId.Stage1, NotRequired = true };
-            var sequence2 = new ApplicationSequence { SequenceNo = SequenceId.Stage2, NotRequired = false };
+            var sequence1 = new ApplicationSequence { SequenceId = SequenceId.Stage1, NotRequired = true };
+            var sequence2 = new ApplicationSequence { SequenceId = SequenceId.Stage2, NotRequired = false };
             ApplyRepository.Setup(r => r.GetSequences(It.IsAny<Guid>())).ReturnsAsync(new List<ApplicationSequence> { sequence1, sequence2 });
 
             var request = new ReturnRequest(Guid.NewGuid(), 2, "Approve");

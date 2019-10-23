@@ -74,14 +74,14 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         private void RemoveSequenceOne(List<ApplicationSequence> sequences)
         {
-            var stage1 = sequences.Single(seq => seq.SequenceNo == SequenceId.Stage1);
+            var stage1 = sequences.Single(seq => seq.SequenceId == SequenceId.Stage1);
             stage1.IsActive = false;
             stage1.NotRequired = true;
             stage1.Status = ApplicationSequenceStatus.Approved;
 
-            SetSubmissionData(stage1.ApplicationId, stage1.SequenceNo).GetAwaiter().GetResult();
+            SetSubmissionData(stage1.ApplicationId, stage1.SequenceId).GetAwaiter().GetResult();
 
-            sequences.Single(seq => seq.SequenceNo == SequenceId.Stage2).IsActive = true;
+            sequences.Single(seq => seq.SequenceId == SequenceId.Stage2).IsActive = true;
         }
 
         private async Task SetSubmissionData(Guid applicationId, int sequenceId)

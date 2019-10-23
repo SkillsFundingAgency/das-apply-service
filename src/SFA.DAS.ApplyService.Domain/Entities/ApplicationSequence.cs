@@ -9,7 +9,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     {
         public Guid ApplicationId { get; set; }
         [JsonProperty("sequenceNo")]
-        public int SequenceNo { get; set; }
+        public int SequenceId { get; set; }
         public bool IsActive { get; set; }
         public List<ApplicationSection> Sections { get; set; }
         public bool NotRequired { get; set; }

@@ -43,8 +43,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
             });
             ApplyRepository.Setup(r => r.GetSequences(ApplicationId)).ReturnsAsync(new List<ApplicationSequence>
             {
-                new ApplicationSequence {SequenceNo = SequenceId.Stage1},
-                new ApplicationSequence {SequenceNo = SequenceId.Stage2}
+                new ApplicationSequence {SequenceId = SequenceId.Stage1},
+                new ApplicationSequence {SequenceId = SequenceId.Stage2}
             });
 
             OrganisationRepository = new Mock<IOrganisationRepository>();

@@ -26,7 +26,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         {
             _sessionService = new Mock<ISessionService>();
             _qnaApiClient = new Mock<IQnaApiClient>();
-            var sequence = new ApplicationSequence { Id = Guid.NewGuid(), SequenceNo = SequenceId };
+            var sequence = new ApplicationSequence { Id = Guid.NewGuid(), SequenceId = SequenceId };
             var sequences = new List<ApplicationSequence>
             {
                 sequence
