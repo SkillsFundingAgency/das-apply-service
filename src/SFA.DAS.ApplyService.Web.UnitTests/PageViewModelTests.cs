@@ -143,7 +143,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             return new Page
             {
                 PageId = pageId,
-                SectionNo = sectionId,
+                SectionId = sectionId,
                 PageOfAnswers = new List<PageOfAnswers>(),
                 Questions = new List<Question>()
             };
