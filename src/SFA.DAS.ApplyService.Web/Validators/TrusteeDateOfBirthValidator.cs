@@ -1,5 +1,4 @@
 ﻿using SFA.DAS.ApplyService.Domain.Apply;
-using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,6 +75,22 @@ namespace SFA.DAS.ApplyService.Web.Validators
                             var errorMessage = new ValidationErrorDetail
                             {
                                 Field = trustee.Id + "_Year",
+                                ErrorMessage = InvalidIncompleteDateOfBirthErrorMessage
+                            };
+                            errorMessages.Add(errorMessage);
+                        }
+                    }
+                    if (dobMonth != null && dobYear != null)
+                    {
+                        int monthValue = 0;
+                        int.TryParse(dobMonth.Value, out monthValue);
+                        int yearValue = 0;
+                        int.TryParse(dobYear.Value, out yearValue);
+                        if (monthValue == DateTime.Now.Month && yearValue == DateTime.Now.Year)
+                        {
+                            var errorMessage = new ValidationErrorDetail
+                            {
+                                Field = trustee.Id + "_Month",
                                 ErrorMessage = InvalidIncompleteDateOfBirthErrorMessage
                             };
                             errorMessages.Add(errorMessage);
