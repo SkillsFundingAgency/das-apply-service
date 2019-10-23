@@ -74,14 +74,14 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         private void RemoveSequenceOne(List<ApplicationSequence> sequences)
         {
-            var stage1 = sequences.Single(seq => seq.SequenceId == SequenceId.Stage1);
+            var stage1 = sequences.Single(seq => seq.SequenceNo == SequenceId.Stage1);
             stage1.IsActive = false;
             stage1.NotRequired = true;
             stage1.Status = ApplicationSequenceStatus.Approved;
 
-            SetSubmissionData(stage1.ApplicationId, stage1.SequenceId).GetAwaiter().GetResult();
+            SetSubmissionData(stage1.ApplicationId, stage1.SequenceNo).GetAwaiter().GetResult();
 
-            sequences.Single(seq => seq.SequenceId == SequenceId.Stage2).IsActive = true;
+            sequences.Single(seq => seq.SequenceNo == SequenceId.Stage2).IsActive = true;
         }
 
         private async Task SetSubmissionData(Guid applicationId, int sequenceId)
@@ -112,7 +112,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         private void RemoveSectionThree(List<ApplicationSection> sections)
         {
-            foreach(var sec in sections.Where(s => s.SectionId == 3))
+            foreach(var sec in sections.Where(s => s.SectionNo == 3))
             {
                 sec.NotRequired = true;
                 sec.Status = ApplicationSectionStatus.Evaluated;
@@ -129,7 +129,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         private void RemoveSectionsOneAndTwo(List<ApplicationSection> sections)
         {
-            foreach (var sec in sections.Where(s => s.SectionId == 1 || s.SectionId == 2))
+            foreach (var sec in sections.Where(s => s.SectionNo == 1 || s.SectionNo == 2))
             {
                 sec.NotRequired = true;
                 sec.Status = ApplicationSectionStatus.Evaluated;

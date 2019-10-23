@@ -46,7 +46,7 @@
             else
             {
                 <ul class="govuk-list">
-                    @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionId))
+                    @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionNo))
                     {
                         <li>
                             <h2 id="@applicationSection.Id" class="govuk-heading-m govuk-!-margin-bottom-2">
@@ -57,7 +57,7 @@
                             </span>
                             @if (Model.Status != ApplicationSequenceStatus.Submitted)
                             {
-                                <a class="govuk-link" href="@Url.Action("Section", "Application", new { applicationSection.ApplicationId, applicationSection.SequenceId, applicationSection.SectionId })">
+                                <a class="govuk-link" href="@Url.Action("Section", "Application", new { applicationSection.ApplicationId, SequenceId = applicationSection.SequenceNo, SectionId = applicationSection.SectionNo })">
                                     Go to @applicationSection.LinkTitle.ToLower()
                                 </a>
                             }

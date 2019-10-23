@@ -17,7 +17,7 @@
     }
     else
     {
-        <a href="@Url.Action("Section", "Application", new { Model.ApplicationId, Model.SequenceId, Model.SectionId })" class="govuk-back-link">Back to summary</a>
+        <a href="@Url.Action("Section", "Application", new { Model.ApplicationId, Model.SequenceNo, Model.SectionNo })" class="govuk-back-link">Back to summary</a>
     }
 </noscript>
 <script>
@@ -109,8 +109,8 @@
                         <form asp-action="DeleteAnswer" asp-controller="Application">
                             <input type="hidden" id="AnswerId" name="AnswerId" value="@answerPage.Id" />
                             <input type="hidden" id="ApplicationId" name="ApplicationId" value="@Model.ApplicationId" />
-                            <input type="hidden" id="SectionId" name="SectionId" value="@Model.SectionId" />
-                            <input type="hidden" id="SequenceId" name="SequenceId" value="@Model.SequenceId" />
+                            <input type="hidden" id="SectionId" name="SectionNo" value="@Model.SectionId" />
+                            <input type="hidden" id="SequenceId" name="SequenceNo" value="@Model.SequenceId" />
                             <input type="hidden" id="PageId" name="PageId" value="@Model.PageId" />
                             <input type="hidden" id="RedirectAction" name="RedirectAction" value="@Model.RedirectAction" />
                             <div class="govuk-!-margin-top-4">

@@ -28,18 +28,18 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             {
                 Id = Guid.NewGuid(),
                 ApplicationId = _applicationId,
-                SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
+                SequenceNo = RoatpWorkflowSequenceIds.YourOrganisation,
                 Sections = new List<ApplicationSection>()
             };
             _providerRouteSection = new ApplicationSection
             {
-                SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
-                SectionId = RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute
+                SequenceNo = RoatpWorkflowSequenceIds.YourOrganisation,
+                SectionNo = RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute
             };
             _whatYouNeedSection = new ApplicationSection
             {
-                SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
-                SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed
+                SequenceNo = RoatpWorkflowSequenceIds.YourOrganisation,
+                SectionNo = RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed
             };
 
             _yourApplicationSequence.Sections.Add(_providerRouteSection);
@@ -254,13 +254,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             {
                 Id = Guid.NewGuid(),
                 ApplicationId = _applicationId,
-                SequenceId = RoatpWorkflowSequenceIds.CriminalComplianceChecks,
+                SequenceNo = RoatpWorkflowSequenceIds.CriminalComplianceChecks,
                 Sections = new List<ApplicationSection>()
             };
             var criminalWhatYouNeedSection = new ApplicationSection
             {
-                SequenceId = RoatpWorkflowSequenceIds.CriminalComplianceChecks,
-                SectionId = RoatpWorkflowSectionIds.CriminalComplianceChecks.WhatYouWillNeed,
+                SequenceNo = RoatpWorkflowSequenceIds.CriminalComplianceChecks,
+                SectionNo = RoatpWorkflowSectionIds.CriminalComplianceChecks.WhatYouWillNeed,
                 QnAData = new QnAData
                 {
                     Pages = new List<Page>
@@ -293,8 +293,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             criminalWhatYouNeedSection.SectionCompleted = true;
             var criminalOrganisationChecksSection = new ApplicationSection
             {
-                SequenceId = RoatpWorkflowSequenceIds.CriminalComplianceChecks,
-                SectionId = RoatpWorkflowSectionIds.CriminalComplianceChecks.ChecksOnYourOrganisation,
+                SequenceNo = RoatpWorkflowSequenceIds.CriminalComplianceChecks,
+                SectionNo = RoatpWorkflowSectionIds.CriminalComplianceChecks.ChecksOnYourOrganisation,
                 QnAData = new QnAData
                 {
                     Pages = new List<Page>
@@ -335,8 +335,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             };
             var criminalIndividualChecksSection = new ApplicationSection
             {
-                SequenceId = RoatpWorkflowSequenceIds.CriminalComplianceChecks,
-                SectionId = RoatpWorkflowSectionIds.CriminalComplianceChecks.CheckOnWhosInControl,
+                SequenceNo = RoatpWorkflowSequenceIds.CriminalComplianceChecks,
+                SectionNo = RoatpWorkflowSectionIds.CriminalComplianceChecks.CheckOnWhosInControl,
                 QnAData = new QnAData
                 {
                     Pages = new List<Page>

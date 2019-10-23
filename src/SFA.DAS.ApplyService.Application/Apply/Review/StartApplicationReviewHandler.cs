@@ -25,12 +25,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review
 
                 if (section1.Status == ApplicationSectionStatus.Submitted)
                 {
-                    await _applyRepository.StartApplicationReview(request.ApplicationId, section1.SectionId);
+                    await _applyRepository.StartApplicationReview(request.ApplicationId, section1.SectionNo);
                 }
 
                 if (section2.Status == ApplicationSectionStatus.Submitted)
                 {
-                    await _applyRepository.StartApplicationReview(request.ApplicationId, section2.SectionId);
+                    await _applyRepository.StartApplicationReview(request.ApplicationId, section2.SectionNo);
                 }
             }
 

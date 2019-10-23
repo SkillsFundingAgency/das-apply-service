@@ -51,11 +51,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
                 await _applyRepository.CloseSequence(request.ApplicationId, request.SequenceId);
 
                 var sequences = await _applyRepository.GetSequences(request.ApplicationId);
-                var nextSequence = sequences.FirstOrDefault(seq => (int)seq.SequenceId == request.SequenceId + 1);
+                var nextSequence = sequences.FirstOrDefault(seq => (int)seq.SequenceNo == request.SequenceId + 1);
 
                 if (nextSequence != null)
                 {
-                    await _applyRepository.OpenSequence(request.ApplicationId, (int)nextSequence.SequenceId);
+                    await _applyRepository.OpenSequence(request.ApplicationId, (int)nextSequence.SequenceNo);
                 }
                 else
                 {

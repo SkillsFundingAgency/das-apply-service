@@ -3,11 +3,11 @@
 
 @{
     var yourOrganisationSequence = Model.ApplicationSequences
-        .Single(seq => (int)seq.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
+        .Single(seq => (int)seq.SequenceNo == RoatpWorkflowSequenceIds.YourOrganisation);
 
     <li>
         <h2 class="app-task-list__section">
-            @Html.Raw(Convert.ToInt32(yourOrganisationSequence.SequenceId)). @Html.Raw(yourOrganisationSequence.Description)
+            @Html.Raw(Convert.ToInt32(yourOrganisationSequence.SequenceNo)). @Html.Raw(yourOrganisationSequence.Description)
         </h2>
 
         <ul class="app-task-list__items">

@@ -26,13 +26,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         {
             _sessionService = new Mock<ISessionService>();
             _qnaApiClient = new Mock<IQnaApiClient>();
-            var sequence = new ApplicationSequence { Id = Guid.NewGuid(), SequenceId = SequenceId };
+            var sequence = new ApplicationSequence { Id = Guid.NewGuid(), SequenceNo = SequenceId };
             var sequences = new List<ApplicationSequence>
             {
                 sequence
             };
             _qnaApiClient.Setup(x => x.GetSequences(It.IsAny<Guid>())).ReturnsAsync(sequences);
-            _section = new ApplicationSection { Id = Guid.NewGuid(), SectionId = SectionId };
+            _section = new ApplicationSection { Id = Guid.NewGuid(), SectionNo = SectionId };
             _section.QnAData = new QnAData
             {
                 Pages = new List<Page>()

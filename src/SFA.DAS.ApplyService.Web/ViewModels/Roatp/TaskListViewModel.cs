@@ -68,7 +68,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         public bool PreviousSectionCompleted(int sequenceId, int sectionId, bool sequential = false)
         {
-            var sequence = ApplicationSequences.FirstOrDefault(x => x.SequenceId == sequenceId);
+            var sequence = ApplicationSequences.FirstOrDefault(x => x.SequenceNo == sequenceId);
 
             return RoatpTaskListWorkflowHandler.PreviousSectionCompleted(sequence, sectionId, sequential);
         }

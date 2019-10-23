@@ -37,9 +37,9 @@ namespace SFA.DAS.ApplyService.Web.Services
             string previousPageId = string.Empty;
 
             var sequences = await _qnaApiClient.GetSequences(applicationId);
-            var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
+            var selectedSequence = sequences.Single(x => x.SequenceNo == sequenceId);
             var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
-            var currentSection = sections.Single(x => x.SectionId == sectionId);
+            var currentSection = sections.Single(x => x.SectionNo == sectionId);
 
             var firstPageInSection = currentSection.QnAData.Pages[0];
             if (pageId == firstPageInSection.PageId)

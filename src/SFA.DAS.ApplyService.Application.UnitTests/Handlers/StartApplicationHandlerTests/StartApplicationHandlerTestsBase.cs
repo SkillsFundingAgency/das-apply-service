@@ -36,15 +36,15 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
             ApplyRepository.Setup(r => r.CreateApplication(ApplicationId, ApplicationType, ApplyingOrganisationId, UserId, latestWorkflowId)).ReturnsAsync(ApplicationId);
             ApplyRepository.Setup(r => r.CopyWorkflowToApplication(ApplicationId, latestWorkflowId, It.IsAny<string>())).ReturnsAsync(new List<ApplicationSection>
             {
-                new ApplicationSection {SectionId = 1, QnAData = new QnAData {Pages = new List<Page>{new Page(){PageId = "1", Title = "REPLACEME"}, new Page() { PageId = "2", NotRequiredOrgTypes = new List<string> { "HEI" } } }}},
-                new ApplicationSection {SectionId = 2, QnAData = new QnAData {Pages = new List<Page>()}},
-                new ApplicationSection {SectionId = 3, QnAData = new QnAData {Pages = new List<Page>()}},
-                new ApplicationSection {SectionId = 4, QnAData = new QnAData {Pages = new List<Page>()}}
+                new ApplicationSection {SectionNo = 1, QnAData = new QnAData {Pages = new List<Page>{new Page(){PageId = "1", Title = "REPLACEME"}, new Page() { PageId = "2", NotRequiredOrgTypes = new List<string> { "HEI" } } }}},
+                new ApplicationSection {SectionNo = 2, QnAData = new QnAData {Pages = new List<Page>()}},
+                new ApplicationSection {SectionNo = 3, QnAData = new QnAData {Pages = new List<Page>()}},
+                new ApplicationSection {SectionNo = 4, QnAData = new QnAData {Pages = new List<Page>()}}
             });
             ApplyRepository.Setup(r => r.GetSequences(ApplicationId)).ReturnsAsync(new List<ApplicationSequence>
             {
-                new ApplicationSequence {SequenceId = SequenceId.Stage1},
-                new ApplicationSequence {SequenceId = SequenceId.Stage2}
+                new ApplicationSequence {SequenceNo = SequenceId.Stage1},
+                new ApplicationSequence {SequenceNo = SequenceId.Stage2}
             });
 
             OrganisationRepository = new Mock<IOrganisationRepository>();

@@ -82,22 +82,22 @@
                     @{
                         await Html.RenderPartialAsync("~/Views/Roatp/TaskList/YourOrganisationSequence.cshtml", Model);
                     }
-                    @foreach (var applicationSequence in Model.ApplicationSequences.Where(sequence => (int)sequence.SequenceId != RoatpWorkflowSequenceIds.YourOrganisation).OrderBy(seq => seq.SequenceId))
+                    @foreach (var applicationSequence in Model.ApplicationSequences.Where(sequence => (int)sequence.SequenceNo != RoatpWorkflowSequenceIds.YourOrganisation).OrderBy(seq => seq.SequenceNo))
                     {
                         <li>
                             <h2 class="app-task-list__section">
-                                @Html.Raw(Convert.ToInt32(applicationSequence.SequenceId)). @Html.Raw(applicationSequence.Description)
+                                @Html.Raw(Convert.ToInt32(applicationSequence.SequenceNo)). @Html.Raw(applicationSequence.Description)
                             </h2>
                             <ul class="app-task-list__items">
-                                @foreach (var section in applicationSequence.Sections.OrderBy(sec => sec.SectionId))
+                                @foreach (var section in applicationSequence.Sections.OrderBy(sec => sec.SectionNo))
                                 {
-                                    @if (!Model.IntroductionPageNextSectionUnavailable(section.SequenceId, section.SectionId))
+                                    @if (!Model.IntroductionPageNextSectionUnavailable(section.SequenceNo, section.SectionNo))
                                     {
                                         <li class="app-task-list__item">
-                                            <a class="app-task-list__task_name" href="@Url.Action("Section", "RoatpApplication", new {section.ApplicationId, section.SequenceId, section.SectionId})">
+                                            <a class="app-task-list__task_name" href="@Url.Action("Section", "RoatpApplication", new {section.ApplicationId, SequenceId = section.SequenceNo, SectionId = section.SectionNo})">
                                                 @Html.Raw(section.Title)
                                             </a>
-                                            <strong class="govuk-tag app-task-list__task-@Model.CssClass(section.SequenceId, section.SectionId)" id="completed">@Model.SectionStatus(section.SequenceId, section.SectionId)</strong>
+                                            <strong class="govuk-tag app-task-list__task-@Model.CssClass(section.SequenceNo, section.SectionNo)" id="completed">@Model.SectionStatus(section.SequenceNo, section.SectionNo)</strong>
                                         </li>
                                     }
                                     else

@@ -10,7 +10,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
 //
 //        public Sequence GetSequence(string sequenceId)
 //        {
-//            return Sequences.FirstOrDefault(s => s.SequenceId == sequenceId);
+//            return Sequences.FirstOrDefault(s => s.SequenceNo == sequenceId);
 //        }
 //
 //        public Sequence GetSequenceContainingPage(string pageId)

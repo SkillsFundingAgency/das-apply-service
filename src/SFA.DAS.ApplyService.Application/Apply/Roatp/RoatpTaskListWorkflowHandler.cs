@@ -11,13 +11,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
     {
         public static string SectionStatus(IEnumerable<ApplicationSequence> applicationSequences, int sequenceId, int sectionId, bool sequential = false)
         {
-            var sequence = applicationSequences.FirstOrDefault(x => (int)x.SequenceId == sequenceId);
+            var sequence = applicationSequences.FirstOrDefault(x => (int)x.SequenceNo == sequenceId);
             if (sequence == null)
             {
                 return String.Empty;
             }
 
-            var section = sequence.Sections.FirstOrDefault(x => x.SectionId == sectionId);
+            var section = sequence.Sections.FirstOrDefault(x => x.SectionNo == sectionId);
             if (section == null)
             {
                 return string.Empty;
@@ -37,7 +37,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         {
             if (sequential && sectionId > 1)
             {
-                var previousSection = sequence.Sections.FirstOrDefault(x => x.SectionId == (sectionId - 1));
+                var previousSection = sequence.Sections.FirstOrDefault(x => x.SectionNo == (sectionId - 1));
                 if (previousSection == null)
                 {
                     return false;

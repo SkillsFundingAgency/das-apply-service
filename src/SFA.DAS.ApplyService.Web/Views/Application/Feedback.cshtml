@@ -42,7 +42,7 @@
             <p class="govuk-body">Go into each question to view comments, where you will have an opportunity to give more information.</p>
 
             <ol class="app-task-list">
-                @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionId))
+                @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionNo))
                 {
                     <li>
                         <h2 id="@applicationSection.Id" class="govuk-heading-l">@applicationSection.LinkTitle</h2>
@@ -56,7 +56,7 @@
                                     {
                                         <li class="app-task-list__item">
                                             <a aria-describedby="feedback-completed" class="app-task-list__task-name"
-                                               href="@Url.Action("Page", "Application", new { applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = applicationSection.SectionId, pageId = pg.PageId, redirectAction = "Feedback" })">@pg.LinkTitle</a>
+                                               href="@Url.Action("Page", "Application", new { applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = applicationSection.SectionNo, pageId = pg.PageId, redirectAction = "Feedback" })">@pg.LinkTitle</a>
                                             @if (pg.AllFeedbackIsCompleted)
                                             {
                                                 <strong class="govuk-tag app-task-list__task-completed" id="feedback-completed">Completed</strong>
