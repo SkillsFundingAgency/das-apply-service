@@ -312,7 +312,7 @@ VALUES
 	  <p class=\"govuk-body\">The file must be a PDF and smaller than 5MB.</p>",
           "Hint": "",
           "Input": {
-            "Type": "fileUpload",
+            "Type": "FileUpload",
             "Validations": [{
                 "Name": "Required",
                 "Value": null,
