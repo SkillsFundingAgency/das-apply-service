@@ -165,6 +165,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IProcessPageFlowService, ProcessPageFlowService>();
             services.AddTransient<IQuestionPropertyTokeniser, QuestionPropertyTokeniser>();
             services.AddTransient<IPageNavigationTrackingService, PageNavigationTrackingService>();
+            services.AddTransient<IAnswerFormService, AnswerFormService>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)

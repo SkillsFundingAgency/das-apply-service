@@ -8,6 +8,11 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         public static string FormatDateOfBirth(string month, string year)
         {
+            if (String.IsNullOrWhiteSpace(month) || String.IsNullOrWhiteSpace(year))
+            {
+                return string.Empty;
+            }
+
             var index = (Convert.ToInt32(month)) - 1;
 
             if (index < 0 || index > 11)

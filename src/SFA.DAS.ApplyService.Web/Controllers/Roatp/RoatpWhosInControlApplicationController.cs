@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Web.Infrastructure;
@@ -19,10 +18,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     public class RoatpWhosInControlApplicationController : Controller
     {
         private readonly IQnaApiClient _qnaApiClient;
+        private readonly IApplicationApiClient _applicationApiClient;
+        private readonly IAnswerFormService _answerFormService;
 
-        public RoatpWhosInControlApplicationController(IQnaApiClient qnaApiClient)
+        public RoatpWhosInControlApplicationController(IQnaApiClient qnaApiClient, IApplicationApiClient applicationApiClient, IAnswerFormService answerFormService)
         {
             _qnaApiClient = qnaApiClient;
+            _applicationApiClient = applicationApiClient;
+            _answerFormService = answerFormService;
         }
 
         [Route("confirm-who-control")]
@@ -90,16 +93,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             var yourOrganisationSequence =
                 applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
             var yourOrganisationSections = await _qnaApiClient.GetSections(applicationId, yourOrganisationSequence.Id);
-            var yourOrganisationSection =
+            var whosInControlSection =
                 yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
-            var updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, yourOrganisationSection.Id, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, answers);
+            var updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, answers);
 
             var verificationCharityAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpVerificationCharity);
             if (verificationCharityAnswer.Value == "TRUE")
             {
                 return RedirectToAction("ConfirmTrusteesNoDob", new { applicationId });
             }
+            await _applicationApiClient.MarkSectionAsCompleted(applicationId, whosInControlSection.Id);
 
             return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
         }
@@ -168,7 +172,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [HttpPost]
         public async Task<IActionResult> TrusteesDobsConfirmed(ConfirmTrusteesDateOfBirthViewModel model)
         {
-            var answers = GetAnswersFromForm();
+            var answers = _answerFormService.GetAnswersFromForm(HttpContext);
             var trusteesAnswer = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
             var trusteesData = JsonConvert.DeserializeObject<TabularData>(trusteesAnswer.Value);
 
@@ -186,7 +190,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             var yourOrganisationSequence =
                 applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
             var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
-            var yourOrganisationSection =
+            var whosInControlSection =
                 yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
             var trusteeAnswers = new List<Answer>
@@ -203,7 +207,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 }
             };
 
-            var updateResult = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, yourOrganisationSection.Id, RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage, trusteeAnswers);
+            var updateResult = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage, trusteeAnswers);
+
+            await _applicationApiClient.MarkSectionAsCompleted(model.ApplicationId, whosInControlSection.Id);
 
             return RedirectToAction("TaskList", "RoatpApplication", new { model.ApplicationId });
         }
@@ -226,41 +232,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public async Task<IActionResult> AddPeopleInControl(Guid applicationId)
         {
             return View("~/Views/Roatp/WhosInControl/AddPeopleInControl.cshtml");
-        }
-
-        private List<Answer> GetAnswersFromForm()
-        {
-            var answers = new List<Answer>();
-
-            Dictionary<string, JObject> answerValues = new Dictionary<string, JObject>();
-
-            foreach (var formVariable in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__")))
-            {
-                var answerKey = formVariable.Key.Split("_Key_");
-                if (!answerValues.ContainsKey(answerKey[0]))
-                {
-                    answerValues.Add(answerKey[0], new JObject());
-                }
-
-                answerValues[answerKey[0]].Add(
-                    answerKey.Count() == 1 ? string.Empty : answerKey[1],
-                    formVariable.Value.ToString());
-            }
-
-            foreach (var answer in answerValues)
-            {
-                if (answer.Value.Count > 1)
-                {
-                    answers.Add(new Answer() { QuestionId = answer.Key, JsonValue = answer.Value });
-                }
-                else
-                {
-                    answers.Add(new Answer() { QuestionId = answer.Key, Value = answer.Value.Value<string>(string.Empty) });
-                }
-            }
-
-            return answers;
-        }
+        }             
 
         private List<TrusteeDateOfBirth> MapTrusteesDataToViewModel(TabularData trusteeData)
         {
@@ -296,6 +268,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 var dobYearKey = $"{trustee.Id}_Year";
                 var dobMonth = answers.FirstOrDefault(x => x.QuestionId == dobMonthKey);
                 var dobYear = answers.FirstOrDefault(x => x.QuestionId == dobYearKey);
+                if (dobMonth == null || dobYear == null)
+                {
+                    break;
+                }
                 if (trustee.Columns.Count < 2)
                 {
                     trustee.Columns.Add(DateOfBirthFormatter.FormatDateOfBirth(dobMonth.Value, dobYear.Value));
