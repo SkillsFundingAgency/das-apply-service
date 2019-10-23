@@ -112,7 +112,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         private void RemoveSectionThree(List<ApplicationSection> sections)
         {
-            foreach(var sec in sections.Where(s => s.SectionNo == 3))
+            foreach(var sec in sections.Where(s => s.SectionId == 3))
             {
                 sec.NotRequired = true;
                 sec.Status = ApplicationSectionStatus.Evaluated;
@@ -129,7 +129,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         private void RemoveSectionsOneAndTwo(List<ApplicationSection> sections)
         {
-            foreach (var sec in sections.Where(s => s.SectionNo == 1 || s.SectionNo == 2))
+            foreach (var sec in sections.Where(s => s.SectionId == 1 || s.SectionId == 2))
             {
                 sec.NotRequired = true;
                 sec.Status = ApplicationSectionStatus.Evaluated;

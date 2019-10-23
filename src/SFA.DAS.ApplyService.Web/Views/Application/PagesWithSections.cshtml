@@ -41,7 +41,7 @@
                            
                                 <li class="app-task-list__item">
                                     <a class="govuk-link app-task-list__task-name" 
-                                       href="@Url.Action("Page", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceNo, sectionId = Model.SectionNo, pageId = pg.PageId, redirectAction="Section"})">
+                                       href="@Url.Action("Page", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pg.PageId, redirectAction="Section"})">
                                         @pg.LinkTitle
                                     </a>
                                     @if (pg.Complete)

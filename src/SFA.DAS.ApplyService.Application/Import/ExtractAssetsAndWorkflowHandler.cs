@@ -46,40 +46,40 @@
 ////                foreach (var page in qnaDataObject.Pages)
 ////                {
 ////                    reference++;
-////                    assets.Add($"SQ-{applicationSection.SequenceNo}-SE-{applicationSection.SectionNo}-PG-{page.PageId}-{reference}", page.Title);
-////                    page.Title = $"SQ-{applicationSection.SequenceNo}-SE-{applicationSection.SectionNo}-PG-{page.PageId}-{reference}";
+////                    assets.Add($"SQ-{applicationSection.SequenceId}-SE-{applicationSection.SectionId}-PG-{page.PageId}-{reference}", page.Title);
+////                    page.Title = $"SQ-{applicationSection.SequenceId}-SE-{applicationSection.SectionId}-PG-{page.PageId}-{reference}";
 ////                    
 ////                    reference++;
-////                    assets.Add($"SQ-{applicationSection.SequenceNo}-SE-{applicationSection.SectionNo}-PG-{page.PageId}-{reference}", page.BodyText);
-////                    page.BodyText = $"SQ-{applicationSection.SequenceNo}-SE-{applicationSection.SectionNo}-PG-{page.PageId}-{reference}";
+////                    assets.Add($"SQ-{applicationSection.SequenceId}-SE-{applicationSection.SectionId}-PG-{page.PageId}-{reference}", page.BodyText);
+////                    page.BodyText = $"SQ-{applicationSection.SequenceId}-SE-{applicationSection.SectionId}-PG-{page.PageId}-{reference}";
 ////                    
 ////                    reference++;
-////                    assets.Add($"SQ-{applicationSection.SequenceNo}-SE-{applicationSection.SectionNo}-PG-{page.PageId}-{reference}", page.InfoText);
-////                    page.InfoText = $"SQ-{applicationSection.SequenceNo}-SE-{applicationSection.SectionNo}-PG-{page.PageId}-{reference}";
+////                    assets.Add($"SQ-{applicationSection.SequenceId}-SE-{applicationSection.SectionId}-PG-{page.PageId}-{reference}", page.InfoText);
+////                    page.InfoText = $"SQ-{applicationSection.SequenceId}-SE-{applicationSection.SectionId}-PG-{page.PageId}-{reference}";
 ////                    
 ////                    reference++;
-////                    assets.Add($"SQ-{applicationSection.SequenceNo}-SE-{applicationSection.SectionNo}-PG-{page.PageId}-{reference}", page.LinkTitle);
-////                    page.LinkTitle = $"SQ-{applicationSection.SequenceNo}-SE-{applicationSection.SectionNo}-PG-{page.PageId}-{reference}";
+////                    assets.Add($"SQ-{applicationSection.SequenceId}-SE-{applicationSection.SectionId}-PG-{page.PageId}-{reference}", page.LinkTitle);
+////                    page.LinkTitle = $"SQ-{applicationSection.SequenceId}-SE-{applicationSection.SectionId}-PG-{page.PageId}-{reference}";
 ////
 ////                    page.PageOfAnswers = new List<PageOfAnswers>();
 ////                    
 ////                    foreach (var question in page.Questions)
 ////                    {
 ////                        reference++;
-////                        assets.Add($"SQ-{applicationSection.SequenceNo}-SE-{applicationSection.SectionNo}-PG-{page.PageId}-{question.QuestionId}-{reference}", question.Hint);
-////                        question.Hint = $"SQ-{applicationSection.SequenceNo}-SE-{applicationSection.SectionNo}-PG-{page.PageId}-{question.QuestionId}-{reference}";
+////                        assets.Add($"SQ-{applicationSection.SequenceId}-SE-{applicationSection.SectionId}-PG-{page.PageId}-{question.QuestionId}-{reference}", question.Hint);
+////                        question.Hint = $"SQ-{applicationSection.SequenceId}-SE-{applicationSection.SectionId}-PG-{page.PageId}-{question.QuestionId}-{reference}";
 ////                        
 ////                        reference++;
-////                        assets.Add($"SQ-{applicationSection.SequenceNo}-SE-{applicationSection.SectionNo}-PG-{page.PageId}-{question.QuestionId}-{reference}", question.Label);
-////                        question.Label = $"SQ-{applicationSection.SequenceNo}-SE-{applicationSection.SectionNo}-PG-{page.PageId}-{question.QuestionId}-{reference}";
+////                        assets.Add($"SQ-{applicationSection.SequenceId}-SE-{applicationSection.SectionId}-PG-{page.PageId}-{question.QuestionId}-{reference}", question.Label);
+////                        question.Label = $"SQ-{applicationSection.SequenceId}-SE-{applicationSection.SectionId}-PG-{page.PageId}-{question.QuestionId}-{reference}";
 ////                        
 ////                        reference++;
-////                        assets.Add($"SQ-{applicationSection.SequenceNo}-SE-{applicationSection.SectionNo}-PG-{page.PageId}-{question.QuestionId}-{reference}", question.ShortLabel);
-////                        question.ShortLabel = $"SQ-{applicationSection.SequenceNo}-SE-{applicationSection.SectionNo}-PG-{page.PageId}-{question.QuestionId}-{reference}";
+////                        assets.Add($"SQ-{applicationSection.SequenceId}-SE-{applicationSection.SectionId}-PG-{page.PageId}-{question.QuestionId}-{reference}", question.ShortLabel);
+////                        question.ShortLabel = $"SQ-{applicationSection.SequenceId}-SE-{applicationSection.SectionId}-PG-{page.PageId}-{question.QuestionId}-{reference}";
 ////                        
 ////                        reference++;
-////                        assets.Add($"SQ-{applicationSection.SequenceNo}-SE-{applicationSection.SectionNo}-PG-{page.PageId}-{question.QuestionId}-{reference}", question.QuestionBodyText);
-////                        question.QuestionBodyText = $"SQ-{applicationSection.SequenceNo}-SE-{applicationSection.SectionNo}-PG-{page.PageId}-{question.QuestionId}-{reference}";
+////                        assets.Add($"SQ-{applicationSection.SequenceId}-SE-{applicationSection.SectionId}-PG-{page.PageId}-{question.QuestionId}-{reference}", question.QuestionBodyText);
+////                        question.QuestionBodyText = $"SQ-{applicationSection.SequenceId}-SE-{applicationSection.SectionId}-PG-{page.PageId}-{question.QuestionId}-{reference}";
 ////
 ////                        _logger.LogInformation($"Page: {page.PageId} QuestionId : {question.QuestionId}");
 ////                        
@@ -93,23 +93,23 @@
 ////                                    {
 ////                                        string hint = furtherQuestion.Hint;
 ////                                        reference++;
-////                                        assets.Add($"SQ-{applicationSection.SequenceNo}-SE-{applicationSection.SectionNo}-PG-{page.PageId}-{furtherQuestion.QuestionId}-{reference}", hint ?? "");
-////                                        furtherQuestion.Hint = $"SQ-{applicationSection.SequenceNo}-SE-{applicationSection.SectionNo}-PG-{page.PageId}-{furtherQuestion.QuestionId}-{reference}";
+////                                        assets.Add($"SQ-{applicationSection.SequenceId}-SE-{applicationSection.SectionId}-PG-{page.PageId}-{furtherQuestion.QuestionId}-{reference}", hint ?? "");
+////                                        furtherQuestion.Hint = $"SQ-{applicationSection.SequenceId}-SE-{applicationSection.SectionId}-PG-{page.PageId}-{furtherQuestion.QuestionId}-{reference}";
 ////
 ////                                        string label = furtherQuestion.Label;
 ////                                        reference++;
-////                                        assets.Add($"SQ-{applicationSection.SequenceNo}-SE-{applicationSection.SectionNo}-PG-{page.PageId}-{furtherQuestion.QuestionId}-{reference}", label ?? "");
-////                                        furtherQuestion.Label = $"SQ-{applicationSection.SequenceNo}-SE-{applicationSection.SectionNo}-PG-{page.PageId}-{furtherQuestion.QuestionId}-{reference}";
+////                                        assets.Add($"SQ-{applicationSection.SequenceId}-SE-{applicationSection.SectionId}-PG-{page.PageId}-{furtherQuestion.QuestionId}-{reference}", label ?? "");
+////                                        furtherQuestion.Label = $"SQ-{applicationSection.SequenceId}-SE-{applicationSection.SectionId}-PG-{page.PageId}-{furtherQuestion.QuestionId}-{reference}";
 ////
 ////                                        string shortLabel = furtherQuestion.ShortLabel;
 ////                                        reference++;
-////                                        assets.Add($"SQ-{applicationSection.SequenceNo}-SE-{applicationSection.SectionNo}-PG-{page.PageId}-{furtherQuestion.QuestionId}-{reference}", shortLabel ?? "");
-////                                        furtherQuestion.ShortLabel = $"SQ-{applicationSection.SequenceNo}-SE-{applicationSection.SectionNo}-PG-{page.PageId}-{furtherQuestion.QuestionId}-{reference}";
+////                                        assets.Add($"SQ-{applicationSection.SequenceId}-SE-{applicationSection.SectionId}-PG-{page.PageId}-{furtherQuestion.QuestionId}-{reference}", shortLabel ?? "");
+////                                        furtherQuestion.ShortLabel = $"SQ-{applicationSection.SequenceId}-SE-{applicationSection.SectionId}-PG-{page.PageId}-{furtherQuestion.QuestionId}-{reference}";
 ////
 ////                                        string questionBodyText = furtherQuestion.QuestionBodyText;
 ////                                        reference++;
-////                                        assets.Add($"SQ-{applicationSection.SequenceNo}-SE-{applicationSection.SectionNo}-PG-{page.PageId}-{furtherQuestion.QuestionId}-{reference}", questionBodyText ?? "");
-////                                        furtherQuestion.QuestionBodyText = $"SQ-{applicationSection.SequenceNo}-SE-{applicationSection.SectionNo}-PG-{page.PageId}-{furtherQuestion.QuestionId}-{reference}";
+////                                        assets.Add($"SQ-{applicationSection.SequenceId}-SE-{applicationSection.SectionId}-PG-{page.PageId}-{furtherQuestion.QuestionId}-{reference}", questionBodyText ?? "");
+////                                        furtherQuestion.QuestionBodyText = $"SQ-{applicationSection.SequenceId}-SE-{applicationSection.SectionId}-PG-{page.PageId}-{furtherQuestion.QuestionId}-{reference}";
 ////                                    }
 ////                                }   
 ////                            }  

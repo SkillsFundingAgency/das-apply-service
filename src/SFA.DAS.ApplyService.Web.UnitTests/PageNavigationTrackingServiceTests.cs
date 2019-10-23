@@ -32,7 +32,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 sequence
             };
             _qnaApiClient.Setup(x => x.GetSequences(It.IsAny<Guid>())).ReturnsAsync(sequences);
-            _section = new ApplicationSection { Id = Guid.NewGuid(), SectionNo = SectionId };
+            _section = new ApplicationSection { Id = Guid.NewGuid(), SectionId = SectionId };
             _section.QnAData = new QnAData
             {
                 Pages = new List<Page>()

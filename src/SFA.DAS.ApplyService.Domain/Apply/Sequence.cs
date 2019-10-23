@@ -4,7 +4,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
 {
 //    public class Sequence
 //    {
-//        public string SequenceNo { get; set; }
+//        public string SequenceId { get; set; }
 //        public string Title { get; set; }
 //        public string LinkTitle { get; set; }
 //        public bool Active { get; set; }

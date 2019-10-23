@@ -17,7 +17,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 return String.Empty;
             }
 
-            var section = sequence.Sections.FirstOrDefault(x => x.SectionNo == sectionId);
+            var section = sequence.Sections.FirstOrDefault(x => x.SectionId == sectionId);
             if (section == null)
             {
                 return string.Empty;
@@ -37,7 +37,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         {
             if (sequential && sectionId > 1)
             {
-                var previousSection = sequence.Sections.FirstOrDefault(x => x.SectionNo == (sectionId - 1));
+                var previousSection = sequence.Sections.FirstOrDefault(x => x.SectionId == (sectionId - 1));
                 if (previousSection == null)
                 {
                     return false;

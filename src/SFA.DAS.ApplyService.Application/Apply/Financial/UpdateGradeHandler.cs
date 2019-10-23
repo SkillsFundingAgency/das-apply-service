@@ -40,7 +40,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
             {
                 var pageId = section.QnAData.Pages.First(p => p.Active).PageId;
                 var feedback = new Feedback { Message = request.UpdatedGrade.InadequateMoreInformation, From = "Staff member", Date = DateTime.UtcNow, IsNew = true };
-                var addFeedbackRequest = new AddFeedbackRequest(section.ApplicationId, section.SequenceNo, section.SectionNo, pageId, feedback);
+                var addFeedbackRequest = new AddFeedbackRequest(section.ApplicationId, section.SequenceId, section.SectionId, pageId, feedback);
                 await _mediator.Send(addFeedbackRequest);
             }
 

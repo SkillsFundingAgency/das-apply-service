@@ -16,10 +16,10 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     public class ApplicationSection : EntityBase
     {
         public Guid ApplicationId { get; set; }
-        [JsonProperty("SectionNo")]
-        public int SectionNo { get; set; }
-        [JsonProperty("SequenceNo")]
-        public int SequenceNo { get; set; }
+        [JsonProperty("SectionId")]
+        public int SectionId { get; set; }
+        [JsonProperty("SequenceId")]
+        public int SequenceId { get; set; }
 
         public QnAData QnAData { get; set; }
 

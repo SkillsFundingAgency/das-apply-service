@@ -222,7 +222,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var sequences = await _qnaApiClient.GetSequences(applicationId);
             var selectedSequence = sequences.Single(x => x.SequenceNo == sequenceId);
             var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
-            var selectedSection = sections.Single(x => x.SectionNo == sectionId);
+            var selectedSection = sections.Single(x => x.SectionId == sectionId);
 
             var section = await _qnaApiClient.GetSection(applicationId, selectedSection.Id);
 
@@ -255,7 +255,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var sequences = await _qnaApiClient.GetSequences(applicationId);
             var selectedSequence = sequences.Single(x => x.SequenceNo == sequenceId);
             var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
-            var selectedSection = sections.Single(x => x.SectionNo == sectionId);
+            var selectedSection = sections.Single(x => x.SectionId == sectionId);
 
             var sequence = await _qnaApiClient.GetSequence(applicationId, selectedSequence.Id);
             
@@ -357,7 +357,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var charityCommissionManualEntry = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CharityCommissionTrusteeManualEntry);
             var yourOrganisationSequence = sequences.FirstOrDefault(x => x.SequenceNo == RoatpWorkflowSequenceIds.YourOrganisation);
             var yourOrganisationSections = await _qnaApiClient.GetSections(applicationId, yourOrganisationSequence.Id);
-            var providerRouteSection = yourOrganisationSections.FirstOrDefault(x => x.SectionNo == RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute);
+            var providerRouteSection = yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute);
             var providerRoute = await _qnaApiClient.GetAnswer(applicationId, providerRouteSection.Id, RoatpWorkflowPageIds.YourOrganisation, RoatpPreambleQuestionIdConstants.ApplyProviderRoute);
             
             var model = new TaskListViewModel
@@ -383,7 +383,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var sequences = await _qnaApiClient.GetSequences(applicationId);
             var preambleSequence = sequences.FirstOrDefault(x => x.SequenceNo == RoatpWorkflowSequenceIds.Preamble);
             var preambleSections = await _qnaApiClient.GetSections(applicationId, preambleSequence.Id);
-            var preambleSection = preambleSections.FirstOrDefault(x => x.SectionNo == DefaultSectionId);
+            var preambleSection = preambleSections.FirstOrDefault(x => x.SectionId == DefaultSectionId);
             var isCompanyAnswer = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany);
             if (isCompanyAnswer?.Value == null || isCompanyAnswer.Value.ToUpper() != "TRUE")
             {
@@ -477,7 +477,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var sequences = await _qnaApiClient.GetSequences(applicationId);
             var selectedSequence = sequences.Single(x => x.SequenceNo == sequenceId);
             var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
-            var selectedSection = sections.Single(x => x.SectionNo == sectionId);
+            var selectedSection = sections.Single(x => x.SectionId == sectionId);
 
             var page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
             return (page == null || !page.PageOfAnswers.Any());
@@ -490,7 +490,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var sequences = await _qnaApiClient.GetSequences(applicationId);
             var selectedSequence = sequences.Single(x => x.SequenceNo == sequenceId);
             var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
-            var selectedSection = sections.Single(x => x.SectionNo == sectionId);
+            var selectedSection = sections.Single(x => x.SectionId == sectionId);
 
             var page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
 
@@ -527,7 +527,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 if (__formAction == "Add" && page.AllowMultipleAnswers)
                 {
                     return RedirectToAction("Page", new {applicationId, sequenceId = selectedSequence.SequenceNo,
-                        sectionId = selectedSection.SectionNo, pageId = updatePageResult.NextActionId, redirectAction});
+                        sectionId = selectedSection.SectionId, pageId = updatePageResult.NextActionId, redirectAction});
                 }
 
                 if (redirectAction == "Feedback")
@@ -543,7 +543,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
         
                 return RedirectToAction("Page", new {applicationId, sequenceId = selectedSequence.SequenceNo,
-                    sectionId = selectedSection.SectionNo, pageId = updatePageResult.NextActionId, redirectAction});
+                    sectionId = selectedSection.SectionId, pageId = updatePageResult.NextActionId, redirectAction});
                                    
             }
 
@@ -816,7 +816,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var preambleSequence =
                 applicationSequences.FirstOrDefault(x => x.SequenceNo == RoatpWorkflowSequenceIds.Preamble);
             var preambleSections = await _qnaApiClient.GetSections(applicationId, preambleSequence.Id);
-            var questionsSection = preambleSections.FirstOrDefault(x => x.SectionNo == DefaultSectionId);
+            var questionsSection = preambleSections.FirstOrDefault(x => x.SectionId == DefaultSectionId);
 
             var updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, questionsSection.Id, RoatpWorkflowPageIds.Preamble, preambleAnswers);
             
@@ -828,7 +828,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 applicationSequences.FirstOrDefault(x => x.SequenceNo == RoatpWorkflowSequenceIds.YourOrganisation);
             var yourOrganisationSections = await _qnaApiClient.GetSections(applicationId, yourOrganisationSequence.Id);
             var yourOrganisationSection =
-                yourOrganisationSections.FirstOrDefault(x => x.SectionNo == RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute);
+                yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute);
 
             updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, yourOrganisationSection.Id, RoatpWorkflowPageIds.YourOrganisation, yourOrganisationAnswers);
 
@@ -843,7 +843,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var conditionsOfAcceptanceSections =
                 await _qnaApiClient.GetSections(applicationId, conditionsOfAcceptanceSequence.Id);
             var conditionsOfAcceptanceSection =
-                conditionsOfAcceptanceSections.FirstOrDefault(x => x.SectionNo == DefaultSectionId);
+                conditionsOfAcceptanceSections.FirstOrDefault(x => x.SectionId == DefaultSectionId);
 
             updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, conditionsOfAcceptanceSection.Id, RoatpWorkflowPageIds.ConditionsOfAcceptance, conditionsOfAcceptanceAnswers);
         }
@@ -855,7 +855,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var yourOrganisationSequence =
                 applicationSequences.FirstOrDefault(x => x.SequenceNo == RoatpWorkflowSequenceIds.YourOrganisation);
             var yourOrganisationSections = await _qnaApiClient.GetSections(applicationId, yourOrganisationSequence.Id);
-            var whosInControlSection = yourOrganisationSections.FirstOrDefault(x => x.SectionNo == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+            var whosInControlSection = yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
        
             var whosInControlQuestions = questions.AsEnumerable<Answer>().ToList();                  
 
