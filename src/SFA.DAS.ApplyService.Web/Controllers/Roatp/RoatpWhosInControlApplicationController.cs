@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Web.Infrastructure;
+using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.Validators;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
@@ -13,7 +14,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
-{
+{    
     [Authorize]
     public class RoatpWhosInControlApplicationController : Controller
     {
@@ -45,10 +46,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public async Task<IActionResult> ConfirmDirectorsPscs(Guid applicationId)
         {
             var companiesHouseDirectorsAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.CompaniesHouseDirectors);
-            var directorsData = JsonConvert.DeserializeObject<dynamic>(companiesHouseDirectorsAnswer.Value);
+            var directorsData = JsonConvert.DeserializeObject<TabularData>(companiesHouseDirectorsAnswer.Value);
 
             var companiesHousePscsAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.CompaniesHousePscs);
-            var pscsData = JsonConvert.DeserializeObject<dynamic>(companiesHousePscsAnswer.Value);
+            var pscsData = JsonConvert.DeserializeObject<TabularData>(companiesHousePscsAnswer.Value);
 
             var model = new ConfirmDirectorsPscsViewModel
             {
@@ -107,7 +108,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public async Task<IActionResult> ConfirmTrusteesNoDob(Guid applicationId)
         {
             var charityTrusteesAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
-            var trusteesData = JsonConvert.DeserializeObject<dynamic>(charityTrusteesAnswer.Value);
+            var trusteesData = JsonConvert.DeserializeObject<TabularData>(charityTrusteesAnswer.Value);
 
             var model = new ConfirmTrusteesViewModel
             {
@@ -153,46 +154,58 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public async Task<IActionResult> ConfirmTrusteesDob(Guid applicationId)
         {
             var trusteesAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
-            var trusteesData = JsonConvert.DeserializeObject<dynamic>(trusteesAnswer.Value);
+            var trusteesData = JsonConvert.DeserializeObject<TabularData>(trusteesAnswer.Value);
 
             var model = new ConfirmTrusteesDateOfBirthViewModel
             {
                 ApplicationId = applicationId,
-                Trustees = new PeopleInControl
-                {
-                    QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionTrustees,
-                    TableData = trusteesData
-                }
+                TrusteeDatesOfBirth = MapTrusteesDataToViewModel(trusteesData)
             };
 
             return View("~/Views/Roatp/WhosInControl/ConfirmTrusteesDob.cshtml", model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> TrusteesDobsConfirmed(Guid applicationId)
+        public async Task<IActionResult> TrusteesDobsConfirmed(ConfirmTrusteesDateOfBirthViewModel model)
         {
             var answers = GetAnswersFromForm();
+            var trusteesAnswer = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
+            var trusteesData = JsonConvert.DeserializeObject<TabularData>(trusteesAnswer.Value);
 
-            var trusteesAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
-            var trusteesData = JsonConvert.DeserializeObject<dynamic>(trusteesAnswer.Value);
+            trusteesData = MapAnswersToTrusteesDob(trusteesData, answers);
 
-            var model = new ConfirmTrusteesDateOfBirthViewModel
-            {
-                ApplicationId = applicationId,
-                Trustees = new PeopleInControl
-                {
-                    QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionTrustees,
-                    TableData = trusteesData
-                }
-            };
-            model.ErrorMessages = TrusteeDateOfBirthValidator.ValidateTrusteeDatesOfBirth(answers, trusteesData);
+            model.TrusteeDatesOfBirth = MapTrusteesDataToViewModel(trusteesData);
+            model.ErrorMessages = TrusteeDateOfBirthValidator.ValidateTrusteeDatesOfBirth(trusteesData, answers);
 
             if (model.ErrorMessages != null & model.ErrorMessages.Count > 0)
             {
                 return View("~/Views/Roatp/WhosInControl/ConfirmTrusteesDob.cshtml", model);
             }
+            
+            var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
+            var yourOrganisationSequence =
+                applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
+            var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
+            var yourOrganisationSection =
+                yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
-            return null;
+            var trusteeAnswers = new List<Answer>
+            {
+                new Answer
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionTrustees,
+                    Value = JsonConvert.SerializeObject(trusteesData)
+                },
+                new Answer
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionDetailsConfirmed,
+                    Value = "TRUE"
+                }
+            };
+
+            var updateResult = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, yourOrganisationSection.Id, RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage, trusteeAnswers);
+
+            return RedirectToAction("TaskList", "RoatpApplication", new { model.ApplicationId });
         }
                 
         public async Task<IActionResult> AddTrustees(Guid applicationId)
@@ -248,5 +261,54 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             return answers;
         }
+
+        private List<TrusteeDateOfBirth> MapTrusteesDataToViewModel(TabularData trusteeData)
+        {
+            var trusteeDatesOfBirth = new List<TrusteeDateOfBirth>();
+            foreach(var trustee in trusteeData.DataRows)
+            {
+                var trusteeDob = new TrusteeDateOfBirth
+                {
+                    Id = trustee.Id,
+                    Name = trustee.Columns[0]
+                };
+                if (trustee.Columns.Count > 1)
+                {
+                    var shortDob = trustee.Columns[1];
+                    trusteeDob.DobMonth = DateOfBirthFormatter.GetMonthNumberFromShortDateOfBirth(shortDob);
+                    trusteeDob.DobYear = DateOfBirthFormatter.GetYearFromShortDateOfBirth(shortDob);
+                }
+                trusteeDatesOfBirth.Add(trusteeDob);
+            }
+            return trusteeDatesOfBirth;
+        }
+
+        private TabularData MapAnswersToTrusteesDob(TabularData trusteesData, List<Answer> answers)
+        {
+            if (trusteesData.HeadingTitles.Count < 2)
+            {
+                trusteesData.HeadingTitles.Add("Date of birth");
+            }
+
+            foreach (var trustee in trusteesData.DataRows)
+            {
+                var dobMonthKey = $"{trustee.Id}_Month";
+                var dobYearKey = $"{trustee.Id}_Year";
+                var dobMonth = answers.FirstOrDefault(x => x.QuestionId == dobMonthKey);
+                var dobYear = answers.FirstOrDefault(x => x.QuestionId == dobYearKey);
+                if (trustee.Columns.Count < 2)
+                {
+                    trustee.Columns.Add(DateOfBirthFormatter.FormatDateOfBirth(dobMonth.Value, dobYear.Value));
+                }
+                else
+                {
+                    trustee.Columns[1] = DateOfBirthFormatter.FormatDateOfBirth(dobMonth.Value, dobYear.Value);
+                }
+            }
+
+            return trusteesData;
+        }
+
+       
     }
 }

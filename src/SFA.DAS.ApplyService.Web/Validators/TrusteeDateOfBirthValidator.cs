@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
         public const string MissingDateOfBirthErrorMessage = "Enter a date of birth";
         public const string InvalidIncompleteDateOfBirthErrorMessage = "Enter a date of birth using a month and year";
 
-        public static List<ValidationErrorDetail> ValidateTrusteeDatesOfBirth(List<Answer> answers, dynamic trusteesData)
+        public static List<ValidationErrorDetail> ValidateTrusteeDatesOfBirth(TabularData trusteesData, List<Answer> answers)
         {
             var errorMessages = new List<ValidationErrorDetail>();
 
