@@ -204,25 +204,83 @@
                 return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
             }
 
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-            applicationDetails.ApplicationRoute = new ApplicationRoute { Id = model.ApplicationRouteId };
-
-            var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
-
-            applicationDetails.CreatedBy = user.Id;
-            
-            var createOrganisationRequest = Mapper.Map<CreateOrganisationRequest>(applicationDetails);
-
-            var organisation = await _organisationApiClient.Create(createOrganisationRequest, user.Id);          
-
-            _sessionService.Set(ApplicationDetailsKey, applicationDetails);
-
-            if (!user.IsApproved)
+            if (model.ApplicationRouteId == ApplicationRoute.EmployerProviderApplicationRoute)
             {
-                await _usersApiClient.ApproveUser(user.Id);
+                var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+                var viewModel = new EmployerLevyStatusViewModel
+                {
+                    UKPRN = applicationDetails.UKPRN.ToString(),
+                    ApplicationRouteId = model.ApplicationRouteId
+                };
+                return await ConfirmLevyStatus(viewModel);
             }
 
-            return RedirectToAction("Applications", "RoatpApplication", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
+            return await StartRoatpApplication(model);
+        }
+
+        [Route("organisation-levy-paying-employer")]
+        public async Task<IActionResult> ConfirmLevyStatus(EmployerLevyStatusViewModel model)
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+            if (applicationDetails.ApplicationRoute == null)
+            {
+                applicationDetails.ApplicationRoute = new ApplicationRoute { Id = model.ApplicationRouteId };
+                _sessionService.Set(ApplicationDetailsKey, applicationDetails);
+            }
+
+            return View("~/Views/Roatp/ConfirmLevyStatus.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SubmitLevyStatus(EmployerLevyStatusViewModel model)
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/ConfirmLevyStatus.cshtml", model);
+            }
+            
+            applicationDetails.LevyPayingEmployer = model.LevyPayingEmployer;
+            _sessionService.Set(ApplicationDetailsKey, applicationDetails);
+
+            if (applicationDetails.LevyPayingEmployer == "Y")
+            {
+                var selectApplicationRouteModel = new SelectApplicationRouteViewModel
+                {
+                    ApplicationRouteId = applicationDetails.ApplicationRoute.Id
+                };
+                return await StartRoatpApplication(selectApplicationRouteModel);
+            }
+            return await IneligibleNonLevy();
+        }
+
+        [Route("organisation-cannot-apply-employer")]
+        public async Task<IActionResult> IneligibleNonLevy()
+        {
+            return View("~/Views/Roatp/IneligibleNonLevy.cshtml", new EmployerProviderContinueApplicationViewModel());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmNonLevyContinue(EmployerProviderContinueApplicationViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/IneligibleNonLevy.cshtml", model);
+            }
+
+            if (model.ContinueWithApplication == "Y")
+            {
+                return RedirectToAction("SelectApplicationRoute");
+            }
+
+            return RedirectToAction("NonLevyAbandonedApplication");
+        }
+        
+        [Route("chosen-not-apply-roatp")]
+        public async Task<IActionResult> NonLevyAbandonedApplication()
+        {
+            return View("~/Views/Roatp/NonLevyAbandonedApplication.cshtml");
         }
 
         [Route("ukrlp-unavailable")]
@@ -250,6 +308,12 @@
             var applicationRoutes = await GetApplicationRoutesForOrganisation();
 
             model.ApplicationRoutes = applicationRoutes;
+
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+            if (applicationDetails.ApplicationRoute != null)
+            {
+                model.ApplicationRouteId = applicationDetails.ApplicationRoute.Id;
+            }
 
             return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
         }
@@ -352,6 +416,29 @@
             return RedirectToAction("SelectApplicationRoute");           
         }
 
+        private async Task<IActionResult> StartRoatpApplication(SelectApplicationRouteViewModel model)
+        {
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+            applicationDetails.ApplicationRoute = new ApplicationRoute { Id = model.ApplicationRouteId };
+
+            var user = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
+
+            applicationDetails.CreatedBy = user.Id;
+
+            var createOrganisationRequest = Mapper.Map<CreateOrganisationRequest>(applicationDetails);
+
+            var organisation = await _organisationApiClient.Create(createOrganisationRequest, user.Id);
+
+            _sessionService.Set(ApplicationDetailsKey, applicationDetails);
+
+            if (!user.IsApproved)
+            {
+                await _usersApiClient.ApproveUser(user.Id);
+            }
+
+            return RedirectToAction("Applications", "RoatpApplication", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
+		}
+		
         [Route("already-on-roatp")]
         public async Task<IActionResult> ProviderAlreadyOnRegister()
         {

@@ -78,7 +78,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 PageOfAnswers = page.PageOfAnswers;
             }
-            
+
+
             var questions = page.Questions;
             var answers = page.PageOfAnswers.FirstOrDefault()?.Answers;
 
