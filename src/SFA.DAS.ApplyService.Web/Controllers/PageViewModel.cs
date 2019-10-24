@@ -69,7 +69,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             LinkTitle = page.LinkTitle;
             DisplayType = page.DisplayType;
             PageId = page.PageId;
-            SequenceId = page.SequenceId;
             AllowMultipleAnswers = page.AllowMultipleAnswers;
             if (errorMessages != null && errorMessages.Any())
             {
@@ -79,9 +78,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 PageOfAnswers = page.PageOfAnswers;
             }
-
-            SectionId = int.Parse((string)page.SectionId);
-
+            
             var questions = page.Questions;
             var answers = page.PageOfAnswers.FirstOrDefault()?.Answers;
 
