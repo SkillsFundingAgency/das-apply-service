@@ -43,10 +43,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.ApplyService.Web.Un
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.ApplyService.Web.IntegrationTests", "SFA.DAS.ApplyService.Web.IntegrationTests\SFA.DAS.ApplyService.Web.IntegrationTests.csproj", "{1F7E8D8A-E6AE-40EB-AB77-52176FD6FFC4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.ApplyService.Encryption", "SFA.DAS.ApplyService.Encryption\SFA.DAS.ApplyService.Encryption.csproj", "{14DDABE7-0AAD-41CB-98C5-BE23650036A8}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.ApplyService.Storage", "SFA.DAS.ApplyService.Storage\SFA.DAS.ApplyService.Storage.csproj", "{E8C7355F-CC93-47C3-95FE-DC494ADC6416}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
