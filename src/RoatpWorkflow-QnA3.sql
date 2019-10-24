@@ -30,7 +30,7 @@ VALUES
 			"InfoText": "",
 			 "Questions": [
         {
-          "QuestionId": "FHA-10",
+          "QuestionId": "CC-10",
           "QuestionTag": "Criminal-Introduction-All",
           "Label": "Criminal and compliance checks on your organisation",
           "ShortLabel": "",
@@ -76,11 +76,9 @@ INSERT INTO [dbo].[WorkflowSequences]
 VALUES
 			(@CriminalComplianceChecksSequenceId
 			,@WorkFlowId3
-			,2
+			,3
 			,1
 			,@CriminalComplianceChecksSectionId
 			,1)
-
-GO
 
 GO
