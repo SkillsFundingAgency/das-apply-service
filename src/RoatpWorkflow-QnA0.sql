@@ -23,8 +23,8 @@ VALUES
   "Pages": [
     {
       "PageId": "1",
-      "SequenceId": "0",
-      "SectionId": "1",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Preamble",
       "LinkTitle": "",
       "InfoText": "",

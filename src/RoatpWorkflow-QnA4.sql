@@ -41,8 +41,8 @@ VALUES
 	"Pages": [
 		{
 			"PageId": "4000",
-			"SequenceId": "4",
-			"SectionId": "1",
+			"SequenceId": null,
+			"SectionId": null,
 			"Title": "",
 			"LinkTitle": "link title",
 			"InfoText": "info text",
@@ -96,8 +96,8 @@ VALUES
     },
 	{
 			"PageId": "4001",
-			"SequenceId": "4",
-			"SectionId": "1",
+			"SequenceId": null,
+			"SectionId": null,
 			"Title": "",
 			"LinkTitle": "link title",
 			"InfoText": "info text",
@@ -151,8 +151,8 @@ VALUES
     },
 	{
 			"PageId": "4002",
-			"SequenceId": "4",
-			"SectionId": "1",
+			"SequenceId": null,
+			"SectionId": null,
 			"Title": "",
 			"LinkTitle": "link title",
 			"InfoText": "info text",
@@ -214,8 +214,8 @@ VALUES
 	"Pages": [
 		{
 			"PageId": "4010",
-			"SequenceId": "4",
-			"SectionId": "2",
+			"SequenceId": null,
+			"SectionId": null,
 			"Title": "Continuity plan for apprenticeship training",
 			"LinkTitle": "Continuity plan for apprenticeship training",
 			"InfoText": "Continuity plan for apprenticeship training",
@@ -291,8 +291,8 @@ VALUES
 	"Pages": [
 		{
 			"PageId": "4020",
-			"SequenceId": "4",
-			"SectionId": "3",
+			"SequenceId": null,
+			"SectionId": null,
 			"Title": "Equality and Diversity policy",
 			"LinkTitle": "Equality and Diversity policy",
 			"InfoText": "Equality and Diversity policy",

@@ -44,7 +44,7 @@ BEGIN
            ,'RoATP'
            ,GETDATE()
            ,'Import'
-		   '{}')
+		   ,'{}')
 END
 
 DELETE FROM [dbo].[WorkflowSections]
