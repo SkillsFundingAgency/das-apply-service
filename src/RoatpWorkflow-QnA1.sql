@@ -732,7 +732,7 @@ VALUES
 	{
       "PageId": "50",
       "SequenceId": null,
-      "SectionId": null",
+      "SectionId": null,
       "Title": "How long has your organisation been trading for?",
       "LinkTitle": "",
       "InfoText": "",
