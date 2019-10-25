@@ -13,6 +13,7 @@
         public CompaniesHouseSummary CompanySummary { get; set; }
         public CharityCommissionSummary CharitySummary { get; set; }
         public OrganisationRegisterStatus RoatpRegisterStatus { get; set; }
+        public string LevyPayingEmployer { get; set; }
         public Guid CreatedBy { get; set; }
 
         public const string OrganisationType = "TrainingProvider";
