@@ -48,6 +48,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string CharityCommissionTrustees = "YO-80";
         public static string CharityCommissionDetailsConfirmed = "YO-85";
         public static string SoleTradeOrPartnership = "YO-100";
+        public static string PartnershipType = "YO-101";
         public static string ApplyProviderRoute = "YO-1";
         public static string ApplyProviderRouteMain = "YO-1.1";              
         public static string ApplyProviderRouteEmployer = "YO-1.2";
@@ -137,6 +138,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string UkrlpVerificationCharity = "UKRLP-Verification-Charity";
         public static string CharityCommissionTrustees = "Charity-Trustees";
         public static string UkrlpVerificationSoleTraderPartnership = "UKRLP-Verification-SoleTraderPartnership";
+        public static string SoleTraderOrPartnership = "SoleTrade-or-Partnership";
+        public static string PartnershipType = "Partnership-Type";
     }
 
     public static class RoatpPreambleQuestionBuilder

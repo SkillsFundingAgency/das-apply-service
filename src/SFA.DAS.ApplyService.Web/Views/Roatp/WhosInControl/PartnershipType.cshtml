@@ -22,7 +22,8 @@
 </div>
 
 <div class="grid-row">
-    <form asp-controller="RoatpApplication" asp-action="TaskList" method="get" name="backForm">
+    <form asp-controller="RoatpWhosInControlApplication" asp-action="SoleTraderOrPartnership" method="get" name="backForm">
+        @Html.HiddenFor(x => x.ApplicationId)
         <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
     </form>
 </div>
@@ -69,10 +70,10 @@
 
                                 <div class="govuk-radios__item">
 
-                                    <input asp-for="PartnershipType" class="govuk-radios__input" id="Partnership-Individual"
-                                           name="Partnership" type="radio" value="Individual"
+                                    <input asp-for="PartnershipType" class="govuk-radios__input" id="PartnershipType-Individual"
+                                           name="PartnershipType" type="radio" value="Individual"
                                            sfa-validation-for="PartnershipType" sfa-validationerror-class="form-control-error">
-                                    <label class="govuk-label govuk-radios__label" for="Partnership-Individual">
+                                    <label class="govuk-label govuk-radios__label" for="PartnershipType-Individual">
                                         An individual
                                     </label>
 
@@ -80,10 +81,10 @@
 
                                 <div class="govuk-radios__item">
 
-                                    <input asp-for="PartnershipType" class="govuk-radios__input" id="Partnership-Organisation"
+                                    <input asp-for="PartnershipType" class="govuk-radios__input" id="PartnershipType-Organisation"
                                            name="PartnershipType" type="radio" value="Organisation"
                                            sfa-validation-for="PartnershipType" sfa-validationerror-class="form-control-error">
-                                    <label class="govuk-label govuk-radios__label" for="Partnership-Organisation">
+                                    <label class="govuk-label govuk-radios__label" for="PartnershipType-Organisation">
                                         An organisation
                                     </label>
 
