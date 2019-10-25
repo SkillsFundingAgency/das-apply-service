@@ -52,21 +52,7 @@ VALUES
           "QuestionTag": "ProtectApprentice-Introduction-Main",
           "Label": "Protecting your apprentices",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-intro-main\">For this section you''ll need to upload your organisation''s:</p>
-       <ul class=\"govuk-list govuk-list--bullet\">
-	          <li>continuity plan for apprenticeship training</li>
-        <li>equality and diversity policy</li>
-        <li>safeguarding policy</li>
-        <li>prevent duty policy (if needed)</li>
-        <li>health and safety policy</li>
-      </ul>
-	  <div class=\"govuk-warning-text\">
-  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>
-  <strong class=\"govuk-warning-text__text\">
-    <span class=\"govuk-warning-text__assistive\">Warning</span>
-    All policies and processes must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept policies or processes that are generic or taken from a third party.
-  </strong>
-	</div>",
+          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-intro-main\">For this section you''ll need to upload your organisation''s:</p><ul class=\"govuk-list govuk-list--bullet\"><li>continuity plan for apprenticeship training</li><li>equality and diversity policy</li><li>safeguarding policy</li><li>prevent duty policy (if needed)</li><li>health and safety policy</li></ul><div class=\"govuk-warning-text\"><span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span><strong class=\"govuk-warning-text__text\"><span class=\"govuk-warning-text__assistive\">Warning</span>All policies and processes must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept policies or processes that are generic or taken from a third party.</strong></div>",
           "Hint": "",
           "Input": {
             "Type": "Hidden",
@@ -107,21 +93,7 @@ VALUES
           "QuestionTag": "ProtectApprentice-Introduction-Employer",
           "Label": "Protecting your apprentices",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-intro-emp\">For this section you''ll need to upload your organisation''s:</p>
-       <ul class=\"govuk-list govuk-list--bullet\">
-	          <li>continuity plan for apprenticeship training</li>
-        <li>equality and diversity policy</li>
-        <li>safeguarding policy</li>
-        <li>prevent duty policy (if needed)</li>
-        <li>health and safety policy</li>
-      </ul>
-	  <div class=\"govuk-warning-text\">
-  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>
-  <strong class=\"govuk-warning-text__text\">
-    <span class=\"govuk-warning-text__assistive\">Warning</span>
-    All policies and processes must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept policies or processes that are generic or taken from a third party.
-  </strong>
-	</div>",
+          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-intro-emp\">For this section you''ll need to upload your organisation''s:</p><ul class=\"govuk-list govuk-list--bullet\"><li>continuity plan for apprenticeship training</li><li>equality and diversity policy</li><li>safeguarding policy</li><li>prevent duty policy (if needed)</li><li>health and safety policy</li></ul><div class=\"govuk-warning-text\"><span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span><strong class=\"govuk-warning-text__text\"><span class=\"govuk-warning-text__assistive\">Warning</span>All policies and processes must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept policies or processes that are generic or taken from a third party.</strong></div>",
           "Hint": "",
           "Input": {
             "Type": "Hidden",
@@ -162,20 +134,7 @@ VALUES
           "QuestionTag": "ProtectApprentice-Introduction-Supporting",
           "Label": "Protecting your apprentices",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-intro-supp\">For this section you''ll need to upload your organisation''s:</p>
-       <ul class=\"govuk-list govuk-list--bullet\">
-        <li>equality and diversity policy</li>
-        <li>safeguarding policy</li>
-        <li>prevent duty policy (if needed)</li>
-        <li>health and safety policy</li>
-      </ul>
-	  <div class=\"govuk-warning-text\">
-  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>
-  <strong class=\"govuk-warning-text__text\">
-    <span class=\"govuk-warning-text__assistive\">Warning</span>
-    All uploads must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept uploads that are generic or taken from a third party.
-  </strong>
-	</div>",
+          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-intro-supp\">For this section you''ll need to upload your organisation''s:</p><ul class=\"govuk-list govuk-list--bullet\"><li>equality and diversity policy</li><li>safeguarding policy</li><li>prevent duty policy (if needed)</li><li>health and safety policy</li></ul><div class=\"govuk-warning-text\"><span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span><strong class=\"govuk-warning-text__text\"><span class=\"govuk-warning-text__assistive\">Warning</span>All uploads must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept uploads that are generic or taken from a third party.</strong></div>",
           "Hint": "",
           "Input": {
             "Type": "Hidden",
@@ -229,17 +188,7 @@ VALUES
           "QuestionTag": "ProtectApprentice-Continuity",
           "Label": "Upload your organisation''s continuity plan for apprenticeship training",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-continuity-plan\">A continuity plan for apprenticeship training shows how your organisation will continue to deliver in case of a significant event.</p>
-		  <p class=\"govuk-body\" id=\"pya-continuity-plan-2\">This must include how your organisation will:</p>
-	  <ul class=\"govuk-list govuk-list--bullet\">
-		  <li>have different methods of communication</li>
-		  <li>manage transportation needs</li>
-		  <li>provide different operating locations (if needed)</li>
-		  <li>back-up relevant business systems</li>
-		  <li>back-up and restore data </li>
-		  <li>have a list of emergency contacts - ESFA must be listed</li>
-		</ul>
-	  <p class=\"govuk-body\">The file must be a PDF and smaller than 5MB.</p>",
+          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-continuity-plan\">A continuity plan for apprenticeship training shows how your organisation will continue to deliver in case of a significant event.</p><p class=\"govuk-body\" id=\"pya-continuity-plan-2\">This must include how your organisation will:</p><ul class=\"govuk-list govuk-list--bullet\"><li>have different methods of communication</li><li>manage transportation needs</li><li>provide different operating locations (if needed)</li><li>back-up relevant business systems</li><li>back-up and restore data </li><li>have a list of emergency contacts - ESFA must be listed</li></ul><p class=\"govuk-body\">The file must be a PDF and smaller than 5MB.</p>",
           "Hint": "",
           "Input": {
             "Type": "FileUpload",
@@ -302,14 +251,7 @@ VALUES
           "QuestionTag": "ProtectApprentice-Equality",
           "Label": "Upload your organisation''s equality and diversity policy",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-equality-policy\">This must include how your organisation will:</p>
-	  <ul class=\"govuk-list govuk-list--bullet\">
-		  <li>promote the policy</li>
-		  <li>get engagement towards the policy</li>
-		  <li>train its employees in implementing the policy</li>
-		  <li>consider the policy when recruiting, delivering apprenticeship training and working with employers and apprentices</li>
-		</ul>
-	  <p class=\"govuk-body\">The file must be a PDF and smaller than 5MB.</p>",
+          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-equality-policy\">This must include how your organisation will:</p><ul class=\"govuk-list govuk-list--bullet\"><li>promote the policy</li><li>get engagement towards the policy</li><li>train its employees in implementing the policy</li><li>consider the policy when recruiting, delivering apprenticeship training and working with employers and apprentices</li></ul><p class=\"govuk-body\">The file must be a PDF and smaller than 5MB.</p>",
           "Hint": "",
           "Input": {
             "Type": "FileUpload",
