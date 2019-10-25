@@ -5009,7 +5009,6 @@ delete from workflowSections where id = @ProtectionOfApprentices2SectionId
 delete from workflowSections where id = @ProtectionOfApprentices3SectionId
 delete from workflowSections where id = @ProtectionOfApprentices4SectionId
 
-
 INSERT [dbo].[WorkflowSections]
   ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
 VALUES
