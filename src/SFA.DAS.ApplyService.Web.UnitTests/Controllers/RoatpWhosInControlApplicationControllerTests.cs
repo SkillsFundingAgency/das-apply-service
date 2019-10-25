@@ -233,6 +233,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCharity)).ReturnsAsync(verifiedCharityCommissionAnswer);
 
+            var verifiedSoleTraderPartnershipAnswer = new Answer
+            {
+                QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationSoleTraderPartnership,
+                Value = ""
+            };
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationSoleTraderPartnership)).ReturnsAsync(verifiedSoleTraderPartnershipAnswer);
+            
             var result = _controller.StartPage(Guid.NewGuid()).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
