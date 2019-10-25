@@ -347,7 +347,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         public async Task<IActionResult> AddSoleTradeDob(Guid applicationId)
         {
-            return View("~/Views/Roatp/WhosInControl/AddSoleTradeDob.cshtml");
+            return null;
         }
 
         private List<TrusteeDateOfBirth> MapTrusteesDataToViewModel(TabularData trusteeData)
