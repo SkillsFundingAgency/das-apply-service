@@ -191,7 +191,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             var validationErrorDetails = TrusteeDateOfBirthValidator.ValidateTrusteeDatesOfBirth(trusteeData, answers);
 
             validationErrorDetails.Count.Should().Be(1);
-            validationErrorDetails[0].ErrorMessage.Should().Be(TrusteeDateOfBirthValidator.InvalidIncompleteDateOfBirthErrorMessage);
+            validationErrorDetails[0].ErrorMessage.Should().Be(TrusteeDateOfBirthValidator.DateOfBirthInFutureErrorMessage);
         }
 
         [Test]
@@ -228,7 +228,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             var validationErrorDetails = TrusteeDateOfBirthValidator.ValidateTrusteeDatesOfBirth(trusteeData, answers);
 
             validationErrorDetails.Count.Should().Be(1);
-            validationErrorDetails[0].ErrorMessage.Should().Be(TrusteeDateOfBirthValidator.InvalidIncompleteDateOfBirthErrorMessage);
+            validationErrorDetails[0].ErrorMessage.Should().Be(TrusteeDateOfBirthValidator.DateOfBirthInFutureErrorMessage);
         }
     }
 }

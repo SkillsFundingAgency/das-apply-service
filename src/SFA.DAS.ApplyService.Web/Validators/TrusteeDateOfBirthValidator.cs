@@ -9,6 +9,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
     {
         public const string MissingDateOfBirthErrorMessage = "Enter a date of birth";
         public const string InvalidIncompleteDateOfBirthErrorMessage = "Enter a date of birth using a month and year";
+        public const string DateOfBirthInFutureErrorMessage = "Enter a date of birth using a month and year that's in the past";
 
         public static List<ValidationErrorDetail> ValidateTrusteeDatesOfBirth(TabularData trusteesData, List<Answer> answers)
         {
@@ -70,12 +71,21 @@ namespace SFA.DAS.ApplyService.Web.Validators
                     {
                         int yearValue = 0;
                         int.TryParse(dobYear.Value, out yearValue);
-                        if (yearValue == 0 || yearValue > DateTime.Now.Year)
+                        if (yearValue == 0)
                         {
                             var errorMessage = new ValidationErrorDetail
                             {
                                 Field = trustee.Id + "_Year",
                                 ErrorMessage = InvalidIncompleteDateOfBirthErrorMessage
+                            };
+                            errorMessages.Add(errorMessage);
+                        }
+                        if (yearValue > DateTime.Now.Year)
+                        {
+                            var errorMessage = new ValidationErrorDetail
+                            {
+                                Field = trustee.Id + "_Year",
+                                ErrorMessage = DateOfBirthInFutureErrorMessage
                             };
                             errorMessages.Add(errorMessage);
                         }
@@ -91,7 +101,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
                             var errorMessage = new ValidationErrorDetail
                             {
                                 Field = trustee.Id + "_Month",
-                                ErrorMessage = InvalidIncompleteDateOfBirthErrorMessage
+                                ErrorMessage = DateOfBirthInFutureErrorMessage
                             };
                             errorMessages.Add(errorMessage);
                         }
