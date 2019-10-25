@@ -484,6 +484,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(trusteesAnswer);
 
+            var verifiedCompanyAnswer = new Answer
+            {
+                QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany,
+                Value = "TRUE"
+            };
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCompany)).ReturnsAsync(verifiedCompanyAnswer);
+            
             var result = _controller.ConfirmTrusteesNoDob(Guid.NewGuid()).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
@@ -527,6 +535,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(trusteesAnswer);
+
+            var verifiedCompanyAnswer = new Answer
+            {
+                QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany,
+                Value = "TRUE"
+            };
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCompany)).ReturnsAsync(verifiedCompanyAnswer);
 
             var result = _controller.ConfirmTrusteesNoDob(Guid.NewGuid()).GetAwaiter().GetResult();
 
