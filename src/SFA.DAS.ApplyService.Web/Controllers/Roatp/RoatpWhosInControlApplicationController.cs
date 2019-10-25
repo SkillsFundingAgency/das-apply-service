@@ -113,7 +113,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             var charityTrusteesAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
             var trusteesData = JsonConvert.DeserializeObject<TabularData>(charityTrusteesAnswer.Value);
-
+            
             var model = new ConfirmTrusteesViewModel
             {
                 ApplicationId = applicationId,
@@ -123,6 +123,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     TableData = trusteesData
                 }
             };
+            
+            var verificationCompanyAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpVerificationCompany);
+            if (verificationCompanyAnswer.Value == "TRUE")
+            {
+                model.VerifiedCompaniesHouse = true;
+            }
 
             return View("~/Views/Roatp/WhosInControl/ConfirmTrusteesNoDob.cshtml", model);
         }

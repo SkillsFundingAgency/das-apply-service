@@ -15,7 +15,14 @@
 </div>
 
 <div class="grid-row">
-    <a class="govuk-back-link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Back</a>
+    @if (Model.VerifiedCompaniesHouse)
+    {            
+        <a class="govuk-back-link" href="@Url.Action("ConfirmDirectorsPscs", "RoatpWhosInControlApplication", new { Model.ApplicationId })">Back</a>
+    }
+    else
+    {
+        <a class="govuk-back-link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Back</a>
+    }
 </div>
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
