@@ -17,6 +17,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     [Authorize]
     public class RoatpWhosInControlApplicationController : Controller
     {
+        private const string OrganisationTypeSoleTrader = "Sole trader";
+        private const string OrganisationTypePartnership = "Partnership";
+
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IApplicationApiClient _applicationApiClient;
         private readonly IAnswerFormService _answerFormService;
@@ -40,6 +43,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             if (verificationCharityAnswer.Value == "TRUE")
             {
                 return await ConfirmTrusteesNoDob(applicationId);
+            }
+
+            var verificationPartnership = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpVerificationSoleTraderPartnership);
+            if (verificationPartnership.Value == "TRUE")
+            {
+                return await SoleTraderOrPartnership(applicationId);
             }
 
             return await AddPeopleInControl(applicationId);
@@ -219,6 +228,71 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return View("~/Views/Roatp/WhosInControl/AddTrustees.cshtml");
         }
 
+        public async Task<IActionResult> SoleTraderOrPartnership(Guid applicationId)
+        {
+            var model = new SoleTraderOrPartnershipViewModel { ApplicationId = applicationId };
+
+            return View("~/Views/Roatp/WhosInControl/SoleTraderOrPartnership.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmSoleTraderOrPartnership(SoleTraderOrPartnershipViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/WhosInControl/SoleTraderOrPartnership.cshtml", model);
+            }
+
+            var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
+            var yourOrganisationSequence =
+                applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
+            var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
+            var whosInControlSection =
+                yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+
+            var organisationTypeAnswer = new List<Answer>
+            {
+                new Answer
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.SoleTradeOrPartnership,
+                    Value = model.OrganisationType
+                }
+            };
+
+            var updateResult = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.SoleTraderPartnership, organisationTypeAnswer);
+            
+            if (model.OrganisationType == OrganisationTypePartnership)
+            {
+                return RedirectToAction("ConfirmPartnershipIndividualOrganisation", new { applicationId = model.ApplicationId });
+            }
+            else
+            {
+                return RedirectToAction("AddSoleTradeDob", new { applicationId = model.ApplicationId });
+            }
+        }
+
+        public async Task<IActionResult> ConfirmPartnershipIndividualOrganisation(Guid applicationId)
+        {
+            var model = new ConfirmPartnershipTypeViewModel { ApplicationId = applicationId };
+            return View("~/Views/Roatp/WhosInControl/ConfirmPartnershipIndividualOrganisation.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PartnershipTypeConfirmed(ConfirmPartnershipTypeViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/WhosInControl/ConfirmPartnershipIndividualOrganisation.cshtml", model);
+            }
+
+            return null;
+        }
+
+        public async Task<IActionResult> AddPeopleInControl(Guid applicationId)
+        {
+            return View("~/Views/Roatp/WhosInControl/AddPeopleInControl.cshtml");
+        }
+
         public async Task<IActionResult> AddPartner(Guid applicationId)
         {
             return View("~/Views/Roatp/WhosInControl/AddPartner.cshtml");
@@ -228,11 +302,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             return View("~/Views/Roatp/WhosInControl/AddSoleTradeDob.cshtml");
         }
-
-        public async Task<IActionResult> AddPeopleInControl(Guid applicationId)
-        {
-            return View("~/Views/Roatp/WhosInControl/AddPeopleInControl.cshtml");
-        }             
 
         private List<TrusteeDateOfBirth> MapTrusteesDataToViewModel(TabularData trusteeData)
         {
