@@ -185,6 +185,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             trusteesData = MapAnswersToTrusteesDob(trusteesData, answers);
 
             model.TrusteeDatesOfBirth = MapTrusteesDataToViewModel(trusteesData);
+
+            if (model.TrusteeDatesOfBirth.Count == 0) // temporary code - manual trustee entry in future story
+            {
+                return RedirectToAction("TaskList", "RoatpApplication", new { model.ApplicationId });
+            }
+
             model.ErrorMessages = TrusteeDateOfBirthValidator.ValidateTrusteeDatesOfBirth(trusteesData, answers);
 
             if (model.ErrorMessages != null & model.ErrorMessages.Count > 0)
@@ -243,26 +249,35 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private List<TrusteeDateOfBirth> MapTrusteesDataToViewModel(TabularData trusteeData)
         {
             var trusteeDatesOfBirth = new List<TrusteeDateOfBirth>();
-            foreach(var trustee in trusteeData.DataRows)
+            if (trusteeData != null && trusteeData.DataRows != null)
             {
-                var trusteeDob = new TrusteeDateOfBirth
+                foreach (var trustee in trusteeData.DataRows)
                 {
-                    Id = trustee.Id,
-                    Name = trustee.Columns[0]
-                };
-                if (trustee.Columns.Count > 1)
-                {
-                    var shortDob = trustee.Columns[1];
-                    trusteeDob.DobMonth = DateOfBirthFormatter.GetMonthNumberFromShortDateOfBirth(shortDob);
-                    trusteeDob.DobYear = DateOfBirthFormatter.GetYearFromShortDateOfBirth(shortDob);
+                    var trusteeDob = new TrusteeDateOfBirth
+                    {
+                        Id = trustee.Id,
+                        Name = trustee.Columns[0]
+                    };
+                    if (trustee.Columns.Count > 1)
+                    {
+                        var shortDob = trustee.Columns[1];
+                        trusteeDob.DobMonth = DateOfBirthFormatter.GetMonthNumberFromShortDateOfBirth(shortDob);
+                        trusteeDob.DobYear = DateOfBirthFormatter.GetYearFromShortDateOfBirth(shortDob);
+                    }
+                    trusteeDatesOfBirth.Add(trusteeDob);
                 }
-                trusteeDatesOfBirth.Add(trusteeDob);
             }
+            
             return trusteeDatesOfBirth;
         }
 
         private TabularData MapAnswersToTrusteesDob(TabularData trusteesData, List<Answer> answers)
         {
+            if (trusteesData == null)
+            {
+                return null;
+            }
+
             if (trusteesData.HeadingTitles.Count < 2)
             {
                 trusteesData.HeadingTitles.Add("Date of birth");

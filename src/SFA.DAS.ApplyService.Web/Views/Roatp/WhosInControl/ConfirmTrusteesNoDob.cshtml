@@ -28,7 +28,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            @if (Model.Trustees.TableData.DataRows.Count == 1)
+            @if (Model.Trustees != null && Model.Trustees.TableData != null && Model.Trustees.TableData.DataRows.Count == 1)
             {
                 <h1 class="govuk-heading-xl">Confirm your organisation's trustee</h1>
             }
