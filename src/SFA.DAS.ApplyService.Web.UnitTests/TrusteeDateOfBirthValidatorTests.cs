@@ -230,5 +230,45 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             validationErrorDetails.Count.Should().Be(1);
             validationErrorDetails[0].ErrorMessage.Should().Be(TrusteeDateOfBirthValidator.DateOfBirthInFutureErrorMessage);
         }
+
+        [TestCase(1)]
+        [TestCase(12)]
+        [TestCase(123)]
+        [TestCase(999)]
+        public void Validator_rejects_year_with_less_than_4_digits(int year)
+        {
+            var answers = new List<Answer>
+            {
+                new Answer
+                {
+                    QuestionId = "10001000_Month",
+                    Value = "5"
+                },
+                new Answer
+                {
+                    QuestionId = "10001000_Year",
+                    Value = year.ToString()
+                }
+            };
+            var trusteeData = new TabularData
+            {
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Id = "10001000",
+                        Columns = new List<string>
+                        {
+                            "Ms A Trustee"
+                        }
+                    }
+                }
+            };
+
+            var validationErrorDetails = TrusteeDateOfBirthValidator.ValidateTrusteeDatesOfBirth(trusteeData, answers);
+
+            validationErrorDetails.Count.Should().Be(1);
+            validationErrorDetails[0].ErrorMessage.Should().Be(TrusteeDateOfBirthValidator.DateOfBirthYearLengthErrorMessage);
+        }
     }
 }

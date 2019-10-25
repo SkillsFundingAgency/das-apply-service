@@ -10,6 +10,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
         public const string MissingDateOfBirthErrorMessage = "Enter a date of birth";
         public const string InvalidIncompleteDateOfBirthErrorMessage = "Enter a date of birth using a month and year";
         public const string DateOfBirthInFutureErrorMessage = "Enter a date of birth using a month and year that's in the past";
+        public const string DateOfBirthYearLengthErrorMessage = "Enter a date of birth using a month and year using 4 numbers";
 
         public static List<ValidationErrorDetail> ValidateTrusteeDatesOfBirth(TabularData trusteesData, List<Answer> answers)
         {
@@ -79,6 +80,15 @@ namespace SFA.DAS.ApplyService.Web.Validators
                                 ErrorMessage = InvalidIncompleteDateOfBirthErrorMessage
                             };
                             errorMessages.Add(errorMessage);
+                        }
+                        if (yearValue > 0 && yearValue < 1000)
+                        {
+                            var errorMessage = new ValidationErrorDetail
+                            {
+                                Field = trustee.Id + "_Year",
+                                ErrorMessage = DateOfBirthYearLengthErrorMessage
+                            };
+                            errorMessages.Add(errorMessage);                           
                         }
                         if (yearValue > DateTime.Now.Year)
                         {
