@@ -4982,6 +4982,8 @@ SET @ProtectionOfApprentices2SequenceId = '436b3fba-1abf-4d13-a883-a552e7c437d2'
 DECLARE @ProtectionOfApprentices3SequenceId UNIQUEIDENTIFIER
 SET @ProtectionOfApprentices3SequenceId = '24bc1f2c-d2b2-4de0-b339-9d7664e091ab'
 
+DECLARE @ProtectionOfApprentices4SequenceId UNIQUEIDENTIFIER
+SET @ProtectionOfApprentices4SequenceId = '94633287-8d89-456e-82e0-1e6967df6e85'
 
 DECLARE @ProtectionOfApprentices2SectionId UNIQUEIDENTIFIER
 SET @ProtectionOfApprentices2SectionId = '5dc1e1f5-7b28-47eb-9702-2b25f5d5782d'
@@ -4989,14 +4991,23 @@ SET @ProtectionOfApprentices2SectionId = '5dc1e1f5-7b28-47eb-9702-2b25f5d5782d'
 DECLARE @ProtectionOfApprentices3SectionId UNIQUEIDENTIFIER
 SET @ProtectionOfApprentices3SectionId = '82e510b7-ad91-4bd0-a60a-01b6ceef18d0'
 
+
+DECLARE @ProtectionOfApprentices4SectionId UNIQUEIDENTIFIER
+SET @ProtectionOfApprentices4SectionId = 'bbef7c29-ed73-4708-b67e-445846b67712'
+
 DECLARE @ProtectionOfApprenticesSectionId UNIQUEIDENTIFIER
 SET @ProtectionOfApprenticesSectionId = '80616b64-ffb4-45b3-9d4e-0b449bb441eb'
 
 delete from workflowsequences where id = @ProtectionOfApprenticesSequenceId
 delete from WorkflowSequences where id = @ProtectionOfApprentices2SequenceId
+delete from WorkflowSequences where id = @ProtectionOfApprentices3SequenceId
+delete from WorkflowSequences where id = @ProtectionOfApprentices4SequenceId
+
 
 delete from workflowSections where id = @ProtectionOfApprenticesSectionId
 delete from workflowSections where id = @ProtectionOfApprentices2SectionId
+delete from workflowSections where id = @ProtectionOfApprentices3SectionId
+delete from workflowSections where id = @ProtectionOfApprentices4SectionId
 
 
 INSERT [dbo].[WorkflowSections]
@@ -5262,6 +5273,73 @@ VALUES
 
 
 
+
+--- part 4 safeguarding
+
+INSERT [dbo].[WorkflowSections]
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle],[DisplayType])
+VALUES
+  (@ProtectionOfApprentices4SectionId, @ProjectId, N'
+{
+	"Pages": [
+		{
+			"PageId": "540",
+			"SequenceId": null,
+			"SectionId": null,
+			"Title": "Equality and Diversity policy",
+			"LinkTitle": "Equality and Diversity policy",
+			"InfoText": "Equality and Diversity policy",
+			 "Questions": [
+        {
+          "QuestionId": "PYA-30",
+          "QuestionTag": "ProtectApprentice-Equality",
+          "Label": "Upload your organisation''s equality and diversity policy",
+          "ShortLabel": "",
+           "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-equality-policy\">This must include how your organisation will:</p><ul class=\"govuk-list govuk-list--bullet\"><li>promote the policy</li><li>get engagement towards the policy</li><li>train its employees in implementing the policy</li><li>consider the policy when recruiting, delivering apprenticeship training and working with employers and apprentices</li></ul><p class=\"govuk-body\">The file must be a PDF and smaller than 5MB.</p>",
+          "Hint": "",
+          "Input": {
+            "Type": "FileUpload",
+            "Validations": [
+			    {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Select your organisation''s equality and diversity policy"
+                },
+				{
+                "Name": "FileType",
+                "Value": "pdf",
+                "ErrorMessage": "The selected file must be a PDF"
+              }
+			]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+       "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "550",
+          "Conditions": [],
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    }
+	]
+}
+', N'Equality and diversity policy', N'Equality and diversity policy',  N'Pages')
+
+
+
 INSERT INTO [dbo].[WorkflowSequences]
 			([Id]
 			,[WorkflowId]
@@ -5305,6 +5383,22 @@ VALUES
 			,4
 			,3
 			,@ProtectionOfApprentices3SectionId
+			,1)
+
+
+INSERT INTO [dbo].[WorkflowSequences]
+			([Id]
+			,[WorkflowId]
+			,[SequenceNo]
+			,[SectionNo]
+			,[SectionId]
+			,[IsActive])
+VALUES
+			(@ProtectionOfApprentices4SequenceId
+			,@WorkFlowId
+			,4
+			,4
+			,@ProtectionOfApprentices4SectionId
 			,1)
 
 GO
