@@ -704,35 +704,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return fileValidationPassed;
         }
 
-        public async Task<IActionResult> Download(Guid applicationId, int sequenceId, int sectionId, string pageId, string questionId, string filename)
-        {
-            var sequences = await _qnaApiClient.GetSequences(applicationId);
-            var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
-            var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
-            var selectedSection = sections.Single(x => x.SectionId == sectionId);
-            var response = await _qnaApiClient.DownloadFile(applicationId, selectedSection.Id, pageId, questionId, filename);
-            var fileStream = await response.Content.ReadAsStreamAsync();
-
-            return File(fileStream, response.Content.Headers.ContentType.MediaType, filename);
-
-        }
-
-        public async Task<IActionResult> DeleteFile(Guid applicationId, int sequenceId, int sectionId, string pageId, string questionId, string filename, string redirectAction)
-        {
-
-            var sequences = await _qnaApiClient.GetSequences(applicationId);
-            var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
-            var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
-            var selectedSection = sections.Single(x => x.SectionId == sectionId);
-
-
-            await _apiClient.RemoveSectionCompleted(applicationId, selectedSection.Id);
-            await _qnaApiClient.DeleteFile(applicationId,  selectedSection.Id, pageId, questionId, filename);
-           
-
-            return RedirectToAction("Page", new {applicationId, sequenceId, sectionId, pageId, redirectAction});
-        }
-        
         public async Task<IActionResult> Submit(Guid applicationId, int sequenceId)
         {
             var canUpdate = await CanUpdateApplication(applicationId, sequenceId);
