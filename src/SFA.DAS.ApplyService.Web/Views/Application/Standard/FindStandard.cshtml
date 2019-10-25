@@ -23,7 +23,7 @@
     }
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form asp-action="Search" asp-controller="Standard" asp-route-applicationId="@Model.ApplicationId">
+            <form asp-action="Search" asp-controller="Standard" asp-route-Id="@Model.ApplicationId">
                 <div class="govuk-form-group @(!ViewData.ModelState.IsValid || showErrors ? "govuk-form-group--error" : "")">
                     <h1 class="govuk-label-wrapper">
                         <label class="govuk-label govuk-label--xl" for="standard-name">

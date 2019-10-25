@@ -1016,7 +1016,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var applicationRouteModel = new SelectApplicationRouteViewModel
             {
-                ApplicationRouteId = ApplicationRoute.EmployerProviderApplicationRoute
+                ApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute
             };
 
             var result = _controller.StartApplication(applicationRouteModel).GetAwaiter().GetResult();
@@ -1026,6 +1026,98 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                                                                && y.OrganisationDetails.CompaniesHouseDetails == null
                                                                && y.OrganisationDetails.CharityCommissionDetails ==
                                                                null), It.IsAny<Guid>()), Times.Once);
+        }
+        
+        [Test]
+        public void Provider_asked_to_confirm_levy_status_if_choose_employer_application_route()
+        {
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
+
+            var model = new SelectApplicationRouteViewModel
+            {
+                ApplicationRouteId = ApplicationRoute.EmployerProviderApplicationRoute
+            };
+
+            var result = _controller.StartApplication(model).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("ConfirmLevyStatus");
+        }
+
+        [Test]
+        public void Provider_routed_to_confirmation_page_if_non_levy_employer()
+        {
+            var model = new EmployerLevyStatusViewModel
+            {
+                ApplicationRouteId = ApplicationRoute.EmployerProviderApplicationRoute,
+                LevyPayingEmployer = "N",
+                UKPRN = "10001234"
+            };
+
+            var applicationDetails = new ApplicationDetails
+            {
+                UKPRN = 10001000,
+                ApplicationRoute = new ApplicationRoute { Id = ApplicationRoute.EmployerProviderApplicationRoute }
+            };
+
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+            var result = _controller.SubmitLevyStatus(model).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("IneligibleNonLevy");
+        }
+
+        [Test]
+        public void Provider_routed_to_task_list_if_levy_paying_employer()
+        {
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
+
+            _usersApiClient.Setup(x => x.GetUserBySignInId(It.IsAny<string>())).ReturnsAsync(_user);
+            _usersApiClient.Setup(x => x.ApproveUser(It.IsAny<Guid>())).ReturnsAsync(true);
+
+            _organisationApiClient.Setup(x => x.Create(It.IsAny<CreateOrganisationRequest>(), It.IsAny<Guid>()))
+                .ReturnsAsync(new Organisation()).Verifiable();
+
+            _expectedRequest.OrganisationDetails.UKRLPDetails.VerificationDetails.Add(new VerificationDetails
+            {
+                VerificationAuthority = "National Audit Office",
+                VerificationId = "12345678"
+            });
+
+            var model = new EmployerLevyStatusViewModel
+            {
+                ApplicationRouteId = ApplicationRoute.EmployerProviderApplicationRoute,
+                LevyPayingEmployer = "Y",
+                UKPRN = "10001234"
+            };
+
+            _applicationDetails.ApplicationRoute = new ApplicationRoute { Id = ApplicationRoute.EmployerProviderApplicationRoute };
+            
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
+
+            var result = _controller.SubmitLevyStatus(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("Applications");
+            redirectResult.ControllerName.Should().Be("RoatpApplication");
+        }
+
+        [Test]
+        public void Provider_asked_to_choose_application_route_again_if_non_levy_and_want_to_continue_with_application()
+        {
+            var model = new EmployerProviderContinueApplicationViewModel
+            {
+                ContinueWithApplication = "Y"
+            };
+
+            var result = _controller.ConfirmNonLevyContinue(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+
+			redirectResult.ActionName.Should().Be("SelectApplicationRoute");
         }
 
         [TestCase(OrganisationStatus.Active)]
@@ -1186,6 +1278,15 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(registerStatus);
 
+            var applicationDetails = new ApplicationDetails
+            {
+                UKPRN = 10001000,
+                RoatpRegisterStatus = registerStatus,
+                ApplicationRoute = new ApplicationRoute {  Id = ApplicationRoute.MainProviderApplicationRoute }
+            };
+
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+
             var result = _controller.SelectApplicationRoute().GetAwaiter().GetResult();
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
@@ -1211,6 +1312,20 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
+        public void Provider_shown_shutter_page_if_non_levy_and_choose_not_to_continue_with_application()
+        {
+            var model = new EmployerProviderContinueApplicationViewModel
+            {
+                ContinueWithApplication = "N"
+            };
+
+            var result = _controller.ConfirmNonLevyContinue(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("NonLevyAbandonedApplication");
+        }
+
+		[Test]
         public void Provider_already_on_register_opts_to_stay_on_register_in_same_route()
         {
             var model = new ChangeProviderRouteViewModel { ChangeApplicationRoute = "N" };
@@ -1225,4 +1340,5 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
     }
+
 }

@@ -64,8 +64,8 @@ VALUES
   "Pages": [
     {
       "PageId": "1",
-      "SequenceId": "0",
-      "SectionId": "1",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Preamble",
       "LinkTitle": "",
       "InfoText": "",
@@ -459,6 +459,19 @@ VALUES
             "Validations": []            
           },
           "Order": null
+        },
+        {
+          "QuestionId": "PRE-95",
+          "QuestionTag": "EmployerProvider-LevyPaying",
+          "Label": "",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Text",
+            "Validations": []            
+          },
+          "Order": null
         }
       ],
       "PageOfAnswers": [],
@@ -510,8 +523,8 @@ VALUES
   "Pages": [
     {
       "PageId": "2",
-      "SequenceId": "1",
-      "SectionId": "1",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Provider route",
       "LinkTitle": "",
       "InfoText": "",
@@ -608,8 +621,8 @@ VALUES
   "Pages": [
     {
       "PageId": "10",
-      "SequenceId": "1",
-      "SectionId": "2",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Your organisation",
       "LinkTitle": "",
       "InfoText": "",
@@ -619,7 +632,7 @@ VALUES
           "QuestionTag": "Organisation-Introduction-Main",
           "Label": "",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\">In this section we''ll ask for:</p><ul class=\"govuk-list govuk-list--bullet\"><li>your organsiation''s Information Commissioner''s Office registration number</li><li>who''s in control and their date of births</li><li>your organisation''s trading history</li><li>details of what your organisation is</li><li>Ofsted or other educational accreditations</li></ul><p class=\"govuk-body\">Depending on your answers, we may ask further questions.</p> <div class=\"govuk-warning-text\"> <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span> <strong class=\"govuk-warning-text__text\"> <span class=\"govuk-warning-text__assistive\">Warning</span>Your organisation must have at least 12 months trading history and a training manager with at least 9 months experience in developing and delivering training. </strong> </div>",
+          "QuestionBodyText": "<p class=\"govuk-body\">In this section we''ll ask for:</p><ul class=\"govuk-list govuk-list--bullet\"><li>your organisation''s Information Commissioner''s Office registration number</li><li>who''s in control and their date of births</li><li>your organisation''s trading history</li><li>details of what your organisation is</li><li>Ofsted or other educational accreditations</li></ul><p class=\"govuk-body\">Depending on your answers, we may ask further questions.</p> <div class=\"govuk-warning-text\"> <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span> <strong class=\"govuk-warning-text__text\"> <span class=\"govuk-warning-text__assistive\">Warning</span>Your organisation must have at least 12 months trading history and a training manager with at least 9 months experience in developing and delivering training. </strong> </div>",
           "Hint": "",
           "Input": {
             "Type": "Hidden",
@@ -675,8 +688,8 @@ VALUES
     },
 	{
       "PageId": "11",
-      "SequenceId": "1",
-      "SectionId": "2",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Your organisation",
       "LinkTitle": "",
       "InfoText": "",
@@ -686,7 +699,7 @@ VALUES
           "QuestionTag": "Organisation-Introduction-Employer",
           "Label": "",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\">In this section we''ll ask for:</p><ul class=\"govuk-list govuk-list--bullet\"><li>your organsiation''s Information Commissioner''s Office registration number</li><li>who''s in control and their date of births</li><li>your organisation''s trading history</li><li>details of what your organisation is</li><li>Ofsted or other educational accreditations</li></ul><p class=\"govuk-body\">Depending on your answers, we may ask further questions.</p> <div class=\"govuk-warning-text\"> <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span> <strong class=\"govuk-warning-text__text\"> <span class=\"govuk-warning-text__assistive\">Warning</span>Your organisation must have at least 12 months trading history and a training manager with at least 9 months experience in developing and delivering training. </strong> </div>",
+          "QuestionBodyText": "<p class=\"govuk-body\">In this section we''ll ask for:</p><ul class=\"govuk-list govuk-list--bullet\"><li>your organisation''s Information Commissioner''s Office registration number</li><li>who''s in control and their date of births</li><li>your organisation''s trading history</li><li>details of what your organisation is</li><li>Ofsted or other educational accreditations</li></ul><p class=\"govuk-body\">Depending on your answers, we may ask further questions.</p> <div class=\"govuk-warning-text\"> <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span> <strong class=\"govuk-warning-text__text\"> <span class=\"govuk-warning-text__assistive\">Warning</span>Your organisation must have at least 12 months trading history and a training manager with at least 9 months experience in developing and delivering training. </strong> </div>",
           "Hint": "",
           "Input": {
             "Type": "Hidden",
@@ -742,8 +755,8 @@ VALUES
     },
 	{
       "PageId": "12",
-      "SequenceId": "1",
-      "SectionId": "2",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Your organisation",
       "LinkTitle": "",
       "InfoText": "",
@@ -753,7 +766,7 @@ VALUES
           "QuestionTag": "Organisation-Introduction-Supporting",
           "Label": "",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\">In this section we''ll ask for:</p><ul class=\"govuk-list govuk-list--bullet\"><li>your organsiation''s Information Commissioner''s Office registration number</li><li>who''s in control and their date of births</li><li>your organisation''s trading history</li><li>details of what your organisation is</li><li>Ofsted or other educational accreditations</li></ul><p class=\"govuk-body\">Depending on your answers, we may ask further questions.</p> <div class=\"govuk-warning-text\"> <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span> <strong class=\"govuk-warning-text__text\"> <span class=\"govuk-warning-text__assistive\">Warning</span>Your organisation must have at least 3 months trading history and a training manager with at least 3 months experience in developing and delivering training. </strong> </div>",
+          "QuestionBodyText": "<p class=\"govuk-body\">In this section we''ll ask for:</p><ul class=\"govuk-list govuk-list--bullet\"><li>your organisation''s Information Commissioner''s Office registration number</li><li>who''s in control and their date of births</li><li>your organisation''s trading history</li><li>details of what your organisation is</li><li>Ofsted or other educational accreditations</li></ul><p class=\"govuk-body\">Depending on your answers, we may ask further questions.</p> <div class=\"govuk-warning-text\"> <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span> <strong class=\"govuk-warning-text__text\"> <span class=\"govuk-warning-text__assistive\">Warning</span>Your organisation must have at least 3 months trading history and a training manager with at least 3 months experience in developing and delivering training. </strong> </div>",
           "Hint": "",
           "Input": {
             "Type": "Hidden",
@@ -840,8 +853,8 @@ VALUES
   "Pages": [
     {
       "PageId": "20",
-      "SequenceId": "1",
-      "SectionId": "3",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Does your organisation have an ultimate parent company in the UK?",
       "LinkTitle": "",
       "InfoText": "",
@@ -910,8 +923,8 @@ VALUES
     },
 	{
       "PageId": "21",
-      "SequenceId": "1",
-      "SectionId": "3",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Enter your organisation''s ultimate parent company details",
       "LinkTitle": "",
       "InfoText": "",
@@ -1004,8 +1017,8 @@ VALUES
     },
 	{
       "PageId": "30",
-      "SequenceId": "1",
-      "SectionId": "3",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "What is your organisation''s Information Commissioner''s Office (ICO) registration number?",
       "LinkTitle": "",
       "InfoText": "",
@@ -1104,8 +1117,8 @@ VALUES
     },
 	{
       "PageId": "40",
-      "SequenceId": "1",
-      "SectionId": "3",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Does your organisation have a website?",
       "LinkTitle": "",
       "InfoText": "",
@@ -1218,8 +1231,8 @@ VALUES
     },
 	{
       "PageId": "50",
-      "SequenceId": "1",
-      "SectionId": "3",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "How long has your organisation been trading for?",
       "LinkTitle": "",
       "InfoText": "",
@@ -1354,8 +1367,8 @@ VALUES
     },
 	{
       "PageId": "51",
-      "SequenceId": "1",
-      "SectionId": "3",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "How long has your organisation been trading for?",
       "LinkTitle": "",
       "InfoText": "",
@@ -1490,8 +1503,8 @@ VALUES
     },
 	{
       "PageId": "60",
-      "SequenceId": "1",
-      "SectionId": "3",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "How long has your organisation been trading for?",
       "LinkTitle": "",
       "InfoText": "",
@@ -1626,8 +1639,8 @@ VALUES
     },
 	{
       "PageId": "10001",
-      "SequenceId": "1",
-      "SectionId": "3",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Your organisation is not eligible to apply to join RoATP",
       "LinkTitle": "",
       "InfoText": "",
@@ -1661,8 +1674,8 @@ VALUES
     },
 	{
       "PageId": "10002",
-      "SequenceId": "1",
-      "SectionId": "3",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Your organisation is not eligible to apply to join RoATP",
       "LinkTitle": "",
       "InfoText": "",
@@ -1696,8 +1709,8 @@ VALUES
     },
 	{
       "PageId": "10003",
-      "SequenceId": "1",
-      "SectionId": "3",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Your organisation is not eligible to apply to join RoATP",
       "LinkTitle": "",
       "InfoText": "",
@@ -1762,8 +1775,8 @@ VALUES
   "Pages": [   	
 	{
       "PageId": "70",
-      "SequenceId": "1",
-      "SectionId": "4",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Confirm who''s in control",
       "LinkTitle": "",
       "InfoText": "",
@@ -1858,8 +1871,8 @@ VALUES
     },
 	{
       "PageId": "80",
-      "SequenceId": "1",
-      "SectionId": "4",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Confirm who''s in control",
       "LinkTitle": "",
       "InfoText": "",
@@ -1901,8 +1914,8 @@ VALUES
     },		
 	{
       "PageId": "90",
-      "SequenceId": "1",
-      "SectionId": "4",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Confirm who''s in control",
       "LinkTitle": "",
       "InfoText": "",
@@ -1944,8 +1957,8 @@ VALUES
     },
 	{
       "PageId": "100",
-      "SequenceId": "1",
-      "SectionId": "4",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Tell us your organisation''s type",
       "LinkTitle": "",
       "InfoText": "",
@@ -2024,8 +2037,8 @@ VALUES
     },	
 	{
       "PageId": "110",
-      "SequenceId": "1",
-      "SectionId": "4",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "PLACEHOLDER Add Partner",
       "LinkTitle": "",
       "InfoText": "",
@@ -2067,8 +2080,8 @@ VALUES
     },
 	{
       "PageId": "120",
-      "SequenceId": "1",
-      "SectionId": "4",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "What is {{UKRLP-LegalName}}''s date of birth?",
       "LinkTitle": "",
       "InfoText": "",
@@ -2120,8 +2133,8 @@ VALUES
     },
 	{
       "PageId": "130",
-      "SequenceId": "1",
-      "SectionId": "4",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "PLACEHOLDER Add People In Control",
       "LinkTitle": "",
       "InfoText": "",
@@ -2194,8 +2207,8 @@ VALUES
   "Pages": [
     {
       "PageId": "140",
-      "SequenceId": "1",
-      "SectionId": "5",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "What is your organisation?",
       "LinkTitle": "",
       "InfoText": "",
@@ -2333,8 +2346,8 @@ VALUES
     },
 	{
       "PageId": "150",
-      "SequenceId": "1",
-      "SectionId": "5",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "What is your organisation?",
       "LinkTitle": "",
       "InfoText": "",
@@ -2463,8 +2476,8 @@ VALUES
     },
 	{
       "PageId": "160",
-      "SequenceId": "1",
-      "SectionId": "5",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "What type of educational institute is your organisation?",
       "LinkTitle": "",
       "InfoText": "",
@@ -2634,8 +2647,8 @@ VALUES
     },
 	{
       "PageId": "161",
-      "SequenceId": "1",
-      "SectionId": "5",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "What type of educational institute is your organisation?",
       "LinkTitle": "",
       "InfoText": "",
@@ -2805,8 +2818,8 @@ VALUES
     },
 	{
       "PageId": "170",
-      "SequenceId": "1",
-      "SectionId": "5",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "What type of public body is your organisation?",
       "LinkTitle": "",
       "InfoText": "",
@@ -2889,8 +2902,8 @@ VALUES
     },
 	{
       "PageId": "171",
-      "SequenceId": "1",
-      "SectionId": "5",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "What type of public body is your organisation?",
       "LinkTitle": "",
       "InfoText": "",
@@ -2995,8 +3008,8 @@ VALUES
     },
 	{
       "PageId": "180",
-      "SequenceId": "1",
-      "SectionId": "5",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "What type of school is your organisation?",
       "LinkTitle": "",
       "InfoText": "",
@@ -3067,8 +3080,8 @@ VALUES
     },
 	{
       "PageId": "181",
-      "SequenceId": "1",
-      "SectionId": "5",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "What type of school is your organisation?",
       "LinkTitle": "",
       "InfoText": "",
@@ -3161,8 +3174,8 @@ VALUES
     },
 	{
       "PageId": "190",
-      "SequenceId": "1",
-      "SectionId": "5",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Is your organisation funded by the Office for Students?",
       "LinkTitle": "",
       "InfoText": "",
@@ -3218,8 +3231,8 @@ VALUES
     },
 	{
       "PageId": "191",
-      "SequenceId": "1",
-      "SectionId": "5",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Is your organisation funded by the Office for Students?",
       "LinkTitle": "",
       "InfoText": "",
@@ -3297,8 +3310,8 @@ VALUES
     },
 	{
       "PageId": "200",
-      "SequenceId": "1",
-      "SectionId": "5",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Is your organisation already registered with ESFA?",
       "LinkTitle": "",
       "InfoText": "",
@@ -3354,8 +3367,8 @@ VALUES
     },
 	{
       "PageId": "201",
-      "SequenceId": "1",
-      "SectionId": "5",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Is your organisation already registered with ESFA?",
       "LinkTitle": "",
       "InfoText": "",
@@ -3433,8 +3446,8 @@ VALUES
     },
 	{
       "PageId": "210",
-      "SequenceId": "1",
-      "SectionId": "5",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Is your organisation receiving funding from ESFA?",
       "LinkTitle": "",
       "InfoText": "",
@@ -3490,8 +3503,8 @@ VALUES
     },
 	{
       "PageId": "211",
-      "SequenceId": "1",
-      "SectionId": "5",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Is your organisation receiving funding from ESFA?",
       "LinkTitle": "",
       "InfoText": "",
@@ -3569,8 +3582,8 @@ VALUES
     },
 	{
       "PageId": "220",
-      "SequenceId": "1",
-      "SectionId": "5",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "How will your organisation train its apprentices?",
       "LinkTitle": "",
       "InfoText": "",
@@ -3634,8 +3647,8 @@ VALUES
     },
 	{
       "PageId": "230",
-      "SequenceId": "1",
-      "SectionId": "5",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "How would you describe your organisation?",
       "LinkTitle": "",
       "InfoText": "",
@@ -3738,8 +3751,8 @@ VALUES
   "Pages": [
     {
       "PageId": "240",
-      "SequenceId": "1",
-      "SectionId": "6",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Does your organisation offer initial teacher training?",
       "LinkTitle": "",
       "InfoText": "",
@@ -3811,8 +3824,8 @@ VALUES
     },
 	{
       "PageId": "250",
-      "SequenceId": "1",
-      "SectionId": "6",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Is the postgraduate teaching apprenticeship the only apprenticeship your organisation intends to deliver?",
       "LinkTitle": "",
       "InfoText": "",
@@ -3879,8 +3892,8 @@ VALUES
     },
 	{
       "PageId": "260",
-      "SequenceId": "1",
-      "SectionId": "6",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Has your organisation had a full Ofsted inspection in further education and skills?",
       "LinkTitle": "",
       "InfoText": "",
@@ -3947,8 +3960,8 @@ VALUES
     },
 	{
       "PageId": "270",
-      "SequenceId": "1",
-      "SectionId": "6",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Did your organisation get a grade for apprenticeships in this full Ofsted inspection?",
       "LinkTitle": "",
       "InfoText": "",
@@ -4048,8 +4061,8 @@ VALUES
     },
 	{
       "PageId": "280",
-      "SequenceId": "1",
-      "SectionId": "6",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "What grade did your organisation get for overall effectiveness in this full Ofsted inspection?",
       "LinkTitle": "",
       "InfoText": "",
@@ -4135,8 +4148,8 @@ VALUES
     },
 	{
       "PageId": "290",
-      "SequenceId": "1",
-      "SectionId": "6",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Has your organisation had a monitoring visit for apprenticeships in further education and skills?",
       "LinkTitle": "",
       "InfoText": "",
@@ -4192,8 +4205,8 @@ VALUES
     },
 	{
       "PageId": "300",
-      "SequenceId": "1",
-      "SectionId": "6",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "What grade did your organisation get for apprenticeships in this full Ofsted inspection?",
       "LinkTitle": "",
       "InfoText": "",
@@ -4279,8 +4292,8 @@ VALUES
     },
 	{
       "PageId": "301",
-      "SequenceId": "1",
-      "SectionId": "6",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "What grade did your organisation get for apprenticeships in this full Ofsted inspection?",
       "LinkTitle": "",
       "InfoText": "",
@@ -4366,8 +4379,8 @@ VALUES
     },
 	{
       "PageId": "310",
-      "SequenceId": "1",
-      "SectionId": "6",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Did your organisation get this grade within the last 3 years?",
       "LinkTitle": "",
       "InfoText": "",
@@ -4434,8 +4447,8 @@ VALUES
     },
 	{
       "PageId": "311",
-      "SequenceId": "1",
-      "SectionId": "6",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Did your organisation get this grade within the last 3 years?",
       "LinkTitle": "",
       "InfoText": "",
@@ -4502,8 +4515,8 @@ VALUES
     },
 	{
       "PageId": "320",
-      "SequenceId": "1",
-      "SectionId": "6",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Has your organisation maintained funding from an education agency since its full Ofsted inspection?",
       "LinkTitle": "",
       "InfoText": "",
@@ -4559,8 +4572,8 @@ VALUES
     },
 	{
       "PageId": "330",
-      "SequenceId": "1",
-      "SectionId": "6",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Has your organisation had a short Ofsted inspection within the last 3 years?",
       "LinkTitle": "",
       "InfoText": "",
@@ -4627,8 +4640,8 @@ VALUES
     },
 	{
       "PageId": "340",
-      "SequenceId": "1",
-      "SectionId": "6",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Has your organisation maintained the grade it got in its full Ofsted inspection in its short Ofsted inspection?",
       "LinkTitle": "",
       "InfoText": "",
@@ -4695,8 +4708,8 @@ VALUES
     },
 	{
       "PageId": "350",
-      "SequenceId": "1",
-      "SectionId": "6",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Has your organisation delivered apprenticeship training as a subcontractor in the last 12 months?",
       "LinkTitle": "",
       "InfoText": "",
@@ -4752,8 +4765,8 @@ VALUES
     },
 	{
       "PageId": "10004",
-      "SequenceId": "1",
-      "SectionId": "6",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Your organisation is not eligible to apply to join RoATP",
       "LinkTitle": "",
       "InfoText": "",
@@ -4898,8 +4911,8 @@ VALUES
   "Pages": [
     {
       "PageId": "999999",
-      "SequenceId": "99",
-      "SectionId": "1",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Conditions of acceptance",
       "LinkTitle": "",
       "InfoText": "",
@@ -4994,8 +5007,8 @@ VALUES
 	"Pages": [
 		{
 			"PageId": "500",
-			"SequenceId": "4",
-			"SectionId": "1",
+			"SequenceId": null,
+			"SectionId": null,
 			"Title": "",
 			"LinkTitle": "link title",
 			"InfoText": "info text",
@@ -5005,21 +5018,7 @@ VALUES
           "QuestionTag": "ProtectApprentice-Introduction-Main",
           "Label": "Protecting your apprentices",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-intro-main\">For this section you''ll need to upload your organisation''s:</p>
-       <ul class=\"govuk-list govuk-list--bullet\">
-	          <li>continuity plan for apprenticeship training</li>
-        <li>equality and diversity policy</li>
-        <li>safeguarding policy</li>
-        <li>prevent duty policy (if needed)</li>
-        <li>health and safety policy</li>
-      </ul>
-	  <div class=\"govuk-warning-text\">
-  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>
-  <strong class=\"govuk-warning-text__text\">
-    <span class=\"govuk-warning-text__assistive\">Warning</span>
-    All policies and processes must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept policies or processes that are generic or taken from a third party.
-  </strong>
-	</div>",
+          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-intro-main\">For this section you''ll need to upload your organisation''s:</p><ul class=\"govuk-list govuk-list--bullet\"><li>continuity plan for apprenticeship training</li><li>equality and diversity policy</li><li>safeguarding policy</li><li>prevent duty policy (if needed)</li><li>health and safety policy</li></ul><div class=\"govuk-warning-text\"><span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span><strong class=\"govuk-warning-text__text\"><span class=\"govuk-warning-text__assistive\">Warning</span>All policies and processes must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept policies or processes that are generic or taken from a third party.</strong></div>",
           "Hint": "",
           "Input": {
             "Type": "Hidden",
@@ -5049,8 +5048,8 @@ VALUES
     },
 	{
 			"PageId": "510",
-			"SequenceId": "4",
-			"SectionId": "1",
+			"SequenceId": null,
+			"SectionId": null,
 			"Title": "",
 			"LinkTitle": "link title",
 			"InfoText": "info text",
@@ -5060,21 +5059,7 @@ VALUES
           "QuestionTag": "ProtectApprentice-Introduction-Employer",
           "Label": "Protecting your apprentices",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-intro-emp\">For this section you''ll need to upload your organisation''s:</p>
-       <ul class=\"govuk-list govuk-list--bullet\">
-	          <li>continuity plan for apprenticeship training</li>
-        <li>equality and diversity policy</li>
-        <li>safeguarding policy</li>
-        <li>prevent duty policy (if needed)</li>
-        <li>health and safety policy</li>
-      </ul>
-	  <div class=\"govuk-warning-text\">
-  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>
-  <strong class=\"govuk-warning-text__text\">
-    <span class=\"govuk-warning-text__assistive\">Warning</span>
-    All policies and processes must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept policies or processes that are generic or taken from a third party.
-  </strong>
-	</div>",
+          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-intro-emp\">For this section you''ll need to upload your organisation''s:</p><ul class=\"govuk-list govuk-list--bullet\"><li>continuity plan for apprenticeship training</li><li>equality and diversity policy</li><li>safeguarding policy</li><li>prevent duty policy (if needed)</li><li>health and safety policy</li></ul><div class=\"govuk-warning-text\"><span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span><strong class=\"govuk-warning-text__text\"><span class=\"govuk-warning-text__assistive\">Warning</span>All policies and processes must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept policies or processes that are generic or taken from a third party.</strong></div>",
           "Hint": "",
           "Input": {
             "Type": "Hidden",
@@ -5104,8 +5089,8 @@ VALUES
     },
 	{
 			"PageId": "520",
-			"SequenceId": "4",
-			"SectionId": "1",
+			"SequenceId": null,
+			"SectionId": null,
 			"Title": "",
 			"LinkTitle": "link title",
 			"InfoText": "info text",
@@ -5115,20 +5100,7 @@ VALUES
           "QuestionTag": "ProtectApprentice-Introduction-Supporting",
           "Label": "Protecting your apprentices",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-intro-supp\">For this section you''ll need to upload your organisation''s:</p>
-       <ul class=\"govuk-list govuk-list--bullet\">
-        <li>equality and diversity policy</li>
-        <li>safeguarding policy</li>
-        <li>prevent duty policy (if needed)</li>
-        <li>health and safety policy</li>
-      </ul>
-	  <div class=\"govuk-warning-text\">
-  <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span>
-  <strong class=\"govuk-warning-text__text\">
-    <span class=\"govuk-warning-text__assistive\">Warning</span>
-    All uploads must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept uploads that are generic or taken from a third party.
-  </strong>
-	</div>",
+          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-intro-supp\">For this section you''ll need to upload your organisation''s:</p><ul class=\"govuk-list govuk-list--bullet\"><li>equality and diversity policy</li><li>safeguarding policy</li><li>prevent duty policy (if needed)</li><li>health and safety policy</li></ul><div class=\"govuk-warning-text\"><span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span><strong class=\"govuk-warning-text__text\"><span class=\"govuk-warning-text__assistive\">Warning</span>All uploads must be specific to your organisation, apprentices and trainers. They must also be signed by a senior employee. For example, a director or CEO. We will not accept uploads that are generic or taken from a third party.</strong></div>",
           "Hint": "",
           "Input": {
             "Type": "Hidden",
@@ -5167,8 +5139,8 @@ VALUES
 	"Pages": [
 		{
 			"PageId": "530",
-			"SequenceId": "4",
-			"SectionId": "2",
+			"SequenceId": null,
+			"SectionId": null,
 			"Title": "Continuity plan for apprenticeship training",
 			"LinkTitle": "Continuity plan for apprenticeship training",
 			"InfoText": "Continuity plan for apprenticeship training",
@@ -5182,17 +5154,7 @@ VALUES
           "QuestionTag": "ProtectApprentice-Continuity",
           "Label": "Upload your organisation''s continuity plan for apprenticeship training",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-continuity-plan\">A continuity plan for apprenticeship training shows how your organisation will continue to deliver in case of a significant event.</p>
-		  <p class=\"govuk-body\" id=\"pya-continuity-plan-2\">This must include how your organisation will:</p>
-	  <ul class=\"govuk-list govuk-list--bullet\">
-		  <li>have different methods of communication</li>
-		  <li>manage transportation needs</li>
-		  <li>provide different operating locations (if needed)</li>
-		  <li>back-up relevant business systems</li>
-		  <li>back-up and restore data </li>
-		  <li>have a list of emergency contacts - ESFA must be listed</li>
-		</ul>
-	  <p class=\"govuk-body\">The file must be a PDF and smaller than 5MB.</p>",
+          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-continuity-plan\">A continuity plan for apprenticeship training shows how your organisation will continue to deliver in case of a significant event.</p><p class=\"govuk-body\" id=\"pya-continuity-plan-2\">This must include how your organisation will:</p><ul class=\"govuk-list govuk-list--bullet\"><li>have different methods of communication</li><li>manage transportation needs</li><li>provide different operating locations (if needed)</li><li>back-up relevant business systems</li><li>back-up and restore data </li><li>have a list of emergency contacts - ESFA must be listed</li></ul><p class=\"govuk-body\">The file must be a PDF and smaller than 5MB.</p>",
           "Hint": "",
           "Input": {
             "Type": "FileUpload",
@@ -5244,8 +5206,8 @@ VALUES
 	"Pages": [
 		{
 			"PageId": "540",
-			"SequenceId": "4",
-			"SectionId": "3",
+			"SequenceId": null,
+			"SectionId": null,
 			"Title": "Equality and Diversity policy",
 			"LinkTitle": "Equality and Diversity policy",
 			"InfoText": "Equality and Diversity policy",
