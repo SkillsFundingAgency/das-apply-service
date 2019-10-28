@@ -1,11 +1,16 @@
 using System;
 using System.Collections.Generic;
+using Remotion.Linq;
 using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
     public class QuestionViewModel
     {
+        public Guid Id => ApplicationId;
+        public int SequenceNo => SequenceId;
+
+
         public string QuestionId { get; set; }
         public string Type { get; set; }
         public string Label { get; set; }

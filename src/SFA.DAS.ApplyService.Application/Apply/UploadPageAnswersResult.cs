@@ -1,9 +1,10 @@
+﻿using System;
 using System.Collections.Generic;
-using SFA.DAS.ApplyService.Domain.Apply;
+using System.Text;
 
-namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
+namespace SFA.DAS.ApplyService.Application.Apply
 {
-    public class UpdatePageAnswersResult
+    public class UploadPageAnswersResult
     {
         public bool ValidationPassed { get; set; }
         public List<KeyValuePair<string, string>> ValidationErrors { get; set; }

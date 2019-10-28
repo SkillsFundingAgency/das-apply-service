@@ -31,6 +31,7 @@ namespace SFA.DAS.ApplyService.Web
 {
     using Controllers;
     using SFA.DAS.ApplyService.Web.Configuration;
+    using SFA.DAS.ApplyService.Web.Infrastructure.Validations;
     using SFA.DAS.ApplyService.Web.Services;
 
     public class Startup
@@ -76,6 +77,7 @@ namespace SFA.DAS.ApplyService.Web
             services.Configure<List<TaskListConfiguration>>(_configuration.GetSection("TaskListSequences"));
             services.Configure<List<QnaPageOverrideConfiguration>>(_configuration.GetSection("QnaPageOverrides"));
             services.Configure<List<QnaLinksConfiguration>>(_configuration.GetSection("QnaLinks"));
+            services.Configure<List<CustomValidationConfiguration>>(_configuration.GetSection("CustomValidations"));
 
             if (_env.IsDevelopment())
             {
@@ -165,6 +167,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IProcessPageFlowService, ProcessPageFlowService>();
             services.AddTransient<IQuestionPropertyTokeniser, QuestionPropertyTokeniser>();
             services.AddTransient<IPageNavigationTrackingService, PageNavigationTrackingService>();
+            services.AddTransient<ICustomValidatorFactory, CustomValidatorFactory>();
             services.AddTransient<IAnswerFormService, AnswerFormService>();
         }
 

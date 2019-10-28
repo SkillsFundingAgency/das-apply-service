@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using MediatR;
 using SFA.DAS.ApplyService.Domain.Apply;
 
+
 namespace SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers
 {
-    public class UpdatePageAnswersRequest : IRequest<UpdatePageAnswersResult>
+    public class UpdatePageAnswersRequest : IRequest<SetPageAnswersResponse>
     {
         public Guid ApplicationId { get; }
         public Guid UserId { get; }
