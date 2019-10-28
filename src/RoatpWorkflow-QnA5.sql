@@ -76,7 +76,7 @@ INSERT INTO [dbo].[WorkflowSequences]
 VALUES
 			(@ReadinessToEngageSequenceId
 			,@WorkFlowId5
-			,3
+			,5
 			,1
 			,@ReadinessToEngageSectionId
 			,1)

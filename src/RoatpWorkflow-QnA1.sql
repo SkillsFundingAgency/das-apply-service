@@ -132,7 +132,7 @@ VALUES
           "QuestionTag": "Organisation-Introduction-Main",
           "Label": "",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\">In this section we''ll ask for:</p><ul class=\"govuk-list govuk-list--bullet\"><li>your organsiation''s Information Commissioner''s Office registration number</li><li>who''s in control and their date of births</li><li>your organisation''s trading history</li><li>details of what your organisation is</li><li>Ofsted or other educational accreditations</li></ul><p class=\"govuk-body\">Depending on your answers, we may ask further questions.</p> <div class=\"govuk-warning-text\"> <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span> <strong class=\"govuk-warning-text__text\"> <span class=\"govuk-warning-text__assistive\">Warning</span>Your organisation must have at least 12 months trading history and a training manager with at least 9 months experience in developing and delivering training. </strong> </div>",
+          "QuestionBodyText": "<p class=\"govuk-body\">In this section we''ll ask for:</p><ul class=\"govuk-list govuk-list--bullet\"><li>your organisation''s Information Commissioner''s Office registration number</li><li>who''s in control and their date of births</li><li>your organisation''s trading history</li><li>details of what your organisation is</li><li>Ofsted or other educational accreditations</li></ul><p class=\"govuk-body\">Depending on your answers, we may ask further questions.</p> <div class=\"govuk-warning-text\"> <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span> <strong class=\"govuk-warning-text__text\"> <span class=\"govuk-warning-text__assistive\">Warning</span>Your organisation must have at least 12 months trading history and a training manager with at least 9 months experience in developing and delivering training. </strong> </div>",
           "Hint": "",
           "Input": {
             "Type": "Hidden",
@@ -199,7 +199,7 @@ VALUES
           "QuestionTag": "Organisation-Introduction-Employer",
           "Label": "",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\">In this section we''ll ask for:</p><ul class=\"govuk-list govuk-list--bullet\"><li>your organsiation''s Information Commissioner''s Office registration number</li><li>who''s in control and their date of births</li><li>your organisation''s trading history</li><li>details of what your organisation is</li><li>Ofsted or other educational accreditations</li></ul><p class=\"govuk-body\">Depending on your answers, we may ask further questions.</p> <div class=\"govuk-warning-text\"> <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span> <strong class=\"govuk-warning-text__text\"> <span class=\"govuk-warning-text__assistive\">Warning</span>Your organisation must have at least 12 months trading history and a training manager with at least 9 months experience in developing and delivering training. </strong> </div>",
+          "QuestionBodyText": "<p class=\"govuk-body\">In this section we''ll ask for:</p><ul class=\"govuk-list govuk-list--bullet\"><li>your organisation''s Information Commissioner''s Office registration number</li><li>who''s in control and their date of births</li><li>your organisation''s trading history</li><li>details of what your organisation is</li><li>Ofsted or other educational accreditations</li></ul><p class=\"govuk-body\">Depending on your answers, we may ask further questions.</p> <div class=\"govuk-warning-text\"> <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span> <strong class=\"govuk-warning-text__text\"> <span class=\"govuk-warning-text__assistive\">Warning</span>Your organisation must have at least 12 months trading history and a training manager with at least 9 months experience in developing and delivering training. </strong> </div>",
           "Hint": "",
           "Input": {
             "Type": "Hidden",
@@ -266,7 +266,7 @@ VALUES
           "QuestionTag": "Organisation-Introduction-Supporting",
           "Label": "",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\">In this section we''ll ask for:</p><ul class=\"govuk-list govuk-list--bullet\"><li>your organsiation''s Information Commissioner''s Office registration number</li><li>who''s in control and their date of births</li><li>your organisation''s trading history</li><li>details of what your organisation is</li><li>Ofsted or other educational accreditations</li></ul><p class=\"govuk-body\">Depending on your answers, we may ask further questions.</p> <div class=\"govuk-warning-text\"> <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span> <strong class=\"govuk-warning-text__text\"> <span class=\"govuk-warning-text__assistive\">Warning</span>Your organisation must have at least 3 months trading history and a training manager with at least 3 months experience in developing and delivering training. </strong> </div>",
+          "QuestionBodyText": "<p class=\"govuk-body\">In this section we''ll ask for:</p><ul class=\"govuk-list govuk-list--bullet\"><li>your organisation''s Information Commissioner''s Office registration number</li><li>who''s in control and their date of births</li><li>your organisation''s trading history</li><li>details of what your organisation is</li><li>Ofsted or other educational accreditations</li></ul><p class=\"govuk-body\">Depending on your answers, we may ask further questions.</p> <div class=\"govuk-warning-text\"> <span class=\"govuk-warning-text__icon\" aria-hidden=\"true\">!</span> <strong class=\"govuk-warning-text__text\"> <span class=\"govuk-warning-text__assistive\">Warning</span>Your organisation must have at least 3 months trading history and a training manager with at least 3 months experience in developing and delivering training. </strong> </div>",
           "Hint": "",
           "Input": {
             "Type": "Hidden",
@@ -674,7 +674,7 @@ VALUES
             ],
             "Validations": [
               {
-                "Name": "ComplexRadioType",
+                "Name": "Required",
                 "Value": null,
                 "ErrorMessage": "Tell us if your organisation has a website"
               }
@@ -1379,15 +1379,28 @@ VALUES
       "Questions": [
         {
           "QuestionId": "YO-80",
-          "QuestionTag": "Confirm-Trustees-NoDoB",
-          "Label": "Confirm who''s in control",
+          "QuestionTag": "Charity-Trustees",
+          "Label": "",
           "ShortLabel": "",
-          "QuestionBodyText": "PLACEHOLDER Confirm Trustees DOB",
+          "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",			
+            "Type": "TabularData",			
             "Validations": [              
             ]
+          },
+          "Order": null
+        },
+		{
+          "QuestionId": "YO-85",
+          "QuestionTag": "Confirm-Trustees",
+          "Label": "",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Validations": []
           },
           "Order": null
         }
@@ -4207,6 +4220,63 @@ VALUES
       "BodyText": ""
     },
 	{
+      "PageId": "350",
+      "SequenceId": null,
+      "SectionId": null,
+      "Title": "Has your organisation delivered apprenticeship training as a subcontractor in the last 12 months?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-350",
+          "QuestionTag": "Subcontractor-Supporting",
+          "Label": "Has your organisation delivered apprenticeship training as a subcontractor in the last 12 months?",
+          "ShortLabel": "",
+          "QuestionBodyText": "<p class=\"govuk-body\">To confirm your answer, we''ll review your main or employer provider''s subcontractor declaration.</p>",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			  {
+                "Label": "Yes",
+				"Value": "Yes"
+              },
+			  {
+                "Label": "No",
+				"Value": "No"
+              }
+			],
+            "Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us if your organisation has delivered apprenticeship training as a subcontractor in the last 12 months"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [			
+		{
+          "Action": "NextPage",
+          "ReturnId": null,
+          "Conditions": [],
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
       "PageId": "10004",
       "SequenceId": null,
       "SectionId": null,
@@ -4243,7 +4313,7 @@ VALUES
     }
   ]
 }
-', N'Experience and accreditations', N'Experience and accreditations', N'Pages')
+', N'Experience and accreditations', N'Experience and accreditation', N'Pages')
 
 DECLARE @ExperienceAccreditationsSequenceId UNIQUEIDENTIFIER
 SET @ExperienceAccreditationsSequenceId = '803C1398-7B76-4351-94C4-7F1B641053EA'
