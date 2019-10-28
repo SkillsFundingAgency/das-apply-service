@@ -10,8 +10,8 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         public Guid ApplicationId { get; set; }
         public string SoleTraderName { get; set; }
-        public int SoleTraderDobMonth { get; set; }
-        public int SoleTraderDobYear { get; set; }
+        public string SoleTraderDobMonth { get; set; }
+        public string SoleTraderDobYear { get; set; }
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
     }
 }

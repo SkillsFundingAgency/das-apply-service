@@ -17,11 +17,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     [Authorize]
     public class RoatpWhosInControlApplicationController : Controller
     {
-        private const string OrganisationTypeSoleTrader = "Sole trader";
-        private const string OrganisationTypePartnership = "Partnership";
-        private const string PartnershipTypeIndividual = "Individual";
-        private const string PartnershipTypeOrganisation = "Organisation";
-
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IApplicationApiClient _applicationApiClient;
         private readonly IAnswerFormService _answerFormService;
@@ -280,7 +275,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             var updateResult = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.SoleTraderPartnership, organisationTypeAnswer);
             
-            if (model.OrganisationType == OrganisationTypePartnership)
+            if (model.OrganisationType == SoleTraderOrPartnershipViewModel.OrganisationTypePartnership)
             {
                 return RedirectToAction("PartnershipType", new { applicationId = model.ApplicationId });
             }
@@ -330,7 +325,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             var updateResult = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.PartnershipType, organisationTypeAnswer);
 
 
-            if (model.PartnershipType == PartnershipTypeIndividual)
+            if (model.PartnershipType == ConfirmPartnershipTypeViewModel.PartnershipTypeIndividual)
             {
                 return RedirectToAction("AddPartnerIndividual", new { applicationId = model.ApplicationId });
             }
@@ -374,8 +369,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 var delimiterIndex = answerValue.IndexOf(",");
                 if (delimiterIndex > 0)
                 {
-                    model.SoleTraderDobMonth = Convert.ToInt32(answerValue.Substring(0, delimiterIndex));
-                    model.SoleTraderDobYear = Convert.ToInt32(answerValue.Substring(delimiterIndex+1));
+                    model.SoleTraderDobMonth = answerValue.Substring(0, delimiterIndex);
+                    model.SoleTraderDobYear = answerValue.Substring(delimiterIndex+1);
                 }
             }
             return View("~/Views/Roatp/WhosInControl/AddSoleTradeDob.cshtml", model);
@@ -384,8 +379,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [HttpPost]
         public async Task<IActionResult> SoleTradeDobConfirmed(SoleTradeDobViewModel model)
         {
-            var dobMonth = new Answer { Value = model.SoleTraderDobMonth.ToString() };
-            var dobYear = new Answer { Value = model.SoleTraderDobYear.ToString() };
+            var dobMonth = new Answer { Value = model.SoleTraderDobMonth };
+            var dobYear = new Answer { Value = model.SoleTraderDobYear };
 
             var errorMessages = DateOfBirthAnswerValidator.ValidateDateOfBirth(dobMonth, dobYear, SoleTradeDobViewModel.DobFieldPrefix);
             if (errorMessages.Any())
