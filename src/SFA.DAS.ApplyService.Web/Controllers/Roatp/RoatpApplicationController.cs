@@ -371,13 +371,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var companiesHouseManualEntry = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CompaniesHouseManualEntryRequired);
             var verifiedCharityCommission = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity);
             var charityCommissionManualEntry = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CharityCommissionTrusteeManualEntry);
-            var yourOrganisationSequence = sequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
-            var yourOrganisationSections = await _qnaApiClient.GetSections(applicationId, yourOrganisationSequence.Id);
-            var providerRouteSection = yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute);
-            var providerRoute = await _qnaApiClient.GetAnswer(applicationId, providerRouteSection.Id, RoatpWorkflowPageIds.YourOrganisation, RoatpPreambleQuestionIdConstants.ApplyProviderRoute);
-
-            //MFCMFC
-            var zzz = await _qnaApiClient.GetAnswerByTag(applicationId, "Apply-ProviderRoute");
+            var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, "Apply-ProviderRoute");
 
             var model = new TaskListViewModel(_roatpTaskListWorkflowService)
             {
