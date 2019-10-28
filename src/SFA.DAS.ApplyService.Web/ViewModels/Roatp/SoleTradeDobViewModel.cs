@@ -6,6 +6,8 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
     public class SoleTradeDobViewModel
     {
+        public const string DobFieldPrefix = "SoleTraderDob";
+
         public Guid ApplicationId { get; set; }
         public string SoleTraderName { get; set; }
         public int SoleTraderDobMonth { get; set; }

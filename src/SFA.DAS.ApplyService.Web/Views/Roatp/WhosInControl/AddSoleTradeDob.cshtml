@@ -42,11 +42,11 @@
    
             <h1 class="govuk-heading-xl">What is @Html.Raw(Model.SoleTraderName)'s date of birth?</h1>           
 
-            <form method="post" asp-action="TrusteesDobsConfirmed" novalidate enctype="multipart/form-data">
+            <form method="post" asp-action="SoleTradeDobConfirmed" novalidate enctype="multipart/form-data">
 
                 @Html.HiddenFor(x => x.ApplicationId)
-
-                   
+                @Html.HiddenFor(x => x.SoleTraderName)
+                                   
                 <span class="govuk-hint" id="dob-hint">
                     For example, 3 1980
                 </span>
@@ -54,7 +54,7 @@
                     <div class="govuk-date-input__item">
                         <div class="govuk-form-group" sfa-validation-for="SoleTraderDobMonth">
                             <label class="govuk-label govuk-date-input__label" for="SoleTraderDobMonth">Month</label>
-                            <input value="SoleTraderDobMonth"
+                            <input value="@Model.SoleTraderDobMonth"
                                     class="govuk-input govuk-date-input__input govuk-input--width-2 @isError"
                                     id="SoleTraderDobMonth"
                                     name="SoleTraderDobMonth"
@@ -66,7 +66,7 @@
                     <div class="govuk-date-input__item">
                         <div class="govuk-form-group" sfa-validation-for="SoleTraderDobYear">
                             <label class="govuk-label govuk-date-input__label" for="SoleTraderDobYear">Year</label>
-                            <input value="SoleTraderDobYear"
+                            <input value="@Model.SoleTraderDobYear"
                                     class="govuk-input govuk-date-input__input govuk-input--width-4 @isError"
                                     id="SoleTraderDobYear"
                                     name="SoleTraderDobYear"

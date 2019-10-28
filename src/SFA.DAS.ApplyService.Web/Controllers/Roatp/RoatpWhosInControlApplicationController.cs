@@ -359,9 +359,65 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         public async Task<IActionResult> AddSoleTradeDob(Guid applicationId)
         {
-            return null;
+            var model = new SoleTradeDobViewModel { ApplicationId = applicationId };
+
+            var soleTraderName = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpLegalName);
+            if (soleTraderName != null)
+            {
+                model.SoleTraderName = soleTraderName.Value;
+            }
+
+            var soleTraderDob = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.SoleTradeDob);
+            if (soleTraderDob != null && soleTraderDob.Value != null)
+            {
+                var answerValue = soleTraderDob.Value;
+                var delimiterIndex = answerValue.IndexOf(",");
+                if (delimiterIndex > 0)
+                {
+                    model.SoleTraderDobMonth = Convert.ToInt32(answerValue.Substring(0, delimiterIndex));
+                    model.SoleTraderDobYear = Convert.ToInt32(answerValue.Substring(delimiterIndex+1));
+                }
+            }
+            return View("~/Views/Roatp/WhosInControl/AddSoleTradeDob.cshtml", model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> SoleTradeDobConfirmed(SoleTradeDobViewModel model)
+        {
+            var dobMonth = new Answer { Value = model.SoleTraderDobMonth.ToString() };
+            var dobYear = new Answer { Value = model.SoleTraderDobYear.ToString() };
+
+            var errorMessages = DateOfBirthAnswerValidator.ValidateDateOfBirth(dobMonth, dobYear, SoleTradeDobViewModel.DobFieldPrefix);
+            if (errorMessages.Any())
+            {
+                model.ErrorMessages = errorMessages;
+                return View("~/Views/Roatp/WhosInControl/AddSoleTradeDob.cshtml", model);
+            }
+
+            var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
+            var yourOrganisationSequence =
+                applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
+            var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
+            var whosInControlSection =
+                yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+
+            var answerValue = $"{model.SoleTraderDobMonth},{model.SoleTraderDobYear}";
+            var soleTradeDobAnswer = new List<Answer>
+            {
+                new Answer
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.AddSoleTradeDob,
+                    Value = answerValue
+                }
+            };
+
+            var result = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob, soleTradeDobAnswer);
+
+            await _applicationApiClient.MarkSectionAsCompleted(model.ApplicationId, whosInControlSection.Id);
+
+            return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId });
+        }
+        
         private List<TrusteeDateOfBirth> MapTrusteesDataToViewModel(TabularData trusteeData)
         {
             var trusteeDatesOfBirth = new List<TrusteeDateOfBirth>();
