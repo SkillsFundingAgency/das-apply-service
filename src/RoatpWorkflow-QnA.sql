@@ -1879,15 +1879,28 @@ VALUES
       "Questions": [
         {
           "QuestionId": "YO-80",
-          "QuestionTag": "Confirm-Trustees-NoDoB",
-          "Label": "Confirm who''s in control",
+          "QuestionTag": "Charity-Trustees",
+          "Label": "",
           "ShortLabel": "",
-          "QuestionBodyText": "PLACEHOLDER Confirm Trustees DOB",
+          "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",			
+            "Type": "TabularData",			
             "Validations": [              
             ]
+          },
+          "Order": null
+        },
+		{
+          "QuestionId": "YO-85",
+          "QuestionTag": "Confirm-Trustees",
+          "Label": "",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Validations": []
           },
           "Order": null
         }
