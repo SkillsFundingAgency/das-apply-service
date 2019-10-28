@@ -393,7 +393,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
         private static void CreateCompaniesHouseDirectorsData(ApplicationDetails applicationDetails, List<PreambleAnswer> questions)
         {
-            if (applicationDetails.CompanySummary.Directors != null & applicationDetails.CompanySummary.Directors.Count > 0)
+            if (applicationDetails.CompanySummary.Directors != null && applicationDetails.CompanySummary.Directors.Count > 0)
             {
                 var table = new TabularData
                 {
@@ -430,7 +430,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
         private static void CreateCompaniesHousePscData(ApplicationDetails applicationDetails, List<PreambleAnswer> questions)
         {
-            if (applicationDetails.CompanySummary.PersonsSignificationControl != null & applicationDetails.CompanySummary.PersonsSignificationControl.Count > 0)
+            if (applicationDetails.CompanySummary.PersonsSignificationControl != null && applicationDetails.CompanySummary.PersonsSignificationControl.Count > 0)
             {
                 var table = new TabularData
                 {
@@ -467,7 +467,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
         private static void CreateCharityTrusteeData(ApplicationDetails applicationDetails, List<PreambleAnswer> questions)
         {
-            if (applicationDetails.CharitySummary.Trustees != null & applicationDetails.CharitySummary.Trustees.Count > 0)
+            if (applicationDetails.CharitySummary.Trustees != null && applicationDetails.CharitySummary.Trustees.Count > 0)
             {
                 var table = new TabularData
                 {
