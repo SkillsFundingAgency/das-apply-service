@@ -1,0 +1,37 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.PeopleInControl
+
+@if (Model.TableData != null && Model.TableData.HeadingTitles != null && Model.TableData.DataRows != null)
+{
+    <table class="govuk-table">
+        @if (Model.TableData.Caption != null)
+        {
+            <caption class="govuk-table__caption">
+                @Model.TableData.Caption
+            </caption>
+        }
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                @foreach (var title in Model.TableData.HeadingTitles)
+                {
+                    <th class="govuk-table__header" scope="col">@Html.Raw(title)</th>
+                }
+            </tr>
+        </thead>
+        <tbody class="govuk-table_body">
+            @foreach (var dataRow in Model.TableData.DataRows)
+            {
+                <tr class="govuk-table__row">
+                    @foreach (var column in dataRow.Columns)
+                    {
+                        <td class="govuk-table__cell">@Html.Raw(column)</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+    <input type="hidden" id="@Model.QuestionId" name="@Model.QuestionId" value="@Model.TableData" />
+}
+else
+{
+    <input type="hidden" id="@Model.QuestionId" name="@Model.QuestionId" value="{}" />
+}

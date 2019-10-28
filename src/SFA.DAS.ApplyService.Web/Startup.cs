@@ -171,6 +171,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IPageNavigationTrackingService, PageNavigationTrackingService>();
             services.AddTransient<ICustomValidatorFactory, CustomValidatorFactory>();
             services.AddTransient<IRoatpTaskListWorkflowService, RoatpTaskListWorkflowService>();
+            services.AddTransient<IAnswerFormService, AnswerFormService>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)
