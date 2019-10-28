@@ -5,7 +5,6 @@ using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
-using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Web.Controllers.Roatp;
@@ -14,6 +13,7 @@ using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
 using System.Collections.Generic;
+using SFA.DAS.ApplyService.Application.Apply;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
@@ -364,7 +364,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _qnaClient.Setup(x => x.GetSections(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(sections);
 
-            var updateResult = new UpdatePageAnswersResult
+            var updateResult = new SetPageAnswersResponse
             {
                 ValidationPassed = true
             };
@@ -430,7 +430,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _qnaClient.Setup(x => x.GetSections(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(sections);
 
-            var updateResult = new UpdatePageAnswersResult
+            var updateResult = new SetPageAnswersResponse
             {
                 ValidationPassed = true
             };
@@ -499,7 +499,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCompany)).ReturnsAsync(verifiedCompanyAnswer);
-            
+
             var result = _controller.ConfirmTrusteesNoDob(Guid.NewGuid()).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
@@ -795,14 +795,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _qnaClient.Setup(x => x.GetSections(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(sections);
 
-            var updateResult = new UpdatePageAnswersResult
+            var updateResult = new SetPageAnswersResponse
             {
                 ValidationPassed = true
             };
             _qnaClient.Setup(x => x.UpdatePageAnswers(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<List<Answer>>())).ReturnsAsync(updateResult);
 
             _applicationClient.Setup(x => x.MarkSectionAsCompleted(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(true).Verifiable();
-            
+
             var viewModel = new ConfirmTrusteesDateOfBirthViewModel
             {
                 ApplicationId = Guid.NewGuid()

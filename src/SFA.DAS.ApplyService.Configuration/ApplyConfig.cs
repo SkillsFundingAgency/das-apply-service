@@ -8,7 +8,7 @@ namespace SFA.DAS.ApplyService.Configuration
         public string SessionRedisConnectionString { get; set; }
         public DfeSignInConfig DfeSignIn { get; set; }
         public string SqlConnectionString { get; set; }
-        public FileStorageConfig FileStorage { get; set; }
+
 
         public NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
         public AssessorServiceApiAuthentication AssessorServiceApiAuthentication { get; set; }
