@@ -1,4 +1,5 @@
 @using NPOI.HPSF.Wellknown
+@using Remotion.Linq.Clauses
 @model SFA.DAS.ApplyService.Web.Controllers.PageViewModel
 
 @{
@@ -217,13 +218,14 @@
 
                         @if (!Model.HideCTA)
                         {
-                            if (Model.PageOfAnswers == null || Model.PageOfAnswers.Count == 0)
+                            if (Model.PageOfAnswers != null && Model.PageOfAnswers.Count > 0 && Model.PageOfAnswers.First().Answers.Count(x => x.Value.ToLower().Contains(".pdf"))>0)
                             {
-                                <button type="submit" class="govuk-button">@Model.CTAButtonText</button>
+                                <a class="govuk-button" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">@Model.CTAButtonText</a>
                             }
                             else
                             {
-                                <a class="govuk-button" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">@Model.CTAButtonText</a>
+                                <button type="submit" class="govuk-button">@Model.CTAButtonText</button>
+
                             }
                         }
 
@@ -232,25 +234,25 @@
                             var first = true;
                             @foreach (var link in linksConfiguration.Links)
                             {
-                                if (first && Model.SectionId!=1)
+                                if (first && Model.SectionId != 1)
                                 {
-                                    <p class="govuk-body skipbutton" id ="skipbutton">
+                                    <p class="govuk-body skipbutton" id="skipbutton">
                                         <a href="@Url.Action(link.Action, link.Controller, new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = Model.PageId})">@link.Caption</a>
                                     </p>
-                                            }
-                                            
+                                }
+
                                 else
                                 {
                                     first = false;
-                                        <p class="govuk-body govuk-!-margin-bottom-2">
-                                            <a href="@Url.Action(link.Action, link.Controller, new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = Model.PageId})">@link.Caption</a>
-                                        </p>
-                                    }
+                                    <p class="govuk-body govuk-!-margin-bottom-2">
+                                        <a href="@Url.Action(link.Action, link.Controller, new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = Model.PageId})">@link.Caption</a>
+                                    </p>
+                                }
                             }
-                            }
+                        }
 
 
-                            <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details" />
+                        <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details" />
                     </form>
             }
 
