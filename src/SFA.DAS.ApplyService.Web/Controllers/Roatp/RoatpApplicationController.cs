@@ -131,11 +131,18 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (applicationDetails.UkrlpLookupDetails.VerifiedByCompaniesHouse)
             {
-                var whosInControlQuestions = RoatpPreambleQuestionBuilder.CreateCompaniesHouseWhosInControlQuestions(applicationDetails);
+                var directorsPscsQuestions = RoatpPreambleQuestionBuilder.CreateCompaniesHouseWhosInControlQuestions(applicationDetails);
 
-                await SaveCompaniesHouseWhosInControlQuestions(response.ApplicationId, userId, whosInControlQuestions);
+                await SaveCompaniesHouseWhosInControlQuestions(response.ApplicationId, userId, directorsPscsQuestions);
             }
             
+            if (applicationDetails.UkrlpLookupDetails.VerifiedbyCharityCommission)
+            {
+                var trusteesQuestions = RoatpPreambleQuestionBuilder.CreateCharityCommissionWhosInControlQuestions(applicationDetails);
+
+                await SaveCharityCommissionWhosInControlQuestions(response.ApplicationId, userId, trusteesQuestions);
+            }
+
             return RedirectToAction("Applications", new { applicationType = applicationType });
         }
 
@@ -704,35 +711,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return fileValidationPassed;
         }
 
-        public async Task<IActionResult> Download(Guid applicationId, int sequenceId, int sectionId, string pageId, string questionId, string filename)
-        {
-            var sequences = await _qnaApiClient.GetSequences(applicationId);
-            var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
-            var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
-            var selectedSection = sections.Single(x => x.SectionId == sectionId);
-            var response = await _qnaApiClient.DownloadFile(applicationId, selectedSection.Id, pageId, questionId, filename);
-            var fileStream = await response.Content.ReadAsStreamAsync();
-
-            return File(fileStream, response.Content.Headers.ContentType.MediaType, filename);
-
-        }
-
-        public async Task<IActionResult> DeleteFile(Guid applicationId, int sequenceId, int sectionId, string pageId, string questionId, string filename, string redirectAction)
-        {
-
-            var sequences = await _qnaApiClient.GetSequences(applicationId);
-            var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
-            var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
-            var selectedSection = sections.Single(x => x.SectionId == sectionId);
-
-
-            await _apiClient.RemoveSectionCompleted(applicationId, selectedSection.Id);
-            await _qnaApiClient.DeleteFile(applicationId,  selectedSection.Id, pageId, questionId, filename);
-           
-
-            return RedirectToAction("Page", new {applicationId, sequenceId, sectionId, pageId, redirectAction});
-        }
-        
         public async Task<IActionResult> Submit(Guid applicationId, int sequenceId)
         {
             var canUpdate = await CanUpdateApplication(applicationId, sequenceId);
@@ -893,6 +871,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var whosInControlQuestions = questions.AsEnumerable<Answer>().ToList();                  
 
             var updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, whosInControlQuestions);
+        }
+
+        private async Task SaveCharityCommissionWhosInControlQuestions(Guid applicationId, Guid userId, List<PreambleAnswer> questions)
+        {
+            var applicationSequences = await _qnaApiClient.GetSequences(applicationId);
+
+            var yourOrganisationSequence =
+                applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
+            var yourOrganisationSections = await _qnaApiClient.GetSections(applicationId, yourOrganisationSequence.Id);
+            var whosInControlSection = yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+
+            var whosInControlQuestions = questions.AsEnumerable<Answer>().ToList();
+
+            var updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage, whosInControlQuestions);
         }
 
         private bool IsPostBack()

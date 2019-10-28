@@ -1879,15 +1879,28 @@ VALUES
       "Questions": [
         {
           "QuestionId": "YO-80",
-          "QuestionTag": "Confirm-Trustees-NoDoB",
-          "Label": "Confirm who''s in control",
+          "QuestionTag": "Charity-Trustees",
+          "Label": "",
           "ShortLabel": "",
-          "QuestionBodyText": "PLACEHOLDER Confirm Trustees DOB",
+          "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",			
+            "Type": "TabularData",			
             "Validations": [              
             ]
+          },
+          "Order": null
+        },
+		{
+          "QuestionId": "YO-85",
+          "QuestionTag": "Confirm-Trustees",
+          "Label": "",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Validations": []
           },
           "Order": null
         }
@@ -5154,17 +5167,7 @@ VALUES
           "QuestionTag": "ProtectApprentice-Continuity",
           "Label": "Upload your organisation''s continuity plan for apprenticeship training",
           "ShortLabel": "",
-          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-continuity-plan\">A continuity plan for apprenticeship training shows how your organisation will continue to deliver in case of a significant event.</p>
-		  <p class=\"govuk-body\" id=\"pya-continuity-plan-2\">This must include how your organisation will:</p>
-	  <ul class=\"govuk-list govuk-list--bullet\">
-		  <li>have different methods of communication</li>
-		  <li>manage transportation needs</li>
-		  <li>provide different operating locations (if needed)</li>
-		  <li>back-up relevant business systems</li>
-		  <li>back-up and restore data </li>
-		  <li>have a list of emergency contacts - ESFA must be listed</li>
-		</ul>
-	  <p class=\"govuk-body\">The file must be a PDF and smaller than 5MB.</p>",
+          "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-continuity-plan\">A continuity plan for apprenticeship training shows how your organisation will continue to deliver in case of a significant event.</p><p class=\"govuk-body\" id=\"pya-continuity-plan-2\">This must include how your organisation will:</p><ul class=\"govuk-list govuk-list--bullet\"><li>have different methods of communication</li><li>manage transportation needs</li><li>provide different operating locations (if needed)</li><li>back-up relevant business systems</li><li>back-up and restore data </li><li>have a list of emergency contacts - ESFA must be listed</li></ul><p class=\"govuk-body\">The file must be a PDF and smaller than 5MB.</p>",
           "Hint": "",
           "Input": {
             "Type": "FileUpload",
