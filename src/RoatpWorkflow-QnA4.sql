@@ -15,6 +15,9 @@ SET @ProtectionOfApprentices2SequenceId = '436b3fba-1abf-4d13-a883-a552e7c437d2'
 DECLARE @ProtectionOfApprentices3SequenceId UNIQUEIDENTIFIER
 SET @ProtectionOfApprentices3SequenceId = '24bc1f2c-d2b2-4de0-b339-9d7664e091ab'
 
+DECLARE @ProtectionOfApprentices4SequenceId UNIQUEIDENTIFIER
+SET @ProtectionOfApprentices4SequenceId = '94633287-8d89-456e-82e0-1e6967df6e85'
+
 
 DECLARE @ProtectionOfApprentices2SectionId UNIQUEIDENTIFIER
 SET @ProtectionOfApprentices2SectionId = '5dc1e1f5-7b28-47eb-9702-2b25f5d5782d'
@@ -22,16 +25,22 @@ SET @ProtectionOfApprentices2SectionId = '5dc1e1f5-7b28-47eb-9702-2b25f5d5782d'
 DECLARE @ProtectionOfApprentices3SectionId UNIQUEIDENTIFIER
 SET @ProtectionOfApprentices3SectionId = '82e510b7-ad91-4bd0-a60a-01b6ceef18d0'
 
+DECLARE @ProtectionOfApprentices4SectionId UNIQUEIDENTIFIER
+SET @ProtectionOfApprentices4SectionId = 'bbef7c29-ed73-4708-b67e-445846b67712'
+
 DECLARE @ProtectionOfApprenticesSectionId UNIQUEIDENTIFIER
 SET @ProtectionOfApprenticesSectionId = '80616b64-ffb4-45b3-9d4e-0b449bb441eb'
 
 delete from workflowsequences where id = @ProtectionOfApprenticesSequenceId
 delete from WorkflowSequences where id = @ProtectionOfApprentices2SequenceId
 delete from WorkflowSequences where id = @ProtectionOfApprentices3SequenceId
+delete from WorkflowSequences where id = @ProtectionOfApprentices4SequenceId
+
 
 delete from workflowSections where id = @ProtectionOfApprenticesSectionId
 delete from workflowSections where id = @ProtectionOfApprentices2SectionId
 delete from workflowSections where id = @ProtectionOfApprentices3SectionId
+delete from workflowSections where id = @ProtectionOfApprentices4SectionId
 
 INSERT [dbo].[WorkflowSections]
   ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
