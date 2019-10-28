@@ -26,10 +26,11 @@ SET @ProtectionOfApprenticesSectionId = '80616b64-ffb4-45b3-9d4e-0b449bb441eb'
 
 delete from workflowsequences where id = @ProtectionOfApprenticesSequenceId
 delete from WorkflowSequences where id = @ProtectionOfApprentices2SequenceId
+delete from WorkflowSequences where id = @ProtectionOfApprentices3SequenceId
 
 delete from workflowSections where id = @ProtectionOfApprenticesSectionId
 delete from workflowSections where id = @ProtectionOfApprentices2SectionId
-
+delete from workflowSections where id = @ProtectionOfApprentices3SectionId
 
 INSERT [dbo].[WorkflowSections]
   ([Id], [ProjectId], [QnAData], [Title], [LinkTitle], [DisplayType])
