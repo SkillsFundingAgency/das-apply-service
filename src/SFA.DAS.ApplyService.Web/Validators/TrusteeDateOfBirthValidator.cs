@@ -18,7 +18,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
                 var dobYear = answers.FirstOrDefault(x => x.QuestionId == dobYearKey);
 
                 var prefix = trustee.Id + "_";
-                var validatorMessages = DateOfBirthValidator.ValidateDateOfBirth(dobMonth, dobYear, prefix);
+                var validatorMessages = DateOfBirthAnswerValidator.ValidateDateOfBirth(dobMonth, dobYear, prefix);
                 if (validatorMessages.Any())
                 {
                     errorMessages.AddRange(validatorMessages);

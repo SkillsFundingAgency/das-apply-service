@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.ApplyService.Web.Validators
 {
-    public static class DateOfBirthValidator
+    public static class DateOfBirthAnswerValidator
     {
         public const string MissingDateOfBirthErrorMessage = "Enter a date of birth";
         public const string InvalidIncompleteDateOfBirthErrorMessage = "Enter a date of birth using a month and year";
@@ -99,6 +99,15 @@ namespace SFA.DAS.ApplyService.Web.Validators
                     int yearValue = 0;
                     int.TryParse(dobYear.Value, out yearValue);
                     if (monthValue == DateTime.Now.Month && yearValue == DateTime.Now.Year)
+                    {
+                        var errorMessage = new ValidationErrorDetail
+                        {
+                            Field = fieldPrefix + "Month",
+                            ErrorMessage = DateOfBirthInFutureErrorMessage
+                        };
+                        errorMessages.Add(errorMessage);
+                    }
+                    if (monthValue > DateTime.Now.Month && yearValue == DateTime.Now.Year)
                     {
                         var errorMessage = new ValidationErrorDetail
                         {

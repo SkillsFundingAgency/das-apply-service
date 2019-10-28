@@ -32,7 +32,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             var validationErrorDetails = TrusteeDateOfBirthValidator.ValidateTrusteeDatesOfBirth(trusteeData, answers);
 
             validationErrorDetails.Count.Should().Be(1);
-            validationErrorDetails[0].ErrorMessage.Should().Be(DateOfBirthValidator.MissingDateOfBirthErrorMessage);
+            validationErrorDetails[0].ErrorMessage.Should().Be(DateOfBirthAnswerValidator.MissingDateOfBirthErrorMessage);
         }
 
         [Test]
@@ -77,7 +77,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             var validationErrorDetails = TrusteeDateOfBirthValidator.ValidateTrusteeDatesOfBirth(trusteeData, answers);
 
             validationErrorDetails.Count.Should().Be(1);
-            validationErrorDetails[0].ErrorMessage.Should().Be(DateOfBirthValidator.MissingDateOfBirthErrorMessage);
+            validationErrorDetails[0].ErrorMessage.Should().Be(DateOfBirthAnswerValidator.MissingDateOfBirthErrorMessage);
         }
 
         [TestCase("0")]
@@ -116,7 +116,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             var validationErrorDetails = TrusteeDateOfBirthValidator.ValidateTrusteeDatesOfBirth(trusteeData, answers);
 
             validationErrorDetails.Count.Should().Be(1);
-            validationErrorDetails[0].ErrorMessage.Should().Be(DateOfBirthValidator.InvalidIncompleteDateOfBirthErrorMessage);
+            validationErrorDetails[0].ErrorMessage.Should().Be(DateOfBirthAnswerValidator.InvalidIncompleteDateOfBirthErrorMessage);
         }
 
         [TestCase("0")]
@@ -154,7 +154,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             var validationErrorDetails = TrusteeDateOfBirthValidator.ValidateTrusteeDatesOfBirth(trusteeData, answers);
 
             validationErrorDetails.Count.Should().Be(1);
-            validationErrorDetails[0].ErrorMessage.Should().Be(DateOfBirthValidator.InvalidIncompleteDateOfBirthErrorMessage);
+            validationErrorDetails[0].ErrorMessage.Should().Be(DateOfBirthAnswerValidator.InvalidIncompleteDateOfBirthErrorMessage);
         }
 
         [Test]
@@ -191,7 +191,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             var validationErrorDetails = TrusteeDateOfBirthValidator.ValidateTrusteeDatesOfBirth(trusteeData, answers);
 
             validationErrorDetails.Count.Should().Be(1);
-            validationErrorDetails[0].ErrorMessage.Should().Be(DateOfBirthValidator.DateOfBirthInFutureErrorMessage);
+            validationErrorDetails[0].ErrorMessage.Should().Be(DateOfBirthAnswerValidator.DateOfBirthInFutureErrorMessage);
         }
 
         [Test]
@@ -228,7 +228,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             var validationErrorDetails = TrusteeDateOfBirthValidator.ValidateTrusteeDatesOfBirth(trusteeData, answers);
 
             validationErrorDetails.Count.Should().Be(1);
-            validationErrorDetails[0].ErrorMessage.Should().Be(DateOfBirthValidator.DateOfBirthInFutureErrorMessage);
+            validationErrorDetails[0].ErrorMessage.Should().Be(DateOfBirthAnswerValidator.DateOfBirthInFutureErrorMessage);
         }
 
         [TestCase(1)]
@@ -268,7 +268,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             var validationErrorDetails = TrusteeDateOfBirthValidator.ValidateTrusteeDatesOfBirth(trusteeData, answers);
 
             validationErrorDetails.Count.Should().Be(1);
-            validationErrorDetails[0].ErrorMessage.Should().Be(DateOfBirthValidator.DateOfBirthYearLengthErrorMessage);
+            validationErrorDetails[0].ErrorMessage.Should().Be(DateOfBirthAnswerValidator.DateOfBirthYearLengthErrorMessage);
         }
     }
 }
