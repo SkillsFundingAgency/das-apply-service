@@ -217,7 +217,14 @@
 
                         @if (!Model.HideCTA)
                         {
-                            <button type="submit" class="govuk-button">@Model.CTAButtonText</button>
+                            if (Model.PageOfAnswers == null || Model.PageOfAnswers.Count == 0)
+                            {
+                                <button type="submit" class="govuk-button">@Model.CTAButtonText</button>
+                            }
+                            else
+                            {
+                                <a class="govuk-button" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">@Model.CTAButtonText</a>
+                            }
                         }
 
                         @foreach (var linksConfiguration in Model.LinksConfiguration)
