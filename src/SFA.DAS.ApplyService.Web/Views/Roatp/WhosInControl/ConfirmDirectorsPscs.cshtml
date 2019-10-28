@@ -1,0 +1,56 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ConfirmDirectorsPscsViewModel
+
+<div class="govuk-phase-banner govuk-width-container roatp__navigation">
+    <nav>
+        <ul id="navigation" class="roatp__navigation " aria-label="Top Level Navigation">
+
+            <li class="roatp__navigation-item">
+
+                <a class="govuk-header__link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Application overview</a>
+
+            </li>
+
+        </ul>
+    </nav>
+</div>
+
+<div class="grid-row">
+    <a class="govuk-back-link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Back</a>
+</div>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-xl">Confirm who's in control</h1>
+            <p class="govuk-body">These are the details we found on Companies House</p>
+
+            <form method="post" asp-action="DirectorsPscsConfirmed" novalidate enctype="multipart/form-data">
+
+                @Html.HiddenFor(x => x.ApplicationId)
+
+                @{ await Html.RenderPartialAsync("~/Views/Roatp/WhosInControl/PeopleInControl.cshtml", Model.CompaniesHouseDirectors); }
+
+                @{ await Html.RenderPartialAsync("~/Views/Roatp/WhosInControl/PeopleInControl.cshtml", Model.CompaniesHousePscs); }
+
+                <button type="submit" class="govuk-button">Confirm and continue</button>
+
+                <details class="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            What if these details are wrong?
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text">
+                        <p class="govuk-body">
+                            Contact Companies House to <a href="https://www.gov.uk/file-changes-to-a-company-with-companies-house" target="_blank">change these details (opens in a new window or tab)</a>.
+                        </p>
+                        <p class="govuk-body">
+                            After your changes have been confirmed, sign back in to continue with this application.
+                        </p>
+                    </div>
+                </details>
+
+            </form>
+        </div>
+    </div>
+</main>
