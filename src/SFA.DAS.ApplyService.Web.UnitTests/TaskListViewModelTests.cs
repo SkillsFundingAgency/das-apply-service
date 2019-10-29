@@ -1,4 +1,6 @@
 ﻿
+using SFA.DAS.ApplyService.Web.Services;
+
 namespace SFA.DAS.ApplyService.Web.UnitTests
 {
     using System;
@@ -18,6 +20,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         private ApplicationSequence _yourApplicationSequence;
         private ApplicationSection _providerRouteSection;
         private ApplicationSection _whatYouNeedSection;
+        private RoatpTaskListWorkflowService _roatpTaskListWorkflowService;
         
         [SetUp]
         public void Before_each_test()
@@ -31,6 +34,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
                 Sections = new List<ApplicationSection>()
             };
+            _roatpTaskListWorkflowService = new RoatpTaskListWorkflowService();
             _providerRouteSection = new ApplicationSection
             {
                 SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
@@ -90,7 +94,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 }
             };
 
-            var model = new TaskListViewModel
+            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
             {
                 ApplicationId = _applicationId,
                 ApplicationSequences = _applicationSequences,
@@ -156,7 +160,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 }
             };
 
-            var model = new TaskListViewModel
+            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
             {
                 ApplicationId = _applicationId,
                 ApplicationSequences = _applicationSequences,
@@ -233,7 +237,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             };
             _whatYouNeedSection.SectionCompleted = true;
 
-            var model = new TaskListViewModel
+            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
             {
                 ApplicationId = _applicationId,
                 ApplicationSequences = _applicationSequences,
@@ -369,7 +373,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             criminalComplianceSequence.Sections.Add(criminalIndividualChecksSection);
             _applicationSequences.Add(criminalComplianceSequence);
 
-            var model = new TaskListViewModel
+            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
             {
                 ApplicationId = _applicationId,
                 ApplicationSequences = _applicationSequences,

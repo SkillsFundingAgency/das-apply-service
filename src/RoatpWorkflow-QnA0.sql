@@ -456,19 +456,20 @@ VALUES
 }
 ', N'Preamble', N'Preamble', N'Pages')
 
+
 INSERT INTO [dbo].[WorkflowSequences]
            ([Id]
            ,[WorkflowId]
            ,[SequenceNo]
-		   ,[SectionNo]
-		   ,[SectionId]
+           ,[SectionNo]
+           ,[SectionId]
            ,[IsActive])
      VALUES
            (NEWID()
            ,@WorkflowId0
            ,0
-		   ,1
-		   ,@PreambleSectionId
+           ,1
+           ,@PreambleSectionId
            ,1)
 
 GO

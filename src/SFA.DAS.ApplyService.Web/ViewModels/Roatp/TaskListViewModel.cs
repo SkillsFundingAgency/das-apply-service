@@ -1,4 +1,6 @@
-﻿
+﻿using SFA.DAS.ApplyService.Web.Configuration;
+using SFA.DAS.ApplyService.Web.Services;
+
 namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
     using System;
@@ -9,12 +11,23 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
     public class TaskListViewModel
     {
+        private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
+
+        public TaskListViewModel(IRoatpTaskListWorkflowService roatpTaskListWorkflowService)
+        {
+            _roatpTaskListWorkflowService = roatpTaskListWorkflowService;
+        }
+
+
         private const string EmployerApplicationRouteId = "2";
 
         public Guid ApplicationId { get; set; }
         public string UKPRN { get; set; }
         public string OrganisationName { get; set; }
         public string TradingName { get; set; }
+
+        public List<NotRequiredOverrideConfiguration> NotRequiredOverrides { get; set; }
+
 
         public string ApplicationRouteShortText
         {
@@ -48,7 +61,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         
         public string CssClass(int sequenceId, int sectionId, bool sequential = false)
         {
-            var status = RoatpTaskListWorkflowHandler.SectionStatus(ApplicationSequences, sequenceId, sectionId, sequential);
+            var status = _roatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, sequenceId, sectionId, ApplicationRouteId, sequential);
 
             if (status == String.Empty)
             {
@@ -63,14 +76,14 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         public string SectionStatus(int sequenceId, int sectionId, bool sequential = false)
         {
-            return RoatpTaskListWorkflowHandler.SectionStatus(ApplicationSequences, sequenceId, sectionId, sequential);
+            return _roatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, sequenceId, sectionId, ApplicationRouteId, sequential);
         }
 
         public bool PreviousSectionCompleted(int sequenceId, int sectionId, bool sequential = false)
         {
             var sequence = ApplicationSequences.FirstOrDefault(x => x.SequenceId == sequenceId);
 
-            return RoatpTaskListWorkflowHandler.PreviousSectionCompleted(sequence, sectionId, sequential);
+            return _roatpTaskListWorkflowService.PreviousSectionCompleted(sequence, sectionId, sequential);
         }
 
         public bool IntroductionPageNextSectionUnavailable(int sequenceId, int sectionId)
@@ -81,7 +94,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
                 foreach(var section in yourOrganisationSequence.Sections)
                 {
-                    var sectionStatus = RoatpTaskListWorkflowHandler.SectionStatus(ApplicationSequences, RoatpWorkflowSequenceIds.YourOrganisation, section.SectionId, true);
+                    var sectionStatus = _roatpTaskListWorkflowService.SectionStatus(ApplicationSequences,NotRequiredOverrides, RoatpWorkflowSequenceIds.YourOrganisation, section.SectionId,ApplicationRouteId, true);
                     if (sectionStatus.ToLower() != PageStatusCompleted)
                     {
                         return true;

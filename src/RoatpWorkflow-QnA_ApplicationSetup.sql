@@ -47,6 +47,7 @@ BEGIN
 		   ,'{}')
 END
 
+
 DELETE FROM [dbo].[WorkflowSections]
 WHERE ProjectId = @ProjectId
 
