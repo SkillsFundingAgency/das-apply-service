@@ -218,7 +218,7 @@
 
                         @if (!Model.HideCTA)
                         {
-                            if (Model.PageOfAnswers != null && Model.PageOfAnswers.Count > 0 && Model.PageOfAnswers.First().Answers.Count(x => x.Value.ToLower().Contains(".pdf"))>0)
+                            if (Model.PageOfAnswers != null && Model.PageOfAnswers.Count > 0 && Model.Questions != null && Model.Questions.Count>0 && Model.Questions[0].Type=="FileUpload")
                             {
                                 <a class="govuk-button" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">@Model.CTAButtonText</a>
                             }
