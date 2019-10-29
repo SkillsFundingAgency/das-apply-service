@@ -5,7 +5,6 @@ DECLARE @ProjectId4 UNIQUEIDENTIFIER
 SET @WorkflowId4 = '86F83D58-8608-4462-9A4E-65837AF04287'
 SET @ProjectId4 = '70A0871F-42C1-48EF-8689-E63F0C91A487'
 
-
 DECLARE @ProtectionOfApprenticesSequenceId UNIQUEIDENTIFIER
 SET @ProtectionOfApprenticesSequenceId = '61861411-1794-420d-ab04-788ea4db8072'
 
@@ -40,9 +39,9 @@ VALUES
 {
 	"Pages": [
 		{
-			"PageId": "500",
-			"SequenceId": "4",
-			"SectionId": "1",
+			"PageId": "4000",
+			"SequenceId": null,
+			"SectionId": null,
 			"Title": "",
 			"LinkTitle": "link title",
 			"InfoText": "info text",
@@ -65,7 +64,7 @@ VALUES
        "Next": [      
         {
           "Action": "NextPage",
-          "ReturnId": "530",
+          "ReturnId": "4010",
           "Conditions": [],
           "ConditionMet": false
         }
@@ -81,9 +80,9 @@ VALUES
       "BodyText": ""
     },
 	{
-			"PageId": "510",
-			"SequenceId": "4",
-			"SectionId": "1",
+			"PageId": "4001",
+			"SequenceId": null,
+			"SectionId": null,
 			"Title": "",
 			"LinkTitle": "link title",
 			"InfoText": "info text",
@@ -106,7 +105,7 @@ VALUES
        "Next": [      
         {
           "Action": "NextPage",
-          "ReturnId": "530",
+          "ReturnId": "4010",
           "Conditions": [],
           "ConditionMet": false
         }
@@ -122,9 +121,9 @@ VALUES
       "BodyText": ""
     },
 	{
-			"PageId": "520",
-			"SequenceId": "4",
-			"SectionId": "1",
+			"PageId": "4002",
+			"SequenceId": null,
+			"SectionId": null,
 			"Title": "",
 			"LinkTitle": "link title",
 			"InfoText": "info text",
@@ -147,7 +146,7 @@ VALUES
        "Next": [      
         {
           "Action": "NextPage",
-          "ReturnId": "540",
+          "ReturnId": "4010",
           "Conditions": [],
           "ConditionMet": false
         }
@@ -172,9 +171,9 @@ VALUES
 {
 	"Pages": [
 		{
-			"PageId": "530",
-			"SequenceId": "4",
-			"SectionId": "2",
+			"PageId": "4010",
+			"SequenceId": null,
+			"SectionId": null,
 			"Title": "Continuity plan for apprenticeship training",
 			"LinkTitle": "Continuity plan for apprenticeship training",
 			"InfoText": "Continuity plan for apprenticeship training",
@@ -212,7 +211,7 @@ VALUES
        "Next": [      
         {
           "Action": "NextPage",
-          "ReturnId": "540",
+          "ReturnId": "4020",
           "Conditions": [],
           "ConditionMet": false
         }
@@ -239,9 +238,9 @@ VALUES
 {
 	"Pages": [
 		{
-			"PageId": "540",
-			"SequenceId": "4",
-			"SectionId": "3",
+			"PageId": "4020",
+			"SequenceId": null,
+			"SectionId": null,
 			"Title": "Equality and diversity policy",
 			"LinkTitle": "Equality and diversity policy",
 			"InfoText": "Equality and diversity policy",
@@ -273,7 +272,7 @@ VALUES
        "Next": [      
         {
           "Action": "NextPage",
-          "ReturnId": "550",
+          "ReturnId": "4030",
           "Conditions": [],
           "ConditionMet": false
         }
@@ -303,7 +302,7 @@ INSERT INTO [dbo].[WorkflowSequences]
 			,[IsActive])
 VALUES
 			(@ProtectionOfApprenticesSequenceId
-			,@WorkFlowId4
+			,@WorkflowId4
 			,4
 			,1
 			,@ProtectionOfApprenticesSectionId
@@ -318,7 +317,7 @@ INSERT INTO [dbo].[WorkflowSequences]
 			,[IsActive])
 VALUES
 			(@ProtectionOfApprentices2SequenceId
-			,@WorkFlowId4
+			,@WorkflowId4
 			,4
 			,2
 			,@ProtectionOfApprentices2SectionId
@@ -333,7 +332,7 @@ INSERT INTO [dbo].[WorkflowSequences]
 			,[IsActive])
 VALUES
 			(@ProtectionOfApprentices3SequenceId
-			,@WorkFlowId4
+			,@WorkflowId4
 			,4
 			,3
 			,@ProtectionOfApprentices3SectionId

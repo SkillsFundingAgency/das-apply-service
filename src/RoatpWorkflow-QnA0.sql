@@ -23,8 +23,8 @@ VALUES
   "Pages": [
     {
       "PageId": "1",
-      "SequenceId": "0",
-      "SectionId": "1",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Preamble",
       "LinkTitle": "",
       "InfoText": "",
@@ -418,6 +418,19 @@ VALUES
             "Validations": []            
           },
           "Order": null
+        },
+        {
+          "QuestionId": "PRE-95",
+          "QuestionTag": "EmployerProvider-LevyPaying",
+          "Label": "",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Text",
+            "Validations": []            
+          },
+          "Order": null
         }
       ],
       "PageOfAnswers": [],
@@ -442,8 +455,6 @@ VALUES
   ]
 }
 ', N'Preamble', N'Preamble', N'Pages')
-
-
 
 
 INSERT INTO [dbo].[WorkflowSequences]

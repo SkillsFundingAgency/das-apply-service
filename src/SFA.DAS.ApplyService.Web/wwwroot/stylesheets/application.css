@@ -949,3 +949,10 @@
 .roatp__navigation-signout {
     float: right;
 }
+
+.skipbutton {
+    display: inline-block;
+    margin-top: 9px;
+    margin-bottom: 6px;
+    margin-left: 20px;
+}

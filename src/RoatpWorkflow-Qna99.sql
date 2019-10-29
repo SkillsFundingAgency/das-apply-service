@@ -23,8 +23,8 @@ VALUES
   "Pages": [
     {
       "PageId": "999999",
-      "SequenceId": "99",
-      "SectionId": "1",
+      "SequenceId": null,
+      "SectionId": null,
       "Title": "Conditions of acceptance",
       "LinkTitle": "",
       "InfoText": "",
