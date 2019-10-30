@@ -518,7 +518,7 @@ VALUES
 					<p class=\"govuk-body\">The file must be a PDF and smaller than 5MB.</p>",
                     "Hint": "",
                     "Input": {
-                        "Type": ""FileUpload",
+                        "Type": "FileUpload",
                         "Validations": [{
                                 "Name": "Required",
                                 "Value": null,
@@ -566,7 +566,7 @@ VALUES
 					<p class=\"govuk-body\">Website link</p>",
                     "Hint": "For example, http://www.example.com/complaintspolicy",
                     "Input": {
-                        "Type": ""Text",
+                        "Type": "Text",
                         "Validations": [{
                                 "Name": "Required",
                                 "Value": null,
