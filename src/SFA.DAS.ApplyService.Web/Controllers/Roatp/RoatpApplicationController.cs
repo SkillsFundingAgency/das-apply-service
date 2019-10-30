@@ -135,11 +135,18 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (applicationDetails.UkrlpLookupDetails.VerifiedByCompaniesHouse)
             {
-                var whosInControlQuestions = RoatpPreambleQuestionBuilder.CreateCompaniesHouseWhosInControlQuestions(applicationDetails);
+                var directorsPscsQuestions = RoatpPreambleQuestionBuilder.CreateCompaniesHouseWhosInControlQuestions(applicationDetails);
 
-                await SaveCompaniesHouseWhosInControlQuestions(response.ApplicationId, userId, whosInControlQuestions);
+                await SaveCompaniesHouseWhosInControlQuestions(response.ApplicationId, userId, directorsPscsQuestions);
             }
             
+            if (applicationDetails.UkrlpLookupDetails.VerifiedbyCharityCommission)
+            {
+                var trusteesQuestions = RoatpPreambleQuestionBuilder.CreateCharityCommissionWhosInControlQuestions(applicationDetails);
+
+                await SaveCharityCommissionWhosInControlQuestions(response.ApplicationId, userId, trusteesQuestions);
+            }
+
             return RedirectToAction("Applications", new { applicationType = applicationType });
         }
 
@@ -364,11 +371,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var companiesHouseManualEntry = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CompaniesHouseManualEntryRequired);
             var verifiedCharityCommission = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity);
             var charityCommissionManualEntry = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CharityCommissionTrusteeManualEntry);
-            var yourOrganisationSequence = sequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
-            var yourOrganisationSections = await _qnaApiClient.GetSections(applicationId, yourOrganisationSequence.Id);
-            var providerRouteSection = yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute);
-            var providerRoute = await _qnaApiClient.GetAnswer(applicationId, providerRouteSection.Id, RoatpWorkflowPageIds.YourOrganisation, RoatpPreambleQuestionIdConstants.ApplyProviderRoute);
-
+            var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, "Apply-ProviderRoute");
 
             var model = new TaskListViewModel(_roatpTaskListWorkflowService)
             {
@@ -670,7 +673,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var unansweredQuestions = page.Questions.Where(x => !answers.Any(y => y.QuestionId == x.QuestionId));
             foreach(var question in unansweredQuestions)
             {
-                answers.Add(new Answer() { QuestionId = question.QuestionId, Value = string.Empty });
+                var valueToInject = string.Empty;
+
+               
+
+                if (page.Questions != null && page.Questions.Count > 0 &&
+                    page.Questions[0].Input.Type == "FileUpload")
+                {
+                    var fileUploadAnswerValue = page?.PageOfAnswers[0].Answers.FirstOrDefault(x => x.QuestionId == question.QuestionId)?.Value;
+
+                    if (fileUploadAnswerValue!=null)
+                        valueToInject = fileUploadAnswerValue;
+                }
+                answers.Add(new Answer() { QuestionId = question.QuestionId, Value = valueToInject });
+                //answers.Add(new Answer() { QuestionId = question.QuestionId, Value = "" });
             }
         }
 
@@ -870,6 +886,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var whosInControlQuestions = questions.AsEnumerable<Answer>().ToList();                  
 
             var updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, whosInControlQuestions);
+        }
+
+        private async Task SaveCharityCommissionWhosInControlQuestions(Guid applicationId, Guid userId, List<PreambleAnswer> questions)
+        {
+            var applicationSequences = await _qnaApiClient.GetSequences(applicationId);
+
+            var yourOrganisationSequence =
+                applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
+            var yourOrganisationSections = await _qnaApiClient.GetSections(applicationId, yourOrganisationSequence.Id);
+            var whosInControlSection = yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+
+            var whosInControlQuestions = questions.AsEnumerable<Answer>().ToList();
+
+            var updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage, whosInControlQuestions);
         }
 
         private bool IsPostBack()

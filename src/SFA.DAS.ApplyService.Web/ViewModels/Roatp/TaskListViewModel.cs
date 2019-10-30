@@ -88,6 +88,20 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         public bool IntroductionPageNextSectionUnavailable(int sequenceId, int sectionId)
         {
+            if (sequenceId != RoatpWorkflowSequenceIds.YourOrganisation)
+            {
+                var yourOrganisationSequence = ApplicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
+
+                foreach(var section in yourOrganisationSequence.Sections)
+                {
+                    var sectionStatus = _roatpTaskListWorkflowService.SectionStatus(ApplicationSequences,NotRequiredOverrides, RoatpWorkflowSequenceIds.YourOrganisation, section.SectionId,ApplicationRouteId, true);
+                    if (sectionStatus.ToLower() != PageStatusCompleted)
+                    {
+                        return true;
+                    }
+                }
+            }
+
             var statusOfIntroductionPage = SectionStatus(sequenceId,IntroductionSectionId);
             if (sequenceId > Sequence1Id && sectionId != IntroductionSectionId && statusOfIntroductionPage.ToLower() != PageStatusCompleted)
                 return true;

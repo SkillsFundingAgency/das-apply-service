@@ -5,7 +5,6 @@ DECLARE @ProjectId4 UNIQUEIDENTIFIER
 SET @WorkflowId4 = '86F83D58-8608-4462-9A4E-65837AF04287'
 SET @ProjectId4 = '70A0871F-42C1-48EF-8689-E63F0C91A487'
 
-
 DECLARE @ProtectionOfApprenticesSequenceId UNIQUEIDENTIFIER
 SET @ProtectionOfApprenticesSequenceId = '61861411-1794-420d-ab04-788ea4db8072'
 
@@ -49,9 +48,9 @@ VALUES
 {
 	"Pages": [
 		{
-			"PageId": "500",
-			"SequenceId": "4",
-			"SectionId": "1",
+			"PageId": "4000",
+			"SequenceId": null,
+			"SectionId": null,
 			"Title": "",
 			"LinkTitle": "link title",
 			"InfoText": "info text",
@@ -74,7 +73,7 @@ VALUES
        "Next": [      
         {
           "Action": "NextPage",
-          "ReturnId": "530",
+          "ReturnId": "4010",
           "Conditions": [],
           "ConditionMet": false
         }
@@ -90,9 +89,9 @@ VALUES
       "BodyText": ""
     },
 	{
-			"PageId": "510",
-			"SequenceId": "4",
-			"SectionId": "1",
+			"PageId": "4001",
+			"SequenceId": null,
+			"SectionId": null,
 			"Title": "",
 			"LinkTitle": "link title",
 			"InfoText": "info text",
@@ -115,7 +114,7 @@ VALUES
        "Next": [      
         {
           "Action": "NextPage",
-          "ReturnId": "530",
+          "ReturnId": "4010",
           "Conditions": [],
           "ConditionMet": false
         }
@@ -131,9 +130,9 @@ VALUES
       "BodyText": ""
     },
 	{
-			"PageId": "520",
-			"SequenceId": "4",
-			"SectionId": "1",
+			"PageId": "4002",
+			"SequenceId": null,
+			"SectionId": null,
 			"Title": "",
 			"LinkTitle": "link title",
 			"InfoText": "info text",
@@ -156,7 +155,7 @@ VALUES
        "Next": [      
         {
           "Action": "NextPage",
-          "ReturnId": "540",
+          "ReturnId": "4010",
           "Conditions": [],
           "ConditionMet": false
         }
@@ -181,9 +180,9 @@ VALUES
 {
 	"Pages": [
 		{
-			"PageId": "530",
-			"SequenceId": "4",
-			"SectionId": "2",
+			"PageId": "4010",
+			"SequenceId": null,
+			"SectionId": null,
 			"Title": "Continuity plan for apprenticeship training",
 			"LinkTitle": "Continuity plan for apprenticeship training",
 			"InfoText": "Continuity plan for apprenticeship training",
@@ -221,7 +220,7 @@ VALUES
        "Next": [      
         {
           "Action": "NextPage",
-          "ReturnId": "540",
+          "ReturnId": "4020",
           "Conditions": [],
           "ConditionMet": false
         }
@@ -248,9 +247,9 @@ VALUES
 {
 	"Pages": [
 		{
-			"PageId": "540",
-			"SequenceId": "4",
-			"SectionId": "3",
+			"PageId": "4020",
+			"SequenceId": null,
+			"SectionId": null,
 			"Title": "Equality and diversity policy",
 			"LinkTitle": "Equality and diversity policy",
 			"InfoText": "Equality and diversity policy",
@@ -282,7 +281,7 @@ VALUES
        "Next": [      
         {
           "Action": "NextPage",
-          "ReturnId": "550",
+          "ReturnId": "4030",
           "Conditions": [],
           "ConditionMet": false
         }
@@ -303,6 +302,109 @@ VALUES
 
 
 
+INSERT [dbo].[WorkflowSections]
+  ([Id], [ProjectId], [QnAData], [Title], [LinkTitle],[DisplayType])
+VALUES
+  (@ProtectionOfApprentices4SectionId, @ProjectId4, N'
+{
+	"Pages": [
+		{
+			"PageId": "4030",
+			"SequenceId": null,
+			"SectionId": null,
+			"Title": "Safeguarding and Prevent duty policy",
+			"LinkTitle": "Safeguarding and Prevent duty policy",
+			"InfoText": "Safeguarding and Prevent duty policy",
+			 "Questions": [
+        {
+          "QuestionId": "PYA-40",
+          "QuestionTag": "ProtectApprentice-Safeguarding",
+          "Label": "Upload your organisation''s safeguarding policy",
+          "ShortLabel": "",
+           "QuestionBodyText": "<p class=\"govuk-body\" id=\"pya-equality-policy\">This must include how your organisation will:</p><ul class=\"govuk-list govuk-list--bullet\"><li>promote the policy</li><li>get commitment towards the policy</li><li>train its employees in implementing the policy</li><li>protect its apprentices</li><li>prevent abuse towards its apprentices</li><li>have  way of raising, recording and investigating concerns</li><li>have a way of apprentices getting support or guidance</li><li>monitor its IT usage</li></ul><p class=\"govuk-body\">Find out more about safeguarding in <a href=\"http://www.legislation.gov.uk/ukpga/2014/23/contents\" target=\"_blank\">the Care Act 2014 (opens in a new windows or tab)</a>.</p><p class=\"govuk-body\">The file must be a PDF and smaller than 5MB.</p>",
+          "Hint": "",
+          "Input": {
+            "Type": "FileUpload",
+            "Validations": [
+			    {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Select your organisation''s safeguarding policy"
+                },
+				{
+                "Name": "FileType",
+                "Value": "pdf",
+                "ErrorMessage": "The selected file must be a PDF"
+              }
+			]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+       "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "4035",
+          "Conditions": [],
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    },
+	{
+			"PageId": "4035",
+			"SequenceId": null,
+			"SectionId": null,
+			"Title": "Safeguarding responsibility - title",
+			"LinkTitle": "Safeguarding responsibility - link title",
+			"InfoText": "Safeguarding responsibility - info text",
+			 "Questions": [
+			  {
+          "QuestionId": "PYA-45",
+          "QuestionTag": "ProtectApprentice-Safeguarding-responsibility",
+          "Label": "Tell us who has overall responsibility for safeguarding in your organisation",
+          "ShortLabel": "short label 45",
+           "QuestionBodyText": "Holding page for safeguarding responsibility",
+          "Hint": "",
+          "Input": {
+            "Type": "Hidden",
+            "Validations": []
+			},
+          "Order": null
+        }
+      ],"PageOfAnswers": [],
+       "Next": [      
+        {
+          "Action": "NextPage",
+          "ReturnId": "4040",
+          "Conditions": [],
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": ""
+    }
+	]
+}
+', N'Safeguarding and Prevent duty policy', N'Safeguarding and Prevent duty policy',  N'Pages')
+
+
 INSERT INTO [dbo].[WorkflowSequences]
 			([Id]
 			,[WorkflowId]
@@ -312,7 +414,7 @@ INSERT INTO [dbo].[WorkflowSequences]
 			,[IsActive])
 VALUES
 			(@ProtectionOfApprenticesSequenceId
-			,@WorkFlowId4
+			,@WorkflowId4
 			,4
 			,1
 			,@ProtectionOfApprenticesSectionId
@@ -327,7 +429,7 @@ INSERT INTO [dbo].[WorkflowSequences]
 			,[IsActive])
 VALUES
 			(@ProtectionOfApprentices2SequenceId
-			,@WorkFlowId4
+			,@WorkflowId4
 			,4
 			,2
 			,@ProtectionOfApprentices2SectionId
@@ -342,10 +444,25 @@ INSERT INTO [dbo].[WorkflowSequences]
 			,[IsActive])
 VALUES
 			(@ProtectionOfApprentices3SequenceId
-			,@WorkFlowId4
+			,@WorkflowId4
 			,4
 			,3
 			,@ProtectionOfApprentices3SectionId
 			,1)
 
+
+INSERT INTO [dbo].[WorkflowSequences]
+			([Id]
+			,[WorkflowId]
+			,[SequenceNo]
+			,[SectionNo]
+			,[SectionId]
+			,[IsActive])
+VALUES
+			(@ProtectionOfApprentices4SequenceId
+			,@WorkFlowId4
+			,4
+			,4
+			,@ProtectionOfApprentices4SectionId
+			,1)
 GO
