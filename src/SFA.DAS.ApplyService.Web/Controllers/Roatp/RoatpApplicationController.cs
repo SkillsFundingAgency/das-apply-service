@@ -48,7 +48,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IPageNavigationTrackingService _pageNavigationTrackingService;
         private readonly List<QnaPageOverrideConfiguration> _pageOverrideConfiguration;
         private readonly List<QnaLinksConfiguration> _qnaLinks;
+        private readonly List<NotRequiredOverrideConfiguration> _notRequiredOverrides;
         private readonly ICustomValidatorFactory _customValidatorFactory;
+        private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
         private const string InputClassUpperCase = "app-uppercase";
@@ -60,7 +62,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
             IQnaApiClient qnaApiClient, IOptions<List<TaskListConfiguration>> configuration, IProcessPageFlowService processPageFlowService,
             IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
-            IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks, ICustomValidatorFactory customValidatorFactory)
+            IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks, ICustomValidatorFactory customValidatorFactory, IRoatpTaskListWorkflowService roatpTaskListWorkflowService, IOptions<List<NotRequiredOverrideConfiguration>> notRequiredOverrides)
         {
             _apiClient = apiClient;
             _logger = logger;
@@ -76,6 +78,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _qnaLinks = qnaLinks.Value;
             _pageOverrideConfiguration = pageOverrideConfiguration.Value;
             _customValidatorFactory = customValidatorFactory;
+            _roatpTaskListWorkflowService = roatpTaskListWorkflowService;
+            _notRequiredOverrides = notRequiredOverrides.Value;
         }
 
         public async Task<IActionResult> Applications(string applicationType)
@@ -367,15 +371,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var companiesHouseManualEntry = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CompaniesHouseManualEntryRequired);
             var verifiedCharityCommission = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity);
             var charityCommissionManualEntry = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CharityCommissionTrusteeManualEntry);
-            var yourOrganisationSequence = sequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
-            var yourOrganisationSections = await _qnaApiClient.GetSections(applicationId, yourOrganisationSequence.Id);
-            var providerRouteSection = yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute);
-            var providerRoute = await _qnaApiClient.GetAnswer(applicationId, providerRouteSection.Id, RoatpWorkflowPageIds.YourOrganisation, RoatpPreambleQuestionIdConstants.ApplyProviderRoute);
-            
-            var model = new TaskListViewModel
+            var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, "Apply-ProviderRoute");
+
+            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
             {
                 ApplicationId = applicationId,
                 ApplicationSequences = filteredSequences,
+                NotRequiredOverrides = _notRequiredOverrides,
                 UKPRN = organisationDetails.OrganisationUkprn?.ToString(),
                 OrganisationName = organisationDetails.Name,
                 TradingName = organisationDetails.OrganisationDetails?.TradingName,
