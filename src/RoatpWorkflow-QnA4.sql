@@ -372,8 +372,8 @@ VALUES
           "QuestionId": "PYA-45",
           "QuestionTag": "ProtectApprentice-Safeguarding-responsibility",
           "Label": "Tell us who has overall responsibility for safeguarding in your organisation",
-          "ShortLabel": "short label 45",
-           "QuestionBodyText": "Holding page for safeguarding responsibility",
+          "ShortLabel": "",
+           "QuestionBodyText": "Holding page for safeguarding responsibility officer",
           "Hint": "",
           "Input": {
             "Type": "Hidden",

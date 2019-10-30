@@ -34,5 +34,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         Task DeleteFile(Guid applicationId, Guid sectionId, string pageId, string questionId, string fileName);
 
+        Task<GetNextActionResponse> GetNextActionBySectionNo(Guid applicationId, int sequenceNo, int sectionNo,
+            string pageId);
+
+        Task<GetNextActionResponse> GetNextAction(Guid applicationId, Guid sectionId, string pageId);
+
     }
 }

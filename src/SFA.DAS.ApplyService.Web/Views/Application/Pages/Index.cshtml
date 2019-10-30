@@ -218,15 +218,7 @@
 
                         @if (!Model.HideCTA)
                         {
-                            @*if (Model.PageOfAnswers != null && Model.PageOfAnswers.Count > 0 && Model.Questions != null && Model.Questions.Count>0 && Model.Questions[0].Type=="FileUpload")
-                            {
-                                <a class="govuk-button" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">@Model.CTAButtonText</a>
-                            }
-                            else
-                            {*@
-                                <button type="submit" class="govuk-button">@Model.CTAButtonText</button>
-
-                            //}
+                            <button type="submit" class="govuk-button">@Model.CTAButtonText</button>
                         }
 
                         @foreach (var linksConfiguration in Model.LinksConfiguration)

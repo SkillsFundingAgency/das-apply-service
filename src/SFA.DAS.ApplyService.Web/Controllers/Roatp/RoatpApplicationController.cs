@@ -308,10 +308,27 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 var section = await _qnaApiClient.GetSection(applicationId, selectedSection.Id);
 
-                if (IsPostBack())
+                var skipSaveAnswers = false;
+
+                if (IsFileUploadWithNonEmptyValueAndIsPostBack(page))
                 {
-                    return await SaveAnswers(applicationId, sequenceId, sectionId, pageId, redirectAction,
-                        string.Empty);
+                    var nextActionResult =
+                        await _qnaApiClient.GetNextActionBySectionNo(applicationId, sequenceId, sectionId, pageId);
+
+                    if (nextActionResult != null && nextActionResult.NextAction == "NextPage")
+                    {
+                        pageId = nextActionResult.NextActionId;
+                        skipSaveAnswers = true;
+                    }
+                }
+                
+                if (!skipSaveAnswers)
+                {
+                    if (IsPostBack())
+                    {
+                        return await SaveAnswers(applicationId, sequenceId, sectionId, pageId, redirectAction,
+                            string.Empty);
+                    }
                 }
 
                 page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
@@ -673,20 +690,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var unansweredQuestions = page.Questions.Where(x => !answers.Any(y => y.QuestionId == x.QuestionId));
             foreach(var question in unansweredQuestions)
             {
-                var valueToInject = string.Empty;
+                //var valueToInject = string.Empty;
 
                
 
-                if (page.Questions != null && page.Questions.Count > 0 &&
-                    page.Questions[0].Input.Type == "FileUpload")
-                {
-                    var fileUploadAnswerValue = page?.PageOfAnswers[0].Answers.FirstOrDefault(x => x.QuestionId == question.QuestionId)?.Value;
+                //if (page.Questions != null && page.Questions.Count > 0 &&
+                //    page.Questions[0].Input.Type == "FileUpload")
+                //{
+                //    var fileUploadAnswerValue = page?.PageOfAnswers[0].Answers.FirstOrDefault(x => x.QuestionId == question.QuestionId)?.Value;
 
-                    if (fileUploadAnswerValue!=null)
-                        valueToInject = fileUploadAnswerValue;
-                }
-                answers.Add(new Answer() { QuestionId = question.QuestionId, Value = valueToInject });
-                //answers.Add(new Answer() { QuestionId = question.QuestionId, Value = "" });
+                //    if (fileUploadAnswerValue!=null)
+                //        valueToInject = fileUploadAnswerValue;
+                //}
+                //answers.Add(new Answer() { QuestionId = question.QuestionId, Value = valueToInject });
+                answers.Add(new Answer() { QuestionId = question.QuestionId, Value = "" });
             }
         }
 
@@ -919,6 +936,25 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return viewModel;
+        }
+
+        private bool IsFileUploadWithNonEmptyValueAndIsPostBack(Page page)
+        {
+            if (!IsPostBack())
+                return false;
+
+            if (page.PageOfAnswers == null || page.PageOfAnswers.Count ==0 ||  page.Questions == null || page.Questions.Count == 0 || page.Questions[0].Input.Type != "FileUpload")
+                return false;
+
+            var fileUploadAnswerValue = string.Empty;
+
+            foreach (var question in page.Questions)
+            {
+                if (fileUploadAnswerValue==string.Empty)
+                    fileUploadAnswerValue= page.PageOfAnswers[0].Answers.FirstOrDefault(x => x.QuestionId == question.QuestionId)?.Value;
+            }
+        
+        return !string.IsNullOrEmpty(fileUploadAnswerValue);
         }
 
         private void RunCustomValidations(Page page, List<Answer> answers)
