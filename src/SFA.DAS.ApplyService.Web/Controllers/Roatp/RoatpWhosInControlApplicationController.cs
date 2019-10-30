@@ -65,12 +65,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 ApplicationId = applicationId,
                 CompaniesHouseDirectors = new PeopleInControl
                 {
-                    QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseDirectors,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHouseDirectors,
                     TableData = directorsData
                 },
                 CompaniesHousePscs = new PeopleInControl
                 {
-                    QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHousePSCs,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHousePSCs,
                     TableData = pscsData
                 }
             };
@@ -90,7 +90,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 companiesHousePscsAnswer,
                 new Answer
                 {
-                    QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseDetailsConfirmed,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHouseDetailsConfirmed,
                     Value = "Y"
                 }
             };
@@ -125,7 +125,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 ApplicationId = applicationId,
                 Trustees = new PeopleInControl
                 {
-                    QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionTrustees,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
                     TableData = trusteesData
                 }
             };
@@ -149,7 +149,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 trusteesAnswer,
                 new Answer
                 {
-                    QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionDetailsConfirmed,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionDetailsConfirmed,
                     Value = "Y"
                 }
             };
@@ -215,12 +215,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 new Answer
                 {
-                    QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionTrustees,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
                     Value = JsonConvert.SerializeObject(trusteesData)
                 },
                 new Answer
                 {
-                    QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionDetailsConfirmed,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionDetailsConfirmed,
                     Value = "TRUE"
                 }
             };
@@ -268,7 +268,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 new Answer
                 {
-                    QuestionId = RoatpPreambleQuestionIdConstants.SoleTradeOrPartnership,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.SoleTradeOrPartnership,
                     Value = model.OrganisationType
                 }
             };
@@ -317,7 +317,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 new Answer
                 {
-                    QuestionId = RoatpPreambleQuestionIdConstants.PartnershipType,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.PartnershipType,
                     Value = model.PartnershipType
                 }
             };
@@ -343,13 +343,91 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public async Task<IActionResult> AddPartnerIndividual(Guid applicationId)
         {
             var model = new AddPartnerIndividualViewModel { ApplicationId = applicationId };
+
+            // Handling multiple partner details covered in a future story
+            var individualPartnerAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.AddPartnerIndividual);
+            if (individualPartnerAnswer != null && individualPartnerAnswer.Value != null)
+            {
+                var partnerData = JsonConvert.DeserializeObject<TabularData>(individualPartnerAnswer.Value);
+                var dataRow = partnerData.DataRows[0];
+                model.PartnerName = dataRow.Columns[0];
+                var formattedDob = dataRow.Columns[1];
+                model.PartnerDobMonth = DateOfBirthFormatter.GetMonthNumberFromShortDateOfBirth(formattedDob);
+                model.PartnerDobYear = DateOfBirthFormatter.GetYearFromShortDateOfBirth(formattedDob);
+            }
             return View("~/Views/Roatp/WhosInControl/AddPartnerIndividual.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddIndividualPartnerDetails(AddPartnerIndividualViewModel model)
+        {
+            var errorMessages = PartnerDetailsValidator.Validate(model);
+
+            if (errorMessages.Any())
+            {
+                model.ErrorMessages = errorMessages;
+                return View("~/Views/Roatp/WhosInControl/AddPartnerIndividual.cshtml", model);
+            }
+
+            var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
+            var yourOrganisationSequence =
+                applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
+            var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
+            var whosInControlSection =
+                yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+
+            var partnerTableData = new TabularData
+            {
+                HeadingTitles = new List<string> { "Name", "Date of birth" },
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string>
+                        {
+                            model.PartnerName, DateOfBirthFormatter.FormatDateOfBirth(model.PartnerDobMonth, model.PartnerDobYear)
+                        }
+                    }
+                }
+            };
+            var individualPartnerJson = JsonConvert.SerializeObject(partnerTableData);
+
+            var individualPartnerAnswers = new List<Answer>
+            {
+                new Answer
+                {
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartnerIndividual,
+                    Value = individualPartnerJson
+                }
+            };
+
+            var result = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddPartnerIndividual, individualPartnerAnswers);
+            
+            return RedirectToAction("ConfirmPartners", new { applicationId = model.ApplicationId });
         }
 
         public async Task<IActionResult> AddPartnerOrganisation(Guid applicationId)
         {
             var model = new AddPartnerOrganisationViewModel { ApplicationId = applicationId };
             return View("~/Views/Roatp/WhosInControl/AddPartnerOrganisation.cshtml", model);
+        }
+
+        public async Task<IActionResult> ConfirmPartners(Guid applicationId)
+        {
+            var model = new ConfirmPartnersViewModel { ApplicationId = applicationId };
+
+            var partnerType = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.PartnershipType);
+            if (partnerType != null && partnerType.Value != null && partnerType.Value == ConfirmPartnershipTypeViewModel.PartnershipTypeIndividual)
+            {
+                model.BackAction = "AddPartnerIndividual";
+            }
+            else
+            {
+                model.BackAction = "AddPartnerOrganisation";
+            }
+
+            return View("~/Views/Roatp/WhosInControl/ConfirmPartners.cshtml", model);
         }
 
         public async Task<IActionResult> AddSoleTradeDob(Guid applicationId)
@@ -401,7 +479,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 new Answer
                 {
-                    QuestionId = RoatpPreambleQuestionIdConstants.AddSoleTradeDob,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.AddSoleTradeDob,
                     Value = answerValue
                 }
             };

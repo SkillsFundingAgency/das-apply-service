@@ -115,14 +115,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             
             var directorsDataAnswer = new Answer
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseDirectors,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHouseDirectors,
                 Value = "{}"
             };
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHouseDirectors)).ReturnsAsync(directorsDataAnswer);
 
             var pscsDataAnswer = new Answer
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHousePSCs,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHousePSCs,
                 Value = "{}"
             };
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHousePscs)).ReturnsAsync(pscsDataAnswer);
@@ -154,14 +154,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var directorsDataAnswer = new Answer
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseDirectors,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHouseDirectors,
                 Value = "{}"
             };
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHouseDirectors)).ReturnsAsync(directorsDataAnswer);
 
             var pscsDataAnswer = new Answer
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHousePSCs,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHousePSCs,
                 Value = "{}"
             };
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHousePscs)).ReturnsAsync(pscsDataAnswer);
@@ -202,7 +202,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             
             var trusteesDataAnswer = new Answer
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionTrustees,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
                 Value = "{}"
             };
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(trusteesDataAnswer);
@@ -289,7 +289,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var directorsAnswer = new Answer
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseDirectors,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHouseDirectors,
                 Value = directorsJson
             };
 
@@ -299,7 +299,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var pscsAnswer = new Answer
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHousePSCs,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHousePSCs,
                 Value = pscsJson
             };
 
@@ -328,7 +328,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var directorsAnswer = new Answer
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseDirectors,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHouseDirectors,
                 Value = directorsJson
             };
 
@@ -338,7 +338,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var pscsAnswer = new Answer
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHousePSCs,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHousePSCs,
                 Value = pscsJson
             };
 
@@ -364,7 +364,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var directorsAnswer = new Answer
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseDirectors,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHouseDirectors,
                 Value = directorsJson
             };
 
@@ -374,7 +374,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var pscsAnswer = new Answer
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHousePSCs,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHousePSCs,
                 Value = pscsJson
             };
 
@@ -430,7 +430,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var directorsAnswer = new Answer
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseDirectors,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHouseDirectors,
                 Value = directorsJson
             };
 
@@ -440,7 +440,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var pscsAnswer = new Answer
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHousePSCs,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHousePSCs,
                 Value = pscsJson
             };
 
@@ -520,7 +520,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var trusteesAnswer = new Answer
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionTrustees,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
                 Value = trusteesJson
             };
 
@@ -572,7 +572,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var trusteesAnswer = new Answer
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionTrustees,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
                 Value = trusteesJson
             };
 
@@ -600,12 +600,93 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Confirm_trustees_dob_presents_trustees_with_no_dates_of_birth()
         {
+            var trustees = new TabularData
+            {
+                Caption = "",
+                HeadingTitles = new List<string>()
+                {
+                    "Name"
+                },
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string>
+                        {
+                            "Miss C Trustee"
+                        }
+                    }
+                }
+            };
+
+            var trusteesJson = JsonConvert.SerializeObject(trustees);
+
+            var trusteesAnswer = new Answer
+            {
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
+                Value = trusteesJson
+            };
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(trusteesAnswer);
+
+            var result = _controller.ConfirmTrusteesDob(Guid.NewGuid()).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var model = viewResult.Model as ConfirmTrusteesDateOfBirthViewModel;
+            model.Should().NotBeNull();
+            model.TrusteeDatesOfBirth.Count.Should().Be(1);
+            model.TrusteeDatesOfBirth[0].Name.Should().Be("Miss C Trustee");
+            model.TrusteeDatesOfBirth[0].DobMonth.Should().BeNullOrEmpty();
+            model.TrusteeDatesOfBirth[0].DobYear.Should().BeNullOrEmpty();
         }
 
         [Test]
         public void Confirm_trustees_dob_presents_trustees_with_prefilled_dates_of_birth()
         {
+            var trustees = new TabularData
+            {
+                Caption = "",
+                HeadingTitles = new List<string>()
+                {
+                    "Name",
+                    "Date of birth"
+                },
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string>
+                        {
+                            "Miss C Trustee",
+                            "Nov 1991"
+                        }
+                    }
+                }
+            };
 
+            var trusteesJson = JsonConvert.SerializeObject(trustees);
+
+            var trusteesAnswer = new Answer
+            {
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
+                Value = trusteesJson
+            };
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(trusteesAnswer);
+
+            var result = _controller.ConfirmTrusteesDob(Guid.NewGuid()).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var model = viewResult.Model as ConfirmTrusteesDateOfBirthViewModel;
+            model.Should().NotBeNull();
+            model.TrusteeDatesOfBirth.Count.Should().Be(1);
+            model.TrusteeDatesOfBirth[0].Name.Should().Be("Miss C Trustee");
+            model.TrusteeDatesOfBirth[0].DobMonth.Should().Be("11");
+            model.TrusteeDatesOfBirth[0].DobYear.Should().Be("1991");
         }
 
         [Test]
@@ -645,7 +726,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var trusteesAnswer = new Answer
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionTrustees,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
                 Value = trusteesJson
             };
 
@@ -725,7 +806,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var trusteesAnswer = new Answer
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionTrustees,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
                 Value = trusteesJson
             };
 
@@ -805,7 +886,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var trusteesAnswer = new Answer
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionTrustees,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
                 Value = trusteesJson
             };
 
@@ -968,7 +1049,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var dateOfBirthAnswer = new Answer
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.AddSoleTradeDob,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddSoleTradeDob,
                 Value = "11,1991"
             };
 
@@ -1013,7 +1094,137 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Confirm_sole_trade_redirects_to_task_list_for_valid_values()
         {
+            var sequences = new List<ApplicationSequence>();
+            sequences.Add(new ApplicationSequence
+            {
+                SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
+                Id = Guid.NewGuid()
+            });
 
+            _qnaClient.Setup(x => x.GetSequences(It.IsAny<Guid>())).ReturnsAsync(sequences);
+
+            var sections = new List<ApplicationSection>();
+            sections.Add(new ApplicationSection
+            {
+                SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
+                Id = Guid.NewGuid()
+            });
+
+            _qnaClient.Setup(x => x.GetSections(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(sections);
+
+            var updateResult = new SetPageAnswersResponse
+            {
+                ValidationPassed = true
+            };
+            _qnaClient.Setup(x => x.UpdatePageAnswers(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<List<Answer>>())).ReturnsAsync(updateResult);
+
+            var viewModel = new SoleTradeDobViewModel
+            {
+                SoleTraderDobMonth = "12",
+                SoleTraderDobYear = "1963",
+                ApplicationId = Guid.NewGuid(),
+                ErrorMessages = new List<ValidationErrorDetail>()
+            };
+
+            var result = _controller.SoleTradeDobConfirmed(viewModel).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("TaskList");
+        }
+
+        [Test]
+        public void Add_partner_individual_prompts_for_name_and_date_of_birth()
+        {
+            var individualPartnerAnswer = new Answer
+            {
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartnerIndividual,
+                Value = null
+            };
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartnerIndividual)).ReturnsAsync(individualPartnerAnswer);
+
+            var result = _controller.AddPartnerIndividual(Guid.NewGuid()).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var model = viewResult.Model as AddPartnerIndividualViewModel;
+            model.Should().NotBeNull();
+            model.PartnerName.Should().BeNullOrEmpty();
+            model.PartnerDobMonth.Should().BeNullOrEmpty();
+            model.PartnerDobYear.Should().BeNullOrEmpty();
+        }
+
+        [Test]
+        public void Add_partner_individual_prefills_name_and_dob_month_and_year_if_valid_values_previously_entered()
+        {
+            var partnerTableData = new TabularData
+            {
+                HeadingTitles = new List<string> { "Name", "Date of birth" },
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string>
+                        {
+                            "Mrs B Partner",
+                            "Nov 1992"
+                        }
+                    }
+                }
+            };
+
+            var partnerTableJson = JsonConvert.SerializeObject(partnerTableData);
+
+            var individualPartnerAnswer = new Answer
+            {
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartnerIndividual,
+                Value = partnerTableJson
+            };
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartnerIndividual)).ReturnsAsync(individualPartnerAnswer);
+
+            var result = _controller.AddPartnerIndividual(Guid.NewGuid()).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var model = viewResult.Model as AddPartnerIndividualViewModel;
+            model.Should().NotBeNull();
+            model.PartnerName.Should().Be("Mrs B Partner");
+            model.PartnerDobMonth.Should().Be("11");
+            model.PartnerDobYear.Should().Be("1992");
+        }
+
+        [TestCase("", "", "")]
+        [TestCase("", "1", "")]
+        [TestCase("", "", "1991")]
+        [TestCase("", "13", "1992")]
+        [TestCase("", "12", "999")]
+        [TestCase("", "10", "3000")]
+        [TestCase("Partner name", "", "")]
+        [TestCase("Partner name", "1", "")]
+        [TestCase("Partner name", "", "1991")]
+        [TestCase("Partner name", "13", "1992")]
+        [TestCase("Partner name", "12", "999")]
+        [TestCase("Partner name", "10", "3000")]
+        public void Add_individual_partner_details_rejects_invalid_values(string partnerName, string dobMonth, string dobYear)
+        {
+            var viewModel = new SoleTradeDobViewModel
+            {
+                SoleTraderDobMonth = dobMonth,
+                SoleTraderDobYear = dobYear,
+                ApplicationId = Guid.NewGuid(),
+                ErrorMessages = new List<ValidationErrorDetail>()
+            };
+
+            var result = _controller.SoleTradeDobConfirmed(viewModel).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var model = viewResult.Model as SoleTradeDobViewModel;
+            model.Should().NotBeNull();
+            model.ErrorMessages.Count.Should().BeGreaterOrEqualTo(1);
         }
     }
 }

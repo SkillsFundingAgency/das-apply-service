@@ -1628,19 +1628,19 @@ VALUES
       "PageId": "110",
       "SequenceId": null,
       "SectionId": null,
-      "Title": "PLACEHOLDER Add Partner Individual",
+      "Title": "Enter the individual''s details",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-110",
           "QuestionTag": "Add-Partner-Individual",
-          "Label": "PLACEHOLDER Add Partner Individual",
+          "Label": "Enter the individual''s details",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",			
+            "Type": "TabularData",			
             "Validations": [              
             ]
           },
@@ -1676,14 +1676,14 @@ VALUES
       "InfoText": "",
       "Questions": [
         {
-          "QuestionId": "YO-110",
+          "QuestionId": "YO-111",
           "QuestionTag": "Add-Partner-Organisation",
           "Label": "PLACEHOLDER Add Partner Organisation",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",			
+            "Type": "TabularData",			
             "Validations": [              
             ]
           },
