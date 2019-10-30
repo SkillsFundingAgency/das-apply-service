@@ -690,19 +690,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var unansweredQuestions = page.Questions.Where(x => !answers.Any(y => y.QuestionId == x.QuestionId));
             foreach(var question in unansweredQuestions)
             {
-                //var valueToInject = string.Empty;
-
-               
-
-                //if (page.Questions != null && page.Questions.Count > 0 &&
-                //    page.Questions[0].Input.Type == "FileUpload")
-                //{
-                //    var fileUploadAnswerValue = page?.PageOfAnswers[0].Answers.FirstOrDefault(x => x.QuestionId == question.QuestionId)?.Value;
-
-                //    if (fileUploadAnswerValue!=null)
-                //        valueToInject = fileUploadAnswerValue;
-                //}
-                //answers.Add(new Answer() { QuestionId = question.QuestionId, Value = valueToInject });
                 answers.Add(new Answer() { QuestionId = question.QuestionId, Value = "" });
             }
         }
