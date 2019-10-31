@@ -308,7 +308,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 var section = await _qnaApiClient.GetSection(applicationId, selectedSection.Id);
 
-                var skipSaveAnswers = false;
+                //var skipSaveAnswers = false;
 
                 if (IsFileUploadWithNonEmptyValueAndIsPostBack(page))
                 {
@@ -318,18 +318,28 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     if (nextActionResult != null && nextActionResult.NextAction == "NextPage")
                     {
                         pageId = nextActionResult.NextActionId;
-                        skipSaveAnswers = true;
+
+                        //skipSaveAnswers = true;
+
+                        return RedirectToAction("Page", new
+                        {
+                            applicationId,
+                            sequenceId = selectedSequence.SequenceId,
+                            sectionId = selectedSection.SectionId,
+                            pageId = nextActionResult.NextActionId,
+                            redirectAction
+                        });
                     }
                 }
                 
-                if (!skipSaveAnswers)
-                {
+                //if (!skipSaveAnswers)
+                //{
                     if (IsPostBack())
                     {
                         return await SaveAnswers(applicationId, sequenceId, sectionId, pageId, redirectAction,
                             string.Empty);
                     }
-                }
+                //}
 
                 page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
                 if (page == null || page.Questions == null)
@@ -357,6 +367,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return View("~/Views/Application/Pages/Index.cshtml", viewModel);
+
+            
         }
         
         [Route("apply-training-provider-tasklist")]
