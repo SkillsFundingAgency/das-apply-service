@@ -18,6 +18,7 @@ using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.DfeSignIn;
+using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web;
 using SFA.DAS.ApplyService.Web.Infrastructure;
@@ -78,6 +79,7 @@ namespace SFA.DAS.ApplyService.Web
             services.Configure<List<QnaPageOverrideConfiguration>>(_configuration.GetSection("QnaPageOverrides"));
             services.Configure<List<QnaLinksConfiguration>>(_configuration.GetSection("QnaLinks"));
             services.Configure<List<CustomValidationConfiguration>>(_configuration.GetSection("CustomValidations"));
+            services.Configure<List<NotRequiredOverrideConfiguration>>(_configuration.GetSection("NotRequiredOverrides"));
 
             if (_env.IsDevelopment())
             {
@@ -168,6 +170,8 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IQuestionPropertyTokeniser, QuestionPropertyTokeniser>();
             services.AddTransient<IPageNavigationTrackingService, PageNavigationTrackingService>();
             services.AddTransient<ICustomValidatorFactory, CustomValidatorFactory>();
+            services.AddTransient<IRoatpTaskListWorkflowService, RoatpTaskListWorkflowService>();
+            services.AddTransient<IAnswerFormService, AnswerFormService>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)

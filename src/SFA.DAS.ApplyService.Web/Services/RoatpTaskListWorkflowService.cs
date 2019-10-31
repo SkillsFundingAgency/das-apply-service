@@ -1,27 +1,33 @@
-﻿
-namespace SFA.DAS.ApplyService.Application.Apply.Roatp
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using MoreLinq;
+using NPOI.POIFS.Storage;
+using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Web.Configuration;
+
+namespace SFA.DAS.ApplyService.Web.Services
 {
-    using System;
-    using System.Linq;
-    using System.Collections.Generic;
-    using MoreLinq;
-    using SFA.DAS.ApplyService.Domain.Entities;
-
-    public static class RoatpTaskListWorkflowHandler
+    public class RoatpTaskListWorkflowService: IRoatpTaskListWorkflowService
     {
-        public static string SectionStatus(IEnumerable<ApplicationSequence> applicationSequences, int sequenceId, int sectionId, bool sequential = false)
+        public  string SectionStatus(IEnumerable<ApplicationSequence> applicationSequences, List<NotRequiredOverrideConfiguration> notRequiredOverrides, int sequenceId, int sectionId, string applicationRouteId, bool sequential = false)
         {
-            var sequence = applicationSequences.FirstOrDefault(x => (int)x.SequenceId == sequenceId);
-            if (sequence == null)
-            {
-                return String.Empty;
-            }
+            var sequence = applicationSequences?.FirstOrDefault(x => (int)x.SequenceId == sequenceId);
 
-            var section = sequence.Sections.FirstOrDefault(x => x.SectionId == sectionId);
+            var section = sequence?.Sections?.FirstOrDefault(x => x.SectionId == sectionId);
             if (section == null)
             {
                 return string.Empty;
             }
+
+            if (notRequiredOverrides!=null && notRequiredOverrides.Any(condition => condition.ConditionalCheckField == "ProviderTypeId" &&
+                                                          applicationRouteId == condition.MustEqual &&
+                                                          sectionId == condition.SectionId &&
+                                                          sequenceId == condition.SequenceId))
+            {
+                return "Not required";
+            }
+
 
             if (!PreviousSectionCompleted(sequence, sectionId, sequential))
             {
@@ -29,11 +35,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             }
 
             var questionsCompleted = SectionHasCompletedQuestions(section);
-            //var questionsInSection = section.QnAData.Pages.Where(p => p.NotRequired == false).SelectMany(x => x.Questions).DistinctBy(q => q.QuestionId).Count();
+
             return SectionText(questionsCompleted, section.SectionCompleted, sequential);
         }
 
-        public static bool PreviousSectionCompleted(ApplicationSequence sequence, int sectionId, bool sequential)
+        public  bool PreviousSectionCompleted(ApplicationSequence sequence, int sectionId, bool sequential)
         {
             if (sequential && sectionId > 1)
             {
@@ -60,7 +66,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             return true;
         }
 
-        private static int SectionHasCompletedQuestions(ApplicationSection section)
+        private  int SectionHasCompletedQuestions(ApplicationSection section)
         {
             int answeredQuestions = 0;
             
@@ -84,29 +90,25 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             return answeredQuestions;
         }
 
-        private static string SectionText(int completedCount, bool sectionCompleted, bool sequential)
+        private  string SectionText(int completedCount, bool sectionCompleted, bool sequential)
         {
             if (sectionCompleted)
             {
                 return "Completed";
             }
 
-            //if (completedCount < questionCount)
-            //{
-                if (sequential && completedCount == 0)
-                {
-                    return "Next";
-                }
+            if (sequential && completedCount == 0)
+            {
+                return "Next";
+            }
 
-                if (completedCount > 0)
-                {
-                    return "In Progress";
-                }
+            if (completedCount > 0)
+            {
+                return "In Progress";
+            }
 
-                return string.Empty;
-            //}
+            return string.Empty;
 
-            //return "Completed";
         }
     }
 }

@@ -4,7 +4,6 @@ using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NPOI.HPSF.Wellknown;
-using SFA.DAS.QnA.Api.Types;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {

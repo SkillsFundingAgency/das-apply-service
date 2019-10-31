@@ -1,3 +1,5 @@
+@using NPOI.HPSF.Wellknown
+@using Remotion.Linq.Clauses
 @model SFA.DAS.ApplyService.Web.Controllers.PageViewModel
 
 @{
@@ -216,22 +218,41 @@
 
                         @if (!Model.HideCTA)
                         {
-                            <button type="submit" class="govuk-button">@Model.CTAButtonText</button>
+                            if (Model.PageOfAnswers != null && Model.PageOfAnswers.Count > 0 && Model.Questions != null && Model.Questions.Count>0 && Model.Questions[0].Type=="FileUpload")
+                            {
+                                <a class="govuk-button" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">@Model.CTAButtonText</a>
+                            }
+                            else
+                            {
+                                <button type="submit" class="govuk-button">@Model.CTAButtonText</button>
+
+                            }
                         }
 
                         @foreach (var linksConfiguration in Model.LinksConfiguration)
                         {
-
+                            var first = true;
                             @foreach (var link in linksConfiguration.Links)
+                            {
+                                if (first && Model.SectionId != 1)
                                 {
-                                <p class="govuk-body govuk-!-margin-bottom-2">
-                                    <a href="@Url.Action(link.Action, link.Controller, new { Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = Model.PageId})">@link.Caption</a>
-                                </p>
+                                    <p class="govuk-body skipbutton" id="skipbutton">
+                                        <a href="@Url.Action(link.Action, link.Controller, new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = Model.PageId})">@link.Caption</a>
+                                    </p>
                                 }
+
+                                else
+                                {
+                                    first = false;
+                                    <p class="govuk-body govuk-!-margin-bottom-2">
+                                        <a href="@Url.Action(link.Action, link.Controller, new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = Model.PageId})">@link.Caption</a>
+                                    </p>
+                                }
+                            }
                         }
 
 
-                            <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details" />
+                        <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details" />
                     </form>
             }
 
