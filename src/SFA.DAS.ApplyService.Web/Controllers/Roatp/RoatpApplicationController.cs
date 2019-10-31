@@ -308,8 +308,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 var section = await _qnaApiClient.GetSection(applicationId, selectedSection.Id);
 
-                //var skipSaveAnswers = false;
-
                 if (IsFileUploadWithNonEmptyValueAndIsPostBack(page))
                 {
                     var nextActionResult =
@@ -317,9 +315,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                     if (nextActionResult != null && nextActionResult.NextAction == "NextPage")
                     {
-                        pageId = nextActionResult.NextActionId;
-
-                        //skipSaveAnswers = true;
 
                         return RedirectToAction("Page", new
                         {
@@ -331,17 +326,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         });
                     }
                 }
-                
-                //if (!skipSaveAnswers)
-                //{
-                    if (IsPostBack())
-                    {
-                        return await SaveAnswers(applicationId, sequenceId, sectionId, pageId, redirectAction,
-                            string.Empty);
-                    }
-                //}
+            
+                if (IsPostBack())
+                {
+                    return await SaveAnswers(applicationId, sequenceId, sectionId, pageId, redirectAction,
+                        string.Empty);
+                }
 
-                page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
+                    page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
                 if (page == null || page.Questions == null)
                 {
                     var pageInSectionId = section.QnAData.Pages.FirstOrDefault(x => x.PageId == pageId);
