@@ -340,16 +340,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return View("~/Views/Roatp/WhosInControl/AddPeopleInControl.cshtml");
         }
 
-        public async Task<IActionResult> AddPartnerIndividual(Guid applicationId)
+        public async Task<IActionResult> AddPartnerIndividual(Guid applicationId, int index = 0)
         {
             var model = new AddPartnerIndividualViewModel { ApplicationId = applicationId };
 
             // Handling multiple partner details covered in a future story
-            var individualPartnerAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.AddPartnerIndividual);
+            var individualPartnerAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.AddPartners);
             if (individualPartnerAnswer != null && individualPartnerAnswer.Value != null)
             {
                 var partnerData = JsonConvert.DeserializeObject<TabularData>(individualPartnerAnswer.Value);
-                var dataRow = partnerData.DataRows[0];
+                var dataRow = partnerData.DataRows[index];
                 model.PartnerName = dataRow.Columns[0];
                 var formattedDob = dataRow.Columns[1];
                 model.PartnerDobMonth = DateOfBirthFormatter.GetMonthNumberFromShortDateOfBirth(formattedDob);
@@ -397,7 +397,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 new Answer
                 {
-                    QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartnerIndividual,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartners,
                     Value = individualPartnerJson
                 }
             };
@@ -407,14 +407,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return RedirectToAction("ConfirmPartners", new { applicationId = model.ApplicationId });
         }
 
-        public async Task<IActionResult> AddPartnerOrganisation(Guid applicationId)
+        public async Task<IActionResult> AddPartnerOrganisation(Guid applicationId, int index = 0)
         {
             var model = new AddPartnerOrganisationViewModel { ApplicationId = applicationId };
 
-            var organisationPartnerAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.AddPartnerOrganisation);
+            var organisationPartnerAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.AddPartners);
             if (organisationPartnerAnswer != null && organisationPartnerAnswer.Value != null)
             {
-                model.OrganisationName = organisationPartnerAnswer.Value;
+                var partnerData = JsonConvert.DeserializeObject<TabularData>(organisationPartnerAnswer.Value);
+                var dataRow = partnerData.DataRows[index];
+                model.OrganisationName = dataRow.Columns[0];
             }
 
             return View("~/Views/Roatp/WhosInControl/AddPartnerOrganisation.cshtml", model);
@@ -435,14 +437,33 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             var whosInControlSection =
                 yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
+            // move into a repo that handles add/edit/remove partner table data
+            var partnerTableData = new TabularData
+            {
+                HeadingTitles = new List<string> { "Name", "Date of birth" },
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string>
+                        {
+                            model.OrganisationName, string.Empty
+                        }
+                    }
+                }
+            };
+            var organisationPartnerJson = JsonConvert.SerializeObject(partnerTableData);
+
             var organisationPartnerAnswer = new List<Answer>
             {
                 new Answer
                 {
-                    QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartnerOrganisation,
-                    Value = model.OrganisationName
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartners,
+                    Value = organisationPartnerJson
                 }
             };
+
 
             var result = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddPartnerOrganisation, organisationPartnerAnswer);
 

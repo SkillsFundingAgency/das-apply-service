@@ -55,8 +55,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string CharityCommissionDetailsConfirmed = "YO-85";
         public static string SoleTradeOrPartnership = "YO-100";
         public static string PartnershipType = "YO-101";
-        public static string AddPartnerIndividual = "YO-110";
-        public static string AddPartnerOrganisation = "YO-111";
+        public static string AddPartners = "YO-110";
         public static string AddSoleTradeDob = "YO-120";
     }
 
@@ -148,8 +147,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string UkrlpVerificationSoleTraderPartnership = "UKRLP-Verification-SoleTraderPartnership";
         public static string SoleTraderOrPartnership = "SoleTrade-or-Partnership";
         public static string PartnershipType = "Partnership-Type";
-        public static string AddPartnerIndividual = "Add-Partner-Individual";
-        public static string AddPartnerOrganisation = "Add-Partner-Organisation";
+        public static string AddPartners = "Add-Partners";
         public static string SoleTradeDob = "Add-SoleTrade-DOB";
     }
 

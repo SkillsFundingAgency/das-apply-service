@@ -1138,11 +1138,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             var individualPartnerAnswer = new Answer
             {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartnerIndividual,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartners,
                 Value = null
             };
 
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartnerIndividual)).ReturnsAsync(individualPartnerAnswer);
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(individualPartnerAnswer);
 
             var result = _controller.AddPartnerIndividual(Guid.NewGuid()).GetAwaiter().GetResult();
 
@@ -1179,11 +1179,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var individualPartnerAnswer = new Answer
             {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartnerIndividual,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartners,
                 Value = partnerTableJson
             };
 
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartnerIndividual)).ReturnsAsync(individualPartnerAnswer);
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(individualPartnerAnswer);
 
             var result = _controller.AddPartnerIndividual(Guid.NewGuid()).GetAwaiter().GetResult();
 
@@ -1230,13 +1230,31 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Add_partner_organisation_prefills_name_if_valid_values_previously_entered()
         {
-            var partnerAnswer = new Answer
+            var partnerTableData = new TabularData
             {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartnerOrganisation,
-                Value = "Organisation Name"
+                HeadingTitles = new List<string> { "Name", "Date of birth" },
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string>
+                        {
+                            "Org Partner"
+                        }
+                    }
+                }
             };
 
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartnerOrganisation)).ReturnsAsync(partnerAnswer);
+            var partnerTableJson = JsonConvert.SerializeObject(partnerTableData);
+
+            var individualPartnerAnswer = new Answer
+            {
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartners,
+                Value = partnerTableJson
+            };
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(individualPartnerAnswer);
 
             var result = _controller.AddPartnerOrganisation(Guid.NewGuid()).GetAwaiter().GetResult();
 
@@ -1244,7 +1262,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Should().NotBeNull();
             var model = viewResult.Model as AddPartnerOrganisationViewModel;
             model.Should().NotBeNull();
-            model.OrganisationName.Should().Be(partnerAnswer.Value);
+            model.OrganisationName.Should().Be("Org Partner");
         }
     }
 }
