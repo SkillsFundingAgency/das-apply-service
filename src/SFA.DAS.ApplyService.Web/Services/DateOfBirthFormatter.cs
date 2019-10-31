@@ -13,12 +13,23 @@ namespace SFA.DAS.ApplyService.Web.Services
                 return string.Empty;
             }
 
-            var index = (Convert.ToInt32(month)) - 1;
+            int monthValue = 0;
+            int yearValue = 0;
+            int.TryParse(month, out monthValue);
+            int.TryParse(year, out yearValue);
+
+            if (monthValue == 0 || yearValue == 0)
+            {
+                return string.Empty;
+            }
+
+            var index = monthValue - 1;
 
             if (index < 0 || index > 11)
             {
                 return string.Empty;
             }
+
             return $"{ShortMonthNames[index]} {year}";
         }
 
