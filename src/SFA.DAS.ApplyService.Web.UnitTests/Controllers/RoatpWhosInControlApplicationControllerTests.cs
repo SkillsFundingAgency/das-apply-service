@@ -1226,5 +1226,25 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             model.Should().NotBeNull();
             model.ErrorMessages.Count.Should().BeGreaterOrEqualTo(1);
         }
+
+        [Test]
+        public void Add_partner_organisation_prefills_name_if_valid_values_previously_entered()
+        {
+            var partnerAnswer = new Answer
+            {
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartnerOrganisation,
+                Value = "Organisation Name"
+            };
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartnerOrganisation)).ReturnsAsync(partnerAnswer);
+
+            var result = _controller.AddPartnerOrganisation(Guid.NewGuid()).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var model = viewResult.Model as AddPartnerOrganisationViewModel;
+            model.Should().NotBeNull();
+            model.OrganisationName.Should().Be(partnerAnswer.Value);
+        }
     }
 }

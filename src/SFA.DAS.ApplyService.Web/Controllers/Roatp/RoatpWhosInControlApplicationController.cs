@@ -410,7 +410,43 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public async Task<IActionResult> AddPartnerOrganisation(Guid applicationId)
         {
             var model = new AddPartnerOrganisationViewModel { ApplicationId = applicationId };
+
+            var organisationPartnerAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.AddPartnerOrganisation);
+            if (organisationPartnerAnswer != null && organisationPartnerAnswer.Value != null)
+            {
+                model.OrganisationName = organisationPartnerAnswer.Value;
+            }
+
             return View("~/Views/Roatp/WhosInControl/AddPartnerOrganisation.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddOrganisationPartnerDetails(AddPartnerOrganisationViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/WhosInControl/AddPartnerOrganisation.cshtml", model);
+            }
+
+            var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
+            var yourOrganisationSequence =
+                applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
+            var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
+            var whosInControlSection =
+                yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+
+            var organisationPartnerAnswer = new List<Answer>
+            {
+                new Answer
+                {
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartnerOrganisation,
+                    Value = model.OrganisationName
+                }
+            };
+
+            var result = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddPartnerOrganisation, organisationPartnerAnswer);
+
+            return RedirectToAction("ConfirmPartners", new { applicationId = model.ApplicationId });
         }
 
         public async Task<IActionResult> ConfirmPartners(Guid applicationId)
