@@ -82,6 +82,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _notRequiredOverrides = notRequiredOverrides.Value;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Applications(string applicationType)
         {
             var user = User.Identity.Name;
@@ -150,6 +151,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return RedirectToAction("Applications", new { applicationType = applicationType });
         }
 
+        [HttpGet]
         public async Task<IActionResult> StartApplication(string applicationType)
         {
             var response = await _apiClient.StartApplication(await _userService.GetUserId(), applicationType);
@@ -157,6 +159,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return RedirectToAction("TaskList", new { applicationId = response.ApplicationId });            
         }
 
+        [HttpGet]
         public async Task<IActionResult> Sequence(Guid applicationId)
         {
             // Break this out into a "Signpost" action.
@@ -165,6 +168,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return View(sequenceVm);
         }
 
+        [HttpGet]
         public async Task<IActionResult> SequenceSignPost(Guid applicationId)
         {
             var application = await _apiClient.GetApplication(applicationId);
@@ -223,6 +227,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             throw new BadRequestException("Section does not have a valid DisplayType");
         }
 
+        [HttpGet]
         public async Task<IActionResult> Section(Guid applicationId, int sequenceId, int sectionId)
         {
 
@@ -252,6 +257,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return await Page(applicationId, sequenceId, sectionId, pageId, "TaskList");
         }
 
+        [HttpGet]
         public async Task<IActionResult> Back(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
             string previousPageId = await _pageNavigationTrackingService.GetBackNavigationPageId(applicationId, sequenceId, sectionId, pageId);
@@ -264,6 +270,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return RedirectToAction("Page", new { applicationId, sequenceId, sectionId, pageId = previousPageId, redirectAction });
         }
 
+        [HttpGet]
         public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
             _pageNavigationTrackingService.AddPageToNavigationStack(pageId);
@@ -308,32 +315,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 var section = await _qnaApiClient.GetSection(applicationId, selectedSection.Id);
 
-                if (IsFileUploadWithNonEmptyValueAndIsPostBack(page))
-                {
-                    var nextActionResult =
-                        await _qnaApiClient.GetNextActionBySectionNo(applicationId, sequenceId, sectionId, pageId);
-
-                    if (nextActionResult != null && nextActionResult.NextAction == "NextPage")
-                    {
-
-                        return RedirectToAction("Page", new
-                        {
-                            applicationId,
-                            sequenceId = selectedSequence.SequenceId,
-                            sectionId = selectedSection.SectionId,
-                            pageId = nextActionResult.NextActionId,
-                            redirectAction
-                        });
-                    }
-                }
-            
-                if (IsPostBack())
-                {
-                    return await SaveAnswers(applicationId, sequenceId, sectionId, pageId, redirectAction,
-                        string.Empty);
-                }
-
-                    page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
+                page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
                 if (page == null || page.Questions == null)
                 {
                     var pageInSectionId = section.QnAData.Pages.FirstOrDefault(x => x.PageId == pageId);
@@ -362,7 +344,84 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             
         }
-        
+
+        [HttpPost]
+        public async Task<IActionResult> SaveAnswers(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
+        {
+            _pageNavigationTrackingService.AddPageToNavigationStack(pageId);
+
+            var sequences = await _qnaApiClient.GetSequences(applicationId);
+            var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
+            var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
+            var selectedSection = sections.Single(x => x.SectionId == sectionId);
+
+            var sequence = await _qnaApiClient.GetSequence(applicationId, selectedSequence.Id);
+
+            PageViewModel viewModel = null;
+            var returnUrl = Request.Headers["Referer"].ToString();
+
+            string pageContext = string.Empty;
+
+            if (!ModelState.IsValid)
+            {
+                // when the model state has errors the page will be displayed with the values which failed validation
+                var pageInvalid = JsonConvert.DeserializeObject<Page>((string)this.TempData["InvalidPage"]);
+
+                var errorMessages = !ModelState.IsValid
+                    ? ModelState.SelectMany(k => k.Value.Errors.Select(e => new ValidationErrorDetail()
+                    {
+                        ErrorMessage = e.ErrorMessage,
+                        Field = k.Key
+                    })).DistinctBy(f => f.Field).ToList()
+                    : null;
+
+                viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, pageInvalid, pageContext, redirectAction,
+                    returnUrl, errorMessages, _pageOverrideConfiguration, _qnaLinks);
+
+
+                viewModel = await TokeniseViewModelProperties(viewModel);
+
+                if (viewModel.AllowMultipleAnswers)
+                {
+                    return View("~/Views/Application/Pages/MultipleAnswers.cshtml", viewModel);
+                }
+
+                return View("~/Views/Application/Pages/Index.cshtml", viewModel);
+            }
+
+                // when the model state has no errors the page will be displayed with the last valid values which were saved
+                var page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
+
+                if (page == null)
+                {
+                    return RedirectToAction("TaskList", new { applicationId = applicationId });
+                }
+
+                var section = await _qnaApiClient.GetSection(applicationId, selectedSection.Id);
+
+                if (IsFileUploadWithNonEmptyValue(page))
+                {
+                    var nextActionResult =
+                        await _qnaApiClient.GetNextActionBySectionNo(applicationId, sequenceId, sectionId, pageId);
+
+                    if (nextActionResult != null && nextActionResult.NextAction == "NextPage")
+                    {
+
+                        return RedirectToAction("Page", new
+                        {
+                            applicationId,
+                            sequenceId = selectedSequence.SequenceId,
+                            sectionId = selectedSection.SectionId,
+                            pageId = nextActionResult.NextActionId,
+                            redirectAction
+                        });
+                    }
+                }
+
+                return await SaveAnswersGiven(applicationId, sequenceId, sectionId, pageId, redirectAction,
+                    string.Empty);
+        }
+
         [Route("apply-training-provider-tasklist")]
         [HttpGet]
         public async Task<IActionResult> TaskList(Guid applicationId)
@@ -517,11 +576,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
             return (page == null || !page.PageOfAnswers.Any());
         }
-
-        public async Task<IActionResult> SaveAnswers(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, string __formAction)
+        private async Task<IActionResult> SaveAnswersGiven(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, string __formAction)
         {
-            var userId = User.GetUserId();
-
             var sequences = await _qnaApiClient.GetSequences(applicationId);
             var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
             var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
@@ -734,6 +790,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return fileValidationPassed;
         }
 
+        [HttpPost]
         public async Task<IActionResult> Submit(Guid applicationId, int sequenceId)
         {
             var canUpdate = await CanUpdateApplication(applicationId, sequenceId);
@@ -798,6 +855,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return validationErrors;
         }
 
+        [HttpGet]   //?? MFCMFC
         public async Task<IActionResult> DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, string redirectAction)
         {
             await _apiClient.DeleteAnswer(applicationId, sequenceId, sectionId, pageId, answerId, User.GetUserId());
@@ -805,6 +863,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return RedirectToAction("Page", new {applicationId, sequenceId, sectionId, pageId, redirectAction});
         }
 
+        [HttpGet]
         public async Task<IActionResult> Feedback(Guid applicationId)
         {
             var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
@@ -826,6 +885,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             });
         }
 
+        [HttpGet]
         public async Task<IActionResult> NotSubmitted(Guid applicationId)
         {
             var application = await _apiClient.GetApplication(applicationId);
@@ -838,6 +898,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             });
         }
 
+        [HttpPost] // ?? MFCMFC
         private async Task SavePreambleQuestions(Guid applicationId, Guid userId, List<PreambleAnswer> questions)
         {
             const int DefaultSectionId = 1;
@@ -929,11 +990,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return viewModel;
         }
 
-        private bool IsFileUploadWithNonEmptyValueAndIsPostBack(Page page)
+        private bool IsFileUploadWithNonEmptyValue(Page page)
         {
-            if (!IsPostBack())
-                return false;
-
             if (page.PageOfAnswers == null || page.PageOfAnswers.Count ==0 ||  page.Questions == null || page.Questions.Count == 0 || page.Questions[0].Input.Type != "FileUpload")
                 return false;
 
