@@ -1138,7 +1138,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             var individualPartnerAnswer = new Answer
             {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartnerIndividual,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartners,
                 Value = null
             };
 
@@ -1179,7 +1179,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var individualPartnerAnswer = new Answer
             {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartnerIndividual,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartners,
                 Value = partnerTableJson
             };
 
@@ -1232,7 +1232,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             var partnerAnswer = new Answer
             {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartnerOrganisation,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartners,
                 Value = "Organisation Name"
             };
 

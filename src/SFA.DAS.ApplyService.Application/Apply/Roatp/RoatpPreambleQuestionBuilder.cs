@@ -55,8 +55,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string CharityCommissionDetailsConfirmed = "YO-85";
         public static string SoleTradeOrPartnership = "YO-100";
         public static string PartnershipType = "YO-101";
-        public static string AddPartnerIndividual = "YO-110";
-        public static string AddPartnerOrganisation = "YO-111";
+        public static string AddPartners = "YO-110";
         public static string AddSoleTradeDob = "YO-120";
     }
 

@@ -397,7 +397,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 new Answer
                 {
-                    QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartnerIndividual,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartners,
                     Value = individualPartnerJson
                 }
             };
@@ -439,7 +439,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 new Answer
                 {
-                    QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartnerOrganisation,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartners,
                     Value = model.OrganisationName
                 }
             };
