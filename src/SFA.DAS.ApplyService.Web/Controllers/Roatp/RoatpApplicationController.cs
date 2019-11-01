@@ -346,8 +346,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpPost]
-       // [ModelStatePersist(ModelStatePersist.Store)]
-        //public async Task<IActionResult> SaveAnswers(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         public async Task<IActionResult> SaveAnswers(PageViewModel vm, Guid applicationId)
         {
             vm.ApplicationId = applicationId;
