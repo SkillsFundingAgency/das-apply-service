@@ -237,7 +237,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 var introductionPageId = await
                     _processPageFlowService.GetIntroductionPageIdForSequence(sequenceId, providerTypeId);
                 if (introductionPageId!=null)
-                    return await Page(applicationId, sequenceId, sectionId, introductionPageId, "TaskList");
+                    return await Page(applicationId, sequenceId, sectionId, introductionPageId, "TaskList",null);
             }
 
             var sequences = await _qnaApiClient.GetSequences(applicationId);
@@ -254,7 +254,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var pageId = section.QnAData.Pages.FirstOrDefault()?.PageId;
 
-            return await Page(applicationId, sequenceId, sectionId, pageId, "TaskList");
+            return await Page(applicationId, sequenceId, sectionId, pageId, "TaskList",null);
         }
 
         [HttpGet]
@@ -271,7 +271,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
+        public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, List<Question> answeredQuestions)
         {
             _pageNavigationTrackingService.AddPageToNavigationStack(pageId);
 
@@ -346,8 +346,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveAnswers(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
+       // [ModelStatePersist(ModelStatePersist.Store)]
+        //public async Task<IActionResult> SaveAnswers(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
+        public async Task<IActionResult> SaveAnswers(PageViewModel vm, Guid applicationId)
         {
+            vm.ApplicationId = applicationId;
+            var sequenceId = int.Parse(vm.SequenceId);
+            var sectionId = vm.SectionId;
+            var pageId = vm.PageId;
+            var redirectAction = vm.RedirectAction;
             _pageNavigationTrackingService.AddPageToNavigationStack(pageId);
 
             var sequences = await _qnaApiClient.GetSequences(applicationId);
@@ -595,8 +602,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             if(ModelState.IsValid == false)
             {
                 page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
+
+
                 this.TempData["InvalidPage"] = JsonConvert.SerializeObject(page);
-                return await Page(applicationId, sequenceId, sectionId, pageId, redirectAction);
+                return await Page(applicationId, sequenceId, sectionId, pageId, redirectAction,null);
             }
 
             //todo: Should we convert this to a custom validation?
@@ -611,7 +620,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     //Can this be made common? What about DataFedOptions?
                     page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
                     this.TempData["InvalidPage"] = JsonConvert.SerializeObject(page);
-                    return await Page(applicationId, sequenceId, sectionId, pageId, redirectAction);
+                    return await Page(applicationId, sequenceId, sectionId, pageId, redirectAction,null);
                 }
             }
 
@@ -658,10 +667,25 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
+            PreserveAnswersInPage(page, answers);
             var invalidPage = await GetDataFedOptions(applicationId, page);
             this.TempData["InvalidPage"] = JsonConvert.SerializeObject(invalidPage);
 
-            return await Page(applicationId, sequenceId, sectionId, pageId, redirectAction);
+            return await Page(applicationId, sequenceId, sectionId, pageId, redirectAction, page?.Questions);
+        }
+
+        private void PreserveAnswersInPage(Page page, List<Answer> answers)
+        {
+            foreach (var question in page.Questions)
+            {
+                foreach (var answer in answers)
+                {
+                    if (question.QuestionId == answer.QuestionId)
+                    {
+                        question.Value = answer.Value;
+                    }
+                }
+            }
         }
 
         private static void ApplyFormattingToAnswers(List<Answer> answers, Page page)
