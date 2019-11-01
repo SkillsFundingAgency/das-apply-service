@@ -32,7 +32,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         [TestCase("")]
         [TestCase(" ")]
         [TestCase("0")]
-        public void Validator_returns_error_if_missing_year_field(string yearValue)
+        [TestCase("-1")]
+        public void Validator_returns_error_if_missing_or_negative_year_field(string yearValue)
         {
             var dobMonth = new Answer { Value = "12" };
             Answer dobYear = null;
