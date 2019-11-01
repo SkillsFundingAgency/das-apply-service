@@ -1148,54 +1148,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
-            var model = viewResult.Model as AddPartnerIndividualViewModel;
+            var model = viewResult.Model as AddEditPartnerViewModel;
             model.Should().NotBeNull();
             model.PartnerName.Should().BeNullOrEmpty();
             model.PartnerDobMonth.Should().BeNullOrEmpty();
             model.PartnerDobYear.Should().BeNullOrEmpty();
         }
-
-        [Test]
-        public void Add_partner_individual_prefills_name_and_dob_month_and_year_if_valid_values_previously_entered()
-        {
-            var partnerTableData = new TabularData
-            {
-                HeadingTitles = new List<string> { "Name", "Date of birth" },
-                DataRows = new List<TabularDataRow>
-                {
-                    new TabularDataRow
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        Columns = new List<string>
-                        {
-                            "Mrs B Partner",
-                            "Nov 1992"
-                        }
-                    }
-                }
-            };
-
-            var partnerTableJson = JsonConvert.SerializeObject(partnerTableData);
-
-            var individualPartnerAnswer = new Answer
-            {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartners,
-                Value = partnerTableJson
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(individualPartnerAnswer);
-
-            var result = _controller.AddPartnerIndividual(Guid.NewGuid()).GetAwaiter().GetResult();
-
-            var viewResult = result as ViewResult;
-            viewResult.Should().NotBeNull();
-            var model = viewResult.Model as AddPartnerIndividualViewModel;
-            model.Should().NotBeNull();
-            model.PartnerName.Should().Be("Mrs B Partner");
-            model.PartnerDobMonth.Should().Be("11");
-            model.PartnerDobYear.Should().Be("1992");
-        }
-
+        
         [TestCase("", "", "")]
         [TestCase("", "1", "")]
         [TestCase("", "", "1991")]
@@ -1227,42 +1186,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             model.ErrorMessages.Count.Should().BeGreaterOrEqualTo(1);
         }
 
-        [Test]
-        public void Add_partner_organisation_prefills_name_if_valid_values_previously_entered()
-        {
-            var partnerTableData = new TabularData
-            {
-                HeadingTitles = new List<string> { "Name", "Date of birth" },
-                DataRows = new List<TabularDataRow>
-                {
-                    new TabularDataRow
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        Columns = new List<string>
-                        {
-                            "Org Partner"
-                        }
-                    }
-                }
-            };
-
-            var partnerTableJson = JsonConvert.SerializeObject(partnerTableData);
-
-            var individualPartnerAnswer = new Answer
-            {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartners,
-                Value = partnerTableJson
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(individualPartnerAnswer);
-
-            var result = _controller.AddPartnerOrganisation(Guid.NewGuid()).GetAwaiter().GetResult();
-
-            var viewResult = result as ViewResult;
-            viewResult.Should().NotBeNull();
-            var model = viewResult.Model as AddPartnerOrganisationViewModel;
-            model.Should().NotBeNull();
-            model.OrganisationName.Should().Be("Org Partner");
-        }
+        
     }
 }

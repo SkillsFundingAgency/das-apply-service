@@ -288,13 +288,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public async Task<IActionResult> PartnershipType(Guid applicationId)
         {
             var model = new ConfirmPartnershipTypeViewModel { ApplicationId = applicationId };
-
-            var partnershipTypeAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.PartnershipType);
-            if (partnershipTypeAnswer != null)
-            {
-                model.PartnershipType = partnershipTypeAnswer.Value;
-            }
-
+            
             return View("~/Views/Roatp/WhosInControl/PartnershipType.cshtml", model);
         }
 
@@ -340,26 +334,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return View("~/Views/Roatp/WhosInControl/AddPeopleInControl.cshtml");
         }
 
-        public async Task<IActionResult> AddPartnerIndividual(Guid applicationId, int index = 0)
+        public async Task<IActionResult> AddPartnerIndividual(Guid applicationId)
         {
-            var model = new AddPartnerIndividualViewModel { ApplicationId = applicationId };
+            var model = new AddEditPartnerViewModel { ApplicationId = applicationId };
 
-            // Handling multiple partner details covered in a future story
-            var individualPartnerAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.AddPartners);
-            if (individualPartnerAnswer != null && individualPartnerAnswer.Value != null)
-            {
-                var partnerData = JsonConvert.DeserializeObject<TabularData>(individualPartnerAnswer.Value);
-                var dataRow = partnerData.DataRows[index];
-                model.PartnerName = dataRow.Columns[0];
-                var formattedDob = dataRow.Columns[1];
-                model.PartnerDobMonth = DateOfBirthFormatter.GetMonthNumberFromShortDateOfBirth(formattedDob);
-                model.PartnerDobYear = DateOfBirthFormatter.GetYearFromShortDateOfBirth(formattedDob);
-            }
             return View("~/Views/Roatp/WhosInControl/AddPartnerIndividual.cshtml", model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddIndividualPartnerDetails(AddPartnerIndividualViewModel model)
+        public async Task<IActionResult> AddIndividualPartnerDetails(AddEditPartnerViewModel model)
         {
             var errorMessages = PartnerDetailsValidator.Validate(model);
 
@@ -376,21 +359,29 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             var whosInControlSection =
                 yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
-            var partnerTableData = new TabularData
+            TabularData partnerTableData;
+            var individualPartnerAnswer = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.AddPartners);
+            if (individualPartnerAnswer != null && individualPartnerAnswer.Value != null)
             {
-                HeadingTitles = new List<string> { "Name", "Date of birth" },
-                DataRows = new List<TabularDataRow>
+                partnerTableData = JsonConvert.DeserializeObject<TabularData>(individualPartnerAnswer.Value);
+            }
+            else
+            {
+                partnerTableData = new TabularData
                 {
-                    new TabularDataRow
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        Columns = new List<string>
-                        {
-                            model.PartnerName, DateOfBirthFormatter.FormatDateOfBirth(model.PartnerDobMonth, model.PartnerDobYear)
-                        }
-                    }
+                    HeadingTitles = new List<string> { "Name", "Date of birth" },
+                    DataRows = new List<TabularDataRow>()                
+                };
+            }
+            partnerTableData.DataRows.Add(new TabularDataRow
+            {
+                Id = Guid.NewGuid().ToString(),
+                Columns = new List<string>
+                {
+                    model.PartnerName, DateOfBirthFormatter.FormatDateOfBirth(model.PartnerDobMonth, model.PartnerDobYear)
                 }
-            };
+            });
+
             var individualPartnerJson = JsonConvert.SerializeObject(partnerTableData);
 
             var individualPartnerAnswers = new List<Answer>
@@ -407,23 +398,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return RedirectToAction("ConfirmPartners", new { applicationId = model.ApplicationId });
         }
 
-        public async Task<IActionResult> AddPartnerOrganisation(Guid applicationId, int index = 0)
+        public async Task<IActionResult> AddPartnerOrganisation(Guid applicationId)
         {
-            var model = new AddPartnerOrganisationViewModel { ApplicationId = applicationId };
-
-            var organisationPartnerAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.AddPartners);
-            if (organisationPartnerAnswer != null && organisationPartnerAnswer.Value != null)
-            {
-                var partnerData = JsonConvert.DeserializeObject<TabularData>(organisationPartnerAnswer.Value);
-                var dataRow = partnerData.DataRows[index];
-                model.OrganisationName = dataRow.Columns[0];
-            }
-
+            var model = new AddEditPartnerViewModel { ApplicationId = applicationId };
+            
             return View("~/Views/Roatp/WhosInControl/AddPartnerOrganisation.cshtml", model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddOrganisationPartnerDetails(AddPartnerOrganisationViewModel model)
+        public async Task<IActionResult> AddOrganisationPartnerDetails(AddEditPartnerViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -437,22 +420,29 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             var whosInControlSection =
                 yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
-            // move into a repo that handles add/edit/remove partner table data
-            var partnerTableData = new TabularData
+            TabularData partnerTableData;
+            var individualPartnerAnswer = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.AddPartners);
+            if (individualPartnerAnswer != null && individualPartnerAnswer.Value != null)
             {
-                HeadingTitles = new List<string> { "Name", "Date of birth" },
-                DataRows = new List<TabularDataRow>
+                partnerTableData = JsonConvert.DeserializeObject<TabularData>(individualPartnerAnswer.Value);
+            }
+            else
+            {
+                partnerTableData = new TabularData
                 {
-                    new TabularDataRow
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        Columns = new List<string>
-                        {
-                            model.OrganisationName, string.Empty
-                        }
-                    }
+                    HeadingTitles = new List<string> { "Name", "Date of birth" },
+                    DataRows = new List<TabularDataRow>()
+                };
+            }
+            partnerTableData.DataRows.Add(new TabularDataRow
+            {
+                Id = Guid.NewGuid().ToString(),
+                Columns = new List<string>
+                {
+                    model.PartnerName, string.Empty
                 }
-            };
+            });
+
             var organisationPartnerJson = JsonConvert.SerializeObject(partnerTableData);
 
             var organisationPartnerAnswer = new List<Answer>

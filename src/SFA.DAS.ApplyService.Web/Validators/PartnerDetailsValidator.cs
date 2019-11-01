@@ -13,7 +13,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
         public const string PartnerNameMaxLengthError = "Enter a full name using 255 characters or less";
         public const string DobFieldPrefix = "PartnerDob";
 
-        public static List<ValidationErrorDetail> Validate(AddPartnerIndividualViewModel model)
+        public static List<ValidationErrorDetail> Validate(AddEditPartnerViewModel model)
         {
             var errorMessages = new List<ValidationErrorDetail>();
 

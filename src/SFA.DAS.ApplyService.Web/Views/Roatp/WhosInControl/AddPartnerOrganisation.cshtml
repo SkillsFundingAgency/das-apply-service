@@ -1,5 +1,5 @@
 ﻿@using MoreLinq;
-@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.AddPartnerOrganisationViewModel
+@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.AddEditPartnerViewModel
 
 @{
     ViewBag.Title = "Enter the partner organisation's name";
@@ -60,9 +60,9 @@
                     @Html.HiddenFor(x => x.ApplicationId)
                     <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="PartnerName" sfa-validationerror-class="form-group-error">
 
-                        <label for="OrganisationName" class="govuk-label">Partner organisation's name</label>
+                        <label for="PartnerName" class="govuk-label">Partner organisation's name</label>
 
-                        <input id="OrganisationName" name="OrganisationName" type="text" class="govuk-input govuk-!-width-one-third @isError" asp-for="OrganisationName"
+                        <input id="PartnerName" name="PartnerName" type="text" class="govuk-input govuk-!-width-one-third @isError" asp-for="PartnerName"
                                sfa-validation-for="PartnerName" sfa-validationerror-class="form-control-error" />
                     </div>
                                        
