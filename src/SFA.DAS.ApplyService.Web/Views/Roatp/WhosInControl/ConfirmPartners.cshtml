@@ -1,7 +1,7 @@
 ﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ConfirmPartnersViewModel
 
 @{
-    ViewBag.Title = "PLACEHOLDER Confirm Partners";
+    ViewBag.Title = "Confirm your organisation's partners";
     Layout = "_Layout";
 
     bool showErrors = TempData["ShowErrors"] as bool? ?? false;
@@ -28,30 +28,42 @@
     </form>
 </div>
 
-@if (!ViewData.ModelState.IsValid || showErrors)
-{
-<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-    <h2 class="govuk-error-summary__title" id="error-summary-title">
-        There is a problem
-    </h2>
-    <div class="govuk-error-summary__body">
-        <ul class="govuk-list govuk-error-summary__list">
-            <li><a sfa-validation-for="PartnershipType"></a></li>
-        </ul>
-    </div>
-</div>
-}
-
 <div class="govuk-width-container">
 
     <main class="govuk-main-wrapper " id="main-content" role="main">
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-l">PLACEHOLDER Confirm Partners</h1>
+                <h1 class="govuk-heading-l">Confirm your organisation's partners</h1>
             </div>
         </div>
 
+        <table class="govuk-table">
+            
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    @foreach (var title in Model.PartnerData.HeadingTitles)
+                    {
+                        <th class="govuk-table__header" scope="col">@Html.Raw(title)</th>
+                    }
+                    <th class="govuk-table__header" scope="col"></th>
+                    <th class="govuk-table__header" scope="col"></th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table_body">
+                @for (var index = 0;  index < Model.PartnerData.DataRows.Count; index++)
+                {
+                <tr class="govuk-table__row">
+                    @foreach (var column in Model.PartnerData.DataRows[index].Columns)
+                    {
+                        <td class="govuk-table__cell">@Html.Raw(column)</td>
+                    }
+                    <td class="govuk-table__cell"><a href="@Url.Action("EditPartner", "RoatpWhosInControlApplication", new { Model.ApplicationId, index })">Change</a></td>
+                    <td class="govuk-table__cell"><a href="@Url.Action("RemovePartner", "RoatpWhosInControlApplication", new { Model.ApplicationId, index })">Remove</a></td>
+                </tr>
+                }
+            </tbody>
+        </table>
 
     </main>
 </div>

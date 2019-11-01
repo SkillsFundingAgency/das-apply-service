@@ -484,7 +484,24 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 model.BackAction = "AddPartnerOrganisation";
             }
 
+            var partnerData = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.AddPartners);
+            if (partnerData != null && partnerData.Value != null)
+            {
+                var partnerTableData = JsonConvert.DeserializeObject<TabularData>(partnerData.Value);
+                model.PartnerData = partnerTableData;
+            }
+
             return View("~/Views/Roatp/WhosInControl/ConfirmPartners.cshtml", model);
+        }
+
+        public async Task<IActionResult> EditPartner(Guid applicationId, int index)
+        {
+            return null;
+        }
+
+        public async Task<IActionResult> RemovePartner(Guid applicationId, int index)
+        {
+            return null;
         }
 
         public async Task<IActionResult> AddSoleTradeDob(Guid applicationId)
