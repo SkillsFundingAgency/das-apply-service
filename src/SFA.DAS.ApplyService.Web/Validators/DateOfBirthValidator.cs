@@ -64,7 +64,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
                 {
                     int yearValue = 0;
                     int.TryParse(dobYear.Value, out yearValue);
-                    if (yearValue == 0)
+                    if (yearValue <= 0)
                     {
                         var errorMessage = new ValidationErrorDetail
                         {
