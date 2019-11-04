@@ -53,7 +53,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
             var dobMonth = new Answer { Value = model.PartnerDobMonth };
             var dobYear = new Answer { Value = model.PartnerDobYear };
             var dobErrorMessages = DateOfBirthAnswerValidator.ValidateDateOfBirth(dobMonth, dobYear, DobFieldPrefix);
-            if (dobErrorMessages.Any())
+            if (dobErrorMessages.Any() && model.PartnerTypeIndividual)
             {
                 errorMessages.AddRange(dobErrorMessages);
             }

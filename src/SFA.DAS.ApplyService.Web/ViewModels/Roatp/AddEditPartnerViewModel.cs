@@ -14,5 +14,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string PartnerName { get; set; }
         public string PartnerDobMonth { get; set; }
         public string PartnerDobYear { get; set; }
+        public bool PartnerTypeIndividual { get; set; }
+        public int Index { get; set; }
     }
 }

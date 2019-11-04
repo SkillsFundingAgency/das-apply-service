@@ -62,6 +62,7 @@
             <div class="govuk-grid-column-two-thirds">
                 <form method="post" asp-action="AddIndividualPartnerDetails">
                     @Html.HiddenFor(x => x.ApplicationId)
+                    @Html.HiddenFor(x => x.PartnerTypeIndividual)
                     <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="PartnerName" sfa-validationerror-class="form-group-error">
 
                         <label for="PartnerName" class="govuk-label">Full name</label>
