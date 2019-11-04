@@ -882,7 +882,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return validationErrors;
         }
 
-        [HttpGet]   //?? MFCMFC
+        [HttpGet]  
         public async Task<IActionResult> DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, string redirectAction)
         {
             await _apiClient.DeleteAnswer(applicationId, sequenceId, sectionId, pageId, answerId, User.GetUserId());
@@ -925,7 +925,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             });
         }
 
-        [HttpPost] // ?? MFCMFC
+        [HttpPost] 
         private async Task SavePreambleQuestions(Guid applicationId, Guid userId, List<PreambleAnswer> questions)
         {
             const int DefaultSectionId = 1;
