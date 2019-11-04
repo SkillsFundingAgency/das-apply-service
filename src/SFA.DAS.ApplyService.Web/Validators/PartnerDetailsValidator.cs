@@ -8,8 +8,8 @@ namespace SFA.DAS.ApplyService.Web.Validators
 {
     public static class PartnerDetailsValidator
     {
-        public const string NoDetailsValidationError = "Enter the individual's details";
-        public const string PartnerNameMinLengthError = "Enter a full name";
+        public const string PartnerNameMinLengthErrorIndividual = "Enter a full name";
+        public const string PartnerNameMinLengthErrorOrganisation = "Enter the partner organisation’s name";
         public const string PartnerNameMaxLengthError = "Enter a full name using 255 characters or less";
         public const string DobFieldPrefix = "PartnerDob";
 
@@ -21,10 +21,18 @@ namespace SFA.DAS.ApplyService.Web.Validators
                 && String.IsNullOrWhiteSpace(model.PartnerDobMonth)
                 && String.IsNullOrWhiteSpace(model.PartnerDobYear))
             {
+                var organisationType = "organisation";
+                if (model.PartnerTypeIndividual)
+                {
+                    organisationType = "individual";
+                }
+                
+                var message = $"Enter the {organisationType}'s details";
+
                 errorMessages.Add(
                     new ValidationErrorDetail
                     {
-                        ErrorMessage = NoDetailsValidationError,
+                        ErrorMessage = message,
                         Field = "PartnerName"
                     });
 
@@ -33,10 +41,15 @@ namespace SFA.DAS.ApplyService.Web.Validators
             
             if (String.IsNullOrEmpty(model.PartnerName))
             {
+                var message = PartnerNameMinLengthErrorOrganisation;
+                if (model.PartnerTypeIndividual)
+                {
+                    message = PartnerNameMinLengthErrorIndividual;
+                }
                 errorMessages.Add(
                     new ValidationErrorDetail
                     {
-                        ErrorMessage = PartnerNameMinLengthError,
+                        ErrorMessage = message,
                         Field = "PartnerName"
                     });
             }

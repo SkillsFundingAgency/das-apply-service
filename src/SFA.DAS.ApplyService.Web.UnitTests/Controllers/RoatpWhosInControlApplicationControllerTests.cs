@@ -14,6 +14,7 @@ using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
 using System.Collections.Generic;
 using SFA.DAS.ApplyService.Application.Apply;
+using System.Linq;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
@@ -974,48 +975,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be(expectedActionName);
         }
 
-        [TestCase(ConfirmPartnershipTypeViewModel.PartnershipTypeIndividual, "AddPartnerIndividual")]
-        [TestCase(ConfirmPartnershipTypeViewModel.PartnershipTypeOrganisation, "AddPartnerOrganisation")]
-        public void Confirm_partner_type_redirects_to_add_partner_individual_or_organisation_pages(string partnershipType, string expectedActionName)
-        {
-            var sequences = new List<ApplicationSequence>();
-            sequences.Add(new ApplicationSequence
-            {
-                SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
-                Id = Guid.NewGuid()
-            });
-
-            _qnaClient.Setup(x => x.GetSequences(It.IsAny<Guid>())).ReturnsAsync(sequences);
-
-            var sections = new List<ApplicationSection>();
-            sections.Add(new ApplicationSection
-            {
-                SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
-                Id = Guid.NewGuid()
-            });
-
-            _qnaClient.Setup(x => x.GetSections(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(sections);
-
-            var updateResult = new SetPageAnswersResponse
-            {
-                ValidationPassed = true
-            };
-            _qnaClient.Setup(x => x.UpdatePageAnswers(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<List<Answer>>())).ReturnsAsync(updateResult);
-
-            var model = new ConfirmPartnershipTypeViewModel
-            {
-                ApplicationId = Guid.NewGuid(),
-                PartnershipType = partnershipType
-            };
-
-            var result = _controller.PartnershipTypeConfirmed(model).GetAwaiter().GetResult();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-
-            redirectResult.ActionName.Should().Be(expectedActionName);
-        }
-
         [Test]
         public void Add_sole_trade_dob_prompts_for_date_of_birth_with_sole_trader_legal_name()
         {
@@ -1144,7 +1103,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(individualPartnerAnswer);
 
-            var result = _controller.AddPartnerIndividual(Guid.NewGuid()).GetAwaiter().GetResult();
+            var result = _controller.AddPartner(Guid.NewGuid(), true).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
