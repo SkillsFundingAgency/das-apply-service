@@ -52,5 +52,19 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
             year.Should().Be(expectedValue);
         }
+
+        [TestCase("","","")]
+        [TestCase(" ", " ", "")]
+        [TestCase("1.", "2000", "")]
+        [TestCase(".1", "1999", "")]
+        [TestCase("1", ".1990", "")]
+        [TestCase("2", "198A", "")]
+        [TestCase("a", "1981", "")]
+        public void Format_date_of_birth_rejects_non_numeric_values(string month, string year, string expectedValue)
+        {
+            var formattedDob = DateOfBirthFormatter.FormatDateOfBirth(month, year);
+
+            formattedDob.Should().Be(expectedValue);
+        }
     }
 }

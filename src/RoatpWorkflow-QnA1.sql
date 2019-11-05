@@ -1549,22 +1549,141 @@ VALUES
 	  "NotRequired": true
     },	
 	{
+      "PageId": "101",
+      "SequenceId": null,
+      "SectionId": null,
+      "Title": "What is your organisation''s partner?",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-101",
+          "QuestionTag": "Partnership-Type",
+          "Label": "What is your organisation''s partner?",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "Radio",
+			"Options": [
+			{
+                "Label": "Individual",
+				"Value": "Individual",
+                "FurtherQuestions": null
+              },
+			  {
+                "Label": "Organisation",
+				"Value": "Organisation",
+                "FurtherQuestions": null
+              }
+			],
+			"Validations": [
+              {
+                "Name": "Required",
+                "Value": null,
+                "ErrorMessage": "Tell us what your organisation''s partner is"
+              }
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+		{
+          "Action": "NextPage",
+          "ReturnId": "110",
+          "Conditions": [
+		  {
+            "QuestionId": "YO-101",
+            "MustEqual": "Individual"
+          }
+		  ],
+          "ConditionMet": false
+        },
+		{
+          "Action": "NextPage",
+          "ReturnId": "111",
+          "Conditions": [
+		  {
+            "QuestionId": "YO-101",
+            "MustEqual": "Organisation"
+          }
+		  ],
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": "",
+	  "NotRequired": true
+    },	
+	{
       "PageId": "110",
       "SequenceId": null,
       "SectionId": null,
-      "Title": "PLACEHOLDER Add Partner",
+      "Title": "Enter the individual''s details",
       "LinkTitle": "",
       "InfoText": "",
       "Questions": [
         {
           "QuestionId": "YO-110",
-          "QuestionTag": "Add-Partner",
-          "Label": "PLACEHOLDER Add Partner",
+          "QuestionTag": "Add-Partner-Individual",
+          "Label": "Enter the individual''s details",
           "ShortLabel": "",
           "QuestionBodyText": "",
           "Hint": "",
           "Input": {
-            "Type": "Hidden",			
+            "Type": "TabularData",			
+            "Validations": [              
+            ]
+          },
+          "Order": null
+        }
+      ],
+      "PageOfAnswers": [],
+      "Next": [      
+		{
+          "Action": "NextPage",
+          "ReturnId": "140",
+          "Conditions": [],
+          "ConditionMet": false
+        }
+      ],
+      "Complete": false,
+      "AllowMultipleAnswers": false,
+      "Order": null,
+      "Active": true,
+      "Visible": true,
+      "Feedback": null,
+      "HasFeedback": false,
+      "NotRequiredOrgTypes": [],
+      "BodyText": "",
+	  "NotRequired": true
+    },
+	{
+      "PageId": "111",
+      "SequenceId": null,
+      "SectionId": null,
+      "Title": "PLACEHOLDER Add Partner Organisation",
+      "LinkTitle": "",
+      "InfoText": "",
+      "Questions": [
+        {
+          "QuestionId": "YO-111",
+          "QuestionTag": "Add-Partner-Organisation",
+          "Label": "PLACEHOLDER Add Partner Organisation",
+          "ShortLabel": "",
+          "QuestionBodyText": "",
+          "Hint": "",
+          "Input": {
+            "Type": "TabularData",			
             "Validations": [              
             ]
           },
