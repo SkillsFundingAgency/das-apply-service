@@ -42,16 +42,21 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string RoatpStatusDate = "PRE-93";
         public static string RoatpProviderRoute = "PRE-94";
         public static string LevyPayingEmployer = "PRE-95";
+        public static string ApplyProviderRoute = "YO-1";
+        public static string COAStage1Application = "COA-1";                  
+    }
+
+    public class RoatpYourOrganisationQuestionIdConstants
+    {
         public static string CompaniesHouseDirectors = "YO-70";
         public static string CompaniesHousePSCs = "YO-71";
         public static string CompaniesHouseDetailsConfirmed = "YO-75";
         public static string CharityCommissionTrustees = "YO-80";
         public static string CharityCommissionDetailsConfirmed = "YO-85";
-        public static string ApplyProviderRoute = "YO-1";
-        public static string ApplyProviderRouteMain = "YO-1.1";              
-        public static string ApplyProviderRouteEmployer = "YO-1.2";
-        public static string ApplyProviderRouteSupporting = "YO-1.3";
-        public static string COAStage1Application = "COA-1";                  
+        public static string SoleTradeOrPartnership = "YO-100";
+        public static string PartnershipType = "YO-101";
+        public static string AddPartners = "YO-110";
+        public static string AddSoleTradeDob = "YO-120";
     }
 
     public static class RoatpWorkflowSequenceIds
@@ -110,6 +115,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static string CharityCommissionStartPage = "80";
             public static string CharityCommissionNoTrustees = "90";
             public static string SoleTraderPartnership = "100";
+            public static string PartnershipType = "101";
+            public static string AddPartnerIndividual = "110";
+            public static string AddPartnerOrganisation = "111";
+            public static string AddSoleTraderDob = "120";
             public static string AddPeopleInControl = "130";
         }
 
@@ -129,11 +138,18 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
     public static class RoatpWorkflowQuestionTags
     {
         public static string ProviderRoute = "Apply-ProviderRoute";
+        public static string UkrlpLegalName = "UKRLP-LegalName";
         public static string UkrlpVerificationCompany = "UKRLP-Verification-Company";
         public static string CompaniesHouseDirectors = "Companies-House-Directors";
         public static string CompaniesHousePscs = "Companies-House-PSCs";
         public static string UkrlpVerificationCharity = "UKRLP-Verification-Charity";
         public static string CharityCommissionTrustees = "Charity-Trustees";
+        public static string UkrlpVerificationSoleTraderPartnership = "UKRLP-Verification-SoleTraderPartnership";
+        public static string SoleTraderOrPartnership = "SoleTrade-or-Partnership";
+        public static string PartnershipType = "Partnership-Type";
+        public static string AddPartnerIndividual = "Add-Partner-Individual";
+        public static string AddPartnerOrganisation = "Add-Partner-Organisation";
+        public static string SoleTradeDob = "Add-SoleTrade-DOB";
     }
 
     public static class RoatpPreambleQuestionBuilder
@@ -414,7 +430,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
                 questions.Add(new PreambleAnswer
                 {
-                    QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseDirectors,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHouseDirectors,
                     Value = JsonConvert.SerializeObject(table)
                 });
             }
@@ -422,7 +438,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             {
                 questions.Add(new PreambleAnswer
                 {
-                    QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseDirectors,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHouseDirectors,
                     Value = string.Empty
                 });
             }
@@ -451,7 +467,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
                 questions.Add(new PreambleAnswer
                 {
-                    QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHousePSCs,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHousePSCs,
                     Value = JsonConvert.SerializeObject(table)
                 });
             }
@@ -459,7 +475,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             {
                 questions.Add(new PreambleAnswer
                 {
-                    QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHousePSCs,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHousePSCs,
                     Value = string.Empty
                 });
             }
@@ -487,7 +503,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
                 questions.Add(new PreambleAnswer
                 {
-                    QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionTrustees,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
                     Value = JsonConvert.SerializeObject(table)
                 });
             }
@@ -495,7 +511,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             {
                 questions.Add(new PreambleAnswer
                 {
-                    QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionTrustees,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
                     Value = string.Empty
                 });
             }
@@ -552,7 +568,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         {
             questions.Add(new PreambleAnswer
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseDetailsConfirmed,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHouseDetailsConfirmed,
                 Value = string.Empty
             });
         }
@@ -561,7 +577,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         {
             questions.Add(new PreambleAnswer
             {
-                QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionDetailsConfirmed,
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionDetailsConfirmed,
                 Value = string.Empty
             });
         }
