@@ -42,6 +42,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return await ConfirmTrusteesNoDob(applicationId);
             }
 
+            var verificationPartnership = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpVerificationSoleTraderPartnership);
+            if (verificationPartnership.Value == "TRUE")
+            {
+                return await SoleTraderOrPartnership(applicationId);
+            }
+
             return await AddPeopleInControl(applicationId);
         }
 
@@ -59,12 +65,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 ApplicationId = applicationId,
                 CompaniesHouseDirectors = new PeopleInControl
                 {
-                    QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseDirectors,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHouseDirectors,
                     TableData = directorsData
                 },
                 CompaniesHousePscs = new PeopleInControl
                 {
-                    QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHousePSCs,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHousePSCs,
                     TableData = pscsData
                 }
             };
@@ -84,7 +90,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 companiesHousePscsAnswer,
                 new Answer
                 {
-                    QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseDetailsConfirmed,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHouseDetailsConfirmed,
                     Value = "Y"
                 }
             };
@@ -119,7 +125,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 ApplicationId = applicationId,
                 Trustees = new PeopleInControl
                 {
-                    QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionTrustees,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
                     TableData = trusteesData
                 }
             };
@@ -143,7 +149,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 trusteesAnswer,
                 new Answer
                 {
-                    QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionDetailsConfirmed,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionDetailsConfirmed,
                     Value = "Y"
                 }
             };
@@ -209,12 +215,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 new Answer
                 {
-                    QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionTrustees,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
                     Value = JsonConvert.SerializeObject(trusteesData)
                 },
                 new Answer
                 {
-                    QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionDetailsConfirmed,
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionDetailsConfirmed,
                     Value = "TRUE"
                 }
             };
@@ -231,21 +237,296 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return View("~/Views/Roatp/WhosInControl/AddTrustees.cshtml");
         }
 
-        public async Task<IActionResult> AddPartner(Guid applicationId)
-        {
-            return View("~/Views/Roatp/WhosInControl/AddPartner.cshtml");
+        public async Task<IActionResult> SoleTraderOrPartnership(Guid applicationId)
+        {         
+            var model = new SoleTraderOrPartnershipViewModel { ApplicationId = applicationId };
+            var soleTraderPartnershipAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.SoleTraderOrPartnership);
+            if (soleTraderPartnershipAnswer != null)
+            {
+                model.OrganisationType = soleTraderPartnershipAnswer.Value;
+            }
+
+            return View("~/Views/Roatp/WhosInControl/SoleTraderOrPartnership.cshtml", model);
         }
 
-        public async Task<IActionResult> AddSoleTradeDob(Guid applicationId)
+        [HttpPost]
+        public async Task<IActionResult> ConfirmSoleTraderOrPartnership(SoleTraderOrPartnershipViewModel model)
         {
-            return View("~/Views/Roatp/WhosInControl/AddSoleTradeDob.cshtml");
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/WhosInControl/SoleTraderOrPartnership.cshtml", model);
+            }
+
+            var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
+            var yourOrganisationSequence =
+                applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
+            var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
+            var whosInControlSection =
+                yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+
+            var organisationTypeAnswer = new List<Answer>
+            {
+                new Answer
+                {
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.SoleTradeOrPartnership,
+                    Value = model.OrganisationType
+                }
+            };
+
+            var updateResult = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.SoleTraderPartnership, organisationTypeAnswer);
+            
+            if (model.OrganisationType == SoleTraderOrPartnershipViewModel.OrganisationTypePartnership)
+            {
+                return RedirectToAction("PartnershipType", new { applicationId = model.ApplicationId });
+            }
+            else
+            {
+                return RedirectToAction("AddSoleTradeDob", new { applicationId = model.ApplicationId });
+            }
+        }
+
+        public async Task<IActionResult> PartnershipType(Guid applicationId)
+        {
+            var model = new ConfirmPartnershipTypeViewModel { ApplicationId = applicationId };
+
+            var partnershipTypeAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.PartnershipType);
+            if (partnershipTypeAnswer != null)
+            {
+                model.PartnershipType = partnershipTypeAnswer.Value;
+            }
+
+            return View("~/Views/Roatp/WhosInControl/PartnershipType.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PartnershipTypeConfirmed(ConfirmPartnershipTypeViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/WhosInControl/PartnershipType.cshtml", model);
+            }
+
+            var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
+            var yourOrganisationSequence =
+                applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
+            var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
+            var whosInControlSection =
+                yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+
+            var organisationTypeAnswer = new List<Answer>
+            {
+                new Answer
+                {
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.PartnershipType,
+                    Value = model.PartnershipType
+                }
+            };
+
+            var updateResult = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.PartnershipType, organisationTypeAnswer);
+
+
+            if (model.PartnershipType == ConfirmPartnershipTypeViewModel.PartnershipTypeIndividual)
+            {
+                return RedirectToAction("AddPartnerIndividual", new { applicationId = model.ApplicationId });
+            }
+            else
+            {
+                return RedirectToAction("AddPartnerOrganisation", new { applicationId = model.ApplicationId });
+            }
         }
 
         public async Task<IActionResult> AddPeopleInControl(Guid applicationId)
         {
             return View("~/Views/Roatp/WhosInControl/AddPeopleInControl.cshtml");
-        }             
+        }
 
+        public async Task<IActionResult> AddPartnerIndividual(Guid applicationId)
+        {
+            var model = new AddPartnerIndividualViewModel { ApplicationId = applicationId };
+
+            // Handling multiple partner details covered in a future story
+            var individualPartnerAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.AddPartnerIndividual);
+            if (individualPartnerAnswer != null && individualPartnerAnswer.Value != null)
+            {
+                var partnerData = JsonConvert.DeserializeObject<TabularData>(individualPartnerAnswer.Value);
+                var dataRow = partnerData.DataRows[0];
+                model.PartnerName = dataRow.Columns[0];
+                var formattedDob = dataRow.Columns[1];
+                model.PartnerDobMonth = DateOfBirthFormatter.GetMonthNumberFromShortDateOfBirth(formattedDob);
+                model.PartnerDobYear = DateOfBirthFormatter.GetYearFromShortDateOfBirth(formattedDob);
+            }
+            return View("~/Views/Roatp/WhosInControl/AddPartnerIndividual.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddIndividualPartnerDetails(AddPartnerIndividualViewModel model)
+        {
+            var errorMessages = PartnerDetailsValidator.Validate(model);
+
+            if (errorMessages.Any())
+            {
+                model.ErrorMessages = errorMessages;
+                return View("~/Views/Roatp/WhosInControl/AddPartnerIndividual.cshtml", model);
+            }
+
+            var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
+            var yourOrganisationSequence =
+                applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
+            var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
+            var whosInControlSection =
+                yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+
+            var partnerTableData = new TabularData
+            {
+                HeadingTitles = new List<string> { "Name", "Date of birth" },
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string>
+                        {
+                            model.PartnerName, DateOfBirthFormatter.FormatDateOfBirth(model.PartnerDobMonth, model.PartnerDobYear)
+                        }
+                    }
+                }
+            };
+            var individualPartnerJson = JsonConvert.SerializeObject(partnerTableData);
+
+            var individualPartnerAnswers = new List<Answer>
+            {
+                new Answer
+                {
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartners,
+                    Value = individualPartnerJson
+                }
+            };
+
+            var result = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddPartnerIndividual, individualPartnerAnswers);
+            
+            return RedirectToAction("ConfirmPartners", new { applicationId = model.ApplicationId });
+        }
+
+        public async Task<IActionResult> AddPartnerOrganisation(Guid applicationId)
+        {
+            var model = new AddPartnerOrganisationViewModel { ApplicationId = applicationId };
+
+            var organisationPartnerAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.AddPartnerOrganisation);
+            if (organisationPartnerAnswer != null && organisationPartnerAnswer.Value != null)
+            {
+                model.OrganisationName = organisationPartnerAnswer.Value;
+            }
+
+            return View("~/Views/Roatp/WhosInControl/AddPartnerOrganisation.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddOrganisationPartnerDetails(AddPartnerOrganisationViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/WhosInControl/AddPartnerOrganisation.cshtml", model);
+            }
+
+            var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
+            var yourOrganisationSequence =
+                applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
+            var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
+            var whosInControlSection =
+                yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+
+            var organisationPartnerAnswer = new List<Answer>
+            {
+                new Answer
+                {
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartners,
+                    Value = model.OrganisationName
+                }
+            };
+
+            var result = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddPartnerOrganisation, organisationPartnerAnswer);
+
+            return RedirectToAction("ConfirmPartners", new { applicationId = model.ApplicationId });
+        }
+
+        public async Task<IActionResult> ConfirmPartners(Guid applicationId)
+        {
+            var model = new ConfirmPartnersViewModel { ApplicationId = applicationId };
+
+            var partnerType = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.PartnershipType);
+            if (partnerType != null && partnerType.Value != null && partnerType.Value == ConfirmPartnershipTypeViewModel.PartnershipTypeIndividual)
+            {
+                model.BackAction = "AddPartnerIndividual";
+            }
+            else
+            {
+                model.BackAction = "AddPartnerOrganisation";
+            }
+
+            return View("~/Views/Roatp/WhosInControl/ConfirmPartners.cshtml", model);
+        }
+
+        public async Task<IActionResult> AddSoleTradeDob(Guid applicationId)
+        {
+            var model = new SoleTradeDobViewModel { ApplicationId = applicationId };
+
+            var soleTraderName = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpLegalName);
+            if (soleTraderName != null)
+            {
+                model.SoleTraderName = soleTraderName.Value;
+            }
+
+            var soleTraderDob = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.SoleTradeDob);
+            if (soleTraderDob != null && soleTraderDob.Value != null)
+            {
+                var answerValue = soleTraderDob.Value;
+                var delimiterIndex = answerValue.IndexOf(",");
+                if (delimiterIndex > 0)
+                {
+                    model.SoleTraderDobMonth = answerValue.Substring(0, delimiterIndex);
+                    model.SoleTraderDobYear = answerValue.Substring(delimiterIndex+1);
+                }
+            }
+            return View("~/Views/Roatp/WhosInControl/AddSoleTradeDob.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SoleTradeDobConfirmed(SoleTradeDobViewModel model)
+        {
+            var dobMonth = new Answer { Value = model.SoleTraderDobMonth };
+            var dobYear = new Answer { Value = model.SoleTraderDobYear };
+
+            var errorMessages = DateOfBirthAnswerValidator.ValidateDateOfBirth(dobMonth, dobYear, SoleTradeDobViewModel.DobFieldPrefix);
+            if (errorMessages.Any())
+            {
+                model.ErrorMessages = errorMessages;
+                return View("~/Views/Roatp/WhosInControl/AddSoleTradeDob.cshtml", model);
+            }
+
+            var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
+            var yourOrganisationSequence =
+                applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
+            var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
+            var whosInControlSection =
+                yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+
+            var answerValue = $"{model.SoleTraderDobMonth},{model.SoleTraderDobYear}";
+            var soleTradeDobAnswer = new List<Answer>
+            {
+                new Answer
+                {
+                    QuestionId = RoatpYourOrganisationQuestionIdConstants.AddSoleTradeDob,
+                    Value = answerValue
+                }
+            };
+
+            var result = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob, soleTradeDobAnswer);
+
+            await _applicationApiClient.MarkSectionAsCompleted(model.ApplicationId, whosInControlSection.Id);
+
+            return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId });
+        }
+        
         private List<TrusteeDateOfBirth> MapTrusteesDataToViewModel(TabularData trusteeData)
         {
             var trusteeDatesOfBirth = new List<TrusteeDateOfBirth>();
