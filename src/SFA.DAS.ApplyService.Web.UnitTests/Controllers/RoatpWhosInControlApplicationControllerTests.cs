@@ -116,6 +116,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCompany)).ReturnsAsync(verifiedCompaniesHouseAnswer);
+
+            var manualEntryCompaniesHouseAnswer = new Answer
+            {
+                QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseManualEntryRequired,
+                Value = ""
+            };
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.ManualEntryRequiredCompaniesHouse)).ReturnsAsync(manualEntryCompaniesHouseAnswer);
             
             var directorsDataAnswer = new Answer
             {
@@ -155,6 +163,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCompany)).ReturnsAsync(verifiedCompaniesHouseAnswer);
+
+            var manualEntryCompaniesHouseAnswer = new Answer
+            {
+                QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseManualEntryRequired,
+                Value = ""
+            };
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.ManualEntryRequiredCompaniesHouse)).ReturnsAsync(manualEntryCompaniesHouseAnswer);
 
             var directorsDataAnswer = new Answer
             {
@@ -201,9 +217,17 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity,
                 Value = "TRUE"
             };
-            
+
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCharity)).ReturnsAsync(verifiedCharityCommissionAnswer);
-            
+
+            var manualEntryCharityCommissionAnswer = new Answer
+            {
+                QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionTrusteeManualEntry,
+                Value = ""
+            };
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.ManualEntryRequiredCharityCommission)).ReturnsAsync(manualEntryCharityCommissionAnswer);
+
             var trusteesDataAnswer = new Answer
             {
                 QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
@@ -675,7 +699,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Should().NotBeNull();
             var model = viewResult.Model as ConfirmTrusteesDateOfBirthViewModel;
             model.Should().NotBeNull();
-            model.ErrorMessages.Count.Should().Be(2);
+            model.ErrorMessages.Count.Should().Be(1);
         }
 
         [Test]
@@ -1283,6 +1307,38 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             model.PartnerData.DataRows[0].Columns[1].Should().Be("Mar 1976");
             model.PartnerData.DataRows[1].Columns[0].Should().Be("Org Ltd");
             model.PartnerData.DataRows[1].Columns[1].Should().BeNullOrEmpty();
+        }
+
+        [TestCase("", "", "")]
+        [TestCase("", "1", "")]
+        [TestCase("", "", "1991")]
+        [TestCase("", "13", "1992")]
+        [TestCase("", "12", "999")]
+        [TestCase("", "10", "3000")]
+        [TestCase("Person name", "", "")]
+        [TestCase("Person name", "1", "")]
+        [TestCase("Person name", "", "1991")]
+        [TestCase("Person name", "13", "1992")]
+        [TestCase("Person name", "12", "999")]
+        [TestCase("Person name", "10", "3000")]
+        public void Add_people_in_control_rejects_invalid_values(string personName, string dobMonth, string dobYear)
+        {
+            var viewModel = new AddEditPeopleInControlViewModel
+            {
+                PersonInControlName = personName,
+                PersonInControlDobMonth = dobMonth,
+                PersonInControlDobYear = dobYear,
+                ApplicationId = Guid.NewGuid(),
+                ErrorMessages = new List<ValidationErrorDetail>()
+            };
+
+            var result = _controller.AddPeopleInControlDetails(viewModel).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var model = viewResult.Model as AddEditPeopleInControlViewModel;
+            model.Should().NotBeNull();
+            model.ErrorMessages.Count.Should().BeGreaterOrEqualTo(1);
         }
     }
 }

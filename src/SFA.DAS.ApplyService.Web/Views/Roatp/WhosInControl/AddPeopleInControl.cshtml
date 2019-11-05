@@ -1,0 +1,131 @@
+﻿@using MoreLinq;
+@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.AddEditPeopleInControlViewModel
+
+@{
+    ViewBag.Title = "Who is in control of your organisation?";
+    Layout = "_Layout";
+
+    bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
+
+    var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
+
+}
+
+<div class="govuk-phase-banner govuk-width-container roatp__navigation">
+    <nav>
+        <ul id="navigation" class="roatp__navigation " aria-label="Top Level Navigation">
+
+            <li class="roatp__navigation-item">
+
+                <a class="govuk-header__link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Application overview</a>
+
+            </li>
+
+        </ul>
+    </nav>
+</div>
+
+<div class="grid-row">
+    <form asp-controller="RoatpApplication" asp-action="TaskList" method="get" name="backForm">
+        @Html.HiddenFor(x => x.ApplicationId)
+        <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+    </form>
+</div>
+
+@if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
+{
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+        <h2 class="govuk-error-summary__title" id="error-summary-title">
+            There is a problem
+        </h2>
+        <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+                @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
+                {
+                    <li><a sfa-validation-for="@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
+                }
+            </ul>
+        </div>
+    </div>
+}
+
+<div class="govuk-width-container">
+
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-l">Who is in control of your organisation?</h1>
+                <p class="govuk-body">
+                    This could be a:
+                    <ul class="govuk-list govuk-list--bullet">
+                        <li>company director</li>
+                        <li>shareholder</li>
+                        <li>person with significant control</li>
+                        <li>person with decision making powers</li>
+                        <li>head of organisation</li>
+                        <li>trustee</li>
+                        <li>sole trader</li>
+                        <li>partner</li>
+                    </ul>
+                </p>
+                <p class="govuk-body">
+                    If there is more than one person who's in control, you can add them later.
+                </p>
+            </div>
+        </div>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <form method="post" asp-action="AddPeopleInControlDetails">
+                    @Html.HiddenFor(x => x.ApplicationId)
+
+                    <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="PersonInControlName" sfa-validationerror-class="form-group-error">
+
+                        <label for="PersonInControlName" class="govuk-label">Full name</label>
+
+                        <input id="PersonInControlName" name="PersonInControlName" type="text" class="govuk-input @isError" asp-for="PersonInControlName"
+                               sfa-validation-for="PersonInControlName" sfa-validationerror-class="form-control-error" />
+                    </div>
+
+                    <p class="govuk-label">Date of birth</p>
+                    <span class="govuk-hint" id="dob-hint">
+                        For example, 3 1980
+                    </span>
+                    <div class="govuk-date-input" id="dob">
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group" sfa-validation-for="PersonInControlDobMonth">
+                                <label class="govuk-label govuk-date-input__label" for="PersonInControlDobMonth">Month</label>
+                                <input value="@Model.PersonInControlDobMonth"
+                                        class="govuk-input govuk-date-input__input govuk-input--width-2 @isError"
+                                        id="PersonInControlDobMonth"
+                                        name="PersonInControlDobMonth"
+                                        type="number"
+                                        pattern="[0-9]*"
+                                        sfa-validation-for="PersonInControlDobMonth" />
+                            </div>
+                        </div>
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group" sfa-validation-for="PersonInControlDobYear">
+                                <label class="govuk-label govuk-date-input__label" for="PersonInControlDobYear">Year</label>
+                                <input value="@Model.PersonInControlDobYear"
+                                        class="govuk-input govuk-date-input__input govuk-input--width-4 @isError"
+                                        id="PersonInControlDobYear"
+                                        name="PersonInControlDobYear"
+                                        type="number"
+                                        pattern="[0-9]*"
+                                        sfa-validation-for="PersonInControlDobYear" />
+                            </div>
+                        </div>
+                    </div>
+                    
+
+                    <button type="submit" class="govuk-button">Save and continue</button>
+
+                </form>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+

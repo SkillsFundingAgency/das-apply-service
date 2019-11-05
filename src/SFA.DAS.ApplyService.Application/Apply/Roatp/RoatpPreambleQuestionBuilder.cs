@@ -57,6 +57,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string PartnershipType = "YO-101";
         public static string AddPartners = "YO-110";
         public static string AddSoleTradeDob = "YO-120";
+        public static string AddPeopleInControl = "YO-130";
     }
 
     public static class RoatpWorkflowSequenceIds
@@ -141,13 +142,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string UkrlpVerificationCompany = "UKRLP-Verification-Company";
         public static string CompaniesHouseDirectors = "Companies-House-Directors";
         public static string CompaniesHousePscs = "Companies-House-PSCs";
+        public static string ManualEntryRequiredCompaniesHouse = "CH-ManualEntryRequired";
         public static string UkrlpVerificationCharity = "UKRLP-Verification-Charity";
         public static string CharityCommissionTrustees = "Charity-Trustees";
+        public static string ManualEntryRequiredCharityCommission = "CC-TrusteeManualEntry";
         public static string UkrlpVerificationSoleTraderPartnership = "UKRLP-Verification-SoleTraderPartnership";
         public static string SoleTraderOrPartnership = "SoleTrade-or-Partnership";
         public static string PartnershipType = "Partnership-Type";
         public static string AddPartners = "Add-Partners";
         public static string SoleTradeDob = "Add-SoleTrade-DOB";
+        public static string AddPeopleInControl = "Add-PeopleInControl";
     }
 
     public static class RoatpPreambleQuestionBuilder
