@@ -1,0 +1,78 @@
+﻿@using MoreLinq;
+@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.AddPartnerOrganisationViewModel
+
+@{
+    ViewBag.Title = "Enter the partner organisation's name";
+    Layout = "_Layout";
+
+    bool showErrors = !ViewData.ModelState.IsValid;
+    var isError = !ViewData.ModelState.IsValid ? "govuk-input--error" : "";
+}
+
+<div class="govuk-phase-banner govuk-width-container roatp__navigation">
+    <nav>
+        <ul id="navigation" class="roatp__navigation " aria-label="Top Level Navigation">
+
+            <li class="roatp__navigation-item">
+
+                <a class="govuk-header__link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Application overview</a>
+
+            </li>
+
+        </ul>
+    </nav>
+</div>
+
+<div class="grid-row">
+    <form asp-controller="RoatpWhosInControlApplication" asp-action="PartnershipType" method="get" name="backForm">
+        @Html.HiddenFor(x => x.ApplicationId)
+        <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+    </form>
+</div>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+        <h2 class="govuk-error-summary__title" id="error-summary-title">
+            There is a problem
+        </h2>
+        <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+                <li><a sfa-validation-for="OrganisationName"></a></li>
+            </ul>
+        </div>
+    </div>
+}
+
+
+<div class="govuk-width-container">
+
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-l">Enter the partner organisation's name</h1>
+            </div>
+        </div>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <form method="post" asp-action="AddOrganisationPartnerDetails">
+                    @Html.HiddenFor(x => x.ApplicationId)
+                    <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="PartnerName" sfa-validationerror-class="form-group-error">
+
+                        <label for="OrganisationName" class="govuk-label">Partner organisation's name</label>
+
+                        <input id="OrganisationName" name="OrganisationName" type="text" class="govuk-input govuk-!-width-one-third @isError" asp-for="OrganisationName"
+                               sfa-validation-for="PartnerName" sfa-validationerror-class="form-control-error" />
+                    </div>
+                                       
+                    <button type="submit" class="govuk-button">Save and continue</button>
+
+                </form>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+
