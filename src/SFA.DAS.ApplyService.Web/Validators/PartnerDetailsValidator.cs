@@ -9,7 +9,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
     public static class PartnerDetailsValidator
     {
         public const string PartnerNameMinLengthErrorIndividual = "Enter a full name";
-        public const string PartnerNameMinLengthErrorOrganisation = "Enter the partner organisation’s name";
+        public const string PartnerNameMinLengthErrorOrganisation = "Enter the partner organisation's name";
         public const string PartnerNameMaxLengthError = "Enter a full name using 255 characters or less";
         public const string DobFieldPrefix = "PartnerDob";
 
