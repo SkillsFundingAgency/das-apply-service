@@ -20,12 +20,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IApplicationApiClient _applicationApiClient;
         private readonly IAnswerFormService _answerFormService;
+        private readonly ITabularDataRepository _tabularDataRepository;
 
-        public RoatpWhosInControlApplicationController(IQnaApiClient qnaApiClient, IApplicationApiClient applicationApiClient, IAnswerFormService answerFormService)
+        public RoatpWhosInControlApplicationController(IQnaApiClient qnaApiClient, IApplicationApiClient applicationApiClient, 
+                                                       IAnswerFormService answerFormService, ITabularDataRepository tabularDataRepository)
         {
             _qnaApiClient = qnaApiClient;
             _applicationApiClient = applicationApiClient;
             _answerFormService = answerFormService;
+            _tabularDataRepository = tabularDataRepository;
         }
 
         [Route("confirm-who-control")]
@@ -54,11 +57,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [Route("confirm-directors-pscs")]
         public async Task<IActionResult> ConfirmDirectorsPscs(Guid applicationId)
         {
-            var companiesHouseDirectorsAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.CompaniesHouseDirectors);
-            var directorsData = JsonConvert.DeserializeObject<TabularData>(companiesHouseDirectorsAnswer.Value);
-
-            var companiesHousePscsAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.CompaniesHousePscs);
-            var pscsData = JsonConvert.DeserializeObject<TabularData>(companiesHousePscsAnswer.Value);
+            var directorsData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.CompaniesHouseDirectors);
+            var pscsData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.CompaniesHousePscs);
 
             var model = new ConfirmDirectorsPscsViewModel
             {
@@ -117,9 +117,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [Route("confirm-trustees")]
         public async Task<IActionResult> ConfirmTrusteesNoDob(Guid applicationId)
         {
-            var charityTrusteesAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
-            var trusteesData = JsonConvert.DeserializeObject<TabularData>(charityTrusteesAnswer.Value);
-            
+            var trusteesData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
+
             var model = new ConfirmTrusteesViewModel
             {
                 ApplicationId = applicationId,
@@ -169,8 +168,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [Route("confirm-trustees-dob")]
         public async Task<IActionResult> ConfirmTrusteesDob(Guid applicationId)
         {
-            var trusteesAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
-            var trusteesData = JsonConvert.DeserializeObject<TabularData>(trusteesAnswer.Value);
+            var trusteesData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
 
             var model = new ConfirmTrusteesDateOfBirthViewModel
             {
@@ -185,8 +183,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public async Task<IActionResult> TrusteesDobsConfirmed(ConfirmTrusteesDateOfBirthViewModel model)
         {
             var answers = _answerFormService.GetAnswersFromForm(HttpContext);
-            var trusteesAnswer = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
-            var trusteesData = JsonConvert.DeserializeObject<TabularData>(trusteesAnswer.Value);
+
+            var trusteesData = await _tabularDataRepository.GetTabularDataAnswer(model.ApplicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
 
             trusteesData = MapAnswersToTrusteesDob(trusteesData, answers);
 
@@ -366,13 +364,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             var whosInControlSection =
                 yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
-            TabularData partnerTableData;
-            var individualPartnerAnswer = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.AddPartners);
-            if (individualPartnerAnswer != null && individualPartnerAnswer.Value != null)
-            {
-                partnerTableData = JsonConvert.DeserializeObject<TabularData>(individualPartnerAnswer.Value);
-            }
-            else
+            var partnerTableData = await _tabularDataRepository.GetTabularDataAnswer(model.ApplicationId, RoatpWorkflowQuestionTags.AddPartners);
+
+            if (partnerTableData == null)
             {
                 partnerTableData = new TabularData
                 {
@@ -380,6 +374,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     DataRows = new List<TabularDataRow>()                
                 };
             }
+
             var partnerData = new TabularDataRow
             {
                 Id = Guid.NewGuid().ToString(),
@@ -397,21 +392,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 partnerData.Columns.Add(string.Empty);
             }
-            partnerTableData.DataRows.Add(partnerData);
 
-            var individualPartnerJson = JsonConvert.SerializeObject(partnerTableData);
+            var result = await _tabularDataRepository.AddTabularDataRecord(
+                model.ApplicationId, 
+                whosInControlSection.Id, 
+                RoatpWorkflowPageIds.WhosInControl.AddPartners, 
+                RoatpYourOrganisationQuestionIdConstants.AddPartners, 
+                RoatpWorkflowQuestionTags.AddPartners, 
+                partnerData);
 
-            var individualPartnerAnswers = new List<Answer>
-            {
-                new Answer
-                {
-                    QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartners,
-                    Value = individualPartnerJson
-                }
-            };
-
-            var result = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddPartners, individualPartnerAnswers);
-            
             return RedirectToAction("ConfirmPartners", new { applicationId = model.ApplicationId });
         }
         
@@ -429,23 +418,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 model.BackAction = "AddPartnerOrganisation";
             }
 
-            var partnerData = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.AddPartners);
-            if (partnerData != null && partnerData.Value != null)
-            {
-                var partnerTableData = JsonConvert.DeserializeObject<TabularData>(partnerData.Value);
-                model.PartnerData = partnerTableData;
-            }
+            model.PartnerData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddPartners);
 
             return View("~/Views/Roatp/WhosInControl/ConfirmPartners.cshtml", model);
         }
 
         public async Task<IActionResult> EditPartner(Guid applicationId, int index)
         {
-            var partnerData = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.AddPartners);
-            if (partnerData != null && partnerData.Value != null)
+            var partnerTableData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddPartners);
+            if (partnerTableData != null)
             {
-                var partnerTableData = JsonConvert.DeserializeObject<TabularData>(partnerData.Value);
-
                 if (index >= partnerTableData.DataRows.Count)
                 {
                     return RedirectToAction("ConfirmPartners", new { applicationId });
@@ -482,10 +464,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return View("~/Views/Roatp/WhosInControl/EditPartner.cshtml", model);
             }
 
-            var partnerData = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.AddPartners);
-            if (partnerData != null && partnerData.Value != null)
+            var partnerTableData = await _tabularDataRepository.GetTabularDataAnswer(model.ApplicationId, RoatpWorkflowQuestionTags.AddPartners);
+            if (partnerTableData != null)
             {
-                var partnerTableData = JsonConvert.DeserializeObject<TabularData>(partnerData.Value);
                 var partner = new TabularDataRow
                 {
                     Columns = new List<string> { model.PartnerName }
@@ -498,20 +479,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 {
                     partner.Columns.Add(string.Empty);
                 }
-
-                partnerTableData.DataRows[model.Index] = partner;
                 
-                var updatedPartnerJson = JsonConvert.SerializeObject(partnerTableData);
-
-                var updatedPartnerAnswer = new List<Answer>
-                {
-                    new Answer
-                    {
-                        QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartners,
-                        Value = updatedPartnerJson
-                    }
-                };
-
                 var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
                 var yourOrganisationSequence =
                     applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
@@ -519,8 +487,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 var whosInControlSection =
                     yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
-                var result = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddPartners, updatedPartnerAnswer);
-
+                var result = await _tabularDataRepository.EditTabularDataRecord(
+                    model.ApplicationId,
+                    whosInControlSection.Id,
+                    RoatpWorkflowPageIds.WhosInControl.AddPartners,
+                    RoatpYourOrganisationQuestionIdConstants.AddPartners,
+                    RoatpWorkflowQuestionTags.AddPartners,
+                    partner,
+                    model.Index);
             }
 
             return RedirectToAction("ConfirmPartners", new { model.ApplicationId });
