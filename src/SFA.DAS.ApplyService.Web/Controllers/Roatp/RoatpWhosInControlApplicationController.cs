@@ -445,19 +445,25 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             if (partnerData != null && partnerData.Value != null)
             {
                 var partnerTableData = JsonConvert.DeserializeObject<TabularData>(partnerData.Value);
+
+                if (index >= partnerTableData.DataRows.Count)
+                {
+                    return RedirectToAction("ConfirmPartners", new { applicationId });
+                }
+
                 var partner = partnerTableData.DataRows[index];
                 
                 var model = new AddEditPartnerViewModel
                 {
                     ApplicationId = applicationId,
-                    PartnerName = partner.Columns[0]
+                    PartnerName = partner.Columns[0],
+                    Index = index
                 };
                 if (partner.Columns.Count > 1 && !String.IsNullOrEmpty(partner.Columns[1]))
                 {
                     var dateOfBirth = partner.Columns[1];
                     model.PartnerDobMonth = DateOfBirthFormatter.GetMonthNumberFromShortDateOfBirth(dateOfBirth);
                     model.PartnerDobYear = DateOfBirthFormatter.GetYearFromShortDateOfBirth(dateOfBirth);
-                    model.Index = index;
                     model.PartnerTypeIndividual = true;
                 }
                 return View($"~/Views/Roatp/WhosInControl/EditPartner.cshtml", model);

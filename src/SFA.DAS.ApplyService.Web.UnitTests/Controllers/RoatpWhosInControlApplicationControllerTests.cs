@@ -1114,37 +1114,292 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             model.PartnerDobYear.Should().BeNullOrEmpty();
         }
         
-        [TestCase("", "", "")]
-        [TestCase("", "1", "")]
-        [TestCase("", "", "1991")]
-        [TestCase("", "13", "1992")]
-        [TestCase("", "12", "999")]
-        [TestCase("", "10", "3000")]
-        [TestCase("Partner name", "", "")]
-        [TestCase("Partner name", "1", "")]
-        [TestCase("Partner name", "", "1991")]
-        [TestCase("Partner name", "13", "1992")]
-        [TestCase("Partner name", "12", "999")]
-        [TestCase("Partner name", "10", "3000")]
-        public void Add_individual_partner_details_rejects_invalid_values(string partnerName, string dobMonth, string dobYear)
+        [TestCase("", "", "", true)]
+        [TestCase("", "", "", false)]
+        [TestCase("", "1", "", true)]
+        [TestCase("", "", "1991", true)]
+        [TestCase("", "13", "1992", true)]
+        [TestCase("", "12", "999", true)]
+        [TestCase("", "10", "3000", true)]
+        [TestCase("Partner name", "", "", true)]
+        [TestCase("Partner name", "1", "", true)]
+        [TestCase("Partner name", "", "1991", true)]
+        [TestCase("Partner name", "13", "1992", true)]
+        [TestCase("Partner name", "12", "999", true)]
+        [TestCase("Partner name", "10", "3000", true)]
+        public void Add_partner_details_rejects_invalid_values(string partnerName, string dobMonth, string dobYear, bool isIndividual)
         {
-            var viewModel = new SoleTradeDobViewModel
+            var viewModel = new AddEditPartnerViewModel
             {
-                SoleTraderDobMonth = dobMonth,
-                SoleTraderDobYear = dobYear,
+                PartnerDobMonth = dobMonth,
+                PartnerDobYear = dobYear,
+                PartnerName = partnerName,
+                PartnerTypeIndividual = isIndividual,
                 ApplicationId = Guid.NewGuid(),
                 ErrorMessages = new List<ValidationErrorDetail>()
             };
 
-            var result = _controller.SoleTradeDobConfirmed(viewModel).GetAwaiter().GetResult();
+            var result = _controller.AddPartnerDetails(viewModel).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
-            var model = viewResult.Model as SoleTradeDobViewModel;
+            var model = viewResult.Model as AddEditPartnerViewModel;
+            model.Should().NotBeNull();
+            model.ErrorMessages.Count.Should().BeGreaterOrEqualTo(1);
+        }
+        
+        [Test]
+        public void Edit_partner_replays_stored_details_for_an_individual_partner()
+        {
+            const int index = 1;
+            var partnerTableData = new TabularData
+            {
+                HeadingTitles = new List<string> { "Name", "Date of birth" },
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "Miss I Partner", "Mar 1976" }
+                    },
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "Mrs O Partner", "Jun 1975" }
+                    }
+                }
+            };
+
+            var answerJson = JsonConvert.SerializeObject(partnerTableData);
+
+            var partnersAnswer = new Answer
+            {
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartners,
+                Value = answerJson
+            };
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(partnersAnswer);
+
+            var result = _controller.EditPartner(Guid.NewGuid(), index).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("EditPartner");
+
+            var model = viewResult.Model as AddEditPartnerViewModel;
+            model.Should().NotBeNull();
+
+            model.Index.Should().Be(index);
+            model.PartnerTypeIndividual.Should().BeTrue();
+            model.PartnerName.Should().Be("Mrs O Partner");
+            model.PartnerDobMonth.Should().Be("6");
+            model.PartnerDobYear.Should().Be("1975");
+        }
+
+        [Test]
+        public void Edit_partner_replays_stored_details_for_an_organisation_partner()
+        {
+            const int index = 2;
+            var partnerTableData = new TabularData
+            {
+                HeadingTitles = new List<string> { "Name", "Date of birth" },
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "Mr D Partner", "Mar 1980" }
+                    },
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "Partner LLP", string.Empty }
+                    },
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "Partner Trust", string.Empty }
+                    }
+                }
+            };
+
+            var answerJson = JsonConvert.SerializeObject(partnerTableData);
+
+            var partnersAnswer = new Answer
+            {
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartners,
+                Value = answerJson
+            };
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(partnersAnswer);
+
+            var result = _controller.EditPartner(Guid.NewGuid(), index).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("EditPartner");
+
+            var model = viewResult.Model as AddEditPartnerViewModel;
+            model.Should().NotBeNull();
+
+            model.Index.Should().Be(index);
+            model.PartnerTypeIndividual.Should().BeFalse();
+            model.PartnerName.Should().Be("Partner Trust");
+            model.PartnerDobMonth.Should().BeNullOrEmpty();
+            model.PartnerDobYear.Should().BeNullOrEmpty();
+        }
+
+        [Test]
+        public void Edit_partner_redirects_to_confirm_page_if_invalid_index_supplied()
+        {
+            const int index = 1;
+            var partnerTableData = new TabularData
+            {
+                HeadingTitles = new List<string> { "Name", "Date of birth" },
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "Miss I Partner", "Mar 1976" }
+                    }
+                }
+            };
+
+            var answerJson = JsonConvert.SerializeObject(partnerTableData);
+
+            var partnersAnswer = new Answer
+            {
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartners,
+                Value = answerJson
+            };
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(partnersAnswer);
+
+            var result = _controller.EditPartner(Guid.NewGuid(), index).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("ConfirmPartners");
+        }
+
+        [TestCase("", "", "", true)]
+        [TestCase("", "", "", false)]
+        [TestCase("", "1", "", true)]
+        [TestCase("", "", "1991", true)]
+        [TestCase("", "13", "1992", true)]
+        [TestCase("", "12", "999", true)]
+        [TestCase("", "10", "3000", true)]
+        [TestCase("Partner name", "", "", true)]
+        [TestCase("Partner name", "1", "", true)]
+        [TestCase("Partner name", "", "1991", true)]
+        [TestCase("Partner name", "13", "1992", true)]
+        [TestCase("Partner name", "12", "999", true)]
+        [TestCase("Partner name", "10", "3000", true)]
+        public void Update_partner_details_rejects_invalid_values(string partnerName, string dobMonth, string dobYear, bool isIndividual)
+        {
+            var viewModel = new AddEditPartnerViewModel
+            {
+                PartnerDobMonth = dobMonth,
+                PartnerDobYear = dobYear,
+                PartnerName = partnerName,
+                PartnerTypeIndividual = isIndividual,
+                ApplicationId = Guid.NewGuid(),
+                ErrorMessages = new List<ValidationErrorDetail>()
+            };
+
+            var result = _controller.UpdatePartnerDetails(viewModel).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var model = viewResult.Model as AddEditPartnerViewModel;
             model.Should().NotBeNull();
             model.ErrorMessages.Count.Should().BeGreaterOrEqualTo(1);
         }
 
-        
+        [Test]
+        public void Confirm_partners_replays_single_partner()
+        {
+            var partnerTableData = new TabularData
+            {
+                HeadingTitles = new List<string> { "Name", "Date of birth" },
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "Miss I Partner", "Mar 1976" }
+                    }
+                }
+            };
+
+            var answerJson = JsonConvert.SerializeObject(partnerTableData);
+
+            var partnersAnswer = new Answer
+            {
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartners,
+                Value = answerJson
+            };
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(partnersAnswer);
+
+            var result = _controller.ConfirmPartners(Guid.NewGuid()).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+
+            var model = viewResult.Model as ConfirmPartnersViewModel;
+            model.Should().NotBeNull();
+
+            model.PartnerData.DataRows.Count.Should().Be(1);
+            model.PartnerData.DataRows[0].Columns[0].Should().Be("Miss I Partner");
+            model.PartnerData.DataRows[0].Columns[1].Should().Be("Mar 1976");
+        }
+
+        [Test]
+        public void Confirm_partners_replays_multiple_partners_of_each_type()
+        {
+            var partnerTableData = new TabularData
+            {
+                HeadingTitles = new List<string> { "Name", "Date of birth" },
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "Miss I Partner", "Mar 1976" }
+                    },
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "Org Ltd", string.Empty }
+                    }
+                }
+            };
+
+            var answerJson = JsonConvert.SerializeObject(partnerTableData);
+
+            var partnersAnswer = new Answer
+            {
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartners,
+                Value = answerJson
+            };
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(partnersAnswer);
+
+            var result = _controller.ConfirmPartners(Guid.NewGuid()).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+
+            var model = viewResult.Model as ConfirmPartnersViewModel;
+            model.Should().NotBeNull();
+
+            model.PartnerData.DataRows.Count.Should().Be(2);
+            model.PartnerData.DataRows[0].Columns[0].Should().Be("Miss I Partner");
+            model.PartnerData.DataRows[0].Columns[1].Should().Be("Mar 1976");
+            model.PartnerData.DataRows[1].Columns[0].Should().Be("Org Ltd");
+            model.PartnerData.DataRows[1].Columns[1].Should().BeNullOrEmpty();
+        }
     }
 }
