@@ -55,6 +55,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return await SoleTraderOrPartnership(applicationId);
             }
 
+            var peopleData = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.AddPeopleInControl);
+
+            if (peopleData != null && peopleData.Value != null)
+            {
+                return await ConfirmPeopleInControl(applicationId);
+            }
+
             return await AddPeopleInControl(applicationId);
         }
 
@@ -716,6 +723,114 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return RedirectToAction("ConfirmPeopleInControl", new { model.ApplicationId });
         }
 
+        public async Task<IActionResult> RemovePartner(Guid applicationId, int index)
+        {
+            var partnerTableData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddPartners);
+
+            if (index >= partnerTableData.DataRows.Count)
+            {
+                return RedirectToAction("ConfirmPartners", new { applicationId });
+            }
+
+            var partnerName = partnerTableData.DataRows[index].Columns[0];
+
+            return await ConfirmRemovalOfPersonInControl(applicationId, partnerName, "RemovePartnerDetails");
+        }
+
+        public async Task<IActionResult> RemovePeopleInControl(Guid applicationId, int index)
+        {
+            var personTableData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddPeopleInControl);
+
+            if (index >= personTableData.DataRows.Count)
+            {
+                return RedirectToAction("ConfirmPeopleInControl", new { applicationId });
+            }
+
+            var personName = personTableData.DataRows[index].Columns[0];
+
+            return await ConfirmRemovalOfPersonInControl(applicationId, personName, "RemovePscDetails");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemovePartnerDetails(ConfirmRemovePersonInControlViewModel model)
+        {
+            return await RemoveItemFromPscsList(
+                model,
+                RoatpWorkflowPageIds.WhosInControl.AddPartners,
+                RoatpYourOrganisationQuestionIdConstants.AddPartners,                
+                RoatpWorkflowQuestionTags.AddPartners, 
+                "ConfirmPartners");
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> RemovePscDetails(ConfirmRemovePersonInControlViewModel model)
+        {
+            return await RemoveItemFromPscsList(
+                model,
+                RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl,
+                RoatpYourOrganisationQuestionIdConstants.AddPeopleInControl,
+                RoatpWorkflowQuestionTags.AddPeopleInControl,
+                "ConfirmPeopleInControl");
+        }
+
+        private async Task<IActionResult> ConfirmRemovalOfPersonInControl(Guid applicationId, string name, string actionName)
+        {
+            var model = new ConfirmRemovePersonInControlViewModel
+            {
+                ApplicationId = applicationId,
+                Name = name,
+                ActionName = actionName
+            };
+
+            return View("~/Views/Roatp/WhosInControl/ConfirmPscRemoval.cshtml", model);
+        }
+
+        private async Task<IActionResult> RemoveItemFromPscsList(ConfirmRemovePersonInControlViewModel model, string pageId, string questionId, string questionTag, string redirectAction)
+        {
+            if (String.IsNullOrEmpty(model.Confirmation))
+            {
+                model.ErrorMessages = new List<ValidationErrorDetail>
+                {
+                    new ValidationErrorDetail
+                    {
+                        Field = "Confirmation",
+                        ErrorMessage = $"Tell us if you want to remove {model.Name}"
+                    }
+                };
+
+                return View("~/Views/Roatp/WhosInControl/ConfirmPscRemoval.cshtml", model);
+            }
+
+            if (model.Confirmation != "Y")
+            {
+                return RedirectToAction(redirectAction, new { model.ApplicationId }); 
+            }
+
+            var pscData = await _tabularDataRepository.GetTabularDataAnswer(model.ApplicationId, questionTag);
+
+            if ((pscData == null) || (model.Index < 0 || model.Index > pscData.DataRows.Count))
+            {
+                return RedirectToAction(redirectAction, new { model.ApplicationId });
+            }
+
+            pscData.DataRows.RemoveAt(model.Index);
+
+            var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
+            var yourOrganisationSequence =
+                applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
+            var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
+            var whosInControlSection =
+                yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+
+            var result = await _tabularDataRepository.SaveTabularDataAnswer(
+                model.ApplicationId,
+                whosInControlSection.Id,
+                pageId,
+                questionId,
+                pscData);
+
+            return RedirectToAction(redirectAction, new { model.ApplicationId });
+        }
 
         private List<TrusteeDateOfBirth> MapTrusteesDataToViewModel(TabularData trusteeData)
         {

@@ -14,7 +14,6 @@ using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
 using System.Collections.Generic;
 using SFA.DAS.ApplyService.Application.Apply;
-using System.Linq;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
@@ -1447,6 +1446,318 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var model = viewResult.Model as AddEditPeopleInControlViewModel;
             model.Should().NotBeNull();
             model.ErrorMessages.Count.Should().BeGreaterOrEqualTo(1);
+        }
+
+        [Test]
+        public void Remove_partner_shows_confirmation_page_with_partner_name()
+        {
+            var partnerData = new TabularData
+            {
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Columns = new List<string> { "Mrs A Partner" , "Feb 1999" }
+                    },
+                    new TabularDataRow
+                    {
+                        Columns = new List<string> { "Mr A Rogue" , "Feb 1999" }
+                    }
+                }
+            };
+
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(partnerData);
+
+            var index = 1;
+
+            var result = _controller.RemovePartner(Guid.NewGuid(), index).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+
+            var model = viewResult.Model as ConfirmRemovePersonInControlViewModel;
+            model.Should().NotBeNull();
+
+            model.Name.Should().Be("Mr A Rogue");
+            model.Confirmation.Should().BeNullOrEmpty();
+        }
+
+        [Test]
+        public void Remove_partner_redirects_if_invalid_index_supplied()
+        {
+            var partnerData = new TabularData
+            {
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Columns = new List<string> { "Mrs A Partner" , "Feb 1999" }
+                    },
+                    new TabularDataRow
+                    {
+                        Columns = new List<string> { "Mr A Rogue" , "Feb 1999" }
+                    }
+                }
+            };
+
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(partnerData);
+
+            var index = 2;
+
+            var result = _controller.RemovePartner(Guid.NewGuid(), index).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+
+            redirectResult.ActionName.Should().Be("ConfirmPartners");
+        }
+
+
+        [Test]
+        public void Remove_people_in_control_shows_confirmation_page_with_person_name()
+        {
+            var pscData = new TabularData
+            {
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Columns = new List<string> { "Mrs A Person" , "Feb 1999" }
+                    },
+                    new TabularDataRow
+                    {
+                        Columns = new List<string> { "Mr B Rogue" , "Feb 1999" }
+                    }
+                }
+            };
+
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPeopleInControl)).ReturnsAsync(pscData);
+
+            var index = 1;
+
+            var result = _controller.RemovePeopleInControl(Guid.NewGuid(), index).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+
+            var model = viewResult.Model as ConfirmRemovePersonInControlViewModel;
+            model.Should().NotBeNull();
+
+            model.Name.Should().Be("Mr B Rogue");
+            model.Confirmation.Should().BeNullOrEmpty();
+        }
+
+        [Test]
+        public void Remove_people_in_control_redirects_if_invalid_index_supplied()
+        {
+            var pscData = new TabularData
+            {
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Columns = new List<string> { "Mrs A Partner" , "Feb 1999" }
+                    },
+                    new TabularDataRow
+                    {
+                        Columns = new List<string> { "Mr A Rogue" , "Feb 1999" }
+                    }
+                }
+            };
+
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPeopleInControl)).ReturnsAsync(pscData);
+
+            var index = 2;
+
+            var result = _controller.RemovePeopleInControl(Guid.NewGuid(), index).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+
+            redirectResult.ActionName.Should().Be("ConfirmPeopleInControl");
+        }
+        
+        [Test]
+        public void Remove_item_from_pscs_shows_error_if_not_confirmed()
+        {
+            var model = new ConfirmRemovePersonInControlViewModel
+            {
+                ActionName = "Action",
+                ApplicationId = Guid.NewGuid(),
+                Confirmation = null,
+                ErrorMessages = new List<ValidationErrorDetail>(),
+                Index = 1,
+                Name = "Name to be removed"
+            };
+
+            var result = _controller.RemovePartnerDetails(model).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var viewModel = viewResult.Model as ConfirmRemovePersonInControlViewModel;
+            model.Should().NotBeNull();
+            model.ErrorMessages.Count.Should().Be(1);
+            model.ErrorMessages[0].ErrorMessage.Should().Contain(model.Name); 
+        }
+
+        [Test]
+        public void Remove_item_from_partners_redirects_if_chosen_not_to_remove_entry()
+        {
+            var model = new ConfirmRemovePersonInControlViewModel
+            {
+                ActionName = "Action",
+                ApplicationId = Guid.NewGuid(),
+                Confirmation = "N",
+                ErrorMessages = new List<ValidationErrorDetail>(),
+                Index = 1,
+                Name = "Name to be removed"
+            };
+
+            var result = _controller.RemovePartnerDetails(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("ConfirmPartners");
+        }
+
+        [Test]
+        public void Remove_item_from_pscs_redirects_if_chosen_not_to_remove_entry()
+        {
+            var model = new ConfirmRemovePersonInControlViewModel
+            {
+                ActionName = "Action",
+                ApplicationId = Guid.NewGuid(),
+                Confirmation = "N",
+                ErrorMessages = new List<ValidationErrorDetail>(),
+                Index = 1,
+                Name = "Name to be removed"
+            };
+
+            var result = _controller.RemovePscDetails(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("ConfirmPeopleInControl");
+        }
+
+        [Test]
+        public void Remove_item_from_partners_saves_new_answer_with_entry_removed_if_confirm_removal()
+        {
+            var model = new ConfirmRemovePersonInControlViewModel
+            {
+                ActionName = "Action",
+                ApplicationId = Guid.NewGuid(),
+                Confirmation = "Y",
+                ErrorMessages = new List<ValidationErrorDetail>(),
+                Index = 1,
+                Name = "Name to be removed"
+            };
+
+            var partnerData = new TabularData
+            {
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Columns = new List<string> { "Mrs A Partner" , "Feb 1999" }
+                    },
+                    new TabularDataRow
+                    {
+                        Columns = new List<string> { "Name to be removed" , "Feb 1999" }
+                    }
+                }
+            };
+
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(partnerData);
+
+            var sequences = new List<ApplicationSequence>
+            {
+                new ApplicationSequence
+                {
+                    SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
+                    Id = Guid.NewGuid()
+                }
+            };
+
+            _qnaClient.Setup(x => x.GetSequences(It.IsAny<Guid>())).ReturnsAsync(sequences);
+
+            var sections = new List<ApplicationSection>
+            {
+                new ApplicationSection
+                {
+                    SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
+                    Id = Guid.NewGuid()
+                }
+            };
+
+            _qnaClient.Setup(x => x.GetSections(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(sections);
+
+            _tabularDataRepository.Setup(x => x.SaveTabularDataAnswer(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TabularData>())).ReturnsAsync(true).Verifiable();
+
+            var result = _controller.RemovePartnerDetails(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("ConfirmPartners");
+            _tabularDataRepository.Verify(x => x.SaveTabularDataAnswer(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TabularData>()), Times.Once);
+        }
+
+        [Test]
+        public void Remove_item_from_pscs_saves_new_answer_with_entry_removed_if_confirm_removal()
+        {
+            var model = new ConfirmRemovePersonInControlViewModel
+            {
+                ActionName = "Action",
+                ApplicationId = Guid.NewGuid(),
+                Confirmation = "Y",
+                ErrorMessages = new List<ValidationErrorDetail>(),
+                Index = 1,
+                Name = "Name to be removed"
+            };
+
+            var pscsData = new TabularData
+            {
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Columns = new List<string> { "Mrs A Person" , "Feb 1988" }
+                    },
+                    new TabularDataRow
+                    {
+                        Columns = new List<string> { "Name to be removed" , "Feb 1987" }
+                    }
+                }
+            };
+
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPeopleInControl)).ReturnsAsync(pscsData);
+
+            var sequences = new List<ApplicationSequence>
+            {
+                new ApplicationSequence
+                {
+                    SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
+                    Id = Guid.NewGuid()
+                }
+            };
+
+            _qnaClient.Setup(x => x.GetSequences(It.IsAny<Guid>())).ReturnsAsync(sequences);
+
+            var sections = new List<ApplicationSection>
+            {
+                new ApplicationSection
+                {
+                    SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
+                    Id = Guid.NewGuid()
+                }
+            };
+
+            _qnaClient.Setup(x => x.GetSections(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(sections);
+
+            _tabularDataRepository.Setup(x => x.SaveTabularDataAnswer(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TabularData>())).ReturnsAsync(true).Verifiable();
+
+            var result = _controller.RemovePscDetails(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("ConfirmPeopleInControl");
+            _tabularDataRepository.Verify(x => x.SaveTabularDataAnswer(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TabularData>()), Times.Once);
         }
     }
 }
