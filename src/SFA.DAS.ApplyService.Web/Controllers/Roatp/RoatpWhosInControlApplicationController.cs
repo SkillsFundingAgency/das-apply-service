@@ -173,7 +173,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public async Task<IActionResult> ConfirmTrusteesDob(Guid applicationId)
         {
             var trusteesData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
-
+            
             var model = new ConfirmTrusteesDateOfBirthViewModel
             {
                 ApplicationId = applicationId,
@@ -194,9 +194,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             model.TrusteeDatesOfBirth = MapTrusteesDataToViewModel(trusteesData);
 
-            if (model.TrusteeDatesOfBirth.Count == 0) // temporary code - manual trustee entry in future story
+            if (model.TrusteeDatesOfBirth.Count == 0) 
             {
-                return RedirectToAction("TaskList", "RoatpApplication", new { model.ApplicationId });
+                return RedirectToAction("AddPeopleInControl", new { model.ApplicationId });
             }
 
             model.ErrorMessages = TrusteeDateOfBirthValidator.ValidateTrusteeDatesOfBirth(trusteesData, answers);
@@ -233,12 +233,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             return RedirectToAction("TaskList", "RoatpApplication", new { model.ApplicationId });
         }
-                
-        public async Task<IActionResult> AddTrustees(Guid applicationId)
-        {
-            return View("~/Views/Roatp/WhosInControl/AddTrustees.cshtml");
-        }
-
+          
         public async Task<IActionResult> SoleTraderOrPartnership(Guid applicationId)
         {         
             var model = new SoleTraderOrPartnershipViewModel { ApplicationId = applicationId };
@@ -326,8 +321,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             };
 
             var updateResult = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.PartnershipType, organisationTypeAnswer);
-
-
+            
             if (model.PartnershipType == ConfirmPartnershipTypeViewModel.PartnershipTypeIndividual)
             {
                 return RedirectToAction("AddPartner", new { applicationId = model.ApplicationId, partnerIndividual = true });
@@ -340,15 +334,28 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         
         public async Task<IActionResult> AddPartner(Guid applicationId, bool partnerIndividual)
         {
-            var model = new AddEditPartnerViewModel { ApplicationId = applicationId, PartnerTypeIndividual = partnerIndividual };
+            var model = new AddEditPeopleInControlViewModel
+            {
+                ApplicationId = applicationId,
+                DateOfBirthOptional = !partnerIndividual                
+            };
+
+            if (partnerIndividual)
+            {
+                model.Identifier = "individual";
+            }
+            else
+            {
+                model.Identifier = "organisation";
+            }
 
             return View("~/Views/Roatp/WhosInControl/AddPartner.cshtml", model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddPartnerDetails(AddEditPartnerViewModel model)
+        public async Task<IActionResult> AddPartnerDetails(AddEditPeopleInControlViewModel model)
         {
-            var errorMessages = PartnerDetailsValidator.Validate(model);
+            var errorMessages = PeopleInControlValidator.Validate(model);
 
             if (errorMessages.Any())
             {
@@ -379,26 +386,26 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 Id = Guid.NewGuid().ToString(),
                 Columns = new List<string>
                 {
-                    model.PartnerName
+                    model.PersonInControlName
                 }
 
             };
-            if (model.PartnerTypeIndividual)
+            if (!model.DateOfBirthOptional)
             {
-                partnerData.Columns.Add(DateOfBirthFormatter.FormatDateOfBirth(model.PartnerDobMonth, model.PartnerDobYear));
+                partnerData.Columns.Add(DateOfBirthFormatter.FormatDateOfBirth(model.PersonInControlDobMonth, model.PersonInControlDobYear));
             }
             else
             {
                 partnerData.Columns.Add(string.Empty);
             }
+            partnerTableData.DataRows.Add(partnerData);
 
-            var result = await _tabularDataRepository.AddTabularDataRecord(
+            var result = await _tabularDataRepository.SaveTabularDataAnswer(
                 model.ApplicationId, 
                 whosInControlSection.Id, 
                 RoatpWorkflowPageIds.WhosInControl.AddPartners, 
-                RoatpYourOrganisationQuestionIdConstants.AddPartners, 
-                RoatpWorkflowQuestionTags.AddPartners, 
-                partnerData);
+                RoatpYourOrganisationQuestionIdConstants.AddPartners,
+                partnerTableData);
 
             return RedirectToAction("ConfirmPartners", new { applicationId = model.ApplicationId });
         }
@@ -434,18 +441,21 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
                 var partner = partnerTableData.DataRows[index];
                 
-                var model = new AddEditPartnerViewModel
+                var model = new AddEditPeopleInControlViewModel
                 {
                     ApplicationId = applicationId,
-                    PartnerName = partner.Columns[0],
-                    Index = index
+                    PersonInControlName = partner.Columns[0],
+                    Index = index,
+                    Identifier = "organisation",
+                    DateOfBirthOptional = true
                 };
                 if (partner.Columns.Count > 1 && !String.IsNullOrEmpty(partner.Columns[1]))
                 {
                     var dateOfBirth = partner.Columns[1];
-                    model.PartnerDobMonth = DateOfBirthFormatter.GetMonthNumberFromShortDateOfBirth(dateOfBirth);
-                    model.PartnerDobYear = DateOfBirthFormatter.GetYearFromShortDateOfBirth(dateOfBirth);
-                    model.PartnerTypeIndividual = true;
+                    model.PersonInControlDobMonth = DateOfBirthFormatter.GetMonthNumberFromShortDateOfBirth(dateOfBirth);
+                    model.PersonInControlDobYear = DateOfBirthFormatter.GetYearFromShortDateOfBirth(dateOfBirth);
+                    model.DateOfBirthOptional = false;
+                    model.Identifier = "individual";
                 }
                 return View($"~/Views/Roatp/WhosInControl/EditPartner.cshtml", model);
             }
@@ -453,9 +463,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdatePartnerDetails(AddEditPartnerViewModel model)
+        public async Task<IActionResult> UpdatePartnerDetails(AddEditPeopleInControlViewModel model)
         {
-            var errorMessages = PartnerDetailsValidator.Validate(model);
+            var errorMessages = PeopleInControlValidator.Validate(model);
 
             if (errorMessages.Any())
             {
@@ -468,11 +478,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 var partner = new TabularDataRow
                 {
-                    Columns = new List<string> { model.PartnerName }
+                    Columns = new List<string> { model.PersonInControlName }
                 };
-                if (model.PartnerTypeIndividual)
+                if (!model.DateOfBirthOptional)
                 {
-                    partner.Columns.Add(DateOfBirthFormatter.FormatDateOfBirth(model.PartnerDobMonth, model.PartnerDobYear));
+                    partner.Columns.Add(DateOfBirthFormatter.FormatDateOfBirth(model.PersonInControlDobMonth, model.PersonInControlDobYear));
                 }
                 else
                 {

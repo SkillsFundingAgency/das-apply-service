@@ -1,20 +1,9 @@
 ﻿@using MoreLinq;
-@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.AddEditPartnerViewModel
+@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.AddEditPeopleInControlViewModel
 
 @{
-    var title = "Enter the organisation's details";
-    if (Model.PartnerTypeIndividual)
-    {
-        title = "Enter the individual's details";
-    }
-
-    ViewBag.Title = title;
+    ViewBag.Title = $"Enter the {Model.Identifier}'s details";
     Layout = "_Layout";
-
-    bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
-
-    var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
-
 }
 
 <div class="govuk-phase-banner govuk-width-container roatp__navigation">
@@ -61,54 +50,17 @@
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-l">@title</h1>
+                <h1 class="govuk-heading-l">Enter the @Model.Identifier's details</h1>
             </div>
         </div>
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <form method="post" asp-action="AddPartnerDetails">
                     @Html.HiddenFor(x => x.ApplicationId)
-                    @Html.HiddenFor(x => x.PartnerTypeIndividual)
-                    <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="PartnerName" sfa-validationerror-class="form-group-error">
-
-                        <label for="PartnerName" class="govuk-label">Full name</label>
-
-                        <input id="PartnerName" name="PartnerName" type="text" class="govuk-input @isError" asp-for="PartnerName"
-                               sfa-validation-for="PartnerName" sfa-validationerror-class="form-control-error" />
-                    </div>
-
-                    @if (Model.PartnerTypeIndividual)
-                    {
-                        <p class="govuk-label">Date of birth</p>
-                        <span class="govuk-hint" id="dob-hint">
-                            For example, 3 1980
-                        </span>
-                        <div class="govuk-date-input" id="dob">
-                            <div class="govuk-date-input__item">
-                                <div class="govuk-form-group" sfa-validation-for="PartnerDobMonth">
-                                    <label class="govuk-label govuk-date-input__label" for="PartnerDobMonth">Month</label>
-                                    <input value="@Model.PartnerDobMonth"
-                                           class="govuk-input govuk-date-input__input govuk-input--width-2 @isError"
-                                           id="PartnerDobMonth"
-                                           name="PartnerDobMonth"
-                                           type="number"
-                                           pattern="[0-9]*"
-                                           sfa-validation-for="PartnerDobMonth" />
-                                </div>
-                            </div>
-                            <div class="govuk-date-input__item">
-                                <div class="govuk-form-group" sfa-validation-for="PartnerDobYear">
-                                    <label class="govuk-label govuk-date-input__label" for="PartnerDobYear">Year</label>
-                                    <input value="@Model.PartnerDobYear"
-                                           class="govuk-input govuk-date-input__input govuk-input--width-4 @isError"
-                                           id="PartnerDobYear"
-                                           name="PartnerDobYear"
-                                           type="number"
-                                           pattern="[0-9]*"
-                                           sfa-validation-for="PartnerDobYear" />
-                                </div>
-                            </div>
-                        </div>
+                    @Html.HiddenFor(x => x.DateOfBirthOptional)
+                    @Html.HiddenFor(x => x.Identifier)
+                    @{
+                        await Html.RenderPartialAsync("~/Views/Roatp/WhosInControl/AddEditPersonInControl.cshtml", Model);
                     }
 
                     <button type="submit" class="govuk-button">Save and continue</button>

@@ -1046,11 +1046,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
-            var model = viewResult.Model as AddEditPartnerViewModel;
+            var model = viewResult.Model as AddEditPeopleInControlViewModel;
             model.Should().NotBeNull();
-            model.PartnerName.Should().BeNullOrEmpty();
-            model.PartnerDobMonth.Should().BeNullOrEmpty();
-            model.PartnerDobYear.Should().BeNullOrEmpty();
+            model.PersonInControlName.Should().BeNullOrEmpty();
+            model.PersonInControlDobMonth.Should().BeNullOrEmpty();
+            model.PersonInControlDobYear.Should().BeNullOrEmpty();
         }
         
         [TestCase("", "", "", true)]
@@ -1068,12 +1068,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [TestCase("Partner name", "10", "3000", true)]
         public void Add_partner_details_rejects_invalid_values(string partnerName, string dobMonth, string dobYear, bool isIndividual)
         {
-            var viewModel = new AddEditPartnerViewModel
+            var viewModel = new AddEditPeopleInControlViewModel
             {
-                PartnerDobMonth = dobMonth,
-                PartnerDobYear = dobYear,
-                PartnerName = partnerName,
-                PartnerTypeIndividual = isIndividual,
+                PersonInControlDobMonth = dobMonth,
+                PersonInControlDobYear = dobYear,
+                PersonInControlName = partnerName,
+                DateOfBirthOptional = !isIndividual,
                 ApplicationId = Guid.NewGuid(),
                 ErrorMessages = new List<ValidationErrorDetail>()
             };
@@ -1082,7 +1082,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
-            var model = viewResult.Model as AddEditPartnerViewModel;
+            var model = viewResult.Model as AddEditPeopleInControlViewModel;
             model.Should().NotBeNull();
             model.ErrorMessages.Count.Should().BeGreaterOrEqualTo(1);
         }
@@ -1117,14 +1117,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("EditPartner");
 
-            var model = viewResult.Model as AddEditPartnerViewModel;
+            var model = viewResult.Model as AddEditPeopleInControlViewModel;
             model.Should().NotBeNull();
 
             model.Index.Should().Be(index);
-            model.PartnerTypeIndividual.Should().BeTrue();
-            model.PartnerName.Should().Be("Mrs O Partner");
-            model.PartnerDobMonth.Should().Be("6");
-            model.PartnerDobYear.Should().Be("1975");
+            model.DateOfBirthOptional.Should().BeFalse();
+            model.PersonInControlName.Should().Be("Mrs O Partner");
+            model.PersonInControlDobMonth.Should().Be("6");
+            model.PersonInControlDobYear.Should().Be("1975");
         }
 
         [Test]
@@ -1162,14 +1162,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Should().NotBeNull();
             viewResult.ViewName.Should().Contain("EditPartner");
 
-            var model = viewResult.Model as AddEditPartnerViewModel;
+            var model = viewResult.Model as AddEditPeopleInControlViewModel;
             model.Should().NotBeNull();
 
             model.Index.Should().Be(index);
-            model.PartnerTypeIndividual.Should().BeFalse();
-            model.PartnerName.Should().Be("Partner Trust");
-            model.PartnerDobMonth.Should().BeNullOrEmpty();
-            model.PartnerDobYear.Should().BeNullOrEmpty();
+            model.DateOfBirthOptional.Should().BeTrue();
+            model.PersonInControlName.Should().Be("Partner Trust");
+            model.PersonInControlDobMonth.Should().BeNullOrEmpty();
+            model.PersonInControlDobYear.Should().BeNullOrEmpty();
         }
 
         [Test]
@@ -1221,12 +1221,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [TestCase("Partner name", "10", "3000", true)]
         public void Update_partner_details_rejects_invalid_values(string partnerName, string dobMonth, string dobYear, bool isIndividual)
         {
-            var viewModel = new AddEditPartnerViewModel
+            var viewModel = new AddEditPeopleInControlViewModel
             {
-                PartnerDobMonth = dobMonth,
-                PartnerDobYear = dobYear,
-                PartnerName = partnerName,
-                PartnerTypeIndividual = isIndividual,
+                PersonInControlDobMonth = dobMonth,
+                PersonInControlDobYear = dobYear,
+                PersonInControlName = partnerName,
+                DateOfBirthOptional = !isIndividual,
                 ApplicationId = Guid.NewGuid(),
                 ErrorMessages = new List<ValidationErrorDetail>()
             };
@@ -1235,7 +1235,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
-            var model = viewResult.Model as AddEditPartnerViewModel;
+            var model = viewResult.Model as AddEditPeopleInControlViewModel;
             model.Should().NotBeNull();
             model.ErrorMessages.Count.Should().BeGreaterOrEqualTo(1);
         }

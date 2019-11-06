@@ -3,12 +3,7 @@
 
 @{
     ViewBag.Title = "Who is in control of your organisation?";
-    Layout = "_Layout";
-
-    bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
-
-    var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
-
+    Layout = "_Layout";    
 }
 
 <div class="govuk-phase-banner govuk-width-container roatp__navigation">
@@ -78,46 +73,11 @@
             <div class="govuk-grid-column-two-thirds">
                 <form method="post" asp-action="AddPeopleInControlDetails">
                     @Html.HiddenFor(x => x.ApplicationId)
-
-                    <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="PersonInControlName" sfa-validationerror-class="form-group-error">
-
-                        <label for="PersonInControlName" class="govuk-label">Full name</label>
-
-                        <input id="PersonInControlName" name="PersonInControlName" type="text" class="govuk-input @isError" asp-for="PersonInControlName"
-                               sfa-validation-for="PersonInControlName" sfa-validationerror-class="form-control-error" />
-                    </div>
-
-                    <p class="govuk-label">Date of birth</p>
-                    <span class="govuk-hint" id="dob-hint">
-                        For example, 3 1980
-                    </span>
-                    <div class="govuk-date-input" id="dob">
-                        <div class="govuk-date-input__item">
-                            <div class="govuk-form-group" sfa-validation-for="PersonInControlDobMonth">
-                                <label class="govuk-label govuk-date-input__label" for="PersonInControlDobMonth">Month</label>
-                                <input value="@Model.PersonInControlDobMonth"
-                                        class="govuk-input govuk-date-input__input govuk-input--width-2 @isError"
-                                        id="PersonInControlDobMonth"
-                                        name="PersonInControlDobMonth"
-                                        type="number"
-                                        pattern="[0-9]*"
-                                        sfa-validation-for="PersonInControlDobMonth" />
-                            </div>
-                        </div>
-                        <div class="govuk-date-input__item">
-                            <div class="govuk-form-group" sfa-validation-for="PersonInControlDobYear">
-                                <label class="govuk-label govuk-date-input__label" for="PersonInControlDobYear">Year</label>
-                                <input value="@Model.PersonInControlDobYear"
-                                        class="govuk-input govuk-date-input__input govuk-input--width-4 @isError"
-                                        id="PersonInControlDobYear"
-                                        name="PersonInControlDobYear"
-                                        type="number"
-                                        pattern="[0-9]*"
-                                        sfa-validation-for="PersonInControlDobYear" />
-                            </div>
-                        </div>
-                    </div>
-                    
+                    @Html.HiddenFor(x => x.DateOfBirthOptional)
+                    @Html.HiddenFor(x => x.Identifier)
+                    @{
+                        await Html.RenderPartialAsync("~/Views/Roatp/WhosInControl/AddEditPersonInControl.cshtml", Model);
+                    }
 
                     <button type="submit" class="govuk-button">Save and continue</button>
 

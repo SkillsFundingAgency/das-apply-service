@@ -7,7 +7,8 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
     public class AddEditPeopleInControlViewModel
     {
-        public const string DobFieldPrefix = "PersonInControlDob";
+        public bool DateOfBirthOptional { get; set; }
+        public string Identifier { get; set; }
 
         public Guid ApplicationId { get; set; }
         public List<ValidationErrorDetail> ErrorMessages { get; set; }

@@ -38,7 +38,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
                     new ValidationErrorDetail
                     {
                         ErrorMessage = PersonInControlNameMinLengthError,
-                        Field = "PartnerName"
+                        Field = "PersonInControlName"
                     });
             }
             else if (model.PersonInControlName.Length > 255)
@@ -47,14 +47,17 @@ namespace SFA.DAS.ApplyService.Web.Validators
                     new ValidationErrorDetail
                     {
                         ErrorMessage = PersonInControlNameMaxLengthError,
-                        Field = "PartnerName"
+                        Field = "PersonInControlName"
                     });
             }
 
-            var dobErrorMessages = DateOfBirthAnswerValidator.ValidateDateOfBirth(model.PersonInControlDobMonth, model.PersonInControlDobYear, DobFieldPrefix);
-            if (dobErrorMessages.Any())
+            if (!model.DateOfBirthOptional)
             {
-                errorMessages.AddRange(dobErrorMessages);
+                var dobErrorMessages = DateOfBirthAnswerValidator.ValidateDateOfBirth(model.PersonInControlDobMonth, model.PersonInControlDobYear, DobFieldPrefix);
+                if (dobErrorMessages.Any())
+                {
+                    errorMessages.AddRange(dobErrorMessages);
+                }
             }
 
             return errorMessages;
