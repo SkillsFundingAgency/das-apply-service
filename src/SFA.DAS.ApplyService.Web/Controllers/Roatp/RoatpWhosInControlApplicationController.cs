@@ -644,6 +644,79 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return View("~/Views/Roatp/WhosInControl/ConfirmPeopleInControl.cshtml", model);
         }
 
+
+        public async Task<IActionResult> EditPeopleInControl(Guid applicationId, int index)
+        {
+            var personTableData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddPeopleInControl);
+            if (personTableData != null)
+            {
+                if (index >= personTableData.DataRows.Count)
+                {
+                    return RedirectToAction("ConfirmPeopleInControl", new { applicationId });
+                }
+
+                var person = personTableData.DataRows[index];
+                var name = person.Columns[0];
+                var dateOfBirth = person.Columns[1];
+                var model = new AddEditPeopleInControlViewModel
+                {
+                    ApplicationId = applicationId,
+                    PersonInControlName = name,
+                    Index = index,
+                    Identifier = "person",
+                    PersonInControlDobMonth = DateOfBirthFormatter.GetMonthNumberFromShortDateOfBirth(dateOfBirth),
+                    PersonInControlDobYear = DateOfBirthFormatter.GetYearFromShortDateOfBirth(dateOfBirth),
+                    DateOfBirthOptional = false
+                };
+                
+                return View($"~/Views/Roatp/WhosInControl/EditPeopleInControl.cshtml", model);
+            }
+            return RedirectToAction("ConfirmPeopleInControl", new { applicationId });
+        }
+
+        public async Task<IActionResult> UpdatePeopleInControlDetails(AddEditPeopleInControlViewModel model)
+        {
+            var errorMessages = PeopleInControlValidator.Validate(model);
+
+            if (errorMessages.Any())
+            {
+                model.ErrorMessages = errorMessages;
+                return View("~/Views/Roatp/WhosInControl/EditPeopleInControl.cshtml", model);
+            }
+
+            var peopleTableData = await _tabularDataRepository.GetTabularDataAnswer(model.ApplicationId, RoatpWorkflowQuestionTags.AddPeopleInControl);
+            if (peopleTableData != null)
+            {
+                var person = new TabularDataRow
+                {
+                    Columns = new List<string>
+                    {
+                        model.PersonInControlName,
+                        DateOfBirthFormatter.FormatDateOfBirth(model.PersonInControlDobMonth, model.PersonInControlDobYear)
+                    }
+                };
+
+                var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
+                var yourOrganisationSequence =
+                    applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
+                var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
+                var whosInControlSection =
+                    yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+
+                var result = await _tabularDataRepository.EditTabularDataRecord(
+                    model.ApplicationId,
+                    whosInControlSection.Id,
+                    RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl,
+                    RoatpYourOrganisationQuestionIdConstants.AddPeopleInControl,
+                    RoatpWorkflowQuestionTags.AddPeopleInControl,
+                    person,
+                    model.Index);
+            }
+
+            return RedirectToAction("ConfirmPeopleInControl", new { model.ApplicationId });
+        }
+
+
         private List<TrusteeDateOfBirth> MapTrusteesDataToViewModel(TabularData trusteeData)
         {
             var trusteeDatesOfBirth = new List<TrusteeDateOfBirth>();
@@ -667,7 +740,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             }
             
             return trusteeDatesOfBirth;
-        }
+        }          
 
         private TabularData MapAnswersToTrusteesDob(TabularData trusteesData, List<Answer> answers)
         {

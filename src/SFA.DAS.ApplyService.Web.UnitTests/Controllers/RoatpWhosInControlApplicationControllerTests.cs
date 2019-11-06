@@ -1340,5 +1340,113 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             model.Should().NotBeNull();
             model.ErrorMessages.Count.Should().BeGreaterOrEqualTo(1);
         }
+
+        [Test]
+        public void Edit_people_in_control_replays_stored_details_for_an_individual_person()
+        {
+            const int index = 1;
+            var personTableData = new TabularData
+            {
+                HeadingTitles = new List<string> { "Name", "Date of birth" },
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "Miss I Person", "Mar 1976" }
+                    },
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "Mrs O Person", "Jun 1975" }
+                    }
+                }
+            };
+
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPeopleInControl)).ReturnsAsync(personTableData);
+
+            var result = _controller.EditPeopleInControl(Guid.NewGuid(), index).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("EditPeopleInControl");
+
+            var model = viewResult.Model as AddEditPeopleInControlViewModel;
+            model.Should().NotBeNull();
+
+            model.Index.Should().Be(index);
+            model.DateOfBirthOptional.Should().BeFalse();
+            model.PersonInControlName.Should().Be("Mrs O Person");
+            model.PersonInControlDobMonth.Should().Be("6");
+            model.PersonInControlDobYear.Should().Be("1975");
+        }
+                
+        [Test]
+        public void Edit_people_in_control_redirects_to_confirm_page_if_invalid_index_supplied()
+        {
+            const int index = 1;
+            var personTableData = new TabularData
+            {
+                HeadingTitles = new List<string> { "Name", "Date of birth" },
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "Miss I Person", "Mar 1976" }
+                    }
+                }
+            };
+
+            var answerJson = JsonConvert.SerializeObject(personTableData);
+
+            var peopleAnswer = new Answer
+            {
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPeopleInControl,
+                Value = answerJson
+            };
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(peopleAnswer);
+
+            var result = _controller.EditPeopleInControl(Guid.NewGuid(), index).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("ConfirmPeopleInControl");
+        }
+
+        [TestCase("", "", "")]
+        [TestCase("", "", "")]
+        [TestCase("", "1", "")]
+        [TestCase("", "", "1991")]
+        [TestCase("", "13", "1992")]
+        [TestCase("", "12", "999")]
+        [TestCase("", "10", "3000")]
+        [TestCase("Person name", "", "")]
+        [TestCase("Person name", "1", "")]
+        [TestCase("Person name", "", "1991")]
+        [TestCase("Person name", "13", "1992")]
+        [TestCase("Person name", "12", "999")]
+        [TestCase("Person name", "10", "3000")]
+        public void Update_people_in_control_details_rejects_invalid_values(string personName, string dobMonth, string dobYear)
+        {
+            var viewModel = new AddEditPeopleInControlViewModel
+            {
+                PersonInControlDobMonth = dobMonth,
+                PersonInControlDobYear = dobYear,
+                PersonInControlName = personName,
+                DateOfBirthOptional = false,
+                ApplicationId = Guid.NewGuid(),
+                ErrorMessages = new List<ValidationErrorDetail>()
+            };
+
+            var result = _controller.UpdatePeopleInControlDetails(viewModel).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var model = viewResult.Model as AddEditPeopleInControlViewModel;
+            model.Should().NotBeNull();
+            model.ErrorMessages.Count.Should().BeGreaterOrEqualTo(1);
+        }
     }
 }
