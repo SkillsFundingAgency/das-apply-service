@@ -37,26 +37,20 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             var questionsCompleted = SectionHasCompletedQuestions(section);
 
-
-            // NOTES: MFC The SectionText() method can be removed once the QnA json and process conforms to writing details
-            // into the QnA, and has been fixed.  Current areas affected is all of sequence 1, and sequence 4, section 1
+            // NOTES: MFCMFC The SectionText() method can be removed once the QnA json and process conforms to writing details
+            // into the QnA, and has been fixed.  Current areas affected is all of sequence 1, and sequence 4, section 1 (but maybe all section 1s....)
             // In addition, there is probably a case for removing all calls and reads to the ApplyRepository 'Completed' calls
             // (MarkSectionAsCompleted, IsSectionCompleted,RemoveSectionCompleted), and the table 'ApplicationWorkflow' may be dropped
             // I will need to double check there are no other uses for this endpoint before doing that
-            var sectionTextNewWay = GetSectionText(section.PagesComplete, section.PagesActive, sequential);
-            var sectionTextOldWay = SectionText(questionsCompleted, section.SectionCompleted, sequential);
+            var sectionCompleteBasedOnPagesActiveAndComplete = GetSectionText(questionsCompleted, section,sequential);
+            var sectionCompleteBasedOnDatabaseSettingOfIsComplete = SectionText(questionsCompleted, section.SectionCompleted, sequential);
 
+            var sectionText = sectionCompleteBasedOnPagesActiveAndComplete;
 
-            var sectionText = sectionTextNewWay;
-
-            if (sectionTextOldWay != sectionTextNewWay)
+            if (sequenceId == 1 || (sequenceId ==4 && sectionId == 1))
             {
-                if (sequenceId == 1 || (sequenceId == 4 && sectionId <= 2))
-                {
-                    sectionText = sectionTextOldWay;
-                }
+                sectionText = sectionCompleteBasedOnDatabaseSettingOfIsComplete;
             }
-
             
             return sectionText;
         }
@@ -112,17 +106,17 @@ namespace SFA.DAS.ApplyService.Web.Services
             return answeredQuestions;
         }
 
-        private string GetSectionText(int completed, int active, bool sequential)
+        private string GetSectionText(int completedCount, ApplicationSection section,  bool sequential)
         {
-            if (completed == active)
+            if ((section.PagesComplete == section.PagesActive && section.PagesActive > 0))
                 return "Completed";
 
-            if (sequential && completed == 0)
+            if (sequential && completedCount == 0)
             {
                 return "Next";
             }
 
-            if (completed > 0)
+            if (completedCount > 0)
             {
                 return "In Progress";
             }

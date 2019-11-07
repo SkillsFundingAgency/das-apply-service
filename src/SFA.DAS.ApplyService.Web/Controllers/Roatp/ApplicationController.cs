@@ -47,6 +47,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             await _qnaApiClient.DeleteFile(applicationId, selectedSection.Id, pageId, questionId, filename);
 
 
+
             return RedirectToAction("Page", "RoatpApplication", new { applicationId, sequenceId = sequenceNo, sectionId, pageId, redirectAction });
         }
     }
