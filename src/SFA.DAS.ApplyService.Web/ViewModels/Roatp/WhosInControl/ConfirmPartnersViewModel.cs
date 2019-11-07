@@ -3,7 +3,7 @@ using System;
 
 namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
-    public class ConfirmPartnersViewModel
+    public class ConfirmPartnersViewModel : WhosInControlViewModel
     {
         public const int MaximumNumberOfPartners = 50;
 

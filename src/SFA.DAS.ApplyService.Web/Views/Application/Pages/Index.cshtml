@@ -4,6 +4,8 @@
 
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + (@Model.Title ?? "Page not active");
+
+    var hasSectionTitle = !string.IsNullOrEmpty(Model.SectionTitle);
 }
 
 <div class="govuk-phase-banner govuk-width-container roatp__navigation">
@@ -59,16 +61,21 @@
                     var hasModelTitle = !string.IsNullOrEmpty(Model.Title);
                     var hasBodyText = !string.IsNullOrEmpty(Model.BodyText);
 
+                    if (hasSectionTitle)
+                    {
+                        <span class="govuk-caption-l">@Model.SectionTitle</span>
+                    }
+
                     if ((hasModelTitle || hasBodyText) && Model.PageContext != null)
                     {
-                        <span class="govuk-caption-xl">
+                        <span class="govuk-caption-l">
                             @Html.Raw(Model.PageContext)
                         </span>
                     }
 
                     @if (hasModelTitle)
                     {
-                        <h1 class="govuk-heading-xl">
+                        <h1 class="govuk-heading-l">
                             @Html.Raw(Model.Title)
                         </h1>
                     }
@@ -102,12 +109,16 @@
                                     <fieldset class="govuk-fieldset">
                                         @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio" || question.Type == "CheckboxList")
                                         {
-                                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                                                 @if (Model.PageContext != null)
                                                 {
-                                                    <span class="govuk-caption-xl">
+                                                    <span class="govuk-caption-l">
                                                         @Html.Raw(Model.PageContext)
                                                     </span>
+                                                }
+                                                @if (hasSectionTitle)
+                                                {
+                                                    <span class="govuk-caption-l">@Model.SectionTitle</span>
                                                 }
                                                 <h1 class="govuk-fieldset__heading">
                                                     @Html.Raw(question.Label)
@@ -128,12 +139,16 @@
                                             }
                                             @if (Model.PageContext != null)
                                             {
-                                                <span class="govuk-caption-xl">
+                                                <span class="govuk-caption-l">
                                                     @Html.Raw(Model.PageContext)
                                                 </span>
                                             }
+                                            @if (hasSectionTitle)
+                                            {
+                                                <span class="govuk-caption-l">@Model.SectionTitle</span>
+                                            }
                                             <h2 class="govuk-label-wrapper">
-                                                <label class="govuk-label govuk-label--xl" for="@question.QuestionId">
+                                                <label class="govuk-label govuk-label--l" for="@question.QuestionId">
                                                     @Html.Raw(question.Label)
                                                 </label>
                                             </h2>

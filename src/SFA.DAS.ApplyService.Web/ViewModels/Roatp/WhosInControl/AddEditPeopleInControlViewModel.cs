@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
-    public class AddEditPeopleInControlViewModel
+    public class AddEditPeopleInControlViewModel : WhosInControlViewModel
     {
         public bool DateOfBirthOptional { get; set; }
         public string Identifier { get; set; }
