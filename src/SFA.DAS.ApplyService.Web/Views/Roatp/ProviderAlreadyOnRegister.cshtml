@@ -4,7 +4,9 @@
     ViewBag.Title = "Your organisation is already on the RoATP";
     Layout = "_Layout";
 
-    bool showErrors = TempData["ShowErrors"] as bool? ?? false;
+    bool showErrors = !ViewData.ModelState.IsValid;
+
+    var isError = !ViewData.ModelState.IsValid ? "govuk-input--error" : "";
 }
 
 @{ await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml"); }
@@ -49,15 +51,18 @@
             <div class="govuk-grid-column-two-thirds">
                 <form method="post" asp-action="ChangeProviderRoute" asp-controller="RoatpApplicationPreamble">
 
-                    <div class="govuk-form-group" sfa-validation-for="ApplicationRouteId" sfa-validationerror-class="govuk-error-message">
-
+                    <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ApplicationRouteId" sfa-validationerror-class="govuk-error-message">
+                        @if (showErrors)
+                        {
+                            <span class="govuk-error-message" data-valmsg-for="ChangeApplicationRoute" data-valmsg-replace="true" sfa-validation-for="ApplicationRouteId"></span>
+                        }
                         <fieldset class="govuk-fieldset">
 
                             <div class="govuk-radios">
 
                                 <div class="govuk-radios__item">
 
-                                    <input asp-for="ChangeApplicationRoute" class="govuk-radios__input" id="ChangeApplicationRoute-Yes"
+                                    <input asp-for="ChangeApplicationRoute" class="govuk-radios__input @isError" id="ChangeApplicationRoute-Yes"
                                            name="ChangeApplicationRoute" type="radio" value="Y"
                                            sfa-validation-for="ChangeApplicationRoute" sfa-validationerror-class="form-control-error">
                                     <label class="govuk-label govuk-radios__label" for="ChangeApplicationRoute-Yes">
@@ -68,7 +73,7 @@
 
                                 <div class="govuk-radios__item">
 
-                                    <input asp-for="ChangeApplicationRoute" class="govuk-radios__input" id="ChangeApplicationRoute-No"
+                                    <input asp-for="ChangeApplicationRoute" class="govuk-radios__input @isError" id="ChangeApplicationRoute-No"
                                            name="ChangeApplicationRoute" type="radio" value="N"
                                            sfa-validation-for="ChangeApplicationRoute" sfa-validationerror-class="form-control-error">
                                     <label class="govuk-label govuk-radios__label" for="ChangeApplicationRoute-No">
