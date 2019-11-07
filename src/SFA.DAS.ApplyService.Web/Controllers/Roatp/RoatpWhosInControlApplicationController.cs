@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
-using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.Validators;
@@ -772,6 +771,24 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 RoatpYourOrganisationQuestionIdConstants.AddPeopleInControl,
                 RoatpWorkflowQuestionTags.AddPeopleInControl,
                 "ConfirmPeopleInControl");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CompletePeopleInControlSection(Guid applicationId)
+        {
+            // tech debt - this will be reworked by the changes to the QnA config JSON and method
+            // for determining that application section completed is derived (APR-1008)
+
+            var applicationSequences = await _qnaApiClient.GetSequences(applicationId);
+            var yourOrganisationSequence =
+                applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
+            var yourOrganisationSections = await _qnaApiClient.GetSections(applicationId, yourOrganisationSequence.Id);
+            var whosInControlSection =
+                yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+
+            await _applicationApiClient.MarkSectionAsCompleted(applicationId, whosInControlSection.Id);
+
+            return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
         }
 
         private async Task<IActionResult> ConfirmRemovalOfPersonInControl(Guid applicationId, string name, string actionName)
