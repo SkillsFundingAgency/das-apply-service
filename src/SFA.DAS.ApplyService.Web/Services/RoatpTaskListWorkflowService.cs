@@ -47,11 +47,14 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             var sectionText = sectionCompleteBasedOnPagesActiveAndComplete;
 
-            if (sequenceId == 1 || (sequenceId ==4 && sectionId == 1))
+            if (sectionCompleteBasedOnDatabaseSettingOfIsComplete != sectionCompleteBasedOnPagesActiveAndComplete)
             {
-                sectionText = sectionCompleteBasedOnDatabaseSettingOfIsComplete;
+                if (sequenceId == 1 || (sequenceId == 4 && sectionId == 1))
+                {
+                    sectionText = sectionCompleteBasedOnDatabaseSettingOfIsComplete;
+                }
             }
-            
+
             return sectionText;
         }
 
