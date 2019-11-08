@@ -235,16 +235,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Section(Guid applicationId, int sequenceId, int sectionId)
         {
-
-            if (sectionId == Section1Id)
-            {
-                var providerTypeId = await _processPageFlowService.GetApplicationProviderTypeId(applicationId);
-                var introductionPageId = await
-                    _processPageFlowService.GetIntroductionPageIdForSequence(sequenceId, providerTypeId);
-                if (introductionPageId!=null)
-                    return await Page(applicationId, sequenceId, sectionId, introductionPageId, "TaskList",null);
-            }
-
             var sequences = await _qnaApiClient.GetSequences(applicationId);
             var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
             var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);

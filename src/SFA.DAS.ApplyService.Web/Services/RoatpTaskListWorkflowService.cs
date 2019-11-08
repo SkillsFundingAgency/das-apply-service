@@ -49,7 +49,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             if (sectionCompleteBasedOnDatabaseSettingOfIsComplete != sectionCompleteBasedOnPagesActiveAndComplete)
             {
-                if (sequenceId == 1 || (sequenceId == 4 && sectionId == 1))
+                if (sequenceId == 1)
                 {
                     sectionText = sectionCompleteBasedOnDatabaseSettingOfIsComplete;
                 }
