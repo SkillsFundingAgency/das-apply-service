@@ -95,6 +95,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 InputClasses = q.Input.InputClasses,
                 Hint = q.Hint,
                 Options = q.Input.Options,
+                Validations = q.Input.Validations,
                 Value = page.AllowMultipleAnswers ? GetMultipleValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.Value,
                 JsonValue = page.AllowMultipleAnswers ? GetMultipleJsonValue(page.PageOfAnswers.LastOrDefault()?.Answers, q, errorMessages) : answers?.SingleOrDefault(a => a?.QuestionId == q.QuestionId)?.JsonValue,
                 ErrorMessages = errorMessages?.Where(f => f.Field.Split("_Key_")[0] == q.QuestionId).ToList(),
