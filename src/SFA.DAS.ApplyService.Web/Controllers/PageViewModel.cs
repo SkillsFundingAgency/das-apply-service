@@ -10,12 +10,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 {
     public class PageViewModel
     {
-        public Guid ApplicationId { get; }
+        public Guid ApplicationId { get; set; }
 
         public const string DefaultCTAButtonText = "Save and continue";
 
         private List<QnaPageOverrideConfiguration> _pageOverrideConfiguration;
         public List<QnaLinksConfiguration> LinksConfiguration;
+
+        public PageViewModel() { }
+
         public PageViewModel(Guid applicationId, int sequenceId, int sectionId, string pageId, Page page, string pageContext, string redirectAction, string returnUrl, List<ValidationErrorDetail> errorMessages, List<QnaPageOverrideConfiguration> pageOverrideConfiguration, List<QnaLinksConfiguration> linksConfiguration)
         {
             ApplicationId = applicationId;
@@ -80,12 +83,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
 
-            var questions = page.Questions;
+            var questionsWithRetainedAnswers = page.Questions;
             var answers = page.PageOfAnswers.FirstOrDefault()?.Answers;
 
             Questions = new List<QuestionViewModel>();
 
-            Questions.AddRange(questions.Select(q => new QuestionViewModel()
+            Questions.AddRange(questionsWithRetainedAnswers.Select(q => new QuestionViewModel()
             {
                 Label = q.Label,
                 ShortLabel = q.ShortLabel,
@@ -105,6 +108,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 PageId = PageId,
                 RedirectAction = RedirectAction
             }));
+
+            foreach (var question in questionsWithRetainedAnswers.Where(x=>x.Value!=null))
+            {
+                foreach (var q in Questions.Where(q => question.QuestionId == q.QuestionId))
+                {
+                    q.Value = question.Value;
+                }
+            }
 
             Feedback = page.Feedback;
             HasFeedback = page.HasFeedback;
