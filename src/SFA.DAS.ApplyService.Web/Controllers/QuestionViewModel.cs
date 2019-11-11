@@ -21,6 +21,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public string Value { get; set; }
         public dynamic JsonValue { get; set; }
         public List<Option> Options { get; set; }
+        public List<ValidationDefinition> Validations { get; set; }
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
 
         public Guid ApplicationId { get; set; }
