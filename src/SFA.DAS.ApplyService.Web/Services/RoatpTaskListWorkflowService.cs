@@ -38,7 +38,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             var questionsCompleted = SectionHasCompletedQuestions(section);
 
             // NOTES: MFCMFC The SectionText() method can be removed once the QnA json and process conforms to writing details
-            // into the QnA, and has been fixed.  Current areas affected is all of sequence 1, and sequence 4, section 1 (but maybe all section 1s....)
+            // into the QnA, and has been fixed.  Current areas affected is all of sequence 1
             // In addition, there is probably a case for removing all calls and reads to the ApplyRepository 'Completed' calls
             // (MarkSectionAsCompleted, IsSectionCompleted,RemoveSectionCompleted), and the table 'ApplicationWorkflow' may be dropped
             // I will need to double check there are no other uses for this endpoint before doing that

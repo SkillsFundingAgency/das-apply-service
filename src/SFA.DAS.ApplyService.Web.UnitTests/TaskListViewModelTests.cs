@@ -296,7 +296,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                     }
                 }
             };
-            //criminalWhatYouNeedSection.SectionCompleted = true;
+
             var criminalOrganisationChecksSection = new ApplicationSection
             {
                 SequenceId = RoatpWorkflowSequenceIds.CriminalComplianceChecks,
@@ -385,10 +385,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
 
             model.SectionStatus(RoatpWorkflowSequenceIds.CriminalComplianceChecks,
                 RoatpWorkflowSectionIds.CriminalComplianceChecks.WhatYouWillNeed, false).Should().Be("Completed");
-            //model.SectionStatus(RoatpWorkflowSequenceIds.CriminalComplianceChecks,
-            //    RoatpWorkflowSectionIds.CriminalComplianceChecks.ChecksOnYourOrganisation, false).Should().Be("In Progress");
-            //model.SectionStatus(RoatpWorkflowSequenceIds.CriminalComplianceChecks,
-            //    RoatpWorkflowSectionIds.CriminalComplianceChecks.CheckOnWhosInControl, false).Should().Be("");
+            model.SectionStatus(RoatpWorkflowSequenceIds.CriminalComplianceChecks,
+                RoatpWorkflowSectionIds.CriminalComplianceChecks.ChecksOnYourOrganisation, false).Should().Be("In Progress");
+            model.SectionStatus(RoatpWorkflowSequenceIds.CriminalComplianceChecks,
+                RoatpWorkflowSectionIds.CriminalComplianceChecks.CheckOnWhosInControl, false).Should().Be("");
         }
     }
 }
