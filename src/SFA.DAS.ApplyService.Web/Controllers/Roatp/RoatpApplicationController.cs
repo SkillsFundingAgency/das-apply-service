@@ -124,10 +124,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private async Task<IActionResult> StartApplication(Guid userId, string applicationType)
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-            var startApplicationData = new {
-                OrganisationReferenceId = applicationDetails.UKPRN.ToString(),
-                OrganisationName = applicationDetails.UkrlpLookupDetails.ProviderName
+            
+            var startApplicationData = new JObject
+            {
+                ["OrganisationReferenceId"] = applicationDetails.UKPRN.ToString(),
+                ["OrganisationName"] = applicationDetails.UkrlpLookupDetails.ProviderName,
+                ["Apply-ProviderRoute"] = applicationDetails.ApplicationRoute.Id.ToString()
             };
+
             var startApplicationJson = JsonConvert.SerializeObject(startApplicationData);
 
             var applicationStartResponse =
