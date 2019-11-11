@@ -55,7 +55,7 @@
                     </div>
                 }
 
-                @if (Model.Questions.Count() > 1)
+                @if (Model.Questions.Count() != 1)
                 {
                     var hasModelTitle = !string.IsNullOrEmpty(Model.Title);
                     var hasBodyText = !string.IsNullOrEmpty(Model.BodyText);
