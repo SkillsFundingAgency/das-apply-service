@@ -200,6 +200,20 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
         }
 
+        public async Task<GetNextActionResponse> GetNextActionBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId)
+        {
+            return await(await _httpClient.GetAsync(
+                    $"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}/action/next"))
+                .Content.ReadAsAsync<GetNextActionResponse>();
+        }
+
+        public async Task<GetNextActionResponse> GetNextAction(Guid applicationId, Guid sectionId, string pageId)
+        {
+            return await(await _httpClient.GetAsync(
+                    $"Applications/{applicationId}/sections/{sectionId}/pages/{pageId}/action/next"))
+                .Content.ReadAsAsync<GetNextActionResponse>();
+        }
+
         protected async Task<HttpResponseMessage> RequestToDownloadFile(HttpRequestMessage request, string message = null)
         {
             HttpRequestMessage clonedRequest = null;

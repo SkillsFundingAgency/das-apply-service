@@ -4,7 +4,9 @@
     ViewBag.Title = "Choose your organisation's provider route";
     Layout = "_Layout";
 
-    bool showErrors = TempData["ShowErrors"] as bool? ?? false;
+    bool showErrors = !ViewData.ModelState.IsValid;
+
+    var isError = !ViewData.ModelState.IsValid ? "govuk-input--error" : "";
 }
 
 @{ await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml"); }
@@ -43,8 +45,11 @@
             <div class="govuk-grid-column-two-thirds">
                 <form method="post" asp-action="StartApplication" asp-controller="RoatpApplicationPreamble">
 
-                    <div class="govuk-form-group" sfa-validation-for="ApplicationRouteId" sfa-validationerror-class="govuk-error-message">
-
+                    <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ApplicationRouteId" sfa-validationerror-class="govuk-error-message">
+                        @if (showErrors)
+                        {
+                            <span class="govuk-error-message" data-valmsg-for="ApplicationRouteId" data-valmsg-replace="true" sfa-validation-for="ApplicationRouteId"></span>
+                        }
                         <fieldset class="govuk-fieldset">
 
                             <div class="govuk-radios">
@@ -53,7 +58,7 @@
                                 {
                                     <div class="govuk-radios__item">
 
-                                        <input asp-for="ApplicationRouteId" class="govuk-radios__input" id="route-@applicationRoute.Id"
+                                        <input asp-for="ApplicationRouteId" class="govuk-radios__input @isError" id="route-@applicationRoute.Id"
                                                name="ApplicationRouteId" type="radio" value="@applicationRoute.Id"
                                                sfa-validation-for="ApplicationRouteId" sfa-validationerror-class="form-control-error"
                                                aria-describedby="route-@applicationRoute.Id-item-hint">

@@ -1,3 +1,4 @@
+@using Newtonsoft.Json
 @using NPOI.HPSF.Wellknown
 @using Remotion.Linq.Clauses
 @model SFA.DAS.ApplyService.Web.Controllers.PageViewModel
@@ -56,7 +57,7 @@
                     </div>
                 }
 
-                @if (Model.Questions.Count() > 1)
+                @if (Model.Questions.Count() != 1)
                 {
                     var hasModelTitle = !string.IsNullOrEmpty(Model.Title);
                     var hasBodyText = !string.IsNullOrEmpty(Model.BodyText);
@@ -98,7 +99,9 @@
                 }
 
                 @* no action is specified for the form, post back to the get url to preserve the page hierarchy parameters *@
-                    <form method="post" novalidate enctype="multipart/form-data">
+                    <form method="post" novalidate enctype="multipart/form-data" asp-action="SaveAnswers" asp-route-applicationId="@Model.ApplicationId"
+                          asp-route-sectionId="@Model.SectionId" asp-route-sequenceId="@Model.SequenceId" asp-route-pageId="@Model.PageId">
+                        <input type="hidden" id="ApplicationId" name="ApplicationId" value="@Model.ApplicationId" />
                         <input type="hidden" id="RedirectAction" name="RedirectAction" value="@Model.RedirectAction" />
 
                         @if (Model.Questions.Count() == 1)
@@ -233,15 +236,7 @@
 
                         @if (!Model.HideCTA)
                         {
-                            if (Model.PageOfAnswers != null && Model.PageOfAnswers.Count > 0 && Model.Questions != null && Model.Questions.Count>0 && Model.Questions[0].Type=="FileUpload")
-                            {
-                                <a class="govuk-button" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">@Model.CTAButtonText</a>
-                            }
-                            else
-                            {
-                                <button type="submit" class="govuk-button">@Model.CTAButtonText</button>
-
-                            }
+                            <button type="submit" class="govuk-button">@Model.CTAButtonText</button>
                         }
 
                         @foreach (var linksConfiguration in Model.LinksConfiguration)
