@@ -50,6 +50,18 @@ namespace SFA.DAS.ApplyService.Web.Services
         public async Task<bool> AddTabularDataRecord(Guid applicationId, Guid sectionId, string pageId, string questionId, string questionTag, TabularDataRow record)
         {
             var tabularDataAnswer = await GetTabularDataAnswer(applicationId, questionTag);
+            if (tabularDataAnswer == null)
+            {
+                tabularDataAnswer = new TabularData
+                {
+                    HeadingTitles = new List<string> { "Name", "Date of birth" },
+                    DataRows = new List<TabularDataRow>()
+                };
+            }
+            if (tabularDataAnswer.DataRows == null)
+            {
+                tabularDataAnswer.DataRows = new List<TabularDataRow>();
+            }
             tabularDataAnswer.DataRows.Add(record);
 
             return await SaveTabularDataAnswer(applicationId, sectionId, pageId, questionId, tabularDataAnswer);
