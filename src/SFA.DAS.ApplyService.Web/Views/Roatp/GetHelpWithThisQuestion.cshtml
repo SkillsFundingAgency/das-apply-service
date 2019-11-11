@@ -1,0 +1,40 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.IPageViewModel
+
+<details class="govuk-details govuk-details--gethelp" id="gethelp">
+    <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">
+            Get help with this question
+        </span>
+    </summary>
+    <div class="govuk-details__text govuk-!-padding-bottom-0">
+        <div id="gethelp_content">
+            <p class="govuk-body">Do not include any personal or financial information.</p>
+
+            <form method="post" asp-controller="GetHelp" asp-action="Index">
+                <div class="govuk-character-count" data-module="character-count" data-maxlength="250">
+
+
+                    <div class="govuk-form-group">
+                        <label class="govuk-label" for="gethelp">
+                            What do you need help with?
+                        </label>
+
+                        <textarea class="govuk-textarea js-character-count " id="gethelp" name="gethelp" rows="5" aria-describedby="gethelp-info"></textarea>
+                        @Html.HiddenFor(x => Model.Title)
+                        @Html.HiddenFor(x => Model.ApplicationId)
+                        @Html.HiddenFor(x => Model.SequenceId)
+                        @Html.HiddenFor(x => Model.SectionId)
+                        @Html.HiddenFor(x => Model.PageId)
+                    </div>
+
+                    <span id="gethelp-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
+                        You can enter up to 250 characters
+                    </span>
+                </div>
+
+                <p class="govuk-body">We'll try to respond within 3 working days of receiving this.</p>
+                <button type="submit" class="govuk-button">Send question</button>
+            </form>
+        </div>
+    </div>
+</details>

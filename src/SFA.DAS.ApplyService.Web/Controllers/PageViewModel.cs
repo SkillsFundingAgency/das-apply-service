@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.Extensions.Options;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Web.Configuration;
+using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
-    public class PageViewModel
+    public class PageViewModel : IPageViewModel
     {
         public Guid ApplicationId { get; set; }
 
@@ -65,7 +65,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public string CTAButtonText { get; set; }
         public bool HideCTA { get; set; }
-
+        
         private void SetupPage(Page page, List<ValidationErrorDetail> errorMessages)
         {
             Title = page.Title;
