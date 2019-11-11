@@ -425,7 +425,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     : null;
 
                 viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, pageInvalid, pageContext, redirectAction,
-                    returnUrl, errorMessages, _pageOverrideConfiguration, _qnaLinks);
+                    returnUrl, errorMessages, _pageOverrideConfiguration, _qnaLinks, selectedSection.Title);
 
 
                 viewModel = await TokeniseViewModelProperties(viewModel);
