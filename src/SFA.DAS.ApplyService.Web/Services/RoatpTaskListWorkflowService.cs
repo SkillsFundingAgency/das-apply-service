@@ -15,6 +15,11 @@ namespace SFA.DAS.ApplyService.Web.Services
         {
             var sequence = applicationSequences?.FirstOrDefault(x => (int)x.SequenceId == sequenceId);
 
+            if (sequenceId == 4 && sectionId == 4)
+            {
+                var zzz = "here";
+            }
+
             var section = sequence?.Sections?.FirstOrDefault(x => x.SectionId == sectionId);
             if (section == null)
             {
@@ -42,9 +47,12 @@ namespace SFA.DAS.ApplyService.Web.Services
             // In addition, there is probably a case for removing all calls and reads to the ApplyRepository 'Completed' calls
             // (MarkSectionAsCompleted, IsSectionCompleted,RemoveSectionCompleted), and the table 'ApplicationWorkflow' may be dropped
             // I will need to double check there are no other uses for this endpoint before doing that
+           
+
             var sectionCompleteBasedOnPagesActiveAndComplete = GetSectionText(questionsCompleted, section,sequential);
             var sectionCompleteBasedOnDatabaseSettingOfIsComplete = SectionText(questionsCompleted, section.SectionCompleted, sequential);
 
+            
             var sectionText = sectionCompleteBasedOnPagesActiveAndComplete;
 
             if (sectionCompleteBasedOnDatabaseSettingOfIsComplete != sectionCompleteBasedOnPagesActiveAndComplete)
@@ -106,6 +114,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                         if (matchedAnswer != null && !String.IsNullOrEmpty(matchedAnswer.Value))
                         {
                             answeredQuestions++;
+                            break;
                         }
                     }
                 }
@@ -116,6 +125,9 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         private string GetSectionText(int completedCount, ApplicationSection section,  bool sequential)
         {
+            var pagesCompleted = section.QnAData.Pages.Count(x => x.Complete);
+            var pagesActive = section.QnAData.Pages.Count(x => x.Active);
+
             if ((section.PagesComplete == section.PagesActive && section.PagesActive > 0))
                 return "Completed";
 
