@@ -9,5 +9,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         string SequenceId { get; set; }
         int SectionId { get; set; }
         string PageId { get; set; }
+        bool GetHelpQuerySubmitted { get; set; }
     }
 }

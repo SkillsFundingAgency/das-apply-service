@@ -65,7 +65,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public string CTAButtonText { get; set; }
         public bool HideCTA { get; set; }
-        
+
+        public bool GetHelpQuerySubmitted { get; set; }
+
         private void SetupPage(Page page, List<ValidationErrorDetail> errorMessages)
         {
             Title = page.Title;

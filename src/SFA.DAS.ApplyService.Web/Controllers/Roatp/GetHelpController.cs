@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
+using SFA.DAS.ApplyService.Application.Email;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Configuration;
@@ -24,11 +25,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly IUsersApiClient _usersApiClient;
         private readonly List<TaskListConfiguration> _taskListConfiguration;
         private readonly ISessionService _sessionService;
+        private readonly IGetHelpWithQuestionEmailService _emailService;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
 
         public GetHelpController(ILogger<GetHelpController> logger, IQnaApiClient qnaApiClient, IApplicationApiClient applicationApiClient,
-            IUsersApiClient usersApiClient, ISessionService sessionService, IOptions<List<TaskListConfiguration>> taskListConfiguration)
+            IUsersApiClient usersApiClient, ISessionService sessionService, IOptions<List<TaskListConfiguration>> taskListConfiguration,
+            IGetHelpWithQuestionEmailService emailService)
         {
             _logger = logger;
             _qnaApiClient = qnaApiClient;
@@ -36,71 +39,85 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _usersApiClient = usersApiClient;
             _sessionService = sessionService;
             _taskListConfiguration = taskListConfiguration.Value;
+            _emailService = emailService;
         }
 
-        public async Task<IActionResult> Index(Guid? applicationId, int sequenceId, int sectionId, string pageId, string title, string getHelp)
+        [HttpPost]
+        public async Task<IActionResult> Index(Guid? applicationId, int sequenceId, int sectionId, string pageId, string title, string getHelp, string controller, string action)
         {
-            var model = new GetHelpWithQuestionViewModel();
+            var getHelpQuery = new GetHelpWithQuestion();
 
             if (applicationId.HasValue && applicationId.Value != Guid.Empty)
             {
                 var sequences = await _qnaApiClient.GetSequences(applicationId.Value);
                 var currentSequence = sequences.Single(x => x.SequenceId == sequenceId);
                 var sections = await _qnaApiClient.GetSections(applicationId.Value, currentSequence.Id);
-                var currentSection = sections.Single(x => x.SectionId == sectionId);
+                var currentSection = sections.FirstOrDefault(x => x.SectionId == sectionId);
 
                 var page = await _qnaApiClient.GetPage(applicationId.Value, currentSection.Id, pageId);
 
-                model.PageId = pageId;
-                model.Title = page.Title;
+                getHelpQuery.PageTitle = page.Title;
                 var sequenceConfig = _taskListConfiguration.FirstOrDefault(x => x.Id == sequenceId);
                 if (sequenceConfig != null)
                 {
-                    model.SequenceId = sequenceId.ToString();
+                    getHelpQuery.ApplicationSequence = sequenceConfig.Title;
                 }
-                model.SectionId = currentSection.SectionId;
+                if (currentSection != null)
+                {
+                    getHelpQuery.ApplicationSection = currentSection.Title;
+                }
 
                 var organisationName = await _qnaApiClient.GetAnswerByTag(applicationId.Value, RoatpWorkflowQuestionTags.UkrlpLegalName);
                 if (organisationName != null && !String.IsNullOrWhiteSpace(organisationName.Value))
                 {
-                    model.OrganisationName = organisationName.Value;
+                    getHelpQuery.OrganisationName = organisationName.Value;
                 }
                 else
                 {
-                    model.OrganisationName = "(not set)";
+                    getHelpQuery.OrganisationName = "Not available";
                 }
 
                 var organisationUKPRN = await _qnaApiClient.GetAnswerByTag(applicationId.Value, RoatpWorkflowQuestionTags.UKPRN);
                 if (organisationUKPRN != null && !String.IsNullOrWhiteSpace(organisationUKPRN.Value))
                 {
-                    model.UKPRN = organisationUKPRN.Value;
+                    getHelpQuery.UKPRN = organisationUKPRN.Value;
                 }
                 else
                 {
-                    model.UKPRN = "(not set)";
+                    getHelpQuery.UKPRN = "Not available";
                 }
             }
             else
             {
                 // in preamble so we don't have an application set up yet
                 var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-                model.PageId = "1";
-                model.Title = title;
-                model.SequenceId = "0";
-                model.SectionId = 1;
-                model.OrganisationName = applicationDetails?.UkrlpLookupDetails?.ProviderName;
-                model.UKPRN = applicationDetails?.UKPRN.ToString();
+                getHelpQuery.PageTitle = title;
+                getHelpQuery.ApplicationSequence = "Preamble";
+                getHelpQuery.ApplicationSection = "Preamble";
+                var ukprn = applicationDetails?.UKPRN.ToString();
+                if (String.IsNullOrWhiteSpace(ukprn))
+                {
+                    ukprn = "Not available";
+                }
+                getHelpQuery.UKPRN = ukprn;
+                var organisationName = applicationDetails?.UkrlpLookupDetails?.ProviderName;
+                if (String.IsNullOrWhiteSpace(organisationName))
+                {
+                    ukprn = "Not available";
+                }
+                getHelpQuery.OrganisationName = organisationName;
             }
-
-
-            model.ApplicantsQuery = getHelp;
+            
+            getHelpQuery.GetHelpQuery = getHelp;
 
             var userDetails = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
 
-            model.EmailAddress = userDetails.Email;
-            model.ApplicantFullName = $"{userDetails.GivenNames} {userDetails.FamilyName}";
-            
-            return View("~/Views/Roatp/GetHelpSummary.cshtml", model);
+            getHelpQuery.EmailAddress = userDetails.Email;
+            getHelpQuery.ApplicantFullName = $"{userDetails.GivenNames} {userDetails.FamilyName}";
+
+            await _emailService.SendGetHelpWithQuestionEmail(getHelpQuery);
+
+            return RedirectToAction(action, controller, new { applicationId, sequenceId, sectionId, pageId });
         }
     }
 }
