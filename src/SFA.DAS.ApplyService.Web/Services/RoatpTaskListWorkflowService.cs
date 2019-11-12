@@ -55,6 +55,11 @@ namespace SFA.DAS.ApplyService.Web.Services
                 }
 
                 var previousSectionQuestionsCompleted = SectionHasCompletedQuestions(previousSection);
+                if (previousSectionQuestionsCompleted == 0)
+                    return false;
+
+                
+
                 var previousSectionQuestionsCount = previousSection.QnAData.Pages.Where(p => p.NotRequired == false).SelectMany(x => x.Questions)
                     .DistinctBy(q => q.QuestionId).Count();
                 if (previousSectionQuestionsCompleted < previousSectionQuestionsCount)
