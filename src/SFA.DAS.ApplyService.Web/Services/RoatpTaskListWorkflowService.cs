@@ -35,7 +35,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 return string.Empty;
             }
 
-            var questionsCompleted = SectionHasCompletedQuestions(section);
+            var questionsCompleted = SectionCompletedQuestionsCount(section);
 
             // NOTES: MFCMFC The SectionText() method can be removed once the QnA json and process conforms to writing details
             // into the QnA, and has been fixed.  Current areas affected is all of sequence 1
@@ -73,10 +73,15 @@ namespace SFA.DAS.ApplyService.Web.Services
                     return true;
                 }
 
-                var previousSectionQuestionsCompleted = SectionHasCompletedQuestions(previousSection);
+                var previousSectionsCompletedCount = SectionCompletedQuestionsCount(previousSection);
+                if (previousSectionsCompletedCount == 0)
+                    return false;
+
+                
+
                 var previousSectionQuestionsCount = previousSection.QnAData.Pages.Where(p => p.NotRequired == false).SelectMany(x => x.Questions)
                     .DistinctBy(q => q.QuestionId).Count();
-                if (previousSectionQuestionsCompleted < previousSectionQuestionsCount)
+                if (previousSectionsCompletedCount < previousSectionQuestionsCount)
                 {
                     return false;
                 }
@@ -85,7 +90,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             return true;
         }
 
-        private  int SectionHasCompletedQuestions(ApplicationSection section)
+        private  int SectionCompletedQuestionsCount(ApplicationSection section)
         {
             int answeredQuestions = 0;
             
