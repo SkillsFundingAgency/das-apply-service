@@ -15,11 +15,6 @@ namespace SFA.DAS.ApplyService.Web.Services
         {
             var sequence = applicationSequences?.FirstOrDefault(x => (int)x.SequenceId == sequenceId);
 
-            if (sequenceId == 4 && sectionId == 4)
-            {
-                var zzz = "here";
-            }
-
             var section = sequence?.Sections?.FirstOrDefault(x => x.SectionId == sectionId);
             if (section == null)
             {
