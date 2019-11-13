@@ -289,12 +289,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                                         new Answer {QuestionId = "CC-1", Value = "1"}
                                     }
                                 }
-                            }
+                            },
+                            Active = true,
+                            Complete = true
                         }
                     }
                 }
             };
-            criminalWhatYouNeedSection.SectionCompleted = true;
+
             var criminalOrganisationChecksSection = new ApplicationSection
             {
                 SequenceId = RoatpWorkflowSequenceIds.CriminalComplianceChecks,
@@ -368,8 +370,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                     }
                 }
             };
-            criminalComplianceSequence.Sections.Add(criminalWhatYouNeedSection);
-            criminalComplianceSequence.Sections.Add(criminalOrganisationChecksSection);
+           criminalComplianceSequence.Sections.Add(criminalWhatYouNeedSection);
+           criminalComplianceSequence.Sections.Add(criminalOrganisationChecksSection);
             criminalComplianceSequence.Sections.Add(criminalIndividualChecksSection);
             _applicationSequences.Add(criminalComplianceSequence);
 
