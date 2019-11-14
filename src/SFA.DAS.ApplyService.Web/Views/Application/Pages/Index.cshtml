@@ -234,7 +234,6 @@
                                 if (!string.IsNullOrEmpty(link.LinkPageId))
                                 {
                                     pageId = link.LinkPageId;
-
                                 }
 
                                     if (first && Model.SectionId != 1)
@@ -243,8 +242,7 @@
                                         <a href="@Url.Action(link.Action, link.Controller, new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pageId})">@link.Caption</a>
                                     </p>
                                 }
-
-                                else
+                                    else
                                 {
                                     first = false;
                                    
