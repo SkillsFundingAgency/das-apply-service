@@ -239,16 +239,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Section(Guid applicationId, int sequenceId, int sectionId)
         {
-
-            if (sectionId == Section1Id)
-            {
-                var providerTypeId = await _processPageFlowService.GetApplicationProviderTypeId(applicationId);
-                var introductionPageId = await
-                    _processPageFlowService.GetIntroductionPageIdForSequence(sequenceId, providerTypeId);
-                if (introductionPageId!=null)
-                    return await Page(applicationId, sequenceId, sectionId, introductionPageId, "TaskList",null);
-            }
-
             var sequences = await _qnaApiClient.GetSequences(applicationId);
             var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
             var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
@@ -372,8 +362,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 await RemoveIrrelevantQuestions(applicationId, section);
             }
 
-            var currentPage = section.QnAData.Pages.First(x => x.PageId == pageId);
-            var nextPageId = currentPage.Next.FirstOrDefault(x => x.Conditions == null || x.Conditions.Count==0)?.ReturnId;
+            var nextAction = await _qnaApiClient.GetNextAction(applicationId, currentSection.Id, pageId);
+            var nextPageId = nextAction?.NextActionId;
 
             if (nextPageId == null || section.QnAData.Pages.FirstOrDefault(x => x.PageId == nextPageId) == null)
                 return await TaskList(applicationId);
