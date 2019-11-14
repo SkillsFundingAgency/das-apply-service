@@ -3,12 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
-using SFA.DAS.ApplyService.Application.Email;
 using SFA.DAS.ApplyService.Domain.Roatp;
+using SFA.DAS.ApplyService.EmailService;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Configuration;
 using SFA.DAS.ApplyService.Web.Infrastructure;
-using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +27,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly IGetHelpWithQuestionEmailService _emailService;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
+        private const string GetHelpSubmittedForPageKey = "Roatp_GetHelpSubmitted_{0}";
 
         public GetHelpController(ILogger<GetHelpController> logger, IQnaApiClient qnaApiClient, IApplicationApiClient applicationApiClient,
             IUsersApiClient usersApiClient, ISessionService sessionService, IOptions<List<TaskListConfiguration>> taskListConfiguration,
@@ -116,6 +116,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             getHelpQuery.ApplicantFullName = $"{userDetails.GivenNames} {userDetails.FamilyName}";
 
             await _emailService.SendGetHelpWithQuestionEmail(getHelpQuery);
+
+            var sessionKey = string.Format(GetHelpSubmittedForPageKey, pageId);
+            _sessionService.Set(sessionKey, true);
 
             return RedirectToAction(action, controller, new { applicationId, sequenceId, sectionId, pageId });
         }
