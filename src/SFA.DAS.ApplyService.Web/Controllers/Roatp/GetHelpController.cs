@@ -103,7 +103,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 var organisationName = applicationDetails?.UkrlpLookupDetails?.ProviderName;
                 if (String.IsNullOrWhiteSpace(organisationName))
                 {
-                    ukprn = "Not available";
+                    organisationName = "Not available";
                 }
                 getHelpQuery.OrganisationName = organisationName;
             }

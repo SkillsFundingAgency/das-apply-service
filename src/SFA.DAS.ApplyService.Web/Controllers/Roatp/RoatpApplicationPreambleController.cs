@@ -35,7 +35,8 @@
         private readonly IUsersApiClient _usersApiClient;
         
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
-        
+        private const string GetHelpSubmittedForPageKey = "Roatp_GetHelpSubmitted_{0}";
+
         private string[] StatusOnlyCompanyNumberPrefixes = new[] { "IP", "SP", "IC", "SI", "NP", "NV", "RC", "SR", "NR", "NO" };
 
         private string[] ExcludedCharityCommissionPrefixes = new[] {"SC", "NI"};
@@ -72,11 +73,19 @@
         [Route("enter-uk-provider-reference-number")]
         public async Task<IActionResult> EnterApplicationUkprn(string ukprn)
         {
-            var model = new SearchByUkprnViewModel();
+            var model = new SearchByUkprnViewModel
+            {
+                PageId = "UKPRN"
+            };
             if (!String.IsNullOrWhiteSpace(ukprn))
             {
                 model.UKPRN = ukprn;
             }
+
+            var getHelpSessionKey = string.Format(GetHelpSubmittedForPageKey, "UKPRN");
+            var getHelpSubmitted = _sessionService.Get<bool>(getHelpSessionKey);
+            model.GetHelpQuerySubmitted = getHelpSubmitted;
+
             return View("~/Views/Roatp/EnterApplicationUkprn.cshtml", model);
         }
 
@@ -304,7 +313,10 @@
         [Route("choose-provider-route")]
         public async Task<IActionResult> SelectApplicationRoute()
         {
-            var model = new SelectApplicationRouteViewModel();
+            var model = new SelectApplicationRouteViewModel
+            {
+                PageId = "ApplicationRoute"
+            };
             var applicationRoutes = await GetApplicationRoutesForOrganisation();
 
             model.ApplicationRoutes = applicationRoutes;
@@ -314,6 +326,9 @@
             {
                 model.ApplicationRouteId = applicationDetails.ApplicationRoute.Id;
             }
+            var getHelpSessionKey = string.Format(GetHelpSubmittedForPageKey, "ApplicationRoute");
+            var getHelpSubmitted = _sessionService.Get<bool>(getHelpSessionKey);
+            model.GetHelpQuerySubmitted = getHelpSubmitted;
 
             return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
         }
