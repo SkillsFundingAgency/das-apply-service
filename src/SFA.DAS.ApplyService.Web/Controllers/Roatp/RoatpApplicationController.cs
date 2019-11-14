@@ -286,6 +286,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             string pageContext = string.Empty;
             
+            var section = await _qnaApiClient.GetSection(applicationId, selectedSection.Id);
+            
             if (!ModelState.IsValid)
             {
                 // when the model state has errors the page will be displayed with the values which failed validation
@@ -299,6 +301,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     })).DistinctBy(f => f.Field).ToList()
                     : null;
 
+                if (page.ShowTitleAsCaption)
+                {
+                    page.Title = section.Title;
+                }
+                
                 viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, pageContext, redirectAction,
                     returnUrl, errorMessages, _pageOverrideConfiguration, _qnaLinks);
             }
@@ -311,8 +318,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 {
                     return RedirectToAction("TaskList", new {applicationId = applicationId});
                 }
-
-                var section = await _qnaApiClient.GetSection(applicationId, selectedSection.Id);
 
                 page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
                 if (page == null || page.Questions == null)
@@ -327,6 +332,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 page = await GetDataFedOptions(applicationId, page);
 
+                if (page.ShowTitleAsCaption)
+                {
+                    page.Title = section.Title;
+                }
+                
                 viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, pageContext, redirectAction,
                     returnUrl, null, _pageOverrideConfiguration, _qnaLinks);
 
