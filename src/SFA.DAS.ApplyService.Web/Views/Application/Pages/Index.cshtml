@@ -226,21 +226,31 @@
 
                         @foreach (var linksConfiguration in Model.LinksConfiguration)
                         {
+                            var pageId = Model.PageId;
                             var first = true;
                             @foreach (var link in linksConfiguration.Links)
                             {
-                                if (first && Model.SectionId != 1)
+
+                                if (!string.IsNullOrEmpty(link.LinkPageId))
                                 {
+                                    pageId = link.LinkPageId;
+
+                                }
+
+                                    if (first && Model.SectionId != 1)
+                                    {
                                     <p class="govuk-body skipbutton" id="skipbutton">
-                                        <a href="@Url.Action(link.Action, link.Controller, new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = Model.PageId})">@link.Caption</a>
+                                        <a href="@Url.Action(link.Action, link.Controller, new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pageId})">@link.Caption</a>
                                     </p>
                                 }
 
                                 else
                                 {
                                     first = false;
+                                   
+                                    
                                     <p class="govuk-body govuk-!-margin-bottom-2">
-                                        <a href="@Url.Action(link.Action, link.Controller, new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = Model.PageId})">@link.Caption</a>
+                                        <a href="@Url.Action(link.Action, link.Controller, new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pageId})">@link.Caption</a>
                                     </p>
                                 }
                             }

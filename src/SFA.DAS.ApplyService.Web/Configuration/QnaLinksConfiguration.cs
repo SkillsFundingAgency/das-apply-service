@@ -13,6 +13,7 @@ namespace SFA.DAS.ApplyService.Web.Configuration
         public string Caption { get; set; }
         public string Controller { get; set; }
         public string Action { get; set; }
-        public string PageId { get; set; }
+
+        public string LinkPageId { get; set; }
     }
 }
