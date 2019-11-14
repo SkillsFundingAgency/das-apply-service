@@ -114,7 +114,7 @@ WHERE [TemplateName] IN ( 'EPAOUserApproveRequest' , 'EPAOUserApproveConfirm' )
 IF NOT EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'RoATPGetHelpWithQuestion')
 BEGIN
 	INSERT INTO EmailTemplates ([Id], [Status],[TemplateName],[TemplateId],[Recipients],[CreatedAt],[CreatedBy]) 
-	VALUES (NEWID(), 'Live', N'RoATPGetHelpWithQuestion', N'c84f965c-b4c9-4328-9644-a659037d6a9c', N'RoATP.SUPPORT@education.gov.uk', GETDATE(), 'System')
+	VALUES (NEWID(), 'Live', N'RoATPGetHelpWithQuestion', N'9d1e1a7e-3557-4781-8901-ea627ae70ec2', N'RoATP.SUPPORT@education.gov.uk', GETDATE(), 'System')
 END
 
 -- START OF: ON-1502 Fixes - Remove once deployed to PROD
