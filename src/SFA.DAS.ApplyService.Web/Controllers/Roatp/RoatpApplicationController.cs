@@ -362,13 +362,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 await RemoveIrrelevantQuestions(applicationId, section);
             }
 
-            var currentPage = section.QnAData.Pages.First(x => x.PageId == pageId);
-            var nextPageId = currentPage.Next.FirstOrDefault(x => x.Conditions == null || x.Conditions.Count==0)?.ReturnId;
-
-            if (string.IsNullOrEmpty(nextPageId))
-            {
-                nextPageId = CalculateNextPageId(currentPage);
-            }
+            var nextAction = await _qnaApiClient.GetNextAction(applicationId, currentSection.Id, pageId);
+            var nextPageId = nextAction?.NextActionId;
 
             if (nextPageId == null || section.QnAData.Pages.FirstOrDefault(x => x.PageId == nextPageId) == null)
                 return await TaskList(applicationId);
@@ -383,26 +378,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             });
         }
 
-        private string CalculateNextPageId(Page currentPage)
-        {
-            var conditionalSet = currentPage.Next.Where(x => x.Conditions?.Count > 0);
-            foreach (var conditionals in conditionalSet.Where(c => c.Action == "NextPage"))
-            {
-                foreach (var condition in conditionals.Conditions)
-                {
-                    foreach (var answerSet in currentPage.PageOfAnswers)
-                    {
-                        foreach (var answer in answerSet.Answers)
-                        {
-                            if (answer.QuestionId == condition.QuestionId && answer.Value == condition.MustEqual)
-                               return conditionals.ReturnId;
-                        }
-                    }
-                }
-            }
-
-            return string.Empty;
-        }
         [HttpPost]
         public async Task<IActionResult> SaveAnswers(PageViewModel vm, Guid applicationId)
         {
