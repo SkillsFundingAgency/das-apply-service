@@ -12,5 +12,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public int Index { get; set; }
         public string ActionName { get; set; }
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
+        public string BackAction { get; set; }
     }
 }

@@ -734,7 +734,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             var partnerName = partnerTableData.DataRows[index].Columns[0];
 
-            return await ConfirmRemovalOfPersonInControl(applicationId, partnerName, "RemovePartnerDetails");
+            return await ConfirmRemovalOfPersonInControl(applicationId, partnerName, "RemovePartnerDetails", "ConfirmPartners");
         }
 
         public async Task<IActionResult> RemovePeopleInControl(Guid applicationId, int index)
@@ -748,7 +748,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             var personName = personTableData.DataRows[index].Columns[0];
 
-            return await ConfirmRemovalOfPersonInControl(applicationId, personName, "RemovePscDetails");
+            return await ConfirmRemovalOfPersonInControl(applicationId, personName, "RemovePscDetails", "ConfirmPeopleInControl");
         }
 
         [HttpPost]
@@ -791,13 +791,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
         }
 
-        private async Task<IActionResult> ConfirmRemovalOfPersonInControl(Guid applicationId, string name, string actionName)
+        private async Task<IActionResult> ConfirmRemovalOfPersonInControl(Guid applicationId, string name, string actionName, string backActionName)
         {
             var model = new ConfirmRemovePersonInControlViewModel
             {
                 ApplicationId = applicationId,
                 Name = name,
-                ActionName = actionName
+                ActionName = actionName,
+                BackAction = backActionName
             };
 
             return View("~/Views/Roatp/WhosInControl/ConfirmPscRemoval.cshtml", model);
