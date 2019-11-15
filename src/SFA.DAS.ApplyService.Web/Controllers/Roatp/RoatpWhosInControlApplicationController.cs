@@ -433,6 +433,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             model.PartnerData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddPartners);
 
+            if (model.PartnerData == null || model.PartnerData.DataRows == null || model.PartnerData.DataRows.Count == 0)
+            {
+                return RedirectToAction("PartnershipType", new { applicationId });
+            }
+
             return View("~/Views/Roatp/WhosInControl/ConfirmPartners.cshtml", model);
         }
 
@@ -646,6 +651,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public async Task<IActionResult> ConfirmPeopleInControl(Guid applicationId)
         {
             var peopleInControlData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddPeopleInControl);
+
+            if (peopleInControlData == null || peopleInControlData.DataRows == null || peopleInControlData.DataRows.Count == 0)
+            {
+                return RedirectToAction("AddPeopleInControl", new { applicationId });
+            }
+
             var model = new ConfirmPeopleInControlViewModel { ApplicationId = applicationId, PeopleInControlData = peopleInControlData };
 
             return View("~/Views/Roatp/WhosInControl/ConfirmPeopleInControl.cshtml", model);
