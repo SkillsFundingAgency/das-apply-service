@@ -41,7 +41,7 @@ namespace SFA.DAS.ApplyService.EmailService
         {
             var personalisationTokens = new Dictionary<string, string>
             {
-                { "email address", getHelpWithQuestion.EmailAddress },
+                { "ApplicantEmail", getHelpWithQuestion.EmailAddress },
                 { "ApplicantFullName", getHelpWithQuestion.ApplicantFullName },
                 { "UKPRN", getHelpWithQuestion.UKPRN },
                 { "OrganisationName", getHelpWithQuestion.OrganisationName },
