@@ -109,7 +109,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 RedirectAction = RedirectAction
             }));
 
-            foreach (var question in questionsWithRetainedAnswers.Where(x=>x.Value!=null))
+            foreach (var question in questionsWithRetainedAnswers.Where(x=> !string.IsNullOrEmpty(x.Value)))
             {
                 foreach (var q in Questions.Where(q => question.QuestionId == q.QuestionId))
                 {
