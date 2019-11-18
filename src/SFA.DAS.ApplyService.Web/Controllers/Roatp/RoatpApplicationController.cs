@@ -348,22 +348,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Skip(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
-            var sequences = await _qnaApiClient.GetSequences(applicationId);
-            var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
-            var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
+            var nextAction = await _qnaApiClient.SkipPageBySectionNo(applicationId, sequenceId, sectionId, pageId);
+            var nextPageId = nextAction?.NextActionId;
 
-            var currentSection = sections.Single(x => x.SectionId == sectionId);
-
-            var section = await _qnaApiClient.GetSection(applicationId, currentSection.Id);
+            // Note that SkipPage could have updated the section within QnA, so you must get the latest version!
+            var section = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
 
             if (sequenceId == RoatpWorkflowSequenceIds.YourOrganisation &&
                 sectionId == RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails)
             {
                 await RemoveIrrelevantQuestions(applicationId, section);
             }
-
-            var nextAction = await _qnaApiClient.GetNextAction(applicationId, currentSection.Id, pageId);
-            var nextPageId = nextAction?.NextActionId;
 
             if (nextPageId == null || section.QnAData.Pages.FirstOrDefault(x => x.PageId == nextPageId) == null)
                 return await TaskList(applicationId);
@@ -440,7 +435,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 if (IsFileUploadWithNonEmptyValue(page))
                 {
                     var nextActionResult =
-                        await _qnaApiClient.GetNextActionBySectionNo(applicationId, sequenceId, sectionId, pageId);
+                        await _qnaApiClient.SkipPageBySectionNo(applicationId, sequenceId, sectionId, pageId);
 
                     if (nextActionResult != null && nextActionResult.NextAction == "NextPage")
                     {

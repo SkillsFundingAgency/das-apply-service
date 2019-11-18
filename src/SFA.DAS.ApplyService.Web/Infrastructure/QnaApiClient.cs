@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -10,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using Polly;
 using Polly.Extensions.Http;
@@ -22,9 +22,6 @@ using StartApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartApp
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    using Newtonsoft.Json.Linq;
-    using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
-
     public class QnaApiClient : IQnaApiClient
     {
         private readonly ILogger<QnaApiClient> _logger;
@@ -136,6 +133,13 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .Content.ReadAsAsync<ApplicationSection>();
         }
 
+        public async Task<ApplicationSection> GetSectionBySectionNo(Guid applicationId, int sequenceNo, int sectionNo)
+        {
+            return await (await _httpClient.GetAsync(
+                    $"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}"))
+                .Content.ReadAsAsync<ApplicationSection>();
+        }
+
         public async Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId, Guid sequenceId)
         {
             return await(await _httpClient.GetAsync(
@@ -200,18 +204,17 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
         }
 
-        public async Task<GetNextActionResponse> GetNextActionBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId)
+        public async Task<SkipPageResponse> SkipPageBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId)
         {
-            return await(await _httpClient.GetAsync(
-                    $"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}/action/next"))
-                .Content.ReadAsAsync<GetNextActionResponse>();
+            return await (await _httpClient.PostAsJsonAsync(
+                    $"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}/skip", new object()))
+                .Content.ReadAsAsync<SkipPageResponse>();
         }
 
-        public async Task<GetNextActionResponse> GetNextAction(Guid applicationId, Guid sectionId, string pageId)
+        public async Task<SkipPageResponse> SkipPage(Guid applicationId, Guid sectionId, string pageId)
         {
-            return await(await _httpClient.GetAsync(
-                    $"Applications/{applicationId}/sections/{sectionId}/pages/{pageId}/action/next"))
-                .Content.ReadAsAsync<GetNextActionResponse>();
+            return await (await _httpClient.PostAsJsonAsync($"Applications/{applicationId}/sections/{sectionId}/pages/{pageId}/skip", new object()))
+                .Content.ReadAsAsync<SkipPageResponse>();
         }
 
         protected async Task<HttpResponseMessage> RequestToDownloadFile(HttpRequestMessage request, string message = null)
