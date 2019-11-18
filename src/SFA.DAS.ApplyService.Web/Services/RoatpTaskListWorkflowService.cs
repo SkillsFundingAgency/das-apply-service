@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using MoreLinq;
 using NPOI.POIFS.Storage;
@@ -36,7 +37,28 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             var questionsCompleted = SectionCompletedQuestionsCount(section);
 
-            return SectionText(questionsCompleted, section.SectionCompleted, sequential);
+            // NOTES: MFCMFC The SectionText() method can be removed once the QnA json and process conforms to writing details
+            // into the QnA, and has been fixed.  Current areas affected is all of sequence 1
+            // In addition, there is probably a case for removing all calls and reads to the ApplyRepository 'Completed' calls
+            // (MarkSectionAsCompleted, IsSectionCompleted,RemoveSectionCompleted), and the table 'ApplicationWorkflow' may be dropped
+            // I will need to double check there are no other uses for this endpoint before doing that
+           
+
+            var sectionCompleteBasedOnPagesActiveAndComplete = GetSectionText(questionsCompleted, section,sequential);
+            var sectionCompleteBasedOnDatabaseSettingOfIsComplete = SectionText(questionsCompleted, section.SectionCompleted, sequential);
+
+            
+            var sectionText = sectionCompleteBasedOnPagesActiveAndComplete;
+
+            if (sectionCompleteBasedOnDatabaseSettingOfIsComplete != sectionCompleteBasedOnPagesActiveAndComplete)
+            {
+                if (sequenceId == 1)
+                {
+                    sectionText = sectionCompleteBasedOnDatabaseSettingOfIsComplete;
+                }
+            }
+
+            return sectionText;
         }
 
         public  bool PreviousSectionCompleted(ApplicationSequence sequence, int sectionId, bool sequential)
@@ -87,12 +109,35 @@ namespace SFA.DAS.ApplyService.Web.Services
                         if (matchedAnswer != null && !String.IsNullOrEmpty(matchedAnswer.Value))
                         {
                             answeredQuestions++;
+                            break;
                         }
                     }
                 }
             }
 
             return answeredQuestions;
+        }
+
+        private string GetSectionText(int completedCount, ApplicationSection section,  bool sequential)
+        {
+            var pagesCompleted = section.QnAData.Pages.Count(x => x.Complete);
+            var pagesActive = section.QnAData.Pages.Count(x => x.Active);
+
+            if ((section.PagesComplete == section.PagesActive && section.PagesActive > 0))
+                return "Completed";
+
+            if (sequential && completedCount == 0)
+            {
+                return "Next";
+            }
+
+            if (completedCount > 0)
+            {
+                return "In Progress";
+            }
+
+            return string.Empty;
+
         }
 
         private  string SectionText(int completedCount, bool sectionCompleted, bool sequential)
