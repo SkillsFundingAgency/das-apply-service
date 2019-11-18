@@ -4,6 +4,7 @@
     ViewBag.Title = "Your organisation cannot apply to join the RoATP as an employer provider ";
     Layout = "_Layout";
 
+    bool showErrors = !ViewData.ModelState.IsValid;
 }
 
 @{ await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml"); }
@@ -45,8 +46,11 @@
             <div class="govuk-grid-column-two-thirds">
                 <form method="post" asp-action="ConfirmNonLevyContinue" asp-controller="RoatpApplicationPreamble">
 
-                    <div class="govuk-form-group" sfa-validation-for="ContinueWithApplication" sfa-validationerror-class="govuk-error-message">
-
+                    <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ContinueWithApplication" sfa-validationerror-class="govuk-error-message">
+                        @if (showErrors)
+                        {
+                            <span class="govuk-error-message" data-valmsg-for="ContinueWithApplication" data-valmsg-replace="true" sfa-validation-for="ContinueWithApplication"></span>
+                        }
                         <fieldset class="govuk-fieldset">
 
                             <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
