@@ -82,7 +82,7 @@
                     @{
                         await Html.RenderPartialAsync("~/Views/Roatp/TaskList/YourOrganisationSequence.cshtml", Model);
                     }
-                    @foreach (var applicationSequence in Model.ApplicationSequences.Where(sequence => (int)sequence.SequenceId != RoatpWorkflowSequenceIds.YourOrganisation).OrderBy(seq => seq.SequenceId))
+                    @foreach (var applicationSequence in Model.ApplicationSequences.Where(sequence => !sequence.Sequential).OrderBy(seq => seq.SequenceId))
                     {
                         <li>
                             <h2 class="app-task-list__section">
@@ -95,8 +95,8 @@
                                     {
                                         <li class="app-task-list__item">
                                             <a class="app-task-list__task_name" href="@Url.Action("Section", "RoatpApplication", new {section.ApplicationId, section.SequenceId, section.SectionId})">
-                                                    @Html.Raw(section.Title)
-                                                </a>
+                                                @Html.Raw(section.Title)
+                                            </a>
                                             <strong class="govuk-tag app-task-list__task-@Model.CssClass(section.SequenceId, section.SectionId)" id="completed"> @Model.SectionStatus(section.SequenceId, section.SectionId)</strong>
                                         </li>
                                     }
@@ -107,7 +107,7 @@
                                             @if (Model.SectionStatus(section.SequenceId, section.SectionId).ToLower() == "not required")
                                             {
                                                 <strong class="govuk-tag app-task-list__task-@Model.CssClass(section.SequenceId, section.SectionId)" id="notrequired"> @Model.SectionStatus(section.SequenceId, section.SectionId)</strong>
-                            
+
                                             }
                                         </li>
                                     }
@@ -115,7 +115,9 @@
                             </ul>
                         </li>
                     }
-
+                    @{
+                        await Html.RenderPartialAsync("~/Views/Roatp/TaskList/FinishSequence.cshtml", Model);
+                    }
 
                 </ol>
             </div>
