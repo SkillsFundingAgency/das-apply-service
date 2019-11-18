@@ -430,14 +430,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     return RedirectToAction("TaskList", new { applicationId = applicationId });
                 }
 
-                var section = await _qnaApiClient.GetSection(applicationId, selectedSection.Id);
-
                 if (IsFileUploadWithNonEmptyValue(page))
                 {
                     var nextActionResult =
-                        await _qnaApiClient.SkipPageBySectionNo(applicationId, sequenceId, sectionId, pageId);
+                    await _qnaApiClient.SkipPageBySectionNo(applicationId, sequenceId, sectionId, pageId);
 
-                    if (nextActionResult != null && nextActionResult.NextAction == "NextPage")
+                    if (nextActionResult?.NextAction == "NextPage")
                     {
 
                         return RedirectToAction("Page", new
