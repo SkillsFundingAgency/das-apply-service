@@ -4,6 +4,7 @@
     ViewBag.Title = "Is your organisation a levy-paying employer?";
     Layout = "_Layout";
 
+    bool showErrors = !ViewData.ModelState.IsValid;
 }
 
 @{ await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml"); }
@@ -43,8 +44,11 @@
             <div class="govuk-grid-column-two-thirds">
                 <form method="post" asp-action="SubmitLevyStatus" asp-controller="RoatpApplicationPreamble">
 
-                    <div class="govuk-form-group" sfa-validation-for="LevyPayingEmployer" sfa-validationerror-class="govuk-error-message">
-
+                    <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="LevyPayingEmployer" sfa-validationerror-class="govuk-error-message">
+                        @if (showErrors)
+                        {
+                            <span class="govuk-error-message" data-valmsg-for="LevyPayingEmployer" data-valmsg-replace="true" sfa-validation-for="LevyPayingEmployer"></span>
+                        }
                         <fieldset class="govuk-fieldset">
 
                             <div class="govuk-radios">
