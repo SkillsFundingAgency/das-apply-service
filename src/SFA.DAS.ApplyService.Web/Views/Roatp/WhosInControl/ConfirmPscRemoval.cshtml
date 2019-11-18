@@ -67,7 +67,7 @@
                     @Html.HiddenFor(x => x.ApplicationId)
                     @Html.HiddenFor(x => x.Index)
                     @Html.HiddenFor(x => x.Name)
-                    <div class="govuk-form-group" sfa-validation-for="Confirmation" sfa-validationerror-class="govuk-error-message">
+                    <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="Confirmation" sfa-validationerror-class="govuk-error-message">
 
                         <fieldset class="govuk-fieldset">
 

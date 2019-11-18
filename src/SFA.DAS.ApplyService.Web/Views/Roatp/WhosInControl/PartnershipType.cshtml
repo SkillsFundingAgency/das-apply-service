@@ -3,8 +3,8 @@
 @{
     ViewBag.Title = "What is your organisation's partner?";
     Layout = "_Layout";
-
-    bool showErrors = TempData["ShowErrors"] as bool? ?? false;
+    
+    bool showErrors = !ViewData.ModelState.IsValid;
 }
 
 <div class="govuk-phase-banner govuk-width-container roatp__navigation">
@@ -66,7 +66,7 @@
             <div class="govuk-grid-column-two-thirds">
                 <form method="post" asp-action="PartnershipTypeConfirmed">
                     @Html.HiddenFor(x => x.ApplicationId)
-                    <div class="govuk-form-group" sfa-validation-for="PartnershipType" sfa-validationerror-class="govuk-error-message">
+                    <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="PartnershipType" sfa-validationerror-class="govuk-error-message">
 
                         <fieldset class="govuk-fieldset">
 
