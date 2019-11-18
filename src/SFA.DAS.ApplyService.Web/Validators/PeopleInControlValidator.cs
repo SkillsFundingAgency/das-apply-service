@@ -15,23 +15,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
         public static List<ValidationErrorDetail> Validate(AddEditPeopleInControlViewModel model)
         {
             var errorMessages = new List<ValidationErrorDetail>();
-
-            if (String.IsNullOrWhiteSpace(model.PersonInControlName)
-                && String.IsNullOrWhiteSpace(model.PersonInControlDobMonth)
-                && String.IsNullOrWhiteSpace(model.PersonInControlDobYear))
-            {
-                var message = $"Enter the individual's details";
-
-                errorMessages.Add(
-                    new ValidationErrorDetail
-                    {
-                        ErrorMessage = message,
-                        Field = "PersonInControlName"
-                    });
-
-                return errorMessages; 
-            }
-            
+                        
             if (String.IsNullOrEmpty(model.PersonInControlName))
             {
                 errorMessages.Add(
