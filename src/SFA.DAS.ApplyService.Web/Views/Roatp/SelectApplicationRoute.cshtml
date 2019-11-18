@@ -4,9 +4,9 @@
     ViewBag.Title = "Choose your organisation's provider route";
     Layout = "_Layout";
 
-    bool showErrors = !ViewData.ModelState.IsValid;
+    bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
 
-    var isError = !ViewData.ModelState.IsValid ? "govuk-input--error" : "";
+    var isError = showErrors ? "govuk-input--error" : "";
 }
 
 @{ await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml"); }
@@ -17,7 +17,7 @@
     </form>
 </div>
 
-@if (!ViewData.ModelState.IsValid || showErrors)
+@if (showErrors)
 {
     <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
         <h2 class="govuk-error-summary__title" id="error-summary-title">
@@ -48,7 +48,9 @@
                     <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ApplicationRouteId" sfa-validationerror-class="govuk-error-message">
                         @if (showErrors)
                         {
-                            <span class="govuk-error-message" data-valmsg-for="ApplicationRouteId" data-valmsg-replace="true" sfa-validation-for="ApplicationRouteId"></span>
+                            <span class="govuk-error-message">
+                                @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "ApplicationRouteId")?.ErrorMessage)
+                            </span>
                         }
                         <fieldset class="govuk-fieldset">
 

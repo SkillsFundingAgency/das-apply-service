@@ -4,7 +4,7 @@
     ViewBag.Title = "Is your organisation a levy-paying employer?";
     Layout = "_Layout";
 
-    bool showErrors = !ViewData.ModelState.IsValid;
+    bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
 }
 
 @{ await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml"); }
@@ -47,7 +47,9 @@
                     <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="LevyPayingEmployer" sfa-validationerror-class="govuk-error-message">
                         @if (showErrors)
                         {
-                            <span class="govuk-error-message" data-valmsg-for="LevyPayingEmployer" data-valmsg-replace="true" sfa-validation-for="LevyPayingEmployer"></span>
+                            <span class="govuk-error-message">
+                                @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "LevyPayingEmployer")?.ErrorMessage)
+                            </span>
                         }
                         <fieldset class="govuk-fieldset">
 
