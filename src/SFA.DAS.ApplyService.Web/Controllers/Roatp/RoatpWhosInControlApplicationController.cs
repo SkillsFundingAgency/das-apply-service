@@ -790,7 +790,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 RoatpWorkflowPageIds.WhosInControl.AddPartners,
                 RoatpYourOrganisationQuestionIdConstants.AddPartners,                
                 RoatpWorkflowQuestionTags.AddPartners, 
-                "ConfirmPartners");
+                "ConfirmPartners",
+                model.BackAction);
         }
         
         [HttpPost]
@@ -801,7 +802,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl,
                 RoatpYourOrganisationQuestionIdConstants.AddPeopleInControl,
                 RoatpWorkflowQuestionTags.AddPeopleInControl,
-                "ConfirmPeopleInControl");
+                "ConfirmPeopleInControl", 
+                model.BackAction);
         }
 
         [HttpPost]
@@ -835,7 +837,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return View("~/Views/Roatp/WhosInControl/ConfirmPscRemoval.cshtml", model);
         }
 
-        private async Task<IActionResult> RemoveItemFromPscsList(ConfirmRemovePersonInControlViewModel model, string pageId, string questionId, string questionTag, string redirectAction)
+        private async Task<IActionResult> RemoveItemFromPscsList(ConfirmRemovePersonInControlViewModel model, string pageId, string questionId, string questionTag, string redirectAction, string backAction)
         {
             if (String.IsNullOrEmpty(model.Confirmation))
             {
@@ -844,9 +846,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     new ValidationErrorDetail
                     {
                         Field = "Confirmation",
-                        ErrorMessage = $"Tell us if you want to remove {model.Name}"
+                        ErrorMessage = $"Tell us if you want to remove {model.Name}"                        
                     }
                 };
+                model.BackAction = backAction;
 
                 return View("~/Views/Roatp/WhosInControl/ConfirmPscRemoval.cshtml", model);
             }
