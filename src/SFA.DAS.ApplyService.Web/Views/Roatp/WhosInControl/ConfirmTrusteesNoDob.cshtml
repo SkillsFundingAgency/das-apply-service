@@ -28,13 +28,14 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
+            <span class="govuk-caption-l">@Model.SectionTitle</span>
             @if (Model.Trustees != null && Model.Trustees.TableData != null && Model.Trustees.TableData.DataRows.Count == 1)
             {
-                <h1 class="govuk-heading-xl">Confirm your organisation's trustee</h1>
+                <h1 class="govuk-heading-l">Confirm your organisation's trustee</h1>
             }
             else
             {
-                <h1 class="govuk-heading-xl">Confirm your organisation's trustees</h1>
+                <h1 class="govuk-heading-l">Confirm your organisation's trustees</h1>
             }
             <p class="govuk-body">These are the details we found on the Charity Commission for England and Wales.</p>
 

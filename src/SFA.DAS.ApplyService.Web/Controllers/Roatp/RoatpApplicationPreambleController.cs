@@ -101,8 +101,10 @@
 
             if (!String.IsNullOrEmpty(validationMessage))
             {
-                ModelState.AddModelError(nameof(model.UKPRN), validationMessage);
-                TempData["ShowErrors"] = true;
+                model.ErrorMessages = new List<ValidationErrorDetail>
+                {
+                    new ValidationErrorDetail { Field = "UKPRN", ErrorMessage = validationMessage }
+                };
 
                 return View("~/Views/Roatp/EnterApplicationUkprn.cshtml", model);
             }
@@ -200,6 +202,16 @@
             if (!ModelState.IsValid)
             {
                 model.ApplicationRoutes = await GetApplicationRoutesForOrganisation();
+                model.ErrorMessages = new List<ValidationErrorDetail>();
+                var modelErrors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach(var modelError in modelErrors)
+                {
+                    model.ErrorMessages.Add(new ValidationErrorDetail
+                    {
+                        Field = "ApplicationRouteId",
+                        ErrorMessage = modelError.ErrorMessage
+                    });
+                }
 
                 return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
             }
@@ -238,6 +250,16 @@
 
             if (!ModelState.IsValid)
             {
+                model.ErrorMessages = new List<ValidationErrorDetail>();
+                var modelErrors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var modelError in modelErrors)
+                {
+                    model.ErrorMessages.Add(new ValidationErrorDetail
+                    {
+                        Field = "LevyPayingEmployer",
+                        ErrorMessage = modelError.ErrorMessage
+                    });
+                }
                 return View("~/Views/Roatp/ConfirmLevyStatus.cshtml", model);
             }
             
@@ -266,6 +288,16 @@
         {
             if (!ModelState.IsValid)
             {
+                model.ErrorMessages = new List<ValidationErrorDetail>();
+                var modelErrors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var modelError in modelErrors)
+                {
+                    model.ErrorMessages.Add(new ValidationErrorDetail
+                    {
+                        Field = "ContinueWithApplication",
+                        ErrorMessage = modelError.ErrorMessage
+                    });
+                }
                 return View("~/Views/Roatp/IneligibleNonLevy.cshtml", model);
             }
 
@@ -471,8 +503,19 @@
                 model = new ChangeProviderRouteViewModel
                 {
                     UKPRN = applicationDetails.UKPRN.ToString(),
-                    CurrentProviderType = existingProviderRoute
+                    CurrentProviderType = existingProviderRoute,
+                    ErrorMessages = new List<ValidationErrorDetail>()
                 };
+
+                var modelErrors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var modelError in modelErrors)
+                {
+                    model.ErrorMessages.Add(new ValidationErrorDetail
+                    {
+                        Field = "ChangeApplicationRoute",
+                        ErrorMessage = modelError.ErrorMessage
+                    });
+                }
 
                 return View("~/Views/Roatp/ProviderAlreadyOnRegister.cshtml", model);
             }

@@ -1,10 +1,15 @@
-﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ConfirmPartnershipTypeViewModel
+﻿@using MoreLinq;
+@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ConfirmRemovePersonInControlViewModel
 
 @{
-    ViewBag.Title = "What is your organisation's partner?";
+    var title = $"Are you sure you want to remove {Model.Name}?";
+
+    ViewBag.Title = title;
     Layout = "_Layout";
-    
-    bool showErrors = !ViewData.ModelState.IsValid;
+
+    bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
+
+    var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
 }
 
 <div class="govuk-phase-banner govuk-width-container roatp__navigation">
@@ -22,13 +27,13 @@
 </div>
 
 <div class="grid-row">
-    <form asp-controller="RoatpWhosInControlApplication" asp-action="SoleTraderOrPartnership" method="get" name="backForm">
+    <form asp-controller="RoatpWhosInControlApplication" asp-action="@Model.BackAction" method="get" name="backForm">
         @Html.HiddenFor(x => x.ApplicationId)
         <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
     </form>
 </div>
 
-@if (!ViewData.ModelState.IsValid || showErrors)
+@if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
 {
     <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
         <h2 class="govuk-error-summary__title" id="error-summary-title">
@@ -36,12 +41,14 @@
         </h2>
         <div class="govuk-error-summary__body">
             <ul class="govuk-list govuk-error-summary__list">
-                <li><a sfa-validation-for="PartnershipType"></a></li>
+                @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
+                {
+                    <li><a href="#@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
+                }
             </ul>
         </div>
     </div>
 }
-
 <div class="govuk-width-container">
 
     <main class="govuk-main-wrapper " id="main-content" role="main">
@@ -50,27 +57,22 @@
             <div class="govuk-grid-column-two-thirds">
 
                 <span class="govuk-caption-l">@Model.SectionTitle</span>
-                <h1 class="govuk-heading-l">What is your organisation's partner?</h1>
+                <h1 class="govuk-heading-l">@title</h1>
             </div>
         </div>
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <p class="govuk-body">
-                    If there's more than one person or organisation, you can add them later.
-                </p>
-            </div>
-        </div>
-
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <form method="post" asp-action="PartnershipTypeConfirmed">
+                <form method="post" asp-action="@Model.ActionName">
                     @Html.HiddenFor(x => x.ApplicationId)
-                    <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="PartnershipType" sfa-validationerror-class="govuk-error-message">
+                    @Html.HiddenFor(x => x.Index)
+                    @Html.HiddenFor(x => x.Name)
+                    @Html.HiddenFor(x => x.BackAction)
+                    <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="Confirmation" sfa-validationerror-class="govuk-error-message">
                         @if (showErrors)
                         {
                             <span class="govuk-error-message">
-                                @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "PartnershipType")?.ErrorMessage)
+                                @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "Confirmation")?.ErrorMessage)
                             </span>
                         }
                         <fieldset class="govuk-fieldset">
@@ -79,22 +81,22 @@
 
                                 <div class="govuk-radios__item">
 
-                                    <input asp-for="PartnershipType" class="govuk-radios__input" id="PartnershipType-Individual"
-                                           name="PartnershipType" type="radio" value="Individual"
+                                    <input asp-for="Confirmation" class="govuk-radios__input" id="Confirmation-Yes"
+                                           name="Confirmation" type="radio" value="Y"
                                            sfa-validation-for="PartnershipType" sfa-validationerror-class="form-control-error">
-                                    <label class="govuk-label govuk-radios__label" for="PartnershipType-Individual">
-                                        An individual
+                                    <label class="govuk-label govuk-radios__label" for="Confirmation-Yes">
+                                        Yes
                                     </label>
 
                                 </div>
 
                                 <div class="govuk-radios__item">
 
-                                    <input asp-for="PartnershipType" class="govuk-radios__input" id="PartnershipType-Organisation"
-                                           name="PartnershipType" type="radio" value="Organisation"
-                                           sfa-validation-for="PartnershipType" sfa-validationerror-class="form-control-error">
-                                    <label class="govuk-label govuk-radios__label" for="PartnershipType-Organisation">
-                                        An organisation
+                                    <input asp-for="Confirmation" class="govuk-radios__input" id="Confirmation-No"
+                                           name="Confirmation" type="radio" value="N"
+                                           sfa-validation-for="Confirmation" sfa-validationerror-class="form-control-error">
+                                    <label class="govuk-label govuk-radios__label" for="Confirmation-No">
+                                        No
                                     </label>
 
                                 </div>
@@ -103,6 +105,7 @@
                         </fieldset>
                     </div>
                     <input type="submit" class="govuk-button" value="Save and continue" />
+
                 </form>
             </div>
         </div>
