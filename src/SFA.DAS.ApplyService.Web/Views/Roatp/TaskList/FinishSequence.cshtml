@@ -24,13 +24,25 @@
                 else
                 {
                     <li class="app-task-list__item">
-                        @Html.Raw(section.Title)
-                        @if (Model.SectionStatus(section.SequenceId, section.SectionId).ToLower() == "not required")
-                        {
-                            <strong class="govuk-tag app-task-list__task-@Model.CssClass(section.SequenceId, section.SectionId)" id="notrequired"> @Model.SectionStatus(section.SequenceId, section.SectionId)</strong>
-                        }
+                        @Html.Raw(section.Title)                        
                     </li>
                 }
+            }
+
+            @if (Model.ApplicationSequencesCompleted() && !Model.IntroductionPageNextSectionUnavailable(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.SubmitApplication) && Model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.SubmitApplication).ToLower() != "not required")
+            {
+                <li class="app-task-list__item">
+                    <a class="app-task-list__task_name" href="@Url.Action("SubmitApplication", "RoatpApplication", new { Model.ApplicationId })">
+                        Submit application
+                    </a>
+                    <strong class="govuk-tag app-task-list__task-@Model.CssClass(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.SubmitApplication)" id="completed"> @Model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.SubmitApplication)</strong>
+                </li>
+            }
+            else
+            {
+                <li class="app-task-list__item">
+                    Submit application                    
+                </li>
             }
         </ul>
         

@@ -1,16 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Configuration;
@@ -992,6 +989,23 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, conditionsOfAcceptanceSection.Id, RoatpWorkflowPageIds.ConditionsOfAcceptance, conditionsOfAcceptanceAnswers);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> SubmitApplication(Guid applicationId)
+        {
+            var model = new SubmitApplicationViewModel { ApplicationId = applicationId };
+
+            var organisationName = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpLegalName);
+            model.OrganisationName = organisationName.Value;
+
+            return View("~/Views/Roatp/SubmitApplication.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmSubmitApplication(SubmitApplicationViewModel model)
+        {
+            return null;
+        }
+
         private async Task SaveCompaniesHouseWhosInControlQuestions(Guid applicationId, Guid userId, List<PreambleAnswer> questions)
         {
             var applicationSequences = await _qnaApiClient.GetSequences(applicationId);
@@ -1019,12 +1033,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage, whosInControlQuestions);
         }
-
-        private bool IsPostBack()
-        {
-            return ControllerContext.HttpContext.Request.Method?.ToUpper() == "POST";
-        }
-        
+                
         private async Task<PageViewModel> TokeniseViewModelProperties(PageViewModel viewModel)
         {
             viewModel.Title =  await _questionPropertyTokeniser.GetTokenisedValue(viewModel.ApplicationId, viewModel.Title);

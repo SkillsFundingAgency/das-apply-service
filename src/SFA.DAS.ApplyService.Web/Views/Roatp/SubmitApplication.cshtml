@@ -1,0 +1,59 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.SubmitApplicationViewModel
+
+@{
+    var title = $"Submit application on behalf of {Model.OrganisationName}";
+    ViewBag.Title = title;
+    Layout = "_Layout";
+}
+<div class="govuk-phase-banner govuk-width-container roatp__navigation">
+    <nav>
+        <ul id="navigation" class="roatp__navigation " aria-label="Top Level Navigation">
+            <li class="roatp__navigation-item roatp__navigation-item--active">
+                <a class="govuk-header__link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Application overview</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<div class="govuk-width-container">
+
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-l">@title</h1>
+                <p class="govuk-body">
+                    Before you submit your application, you must check that all of your answers and any files you've uploaded are correct.
+                </p>
+                <p class="govuk-body">
+                    If any of the information provided in this application is wrong, we can fail or reject your application. Your organisation can only apply twice in a 12-month period.
+                </p>
+                <p class="govuk-body">
+                    You can check your answers and file uploads using the <a href="#">application overview</a>, then going into each section.
+                </p>
+                <p class="govuk-body">
+                    You will not be able to view your answers once you submit this application.
+                </p>
+                <form method="post" asp-action="ConfirmSubmitApplication" asp-controller="RoatpApplication">
+                    @Html.HiddenFor(x => x.ApplicationId)
+                    @Html.HiddenFor(x => x.OrganisationName)
+                    <div class="govuk-checkboxes govuk-!-margin-bottom-5">
+                        <div class="govuk-checkboxes__item">
+                            <input type="checkbox" id="ConfirmSubmitApplication" name="ConfirmSubmitApplication" class="govuk-checkboxes__input" />
+                            <label class="govuk-label govuk-checkboxes__label" for="ConfirmSubmitApplication">
+                                I confirm that all the answers and uploads in this application are accurate to the best of my knowledge.
+                            </label>
+
+                        </div>
+                    </div>
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-two-thirds">
+
+                            <input type="submit" class="govuk-button" value="Submit application" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
