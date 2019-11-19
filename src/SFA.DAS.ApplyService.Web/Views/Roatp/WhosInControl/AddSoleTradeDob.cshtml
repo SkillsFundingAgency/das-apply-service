@@ -3,6 +3,12 @@
 
 @{
     var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
+    var showErrors = !String.IsNullOrEmpty(isError);
+    
+    var errorMessages = Model.ErrorMessages != null ? Model.ErrorMessages.DistinctBy(x => x.ErrorMessage) : null;
+    var showDobMonthError = errorMessages != null && errorMessages.FirstOrDefault(x => x.Field == "SoleTraderDobMonth") != null;
+    var showDobYearError = errorMessages != null && errorMessages.FirstOrDefault(x => x.Field == "SoleTraderDobYear") != null;
+
 }
 
 <div class="govuk-phase-banner govuk-width-container roatp__navigation">
@@ -29,7 +35,7 @@
             <ul class="govuk-list govuk-error-summary__list">
                 @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
                 {
-                    <li><a sfa-validation-for="@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
+                    <li><a href="#@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
                 }
             </ul>
         </div>
@@ -51,6 +57,18 @@
                 <span class="govuk-hint" id="dob-hint">
                     For example, 3 1980
                 </span>
+                @if (showErrors)
+                {
+                <span class="govuk-error-message">
+
+                    @Html.Raw(errorMessages.FirstOrDefault(x => x.Field == "SoleTraderDobMonth")?.ErrorMessage)
+                    @if (showDobMonthError && showDobYearError)
+                    {
+                        <br />
+                    }
+                    @Html.Raw(errorMessages.FirstOrDefault(x => x.Field == "SoleTraderDobYear")?.ErrorMessage)
+                </span>
+                }
                 <div class="govuk-date-input" id="dob">
                     <div class="govuk-date-input__item">
                         <div class="govuk-form-group" sfa-validation-for="SoleTraderDobMonth">

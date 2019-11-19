@@ -258,6 +258,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             if (!ModelState.IsValid)
             {
+                model.ErrorMessages = new List<ValidationErrorDetail>();
+                var modelErrors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var modelError in modelErrors)
+                {
+                    model.ErrorMessages.Add(new ValidationErrorDetail
+                    {
+                        Field = "OrganisationType",
+                        ErrorMessage = modelError.ErrorMessage
+                    });
+                }
                 return View("~/Views/Roatp/WhosInControl/SoleTraderOrPartnership.cshtml", model);
             }
 
@@ -308,6 +318,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             if (!ModelState.IsValid)
             {
+                model.ErrorMessages = new List<ValidationErrorDetail>();
+                var modelErrors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var modelError in modelErrors)
+                {
+                    model.ErrorMessages.Add(new ValidationErrorDetail
+                    {
+                        Field = "PartnershipType",
+                        ErrorMessage = modelError.ErrorMessage
+                    });
+                }
                 return View("~/Views/Roatp/WhosInControl/PartnershipType.cshtml", model);
             }
 

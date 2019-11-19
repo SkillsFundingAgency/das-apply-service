@@ -67,7 +67,12 @@
                 <form method="post" asp-action="PartnershipTypeConfirmed">
                     @Html.HiddenFor(x => x.ApplicationId)
                     <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="PartnershipType" sfa-validationerror-class="govuk-error-message">
-
+                        @if (showErrors)
+                        {
+                            <span class="govuk-error-message">
+                                @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "PartnershipType")?.ErrorMessage)
+                            </span>
+                        }
                         <fieldset class="govuk-fieldset">
 
                             <div class="govuk-radios">

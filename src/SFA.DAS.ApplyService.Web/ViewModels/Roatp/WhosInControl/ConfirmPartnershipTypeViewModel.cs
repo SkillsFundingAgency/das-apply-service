@@ -11,5 +11,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public Guid ApplicationId { get; set; }
         [Required(ErrorMessage = "Tell us what your organisation's partner is")]
         public string PartnershipType { get; set; }
+     
     }
 }

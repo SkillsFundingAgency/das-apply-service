@@ -58,7 +58,12 @@
                 <form method="post" asp-action="ConfirmSoleTraderOrPartnership">
                     @Html.HiddenFor(x => x.ApplicationId)
                     <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="OrganisationType" sfa-validationerror-class="govuk-error-message">
-
+                        @if (showErrors)
+                        {
+                            <span class="govuk-error-message">
+                                @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "OrganisationType")?.ErrorMessage)
+                            </span>
+                        }
                         <fieldset class="govuk-fieldset">
 
                             <div class="govuk-radios">
@@ -80,7 +85,7 @@
                                            name="OrganisationType" type="radio" value="Partnership"
                                            sfa-validation-for="OrganisationType" sfa-validationerror-class="form-control-error">
                                     <label class="govuk-label govuk-radios__label" for="OrganisationType-Partnership">
-                                       Partnership
+                                        Partnership
                                     </label>
 
                                 </div>
