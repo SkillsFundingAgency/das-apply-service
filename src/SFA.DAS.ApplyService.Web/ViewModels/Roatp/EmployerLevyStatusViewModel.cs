@@ -1,4 +1,5 @@
-﻿
+﻿using SFA.DAS.ApplyService.Domain.Apply;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
@@ -10,5 +11,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         [Required(ErrorMessage = "Tell us if your organisation is a levy-paying employer")]
         public string LevyPayingEmployer { get; set; }
+
+        public List<ValidationErrorDetail> ErrorMessages { get; set; }
     }
 }

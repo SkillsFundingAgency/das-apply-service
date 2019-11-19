@@ -1,11 +1,12 @@
-﻿using SFA.DAS.ApplyService.Domain.Apply;
+﻿
+using SFA.DAS.ApplyService.Domain.Apply;
 using System.Collections.Generic;
 
 namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
-    public class SearchByUkprnViewModel
+    public class WhosInControlViewModel
     {
-        public string UKPRN { get; set; }
+        public string SectionTitle { get => "Tell us who's in control"; }
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
     }
 }
