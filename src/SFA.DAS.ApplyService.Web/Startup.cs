@@ -172,6 +172,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<ICustomValidatorFactory, CustomValidatorFactory>();
             services.AddTransient<IRoatpTaskListWorkflowService, RoatpTaskListWorkflowService>();
             services.AddTransient<IAnswerFormService, AnswerFormService>();
+            services.AddTransient<ITabularDataRepository, TabularDataRepository>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)

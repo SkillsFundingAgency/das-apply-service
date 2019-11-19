@@ -39,14 +39,15 @@
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-
+            
+            <span class="govuk-caption-l">@Model.SectionTitle</span>
             @if (Model.TrusteeDatesOfBirth.Count == 1)
             {
-                <h1 class="govuk-heading-xl">Enter the date of birth for trustee</h1>
+                <h1 class="govuk-heading-l">Enter the date of birth for trustee</h1>
             }
             else
             {
-                <h1 class="govuk-heading-xl">Enter the date of birth for trustees</h1>
+                <h1 class="govuk-heading-l">Enter the date of birth for trustees</h1>
             }
 
             <form method="post" asp-action="TrusteesDobsConfirmed" novalidate enctype="multipart/form-data">
@@ -70,7 +71,7 @@
                                        name="@(trustee.Id + "_Month")"
                                        type="number"
                                        pattern="[0-9]*"
-                                       sfa-validation-for="@(trustee.Id + "_Month")"  />
+                                       sfa-validation-for="@(trustee.Id + "_Month")" />
                             </div>
                         </div>
                         <div class="govuk-date-input__item">
@@ -81,7 +82,7 @@
                                        id="@(trustee.Id + "_Year")"
                                        name="@(trustee.Id + "_Year")"
                                        type="number"
-                                       pattern="[0-9]*" 
+                                       pattern="[0-9]*"
                                        sfa-validation-for="@(trustee.Id + "_Year")" />
                             </div>
                         </div>

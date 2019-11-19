@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
-    public class SoleTraderOrPartnershipViewModel
+    public class SoleTraderOrPartnershipViewModel : WhosInControlViewModel
     {
         public const string OrganisationTypeSoleTrader = "Sole trader";
         public const string OrganisationTypePartnership = "Partnership";
