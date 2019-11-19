@@ -21,11 +21,6 @@ namespace SFA.DAS.ApplyService.Web.Services
                 return string.Empty;
             }
 
-            if (sequenceId == 6 && sectionId == 2)
-            {
-                var x = "here";
-            }
-
             if (notRequiredOverrides!=null && notRequiredOverrides.Any(condition => condition.ConditionalCheckField == "ProviderTypeId" &&
                                                           applicationRouteId == condition.MustEqual &&
                                                           sectionId == condition.SectionId &&
