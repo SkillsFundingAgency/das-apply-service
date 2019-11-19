@@ -275,6 +275,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
             var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
             var selectedSection = sections.Single(x => x.SectionId == sectionId);
+            var sectionTitle = selectedSection.LinkTitle;
 
             var sequence = await _qnaApiClient.GetSequence(applicationId, selectedSequence.Id);
             
@@ -297,7 +298,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     : null;
 
                 viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, pageContext, redirectAction,
-                    returnUrl, errorMessages, _pageOverrideConfiguration, _qnaLinks);
+                    returnUrl, errorMessages, _pageOverrideConfiguration, _qnaLinks, sectionTitle);
             }
             else
             {
@@ -325,7 +326,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 page = await GetDataFedOptions(applicationId, page);
 
                 viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, pageContext, redirectAction,
-                    returnUrl, null, _pageOverrideConfiguration, _qnaLinks);
+                    returnUrl, null, _pageOverrideConfiguration, _qnaLinks, sectionTitle);
 
             }
 
@@ -406,7 +407,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     : null;
 
                 viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, pageInvalid, pageContext, redirectAction,
-                    returnUrl, errorMessages, _pageOverrideConfiguration, _qnaLinks);
+                    returnUrl, errorMessages, _pageOverrideConfiguration, _qnaLinks, selectedSection.Title);
 
 
                 viewModel = await TokeniseViewModelProperties(viewModel);

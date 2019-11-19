@@ -273,7 +273,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var viewResult = result as ViewResult;
             viewResult.ViewName.Should().Contain("EnterApplicationUkprn");
-            _controller.ModelState.ErrorCount.Should().Be(1);
+            var viewModel = viewResult.Model as SearchByUkprnViewModel;
+            viewModel.ErrorMessages.Count.Should().Be(1);
 
         }
 
