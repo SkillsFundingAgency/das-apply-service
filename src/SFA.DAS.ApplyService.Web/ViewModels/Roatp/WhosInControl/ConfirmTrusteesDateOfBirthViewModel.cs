@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
-    public class ConfirmTrusteesDateOfBirthViewModel
+    public class ConfirmTrusteesDateOfBirthViewModel : WhosInControlViewModel
     {
         public Guid ApplicationId { get; set; }
         public List<TrusteeDateOfBirth> TrusteeDatesOfBirth { get; set; }

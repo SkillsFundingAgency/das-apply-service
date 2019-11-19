@@ -23,6 +23,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IQnaApiClient> _qnaClient;
         private Mock<IApplicationApiClient> _applicationClient;
         private Mock<IAnswerFormService> _answerFormService;
+        private Mock<ITabularDataRepository> _tabularDataRepository;
         private RoatpWhosInControlApplicationController _controller;
 
         private TabularData _directors;
@@ -34,9 +35,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _qnaClient = new Mock<IQnaApiClient>();
             _applicationClient = new Mock<IApplicationApiClient>();
             _answerFormService = new Mock<IAnswerFormService>();
+            _tabularDataRepository = new Mock<ITabularDataRepository>();
             _controller = new RoatpWhosInControlApplicationController(_qnaClient.Object, 
                                                                       _applicationClient.Object, 
-                                                                      _answerFormService.Object);
+                                                                      _answerFormService.Object,
+                                                                      _tabularDataRepository.Object);
             _directors = new TabularData
             {
                 Caption = "Directors",
@@ -112,6 +115,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCompany)).ReturnsAsync(verifiedCompaniesHouseAnswer);
+
+            var manualEntryCompaniesHouseAnswer = new Answer
+            {
+                QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseManualEntryRequired,
+                Value = ""
+            };
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.ManualEntryRequiredCompaniesHouse)).ReturnsAsync(manualEntryCompaniesHouseAnswer);
             
             var directorsDataAnswer = new Answer
             {
@@ -151,6 +162,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCompany)).ReturnsAsync(verifiedCompaniesHouseAnswer);
+
+            var manualEntryCompaniesHouseAnswer = new Answer
+            {
+                QuestionId = RoatpPreambleQuestionIdConstants.CompaniesHouseManualEntryRequired,
+                Value = ""
+            };
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.ManualEntryRequiredCompaniesHouse)).ReturnsAsync(manualEntryCompaniesHouseAnswer);
 
             var directorsDataAnswer = new Answer
             {
@@ -197,9 +216,17 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 QuestionId = RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity,
                 Value = "TRUE"
             };
-            
+
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCharity)).ReturnsAsync(verifiedCharityCommissionAnswer);
-            
+
+            var manualEntryCharityCommissionAnswer = new Answer
+            {
+                QuestionId = RoatpPreambleQuestionIdConstants.CharityCommissionTrusteeManualEntry,
+                Value = ""
+            };
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.ManualEntryRequiredCharityCommission)).ReturnsAsync(manualEntryCharityCommissionAnswer);
+
             var trusteesDataAnswer = new Answer
             {
                 QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
@@ -285,26 +312,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Confirm_directors_pscs_presents_lists_of_directors_and_pscs()
         {
-            var directorsJson = JsonConvert.SerializeObject(_directors);
-
-            var directorsAnswer = new Answer
-            {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHouseDirectors,
-                Value = directorsJson
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHouseDirectors)).ReturnsAsync(directorsAnswer);
-
-            var pscsJson = JsonConvert.SerializeObject(_pscs);
-
-            var pscsAnswer = new Answer
-            {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHousePSCs,
-                Value = pscsJson
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHousePscs)).ReturnsAsync(pscsAnswer);
-
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHouseDirectors)).ReturnsAsync(_directors);
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHousePscs)).ReturnsAsync(_pscs);
+            
             var result = _controller.ConfirmDirectorsPscs(Guid.NewGuid()).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
@@ -321,29 +331,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Confirm_directors_pscs_presents_list_of_pscs_but_no_directors()
         {
-            var directorsJson = JsonConvert.SerializeObject(
-            new TabularData {
+            var directorsData = new TabularData
+            {
                 DataRows = new List<TabularDataRow>()
-            });
-
-            var directorsAnswer = new Answer
-            {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHouseDirectors,
-                Value = directorsJson
             };
 
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHouseDirectors)).ReturnsAsync(directorsAnswer);
-
-            var pscsJson = JsonConvert.SerializeObject(_pscs);
-
-            var pscsAnswer = new Answer
-            {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.CompaniesHousePSCs,
-                Value = pscsJson
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHousePscs)).ReturnsAsync(pscsAnswer);
-
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHouseDirectors)).ReturnsAsync(directorsData);
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHousePscs)).ReturnsAsync(_pscs);
+            
             var result = _controller.ConfirmDirectorsPscs(Guid.NewGuid()).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
@@ -516,15 +511,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 }
             };
 
-            var trusteesJson = JsonConvert.SerializeObject(trustees);
-
-            var trusteesAnswer = new Answer
-            {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
-                Value = trusteesJson
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(trusteesAnswer);
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(trustees);
 
             var verifiedCompanyAnswer = new Answer
             {
@@ -568,15 +555,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 }
             };
 
-            var trusteesJson = JsonConvert.SerializeObject(trustees);
-
-            var trusteesAnswer = new Answer
-            {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
-                Value = trusteesJson
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(trusteesAnswer);
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(trustees);
 
             var verifiedCompanyAnswer = new Answer
             {
@@ -620,16 +599,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 }
             };
 
-            var trusteesJson = JsonConvert.SerializeObject(trustees);
-
-            var trusteesAnswer = new Answer
-            {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
-                Value = trusteesJson
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(trusteesAnswer);
-
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(trustees);
+            
             var result = _controller.ConfirmTrusteesDob(Guid.NewGuid()).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
@@ -667,15 +638,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 }
             };
 
-            var trusteesJson = JsonConvert.SerializeObject(trustees);
-
-            var trusteesAnswer = new Answer
-            {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
-                Value = trusteesJson
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(trusteesAnswer);
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(trustees);
 
             var result = _controller.ConfirmTrusteesDob(Guid.NewGuid()).GetAwaiter().GetResult();
 
@@ -722,15 +685,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 }
             };
 
-            var trusteesJson = JsonConvert.SerializeObject(trustees);
-
-            var trusteesAnswer = new Answer
-            {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
-                Value = trusteesJson
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(trusteesAnswer);
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(trustees);
 
             var viewModel = new ConfirmTrusteesDateOfBirthViewModel
             {
@@ -743,7 +698,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             viewResult.Should().NotBeNull();
             var model = viewResult.Model as ConfirmTrusteesDateOfBirthViewModel;
             model.Should().NotBeNull();
-            model.ErrorMessages.Count.Should().Be(2);
+            model.ErrorMessages.Count.Should().Be(1);
         }
 
         [Test]
@@ -802,16 +757,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 }
             };
 
-            var trusteesJson = JsonConvert.SerializeObject(trustees);
-
-            var trusteesAnswer = new Answer
-            {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
-                Value = trusteesJson
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(trusteesAnswer);
-
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(trustees);
+            
             var viewModel = new ConfirmTrusteesDateOfBirthViewModel
             {
                 ApplicationId = Guid.NewGuid()
@@ -882,15 +829,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 }
             };
 
-            var trusteesJson = JsonConvert.SerializeObject(trustees);
-
-            var trusteesAnswer = new Answer
-            {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees,
-                Value = trusteesJson
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(trusteesAnswer);
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(trustees);
 
             var sequences = new List<ApplicationSequence>();
             sequences.Add(new ApplicationSequence
@@ -967,48 +906,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             var result = _controller.ConfirmSoleTraderOrPartnership(model).GetAwaiter().GetResult();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-
-            redirectResult.ActionName.Should().Be(expectedActionName);
-        }
-
-        [TestCase(ConfirmPartnershipTypeViewModel.PartnershipTypeIndividual, "AddPartnerIndividual")]
-        [TestCase(ConfirmPartnershipTypeViewModel.PartnershipTypeOrganisation, "AddPartnerOrganisation")]
-        public void Confirm_partner_type_redirects_to_add_partner_individual_or_organisation_pages(string partnershipType, string expectedActionName)
-        {
-            var sequences = new List<ApplicationSequence>();
-            sequences.Add(new ApplicationSequence
-            {
-                SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
-                Id = Guid.NewGuid()
-            });
-
-            _qnaClient.Setup(x => x.GetSequences(It.IsAny<Guid>())).ReturnsAsync(sequences);
-
-            var sections = new List<ApplicationSection>();
-            sections.Add(new ApplicationSection
-            {
-                SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
-                Id = Guid.NewGuid()
-            });
-
-            _qnaClient.Setup(x => x.GetSections(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(sections);
-
-            var updateResult = new SetPageAnswersResponse
-            {
-                ValidationPassed = true
-            };
-            _qnaClient.Setup(x => x.UpdatePageAnswers(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<List<Answer>>())).ReturnsAsync(updateResult);
-
-            var model = new ConfirmPartnershipTypeViewModel
-            {
-                ApplicationId = Guid.NewGuid(),
-                PartnershipType = partnershipType
-            };
-
-            var result = _controller.PartnershipTypeConfirmed(model).GetAwaiter().GetResult();
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
@@ -1142,21 +1039,208 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 Value = null
             };
 
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartnerIndividual)).ReturnsAsync(individualPartnerAnswer);
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(individualPartnerAnswer);
 
-            var result = _controller.AddPartnerIndividual(Guid.NewGuid()).GetAwaiter().GetResult();
+            var result = _controller.AddPartner(Guid.NewGuid(), true).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
-            var model = viewResult.Model as AddPartnerIndividualViewModel;
+            var model = viewResult.Model as AddEditPeopleInControlViewModel;
             model.Should().NotBeNull();
-            model.PartnerName.Should().BeNullOrEmpty();
-            model.PartnerDobMonth.Should().BeNullOrEmpty();
-            model.PartnerDobYear.Should().BeNullOrEmpty();
+            model.PersonInControlName.Should().BeNullOrEmpty();
+            model.PersonInControlDobMonth.Should().BeNullOrEmpty();
+            model.PersonInControlDobYear.Should().BeNullOrEmpty();
+        }
+        
+        [TestCase("", "", "", true)]
+        [TestCase("", "", "", false)]
+        [TestCase("", "1", "", true)]
+        [TestCase("", "", "1991", true)]
+        [TestCase("", "13", "1992", true)]
+        [TestCase("", "12", "999", true)]
+        [TestCase("", "10", "3000", true)]
+        [TestCase("Partner name", "", "", true)]
+        [TestCase("Partner name", "1", "", true)]
+        [TestCase("Partner name", "", "1991", true)]
+        [TestCase("Partner name", "13", "1992", true)]
+        [TestCase("Partner name", "12", "999", true)]
+        [TestCase("Partner name", "10", "3000", true)]
+        public void Add_partner_details_rejects_invalid_values(string partnerName, string dobMonth, string dobYear, bool isIndividual)
+        {
+            var viewModel = new AddEditPeopleInControlViewModel
+            {
+                PersonInControlDobMonth = dobMonth,
+                PersonInControlDobYear = dobYear,
+                PersonInControlName = partnerName,
+                DateOfBirthOptional = !isIndividual,
+                ApplicationId = Guid.NewGuid(),
+                ErrorMessages = new List<ValidationErrorDetail>()
+            };
+
+            var result = _controller.AddPartnerDetails(viewModel).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var model = viewResult.Model as AddEditPeopleInControlViewModel;
+            model.Should().NotBeNull();
+            model.ErrorMessages.Count.Should().BeGreaterOrEqualTo(1);
+        }
+        
+        [Test]
+        public void Edit_partner_replays_stored_details_for_an_individual_partner()
+        {
+            const int index = 1;
+            var partnerTableData = new TabularData
+            {
+                HeadingTitles = new List<string> { "Name", "Date of birth" },
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "Miss I Partner", "Mar 1976" }
+                    },
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "Mrs O Partner", "Jun 1975" }
+                    }
+                }
+            };
+
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(partnerTableData);
+
+            var result = _controller.EditPartner(Guid.NewGuid(), index).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("EditPartner");
+
+            var model = viewResult.Model as AddEditPeopleInControlViewModel;
+            model.Should().NotBeNull();
+
+            model.Index.Should().Be(index);
+            model.DateOfBirthOptional.Should().BeFalse();
+            model.PersonInControlName.Should().Be("Mrs O Partner");
+            model.PersonInControlDobMonth.Should().Be("6");
+            model.PersonInControlDobYear.Should().Be("1975");
         }
 
         [Test]
-        public void Add_partner_individual_prefills_name_and_dob_month_and_year_if_valid_values_previously_entered()
+        public void Edit_partner_replays_stored_details_for_an_organisation_partner()
+        {
+            const int index = 2;
+            var partnerTableData = new TabularData
+            {
+                HeadingTitles = new List<string> { "Name", "Date of birth" },
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "Mr D Partner", "Mar 1980" }
+                    },
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "Partner LLP", string.Empty }
+                    },
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "Partner Trust", string.Empty }
+                    }
+                }
+            };
+
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(partnerTableData);
+
+            var result = _controller.EditPartner(Guid.NewGuid(), index).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("EditPartner");
+
+            var model = viewResult.Model as AddEditPeopleInControlViewModel;
+            model.Should().NotBeNull();
+
+            model.Index.Should().Be(index);
+            model.DateOfBirthOptional.Should().BeTrue();
+            model.PersonInControlName.Should().Be("Partner Trust");
+            model.PersonInControlDobMonth.Should().BeNullOrEmpty();
+            model.PersonInControlDobYear.Should().BeNullOrEmpty();
+        }
+
+        [Test]
+        public void Edit_partner_redirects_to_confirm_page_if_invalid_index_supplied()
+        {
+            const int index = 1;
+            var partnerTableData = new TabularData
+            {
+                HeadingTitles = new List<string> { "Name", "Date of birth" },
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "Miss I Partner", "Mar 1976" }
+                    }
+                }
+            };
+
+            var answerJson = JsonConvert.SerializeObject(partnerTableData);
+
+            var partnersAnswer = new Answer
+            {
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartners,
+                Value = answerJson
+            };
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(partnersAnswer);
+
+            var result = _controller.EditPartner(Guid.NewGuid(), index).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("ConfirmPartners");
+        }
+
+        [TestCase("", "", "", true)]
+        [TestCase("", "", "", false)]
+        [TestCase("", "1", "", true)]
+        [TestCase("", "", "1991", true)]
+        [TestCase("", "13", "1992", true)]
+        [TestCase("", "12", "999", true)]
+        [TestCase("", "10", "3000", true)]
+        [TestCase("Partner name", "", "", true)]
+        [TestCase("Partner name", "1", "", true)]
+        [TestCase("Partner name", "", "1991", true)]
+        [TestCase("Partner name", "13", "1992", true)]
+        [TestCase("Partner name", "12", "999", true)]
+        [TestCase("Partner name", "10", "3000", true)]
+        public void Update_partner_details_rejects_invalid_values(string partnerName, string dobMonth, string dobYear, bool isIndividual)
+        {
+            var viewModel = new AddEditPeopleInControlViewModel
+            {
+                PersonInControlDobMonth = dobMonth,
+                PersonInControlDobYear = dobYear,
+                PersonInControlName = partnerName,
+                DateOfBirthOptional = !isIndividual,
+                ApplicationId = Guid.NewGuid(),
+                ErrorMessages = new List<ValidationErrorDetail>()
+            };
+
+            var result = _controller.UpdatePartnerDetails(viewModel).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var model = viewResult.Model as AddEditPeopleInControlViewModel;
+            model.Should().NotBeNull();
+            model.ErrorMessages.Count.Should().BeGreaterOrEqualTo(1);
+        }
+
+        [Test]
+        public void Confirm_partners_replays_single_partner()
         {
             var partnerTableData = new TabularData
             {
@@ -1166,34 +1250,62 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                     new TabularDataRow
                     {
                         Id = Guid.NewGuid().ToString(),
-                        Columns = new List<string>
-                        {
-                            "Mrs B Partner",
-                            "Nov 1992"
-                        }
+                        Columns = new List<string> { "Miss I Partner", "Mar 1976" }
                     }
                 }
             };
 
-            var partnerTableJson = JsonConvert.SerializeObject(partnerTableData);
-
-            var individualPartnerAnswer = new Answer
-            {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartners,
-                Value = partnerTableJson
-            };
-
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartnerIndividual)).ReturnsAsync(individualPartnerAnswer);
-
-            var result = _controller.AddPartnerIndividual(Guid.NewGuid()).GetAwaiter().GetResult();
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(partnerTableData);
+            
+            var result = _controller.ConfirmPartners(Guid.NewGuid()).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
-            var model = viewResult.Model as AddPartnerIndividualViewModel;
+
+            var model = viewResult.Model as ConfirmPartnersViewModel;
             model.Should().NotBeNull();
-            model.PartnerName.Should().Be("Mrs B Partner");
-            model.PartnerDobMonth.Should().Be("11");
-            model.PartnerDobYear.Should().Be("1992");
+
+            model.PartnerData.DataRows.Count.Should().Be(1);
+            model.PartnerData.DataRows[0].Columns[0].Should().Be("Miss I Partner");
+            model.PartnerData.DataRows[0].Columns[1].Should().Be("Mar 1976");
+        }
+
+        [Test]
+        public void Confirm_partners_replays_multiple_partners_of_each_type()
+        {
+            var partnerTableData = new TabularData
+            {
+                HeadingTitles = new List<string> { "Name", "Date of birth" },
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "Miss I Partner", "Mar 1976" }
+                    },
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "Org Ltd", string.Empty }
+                    }
+                }
+            };
+
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(partnerTableData);
+
+            var result = _controller.ConfirmPartners(Guid.NewGuid()).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+
+            var model = viewResult.Model as ConfirmPartnersViewModel;
+            model.Should().NotBeNull();
+
+            model.PartnerData.DataRows.Count.Should().Be(2);
+            model.PartnerData.DataRows[0].Columns[0].Should().Be("Miss I Partner");
+            model.PartnerData.DataRows[0].Columns[1].Should().Be("Mar 1976");
+            model.PartnerData.DataRows[1].Columns[0].Should().Be("Org Ltd");
+            model.PartnerData.DataRows[1].Columns[1].Should().BeNullOrEmpty();
         }
 
         [TestCase("", "", "")]
@@ -1202,49 +1314,450 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [TestCase("", "13", "1992")]
         [TestCase("", "12", "999")]
         [TestCase("", "10", "3000")]
-        [TestCase("Partner name", "", "")]
-        [TestCase("Partner name", "1", "")]
-        [TestCase("Partner name", "", "1991")]
-        [TestCase("Partner name", "13", "1992")]
-        [TestCase("Partner name", "12", "999")]
-        [TestCase("Partner name", "10", "3000")]
-        public void Add_individual_partner_details_rejects_invalid_values(string partnerName, string dobMonth, string dobYear)
+        [TestCase("Person name", "", "")]
+        [TestCase("Person name", "1", "")]
+        [TestCase("Person name", "", "1991")]
+        [TestCase("Person name", "13", "1992")]
+        [TestCase("Person name", "12", "999")]
+        [TestCase("Person name", "10", "3000")]
+        public void Add_people_in_control_rejects_invalid_values(string personName, string dobMonth, string dobYear)
         {
-            var viewModel = new SoleTradeDobViewModel
+            var viewModel = new AddEditPeopleInControlViewModel
             {
-                SoleTraderDobMonth = dobMonth,
-                SoleTraderDobYear = dobYear,
+                PersonInControlName = personName,
+                PersonInControlDobMonth = dobMonth,
+                PersonInControlDobYear = dobYear,
                 ApplicationId = Guid.NewGuid(),
                 ErrorMessages = new List<ValidationErrorDetail>()
             };
 
-            var result = _controller.SoleTradeDobConfirmed(viewModel).GetAwaiter().GetResult();
+            var result = _controller.AddPeopleInControlDetails(viewModel).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
-            var model = viewResult.Model as SoleTradeDobViewModel;
+            var model = viewResult.Model as AddEditPeopleInControlViewModel;
             model.Should().NotBeNull();
             model.ErrorMessages.Count.Should().BeGreaterOrEqualTo(1);
         }
 
         [Test]
-        public void Add_partner_organisation_prefills_name_if_valid_values_previously_entered()
+        public void Edit_people_in_control_replays_stored_details_for_an_individual_person()
         {
-            var partnerAnswer = new Answer
+            const int index = 1;
+            var personTableData = new TabularData
             {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPartners,
-                Value = "Organisation Name"
+                HeadingTitles = new List<string> { "Name", "Date of birth" },
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "Miss I Person", "Mar 1976" }
+                    },
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "Mrs O Person", "Jun 1975" }
+                    }
+                }
             };
 
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartnerOrganisation)).ReturnsAsync(partnerAnswer);
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPeopleInControl)).ReturnsAsync(personTableData);
 
-            var result = _controller.AddPartnerOrganisation(Guid.NewGuid()).GetAwaiter().GetResult();
+            var result = _controller.EditPeopleInControl(Guid.NewGuid(), index).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
-            var model = viewResult.Model as AddPartnerOrganisationViewModel;
+            viewResult.ViewName.Should().Contain("EditPeopleInControl");
+
+            var model = viewResult.Model as AddEditPeopleInControlViewModel;
             model.Should().NotBeNull();
-            model.OrganisationName.Should().Be(partnerAnswer.Value);
+
+            model.Index.Should().Be(index);
+            model.DateOfBirthOptional.Should().BeFalse();
+            model.PersonInControlName.Should().Be("Mrs O Person");
+            model.PersonInControlDobMonth.Should().Be("6");
+            model.PersonInControlDobYear.Should().Be("1975");
+        }
+                
+        [Test]
+        public void Edit_people_in_control_redirects_to_confirm_page_if_invalid_index_supplied()
+        {
+            const int index = 1;
+            var personTableData = new TabularData
+            {
+                HeadingTitles = new List<string> { "Name", "Date of birth" },
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Columns = new List<string> { "Miss I Person", "Mar 1976" }
+                    }
+                }
+            };
+
+            var answerJson = JsonConvert.SerializeObject(personTableData);
+
+            var peopleAnswer = new Answer
+            {
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.AddPeopleInControl,
+                Value = answerJson
+            };
+
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(peopleAnswer);
+
+            var result = _controller.EditPeopleInControl(Guid.NewGuid(), index).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("ConfirmPeopleInControl");
+        }
+
+        [TestCase("", "", "")]
+        [TestCase("", "", "")]
+        [TestCase("", "1", "")]
+        [TestCase("", "", "1991")]
+        [TestCase("", "13", "1992")]
+        [TestCase("", "12", "999")]
+        [TestCase("", "10", "3000")]
+        [TestCase("Person name", "", "")]
+        [TestCase("Person name", "1", "")]
+        [TestCase("Person name", "", "1991")]
+        [TestCase("Person name", "13", "1992")]
+        [TestCase("Person name", "12", "999")]
+        [TestCase("Person name", "10", "3000")]
+        public void Update_people_in_control_details_rejects_invalid_values(string personName, string dobMonth, string dobYear)
+        {
+            var viewModel = new AddEditPeopleInControlViewModel
+            {
+                PersonInControlDobMonth = dobMonth,
+                PersonInControlDobYear = dobYear,
+                PersonInControlName = personName,
+                DateOfBirthOptional = false,
+                ApplicationId = Guid.NewGuid(),
+                ErrorMessages = new List<ValidationErrorDetail>()
+            };
+
+            var result = _controller.UpdatePeopleInControlDetails(viewModel).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var model = viewResult.Model as AddEditPeopleInControlViewModel;
+            model.Should().NotBeNull();
+            model.ErrorMessages.Count.Should().BeGreaterOrEqualTo(1);
+        }
+
+        [Test]
+        public void Remove_partner_shows_confirmation_page_with_partner_name()
+        {
+            var partnerData = new TabularData
+            {
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Columns = new List<string> { "Mrs A Partner" , "Feb 1999" }
+                    },
+                    new TabularDataRow
+                    {
+                        Columns = new List<string> { "Mr A Rogue" , "Feb 1999" }
+                    }
+                }
+            };
+
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(partnerData);
+
+            var index = 1;
+
+            var result = _controller.RemovePartner(Guid.NewGuid(), index).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+
+            var model = viewResult.Model as ConfirmRemovePersonInControlViewModel;
+            model.Should().NotBeNull();
+
+            model.Name.Should().Be("Mr A Rogue");
+            model.Confirmation.Should().BeNullOrEmpty();
+        }
+
+        [Test]
+        public void Remove_partner_redirects_if_invalid_index_supplied()
+        {
+            var partnerData = new TabularData
+            {
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Columns = new List<string> { "Mrs A Partner" , "Feb 1999" }
+                    },
+                    new TabularDataRow
+                    {
+                        Columns = new List<string> { "Mr A Rogue" , "Feb 1999" }
+                    }
+                }
+            };
+
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(partnerData);
+
+            var index = 2;
+
+            var result = _controller.RemovePartner(Guid.NewGuid(), index).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+
+            redirectResult.ActionName.Should().Be("ConfirmPartners");
+        }
+
+
+        [Test]
+        public void Remove_people_in_control_shows_confirmation_page_with_person_name()
+        {
+            var pscData = new TabularData
+            {
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Columns = new List<string> { "Mrs A Person" , "Feb 1999" }
+                    },
+                    new TabularDataRow
+                    {
+                        Columns = new List<string> { "Mr B Rogue" , "Feb 1999" }
+                    }
+                }
+            };
+
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPeopleInControl)).ReturnsAsync(pscData);
+
+            var index = 1;
+
+            var result = _controller.RemovePeopleInControl(Guid.NewGuid(), index).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+
+            var model = viewResult.Model as ConfirmRemovePersonInControlViewModel;
+            model.Should().NotBeNull();
+
+            model.Name.Should().Be("Mr B Rogue");
+            model.Confirmation.Should().BeNullOrEmpty();
+        }
+
+        [Test]
+        public void Remove_people_in_control_redirects_if_invalid_index_supplied()
+        {
+            var pscData = new TabularData
+            {
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Columns = new List<string> { "Mrs A Partner" , "Feb 1999" }
+                    },
+                    new TabularDataRow
+                    {
+                        Columns = new List<string> { "Mr A Rogue" , "Feb 1999" }
+                    }
+                }
+            };
+
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPeopleInControl)).ReturnsAsync(pscData);
+
+            var index = 2;
+
+            var result = _controller.RemovePeopleInControl(Guid.NewGuid(), index).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+
+            redirectResult.ActionName.Should().Be("ConfirmPeopleInControl");
+        }
+        
+        [Test]
+        public void Remove_item_from_pscs_shows_error_if_not_confirmed()
+        {
+            var model = new ConfirmRemovePersonInControlViewModel
+            {
+                ActionName = "Action",
+                ApplicationId = Guid.NewGuid(),
+                Confirmation = null,
+                ErrorMessages = new List<ValidationErrorDetail>(),
+                Index = 1,
+                Name = "Name to be removed"
+            };
+
+            var result = _controller.RemovePartnerDetails(model).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var viewModel = viewResult.Model as ConfirmRemovePersonInControlViewModel;
+            model.Should().NotBeNull();
+            model.ErrorMessages.Count.Should().Be(1);
+            model.ErrorMessages[0].ErrorMessage.Should().Contain(model.Name); 
+        }
+
+        [Test]
+        public void Remove_item_from_partners_redirects_if_chosen_not_to_remove_entry()
+        {
+            var model = new ConfirmRemovePersonInControlViewModel
+            {
+                ActionName = "Action",
+                ApplicationId = Guid.NewGuid(),
+                Confirmation = "N",
+                ErrorMessages = new List<ValidationErrorDetail>(),
+                Index = 1,
+                Name = "Name to be removed"
+            };
+
+            var result = _controller.RemovePartnerDetails(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("ConfirmPartners");
+        }
+
+        [Test]
+        public void Remove_item_from_pscs_redirects_if_chosen_not_to_remove_entry()
+        {
+            var model = new ConfirmRemovePersonInControlViewModel
+            {
+                ActionName = "Action",
+                ApplicationId = Guid.NewGuid(),
+                Confirmation = "N",
+                ErrorMessages = new List<ValidationErrorDetail>(),
+                Index = 1,
+                Name = "Name to be removed"
+            };
+
+            var result = _controller.RemovePscDetails(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("ConfirmPeopleInControl");
+        }
+
+        [Test]
+        public void Remove_item_from_partners_saves_new_answer_with_entry_removed_if_confirm_removal()
+        {
+            var model = new ConfirmRemovePersonInControlViewModel
+            {
+                ActionName = "Action",
+                ApplicationId = Guid.NewGuid(),
+                Confirmation = "Y",
+                ErrorMessages = new List<ValidationErrorDetail>(),
+                Index = 1,
+                Name = "Name to be removed"
+            };
+
+            var partnerData = new TabularData
+            {
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Columns = new List<string> { "Mrs A Partner" , "Feb 1999" }
+                    },
+                    new TabularDataRow
+                    {
+                        Columns = new List<string> { "Name to be removed" , "Feb 1999" }
+                    }
+                }
+            };
+
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(partnerData);
+
+            var sequences = new List<ApplicationSequence>
+            {
+                new ApplicationSequence
+                {
+                    SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
+                    Id = Guid.NewGuid()
+                }
+            };
+
+            _qnaClient.Setup(x => x.GetSequences(It.IsAny<Guid>())).ReturnsAsync(sequences);
+
+            var sections = new List<ApplicationSection>
+            {
+                new ApplicationSection
+                {
+                    SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
+                    Id = Guid.NewGuid()
+                }
+            };
+
+            _qnaClient.Setup(x => x.GetSections(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(sections);
+
+            _tabularDataRepository.Setup(x => x.SaveTabularDataAnswer(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TabularData>())).ReturnsAsync(true).Verifiable();
+
+            var result = _controller.RemovePartnerDetails(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("ConfirmPartners");
+            _tabularDataRepository.Verify(x => x.SaveTabularDataAnswer(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TabularData>()), Times.Once);
+        }
+
+        [Test]
+        public void Remove_item_from_pscs_saves_new_answer_with_entry_removed_if_confirm_removal()
+        {
+            var model = new ConfirmRemovePersonInControlViewModel
+            {
+                ActionName = "Action",
+                ApplicationId = Guid.NewGuid(),
+                Confirmation = "Y",
+                ErrorMessages = new List<ValidationErrorDetail>(),
+                Index = 1,
+                Name = "Name to be removed"
+            };
+
+            var pscsData = new TabularData
+            {
+                DataRows = new List<TabularDataRow>
+                {
+                    new TabularDataRow
+                    {
+                        Columns = new List<string> { "Mrs A Person" , "Feb 1988" }
+                    },
+                    new TabularDataRow
+                    {
+                        Columns = new List<string> { "Name to be removed" , "Feb 1987" }
+                    }
+                }
+            };
+
+            _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPeopleInControl)).ReturnsAsync(pscsData);
+
+            var sequences = new List<ApplicationSequence>
+            {
+                new ApplicationSequence
+                {
+                    SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
+                    Id = Guid.NewGuid()
+                }
+            };
+
+            _qnaClient.Setup(x => x.GetSequences(It.IsAny<Guid>())).ReturnsAsync(sequences);
+
+            var sections = new List<ApplicationSection>
+            {
+                new ApplicationSection
+                {
+                    SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
+                    Id = Guid.NewGuid()
+                }
+            };
+
+            _qnaClient.Setup(x => x.GetSections(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(sections);
+
+            _tabularDataRepository.Setup(x => x.SaveTabularDataAnswer(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TabularData>())).ReturnsAsync(true).Verifiable();
+
+            var result = _controller.RemovePscDetails(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("ConfirmPeopleInControl");
+            _tabularDataRepository.Verify(x => x.SaveTabularDataAnswer(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TabularData>()), Times.Once);
         }
     }
 }

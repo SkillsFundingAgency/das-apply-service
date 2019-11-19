@@ -16,9 +16,18 @@ namespace SFA.DAS.ApplyService.Web.Validators
                 var dobYearKey = $"{trustee.Id}_Year";
                 var dobMonth = answers.FirstOrDefault(x => x.QuestionId == dobMonthKey);
                 var dobYear = answers.FirstOrDefault(x => x.QuestionId == dobYearKey);
+                if (dobMonth == null && dobYear == null)
+                {
+                    errorMessages.Add(new ValidationErrorDetail
+                    {
+                        ErrorMessage = DateOfBirthAnswerValidator.MissingDateOfBirthErrorMessage,
+                        Field = dobMonthKey
+                    });
+                    return errorMessages;
+                }
 
                 var prefix = trustee.Id + "_";
-                var validatorMessages = DateOfBirthAnswerValidator.ValidateDateOfBirth(dobMonth, dobYear, prefix);
+                var validatorMessages = DateOfBirthAnswerValidator.ValidateDateOfBirth(dobMonth.Value, dobYear.Value, prefix);
                 if (validatorMessages.Any())
                 {
                     errorMessages.AddRange(validatorMessages);
