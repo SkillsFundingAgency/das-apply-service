@@ -20,6 +20,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<StartApplicationResponse> StartApplication(string userReference, string workflowType, string applicationData);
         Task<ApplicationSequence> GetSequence(Guid applicationId, Guid sequenceId);
         Task<ApplicationSection> GetSection(Guid applicationId, Guid sectionId);
+        Task<ApplicationSection> GetSectionBySectionNo(Guid applicationId, int sequenceNo, int sectionNo);
         Task<Page> GetPage(Guid applicationId, Guid sectionId, string pageId);
         Task<Answer> GetAnswer(Guid applicationId, Guid sectionId, string pageId, string questionId); 
         Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, Guid sectionId, string pageId, List<Answer> answers);
@@ -34,10 +35,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         Task DeleteFile(Guid applicationId, Guid sectionId, string pageId, string questionId, string fileName);
 
-        Task<GetNextActionResponse> GetNextActionBySectionNo(Guid applicationId, int sequenceNo, int sectionNo,
-            string pageId);
-
-        Task<GetNextActionResponse> GetNextAction(Guid applicationId, Guid sectionId, string pageId);
-
+        Task<SkipPageResponse> SkipPageBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId);
+        Task<SkipPageResponse> SkipPage(Guid applicationId, Guid sectionId, string pageId);
     }
 }
