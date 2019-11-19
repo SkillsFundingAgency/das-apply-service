@@ -11,8 +11,11 @@ namespace SFA.DAS.ApplyService.Web.Validators
         public const string DateOfBirthInFutureErrorMessage = "Enter a date of birth using a month and year that's in the past";
         public const string DateOfBirthYearLengthErrorMessage = "Enter a date of birth using a month and year using 4 numbers";
 
-        public static List<ValidationErrorDetail> ValidateDateOfBirth(Answer dobMonth, Answer dobYear, string fieldPrefix)
+        public static List<ValidationErrorDetail> ValidateDateOfBirth(string month, string year, string fieldPrefix)
         {
+            var dobMonth = new Answer { Value = month };
+            var dobYear = new Answer { Value = year };
+
             var errorMessages = new List<ValidationErrorDetail>();
 
             if (dobMonth == null && dobYear == null)
