@@ -23,6 +23,7 @@
     <SqlServerVerification>False</SqlServerVerification>
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
     <TargetDatabaseSet>True</TargetDatabaseSet>
+    <IncludeSchemaNameInFileName>False</IncludeSchemaNameInFileName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -60,6 +61,9 @@
     <Folder Include="Tables\" />
     <Folder Include="StoredProcedures" />
     <Folder Include="Sequences" />
+    <Folder Include="review\" />
+    <Folder Include="review\Tables\" />
+    <Folder Include="Security\" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Assets.sql" />
@@ -77,11 +81,16 @@
     <Build Include="StoredProcedures\Update_ApplicationSections_QuestionTags.sql" />
     <Build Include="Sequences\AppRefSequence.sql" />
     <Build Include="Tables\ApplicationWorkflow.sql" />
+    <Build Include="review\Tables\Gateway.sql" />
+    <Build Include="Security\review.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
   </ItemGroup>
   <ItemGroup>
     <PreDeploy Include="Script.PreDeployment1.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SFA.DAS.ApplyService.Database.publish.xml" />
   </ItemGroup>
 </Project>

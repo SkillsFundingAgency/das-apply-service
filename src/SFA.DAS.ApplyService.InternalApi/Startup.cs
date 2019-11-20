@@ -29,6 +29,7 @@ using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 
 namespace SFA.DAS.ApplyService.InternalApi
 {
+    using SFA.DAS.ApplyService.Application.Review;
     using UKRLP;
     using static UKRLP.ProviderQueryPortTypeClient;
 
@@ -193,6 +194,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IOrganisationRepository,OrganisationRepository>();
             services.AddTransient<IDfeSignInService,DfeSignInService>();
             services.AddTransient<IGetAnswersService, GetAnswersService>();
+            services.AddTransient<IReviewRepository, ReviewRepository>();
 
             services.AddTransient<IEmailService, EmailService.EmailService>();
             services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();

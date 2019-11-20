@@ -1,0 +1,23 @@
+﻿CREATE TABLE [review].[Gateway](
+	[Id] [uniqueidentifier] NOT NULL,
+	[ApplicationId] [uniqueidentifier] NOT NULL,
+	[Status] [nvarchar](20) NOT NULL,
+ CONSTRAINT [PK_Gateway] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+ALTER TABLE [review].[Gateway]  WITH CHECK ADD  CONSTRAINT [FK_Gateway_Applications] FOREIGN KEY([ApplicationId])
+REFERENCES [dbo].[Applications] ([Id])
+GO
+
+ALTER TABLE [review].[Gateway] CHECK CONSTRAINT [FK_Gateway_Applications]
+GO
+
+
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [IX_Gateway] ON [review].[Gateway]
+(
+	[ApplicationId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
