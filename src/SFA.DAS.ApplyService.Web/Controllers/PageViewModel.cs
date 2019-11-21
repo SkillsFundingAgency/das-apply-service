@@ -19,7 +19,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public PageViewModel() { }
 
-        public PageViewModel(Guid applicationId, int sequenceId, int sectionId, string pageId, Page page, string pageContext, string redirectAction, string returnUrl, List<ValidationErrorDetail> errorMessages, List<QnaPageOverrideConfiguration> pageOverrideConfiguration, List<QnaLinksConfiguration> linksConfiguration)
+        public PageViewModel(Guid applicationId, int sequenceId, int sectionId, string pageId, Page page, string pageContext, 
+                             string redirectAction, string returnUrl, List<ValidationErrorDetail> errorMessages, 
+                             List<QnaPageOverrideConfiguration> pageOverrideConfiguration, List<QnaLinksConfiguration> linksConfiguration,
+                             string sectionTitle)
         {
             ApplicationId = applicationId;
             SequenceId = sequenceId.ToString();
@@ -31,6 +34,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             ErrorMessages = errorMessages;
             _pageOverrideConfiguration = pageOverrideConfiguration;
             LinksConfiguration = linksConfiguration.Where(x=>x.PageId == pageId).ToList();
+            SectionTitle = sectionTitle;
             if (page != null)
             {
                 SetupPage(page, errorMessages);
@@ -65,6 +69,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public string CTAButtonText { get; set; }
         public bool HideCTA { get; set; }
+        
+        public string SectionTitle { get; }
 
         public bool GetHelpQuerySubmitted { get; set; }
 
@@ -111,7 +117,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 RedirectAction = RedirectAction
             }));
 
-            foreach (var question in questionsWithRetainedAnswers.Where(x=>x.Value!=null))
+            foreach (var question in questionsWithRetainedAnswers.Where(x=> !string.IsNullOrEmpty(x.Value)))
             {
                 foreach (var q in Questions.Where(q => question.QuestionId == q.QuestionId))
                 {

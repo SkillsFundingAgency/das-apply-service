@@ -4,7 +4,7 @@
     ViewBag.Title = "What is your organisation's UK provider reference number (UKPRN)?";
     Layout = "_Layout";
 
-    bool showErrors = !ViewData.ModelState.IsValid;
+    bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
 }
 
 @{ await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml"); }
@@ -23,7 +23,10 @@
         </h2>
         <div class="govuk-error-summary__body">
             <ul class="govuk-list govuk-error-summary__list">
-                <li><a sfa-validation-for="UKPRN"></a></li>
+                @foreach(var error in Model.ErrorMessages)
+                {
+                    <li><a href="#@error.Field">@error.ErrorMessage</a></li>
+                }
             </ul>
         </div>
     </div>
@@ -47,7 +50,9 @@
                         <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="UKPRN" sfa-validationerror-class="form-group-error">
                             @if (showErrors)
                             {
-                                <span class="govuk-error-message" data-valmsg-for="UKPRN" data-valmsg-replace="true" sfa-validation-for="UKPRN"></span>
+                                <span class="govuk-error-message">
+                                    @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "UKPRN")?.ErrorMessage)
+                                </span>
                             }
 
                             <label for="UKPRN" class="govuk-label">UKPRN</label>

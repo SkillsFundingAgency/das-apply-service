@@ -4,7 +4,7 @@
     ViewBag.Title = "Tell us your organisation's type";
     Layout = "_Layout";
 
-    bool showErrors = TempData["ShowErrors"] as bool? ?? false;
+    bool showErrors = !ViewData.ModelState.IsValid;
 }
 
 <div class="govuk-phase-banner govuk-width-container roatp__navigation">
@@ -48,6 +48,7 @@
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
+                <span class="govuk-caption-l">@Model.SectionTitle</span>
                 <h1 class="govuk-heading-l">Tell us your organisation's type</h1>
             </div>
         </div>
@@ -56,8 +57,13 @@
             <div class="govuk-grid-column-two-thirds">
                 <form method="post" asp-action="ConfirmSoleTraderOrPartnership">
                     @Html.HiddenFor(x => x.ApplicationId)
-                    <div class="govuk-form-group" sfa-validation-for="OrganisationType" sfa-validationerror-class="govuk-error-message">
-
+                    <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="OrganisationType" sfa-validationerror-class="govuk-error-message">
+                        @if (showErrors)
+                        {
+                            <span class="govuk-error-message">
+                                @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "OrganisationType")?.ErrorMessage)
+                            </span>
+                        }
                         <fieldset class="govuk-fieldset">
 
                             <div class="govuk-radios">
@@ -79,7 +85,7 @@
                                            name="OrganisationType" type="radio" value="Partnership"
                                            sfa-validation-for="OrganisationType" sfa-validationerror-class="form-control-error">
                                     <label class="govuk-label govuk-radios__label" for="OrganisationType-Partnership">
-                                       Partnership
+                                        Partnership
                                     </label>
 
                                 </div>

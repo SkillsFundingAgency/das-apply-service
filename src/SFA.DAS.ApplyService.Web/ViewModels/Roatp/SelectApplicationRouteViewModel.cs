@@ -2,6 +2,7 @@
 {
     using Domain.Roatp;
     using System;
+    using SFA.DAS.ApplyService.Domain.Apply;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
@@ -22,5 +23,7 @@
         public string PageId { get; set; }
 
         public bool GetHelpQuerySubmitted { get; set; }
+
+        public List<ValidationErrorDetail> ErrorMessages { get; set; }
     }
 }
