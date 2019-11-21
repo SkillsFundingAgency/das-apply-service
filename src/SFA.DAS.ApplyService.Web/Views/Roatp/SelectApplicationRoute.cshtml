@@ -31,16 +31,50 @@
     </div>
 }
 
-<div class="govuk-width-container">
+    <div class="govuk-width-container">
 
-    <main class="govuk-main-wrapper " id="main-content" role="main">
+        <main class="govuk-main-wrapper " id="main-content" role="main">
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-l">Choose your organisation's provider route</h1>
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <h1 class="govuk-heading-l">Choose your organisation's provider route</h1>
+                </div>
             </div>
-        </div>
 
+<<<<<<< HEAD
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <form method="post" asp-action="StartApplication" asp-controller="RoatpApplicationPreamble">
+
+                        <div class="govuk-form-group" sfa-validation-for="ApplicationRouteId" sfa-validationerror-class="govuk-error-message">
+
+                            <fieldset class="govuk-fieldset">
+
+                                <div class="govuk-radios">
+
+                                    @foreach (var applicationRoute in Model.ApplicationRoutes)
+                                    {
+                                        <div class="govuk-radios__item">
+
+                                            <input asp-for="ApplicationRouteId" class="govuk-radios__input" id="route-@applicationRoute.Id"
+                                                   name="ApplicationRouteId" type="radio" value="@applicationRoute.Id"
+                                                   sfa-validation-for="ApplicationRouteId" sfa-validationerror-class="form-control-error"
+                                                   aria-describedby="route-@applicationRoute.Id-item-hint">
+                                            <label class="govuk-label govuk-radios__label" for="route-@applicationRoute.Id">
+                                                @applicationRoute.RouteName
+                                            </label>
+                                            <span id="route-@applicationRoute.Id-item-hint" class="govuk-hint govuk-radios__hint">
+                                                @applicationRoute.Description
+                                            </span>
+                                        </div>
+                                    }
+                                </div>
+                            </fieldset>
+                        </div>
+                        <input type="submit" class="govuk-button" value="Save and continue" />
+                    </form>
+                </div>
+=======
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <form method="post" asp-action="StartApplication" asp-controller="RoatpApplicationPreamble">
@@ -77,9 +111,10 @@
                     </div>
                     <input type="submit" class="govuk-button" value="Save and continue" />
                 </form>
+>>>>>>> APR-submaster
             </div>
-        </div>
-    </main>
-</div>
+        </main>
+        <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
+    </div>
 
 

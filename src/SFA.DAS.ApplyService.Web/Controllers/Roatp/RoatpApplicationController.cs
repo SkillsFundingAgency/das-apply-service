@@ -51,6 +51,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IRoatpApiClient _roatpApiClient;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
+        private const string GetHelpSubmittedForPageKey = "Roatp_GetHelpSubmitted_{0}";
         private const string InputClassUpperCase = "app-uppercase";
         private const int Section1Id = 1;
         private const string NotApplicableAnswerText = "None of the above";
@@ -342,6 +343,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return View("~/Views/Application/Pages/MultipleAnswers.cshtml", viewModel);
             }
+
+            var getHelpSessionKey = string.Format(GetHelpSubmittedForPageKey, pageId);
+            var getHelpSubmitted = _sessionService.Get<bool>(getHelpSessionKey);
+            viewModel.GetHelpQuerySubmitted = getHelpSubmitted;
 
             return View("~/Views/Application/Pages/Index.cshtml", viewModel);
 

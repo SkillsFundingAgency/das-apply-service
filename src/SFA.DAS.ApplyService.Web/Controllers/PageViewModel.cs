@@ -4,10 +4,11 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore.Internal;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Web.Configuration;
+using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
-    public class PageViewModel
+    public class PageViewModel : IPageViewModel
     {
         public Guid ApplicationId { get; set; }
 
@@ -70,6 +71,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public bool HideCTA { get; set; }
         
         public string SectionTitle { get; }
+
+        public bool GetHelpQuerySubmitted { get; set; }
 
         private void SetupPage(Page page, List<ValidationErrorDetail> errorMessages)
         {
