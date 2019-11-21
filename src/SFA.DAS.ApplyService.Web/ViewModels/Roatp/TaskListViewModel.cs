@@ -1,6 +1,4 @@
-﻿using SFA.DAS.ApplyService.Web.Configuration;
-using SFA.DAS.ApplyService.Web.Services;
-
+﻿
 namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
     using System;
@@ -8,8 +6,10 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
     using System.Linq;
     using Domain.Entities;
     using SFA.DAS.ApplyService.Application.Apply.Roatp;
+    using SFA.DAS.ApplyService.Web.Configuration;
+    using SFA.DAS.ApplyService.Web.Services;
 
-    public class TaskListViewModel
+    public class TaskListViewModel : ApplicationSummaryViewModel
     {
         private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
 
@@ -18,40 +18,9 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             _roatpTaskListWorkflowService = roatpTaskListWorkflowService;
         }
 
-
         private const string EmployerApplicationRouteId = "2";
 
-        public Guid ApplicationId { get; set; }
-        public string UKPRN { get; set; }
-        public string OrganisationName { get; set; }
-        public string TradingName { get; set; }
-
         public List<NotRequiredOverrideConfiguration> NotRequiredOverrides { get; set; }
-
-
-        public string ApplicationRouteShortText
-        {
-            get
-            {
-                switch(ApplicationRouteId)
-                {
-                    case "1":
-                        {
-                            return "Main";                            
-                        }
-                    case "2":
-                        {
-                            return "Employer";
-                        }
-                    case "3":
-                        {
-                            return "Supporting";
-                        }
-                }
-
-                return string.Empty;
-            }
-        }
     
         public string PageStatusCompleted => "completed";
         public int IntroductionSectionId => 1;
@@ -113,7 +82,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public bool CompaniesHouseManualEntry { get; set; }
         public bool VerifiedCharityCommission { get; set; }
         public bool CharityCommissionManualEntry { get; set; }
-        public string ApplicationRouteId { get; set; }
 
         public string WhosInControlStartPageId
         {

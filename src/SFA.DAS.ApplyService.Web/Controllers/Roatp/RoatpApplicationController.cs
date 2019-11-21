@@ -48,6 +48,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly List<NotRequiredOverrideConfiguration> _notRequiredOverrides;
         private readonly ICustomValidatorFactory _customValidatorFactory;
         private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
+        private readonly IRoatpApiClient _roatpApiClient;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
         private const string InputClassUpperCase = "app-uppercase";
@@ -59,7 +60,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
             IQnaApiClient qnaApiClient, IOptions<List<TaskListConfiguration>> configuration, IProcessPageFlowService processPageFlowService,
             IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
-            IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks, ICustomValidatorFactory customValidatorFactory, IRoatpTaskListWorkflowService roatpTaskListWorkflowService, IOptions<List<NotRequiredOverrideConfiguration>> notRequiredOverrides)
+            IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks, 
+            ICustomValidatorFactory customValidatorFactory, IRoatpTaskListWorkflowService roatpTaskListWorkflowService, 
+            IOptions<List<NotRequiredOverrideConfiguration>> notRequiredOverrides, IRoatpApiClient roatpApiClient)
         {
             _apiClient = apiClient;
             _logger = logger;
@@ -77,6 +80,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _customValidatorFactory = customValidatorFactory;
             _roatpTaskListWorkflowService = roatpTaskListWorkflowService;
             _notRequiredOverrides = notRequiredOverrides.Value;
+            _roatpApiClient = roatpApiClient;
         }
 
         [HttpGet]
@@ -108,6 +112,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             
             switch (application.ApplicationStatus)
             {
+                case ApplicationStatus.Submitted:
+                    return RedirectToAction("ApplicationSubmitted", new { applicationId = application.Id });
                 case ApplicationStatus.FeedbackAdded:
                     return View("~/Views/Application/FeedbackIntro.cshtml", application.Id);
                 case ApplicationStatus.Rejected:
@@ -1004,7 +1010,59 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ConfirmSubmitApplication(SubmitApplicationViewModel model)
         {
-            return null;
+            if (!ModelState.IsValid)
+            {
+                model.ErrorMessages = new List<ValidationErrorDetail>();
+                var modelErrors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var modelError in modelErrors)
+                {
+                    model.ErrorMessages.Add(new ValidationErrorDetail
+                    {
+                        Field = "ConfirmSubmitApplication",
+                        ErrorMessage = modelError.ErrorMessage
+                    });
+                }
+                               
+                return View("~/Views/Roatp/SubmitApplication.cshtml", model);
+            }
+
+            var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
+            var providerRoute = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, "Apply-ProviderRoute");
+            var nextApplicationReferenceNumber = await _roatpApiClient.GetNextRoatpApplicationReference();
+
+            var applicationData = new RoatpApplicationData
+            {
+                ApplicationId = model.ApplicationId,
+                UKPRN = organisationDetails.OrganisationUkprn?.ToString(),
+                OrganisationName = organisationDetails.Name,
+                TradingName = organisationDetails.OrganisationDetails?.TradingName,
+                ApplicationRouteId = providerRoute.Value,
+                ReferenceNumber = nextApplicationReferenceNumber,
+                ApplicationSubmittedOn = DateTime.Now,
+                ApplicationSubmittedBy = User.GetUserId()
+            };
+
+            var submitResult = await _roatpApiClient.SubmitRoatpApplication(applicationData);
+
+            return RedirectToAction("ApplicationSubmitted", new { model.ApplicationId });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ApplicationSubmitted(Guid applicationId)
+        {
+            var applicationData = await _roatpApiClient.GetApplicationData(applicationId);
+
+            var model = new ApplicationSummaryViewModel
+            {
+                ApplicationId = applicationId,
+                UKPRN = applicationData.UKPRN,
+                OrganisationName = applicationData.OrganisationName,
+                TradingName = applicationData.TradingName,
+                ApplicationRouteId = applicationData.ApplicationRouteId,
+                ApplicationReference = applicationData.ReferenceNumber
+            };
+
+            return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
         }
 
         private async Task SaveCompaniesHouseWhosInControlQuestions(Guid applicationId, Guid userId, List<PreambleAnswer> questions)
