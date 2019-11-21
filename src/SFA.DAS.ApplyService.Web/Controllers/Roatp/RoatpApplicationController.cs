@@ -1044,7 +1044,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var submitResult = await _roatpApiClient.SubmitRoatpApplication(applicationData);
 
-            return RedirectToAction("ApplicationSubmitted", new { model.ApplicationId });
+            if (submitResult)
+            {
+                // todo: send confirmation email
+                return RedirectToAction("ApplicationSubmitted", new { model.ApplicationId });
+            }
+            else
+            {
+                return RedirectToAction("TaskList", new { model.ApplicationId });
+            }
         }
 
         [HttpGet]
