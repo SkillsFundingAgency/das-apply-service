@@ -175,7 +175,6 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IQuestionPropertyTokeniser, QuestionPropertyTokeniser>();
             services.AddTransient<IPageNavigationTrackingService, PageNavigationTrackingService>();
             services.AddTransient<ICustomValidatorFactory, CustomValidatorFactory>();
-            services.AddTransient<IRoatpTaskListWorkflowService, RoatpTaskListWorkflowService>();
             services.AddTransient<IAnswerFormService, AnswerFormService>();
             services.AddTransient<IGetHelpWithQuestionEmailService, GetHelpWithQuestionEmailService>();
             services.AddTransient<INotificationsApi>(x => {

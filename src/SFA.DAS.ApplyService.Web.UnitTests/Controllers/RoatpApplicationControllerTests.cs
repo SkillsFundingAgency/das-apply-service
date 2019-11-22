@@ -48,7 +48,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IOptions<List<QnaLinksConfiguration>>> _qnaLinks;
         private Mock<IOptions<List<NotRequiredOverrideConfiguration>>> _notRequiredOverrides;
         private Mock<ICustomValidatorFactory> _customValidatorFactory;
-        private Mock<IRoatpTaskListWorkflowService> _roatpTaskListWorkflowService;
         private Mock<IRoatpApiClient> _roatpApiClient;
         private Mock<ISubmitApplicationConfirmationEmailService> _submitApplicationEmailService;
 
@@ -77,7 +76,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _qnaLinks = new Mock<IOptions<List<QnaLinksConfiguration>>>();
             _notRequiredOverrides = new Mock<IOptions<List<NotRequiredOverrideConfiguration>>>();
             _customValidatorFactory = new Mock<ICustomValidatorFactory>();
-            _roatpTaskListWorkflowService = new Mock<IRoatpTaskListWorkflowService>();
             _roatpApiClient = new Mock<IRoatpApiClient>();
             _submitApplicationEmailService = new Mock<ISubmitApplicationConfirmationEmailService>();
 
@@ -85,7 +83,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                                                          _userService.Object, _usersApiClient.Object, _qnaApiClient.Object, _configuration.Object,
                                                          _processPageFlowService.Object, _questionPropertyTokeniser.Object, _pageOverrideConfiguration.Object,
                                                          _pageNavigationTrackingService.Object, _qnaLinks.Object, _customValidatorFactory.Object,
-                                                         _roatpTaskListWorkflowService.Object, _notRequiredOverrides.Object, _roatpApiClient.Object,
+                                                         _notRequiredOverrides.Object, _roatpApiClient.Object,
                                                          _submitApplicationEmailService.Object)
             {
                 ControllerContext = new ControllerContext()

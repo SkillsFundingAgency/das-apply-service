@@ -48,7 +48,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly List<QnaLinksConfiguration> _qnaLinks;
         private readonly List<NotRequiredOverrideConfiguration> _notRequiredOverrides;
         private readonly ICustomValidatorFactory _customValidatorFactory;
-        private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
         private readonly IRoatpApiClient _roatpApiClient;
         private readonly ISubmitApplicationConfirmationEmailService _submitApplicationEmailService;
 
@@ -64,9 +63,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             IQnaApiClient qnaApiClient, IOptions<List<TaskListConfiguration>> configuration, IProcessPageFlowService processPageFlowService,
             IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
             IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks, 
-            ICustomValidatorFactory customValidatorFactory, IRoatpTaskListWorkflowService roatpTaskListWorkflowService, 
-            IOptions<List<NotRequiredOverrideConfiguration>> notRequiredOverrides, IRoatpApiClient roatpApiClient,
-            ISubmitApplicationConfirmationEmailService submitApplicationEmailService)
+            ICustomValidatorFactory customValidatorFactory, IOptions<List<NotRequiredOverrideConfiguration>> notRequiredOverrides, 
+            IRoatpApiClient roatpApiClient, ISubmitApplicationConfirmationEmailService submitApplicationEmailService)
         {
             _apiClient = apiClient;
             _logger = logger;
@@ -82,7 +80,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _qnaLinks = qnaLinks.Value;
             _pageOverrideConfiguration = pageOverrideConfiguration.Value;
             _customValidatorFactory = customValidatorFactory;
-            _roatpTaskListWorkflowService = roatpTaskListWorkflowService;
+            //_roatpTaskListWorkflowService = roatpTaskListWorkflowService;
             _notRequiredOverrides = notRequiredOverrides.Value;
             _roatpApiClient = roatpApiClient;
             _submitApplicationEmailService = submitApplicationEmailService;
@@ -496,7 +494,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var charityCommissionManualEntry = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CharityCommissionTrusteeManualEntry);
             var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, "Apply-ProviderRoute");
 
-            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            var model = new TaskListViewModel
             {
                 ApplicationId = applicationId,
                 ApplicationSequences = filteredSequences,
@@ -1004,6 +1002,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
+        [Route("submit-application")]
         public async Task<IActionResult> SubmitApplication(Guid applicationId)
         {
             var model = new SubmitApplicationViewModel { ApplicationId = applicationId };
