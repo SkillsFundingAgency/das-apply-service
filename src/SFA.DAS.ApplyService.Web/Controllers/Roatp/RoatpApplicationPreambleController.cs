@@ -35,7 +35,7 @@
         private readonly IUsersApiClient _usersApiClient;
         
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
-        private const string GetHelpSubmittedForPageKey = "Roatp_GetHelpSubmitted_{0}";
+        private const string GetHelpSubmittedForPageFormatString = "Roatp_GetHelpSubmitted_{0}";
 
         private string[] StatusOnlyCompanyNumberPrefixes = new[] { "IP", "SP", "IC", "SI", "NP", "NV", "RC", "SR", "NR", "NO" };
 
@@ -82,7 +82,7 @@
                 model.UKPRN = ukprn;
             }
 
-            var getHelpSessionKey = string.Format(GetHelpSubmittedForPageKey, "UKPRN");
+            var getHelpSessionKey = string.Format(GetHelpSubmittedForPageFormatString, "UKPRN");
             var getHelpSubmitted = _sessionService.Get<bool>(getHelpSessionKey);
             model.GetHelpQuerySubmitted = getHelpSubmitted;
 
@@ -358,7 +358,7 @@
             {
                 model.ApplicationRouteId = applicationDetails.ApplicationRoute.Id;
             }
-            var getHelpSessionKey = string.Format(GetHelpSubmittedForPageKey, "ApplicationRoute");
+            var getHelpSessionKey = string.Format(GetHelpSubmittedForPageFormatString, "ApplicationRoute");
             var getHelpSubmitted = _sessionService.Get<bool>(getHelpSessionKey);
             model.GetHelpQuerySubmitted = getHelpSubmitted;
 
