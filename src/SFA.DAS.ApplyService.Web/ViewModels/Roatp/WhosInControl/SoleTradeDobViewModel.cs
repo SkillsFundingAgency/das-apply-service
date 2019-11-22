@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
-    public class SoleTradeDobViewModel
+    public class SoleTradeDobViewModel : WhosInControlViewModel
     {
         public const string DobFieldPrefix = "SoleTraderDob";
 
