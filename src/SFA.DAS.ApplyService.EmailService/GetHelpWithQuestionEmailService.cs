@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Email.Consts;
@@ -9,23 +8,19 @@ using SFA.DAS.Notifications.Api.Client;
 
 namespace SFA.DAS.ApplyService.EmailService
 {
-    public class GetHelpWithQuestionEmailService : IGetHelpWithQuestionEmailService
+    public class GetHelpWithQuestionEmailService : NotificationApiEmailService, IGetHelpWithQuestionEmailService
     {
-        private readonly ILogger<GetHelpWithQuestionEmailService> _logger;
         private readonly IConfigurationService _configurationService;
-        private readonly INotificationsApi _notificationsApi;
         private readonly IEmailTemplateClient _emailTemplateClient;
-
-        private const string SYSTEM_ID = "RoatpApplyService";
+                
         private const string EmailSubject = "RoATP – Get help with this question";
 
-        public GetHelpWithQuestionEmailService(ILogger<GetHelpWithQuestionEmailService> logger, IConfigurationService configurationService,
+        public GetHelpWithQuestionEmailService(ILogger<NotificationApiEmailService> logger, IConfigurationService configurationService,
                                                IEmailTemplateClient emailTemplateClient, INotificationsApi notificationsApi)
+            : base (logger, notificationsApi)
         {
-            _logger = logger;
             _configurationService = configurationService;
             _emailTemplateClient = emailTemplateClient;
-            _notificationsApi = notificationsApi;
         }
 
         public async Task SendGetHelpWithQuestionEmail(GetHelpWithQuestion getHelpWithQuestion)
@@ -34,7 +29,8 @@ namespace SFA.DAS.ApplyService.EmailService
 
             var personalisationTokens = GetPersonalisationTokens(getHelpWithQuestion);
 
-            await SendEmailViaNotificationsApi(emailTemplate.Recipients, emailTemplate.TemplateId, emailTemplate.TemplateName, getHelpWithQuestion.EmailAddress, personalisationTokens);
+            await SendEmailViaNotificationsApi(emailTemplate.Recipients, emailTemplate.TemplateId, emailTemplate.TemplateName,
+                                               getHelpWithQuestion.EmailAddress, EmailSubject, personalisationTokens);
         }
 
         private Dictionary<string, string> GetPersonalisationTokens(GetHelpWithQuestion getHelpWithQuestion)
@@ -54,27 +50,5 @@ namespace SFA.DAS.ApplyService.EmailService
             return personalisationTokens;
         }
 
-        private async Task SendEmailViaNotificationsApi(string toAddress, string templateId, string templateName, string replyToAddress, Dictionary<string, string> personalisationTokens)
-        {
-            var email = new Notifications.Api.Types.Email
-            {
-                RecipientsAddress = toAddress,
-                TemplateId = templateId,
-                ReplyToAddress = replyToAddress,
-                SystemId = SYSTEM_ID,
-                Subject = EmailSubject,
-                Tokens = personalisationTokens
-            };
-
-            try
-            {
-                _logger.LogInformation($"Sending {templateName} email ({templateId}) to {toAddress}");
-                await _notificationsApi.SendEmail(email);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error sending {templateName} email ({templateId}) to {toAddress}");
-            }
-        }
     }
 }

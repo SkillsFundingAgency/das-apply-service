@@ -196,7 +196,7 @@ namespace SFA.DAS.ApplyService.Web
                 return new NotificationsApi(httpClient, apiConfiguration);
             });
             services.AddTransient<IEmailTemplateClient, EmailTemplateClient>();
-
+            services.AddTransient<ISubmitApplicationConfirmationEmailService, SubmitApplicationConfirmationEmailService>();
             services.AddTransient<ITabularDataRepository, TabularDataRepository>();
         }
 
