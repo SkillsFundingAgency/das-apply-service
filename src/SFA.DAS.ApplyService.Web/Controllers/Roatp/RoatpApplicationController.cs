@@ -25,6 +25,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Options;
     using MoreLinq;
+    using SFA.DAS.ApplyService.EmailService;
     using SFA.DAS.ApplyService.Web.Infrastructure.Validations;
     using SFA.DAS.ApplyService.Web.Services;
     using ViewModels.Roatp;
@@ -49,6 +50,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly ICustomValidatorFactory _customValidatorFactory;
         private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
         private readonly IRoatpApiClient _roatpApiClient;
+        private readonly ISubmitApplicationConfirmationEmailService _submitApplicationEmailService;
 
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
         private const string GetHelpSubmittedForPageKey = "Roatp_GetHelpSubmitted_{0}";
@@ -63,7 +65,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
             IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks, 
             ICustomValidatorFactory customValidatorFactory, IRoatpTaskListWorkflowService roatpTaskListWorkflowService, 
-            IOptions<List<NotRequiredOverrideConfiguration>> notRequiredOverrides, IRoatpApiClient roatpApiClient)
+            IOptions<List<NotRequiredOverrideConfiguration>> notRequiredOverrides, IRoatpApiClient roatpApiClient,
+            ISubmitApplicationConfirmationEmailService submitApplicationEmailService)
         {
             _apiClient = apiClient;
             _logger = logger;
@@ -82,6 +85,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _roatpTaskListWorkflowService = roatpTaskListWorkflowService;
             _notRequiredOverrides = notRequiredOverrides.Value;
             _roatpApiClient = roatpApiClient;
+            _submitApplicationEmailService = submitApplicationEmailService;
         }
 
         [HttpGet]
@@ -97,7 +101,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var applyUser = await _usersApiClient.GetUserBySignInId((await _userService.GetSignInId()).ToString());
             var userId = applyUser?.Id ?? Guid.Empty;
 
-            var org = await _apiClient.GetOrganisationByUserId(userId);
             var applications = await _apiClient.GetApplications(userId, false);
             applications = applications.Where(app => app.ApplicationStatus != ApplicationStatus.Rejected).ToList();
 
@@ -955,8 +958,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 StandardName = application?.ApplicationData?.StandardName
             });
         }
-
-        [HttpPost] 
+        
         private async Task SavePreambleQuestions(Guid applicationId, Guid userId, List<PreambleAnswer> questions)
         {
             const int DefaultSectionId = 1;
@@ -1051,7 +1053,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (submitResult)
             {
-                // todo: send confirmation email
+                var userDetails = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
+                var applicationSubmitConfirmation = new ApplicationSubmitConfirmation
+                {
+                    ApplicantFullName = $"{userDetails.GivenNames} {userDetails.FamilyName}",
+                    ApplicationRouteId = providerRoute.Value,
+                    EmailAddress = User.GetEmail()
+                };
+
+                await _submitApplicationEmailService.SendGetHelpWithQuestionEmail(applicationSubmitConfirmation);
                 return RedirectToAction("ApplicationSubmitted", new { model.ApplicationId });
             }
             else

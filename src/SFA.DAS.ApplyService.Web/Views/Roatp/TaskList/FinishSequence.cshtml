@@ -35,7 +35,19 @@
                     <a class="app-task-list__task_name" href="@Url.Action("SubmitApplication", "RoatpApplication", new { Model.ApplicationId })">
                         Submit application
                     </a>
-                    <strong class="govuk-tag app-task-list__task-@Model.CssClass(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.SubmitApplication)" id="completed"> @Model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.SubmitApplication)</strong>
+                    @{ 
+                        var finishSectionCss = "";
+                        if (Model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.TermsAndConditions) == "Completed")
+                        {
+                            finishSectionCss = "govuk-tag app-task-list__task-next";
+                        }
+                    }
+                    <strong class="govuk-tag app-task-list__task-@finishSectionCss" id="completed">
+                    @if (Model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.TermsAndConditions) == "Completed") 
+                    {
+                        @Html.Raw("Next");
+                    }
+                    </strong>
                 </li>
             }
             else
