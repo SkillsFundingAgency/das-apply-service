@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SFA.DAS.ApplyService.Domain.Review;
+using System;
+using System.Collections.Generic;
 
 namespace SFA.DAS.ApplyService.Domain.Entities.Review
 {
@@ -7,5 +9,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities.Review
         public Guid Id { get; set; }
         public Guid ApplicationId { get; set; }
         public string Status { get; set; }
+        public List<Outcome> Outcomes { get; set; }
     }
 }

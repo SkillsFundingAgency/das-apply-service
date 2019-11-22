@@ -83,6 +83,7 @@
     <Build Include="Tables\ApplicationWorkflow.sql" />
     <Build Include="review\Tables\Gateway.sql" />
     <Build Include="Security\review.sql" />
+    <Build Include="review\Tables\Audit.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

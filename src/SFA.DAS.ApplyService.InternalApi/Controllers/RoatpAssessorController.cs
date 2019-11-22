@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Review.GetGatewayCounts;
 using SFA.DAS.ApplyService.Application.Review.GetSubmittedApplications;
+using SFA.DAS.ApplyService.Application.Review.UpdateGatewayOutcomes;
 using SFA.DAS.ApplyService.Domain.Review.Gateway;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
@@ -31,6 +32,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<ActionResult<GatewayCounts>> GetGatewayCounts(Guid applicationId, string questionIdentifier)
         {
             return await _mediator.Send(new GetGatewayCountsRequest());
+        }
+
+        [HttpPost("gateway/outcomes")]
+        public async Task<ActionResult> PostGatewayOutcomes([FromBody] UpdateGatewayOutcomesCommand command)
+        {
+            await _mediator.Send(command);
+
+            return Ok();
         }
     }
 }
