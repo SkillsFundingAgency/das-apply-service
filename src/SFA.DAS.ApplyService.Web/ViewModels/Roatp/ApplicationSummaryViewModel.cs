@@ -29,9 +29,11 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                         {
                             return "Supporting";
                         }
+                    default:
+                        {
+                            return "(not set)";
+                        }
                 }
-
-                return string.Empty;
             }
         }
 
