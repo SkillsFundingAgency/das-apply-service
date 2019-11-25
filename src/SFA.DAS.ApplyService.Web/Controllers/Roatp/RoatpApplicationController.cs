@@ -1,16 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Configuration;

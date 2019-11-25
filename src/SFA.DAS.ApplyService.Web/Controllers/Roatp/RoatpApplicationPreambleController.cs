@@ -6,7 +6,6 @@
     using Microsoft.Extensions.Logging;
     using SFA.DAS.ApplyService.Web.Infrastructure;
     using System.Threading.Tasks;
-    using Application.Apply.Roatp;
     using Domain.Apply;
     using Domain.CharityCommission;
     using Domain.CompaniesHouse;
@@ -66,13 +65,7 @@
         {
             return View("~/Views/Roatp/TermsAndConditions.cshtml");
         }
-
-        [Route("not-accept-terms-conditions")]
-        public async Task<IActionResult> TermsAndConditionsNotAgreed()
-        {
-            return View("~/Views/Roatp/TermsAndConditionsNotAgreed.cshtml");
-        }
-
+        
         [Route("enter-uk-provider-reference-number")]
         public async Task<IActionResult> EnterApplicationUkprn(string ukprn)
         {
@@ -117,7 +110,7 @@
 
             if (!ukrlpLookupResults.Success)
             {
-                return RedirectToAction("UkrlpNotAvailable");
+                return RedirectToAction("UkrlpNotAvailable", "RoatpShutterPages");
             }
 
             if (ukrlpLookupResults.Results.Any())
@@ -140,7 +133,7 @@
                 };
 
                 _sessionService.Set(ApplicationDetailsKey, applicationDetails);
-                return RedirectToAction("UkprnNotFound");
+                return RedirectToAction("UkprnNotFound", "RoatpShutterPages");
             }
         }
 
@@ -157,48 +150,7 @@
 
             return View("~/Views/Roatp/ConfirmOrganisation.cshtml", viewModel);
         }
-       
-        [Route("uk-provider-reference-number-not-found")]
-        public async Task<IActionResult> UkprnNotFound()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                UKPRN = applicationDetails.UKPRN.ToString()
-            };
-
-            return View("~/Views/Roatp/UkprnNotFound.cshtml", viewModel);
-        }
-
-        [Route("company-not-found")]
-        public async Task<IActionResult> CompanyNotFound()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                UKPRN = applicationDetails.UKPRN.ToString(),
-                ProviderDetails = applicationDetails.UkrlpLookupDetails
-            };
-
-            return View("~/Views/Roatp/CompanyNotFound.cshtml", viewModel);
-        }
-
-        [Route("charity-not-found")]
-        public async Task<IActionResult> CharityNotFound()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                UKPRN = applicationDetails.UKPRN.ToString(),
-                ProviderDetails = applicationDetails.UkrlpLookupDetails
-            };
-
-            return View("~/Views/Roatp/CharityNotFound.cshtml", viewModel);
-        }
-        
+                
         [Route("start-application")]
         [HttpPost]
         public async Task<IActionResult> StartApplication(SelectApplicationRouteViewModel model)
@@ -310,33 +262,9 @@
                 return RedirectToAction("SelectApplicationRoute");
             }
 
-            return RedirectToAction("NonLevyAbandonedApplication");
+            return RedirectToAction("NonLevyAbandonedApplication", "RoatpShutterPages");
         }
-        
-        [Route("chosen-not-apply-roatp")]
-        public async Task<IActionResult> NonLevyAbandonedApplication()
-        {
-            return View("~/Views/Roatp/NonLevyAbandonedApplication.cshtml");
-        }
-
-        [Route("ukrlp-unavailable")]
-        public async Task<IActionResult> UkrlpNotAvailable()
-        {
-            return View("~/Views/Roatp/UkrlpNotAvailable.cshtml");
-        }
-
-        [Route("companies-house-unavailable")]
-        public async Task<IActionResult> CompaniesHouseNotAvailable()
-        {
-            return View("~/Views/Roatp/CompaniesHouseNotAvailable.cshtml");
-        }
-
-        [Route("charity-commission-unavailable")]
-        public async Task<IActionResult> CharityCommissionNotAvailable()
-        {
-            return View("~/Views/Roatp/CharityCommissionNotAvailable.cshtml");
-        }
-
+                
         [Route("choose-provider-route")]
         public async Task<IActionResult> SelectApplicationRoute()
         {
@@ -363,12 +291,12 @@
             
             if (existingApplicationStatuses.Any(x => x.Status == ApplicationStatus.InProgress))
             {
-                return RedirectToAction("ApplicationInProgress", new ExistingApplicationViewModel { UKPRN = providerDetails.UKPRN });
+                return RedirectToAction("ApplicationInProgress", "RoatpShutterPages", new ExistingApplicationViewModel { UKPRN = providerDetails.UKPRN });
             }
 
             if (existingApplicationStatuses.Any(x => x.Status == ApplicationStatus.Submitted))
             {
-                return RedirectToAction("ApplicationSubmitted", new ExistingApplicationViewModel { UKPRN = providerDetails.UKPRN });
+                return RedirectToAction("ApplicationSubmitted", "RoatpShutterPages", new ExistingApplicationViewModel { UKPRN = providerDetails.UKPRN });
             }
             
             CompaniesHouseSummary companyDetails = null;
@@ -390,17 +318,17 @@
                 
                 if (companyDetails.Status == CompaniesHouseSummary.ServiceUnavailable)
                 {
-                    return RedirectToAction("CompaniesHouseNotAvailable");
+                    return RedirectToAction("CompaniesHouseNotAvailable", "RoatpShutterPages");
                 }
 
                 if (companyDetails.Status == CompaniesHouseSummary.CompanyStatusNotFound)
                 {
-                    return RedirectToAction("CompanyNotFound");
+                    return RedirectToAction("CompanyNotFound", "RoatpShutterPages");
                 }
                 
                 if (!CompaniesHouseValidator.CompaniesHouseStatusValid(companyDetails.CompanyNumber, companyDetails.Status))
                 {
-                    return RedirectToAction("CompanyNotFound");
+                    return RedirectToAction("CompanyNotFound", "RoatpShutterPages");
                 }
 
                 applicationDetails.CompanySummary = companyDetails;
@@ -423,20 +351,20 @@
                     bool isValidCharityNumber = int.TryParse(verificationId, out charityNumber);
                     if (!isValidCharityNumber)
                     {
-                        return RedirectToAction("CharityNotFound");
+                        return RedirectToAction("CharityNotFound", "RoatpShutterPages");
                     }
 
                     var charityApiResponse = await _charityCommissionApiClient.GetCharityDetails(charityNumber);
 
                     if (!charityApiResponse.Success)
                     {
-                        return RedirectToAction("CharityCommissionNotAvailable");
+                        return RedirectToAction("CharityCommissionNotAvailable", "RoatpShutterPages");
                     } 
                     charityDetails = charityApiResponse.Response;
 
                     if (charityDetails == null || !charityDetails.IsActivelyTrading)
                     {
-                        return RedirectToAction("CharityNotFound");
+                        return RedirectToAction("CharityNotFound", "RoatpShutterPages");
                     }
                     
                     applicationDetails.CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails);
@@ -564,19 +492,7 @@
 
             return View("~/Views/Roatp/ChosenToRemainOnRegister.cshtml", model);
         }
-
-        [Route("application-in-progress")]
-        public async Task<IActionResult> ApplicationInProgress(ExistingApplicationViewModel model)
-        {
-            return View("~/Views/Roatp/ApplicationInProgress.cshtml", model);
-        }
-
-        [Route("application-submitted")]
-        public async Task<IActionResult> ApplicationSubmitted(ExistingApplicationViewModel model)
-        {
-            return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
-        }
-
+        
         private bool ProviderEligibleToChangeRoute(OrganisationRegisterStatus roatpRegisterStatus)
         {
             if (roatpRegisterStatus.UkprnOnRegister 
