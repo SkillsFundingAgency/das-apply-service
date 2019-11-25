@@ -5,8 +5,10 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Review.GetGatewayCounts;
+using SFA.DAS.ApplyService.Application.Review.GetRejectedOutcomes;
 using SFA.DAS.ApplyService.Application.Review.GetSubmittedApplications;
 using SFA.DAS.ApplyService.Application.Review.UpdateGatewayOutcomes;
+using SFA.DAS.ApplyService.Domain.Review;
 using SFA.DAS.ApplyService.Domain.Review.Gateway;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
@@ -40,6 +42,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             await _mediator.Send(command);
 
             return Ok();
+        }
+
+        [HttpGet("review/rejected-outcomes/{applicationId:Guid}/{sectionId}/{pageId}")]
+        public async Task<ActionResult<List<Outcome>>> GetRejectedOutcomes([FromRoute] Guid applicationId, [FromRoute]string sectionId, [FromRoute]string pageId)
+        {
+            var request = new GetRejectedOutcomesRequest(applicationId, sectionId, pageId);
+
+            return await _mediator.Send(request);
         }
     }
 }

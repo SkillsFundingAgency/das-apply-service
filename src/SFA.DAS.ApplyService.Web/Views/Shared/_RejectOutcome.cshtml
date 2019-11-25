@@ -1,0 +1,18 @@
+﻿@using SFA.DAS.ApplyService.Domain.Review
+
+@model string
+
+@{ 
+    var questionRejectOutcomes = ((List<Outcome>)ViewBag.RejectOutcomes).Where(o => o.QuestionId == Model);
+}
+
+@if (questionRejectOutcomes.Any())
+{
+    <div class="govuk-inset-text">
+        <h2>Rejected answer</h2>
+        @foreach (var outcome in questionRejectOutcomes)
+        {
+            <p>@outcome.Message</p>
+        }
+    </div>
+}

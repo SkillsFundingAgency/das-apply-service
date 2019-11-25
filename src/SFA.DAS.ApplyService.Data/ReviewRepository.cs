@@ -54,7 +54,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<Gateway> GetGatewayReview(Guid applicationId)
+        public async Task<Gateway> GetGatewayReviewAsync(Guid applicationId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
@@ -68,7 +68,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task UpdateGatewayOutcomesAsync(Guid applicationId, string userId, DateTime changedAt, List<Outcome> outcomesDelta)
         {
-            var gatewayReview = await GetGatewayReview(applicationId);
+            var gatewayReview = await GetGatewayReviewAsync(applicationId);
 
             var outcomes = GetUpdatedOutcomes(gatewayReview.Outcomes, outcomesDelta);
 

@@ -17,6 +17,7 @@ using StartApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartApp
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     using Application.Apply.GetAnswers;
+    using SFA.DAS.ApplyService.Domain.Review;
 
     public class ApplicationApiClient : IApplicationApiClient
     {
@@ -203,6 +204,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task RemoveSectionCompleted(Guid applicationId, Guid applicationSectionId)
         {
             await _httpClient.DeleteAsync($"/Application/{applicationId}/RemoveSectionComplete/{applicationSectionId}");
+        }
+
+        public async Task<List<Outcome>> GetRoatpAssessorRejectedOutcomesAsync(Guid applicationId, Guid applicationSectionId, string pageId)
+        {
+            return await (await _httpClient.GetAsync($"/roatp-assessor/review/rejected-outcomes/{applicationId}/{applicationSectionId}/{pageId}"))
+                .Content.ReadAsAsync<List<Outcome>>();
         }
     }
 }

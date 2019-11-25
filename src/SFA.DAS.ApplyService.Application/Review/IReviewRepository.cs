@@ -11,7 +11,7 @@ namespace SFA.DAS.ApplyService.Application.Review
     {
         Task<List<Domain.Entities.Application>> GetSubmittedApplicationsAsync();
         Task<GatewayCounts> GetGatewayCountsAsync();
-        Task<Gateway> GetGatewayReview(Guid applicationId);
+        Task<Gateway> GetGatewayReviewAsync(Guid applicationId);
         Task UpdateGatewayOutcomesAsync(Guid applicationId, string userId, DateTime changedAt, List<Outcome> outcomesDelta);
 
     }

@@ -108,6 +108,8 @@
                         {
                             foreach (var question in Model.Questions)
                             {
+                                <partial name="_RejectOutcome" model="question.QuestionId" />
+
                                 <div class="govuk-form-group @(!ViewData.ModelState.IsValid ? "govuk-form-group--error" : "")">
                                     <fieldset class="govuk-fieldset">
                                         @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio" || question.Type == "CheckboxList")
@@ -187,6 +189,8 @@
                         {
                             foreach (var question in Model.Questions)
                             {
+                                <partial name="_RejectOutcome" model="question.QuestionId" />
+
                                 <div class="govuk-form-group @(question.ErrorMessages?.Any() ?? false ? "govuk-form-group--error" : "")">
 
                                     @if (question.Type == "Address")

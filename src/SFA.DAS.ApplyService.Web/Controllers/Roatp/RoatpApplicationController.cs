@@ -335,6 +335,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             viewModel = await TokeniseViewModelProperties(viewModel);
 
+            ViewBag.RejectOutcomes = await _apiClient.GetRoatpAssessorRejectedOutcomesAsync(applicationId, selectedSection.Id, pageId);
+
             if (viewModel.AllowMultipleAnswers)
             {
                 return View("~/Views/Application/Pages/MultipleAnswers.cshtml", viewModel);
