@@ -1,6 +1,7 @@
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Roatp;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -53,5 +54,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<bool> IsSectionCompleted(Guid applicationId, Guid applicationSectionId);
 
         Task RemoveSectionCompleted(Guid applicationId, Guid applicationSectionId);
+
+        Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatusByUkprn(string ukprn);
     }
 }

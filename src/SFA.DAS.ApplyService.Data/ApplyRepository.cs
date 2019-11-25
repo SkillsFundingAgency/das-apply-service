@@ -6,6 +6,7 @@ using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data.DapperTypeHandlers;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Roatp;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -963,6 +964,24 @@ namespace SFA.DAS.ApplyService.Data
                         applicationId,
                         applicationSectionId
                     });
+            }
+        }
+
+        public async Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatusByUkprn(string ukprn)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var applicationStatuses = await connection.QueryAsync<RoatpApplicationStatus>(
+                    @"select a.Id AS ApplicationId, a.ApplicationStatus AS Status
+                      from dbo.Applications a
+                      inner join dbo.Organisations o
+                      on a.ApplyingOrganisationId = o.Id
+                      where JSON_VALUE(o.OrganisationDetails, '$.OrganisationReferenceType') = 'UKRLP'
+                      and o.OrganisationType = 'TrainingProvider'
+                      and OrganisationUKPRN = @ukprn",
+                 new { ukprn });
+
+                return await Task.FromResult(applicationStatuses);
             }
         }
     }
