@@ -60,7 +60,33 @@
         [Route("terms-conditions-making-application")]
         public async Task<IActionResult> TermsAndConditions()
         {
-            return View("~/Views/Roatp/TermsAndConditions.cshtml");
+            return View("~/Views/Roatp/TermsAndConditions.cshtml", new ConditionsOfAcceptanceViewModel());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmTermsAndConditions(ConditionsOfAcceptanceViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.ErrorMessages = new List<ValidationErrorDetail>();
+                var modelErrors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var modelError in modelErrors)
+                {
+                    model.ErrorMessages.Add(new ValidationErrorDetail
+                    {
+                        Field = "ConditionsAccepted",
+                        ErrorMessage = modelError.ErrorMessage
+                    });
+                }
+                return View("~/Views/Roatp/TermsAndConditions.cshtml", model);
+            }
+
+            if (model.ConditionsAccepted != "Y")
+            {
+                return RedirectToAction("TermsAndConditionsNotAgreed");
+            }
+
+            return RedirectToAction("EnterApplicationUkprn");
         }
 
         [Route("not-accept-terms-conditions")]
