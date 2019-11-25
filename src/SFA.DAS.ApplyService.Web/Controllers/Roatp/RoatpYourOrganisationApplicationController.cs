@@ -55,15 +55,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         public async Task<IActionResult> ExperienceAccreditation(Guid applicationId)
         {
-            var pageId = await GetStartPageForExperienceAccreditationSection(applicationId);
-
             return RedirectToAction("Page", "RoatpApplication",
                 new
                 {
                     applicationId = applicationId,
                     sequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
                     sectionId = RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
-                    pageId = pageId,
+                    pageId = RoatpWorkflowPageIds.ExperienceAndAccreditations.StartPage,
                     redirectAction = "TaskList"
                 });
         }
@@ -79,18 +77,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             return await Task.FromResult(RoatpWorkflowPageIds.YourOrganisationIntroductionMain);
 
-        }
-
-        private async Task<string> GetStartPageForExperienceAccreditationSection(Guid applicationId)
-        {
-            var providerTypeId = await _processPageFlowService.GetApplicationProviderTypeId(applicationId);
-
-            if (providerTypeId == ApplicationRoute.SupportingProviderApplicationRoute)
-            {
-                return await Task.FromResult(RoatpWorkflowPageIds.ExperienceAndAccreditations.SupportingStartPage);
-            }
-
-            return await Task.FromResult(RoatpWorkflowPageIds.ExperienceAndAccreditations.MainEmployerStartPage);
         }
 
     }

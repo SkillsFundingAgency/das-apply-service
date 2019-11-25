@@ -129,9 +129,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         }
 
         public class ExperienceAndAccreditations
-        {
-            public static string MainEmployerStartPage = "240";
-            public static string SupportingStartPage = "350";
+        { 
+            public static string StartPage = "235";
         }
     }
 
