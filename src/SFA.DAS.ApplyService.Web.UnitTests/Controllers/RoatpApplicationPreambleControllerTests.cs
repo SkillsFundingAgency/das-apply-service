@@ -39,6 +39,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<ICharityCommissionApiClient> _charityCommissionApiClient;
         private Mock<IOrganisationApiClient> _organisationApiClient;
         private Mock<IUsersApiClient> _usersApiClient;
+        private Mock<IApplicationApiClient> _applicationApiClient;
 
         private RoatpApplicationPreambleController _controller;
 
@@ -60,13 +61,15 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _charityCommissionApiClient = new Mock<ICharityCommissionApiClient>();
             _organisationApiClient = new Mock<IOrganisationApiClient>();
             _usersApiClient = new Mock<IUsersApiClient>();
-            
+            _applicationApiClient = new Mock<IApplicationApiClient>();
+
             _controller = new RoatpApplicationPreambleController(_logger.Object, _roatpApiClient.Object,
                 _ukrlpApiClient.Object,
                 _sessionService.Object, _companiesHouseApiClient.Object,
                 _charityCommissionApiClient.Object,
                 _organisationApiClient.Object,
-                _usersApiClient.Object);
+                _usersApiClient.Object,
+                _applicationApiClient.Object);
 
             _activeCompany = new CompaniesHouseSummary
             {
@@ -161,6 +164,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                     UkprnOnRegister = false
                 }
             };
+
+            _applicationApiClient.Setup(x => x.GetExistingApplicationStatus(It.IsAny<string>())).ReturnsAsync(new List<RoatpApplicationStatus>());
 
             _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(_applicationDetails.RoatpRegisterStatus);
 
@@ -1227,6 +1232,101 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.Should().NotBeNull();
             redirectResult.ActionName.Should().Be("SelectApplicationRoute");
 
+        }
+
+        [Test]
+        public void Application_in_progress_for_UKPRN()
+        {
+            var providerDetails = new ProviderDetails
+            {
+                UKPRN = "10001000"
+            };
+
+            var applicationDetails = new ApplicationDetails
+            {
+                UkrlpLookupDetails = providerDetails
+            };
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+
+            var existingApplicationStatuses = new List<RoatpApplicationStatus>
+            {
+                new RoatpApplicationStatus
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    Status = ApplicationStatus.InProgress
+                }
+            };
+            _applicationApiClient.Setup(x => x.GetExistingApplicationStatus(It.IsAny<string>())).ReturnsAsync(existingApplicationStatuses);
+
+            var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("ApplicationInProgress");
+        }
+
+        [Test]
+        public void Application_already_submitted_for_UKPRN()
+        {
+            var providerDetails = new ProviderDetails
+            {
+                UKPRN = "10001000"
+            };
+
+            var applicationDetails = new ApplicationDetails
+            {
+                UkrlpLookupDetails = providerDetails
+            };
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+
+            var existingApplicationStatuses = new List<RoatpApplicationStatus>
+            {
+                new RoatpApplicationStatus
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    Status = ApplicationStatus.Submitted
+                }
+            };
+            _applicationApiClient.Setup(x => x.GetExistingApplicationStatus(It.IsAny<string>())).ReturnsAsync(existingApplicationStatuses);
+
+            var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("ApplicationSubmitted");
+        }
+
+        [Test]
+        public void Application_previously_submitted_and_a_new_application_in_progress_for_UKPRN()
+        {
+            var providerDetails = new ProviderDetails
+            {
+                UKPRN = "10001000"
+            };
+
+            var applicationDetails = new ApplicationDetails
+            {
+                UkrlpLookupDetails = providerDetails
+            };
+            _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
+
+            var existingApplicationStatuses = new List<RoatpApplicationStatus>
+            {
+                new RoatpApplicationStatus
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    Status = ApplicationStatus.Submitted
+                },
+                new RoatpApplicationStatus
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    Status = ApplicationStatus.InProgress
+                }
+            };
+            _applicationApiClient.Setup(x => x.GetExistingApplicationStatus(It.IsAny<string>())).ReturnsAsync(existingApplicationStatuses);
+
+            var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("ApplicationInProgress");
         }
 
         [TestCase(OrganisationStatus.Active)]

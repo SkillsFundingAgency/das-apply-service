@@ -21,6 +21,7 @@
     using SFA.DAS.ApplyService.InternalApi.Types;
     using SFA.DAS.ApplyService.Web.Resources;
     using System.Collections.Generic;
+    using SFA.DAS.ApplyService.Domain.Entities;
 
     [Authorize]
     public class RoatpApplicationPreambleController : Controller
@@ -33,6 +34,7 @@
         private readonly ICharityCommissionApiClient _charityCommissionApiClient;
         private readonly IOrganisationApiClient _organisationApiClient;
         private readonly IUsersApiClient _usersApiClient;
+        private readonly IApplicationApiClient _applicationApiClient;
         
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
         
@@ -45,7 +47,8 @@
                                                   ICompaniesHouseApiClient companiesHouseApiClient, 
                                                   ICharityCommissionApiClient charityCommissionApiClient,
                                                   IOrganisationApiClient organisationApiClient,
-                                                  IUsersApiClient usersApiClient)
+                                                  IUsersApiClient usersApiClient,
+                                                  IApplicationApiClient applicationApiClient)
         {
             _logger = logger;
             _roatpApiClient = roatpApiClient;
@@ -55,6 +58,7 @@
             _charityCommissionApiClient = charityCommissionApiClient;
             _organisationApiClient = organisationApiClient;
             _usersApiClient = usersApiClient;
+            _applicationApiClient = applicationApiClient;
         }
 
         [Route("terms-conditions-making-application")]
@@ -354,6 +358,19 @@
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
             var providerDetails = applicationDetails.UkrlpLookupDetails;
+
+            var existingApplicationStatuses = await _applicationApiClient.GetExistingApplicationStatus(providerDetails.UKPRN);
+            
+            if (existingApplicationStatuses.Any(x => x.Status == ApplicationStatus.InProgress))
+            {
+                return RedirectToAction("ApplicationInProgress", new ExistingApplicationViewModel { UKPRN = providerDetails.UKPRN });
+            }
+
+            if (existingApplicationStatuses.Any(x => x.Status == ApplicationStatus.Submitted))
+            {
+                return RedirectToAction("ApplicationSubmitted", new ExistingApplicationViewModel { UKPRN = providerDetails.UKPRN });
+            }
+            
             CompaniesHouseSummary companyDetails = null;
             Charity charityDetails = null;
 
@@ -546,6 +563,18 @@
             };
 
             return View("~/Views/Roatp/ChosenToRemainOnRegister.cshtml", model);
+        }
+
+        [Route("application-in-progress")]
+        public async Task<IActionResult> ApplicationInProgress(ExistingApplicationViewModel model)
+        {
+            return View("~/Views/Roatp/ApplicationInProgress.cshtml", model);
+        }
+
+        [Route("application-submitted")]
+        public async Task<IActionResult> ApplicationSubmitted(ExistingApplicationViewModel model)
+        {
+            return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
         }
 
         private bool ProviderEligibleToChangeRoute(OrganisationRegisterStatus roatpRegisterStatus)
