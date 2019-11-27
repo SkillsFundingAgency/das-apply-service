@@ -447,6 +447,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                             pageId = nextActionResult.NextActionId,
                             redirectAction
                         });
+                    } 
+                    else
+                    {
+                        return RedirectToAction("TaskList", new {applicationId = applicationId});
                     }
                 }
 
