@@ -1,64 +1,105 @@
 @{
-ViewBag.Title = "EPAO account: sign in or set up";
+ViewBag.Title = "Apply to join the register of apprenticeship training providers";
 }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl">Create or sign in to your <span class="das-no-wrap">end-point</span> assessment organisation (EPAO) account</h1>
+            <h1 class="govuk-heading-xl">Apply to join the register of apprenticeship training providers</h1>
 
-            <p class="govuk-body">Use your EPAO account to:</p>
-
+            <p class="govuk-body">
+                Use this service to join the register of apprenticeship training providers (RoATP) so that you can train apprentices in the UK.
+            </p>
+            <p class="govuk-body">
+                You must answer the first section in order as it determines the rest of the application questions. Once you do this, you can answer the rest of the application in any order.
+            </p>
+            <p class="govuk-body">
+                We'll guide you through the application and you'll be able to ask for help on each page. You do not have to complete your application in one go. You can save your details and finish it later.
+            </p>
+            <p class="govuk-body">
+                Education and Skills Funding Agency (ESFA) will:
+            </p>
             <ul class="govuk-list govuk-list--bullet">
-                <li>apply to become a registered EPAO</li>
-                <li>get accreditation to assess standards</li>
+                <li>use information in the public domain to support the assessment of application answers</li>
+                <li>use information it already has on your organisation to support the assessment of application questions</li>
+                <li>use the information provided in the application to verify the people in control of your organisation</li>
             </ul>
+            <p class="govuk-body">
+                ESFA will also check if your organisation is on the:
+            </p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>Register of apprenticeship training providers (RoATP)</li>
+                <li>Register of end-point assessment organisations</li>
+                <li>Register of training organisations (RoTO)</li>
+                <li>Register of removed trustees</li>
+            </ul>
+            <p class="govuk-body">
+                You'll need to allow at least 12 weeks for ESFA to process your application and your organisation can only apply twice in a 12-month period.
+            </p>
+            <p class="govuk-body">
+                Once your organisation's on the RoATP, it will be:
+            </p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>listed on the <a href="https://download.apprenticeships.education.gov.uk/" target="_blank">register of apprenticeship training providers (opens in a new window or tab)</a></li>
+                <li>eligible to receive government funding to train apprentices</li>
+            </ul>
+            <p class="govuk-body">
+                Being on the RoATP does not mean your organisation is recommended by ESFA. It cannot use ESFA as a 'kite-mark' or an award and will not have an identification number for the RoATP.
+            </p>
         </div>
     </div>
 
-            <!-- 
-            <a href="0-eligibility/setup" role="button" class="govuk-button govuk-button--start govuk-!-margin-top-2 govuk-!-margin-bottom-5">Create an account</a>
-            <p class="govuk-body govuk-!-margin-bottom-7">or <a href="signin" class="govuk-link">sign in</a> if you have an application in progress</p>
-            -->
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">        
             <div class="govuk-!-margin-top-2 govuk-!-margin-bottom-8">
-                <a href="@Url.Action("SignIn", "Users" )" role="button" draggable="false" class="govuk-button govuk-!-margin-bottom-2">
-                    Sign in
+                <a href="@Url.Action("ExistingAccount", "Users" )" role="button" draggable="false" class="govuk-button govuk-!-margin-bottom-2">
+                    Apply now
                 </a>
-                <div class="das-inline-button-link">
-                    <span class="govuk-body">or <a class="govuk-link" href="@Url.Action("CreateAccount", "Users" )">create an account</a></span>
-                </div>
             </div>
         </div>
     </div>
-
-    <!-- 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-half border-right">
-            <h2 class="govuk-heading-m">I want to start a new application</h2>
-            <p class="govuk-body">To submit your application to become an EPAO you first need to set up an online account. You can return to your account as many times as you want to complete your application.</p>
-            <a href="0-eligibility/setup" role="button" class="govuk-button govuk-button--start govuk-!-margin-top-2 govuk-!-margin-bottom-5">
-                Create an account
-            </a>
-        </div>
-        <div class="govuk-grid-column-one-half">
-            <h2 class="govuk-heading-m">I have an ongoing application</h2>
-            <p class="govuk-body">To submit your application to become an EPAO you first need to set up an online account. You can return to your account as many times as you want to complete your application.</p>
-            <a href="0-eligibility/setup" role="button" class="govuk-button govuk-button--start govuk-!-margin-top-2 govuk-!-margin-bottom-5">
-                Sign in
-            </a>
-        </div>
-    </div>
-    -->
-
+    
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h2 class="govuk-heading-m">Before you start</h2>
-            <p class="govuk-body">You must provide:</p>
+            <h2 class="govuk-heading-m">What you'll need</h2>
+            <p class="govuk-body">
+                Make sure your organisation has:
+            </p>
             <ul class="govuk-list govuk-list--bullet">
-                <li>your own details to create a login</li>
+                <li>a sign in account (if you do not have one, you can create one when you apply)</li>
+                <li>a <a href="https://www.ukrlp.co.uk/" target="_blank">UK provider reference number (opens in new window or tab)</a></li>
+                <li>an <a href="https://ico.org.uk/" target="_blank">Information Commissioner's Office registration number (opens in a new window or tab)</a></li>
+                <li>a UK business address</li>
+            </ul>
+            <p class="govuk-body">
+                Depending on your organisation and provider route, you may need to know:
+            </p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>who's in control of your organisation and their dates of birth</li>
+                <li>your organisation's financial figures</li>
+                <li>if anyone who's in control of your organisation has any unspent criminal convictions</li>
+                <li>how your organisation manages its relationship with employers and subcontractors</li>
+                <li>who's in your organisations management hierarchy for apprenticeships</li>
+                <li>the sectors your organisation will offer apprenticeships in</li>
+                <li>how your organisation plans to deliver apprenticeship training</li>
+                <li>who will deliver apprenticeship training - including any sector specific experience and qualifications they might have</li>
+                <li>how your organisation will evaluate training</li>
+            </ul>
+            <p class="govuk-body">
+                Depending on your organisation and provider route, you may need to uplodate:
+            </p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>financial evidence covering either the last 12 months or a 12-month period</li>
+                <li>a continuity plan for apprenticeship training</li>
+                <li>an equality and diversity policy</li>
+                <li>a safeguarding policy</li>
+                <li>a Prevent duty policy</li>
+                <li>a health and safety policy</li>
+                <li>a compliants policy</li>
+                <li>a contract for services template with employers</li>
+                <li>a commitment statement template</li>
+                <li>a policy for professional development of employees</li>
             </ul>
         </div>
     </div>
