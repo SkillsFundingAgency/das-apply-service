@@ -66,10 +66,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static int YourOrganisation = 1;
         public static int FinancialEvidence = 2;
         public static int CriminalComplianceChecks = 3;
-        public static int ApprenticeshipWelfare = 4;
+        public static int ProtectingYourApprentices = 4;
         public static int ReadinessToEngage = 5;
-        public static int PeopleAndPlanning = 6;
-        public static int LeadersAndManagers = 7;
+        public static int PlanningApprenticeshipTraining = 6;
+        public static int DeliveringApprenticeshipTraining = 7;
+        public static int EvaluatingApprenticeshipTraining = 8;
+        public static int Finish = 9;
         public static int ConditionsOfAcceptance = 99;
     }
 

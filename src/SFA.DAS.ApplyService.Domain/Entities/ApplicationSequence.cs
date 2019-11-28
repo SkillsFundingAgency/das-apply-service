@@ -14,6 +14,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public List<ApplicationSection> Sections { get; set; }
         public bool NotRequired { get; set; }
         public string Description { get; set; }
+        public bool Sequential { get; set; }
     }
 
     public class ApplicationSequenceStatus

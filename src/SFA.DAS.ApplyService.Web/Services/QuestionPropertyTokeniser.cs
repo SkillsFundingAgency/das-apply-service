@@ -17,6 +17,11 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         public async Task<string> GetTokenisedValue(Guid applicationId, string tokenisedValue)
         {
+            if (string.IsNullOrEmpty(tokenisedValue))
+            {
+                return string.Empty;
+            }
+
             if (ContainsTokens(tokenisedValue))
             {
                 var questionTagName = GetTokenIdentifier(tokenisedValue);
