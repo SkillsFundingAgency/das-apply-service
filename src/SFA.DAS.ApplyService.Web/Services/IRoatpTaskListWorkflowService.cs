@@ -8,8 +8,8 @@ namespace SFA.DAS.ApplyService.Web.Services
     {
         string SectionStatus(IEnumerable<ApplicationSequence> applicationSequences, List<NotRequiredOverrideConfiguration> notRequiredOverrides, 
             int sequenceId, int sectionId,
-            string applicationRouteId, bool sequential = false);
+            string applicationRouteId);
 
-        bool PreviousSectionCompleted(ApplicationSequence sequence, int sectionId, bool sequential);
+        bool PreviousSectionCompleted(ApplicationSequence sequence, int sectionId);
     }
 }
