@@ -447,6 +447,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                             pageId = nextActionResult.NextActionId,
                             redirectAction
                         });
+                    } 
+                    else
+                    {
+                        return RedirectToAction("TaskList", new {applicationId = applicationId});
                     }
                 }
 
@@ -460,7 +464,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var sequences = await _qnaApiClient.GetSequences(applicationId);
 
-            PopulateSequenceDescriptions(sequences);
+            PopulateAdditionalSequenceFields(sequences);
 
             var filteredSequences = sequences.Where(x => x.SequenceId != RoatpWorkflowSequenceIds.Preamble && x.SequenceId != RoatpWorkflowSequenceIds.ConditionsOfAcceptance).OrderBy(y => y.SequenceId);
             
@@ -525,14 +529,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
         }
         
-        private void PopulateSequenceDescriptions(IEnumerable<ApplicationSequence> sequences)
+        private void PopulateAdditionalSequenceFields(IEnumerable<ApplicationSequence> sequences)
         {
             foreach (var sequence in sequences)
             {
-                var sequenceDescription = _configuration.FirstOrDefault(x => x.Id == sequence.SequenceId);
-                if (sequenceDescription != null)
+                var selectedSequence = _configuration.FirstOrDefault(x => x.Id == sequence.SequenceId);
+                if (selectedSequence != null)
                 {
-                    sequence.Description = sequenceDescription.Title;
+                    sequence.Description = selectedSequence.Title;
+                    sequence.Sequential = selectedSequence.Sequential;
                 }
             }
         }
