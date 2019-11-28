@@ -88,6 +88,8 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         public bool IntroductionPageNextSectionUnavailable(int sequenceId, int sectionId)
         {
+            // This block disables the other sequences if YourOrganisation sequence isn't complete
+            // TECH DEBT: This is processor intensive, see it could be done a better way
             if (sequenceId != RoatpWorkflowSequenceIds.YourOrganisation)
             {
                 var yourOrganisationSequence = ApplicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
@@ -99,6 +101,17 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                     {
                         return true;
                     }
+                }
+            }
+
+            // CriminalComplianceChecks has two intro pages...
+            if (sequenceId == RoatpWorkflowSequenceIds.CriminalComplianceChecks)
+            {
+                var SecondCriminialIntroductionSectionId = 3;
+                if (sectionId > SecondCriminialIntroductionSectionId)
+                {
+                    var statusOfSecondIntroductionPage = SectionStatus(sequenceId, SecondCriminialIntroductionSectionId);
+                    return statusOfSecondIntroductionPage.ToLower() != PageStatusCompleted;
                 }
             }
 
