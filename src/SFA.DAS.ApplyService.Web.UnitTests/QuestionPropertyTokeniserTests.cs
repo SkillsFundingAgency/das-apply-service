@@ -81,5 +81,25 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
 
             tokenisedData.Should().Be(propertyData);
         }
+
+        [Test]
+        public void Tokeniser_handles_nulls_correctly()
+        {
+            string propertyData = null;
+
+            var tokenisedData = _tokeniser.GetTokenisedValue(Guid.NewGuid(), propertyData).GetAwaiter().GetResult();
+
+            tokenisedData.Should().Be(string.Empty);
+        }
+
+        [Test]
+        public void Tokeniser_handles_empty_strings_correctly()
+        {
+            string propertyData = string.Empty;
+
+            var tokenisedData = _tokeniser.GetTokenisedValue(Guid.NewGuid(), propertyData).GetAwaiter().GetResult();
+
+            tokenisedData.Should().Be(propertyData);
+        }
     }
 }
