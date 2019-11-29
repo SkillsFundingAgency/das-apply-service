@@ -107,10 +107,25 @@ namespace SFA.DAS.ApplyService.Data
         {
             var connection = transaction.Connection;
 
-            var changeDelta = JsonConvert.SerializeObject(delta);
+            var dataType = GetAuditDataTypeName(delta);
+            var data = JsonConvert.SerializeObject(delta);
 
-            return connection.ExecuteAsync("INSERT INTO review.Audit (Action, ApplicationId, UserId, ChangedAt, ChangeDelta) VALUES (@action, @applicationId, @userId, @changedAt, @changeDelta)",
-                new {action, applicationId, userId, changedAt, changeDelta }, transaction);
+            return connection.ExecuteAsync("INSERT INTO review.Audit (ApplicationId, UserId, ChangedAt, Action, DataType, Data) VALUES (@applicationId, @userId, @changedAt, @action, @dataType, @data)",
+                new {applicationId, userId, changedAt, action, dataType, data }, transaction);
+        }
+
+        private string GetAuditDataTypeName(object data)
+        {
+            var type = data.GetType();
+
+            if(type.IsGenericType && (type.GetGenericTypeDefinition() == typeof(List<>)))
+            {
+                var genericArgs = type.GetGenericArguments();
+                if (genericArgs.Any())
+                    return genericArgs[0].Name;
+            }
+
+            return type.Name;
         }
     }
 }

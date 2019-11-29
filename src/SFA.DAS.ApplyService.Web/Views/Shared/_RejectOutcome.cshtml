@@ -3,7 +3,9 @@
 @model string
 
 @{ 
-    var questionRejectOutcomes = ((List<Outcome>)ViewBag.RejectOutcomes).Where(o => o.QuestionId == Model);
+    var questionRejectOutcomes = (string.IsNullOrEmpty(Model)) 
+        ? ((List<Outcome>)ViewBag.RejectOutcomes)
+        : ((List<Outcome>)ViewBag.RejectOutcomes).Where(o => o.QuestionId == Model);
 }
 
 @if (questionRejectOutcomes.Any())

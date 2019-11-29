@@ -19,7 +19,6 @@ namespace SFA.DAS.ApplyService.Application.Review.GetRejectedOutcomes
         public async Task<List<Outcome>> Handle(GetRejectedOutcomesRequest request, CancellationToken cancellationToken)
         {
             var gatewayReview = await _reviewRepository.GetGatewayReviewAsync(request.ApplicationId);
-            //todo - maybe we need to concatenate with other reviews (Assessor, PMO, etc...)
 
             if (gatewayReview.Outcomes == null)
                 return new List<Outcome>();

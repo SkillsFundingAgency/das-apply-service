@@ -502,6 +502,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 ApplicationRouteId = providerRoute.Value
             };
 
+            ViewBag.RejectOutcomes = await _apiClient.GetRoatpAssessorRejectedOutcomesAsync(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble);
+
             return View("~/Views/Roatp/TaskList.cshtml", model);
         }
 
