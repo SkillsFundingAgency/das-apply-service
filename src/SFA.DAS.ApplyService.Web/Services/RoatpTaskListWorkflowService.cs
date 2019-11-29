@@ -11,7 +11,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 {
     public class RoatpTaskListWorkflowService: IRoatpTaskListWorkflowService
     {
-        public  string SectionStatus(IEnumerable<ApplicationSequence> applicationSequences, List<NotRequiredOverrideConfiguration> notRequiredOverrides, int sequenceId, int sectionId, string applicationRouteId, bool sequential = false)
+        public string SectionStatus(IEnumerable<ApplicationSequence> applicationSequences, List<NotRequiredOverrideConfiguration> notRequiredOverrides, int sequenceId, int sectionId, string applicationRouteId, bool sequential = false)
         {
             var sequence = applicationSequences?.FirstOrDefault(x => (int)x.SequenceId == sequenceId);
 
@@ -52,16 +52,14 @@ namespace SFA.DAS.ApplyService.Web.Services
                     return false;
                 }
 
-                if (previousSection.SectionCompleted)
+                if (previousSection.PagesActive == previousSection.PagesComplete && previousSection.PagesComplete > 0)
                 {
                     return true;
                 }
 
                 var previousSectionsCompletedCount = SectionCompletedQuestionsCount(previousSection);
                 if (previousSectionsCompletedCount == 0)
-                    return false;
-
-                
+                    return false;                               
 
                 var previousSectionQuestionsCount = previousSection.QnAData.Pages.Where(p => p.NotRequired == false).SelectMany(x => x.Questions)
                     .DistinctBy(q => q.QuestionId).Count();

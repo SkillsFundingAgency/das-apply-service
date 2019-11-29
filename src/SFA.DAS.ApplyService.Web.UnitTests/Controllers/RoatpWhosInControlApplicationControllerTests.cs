@@ -406,9 +406,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpVerificationCharity)).ReturnsAsync(verifiedCharityAnswer);
-
-            _applicationClient.Setup(x => x.MarkSectionAsCompleted(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(true).Verifiable();
-
+            
             var result = _controller.DirectorsPscsConfirmed(Guid.NewGuid()).GetAwaiter().GetResult();
 
             var redirectResult = result as RedirectToActionResult;
@@ -854,8 +852,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 ValidationPassed = true
             };
             _qnaClient.Setup(x => x.UpdatePageAnswers(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<List<Answer>>())).ReturnsAsync(updateResult);
-
-            _applicationClient.Setup(x => x.MarkSectionAsCompleted(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(true).Verifiable();
 
             var viewModel = new ConfirmTrusteesDateOfBirthViewModel
             {

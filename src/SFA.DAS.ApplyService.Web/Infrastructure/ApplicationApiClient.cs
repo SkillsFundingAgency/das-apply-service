@@ -187,22 +187,5 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await (await _httpClient.GetAsync($"Answer/{WebUtility.UrlEncode(questionIdentifier)}/{applicationId}")).Content.ReadAsAsync<GetAnswersResponse>();
         }
 
-        public async Task<bool> MarkSectionAsCompleted(Guid applicationId, Guid applicationSectionId)
-        {
-            await _httpClient.PostAsJsonAsync($"/Application/{applicationId}/SectionCompleted/{applicationSectionId}", new { applicationId, applicationSectionId });
-            //return await (await _httpClient.PostAsJsonAsync($"/Application/{applicationId}/SectionCompleted/{applicationSectionId}", new { applicationId, applicationSectionId })));
-
-            return await Task.FromResult<bool>(true);
-        }
-
-        public async Task<bool> IsSectionCompleted(Guid applicationId, Guid applicationSectionId)
-        {
-            return await (await _httpClient.GetAsync($"/Application/{applicationId}/IsSectionComplete/{applicationSectionId}")).Content.ReadAsAsync<bool>();
-        }
-
-        public async Task RemoveSectionCompleted(Guid applicationId, Guid applicationSectionId)
-        {
-            await _httpClient.DeleteAsync($"/Application/{applicationId}/RemoveSectionComplete/{applicationSectionId}");
-        }
     }
 }

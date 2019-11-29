@@ -45,8 +45,5 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<Organisation> GetOrganisationByName(string name);
         Task<GetAnswersResponse> GetAnswer(Guid applicationId, string questionIdentifer);
 
-        Task<bool> MarkSectionAsCompleted(Guid applicationId, Guid applicationSectionId);
-        Task<bool> IsSectionCompleted(Guid applicationId, Guid applicationSectionId);
-        Task RemoveSectionCompleted(Guid applicationId, Guid applicationSectionId);
     }
 }

@@ -511,7 +511,7 @@
                 WhosInControlConfirmed = true
             };
 
-            model.WhosInControlSectionStatus.Should().Be("Next");
+            model.WhosInControlSectionStatus.Should().Be("Completed");
         }
     }
 }

@@ -318,11 +318,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
                 if (page == null || page.Questions == null)
                 {
-                    var pageInSectionId = section.QnAData.Pages.FirstOrDefault(x => x.PageId == pageId);
-                    if (pageInSectionId == null)
-                    {
-                        await _apiClient.MarkSectionAsCompleted(applicationId, selectedSection.Id);
-                    }
                     return await TaskList(applicationId);
                 }
 
@@ -470,11 +465,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             
             foreach (var sequence in filteredSequences)
             {
-                var sections = await _qnaApiClient.GetSections(applicationId, sequence.Id);
-                foreach(var section in sections)
-                {
-                    section.SectionCompleted = await _apiClient.IsSectionCompleted(applicationId, section.Id);
-                }
+                var sections = await _qnaApiClient.GetSections(applicationId, sequence.Id);                
                 sequence.Sections = sections.ToList();
             }
 
@@ -487,7 +478,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var companiesHouseManualEntry = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CompaniesHouseManualEntryRequired);
             var verifiedCharityCommission = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity);
             var charityCommissionManualEntry = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CharityCommissionTrusteeManualEntry);
-            var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, "Apply-ProviderRoute");
+
+            var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
 
             var yourOrganisationSequence =
                 sequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
@@ -706,7 +698,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 var nextActionsPage = updatePageResult.NextActionId;
                 if (nextActionsPage == null)
                 {
-                    await _apiClient.MarkSectionAsCompleted(applicationId, selectedSection.Id);
                     return await TaskList(applicationId);
                 }
         
@@ -1008,8 +999,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute);
 
             updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, yourOrganisationSection.Id, RoatpWorkflowPageIds.YourOrganisation, yourOrganisationAnswers);
-
-            await _apiClient.MarkSectionAsCompleted(applicationId, yourOrganisationSection.Id);
 
             var conditionsOfAcceptanceAnswers = questions
                 .Where(x => x.SequenceId == RoatpWorkflowSequenceIds.ConditionsOfAcceptance).AsEnumerable<Answer>()
