@@ -1,13 +1,11 @@
-﻿
-using SFA.DAS.ApplyService.Web.Services;
-
-namespace SFA.DAS.ApplyService.Web.UnitTests
+﻿namespace SFA.DAS.ApplyService.Web.UnitTests
 {
     using System;
     using Domain.Entities;
     using NUnit.Framework;
     using System.Collections.Generic;
     using Application.Apply.Roatp;
+    using SFA.DAS.ApplyService.Web.Services;
     using Domain.Apply;
     using FluentAssertions;
     using ViewModels.Roatp;
@@ -135,11 +133,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                                     new Answer {QuestionId = "YO-1", Value = "1"}
                                 }
                             }
-                        }
+                        },
+                        Active = true,
+                        Complete = true
                     }
+                    
                 }
             };
-            _providerRouteSection.SectionCompleted = true;
 
             _whatYouNeedSection.QnAData = new QnAData
             {
@@ -201,11 +201,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                                     new Answer {QuestionId = "YO-1", Value = "1"}
                                 }
                             }
-                        }
+                        },
+                        Active = true,
+                        Complete = true
                     }
                 }
             };
-            _providerRouteSection.SectionCompleted = true;
 
             _whatYouNeedSection.QnAData = new QnAData
             {
@@ -231,11 +232,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                                     new Answer {QuestionId = "YO-2", Value = "1"}
                                 }
                             }
-                        }
+                        },
+                        Active = true,
+                        Complete = true
                     }
                 }
             };
-            _whatYouNeedSection.SectionCompleted = true;
 
             var model = new TaskListViewModel(_roatpTaskListWorkflowService)
             {
@@ -389,6 +391,127 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 RoatpWorkflowSectionIds.CriminalComplianceChecks.ChecksOnYourOrganisation, false).Should().Be("In Progress");
             model.SectionStatus(RoatpWorkflowSequenceIds.CriminalComplianceChecks,
                 RoatpWorkflowSectionIds.CriminalComplianceChecks.CheckOnWhosInControl, false).Should().Be("");
+        }
+
+        [Test]
+        public void Whos_in_control_section_status_shows_as_next_if_companies_house_verified_and_not_confirmed()
+        {
+            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            {
+                VerifiedCompaniesHouse = true,
+                VerifiedCharityCommission = false,
+                CompaniesHouseDataConfirmed = false,
+                CharityCommissionDataConfirmed = false,
+                WhosInControlConfirmed = false
+            };
+
+            model.WhosInControlSectionStatus.Should().Be("Next");
+        }
+
+        [Test]
+        public void Whos_in_control_section_status_shows_as_next_if_charity_commission_verified_and_not_confirmed()
+        {
+            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            {
+                VerifiedCompaniesHouse = false,
+                VerifiedCharityCommission = true,
+                CompaniesHouseDataConfirmed = false,
+                CharityCommissionDataConfirmed = false,
+                WhosInControlConfirmed = false
+            };
+
+            model.WhosInControlSectionStatus.Should().Be("Next");
+        }
+
+
+        [Test]
+        public void Whos_in_control_section_status_shows_as_complete_if_companies_house_verified_and_confirmed()
+        {
+            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            {
+                VerifiedCompaniesHouse = true,
+                VerifiedCharityCommission = false,
+                CompaniesHouseDataConfirmed = true,
+                CharityCommissionDataConfirmed = false,
+                WhosInControlConfirmed = false
+            };
+
+            model.WhosInControlSectionStatus.Should().Be("Completed");
+        }
+
+        [Test]
+        public void Whos_in_control_section_status_shows_as_in_progress_if_companies_house_and_charity_commission_verified_and_only_confirmed_company()
+        {
+            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            {
+                VerifiedCompaniesHouse = true,
+                VerifiedCharityCommission = true,
+                CompaniesHouseDataConfirmed = true,
+                CharityCommissionDataConfirmed = false,
+                WhosInControlConfirmed = false
+            };
+
+            model.WhosInControlSectionStatus.Should().Be("In Progress");
+        }
+
+        [Test]
+        public void Whos_in_control_section_status_shows_as_in_progress_if_companies_house_and_charity_commission_verified_and_only_confirmed_charity()
+        {
+            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            {
+                VerifiedCompaniesHouse = true,
+                VerifiedCharityCommission = true,
+                CompaniesHouseDataConfirmed = false,
+                CharityCommissionDataConfirmed = true,
+                WhosInControlConfirmed = false
+            };
+
+            model.WhosInControlSectionStatus.Should().Be("In Progress");
+        }
+
+        [Test]
+        public void Whos_in_control_section_status_shows_as_completed_if_companies_house_and_charity_commission_verified_and_both_confirmed()
+        {
+            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            {
+                VerifiedCompaniesHouse = true,
+                VerifiedCharityCommission = true,
+                CompaniesHouseDataConfirmed = true,
+                CharityCommissionDataConfirmed = true,
+                WhosInControlConfirmed = false
+            };
+
+            model.WhosInControlSectionStatus.Should().Be("Completed");
+        }
+
+        [Test]
+        public void Whos_in_control_section_status_shows_as_next_if_not_verified_by_companies_house_or_charity_commission_and_whos_in_control_not_confirmed()
+        {
+            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            {
+                VerifiedCompaniesHouse = false,
+                VerifiedCharityCommission = false,
+                CompaniesHouseDataConfirmed = false,
+                CharityCommissionDataConfirmed = false,
+                WhosInControlConfirmed = false
+            };
+
+            model.WhosInControlSectionStatus.Should().Be("Next");
+        }
+
+        [Test]
+        public void Whos_in_control_section_status_shows_as_completed_if_not_verified_by_companies_house_or_charity_commission_and_whos_in_control_confirmed()
+        {
+            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            {
+                VerifiedCompaniesHouse = false,
+                VerifiedCharityCommission = false,
+                CompaniesHouseDataConfirmed = false,
+                CharityCommissionDataConfirmed = false,
+                WhosInControlConfirmed = true
+            };
+
+            model.WhosInControlSectionStatus.Should().Be("Next");
         }
     }
 }

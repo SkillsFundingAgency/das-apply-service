@@ -79,6 +79,69 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             return _roatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, sequenceId, sectionId, ApplicationRouteId, sequential);
         }
 
+        public string WhosInControlCss
+        {
+            get
+            {
+                var status = WhosInControlSectionStatus;
+
+                if (status == String.Empty)
+                {
+                    return "hidden";
+                }
+
+                var cssClass = status.ToLower();
+                cssClass = cssClass.Replace(" ", "");
+
+                return cssClass;
+            }
+        }
+
+        public string WhosInControlSectionStatus
+        {
+            get
+            {
+                if (VerifiedCompaniesHouse && VerifiedCharityCommission)
+                {
+                    if ((CompaniesHouseDataConfirmed && !CharityCommissionDataConfirmed)
+                        || (!CompaniesHouseDataConfirmed && CharityCommissionDataConfirmed))
+                    {
+                        return "In Progress";
+                    }
+                    if (CompaniesHouseDataConfirmed && CharityCommissionDataConfirmed)
+                    {
+                        return "Completed";
+                    }
+                }
+
+                if (VerifiedCompaniesHouse && !VerifiedCharityCommission)
+                {
+                    if (CompaniesHouseDataConfirmed)
+                    {
+                        return "Completed";
+                    }
+                }
+
+                if (!VerifiedCompaniesHouse && VerifiedCharityCommission)
+                {
+                    if (CharityCommissionDataConfirmed)
+                    {
+                        return "Completed";
+                    }
+                }
+
+                if (!VerifiedCompaniesHouse && !VerifiedCharityCommission)
+                {
+                    if (WhosInControlConfirmed)
+                    {
+                        return "Completed";
+                    }
+                }
+
+                return "Next";
+            }          
+        }
+
         public bool PreviousSectionCompleted(int sequenceId, int sectionId, bool sequential = false)
         {
             var sequence = ApplicationSequences.FirstOrDefault(x => x.SequenceId == sequenceId);
@@ -114,6 +177,10 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public bool VerifiedCharityCommission { get; set; }
         public bool CharityCommissionManualEntry { get; set; }
         public string ApplicationRouteId { get; set; }
+
+        public bool CompaniesHouseDataConfirmed { get; set; }
+        public bool CharityCommissionDataConfirmed { get; set; }
+        public bool WhosInControlConfirmed { get; set; }
 
         public string WhosInControlStartPageId
         {

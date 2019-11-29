@@ -36,32 +36,13 @@ namespace SFA.DAS.ApplyService.Web.Services
             }
 
             var questionsCompleted = SectionCompletedQuestionsCount(section);
-
-            // NOTES: MFCMFC The SectionText() method can be removed once the QnA json and process conforms to writing details
-            // into the QnA, and has been fixed.  Current areas affected is all of sequence 1
-            // In addition, there is probably a case for removing all calls and reads to the ApplyRepository 'Completed' calls
-            // (MarkSectionAsCompleted, IsSectionCompleted,RemoveSectionCompleted), and the table 'ApplicationWorkflow' may be dropped
-            // I will need to double check there are no other uses for this endpoint before doing that
-           
-
-            var sectionCompleteBasedOnPagesActiveAndComplete = GetSectionText(questionsCompleted, section,sequential);
-            var sectionCompleteBasedOnDatabaseSettingOfIsComplete = SectionText(questionsCompleted, section.SectionCompleted, sequential);
-
+                        
+            var sectionText = GetSectionText(questionsCompleted, section, sequential); 
             
-            var sectionText = sectionCompleteBasedOnPagesActiveAndComplete;
-
-            if (sectionCompleteBasedOnDatabaseSettingOfIsComplete != sectionCompleteBasedOnPagesActiveAndComplete)
-            {
-                if (sequenceId == 1)
-                {
-                    sectionText = sectionCompleteBasedOnDatabaseSettingOfIsComplete;
-                }
-            }
-
             return sectionText;
         }
 
-        public  bool PreviousSectionCompleted(ApplicationSequence sequence, int sectionId, bool sequential)
+        public bool PreviousSectionCompleted(ApplicationSequence sequence, int sectionId, bool sequential)
         {
             if (sequential && sectionId > 1)
             {
@@ -125,27 +106,6 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             if ((section.PagesComplete == section.PagesActive && section.PagesActive > 0))
                 return "Completed";
-
-            if (sequential && completedCount == 0)
-            {
-                return "Next";
-            }
-
-            if (completedCount > 0)
-            {
-                return "In Progress";
-            }
-
-            return string.Empty;
-
-        }
-
-        private  string SectionText(int completedCount, bool sectionCompleted, bool sequential)
-        {
-            if (sectionCompleted)
-            {
-                return "Completed";
-            }
 
             if (sequential && completedCount == 0)
             {
