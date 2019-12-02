@@ -42,7 +42,7 @@
                             finishSectionCss = "govuk-tag app-task-list__task-next";
                         }
                     }
-                    <strong class="govuk-tag app-task-list__task-@finishSectionCss" id="completed">
+                    <strong class="@finishSectionCss" id="completed">
                     @if (Model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.TermsAndConditions) == "Completed") 
                     {
                         @Html.Raw("Next");
