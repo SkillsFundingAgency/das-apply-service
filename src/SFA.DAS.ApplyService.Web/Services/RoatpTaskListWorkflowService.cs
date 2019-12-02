@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using MoreLinq;
+using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Web.Configuration;
 
@@ -50,7 +51,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             if (sectionCompleteBasedOnDatabaseSettingOfIsComplete != sectionCompleteBasedOnPagesActiveAndComplete)
             {
-                if (sequenceId == 1)
+                if (sequence.Sequential)
                 {
                     sectionText = sectionCompleteBasedOnDatabaseSettingOfIsComplete;
                 }
