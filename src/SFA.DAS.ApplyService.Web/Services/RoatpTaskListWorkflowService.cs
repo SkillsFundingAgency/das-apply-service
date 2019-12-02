@@ -10,7 +10,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 {
     public class RoatpTaskListWorkflowService
     {
-        public static string SectionStatus(IEnumerable<ApplicationSequence> applicationSequences, List<NotRequiredOverrideConfiguration> notRequiredOverrides, int sequenceId, int sectionId, string applicationRouteId, bool sequential = false)
+        public static string SectionStatus(IEnumerable<ApplicationSequence> applicationSequences, List<NotRequiredOverrideConfiguration> notRequiredOverrides, int sequenceId, int sectionId, string applicationRouteId)
         {
             var sequence = applicationSequences?.FirstOrDefault(x => (int)x.SequenceId == sequenceId);
 
@@ -29,19 +29,19 @@ namespace SFA.DAS.ApplyService.Web.Services
             }
 
 
-            if (!PreviousSectionCompleted(sequence, sectionId))
+            if (!PreviousSectionCompleted(sequence, sectionId, sequence.Sequential))
             {
                 return string.Empty;
             }
 
             var questionsCompleted = SectionCompletedQuestionsCount(section);
                         
-            var sectionText = GetSectionText(questionsCompleted, section, sequential); 
+            var sectionText = GetSectionText(questionsCompleted, section, sequence.Sequential); 
             
             return sectionText;
         }
 
-        public bool PreviousSectionCompleted(ApplicationSequence sequence, int sectionId, bool sequential)
+        public static bool PreviousSectionCompleted(ApplicationSequence sequence, int sectionId, bool sequential)
         {
             if (sequence.Sequential && sectionId > 1)
             {

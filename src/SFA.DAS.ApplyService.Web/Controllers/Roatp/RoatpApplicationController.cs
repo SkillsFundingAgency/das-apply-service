@@ -1041,11 +1041,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
             var providerRoute = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, "Apply-ProviderRoute");
             var nextApplicationReferenceNumber = await _roatpApiClient.GetNextRoatpApplicationReference();
-
-            var conditionsOfAcceptanceAnswers = questions
-                .Where(x => x.SequenceId == RoatpWorkflowSequenceIds.ConditionsOfAcceptance).AsEnumerable<Answer>()
-                .ToList();
-                
+                            
             var applicationData = new RoatpApplicationData
             {
                 ApplicationId = model.ApplicationId,
@@ -1101,10 +1097,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var preambleQuestions = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(applicationDetails);
             await UpdateQuestionsWithinQnA(applicationId, preambleQuestions);
-
-            // Provider Route section is now Completed
-            var providerRouteSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute);
-            await _apiClient.MarkSectionAsCompleted(applicationId, providerRouteSection.Id);
         }
 
         private async Task SaveCompaniesHouseInformation(Guid applicationId, ApplicationDetails applicationDetails)

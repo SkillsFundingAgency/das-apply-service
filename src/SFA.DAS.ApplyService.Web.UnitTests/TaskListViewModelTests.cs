@@ -397,7 +397,7 @@
         [Test]
         public void Whos_in_control_section_status_shows_as_next_if_companies_house_verified_and_not_confirmed()
         {
-            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            var model = new TaskListViewModel
             {
                 VerifiedCompaniesHouse = true,
                 VerifiedCharityCommission = false,
@@ -412,7 +412,7 @@
         [Test]
         public void Whos_in_control_section_status_shows_as_next_if_charity_commission_verified_and_not_confirmed()
         {
-            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            var model = new TaskListViewModel
             {
                 VerifiedCompaniesHouse = false,
                 VerifiedCharityCommission = true,
@@ -428,7 +428,7 @@
         [Test]
         public void Whos_in_control_section_status_shows_as_complete_if_companies_house_verified_and_confirmed()
         {
-            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            var model = new TaskListViewModel
             {
                 VerifiedCompaniesHouse = true,
                 VerifiedCharityCommission = false,
@@ -443,7 +443,7 @@
         [Test]
         public void Whos_in_control_section_status_shows_as_in_progress_if_companies_house_and_charity_commission_verified_and_only_confirmed_company()
         {
-            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            var model = new TaskListViewModel
             {
                 VerifiedCompaniesHouse = true,
                 VerifiedCharityCommission = true,
@@ -458,7 +458,7 @@
         [Test]
         public void Whos_in_control_section_status_shows_as_in_progress_if_companies_house_and_charity_commission_verified_and_only_confirmed_charity()
         {
-            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            var model = new TaskListViewModel
             {
                 VerifiedCompaniesHouse = true,
                 VerifiedCharityCommission = true,
@@ -473,7 +473,7 @@
         [Test]
         public void Whos_in_control_section_status_shows_as_completed_if_companies_house_and_charity_commission_verified_and_both_confirmed()
         {
-            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            var model = new TaskListViewModel
             {
                 VerifiedCompaniesHouse = true,
                 VerifiedCharityCommission = true,
@@ -488,7 +488,7 @@
         [Test]
         public void Whos_in_control_section_status_shows_as_next_if_not_verified_by_companies_house_or_charity_commission_and_whos_in_control_not_confirmed()
         {
-            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            var model = new TaskListViewModel
             {
                 VerifiedCompaniesHouse = false,
                 VerifiedCharityCommission = false,
@@ -503,7 +503,7 @@
         [Test]
         public void Whos_in_control_section_status_shows_as_completed_if_not_verified_by_companies_house_or_charity_commission_and_whos_in_control_confirmed()
         {
-            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            var model = new TaskListViewModel
             {
                 VerifiedCompaniesHouse = false,
                 VerifiedCharityCommission = false,
