@@ -4,7 +4,9 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.ApplyService.Application.Review.CreateGateway;
 using SFA.DAS.ApplyService.Application.Review.GetGatewayCounts;
+using SFA.DAS.ApplyService.Application.Review.GetGatewayInProgress;
 using SFA.DAS.ApplyService.Application.Review.GetGatewayReview;
 using SFA.DAS.ApplyService.Application.Review.GetRejectedOutcomes;
 using SFA.DAS.ApplyService.Application.Review.GetSubmittedApplications;
@@ -32,8 +34,22 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(new GetSubmittedApplicationsRequest());
         }
 
+        [HttpGet("gateway/in-progress")]
+        public async Task<ActionResult<List<Gateway>>> GetGatewayInProgress()
+        {
+            return await _mediator.Send(new GetGatewayInProgressRequest());
+        }
+
+        [HttpPost("gateway/create")]
+        public async Task<ActionResult> CreateGateway([FromBody] CreateGatewayRequest command)
+        {
+            await _mediator.Send(command);
+
+            return Ok();
+        }
+
         [HttpGet("gateway/counts")]
-        public async Task<ActionResult<GatewayCounts>> GetGatewayCounts(Guid applicationId, string questionIdentifier)
+        public async Task<ActionResult<GatewayCounts>> GetGatewayCounts()
         {
             return await _mediator.Send(new GetGatewayCountsRequest());
         }

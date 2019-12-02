@@ -39,6 +39,53 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<List<Gateway>> GetGatewayInProgressAsync()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var result = (await connection
+                    .QueryAsync<Gateway>(
+                        @"SELECT * FROM review.Gateway WHERE Status = 'InProgress'"))
+                        .ToList();
+
+                return result;
+            }
+        }
+
+        public async Task CreateGateway(Guid id, Guid applicationId, string status, string applicationStatus, DateTime createdAt, string createdBy, DateTime assignedAt, string assignedTo, string assignedToName)
+        {
+            var gateway = new Gateway
+            {
+                Id = id,
+                ApplicationId = applicationId,
+                Status = status,
+                CreatedAt = createdAt,
+                CreatedBy = createdBy,
+                AssignedTo = assignedTo,
+                AssignedAt = assignedAt,
+                AssignedToName = assignedToName
+            };
+
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                connection.Open();
+
+                using (IDbTransaction transaction = connection.BeginTransaction())
+                {
+                    await connection.ExecuteAsync("UPDATE Applications SET ApplicationStatus = @applicationStatus, UpdatedAt = @updatedAt, UpdatedBy = @updatedBy WHERE Id = @applicationId",
+                        new { applicationStatus, updatedAt = createdAt, updatedBy = createdBy, applicationId }, transaction);
+
+                    await connection.ExecuteAsync(@"INSERT INTO review.Gateway (Id, ApplicationId, [Status], CreatedAt, CreatedBy, AssignedAt, AssignedTo, AssignedToName)
+                        VALUES(@id, @applicationId, @status, @createdAt, @createdBy, @assignedAt, @assignedTo, @assignedToName)", 
+                        gateway, transaction);
+
+                    await InsertAuditAsync(transaction, nameof(CreateGateway), applicationId, createdBy, createdAt, gateway);
+
+                    transaction.Commit();
+                }
+            }
+        }
+
         public async Task<GatewayCounts> GetGatewayCountsAsync()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -54,11 +101,11 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<Gateway> GetGatewayReviewAsync(Guid applicationId)
+        public async Task<Domain.Entities.Review.Gateway> GetGatewayReviewAsync(Guid applicationId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                var result = (await connection.QueryAsync<Gateway>("SELECT * FROM review.Gateway WHERE ApplicationId = @applicationId",
+                var result = (await connection.QueryAsync<Domain.Entities.Review.Gateway>("SELECT * FROM review.Gateway WHERE ApplicationId = @applicationId",
                     new { applicationId }))
                     .SingleOrDefault();
 

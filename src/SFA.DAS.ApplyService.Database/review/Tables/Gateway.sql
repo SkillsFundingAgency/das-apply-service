@@ -1,8 +1,13 @@
 ﻿CREATE TABLE [review].[Gateway](
-	[Id] [uniqueidentifier] NOT NULL,
-	[ApplicationId] [uniqueidentifier] NOT NULL,
-	[Status] [nvarchar](20) NOT NULL,
- [Outcomes] NVARCHAR(MAX) NULL, 
+    [Id] UNIQUEIDENTIFIER NOT NULL,
+    [ApplicationId] UNIQUEIDENTIFIER NOT NULL,
+	[Status] NVARCHAR(20) NOT NULL,
+	[CreatedAt] DATETIME2 NOT NULL, 
+    [CreatedBy] NVARCHAR(256) NOT NULL, 
+    [AssignedAt] DATETIME2 NOT NULL, 
+    [AssignedTo] NVARCHAR(256) NOT NULL,
+	[AssignedToName] NVARCHAR(256) NOT NULL, 
+    [Outcomes] NVARCHAR(MAX) NULL,
     CONSTRAINT [PK_Gateway] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
