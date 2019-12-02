@@ -30,7 +30,8 @@
                 Id = Guid.NewGuid(),
                 ApplicationId = _applicationId,
                 SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
-                Sections = new List<ApplicationSection>()
+                Sections = new List<ApplicationSection>(),
+                Sequential = true
             };
             _roatpTaskListWorkflowService = new RoatpTaskListWorkflowService();
             _providerRouteSection = new ApplicationSection
@@ -92,7 +93,7 @@
                 }
             };
 
-            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            var model = new TaskListViewModel
             {
                 ApplicationId = _applicationId,
                 ApplicationSequences = _applicationSequences,
@@ -101,9 +102,9 @@
             };
 
             model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute, true).Should().Be("Next");
+                RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute).Should().Be("Next");
             model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed, true).ToLower().Should().Be("");
+                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed).ToLower().Should().Be("");
         }
 
         [Test]
@@ -160,7 +161,7 @@
                 }
             };
 
-            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            var model = new TaskListViewModel
             {
                 ApplicationId = _applicationId,
                 ApplicationSequences = _applicationSequences,
@@ -169,9 +170,9 @@
             };
 
             model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute, true).Should().Be("Completed");
+                RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute).Should().Be("Completed");
             model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed, true).Should().Be("Next");
+                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed).Should().Be("Next");
         }
 
         [Test]
@@ -239,7 +240,7 @@
                 }
             };
 
-            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            var model = new TaskListViewModel
             {
                 ApplicationId = _applicationId,
                 ApplicationSequences = _applicationSequences,
@@ -248,9 +249,9 @@
             };
 
             model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute, true).Should().Be("Completed");
+                RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute).Should().Be("Completed");
             model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed, true).Should().Be("Completed");
+                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed).Should().Be("Completed");
         }
 
         [Test]
@@ -377,7 +378,7 @@
             criminalComplianceSequence.Sections.Add(criminalIndividualChecksSection);
             _applicationSequences.Add(criminalComplianceSequence);
 
-            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            var model = new TaskListViewModel
             {
                 ApplicationId = _applicationId,
                 ApplicationSequences = _applicationSequences,
@@ -386,11 +387,11 @@
             };
 
             model.SectionStatus(RoatpWorkflowSequenceIds.CriminalComplianceChecks,
-                RoatpWorkflowSectionIds.CriminalComplianceChecks.WhatYouWillNeed, false).Should().Be("Completed");
+                RoatpWorkflowSectionIds.CriminalComplianceChecks.WhatYouWillNeed).Should().Be("Completed");
             model.SectionStatus(RoatpWorkflowSequenceIds.CriminalComplianceChecks,
-                RoatpWorkflowSectionIds.CriminalComplianceChecks.ChecksOnYourOrganisation, false).Should().Be("In Progress");
+                RoatpWorkflowSectionIds.CriminalComplianceChecks.ChecksOnYourOrganisation).Should().Be("In Progress");
             model.SectionStatus(RoatpWorkflowSequenceIds.CriminalComplianceChecks,
-                RoatpWorkflowSectionIds.CriminalComplianceChecks.CheckOnWhosInControl, false).Should().Be("");
+                RoatpWorkflowSectionIds.CriminalComplianceChecks.CheckOnWhosInControl).Should().Be("");
         }
 
         [Test]

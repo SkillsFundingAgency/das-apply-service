@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Remotion.Linq;
 using SFA.DAS.ApplyService.Domain.Apply;
 
-namespace SFA.DAS.ApplyService.Web.Controllers
+namespace SFA.DAS.ApplyService.Web.ViewModels
 {
     public class QuestionViewModel
     {
