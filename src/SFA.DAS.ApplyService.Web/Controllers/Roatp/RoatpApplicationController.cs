@@ -80,7 +80,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _qnaLinks = qnaLinks.Value;
             _pageOverrideConfiguration = pageOverrideConfiguration.Value;
             _customValidatorFactory = customValidatorFactory;
-            //_roatpTaskListWorkflowService = roatpTaskListWorkflowService;
             _notRequiredOverrides = notRequiredOverrides.Value;
             _roatpApiClient = roatpApiClient;
             _submitApplicationEmailService = submitApplicationEmailService;

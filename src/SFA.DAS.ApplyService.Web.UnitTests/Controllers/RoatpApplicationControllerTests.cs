@@ -151,36 +151,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _apiClient.Setup(x => x.StartApplication(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>())).ReturnsAsync(response).Verifiable();
 
-            var applicationSequences = new List<ApplicationSequence>
+            var providerRouteSection = new ApplicationSection
             {
-                new ApplicationSequence
-                {
-                    ApplicationId = Guid.NewGuid(),
-                    SequenceId = RoatpWorkflowSequenceIds.Preamble
-                },
-                new ApplicationSequence
-                {
-                    ApplicationId = Guid.NewGuid(),
-                    SequenceId = RoatpWorkflowSequenceIds.YourOrganisation
-                },
-                new ApplicationSequence
-                {
-                    ApplicationId = Guid.NewGuid(),
-                    SequenceId = RoatpWorkflowSequenceIds.ConditionsOfAcceptance
-                }
-            };
-            _qnaApiClient.Setup(x => x.GetSequences(It.IsAny<Guid>())).ReturnsAsync(applicationSequences);
-
-            var applicationSections = new List<ApplicationSection>
-            {
-                new ApplicationSection
-                {
-                    ApplicationId = Guid.NewGuid(),
-                    SectionId = 1
-                }
+                ApplicationId = Guid.NewGuid(),
+                SectionId = 1
             };
 
-            _qnaApiClient.Setup(x => x.GetSections(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(applicationSections);
+            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(providerRouteSection);
 
             var result = _controller.Applications(ApplicationTypes.RegisterTrainingProviders).GetAwaiter().GetResult();
 
