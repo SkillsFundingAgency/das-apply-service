@@ -110,7 +110,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                 return "Next";
             }          
         }
-
+        
         public string FinishCss(int sectionId)
         {
             var status = FinishSectionStatus(sectionId);
@@ -148,23 +148,20 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             if (shutterPageIds.Any())
             {
                 var finishSequence = ApplicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.Finish);
-                foreach(var section in finishSequence.Sections)
+                var section = finishSequence.Sections.FirstOrDefault(x => x.SectionId == sectionId);
+                
+                foreach(var shutterPageId in shutterPageIds)
                 {
-                    foreach(var shutterPageId in shutterPageIds)
-                    {
-                        var shutterPage = _qnaApiClient.GetPage(ApplicationId, section.Id, shutterPageId)
-                                          .GetAwaiter().GetResult();
+                    var shutterPage = _qnaApiClient.GetPage(ApplicationId, section.Id, shutterPageId)
+                                        .GetAwaiter().GetResult();
 
-                        if (shutterPage != null && shutterPage.Active && shutterPage.Complete)
-                        {
-                            if (section.SectionId == sectionId)
-                            {
-                                return "In Progress";
-                            }
-                            shutterPageActive = true;
-                        }
-                    }                    
-                }
+                    if (shutterPage != null && shutterPage.Active)
+                    {
+                        shutterPageActive = true;
+                        return "In Progress";                        
+                    }
+                }                    
+                
             }
 
             var sectionStatus = RoatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, RoatpWorkflowSequenceIds.Finish, sectionId, ApplicationRouteId);
@@ -178,6 +175,20 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public bool PreviousSectionCompleted(int sequenceId, int sectionId)
         {
             var sequence = ApplicationSequences.FirstOrDefault(x => x.SequenceId == sequenceId);
+
+            if (sequenceId == RoatpWorkflowSequenceIds.YourOrganisation && sectionId == RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation)
+            {
+                return (WhosInControlSectionStatus == "Completed");
+            }
+
+            if (sequenceId == RoatpWorkflowSequenceIds.Finish)
+            {
+                if (sectionId == 1)
+                {
+                    return true;
+                }
+                return (FinishSectionStatus(sectionId) == "Completed");
+            }
 
             return RoatpTaskListWorkflowService.PreviousSectionCompleted(sequence, sectionId, sequence.Sequential);
         }
