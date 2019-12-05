@@ -146,6 +146,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         { 
             public static string StartPage = "235";
         }
+
+        public class Finish
+        {
+            public static string ApplicationPermissionsChecksShutterPage = "10005";
+            public static string TermsConditionsCOAPart2ShutterPage = "10006";
+            public static string TermsConditionsCOAPart3ShutterPage = "10007";
+        }
     }
 
     public static class RoatpWorkflowQuestionTags

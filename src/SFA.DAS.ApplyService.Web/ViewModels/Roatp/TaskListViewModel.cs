@@ -7,11 +7,13 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
     using Domain.Entities;
     using SFA.DAS.ApplyService.Application.Apply.Roatp;
     using SFA.DAS.ApplyService.Web.Configuration;
+    using SFA.DAS.ApplyService.Web.Infrastructure;
     using SFA.DAS.ApplyService.Web.Services;
 
     public class TaskListViewModel : ApplicationSummaryViewModel
     {
         private const string EmployerApplicationRouteId = "2";
+        private readonly IQnaApiClient _qnaApiClient;
 
         public List<NotRequiredOverrideConfiguration> NotRequiredOverrides { get; set; }
     
@@ -21,6 +23,11 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         public IEnumerable<ApplicationSequence> ApplicationSequences { get; set; }
         
+        public TaskListViewModel(IQnaApiClient qnaApiClient)
+        {
+            _qnaApiClient = qnaApiClient;
+        }
+
         public string CssClass(int sequenceId, int sectionId)
         {
             var status = RoatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, sequenceId, sectionId, ApplicationRouteId);
@@ -104,8 +111,71 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             }          
         }
 
-        public bool PreviousSectionCompleted(int sequenceId, int sectionId)
+        public string FinishCss(int sectionId)
+        {
+            var status = FinishSectionStatus(sectionId);
 
+            if (status == String.Empty)
+            {
+                return "hidden";
+            }
+
+            var cssClass = status.ToLower();
+            cssClass = cssClass.Replace(" ", "");
+
+            return cssClass;           
+        }
+
+        public string FinishSectionStatus(int sectionId)
+        {
+            var shutterPageActive = false;
+            if (!ApplicationSequencesCompleted())
+            {
+                return string.Empty;
+            }
+
+            var shutterPageIds = new List<string>();
+            if (sectionId == RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks)
+            {
+                shutterPageIds.Add(RoatpWorkflowPageIds.Finish.ApplicationPermissionsChecksShutterPage);
+            }
+            else if (sectionId == RoatpWorkflowSectionIds.Finish.TermsAndConditions)
+            {
+                shutterPageIds.Add(RoatpWorkflowPageIds.Finish.TermsConditionsCOAPart2ShutterPage);
+                shutterPageIds.Add(RoatpWorkflowPageIds.Finish.TermsConditionsCOAPart3ShutterPage);
+            }
+
+            if (shutterPageIds.Any())
+            {
+                var finishSequence = ApplicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.Finish);
+                foreach(var section in finishSequence.Sections)
+                {
+                    foreach(var shutterPageId in shutterPageIds)
+                    {
+                        var shutterPage = _qnaApiClient.GetPage(ApplicationId, section.Id, shutterPageId)
+                                          .GetAwaiter().GetResult();
+
+                        if (shutterPage != null && shutterPage.Active && shutterPage.Complete)
+                        {
+                            if (section.SectionId == sectionId)
+                            {
+                                return "In Progress";
+                            }
+                            shutterPageActive = true;
+                        }
+                    }                    
+                }
+            }
+
+            var sectionStatus = RoatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, RoatpWorkflowSequenceIds.Finish, sectionId, ApplicationRouteId);
+            if (!shutterPageActive)
+            {
+                return sectionStatus;
+            }
+            return string.Empty;
+        }
+
+        public bool PreviousSectionCompleted(int sequenceId, int sectionId)
         {
             var sequence = ApplicationSequences.FirstOrDefault(x => x.SequenceId == sequenceId);
 

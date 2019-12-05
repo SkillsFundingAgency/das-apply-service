@@ -512,7 +512,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 whosInControlConfirmed = true;
             }
 
-            var model = new TaskListViewModel
+            var model = new TaskListViewModel(_qnaApiClient)
             {
                 ApplicationId = applicationId,
                 ApplicationSequences = filteredSequences,
