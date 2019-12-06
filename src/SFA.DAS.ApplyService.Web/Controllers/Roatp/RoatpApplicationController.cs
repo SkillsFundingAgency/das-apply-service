@@ -572,7 +572,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     }
                     if (question.Input.Type == "TabularData")
                     {
-                        var answer = await _qnaApiClient.GetAnswerByTag(applicationId, question.QuestionTag);
+                        var answer = await _qnaApiClient.GetAnswerByTag(applicationId, question.QuestionTag, question.QuestionId);
                         if (page.PageOfAnswers == null || page.PageOfAnswers.Count < 1)
                         {
                             page.PageOfAnswers = new List<PageOfAnswers>();
