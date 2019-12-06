@@ -74,8 +74,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 var currentSection = sections.FirstOrDefault(x => x.SectionId == sectionId);
 
                 var page = await _qnaApiClient.GetPage(applicationId.Value, currentSection.Id, pageId);
-
-                getHelpQuery.PageTitle = page.Title;
+                if (page == null || String.IsNullOrEmpty(page.Title))
+                {
+                    getHelpQuery.PageTitle = title;
+                }
+                else
+                {
+                    getHelpQuery.PageTitle = page.Title;
+                }
                 var sequenceConfig = _taskListConfiguration.FirstOrDefault(x => x.Id == sequenceId);
                 if (sequenceConfig != null)
                 {
