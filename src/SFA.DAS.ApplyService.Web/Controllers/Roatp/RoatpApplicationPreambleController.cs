@@ -6,7 +6,6 @@
     using Microsoft.Extensions.Logging;
     using SFA.DAS.ApplyService.Web.Infrastructure;
     using System.Threading.Tasks;
-    using Application.Apply.Roatp;
     using Domain.Apply;
     using Domain.CharityCommission;
     using Domain.CompaniesHouse;
@@ -23,7 +22,7 @@
     using System.Collections.Generic;
 
     [Authorize]
-    public class RoatpApplicationPreambleController : Controller
+    public class RoatpApplicationPreambleController : RoatpApplyControllerBase
     {
         private readonly ILogger<RoatpApplicationPreambleController> _logger;
         private readonly IRoatpApiClient _roatpApiClient;
@@ -33,9 +32,6 @@
         private readonly ICharityCommissionApiClient _charityCommissionApiClient;
         private readonly IOrganisationApiClient _organisationApiClient;
         private readonly IUsersApiClient _usersApiClient;
-        
-        private const string ApplicationDetailsKey = "Roatp_Application_Details";
-        private const string GetHelpSubmittedForPageKey = "Roatp_GetHelpSubmitted_{0}";
 
         private string[] StatusOnlyCompanyNumberPrefixes = new[] { "IP", "SP", "IC", "SI", "NP", "NV", "RC", "SR", "NR", "NO" };
 
@@ -47,6 +43,7 @@
                                                   ICharityCommissionApiClient charityCommissionApiClient,
                                                   IOrganisationApiClient organisationApiClient,
                                                   IUsersApiClient usersApiClient)
+            :base(sessionService)
         {
             _logger = logger;
             _roatpApiClient = roatpApiClient;
@@ -73,18 +70,13 @@
         [Route("enter-uk-provider-reference-number")]
         public async Task<IActionResult> EnterApplicationUkprn(string ukprn)
         {
-            var model = new SearchByUkprnViewModel
-            {
-                PageId = "UKPRN"
-            };
+            var model = new SearchByUkprnViewModel();
             if (!String.IsNullOrWhiteSpace(ukprn))
             {
                 model.UKPRN = ukprn;
             }
 
-            var getHelpSessionKey = string.Format(GetHelpSubmittedForPageKey, "UKPRN");
-            var getHelpSubmitted = _sessionService.Get<bool>(getHelpSessionKey);
-            model.GetHelpQuerySubmitted = getHelpSubmitted;
+            PopulateGetHelpWithQuestion(model, "UKPRN");
 
             return View("~/Views/Roatp/EnterApplicationUkprn.cshtml", model);
         }
@@ -227,29 +219,30 @@
 
             if (model.ApplicationRouteId == ApplicationRoute.EmployerProviderApplicationRoute)
             {
+                var applicationRoutes = await GetApplicationRoutesForOrganisation();
                 var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-                var viewModel = new EmployerLevyStatusViewModel
-                {
-                    UKPRN = applicationDetails.UKPRN.ToString(),
-                    ApplicationRouteId = model.ApplicationRouteId
-                };
-                return await ConfirmLevyStatus(viewModel);
+                applicationDetails.ApplicationRoute = applicationRoutes.FirstOrDefault(x => x.Id == model.ApplicationRouteId);
+                _sessionService.Set(ApplicationDetailsKey, applicationDetails);
+
+                return RedirectToAction("ConfirmLevyStatus");
             }
 
             return await StartRoatpApplication(model);
         }
 
         [Route("organisation-levy-paying-employer")]
-        public async Task<IActionResult> ConfirmLevyStatus(EmployerLevyStatusViewModel model)
+        public async Task<IActionResult> ConfirmLevyStatus()
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-            if (applicationDetails.ApplicationRoute == null)
+            var viewModel = new EmployerLevyStatusViewModel
             {
-                applicationDetails.ApplicationRoute = new ApplicationRoute { Id = model.ApplicationRouteId };
-                _sessionService.Set(ApplicationDetailsKey, applicationDetails);
-            }
+                UKPRN = applicationDetails.UKPRN.ToString(),
+                ApplicationRouteId = applicationDetails.ApplicationRoute.Id
+            };
 
-            return View("~/Views/Roatp/ConfirmLevyStatus.cshtml", model);
+            PopulateGetHelpWithQuestion(viewModel, "ConfirmLevyStatus");
+
+            return View("~/Views/Roatp/ConfirmLevyStatus.cshtml", viewModel);
         }
 
         [HttpPost]
@@ -283,13 +276,15 @@
                 };
                 return await StartRoatpApplication(selectApplicationRouteModel);
             }
-            return await IneligibleNonLevy();
+            return RedirectToAction("IneligibleNonLevy");
         }
 
         [Route("organisation-cannot-apply-employer")]
         public async Task<IActionResult> IneligibleNonLevy()
         {
-            return View("~/Views/Roatp/IneligibleNonLevy.cshtml", new EmployerProviderContinueApplicationViewModel());
+            var model = new EmployerProviderContinueApplicationViewModel();
+            PopulateGetHelpWithQuestion(model, "IneligibleNonLevy");
+            return View("~/Views/Roatp/IneligibleNonLevy.cshtml", model);
         }
 
         [HttpPost]
@@ -345,10 +340,7 @@
         [Route("choose-provider-route")]
         public async Task<IActionResult> SelectApplicationRoute()
         {
-            var model = new SelectApplicationRouteViewModel
-            {
-                PageId = "ApplicationRoute"
-            };
+            var model = new SelectApplicationRouteViewModel();
             var applicationRoutes = await GetApplicationRoutesForOrganisation();
 
             model.ApplicationRoutes = applicationRoutes;
@@ -358,9 +350,8 @@
             {
                 model.ApplicationRouteId = applicationDetails.ApplicationRoute.Id;
             }
-            var getHelpSessionKey = string.Format(GetHelpSubmittedForPageKey, "ApplicationRoute");
-            var getHelpSubmitted = _sessionService.Get<bool>(getHelpSessionKey);
-            model.GetHelpQuerySubmitted = getHelpSubmitted;
+
+            PopulateGetHelpWithQuestion(model, "ApplicationRoute");
 
             return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
         }
@@ -500,6 +491,8 @@
                 UKPRN = applicationDetails.UKPRN.ToString(),
                 CurrentProviderType = existingProviderRoute
             };
+
+            PopulateGetHelpWithQuestion(model, "AlreadyOnRegister");
 
             return View("~/Views/Roatp/ProviderAlreadyOnRegister.cshtml", model);
         }

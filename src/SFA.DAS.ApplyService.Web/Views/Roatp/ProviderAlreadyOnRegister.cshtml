@@ -31,69 +31,70 @@
     </div>
 }
 
-<div class="govuk-width-container">
+    <div class="govuk-width-container">
 
-    <main class="govuk-main-wrapper " id="main-content" role="main">
+        <main class="govuk-main-wrapper " id="main-content" role="main">
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-l">Your organisation is already on the RoATP as @Model.CurrentProviderTypeText</h1>
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <h1 class="govuk-heading-l">Your organisation is already on the RoATP as @Model.CurrentProviderTypeText</h1>
+                </div>
             </div>
-        </div>
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <p class="govuk-body">
-                    Does your organisation want to change provider route?
-                </p>
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <p class="govuk-body">
+                        Does your organisation want to change provider route?
+                    </p>
+                </div>
             </div>
-        </div>
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <form method="post" asp-action="ChangeProviderRoute" asp-controller="RoatpApplicationPreamble">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <form method="post" asp-action="ChangeProviderRoute" asp-controller="RoatpApplicationPreamble">
 
-                    <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ChangeApplicationRoute" sfa-validationerror-class="govuk-error-message">
-                        @if (showErrors)
-                        {
-                            <span class="govuk-error-message">
-                                @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "ChangeApplicationRoute")?.ErrorMessage)
-                            </span>
-                        }
-                        <fieldset class="govuk-fieldset">
+                        <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ChangeApplicationRoute" sfa-validationerror-class="govuk-error-message">
+                            @if (showErrors)
+                            {
+                                <span class="govuk-error-message">
+                                    @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "ChangeApplicationRoute")?.ErrorMessage)
+                                </span>
+                            }
+                            <fieldset class="govuk-fieldset">
 
-                            <div class="govuk-radios">
+                                <div class="govuk-radios">
 
-                                <div class="govuk-radios__item">
+                                    <div class="govuk-radios__item">
 
-                                    <input asp-for="ChangeApplicationRoute" class="govuk-radios__input @isError" id="ChangeApplicationRoute-Yes"
-                                           name="ChangeApplicationRoute" type="radio" value="Y"
-                                           sfa-validation-for="ChangeApplicationRoute" sfa-validationerror-class="form-control-error">
-                                    <label class="govuk-label govuk-radios__label" for="ChangeApplicationRoute-Yes">
-                                        Yes
-                                    </label>
+                                        <input asp-for="ChangeApplicationRoute" class="govuk-radios__input @isError" id="ChangeApplicationRoute-Yes"
+                                               name="ChangeApplicationRoute" type="radio" value="Y"
+                                               sfa-validation-for="ChangeApplicationRoute" sfa-validationerror-class="form-control-error">
+                                        <label class="govuk-label govuk-radios__label" for="ChangeApplicationRoute-Yes">
+                                            Yes
+                                        </label>
+
+                                    </div>
+
+                                    <div class="govuk-radios__item">
+
+                                        <input asp-for="ChangeApplicationRoute" class="govuk-radios__input @isError" id="ChangeApplicationRoute-No"
+                                               name="ChangeApplicationRoute" type="radio" value="N"
+                                               sfa-validation-for="ChangeApplicationRoute" sfa-validationerror-class="form-control-error">
+                                        <label class="govuk-label govuk-radios__label" for="ChangeApplicationRoute-No">
+                                            No
+                                        </label>
+
+                                    </div>
 
                                 </div>
-
-                                <div class="govuk-radios__item">
-
-                                    <input asp-for="ChangeApplicationRoute" class="govuk-radios__input @isError" id="ChangeApplicationRoute-No"
-                                           name="ChangeApplicationRoute" type="radio" value="N"
-                                           sfa-validation-for="ChangeApplicationRoute" sfa-validationerror-class="form-control-error">
-                                    <label class="govuk-label govuk-radios__label" for="ChangeApplicationRoute-No">
-                                        No
-                                    </label>
-
-                                </div>
-
-                            </div>
-                        </fieldset>
-                    </div>
-                    <input type="submit" class="govuk-button" value="Save and continue" />
-                </form>
+                            </fieldset>
+                        </div>
+                        <input type="submit" class="govuk-button" value="Save and continue" />
+                    </form>
+                </div>
             </div>
-        </div>
-    </main>
-</div>
+        </main>
+        <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
+    </div>
 
 

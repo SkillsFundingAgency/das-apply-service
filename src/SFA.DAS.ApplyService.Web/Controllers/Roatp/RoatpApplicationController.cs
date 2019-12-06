@@ -28,12 +28,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Options;
     using MoreLinq;
+    using SFA.DAS.ApplyService.Web.Controllers.Roatp;
     using SFA.DAS.ApplyService.Web.Infrastructure.Validations;
     using SFA.DAS.ApplyService.Web.Services;
     using ViewModels.Roatp;
 
     [Authorize]
-    public class RoatpApplicationController : Controller
+    public class RoatpApplicationController : RoatpApplyControllerBase
     {
         private readonly IApplicationApiClient _apiClient;
         private readonly ILogger<RoatpApplicationController> _logger;
@@ -52,8 +53,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly ICustomValidatorFactory _customValidatorFactory;
         private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
 
-        private const string ApplicationDetailsKey = "Roatp_Application_Details";
-        private const string GetHelpSubmittedForPageKey = "Roatp_GetHelpSubmitted_{0}";
         private const string InputClassUpperCase = "app-uppercase";
         private const int Section1Id = 1;
         private const string NotApplicableAnswerText = "None of the above";
@@ -64,6 +63,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             IQnaApiClient qnaApiClient, IOptions<List<TaskListConfiguration>> configuration, IProcessPageFlowService processPageFlowService,
             IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
             IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks, ICustomValidatorFactory customValidatorFactory, IRoatpTaskListWorkflowService roatpTaskListWorkflowService, IOptions<List<NotRequiredOverrideConfiguration>> notRequiredOverrides)
+            :base(sessionService)
         {
             _apiClient = apiClient;
             _logger = logger;
@@ -338,13 +338,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return View("~/Views/Application/Pages/MultipleAnswers.cshtml", viewModel);
             }
 
-            var getHelpSessionKey = string.Format(GetHelpSubmittedForPageKey, pageId);
-            var getHelpSubmitted = _sessionService.Get<bool>(getHelpSessionKey);
-            viewModel.GetHelpQuerySubmitted = getHelpSubmitted;
+            PopulateGetHelpWithQuestion(viewModel, pageId);         
 
-            return View("~/Views/Application/Pages/Index.cshtml", viewModel);
-
-            
+            return View("~/Views/Application/Pages/Index.cshtml", viewModel);            
         }
         
                 

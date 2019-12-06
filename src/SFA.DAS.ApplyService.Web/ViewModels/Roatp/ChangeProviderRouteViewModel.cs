@@ -3,10 +3,11 @@ using System.ComponentModel.DataAnnotations;
 using SFA.DAS.ApplyService.Web.Services;
 using System.Collections.Generic;
 using SFA.DAS.ApplyService.Domain.Apply;
+using System;
 
 namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
-    public class ChangeProviderRouteViewModel
+    public class ChangeProviderRouteViewModel : IPageViewModel
     {
         public string UKPRN { get; set; }
         public ApplicationRoute CurrentProviderType { get; set; }
@@ -35,5 +36,14 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string ChangeApplicationRoute { get; set; }
 
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
+        public string Title { get { return "Your organisation is already on the RoATP"; } set { } }
+
+        public Guid ApplicationId { get; }
+        public string SequenceId { get; set; }
+        public int SectionId { get; set; }
+        public string PageId { get; set; }
+        public string GetHelpQuestion { get; set; }
+        public bool GetHelpQuerySubmitted { get; set; }
+        public string GetHelpErrorMessage { get; set; }
     }
 }
