@@ -594,22 +594,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return page;
         }
         
-        private async Task<bool> CheckIfAnswersMustBeValidated(Guid applicationId, int sequenceId, int sectionId,
-            string pageId, List<Answer> answers, Regex inputEnteredRegex)
-        {
-            if(answers.Exists(p => p.HasValue(inputEnteredRegex) && p.QuestionId != "RedirectAction"))
-            {
-                return true;
-            }
-            
-            var sequences = await _qnaApiClient.GetSequences(applicationId);
-            var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
-            var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
-            var selectedSection = sections.Single(x => x.SectionId == sectionId);
-
-            var page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
-            return (page == null || !page.PageOfAnswers.Any());
-        }
         private async Task<IActionResult> SaveAnswersGiven(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, string __formAction)
         {
             var sequences = await _qnaApiClient.GetSequences(applicationId);
@@ -651,20 +635,34 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
             }
 
-            //todo: do we need these two lines???
-            var answersMustBeValidated = await CheckIfAnswersMustBeValidated(applicationId, sequenceId, sectionId, pageId, answers, new Regex(@"\w+"));
-            var saveNewAnswers = (__formAction == "Add" || answersMustBeValidated);
+            bool validationPassed;
+            List<KeyValuePair<string, string>> validationErrors;
+            string nextAction;
+            string nextActionId;
 
-            var updatePageResult = await _qnaApiClient.UpdatePageAnswers(applicationId, selectedSection.Id, pageId, answers); 
-
-            if (updatePageResult.ValidationPassed)
+            if (page.Questions.Any(q => "FileUpload".Equals(q.Input.Type, StringComparison.InvariantCultureIgnoreCase)))
             {
-                await UploadFilesToStorage(applicationId, selectedSection.Id,pageId);
+                var uploadFileResult = await _qnaApiClient.Upload(applicationId, selectedSection.Id, pageId, HttpContext.Request.Form.Files);
+                validationPassed = uploadFileResult.ValidationPassed;
+                validationErrors = uploadFileResult.ValidationErrors;
+                nextAction = uploadFileResult.NextAction;
+                nextActionId = uploadFileResult.NextActionId;
+            }
+            else
+            {
+                var updatePageResult = await _qnaApiClient.UpdatePageAnswers(applicationId, selectedSection.Id, pageId, answers);
+                validationPassed = updatePageResult.ValidationPassed;
+                validationErrors = updatePageResult.ValidationErrors;
+                nextAction = updatePageResult.NextAction;
+                nextActionId = updatePageResult.NextActionId;
+            }
 
+            if (validationPassed)
+            {
                 if (__formAction == "Add" && page.AllowMultipleAnswers)
                 {
                     return RedirectToAction("Page", new {applicationId, sequenceId = selectedSequence.SequenceId,
-                        sectionId = selectedSection.SectionId, pageId = updatePageResult.NextActionId, redirectAction});
+                        sectionId = selectedSection.SectionId, pageId = nextActionId, redirectAction});
                 }
 
                 if (redirectAction == "Feedback")
@@ -672,21 +670,19 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     return RedirectToAction("Feedback", new {applicationId});
                 }
 
-                var nextActionsPage = updatePageResult.NextActionId;
-                if (nextActionsPage == null)
+                if (string.IsNullOrEmpty(nextActionId) || !"NextPage".Equals(nextAction, StringComparison.InvariantCultureIgnoreCase))
                 {
                     await _apiClient.MarkSectionAsCompleted(applicationId, selectedSection.Id);
                     return await TaskList(applicationId);
                 }
         
                 return RedirectToAction("Page", new {applicationId, sequenceId = selectedSequence.SequenceId,
-                    sectionId = selectedSection.SectionId, pageId = updatePageResult.NextActionId, redirectAction});
-                                   
+                    sectionId = selectedSection.SectionId, pageId = nextActionId, redirectAction});                                   
             }
 
-            if (updatePageResult.ValidationErrors != null)
+            if (validationErrors != null)
             {
-                foreach (var error in updatePageResult.ValidationErrors)
+                foreach (var error in validationErrors)
                 {
                     ModelState.AddModelError(error.Key, error.Value);
                     var valid = ModelState.IsValid;
@@ -750,14 +746,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return null;
-        }
-
-        private async Task UploadFilesToStorage(Guid applicationId, Guid sectionId, string pageId)
-        {
-            if (HttpContext.Request.Form.Files.Any())
-            {
-               await _qnaApiClient.Upload(applicationId, sectionId, pageId, HttpContext.Request.Form.Files);
-            }
         }
 
         private void GetAnswersFromForm(Page page, List<Answer> answers)
