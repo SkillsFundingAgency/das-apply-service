@@ -127,7 +127,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         {
             public static string CompaniesHouseStartPage = "70";
             public static string CharityCommissionStartPage = "80";
-            public static string CharityCommissionConfirmTrustees = "82";
+            public static string CharityCommissionConfirmTrustees = "80";
             public static string CharityCommissionNoTrustees = "90";
             public static string SoleTraderPartnership = "100";
             public static string PartnershipType = "101";
