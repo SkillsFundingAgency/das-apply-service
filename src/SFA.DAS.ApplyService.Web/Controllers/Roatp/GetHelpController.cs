@@ -55,6 +55,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             if (String.IsNullOrWhiteSpace(getHelp))
             {
                 _sessionService.Set(GetHelpErrorMessageKey, MinLengthErrorMessage);
+                var questionKey = string.Format(GetHelpQuestionKey, pageId);
+                _sessionService.Set(questionKey, string.Empty);
                 return RedirectToAction(action, controller, new { applicationId, sequenceId, sectionId, pageId });
             }
 
