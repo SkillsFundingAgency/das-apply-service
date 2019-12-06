@@ -29,7 +29,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private const string ApplicationDetailsKey = "Roatp_Application_Details";
         private const string GetHelpSubmittedForPageKey = "Roatp_GetHelpSubmitted_{0}";
         private const string GetHelpQuestionKey = "Roatp_GetHelpQuestion_{0}";
-        private const string GetHelpErrorMessageKey = "Roatp_GetHelp_ErrorMessage";
+        private const string GetHelpErrorMessageKey = "Roatp_GetHelp_ErrorMessage_{0}";
         private const int GetHelpTextMaxLength = 250;
         private const string MinLengthErrorMessage = "Tell us what you need help with";
         private const string MaxLengthErrorMessage = "Enter at least 250 characters or less";
@@ -51,10 +51,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public async Task<IActionResult> Index(Guid? applicationId, int sequenceId, int sectionId, string pageId, string title, string getHelp, string controller, string action)
         {
             var getHelpQuery = new GetHelpWithQuestion();
+            var errorMessageKey = string.Format(GetHelpErrorMessageKey, pageId);
 
             if (String.IsNullOrWhiteSpace(getHelp))
             {
-                _sessionService.Set(GetHelpErrorMessageKey, MinLengthErrorMessage);
+                _sessionService.Set(errorMessageKey, MinLengthErrorMessage);
                 var questionKey = string.Format(GetHelpQuestionKey, pageId);
                 _sessionService.Set(questionKey, string.Empty);
                 return RedirectToAction(action, controller, new { applicationId, sequenceId, sectionId, pageId });
@@ -62,7 +63,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             if (getHelp.Length > GetHelpTextMaxLength)
             {
-                _sessionService.Set(GetHelpErrorMessageKey, MaxLengthErrorMessage);
+                _sessionService.Set(errorMessageKey, MaxLengthErrorMessage);
                 var questionKey = string.Format(GetHelpQuestionKey, pageId);
                 _sessionService.Set(questionKey, getHelp);
                 return RedirectToAction(action, controller, new { applicationId, sequenceId, sectionId, pageId });
@@ -146,7 +147,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             var sessionKey = string.Format(GetHelpSubmittedForPageKey, pageId);
             _sessionService.Set(sessionKey, true);
-            _sessionService.Set(GetHelpErrorMessageKey, string.Empty);
+            _sessionService.Set(errorMessageKey, string.Empty);
 
             return RedirectToAction(action, controller, new { applicationId, sequenceId, sectionId, pageId });
         }
