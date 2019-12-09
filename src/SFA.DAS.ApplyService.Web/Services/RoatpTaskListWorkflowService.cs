@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using MoreLinq;
-using NPOI.POIFS.Storage;
+using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Web.Configuration;
 
@@ -11,7 +10,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 {
     public class RoatpTaskListWorkflowService: IRoatpTaskListWorkflowService
     {
-        public  string SectionStatus(IEnumerable<ApplicationSequence> applicationSequences, List<NotRequiredOverrideConfiguration> notRequiredOverrides, int sequenceId, int sectionId, string applicationRouteId, bool sequential = false)
+        public string SectionStatus(IEnumerable<ApplicationSequence> applicationSequences, List<NotRequiredOverrideConfiguration> notRequiredOverrides, int sequenceId, int sectionId, string applicationRouteId)
         {
             var sequence = applicationSequences?.FirstOrDefault(x => (int)x.SequenceId == sequenceId);
 
@@ -30,7 +29,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             }
 
 
-            if (!PreviousSectionCompleted(sequence, sectionId, sequential))
+            if (!PreviousSectionCompleted(sequence, sectionId))
             {
                 return string.Empty;
             }
@@ -44,15 +43,15 @@ namespace SFA.DAS.ApplyService.Web.Services
             // I will need to double check there are no other uses for this endpoint before doing that
            
 
-            var sectionCompleteBasedOnPagesActiveAndComplete = GetSectionText(questionsCompleted, section,sequential);
-            var sectionCompleteBasedOnDatabaseSettingOfIsComplete = SectionText(questionsCompleted, section.SectionCompleted, sequential);
+            var sectionCompleteBasedOnPagesActiveAndComplete = GetSectionText(questionsCompleted, section, sequence.Sequential);
+            var sectionCompleteBasedOnDatabaseSettingOfIsComplete = SectionText(questionsCompleted, section.SectionCompleted, sequence.Sequential);
 
             
             var sectionText = sectionCompleteBasedOnPagesActiveAndComplete;
 
             if (sectionCompleteBasedOnDatabaseSettingOfIsComplete != sectionCompleteBasedOnPagesActiveAndComplete)
             {
-                if (sequenceId == 1)
+                if (sequence.Sequential)
                 {
                     sectionText = sectionCompleteBasedOnDatabaseSettingOfIsComplete;
                 }
@@ -61,9 +60,9 @@ namespace SFA.DAS.ApplyService.Web.Services
             return sectionText;
         }
 
-        public  bool PreviousSectionCompleted(ApplicationSequence sequence, int sectionId, bool sequential)
+        public bool PreviousSectionCompleted(ApplicationSequence sequence, int sectionId)
         {
-            if (sequential && sectionId > 1)
+            if (sequence.Sequential && sectionId > 1)
             {
                 var previousSection = sequence.Sections.FirstOrDefault(x => x.SectionId == (sectionId - 1));
                 if (previousSection == null)
@@ -93,7 +92,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             return true;
         }
 
-        private  int SectionCompletedQuestionsCount(ApplicationSection section)
+        private int SectionCompletedQuestionsCount(ApplicationSection section)
         {
             int answeredQuestions = 0;
             
@@ -140,7 +139,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         }
 
-        private  string SectionText(int completedCount, bool sectionCompleted, bool sequential)
+        private string SectionText(int completedCount, bool sectionCompleted, bool sequential)
         {
             if (sectionCompleted)
             {
@@ -160,5 +159,6 @@ namespace SFA.DAS.ApplyService.Web.Services
             return string.Empty;
 
         }
+
     }
 }
