@@ -59,9 +59,9 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         public IEnumerable<ApplicationSequence> ApplicationSequences { get; set; }
         
-        public string CssClass(int sequenceId, int sectionId, bool sequential = false)
+        public string CssClass(int sequenceId, int sectionId)
         {
-            var status = _roatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, sequenceId, sectionId, ApplicationRouteId, sequential);
+            var status = _roatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, sequenceId, sectionId, ApplicationRouteId);
 
             if (status == String.Empty)
             {
@@ -74,16 +74,16 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             return cssClass;
         }
 
-        public string SectionStatus(int sequenceId, int sectionId, bool sequential = false)
+        public string SectionStatus(int sequenceId, int sectionId)
         {
-            return _roatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, sequenceId, sectionId, ApplicationRouteId, sequential);
+            return _roatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, sequenceId, sectionId, ApplicationRouteId);
         }
 
-        public bool PreviousSectionCompleted(int sequenceId, int sectionId, bool sequential = false)
+        public bool PreviousSectionCompleted(int sequenceId, int sectionId)
         {
             var sequence = ApplicationSequences.FirstOrDefault(x => x.SequenceId == sequenceId);
 
-            return _roatpTaskListWorkflowService.PreviousSectionCompleted(sequence, sectionId, sequential);
+            return _roatpTaskListWorkflowService.PreviousSectionCompleted(sequence, sectionId);
         }
 
         public bool IntroductionPageNextSectionUnavailable(int sequenceId, int sectionId)
@@ -96,7 +96,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
                 foreach(var section in yourOrganisationSequence.Sections)
                 {
-                    var sectionStatus = _roatpTaskListWorkflowService.SectionStatus(ApplicationSequences,NotRequiredOverrides, RoatpWorkflowSequenceIds.YourOrganisation, section.SectionId,ApplicationRouteId, true);
+                    var sectionStatus = _roatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, RoatpWorkflowSequenceIds.YourOrganisation, section.SectionId, ApplicationRouteId);
                     if (sectionStatus.ToLower() != PageStatusCompleted)
                     {
                         return true;
@@ -169,6 +169,24 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
                 return describeOrganisationStartPageId;
             }
+        }
+
+        public bool ApplicationSequencesCompleted()
+        {
+            var applicationSequences = ApplicationSequences.Where(seq => seq.SequenceId != RoatpWorkflowSequenceIds.Finish);
+            foreach (var sequence in applicationSequences)
+            {
+                foreach(var section in sequence.Sections)
+                {
+                    var sectionStatus = SectionStatus(sequence.SequenceId, section.SectionId).ToLower();
+                    if (sectionStatus != "not required" && sectionStatus != "completed")
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
     }
 }
