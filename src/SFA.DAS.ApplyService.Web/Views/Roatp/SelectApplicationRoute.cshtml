@@ -76,10 +76,14 @@
                             </div>
                         </fieldset>
                     </div>
+                    @Html.HiddenFor(x => x.PageId)
+                    @Html.HiddenFor(x => x.SequenceId)
+                    @Html.HiddenFor(x => x.SectionId)
                     <input type="submit" class="govuk-button" value="Save and continue" />
                 </form>
 
             </div>
+          </div>
         </main>
         <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
     </div>

@@ -1,8 +1,8 @@
 ﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.IPageViewModel
 
 @{
-    var controllerName = ViewContext.RouteData.Values["controller"];
-    var actionName = ViewContext.RouteData.Values["action"];
+    var controllerName = ViewContext.RouteData.Values["controller"].ToString();
+    var actionName = Model.GetHelpAction;
     var hasError = !String.IsNullOrWhiteSpace(Model.GetHelpErrorMessage);
 }
 

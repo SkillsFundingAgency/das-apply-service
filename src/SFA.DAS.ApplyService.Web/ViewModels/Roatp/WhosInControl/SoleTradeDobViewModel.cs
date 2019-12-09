@@ -13,7 +13,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string SoleTraderName { get; set; }
         public string SoleTraderDobMonth { get; set; }
         public string SoleTraderDobYear { get; set; }
-        public List<ValidationErrorDetail> ErrorMessages { get; set; }
 
         public string Title { get { return $"What is the sole trader's date of birth?"; } set { } }
         public string SequenceId { get { return RoatpWorkflowSequenceIds.YourOrganisation.ToString(); } set { } }
@@ -22,5 +21,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string GetHelpQuestion { get; set; }
         public bool GetHelpQuerySubmitted { get; set; }
         public string GetHelpErrorMessage { get; set; }
+        public string GetHelpAction { get { return "AddSoleTradeDob"; } set { } }
     }
 }

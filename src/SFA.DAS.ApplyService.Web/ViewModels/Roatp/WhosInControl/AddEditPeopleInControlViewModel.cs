@@ -12,7 +12,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string Identifier { get; set; }
 
         public Guid ApplicationId { get; set; }
-        public List<ValidationErrorDetail> ErrorMessages { get; set; }
 
         [Required(ErrorMessage = "Enter a full name")]
         [MaxLength(255, ErrorMessage = "Enter a full name using 255 characters or less")]
@@ -28,5 +27,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string GetHelpQuestion { get; set; }
         public bool GetHelpQuerySubmitted { get; set; }
         public string GetHelpErrorMessage { get; set; }
+
+        public string GetHelpAction { get; set; }
     }
 }

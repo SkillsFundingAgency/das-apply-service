@@ -1114,7 +1114,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 ContinueWithApplication = "Y"
             };
 
-            var result = _controller.ConfirmNonLevyContinue(model).GetAwaiter().GetResult();
+            var result = _controller.ConfirmNonLevyContinue(model);
 
             var redirectResult = result as RedirectToActionResult;
 
@@ -1320,7 +1320,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 ContinueWithApplication = "N"
             };
 
-            var result = _controller.ConfirmNonLevyContinue(model).GetAwaiter().GetResult();
+            var result = _controller.ConfirmNonLevyContinue(model);
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.ActionName.Should().Be("NonLevyAbandonedApplication");

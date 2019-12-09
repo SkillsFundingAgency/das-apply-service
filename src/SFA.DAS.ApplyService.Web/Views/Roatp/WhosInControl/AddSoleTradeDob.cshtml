@@ -53,21 +53,22 @@
 
                 @Html.HiddenFor(x => x.ApplicationId)
                 @Html.HiddenFor(x => x.SoleTraderName)
+                @Html.HiddenFor(x => x.GetHelpAction)
 
                 <span class="govuk-hint" id="dob-hint">
                     For example, 3 1980
                 </span>
                 @if (showErrors)
                 {
-                <span class="govuk-error-message">
+                    <span class="govuk-error-message">
 
-                    @Html.Raw(errorMessages.FirstOrDefault(x => x.Field == "SoleTraderDobMonth")?.ErrorMessage)
-                    @if (showDobMonthError && showDobYearError)
-                    {
-                        <br />
-                    }
-                    @Html.Raw(errorMessages.FirstOrDefault(x => x.Field == "SoleTraderDobYear")?.ErrorMessage)
-                </span>
+                        @Html.Raw(errorMessages.FirstOrDefault(x => x.Field == "SoleTraderDobMonth")?.ErrorMessage)
+                        @if (showDobMonthError && showDobYearError)
+                        {
+                            <br />
+                        }
+                        @Html.Raw(errorMessages.FirstOrDefault(x => x.Field == "SoleTraderDobYear")?.ErrorMessage)
+                    </span>
                 }
                 <div class="govuk-date-input" id="dob">
                     <div class="govuk-date-input__item">

@@ -24,5 +24,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string GetHelpQuestion { get; set; }
         public bool GetHelpQuerySubmitted { get; set; }
         public string GetHelpErrorMessage { get; set; }
+        
+        public string GetHelpAction { get { return "ConfirmLevyStatus"; } set { } }
     }
 }

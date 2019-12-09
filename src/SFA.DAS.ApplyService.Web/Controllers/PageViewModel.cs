@@ -78,6 +78,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public string GetHelpErrorMessage { get; set; }
 
+        public string GetHelpAction { get { return "Page"; } set { } }
+
         private void SetupPage(Page page, List<ValidationErrorDetail> errorMessages)
         {
             Title = page.Title;

@@ -29,5 +29,7 @@
         public string GetHelpErrorMessage { get; set; }
 
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
+
+        public string GetHelpAction { get { return "SelectApplicationRoute"; } set { } }
     }
 }

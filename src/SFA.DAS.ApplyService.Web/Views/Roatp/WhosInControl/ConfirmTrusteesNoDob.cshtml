@@ -42,6 +42,7 @@
             <form method="post" asp-action="TrusteesConfirmed" novalidate enctype="multipart/form-data">
 
                 @Html.HiddenFor(x => x.ApplicationId)
+                @Html.HiddenFor(x => x.GetHelpAction)
 
                 @{ await Html.RenderPartialAsync("~/Views/Roatp/WhosInControl/PeopleInControl.cshtml", Model.Trustees); }
 

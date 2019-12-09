@@ -66,6 +66,8 @@
             <div class="govuk-grid-column-two-thirds">
                 <form method="post" asp-action="PartnershipTypeConfirmed">
                     @Html.HiddenFor(x => x.ApplicationId)
+                    @Html.HiddenFor(x => x.GetHelpAction)
+
                     <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="PartnershipType" sfa-validationerror-class="govuk-error-message">
                         @if (showErrors)
                         {

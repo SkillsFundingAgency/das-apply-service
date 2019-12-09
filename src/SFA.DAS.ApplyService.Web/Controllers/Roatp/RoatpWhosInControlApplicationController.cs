@@ -65,7 +65,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return await ConfirmPeopleInControl(applicationId);
             }
 
-            return await AddPeopleInControl(applicationId);
+            return AddPeopleInControl(applicationId);
         }
 
         [Route("confirm-directors-pscs")]
@@ -382,7 +382,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             var model = new AddEditPeopleInControlViewModel
             {
                 ApplicationId = applicationId,
-                DateOfBirthOptional = !partnerIndividual                
+                DateOfBirthOptional = !partnerIndividual,
+                GetHelpAction = "AddPartner"
             };
 
             if (partnerIndividual)
@@ -503,7 +504,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     PersonInControlName = partner.Columns[0],
                     Index = index,
                     Identifier = "organisation",
-                    DateOfBirthOptional = true
+                    DateOfBirthOptional = true,
+                    GetHelpAction = "EditPartner"
                 };
                 if (partner.Columns.Count > 1 && !String.IsNullOrEmpty(partner.Columns[1]))
                 {
@@ -629,9 +631,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpGet]
-        public async Task<IActionResult> AddPeopleInControl(Guid applicationId)
+        public IActionResult AddPeopleInControl(Guid applicationId)
         {
-            var model = new AddEditPeopleInControlViewModel { ApplicationId = applicationId };
+            var model = new AddEditPeopleInControlViewModel { ApplicationId = applicationId, GetHelpAction = "AddPeopleInControl" };
             PopulateGetHelpWithQuestion(model, RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl);
 
             return View("~/Views/Roatp/WhosInControl/AddPeopleInControl.cshtml", model);
@@ -737,7 +739,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     Identifier = "person",
                     PersonInControlDobMonth = DateOfBirthFormatter.GetMonthNumberFromShortDateOfBirth(dateOfBirth),
                     PersonInControlDobYear = DateOfBirthFormatter.GetYearFromShortDateOfBirth(dateOfBirth),
-                    DateOfBirthOptional = false
+                    DateOfBirthOptional = false,
+                    GetHelpAction = "EditPeopleInControl"
                 };
                 PopulateGetHelpWithQuestion(model, "EditPeopleInControl");
                 return View($"~/Views/Roatp/WhosInControl/EditPeopleInControl.cshtml", model);
@@ -800,7 +803,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             var partnerName = partnerTableData.DataRows[index].Columns[0];
 
-            return await ConfirmRemovalOfPersonInControl(applicationId, partnerName, "RemovePartnerDetails", "ConfirmPartners");
+            return ConfirmRemovalOfPersonInControl(applicationId, partnerName, "RemovePartnerDetails", "ConfirmPartners");
         }
 
         [HttpGet]
@@ -815,7 +818,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             var personName = personTableData.DataRows[index].Columns[0];
 
-            return await ConfirmRemovalOfPersonInControl(applicationId, personName, "RemovePscDetails", "ConfirmPeopleInControl");
+            return ConfirmRemovalOfPersonInControl(applicationId, personName, "RemovePscDetails", "ConfirmPeopleInControl");
         }
 
         [HttpPost]
@@ -860,14 +863,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
         }
 
-        private async Task<IActionResult> ConfirmRemovalOfPersonInControl(Guid applicationId, string name, string actionName, string backActionName)
+        private IActionResult ConfirmRemovalOfPersonInControl(Guid applicationId, string name, string actionName, string backActionName)
         {
             var model = new ConfirmRemovePersonInControlViewModel
             {
                 ApplicationId = applicationId,
                 Name = name,
                 ActionName = actionName,
-                BackAction = backActionName
+                BackAction = backActionName,
+                GetHelpAction = actionName
             };
             PopulateGetHelpWithQuestion(model, actionName);
 

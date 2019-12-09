@@ -27,7 +27,6 @@
         private readonly ILogger<RoatpApplicationPreambleController> _logger;
         private readonly IRoatpApiClient _roatpApiClient;
         private readonly IUkrlpApiClient _ukrlpApiClient;
-        private readonly ISessionService _sessionService;
         private readonly ICompaniesHouseApiClient _companiesHouseApiClient;
         private readonly ICharityCommissionApiClient _charityCommissionApiClient;
         private readonly IOrganisationApiClient _organisationApiClient;
@@ -56,19 +55,19 @@
         }
 
         [Route("terms-conditions-making-application")]
-        public async Task<IActionResult> TermsAndConditions()
+        public IActionResult TermsAndConditions()
         {
             return View("~/Views/Roatp/TermsAndConditions.cshtml");
         }
 
         [Route("not-accept-terms-conditions")]
-        public async Task<IActionResult> TermsAndConditionsNotAgreed()
+        public IActionResult TermsAndConditionsNotAgreed()
         {
             return View("~/Views/Roatp/TermsAndConditionsNotAgreed.cshtml");
         }
 
         [Route("enter-uk-provider-reference-number")]
-        public async Task<IActionResult> EnterApplicationUkprn(string ukprn)
+        public IActionResult EnterApplicationUkprn(string ukprn)
         {
             var model = new SearchByUkprnViewModel();
             if (!String.IsNullOrWhiteSpace(ukprn))
@@ -142,7 +141,7 @@
         }
 
         [Route("confirm-organisations-details")]
-        public async Task<IActionResult> ConfirmOrganisation()
+        public IActionResult ConfirmOrganisation()
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
             
@@ -156,7 +155,7 @@
         }
        
         [Route("uk-provider-reference-number-not-found")]
-        public async Task<IActionResult> UkprnNotFound()
+        public IActionResult UkprnNotFound()
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
 
@@ -169,7 +168,7 @@
         }
 
         [Route("company-not-found")]
-        public async Task<IActionResult> CompanyNotFound()
+        public IActionResult CompanyNotFound()
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
 
@@ -183,7 +182,7 @@
         }
 
         [Route("charity-not-found")]
-        public async Task<IActionResult> CharityNotFound()
+        public IActionResult CharityNotFound()
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
 
@@ -231,7 +230,7 @@
         }
 
         [Route("organisation-levy-paying-employer")]
-        public async Task<IActionResult> ConfirmLevyStatus()
+        public IActionResult ConfirmLevyStatus()
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
             var viewModel = new EmployerLevyStatusViewModel
@@ -280,7 +279,7 @@
         }
 
         [Route("organisation-cannot-apply-employer")]
-        public async Task<IActionResult> IneligibleNonLevy()
+        public IActionResult IneligibleNonLevy()
         {
             var model = new EmployerProviderContinueApplicationViewModel();
             PopulateGetHelpWithQuestion(model, "IneligibleNonLevy");
@@ -288,7 +287,7 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> ConfirmNonLevyContinue(EmployerProviderContinueApplicationViewModel model)
+        public IActionResult ConfirmNonLevyContinue(EmployerProviderContinueApplicationViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -314,25 +313,25 @@
         }
         
         [Route("chosen-not-apply-roatp")]
-        public async Task<IActionResult> NonLevyAbandonedApplication()
+        public IActionResult NonLevyAbandonedApplication()
         {
             return View("~/Views/Roatp/NonLevyAbandonedApplication.cshtml");
         }
 
         [Route("ukrlp-unavailable")]
-        public async Task<IActionResult> UkrlpNotAvailable()
+        public IActionResult UkrlpNotAvailable()
         {
             return View("~/Views/Roatp/UkrlpNotAvailable.cshtml");
         }
 
         [Route("companies-house-unavailable")]
-        public async Task<IActionResult> CompaniesHouseNotAvailable()
+        public IActionResult CompaniesHouseNotAvailable()
         {
             return View("~/Views/Roatp/CompaniesHouseNotAvailable.cshtml");
         }
 
         [Route("charity-commission-unavailable")]
-        public async Task<IActionResult> CharityCommissionNotAvailable()
+        public IActionResult CharityCommissionNotAvailable()
         {
             return View("~/Views/Roatp/CharityCommissionNotAvailable.cshtml");
         }

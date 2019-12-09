@@ -81,7 +81,9 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <form method="post" asp-action="CompletePeopleInControlSection">
-                    @Html.HiddenFor(x => x.ApplicationId)
+                    @Html.HiddenFor(x => x.ApplicationId)                    
+                    @Html.HiddenFor(x => x.GetHelpAction)
+
                     <button type="submit" class="govuk-button">Confirm and continue</button>
                 </form>
             </div>

@@ -9,7 +9,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
     {
         public Guid ApplicationId { get; set; }
         public List<TrusteeDateOfBirth> TrusteeDatesOfBirth { get; set; }
-        public List<ValidationErrorDetail> ErrorMessages { get; set; }
 
         public string Title { get { return "Enter the date of birth for trustees"; } set { } }
         public string SequenceId { get { return RoatpWorkflowSequenceIds.YourOrganisation.ToString(); } set { } }
@@ -18,6 +17,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string GetHelpQuestion { get; set; }
         public bool GetHelpQuerySubmitted { get; set; }
         public string GetHelpErrorMessage { get; set; }
+        public string GetHelpAction { get { return "ConfirmTrusteesDob"; } set { } }
     }
 
     public class TrusteeDateOfBirth

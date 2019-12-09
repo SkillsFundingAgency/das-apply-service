@@ -12,5 +12,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         string GetHelpQuestion { get; set; }
         bool GetHelpQuerySubmitted { get; set; }
         string GetHelpErrorMessage { get; set; }
+        string GetHelpAction { get; set; }
     }
 }

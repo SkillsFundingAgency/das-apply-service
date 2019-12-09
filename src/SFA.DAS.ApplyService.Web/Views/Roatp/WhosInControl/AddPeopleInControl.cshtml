@@ -76,6 +76,7 @@
                     @Html.HiddenFor(x => x.ApplicationId)
                     @Html.HiddenFor(x => x.DateOfBirthOptional)
                     @Html.HiddenFor(x => x.Identifier)
+                    @Html.HiddenFor(x => x.GetHelpAction)
                     @{
                         await Html.RenderPartialAsync("~/Views/Roatp/WhosInControl/AddEditPersonInControl.cshtml", Model);
                     }

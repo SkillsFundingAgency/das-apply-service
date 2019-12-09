@@ -28,6 +28,7 @@
             <form method="post" asp-action="DirectorsPscsConfirmed" novalidate enctype="multipart/form-data">
 
                 @Html.HiddenFor(x => x.ApplicationId)
+                @Html.HiddenFor(x => x.GetHelpAction)
 
                 @{ await Html.RenderPartialAsync("~/Views/Roatp/WhosInControl/PeopleInControl.cshtml", Model.CompaniesHouseDirectors); }
 

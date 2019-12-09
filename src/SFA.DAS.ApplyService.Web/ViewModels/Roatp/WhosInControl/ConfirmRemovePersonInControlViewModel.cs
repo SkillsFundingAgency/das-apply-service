@@ -1,7 +1,5 @@
 ﻿using SFA.DAS.ApplyService.Application.Apply.Roatp;
-using SFA.DAS.ApplyService.Domain.Apply;
 using System;
-using System.Collections.Generic;
 
 namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
@@ -12,7 +10,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string Confirmation { get; set; }
         public int Index { get; set; }
         public string ActionName { get; set; }
-        public List<ValidationErrorDetail> ErrorMessages { get; set; }
         public string BackAction { get; set; }
 
         public string Title { get { return "Are you sure you want to remove person in control?"; } set { } }
@@ -22,5 +19,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string GetHelpQuestion { get; set; }
         public bool GetHelpQuerySubmitted { get; set; }
         public string GetHelpErrorMessage { get; set; }
+
+        public string GetHelpAction { get; set; }
     }
 }
