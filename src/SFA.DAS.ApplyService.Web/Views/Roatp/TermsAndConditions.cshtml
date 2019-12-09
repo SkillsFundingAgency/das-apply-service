@@ -20,7 +20,7 @@
             <ul class="govuk-list govuk-error-summary__list">
                 @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
                 {
-                    <li><a href="#@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
+                    <li><a href="#TermsConditions">@errorMessage.ErrorMessage</a></li>
                 }
             </ul>
         </div>
@@ -58,7 +58,7 @@
                     ESFA reserve the right to change these terms and conditions at any time. Your organisation is obligated to meet the changes made to these terms and conditions.
                 </p>
                 <p class="govuk-body">
-                    You'll be able to view these terms and conditions and any changes on <a href="https://www.gov.uk/guidance/register-of-apprenticeship-training-providers" target="_blank">the RoATP GOV.UK page (opens in a new window or tab).</a>
+                    You'll be able to view these terms and conditions and any changes on <a id="TermsConditions" href="https://www.gov.uk/guidance/register-of-apprenticeship-training-providers" target="_blank">the RoATP GOV.UK page (opens in a new window or tab).</a>
                 </p>
 
                 <form method="post" asp-action="ConfirmTermsAndConditions" asp-controller="RoatpApplicationPreamble">
