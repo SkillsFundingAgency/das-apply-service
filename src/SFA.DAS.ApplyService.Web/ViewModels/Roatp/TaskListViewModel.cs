@@ -187,7 +187,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                 {
                     return true;
                 }
-                return (FinishSectionStatus(sectionId) == "Completed");
+                return (FinishSectionStatus(sectionId-1) == "Completed");
             }
 
             return RoatpTaskListWorkflowService.PreviousSectionCompleted(sequence, sectionId, sequence.Sequential);
