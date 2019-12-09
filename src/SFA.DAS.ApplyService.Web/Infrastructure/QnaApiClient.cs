@@ -102,13 +102,21 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<UploadPageAnswersResult> Upload(Guid applicationId, Guid sectionId, string pageId, IFormFileCollection files)
         {
-
             var formDataContent = new MultipartFormDataContent();
-            foreach (var file in files)
+
+            if (files is null || files.Count < 1)
             {
-                var fileContent = new StreamContent(file.OpenReadStream())
+                // This is so QnA knows there are no files
+                formDataContent = new MultipartFormDataContent { Headers = { ContentLength = 0 } };
+            }
+            else
+            {
+                foreach (var file in files)
+                {
+                    var fileContent = new StreamContent(file.OpenReadStream())
                     { Headers = { ContentLength = file.Length, ContentType = new MediaTypeHeaderValue(file.ContentType) } };
-                formDataContent.Add(fileContent, file.Name, file.FileName);
+                    formDataContent.Add(fileContent, file.Name, file.FileName);
+                }
             }
 
             var response = await _httpClient.PostAsync(
