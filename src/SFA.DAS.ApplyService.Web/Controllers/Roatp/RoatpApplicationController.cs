@@ -699,13 +699,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private void PreserveAnswersInPage(Page page, List<Answer> answers)
         {
-            foreach (var question in page.Questions)
+            // Only preserve answers if there are no FileUpload question types
+            if (page.Questions.All(q => !"FileUpload".Equals(q.Input?.Type, StringComparison.InvariantCultureIgnoreCase)))
             {
-                foreach (var answer in answers)
+                foreach (var question in page.Questions)
                 {
-                    if (question.QuestionId == answer.QuestionId)
+                    foreach (var answer in answers)
                     {
-                        question.Value = answer.Value;
+                        if (question.QuestionId == answer.QuestionId)
+                        {
+                            question.Value = answer.Value;
+                        }
                     }
                 }
             }
