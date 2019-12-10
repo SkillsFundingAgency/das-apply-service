@@ -669,9 +669,9 @@
                 }
             };
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails)).ReturnsAsync(new Answer { Value = null });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails)).ReturnsAsync(new Answer { Value = null });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication)).ReturnsAsync(new Answer { Value = null });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
 
             var model = new TaskListViewModel(_qnaApiClient.Object)
             {
@@ -752,9 +752,9 @@
                 }
             };
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails)).ReturnsAsync(new Answer { Value = null });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication)).ReturnsAsync(new Answer { Value = null });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
             
             var model = new TaskListViewModel(_qnaApiClient.Object)
             {
@@ -835,9 +835,9 @@
                 }
             };
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails)).ReturnsAsync(new Answer { Value = "No" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication)).ReturnsAsync(new Answer { Value = null });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
 
             var model = new TaskListViewModel(_qnaApiClient.Object)
             {
@@ -933,9 +933,9 @@
                     }
                 }
             };
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails)).ReturnsAsync(new Answer { Value = "No" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication)).ReturnsAsync(new Answer { Value = null });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
 
             var model = new TaskListViewModel(_qnaApiClient.Object)
             {
@@ -1031,11 +1031,11 @@
                     }
                 }
             };
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence)).ReturnsAsync(new Answer { Value = null });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
 
             var model = new TaskListViewModel(_qnaApiClient.Object)
             {
@@ -1132,11 +1132,11 @@
                     }
                 }
             };
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence)).ReturnsAsync(new Answer { Value = answerValue });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = answerValue });
 
             var model = new TaskListViewModel(_qnaApiClient.Object)
             {
@@ -1232,11 +1232,11 @@
                     }
                 }
             };
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence)).ReturnsAsync(new Answer { Value = null });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
 
             var model = new TaskListViewModel(_qnaApiClient.Object)
             {
@@ -1348,14 +1348,14 @@
                     }
                 }
             };
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence)).ReturnsAsync(new Answer { Value = "No" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2MainEmployer)).ReturnsAsync(new Answer { Value = null });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3MainEmployer)).ReturnsAsync(new Answer { Value = null });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2MainEmployer, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3MainEmployer, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
 
             var model = new TaskListViewModel(_qnaApiClient.Object)
             {
@@ -1468,14 +1468,14 @@
                     }
                 }
             };
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence)).ReturnsAsync(new Answer { Value = "No" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2Supporting)).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3Supporting)).ReturnsAsync(new Answer { Value = null });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2Supporting, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3Supporting, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
 
             var model = new TaskListViewModel(_qnaApiClient.Object)
             {
@@ -1588,14 +1588,14 @@
                     }
                 }
             };
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence)).ReturnsAsync(new Answer { Value = "No" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2Supporting)).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3Supporting)).ReturnsAsync(new Answer { Value = "No" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2Supporting, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3Supporting, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
 
             var model = new TaskListViewModel(_qnaApiClient.Object)
             {
@@ -1708,14 +1708,14 @@
                     }
                 }
             };
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence)).ReturnsAsync(new Answer { Value = "No" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2MainEmployer)).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3MainEmployer)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2MainEmployer, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3MainEmployer, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
 
             var model = new TaskListViewModel(_qnaApiClient.Object)
             {
@@ -1828,14 +1828,14 @@
                     }
                 }
             };
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence)).ReturnsAsync(new Answer { Value = "No" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2Supporting)).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3Supporting)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2Supporting, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3Supporting, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
 
             var model = new TaskListViewModel(_qnaApiClient.Object)
             {
