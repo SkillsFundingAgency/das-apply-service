@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.Validators;
@@ -15,7 +16,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {    
     [Authorize]
-    public class RoatpWhosInControlApplicationController : Controller
+    public class RoatpWhosInControlApplicationController : RoatpApplyControllerBase
     {
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IApplicationApiClient _applicationApiClient;
@@ -23,7 +24,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         private readonly ITabularDataRepository _tabularDataRepository;
 
         public RoatpWhosInControlApplicationController(IQnaApiClient qnaApiClient, IApplicationApiClient applicationApiClient, 
-                                                       IAnswerFormService answerFormService, ITabularDataRepository tabularDataRepository)
+                                                       IAnswerFormService answerFormService, ITabularDataRepository tabularDataRepository,
+                                                       ISessionService sessionService)
+            :base(sessionService)
         {
             _qnaApiClient = qnaApiClient;
             _applicationApiClient = applicationApiClient;
@@ -62,7 +65,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return await ConfirmPeopleInControl(applicationId);
             }
 
-            return await AddPeopleInControl(applicationId);
+            return AddPeopleInControl(applicationId);
         }
 
         [Route("confirm-directors-pscs")]
@@ -85,6 +88,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     TableData = pscsData
                 }
             };
+
+            PopulateGetHelpWithQuestion(model, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage);
 
             return View("~/Views/Roatp/WhosInControl/ConfirmDirectorsPscs.cshtml", model);
         }
@@ -152,6 +157,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 model.VerifiedCompaniesHouse = true;
             }
+            PopulateGetHelpWithQuestion(model, RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage);
 
             return View("~/Views/Roatp/WhosInControl/ConfirmTrusteesNoDob.cshtml", model);
         }
@@ -200,6 +206,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 ApplicationId = applicationId,
                 TrusteeDatesOfBirth = MapTrusteesDataToViewModel(trusteesData)
             };
+            PopulateGetHelpWithQuestion(model, "ConfirmTrusteesDob");
 
             return View("~/Views/Roatp/WhosInControl/ConfirmTrusteesDob.cshtml", model);
         }
@@ -258,6 +265,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return RedirectToAction("TaskList", "RoatpApplication", new { model.ApplicationId });
         }
           
+        [HttpGet]
         public async Task<IActionResult> SoleTraderOrPartnership(Guid applicationId)
         {         
             var model = new SoleTraderOrPartnershipViewModel { ApplicationId = applicationId };
@@ -266,6 +274,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 model.OrganisationType = soleTraderPartnershipAnswer.Value;
             }
+
+            PopulateGetHelpWithQuestion(model, RoatpWorkflowPageIds.WhosInControl.SoleTraderPartnership);
 
             return View("~/Views/Roatp/WhosInControl/SoleTraderOrPartnership.cshtml", model);
         }
@@ -327,10 +337,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             }
         }
 
+        [HttpGet]
         public async Task<IActionResult> PartnershipType(Guid applicationId)
         {
             var model = new ConfirmPartnershipTypeViewModel { ApplicationId = applicationId };
-            
+
+            var partnerTypeAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.PartnershipType);
+
+            if (partnerTypeAnswer != null && partnerTypeAnswer.Value != null)
+            {
+                model.PartnershipType = partnerTypeAnswer.Value;
+            }
+
+            PopulateGetHelpWithQuestion(model, RoatpWorkflowPageIds.WhosInControl.PartnershipType);
+
             return View("~/Views/Roatp/WhosInControl/PartnershipType.cshtml", model);
         }
 
@@ -369,11 +389,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             };
 
             var updateResult = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.PartnershipType, organisationTypeAnswer);
-            
             if(!updateResult.ValidationPassed)
             {
                 return RedirectToAction("PartnershipType", new { applicationId = model.ApplicationId });
             }
+            
             if (model.PartnershipType == ConfirmPartnershipTypeViewModel.PartnershipTypeIndividual)
             {
                 return RedirectToAction("AddPartner", new { applicationId = model.ApplicationId, partnerIndividual = true });
@@ -384,12 +404,18 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             }
         }
         
-        public async Task<IActionResult> AddPartner(Guid applicationId, bool partnerIndividual)
+        [HttpGet]
+        public async Task<IActionResult> AddPartner(Guid applicationId)
         {
+            var partnerTypeAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.PartnershipType);
+
+            var partnerIndividual = (partnerTypeAnswer != null && partnerTypeAnswer.Value == ConfirmPartnershipTypeViewModel.PartnershipTypeIndividual);
+
             var model = new AddEditPeopleInControlViewModel
             {
                 ApplicationId = applicationId,
-                DateOfBirthOptional = !partnerIndividual                
+                DateOfBirthOptional = !partnerIndividual,
+                GetHelpAction = "AddPartner"
             };
 
             if (partnerIndividual)
@@ -400,6 +426,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 model.Identifier = "organisation";
             }
+
+            PopulateGetHelpWithQuestion(model, RoatpWorkflowPageIds.WhosInControl.AddPartners);
 
             return View("~/Views/Roatp/WhosInControl/AddPartner.cshtml", model);
         }
@@ -462,6 +490,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return RedirectToAction("ConfirmPartners", new { applicationId = model.ApplicationId });
         }
         
+        [HttpGet]
         public async Task<IActionResult> ConfirmPartners(Guid applicationId)
         {
             var model = new ConfirmPartnersViewModel { ApplicationId = applicationId };
@@ -483,9 +512,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return RedirectToAction("PartnershipType", new { applicationId });
             }
 
+            PopulateGetHelpWithQuestion(model, "ConfirmPartners");
+
             return View("~/Views/Roatp/WhosInControl/ConfirmPartners.cshtml", model);
         }
 
+        [HttpGet]
         public async Task<IActionResult> EditPartner(Guid applicationId, int index)
         {
             var partnerTableData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddPartners);
@@ -504,7 +536,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     PersonInControlName = partner.Columns[0],
                     Index = index,
                     Identifier = "organisation",
-                    DateOfBirthOptional = true
+                    DateOfBirthOptional = true,
+                    GetHelpAction = "EditPartner"
                 };
                 if (partner.Columns.Count > 1 && !String.IsNullOrEmpty(partner.Columns[1]))
                 {
@@ -514,6 +547,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     model.DateOfBirthOptional = false;
                     model.Identifier = "individual";
                 }
+                PopulateGetHelpWithQuestion(model, "EditPartner");
+
                 return View($"~/Views/Roatp/WhosInControl/EditPartner.cshtml", model);
             }
             return RedirectToAction("ConfirmPartners", new { applicationId });
@@ -566,6 +601,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return RedirectToAction("ConfirmPartners", new { model.ApplicationId });
         }
 
+        [HttpGet]
         public async Task<IActionResult> AddSoleTradeDob(Guid applicationId)
         {
             var model = new SoleTradeDobViewModel { ApplicationId = applicationId };
@@ -587,6 +623,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     model.SoleTraderDobYear = answerValue.Substring(delimiterIndex+1);
                 }
             }
+            PopulateGetHelpWithQuestion(model, RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob);
+
             return View("~/Views/Roatp/WhosInControl/AddSoleTradeDob.cshtml", model);
         }
 
@@ -627,9 +665,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId });
         }
 
-        public async Task<IActionResult> AddPeopleInControl(Guid applicationId)
+        [HttpGet]
+        public IActionResult AddPeopleInControl(Guid applicationId)
         {
-            var model = new AddEditPeopleInControlViewModel { ApplicationId = applicationId };
+            var model = new AddEditPeopleInControlViewModel { ApplicationId = applicationId, GetHelpAction = "AddPeopleInControl" };
+            PopulateGetHelpWithQuestion(model, RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl);
 
             return View("~/Views/Roatp/WhosInControl/AddPeopleInControl.cshtml", model);
         }
@@ -696,6 +736,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return RedirectToAction("ConfirmPeopleInControl", new { model.ApplicationId });
         }
 
+        [HttpGet]
         public async Task<IActionResult> ConfirmPeopleInControl(Guid applicationId)
         {
             var peopleInControlData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddPeopleInControl);
@@ -706,11 +747,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             }
 
             var model = new ConfirmPeopleInControlViewModel { ApplicationId = applicationId, PeopleInControlData = peopleInControlData };
+            PopulateGetHelpWithQuestion(model, "ConfirmPeopleInControl");
 
             return View("~/Views/Roatp/WhosInControl/ConfirmPeopleInControl.cshtml", model);
         }
 
-
+        [HttpGet]
         public async Task<IActionResult> EditPeopleInControl(Guid applicationId, int index)
         {
             var personTableData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddPeopleInControl);
@@ -732,14 +774,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     Identifier = "person",
                     PersonInControlDobMonth = DateOfBirthFormatter.GetMonthNumberFromShortDateOfBirth(dateOfBirth),
                     PersonInControlDobYear = DateOfBirthFormatter.GetYearFromShortDateOfBirth(dateOfBirth),
-                    DateOfBirthOptional = false
+                    DateOfBirthOptional = false,
+                    GetHelpAction = "EditPeopleInControl"
                 };
-                
+                PopulateGetHelpWithQuestion(model, "EditPeopleInControl");
                 return View($"~/Views/Roatp/WhosInControl/EditPeopleInControl.cshtml", model);
             }
             return RedirectToAction("ConfirmPeopleInControl", new { applicationId });
         }
 
+        [HttpPost]
         public async Task<IActionResult> UpdatePeopleInControlDetails(AddEditPeopleInControlViewModel model)
         {
             var errorMessages = PeopleInControlValidator.Validate(model);
@@ -782,6 +826,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return RedirectToAction("ConfirmPeopleInControl", new { model.ApplicationId });
         }
 
+        [HttpGet]
         public async Task<IActionResult> RemovePartner(Guid applicationId, int index)
         {
             var partnerTableData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddPartners);
@@ -793,9 +838,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             var partnerName = partnerTableData.DataRows[index].Columns[0];
 
-            return await ConfirmRemovalOfPersonInControl(applicationId, partnerName, "RemovePartnerDetails", "ConfirmPartners");
+            return ConfirmRemovalOfPersonInControl(applicationId, partnerName, "RemovePartnerDetails", "ConfirmPartners");
         }
 
+        [HttpGet]
         public async Task<IActionResult> RemovePeopleInControl(Guid applicationId, int index)
         {
             var personTableData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddPeopleInControl);
@@ -807,7 +853,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             var personName = personTableData.DataRows[index].Columns[0];
 
-            return await ConfirmRemovalOfPersonInControl(applicationId, personName, "RemovePscDetails", "ConfirmPeopleInControl");
+            return ConfirmRemovalOfPersonInControl(applicationId, personName, "RemovePscDetails", "ConfirmPeopleInControl");
         }
 
         [HttpPost]
@@ -852,15 +898,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
         }
 
-        private async Task<IActionResult> ConfirmRemovalOfPersonInControl(Guid applicationId, string name, string actionName, string backActionName)
+        private IActionResult ConfirmRemovalOfPersonInControl(Guid applicationId, string name, string actionName, string backActionName)
         {
             var model = new ConfirmRemovePersonInControlViewModel
             {
                 ApplicationId = applicationId,
                 Name = name,
                 ActionName = actionName,
-                BackAction = backActionName
+                BackAction = backActionName,
+                GetHelpAction = actionName
             };
+            PopulateGetHelpWithQuestion(model, actionName);
 
             return View("~/Views/Roatp/WhosInControl/ConfirmPscRemoval.cshtml", model);
         }
