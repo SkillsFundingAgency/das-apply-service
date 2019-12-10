@@ -1050,7 +1050,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 QuestionId = RoatpYourOrganisationQuestionIdConstants.PartnershipType,
                 Value = ConfirmPartnershipTypeViewModel.PartnershipTypeIndividual
             };
-            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.PartnershipType)).ReturnsAsync(partnerTypeAnswer);
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.PartnershipType, It.IsAny<string>())).ReturnsAsync(partnerTypeAnswer);
 
             var result = _controller.AddPartner(Guid.NewGuid()).GetAwaiter().GetResult();
 
