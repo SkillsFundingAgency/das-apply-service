@@ -97,8 +97,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [HttpPost]
         public async Task<IActionResult> DirectorsPscsConfirmed(Guid applicationId)
         {
-            var companiesHouseDirectorsAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.CompaniesHouseDirectors);
-            var companiesHousePscsAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.CompaniesHousePscs);
+            var companiesHouseDirectorsAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.CompaniesHouseDirectors, RoatpYourOrganisationQuestionIdConstants.CompaniesHouseDirectors);
+            var companiesHousePscsAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.CompaniesHousePscs, RoatpYourOrganisationQuestionIdConstants.CompaniesHousePSCs);
 
             var answers = new List<Answer>()
             {
@@ -120,14 +120,21 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             var updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, answers);
 
-            var verificationCharityAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpVerificationCharity);
-            if (verificationCharityAnswer.Value == "TRUE")
+            if (!updateResult.ValidationPassed)
             {
-                return RedirectToAction("ConfirmTrusteesNoDob", new { applicationId });
+                return RedirectToAction("ConfirmDirectorsPscs", new { applicationId });
             }
-            await _applicationApiClient.MarkSectionAsCompleted(applicationId, whosInControlSection.Id);
+            else
+            {
+                var verificationCharityAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpVerificationCharity);
+                if (verificationCharityAnswer.Value == "TRUE")
+                {
+                    return RedirectToAction("ConfirmTrusteesNoDob", new { applicationId });
+                }
+                await _applicationApiClient.MarkSectionAsCompleted(applicationId, whosInControlSection.Id);
 
-            return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
+                return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
+            }
         }
 
         [Route("confirm-trustees")]
@@ -158,7 +165,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [HttpPost]
         public async Task<IActionResult> TrusteesConfirmed(Guid applicationId)
         {
-            var trusteesAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
+            var trusteesAnswer = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees, RoatpYourOrganisationQuestionIdConstants.CharityCommissionTrustees);
 
             var answers = new List<Answer>()
             {
@@ -177,9 +184,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             var yourOrganisationSection =
                 yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
-            var updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, yourOrganisationSection.Id, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, answers);
+            var updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, yourOrganisationSection.Id, RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage, answers);
 
-            return RedirectToAction("ConfirmTrusteesDob", new { applicationId });
+            if (!updateResult.ValidationPassed)
+            {
+                return RedirectToAction("ConfirmTrusteesNoDob", new { applicationId });
+            }
+            else
+            {
+                return RedirectToAction("ConfirmTrusteesDob", new { applicationId });
+            }
         }
 
         [Route("confirm-trustees-dob")]
@@ -243,7 +257,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             var updateResult = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage, trusteeAnswers);
 
-            await _applicationApiClient.MarkSectionAsCompleted(model.ApplicationId, whosInControlSection.Id);
+            if (updateResult.ValidationPassed)
+            {
+                await _applicationApiClient.MarkSectionAsCompleted(model.ApplicationId, whosInControlSection.Id);
+            }
 
             return RedirectToAction("TaskList", "RoatpApplication", new { model.ApplicationId });
         }
@@ -298,8 +315,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             };
 
             var updateResult = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.SoleTraderPartnership, organisationTypeAnswer);
-            
-            if (model.OrganisationType == SoleTraderOrPartnershipViewModel.OrganisationTypePartnership)
+
+            if (!updateResult.ValidationPassed)
+            {
+                return RedirectToAction("SoleTraderOrPartnership", new { applicationId = model.ApplicationId });
+            }
+            else if (model.OrganisationType == SoleTraderOrPartnershipViewModel.OrganisationTypePartnership)
             {
                 var partnersData = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.AddPartners);
 
@@ -368,8 +389,19 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             };
 
             var updateResult = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.PartnershipType, organisationTypeAnswer);
-
-            return RedirectToAction("AddPartner", new { applicationId = model.ApplicationId });
+            if(!updateResult.ValidationPassed)
+            {
+                return RedirectToAction("PartnershipType", new { applicationId = model.ApplicationId });
+            }
+            
+            if (model.PartnershipType == ConfirmPartnershipTypeViewModel.PartnershipTypeIndividual)
+            {
+                return RedirectToAction("AddPartner", new { applicationId = model.ApplicationId, partnerIndividual = true });
+            }
+            else
+            {
+                return RedirectToAction("AddPartner", new { applicationId = model.ApplicationId, partnerIndividual = false });
+            }
         }
         
         [HttpGet]
@@ -623,9 +655,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 }
             };
 
-            var result = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob, soleTradeDobAnswer);
+            var updateResult = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob, soleTradeDobAnswer);
 
-            await _applicationApiClient.MarkSectionAsCompleted(model.ApplicationId, whosInControlSection.Id);
+            if (updateResult.ValidationPassed)
+            {
+                await _applicationApiClient.MarkSectionAsCompleted(model.ApplicationId, whosInControlSection.Id);
+            }
 
             return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId });
         }
