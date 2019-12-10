@@ -62,6 +62,8 @@
                     @Html.HiddenFor(x => x.Index)
                     @Html.HiddenFor(x => x.DateOfBirthOptional)
                     @Html.HiddenFor(x => x.Identifier)
+                    @Html.HiddenFor(x => x.GetHelpAction)
+
                     @{
                         await Html.RenderPartialAsync("~/Views/Roatp/WhosInControl/AddEditPersonInControl.cshtml", Model);
                     }
@@ -73,6 +75,7 @@
         </div>
 
     </main>
+    <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
 </div>
 
 

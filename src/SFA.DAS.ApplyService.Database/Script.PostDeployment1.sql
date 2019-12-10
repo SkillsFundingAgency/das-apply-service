@@ -111,6 +111,24 @@ END
 DELETE FROM EmailTemplates
 WHERE [TemplateName] IN ( 'EPAOUserApproveRequest' , 'EPAOUserApproveConfirm' )
 
+IF NOT EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'RoATPGetHelpWithQuestion')
+BEGIN
+	INSERT INTO EmailTemplates ([Id], [Status],[TemplateName],[TemplateId],[Recipients],[CreatedAt],[CreatedBy]) 
+	VALUES (NEWID(), 'Live', N'RoATPGetHelpWithQuestion', N'9d1e1a7e-3557-4781-8901-ea627ae70ec2', N'RoATP.SUPPORT@education.gov.uk', GETDATE(), 'System')
+END
+
+IF NOT EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'RoATPApplicationSubmitted')
+BEGIN
+	INSERT INTO EmailTemplates ([Id], [Status],[TemplateName],[TemplateId],[CreatedAt],[CreatedBy]) 
+	VALUES (NEWID(), 'Live', N'RoATPApplicationSubmitted', N'f371098e-4e91-40ae-96da-d6f8d9c85251', GETDATE(), 'System')
+END
+
+IF NOT EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'RoATPApplicationSubmittedMain')
+BEGIN
+	INSERT INTO EmailTemplates ([Id], [Status],[TemplateName],[TemplateId],[CreatedAt],[CreatedBy]) 
+	VALUES (NEWID(), 'Live', N'RoATPApplicationSubmittedMain', N'c0008332-7a20-41a4-94d4-57acbcebaef8', GETDATE(), 'System')
+END
+
 -- START OF: ON-1502 Fixes - Remove once deployed to PROD
 /*
 UPDATE [ApplicationSections]

@@ -95,7 +95,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 }
             };
 
-            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            var model = new TaskListViewModel
             {
                 ApplicationId = _applicationId,
                 ApplicationSequences = _applicationSequences,
@@ -161,7 +161,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 }
             };
 
-            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            var model = new TaskListViewModel
             {
                 ApplicationId = _applicationId,
                 ApplicationSequences = _applicationSequences,
@@ -238,7 +238,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             };
             _whatYouNeedSection.SectionCompleted = true;
 
-            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            var model = new TaskListViewModel
             {
                 ApplicationId = _applicationId,
                 ApplicationSequences = _applicationSequences,
@@ -376,7 +376,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             criminalComplianceSequence.Sections.Add(criminalIndividualChecksSection);
             _applicationSequences.Add(criminalComplianceSequence);
 
-            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            var model = new TaskListViewModel
             {
                 ApplicationId = _applicationId,
                 ApplicationSequences = _applicationSequences,
