@@ -220,7 +220,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 Value = "My organisation"
             };
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpLegalName)).ReturnsAsync(organisationNameAnswer);
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UkrlpLegalName, It.IsAny<string>())).ReturnsAsync(organisationNameAnswer);
 
             var result = _controller.SubmitApplication(Guid.NewGuid()).GetAwaiter().GetResult();
 
@@ -257,7 +257,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 QuestionId = "YO-1",
                 Value = ApplicationRoute.MainProviderApplicationRoute.ToString()
             };
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), "Apply-ProviderRoute")).ReturnsAsync(providerRouteAnswer);
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), "Apply-ProviderRoute", It.IsAny<string>())).ReturnsAsync(providerRouteAnswer);
 
             var applicationReference = "APR1102200";
             _roatpApiClient.Setup(x => x.GetNextRoatpApplicationReference()).ReturnsAsync(applicationReference);
