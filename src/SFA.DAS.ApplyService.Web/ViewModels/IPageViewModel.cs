@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
+namespace SFA.DAS.ApplyService.Web.ViewModels
 {
     public interface IPageViewModel
     {

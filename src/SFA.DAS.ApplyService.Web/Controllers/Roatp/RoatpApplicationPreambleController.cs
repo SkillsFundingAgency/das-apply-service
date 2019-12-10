@@ -32,6 +32,8 @@
         private readonly IOrganisationApiClient _organisationApiClient;
         private readonly IUsersApiClient _usersApiClient;
 
+        private const string GetHelpSubmittedForPageFormatString = "Roatp_GetHelpSubmitted_{0}";
+
         private string[] StatusOnlyCompanyNumberPrefixes = new[] { "IP", "SP", "IC", "SI", "NP", "NV", "RC", "SR", "NR", "NO" };
 
         private string[] ExcludedCharityCommissionPrefixes = new[] {"SC", "NI"};

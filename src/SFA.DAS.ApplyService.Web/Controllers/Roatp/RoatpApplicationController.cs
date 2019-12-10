@@ -1,16 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Configuration;
@@ -28,6 +25,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Options;
     using MoreLinq;
+    using SFA.DAS.ApplyService.EmailService;
     using SFA.DAS.ApplyService.Web.Controllers.Roatp;
     using SFA.DAS.ApplyService.Web.Infrastructure.Validations;
     using SFA.DAS.ApplyService.Web.Services;
@@ -50,7 +48,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly List<QnaLinksConfiguration> _qnaLinks;
         private readonly List<NotRequiredOverrideConfiguration> _notRequiredOverrides;
         private readonly ICustomValidatorFactory _customValidatorFactory;
-        private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
+        private readonly IRoatpApiClient _roatpApiClient;
+        private readonly ISubmitApplicationConfirmationEmailService _submitApplicationEmailService;
 
         private const string InputClassUpperCase = "app-uppercase";
         private const int Section1Id = 1;
@@ -61,7 +60,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
             IQnaApiClient qnaApiClient, IOptions<List<TaskListConfiguration>> configuration, IProcessPageFlowService processPageFlowService,
             IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
-            IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks, ICustomValidatorFactory customValidatorFactory, IRoatpTaskListWorkflowService roatpTaskListWorkflowService, IOptions<List<NotRequiredOverrideConfiguration>> notRequiredOverrides)
+            IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks, 
+            ICustomValidatorFactory customValidatorFactory, IOptions<List<NotRequiredOverrideConfiguration>> notRequiredOverrides, 
+            IRoatpApiClient roatpApiClient, ISubmitApplicationConfirmationEmailService submitApplicationEmailService)
             :base(sessionService)
         {
             _apiClient = apiClient;
@@ -78,8 +79,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _qnaLinks = qnaLinks.Value;
             _pageOverrideConfiguration = pageOverrideConfiguration.Value;
             _customValidatorFactory = customValidatorFactory;
-            _roatpTaskListWorkflowService = roatpTaskListWorkflowService;
             _notRequiredOverrides = notRequiredOverrides.Value;
+            _roatpApiClient = roatpApiClient;
+            _submitApplicationEmailService = submitApplicationEmailService;
         }
 
         [HttpGet]
@@ -95,7 +97,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var applyUser = await _usersApiClient.GetUserBySignInId((await _userService.GetSignInId()).ToString());
             var userId = applyUser?.Id ?? Guid.Empty;
 
-            var org = await _apiClient.GetOrganisationByUserId(userId);
             var applications = await _apiClient.GetApplications(userId, false);
             applications = applications.Where(app => app.ApplicationStatus != ApplicationStatus.Rejected).ToList();
 
@@ -111,6 +112,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             
             switch (application.ApplicationStatus)
             {
+                case ApplicationStatus.Submitted:
+                    return RedirectToAction("ApplicationSubmitted", new { applicationId = application.Id });
                 case ApplicationStatus.FeedbackAdded:
                     return View("~/Views/Application/FeedbackIntro.cshtml", application.Id);
                 case ApplicationStatus.Rejected:
@@ -486,7 +489,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var charityCommissionManualEntry = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CharityCommissionTrusteeManualEntry);
             var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, "Apply-ProviderRoute");
 
-            var model = new TaskListViewModel(_roatpTaskListWorkflowService)
+            var model = new TaskListViewModel
             {
                 ApplicationId = applicationId,
                 ApplicationSequences = filteredSequences,
@@ -979,6 +982,92 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("submit-application")]
+        public async Task<IActionResult> SubmitApplication(Guid applicationId)
+        {
+            var model = new SubmitApplicationViewModel { ApplicationId = applicationId };
+
+            var organisationName = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpLegalName);
+            model.OrganisationName = organisationName.Value;
+
+            return View("~/Views/Roatp/SubmitApplication.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmSubmitApplication(SubmitApplicationViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.ErrorMessages = new List<ValidationErrorDetail>();
+                var modelErrors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var modelError in modelErrors)
+                {
+                    model.ErrorMessages.Add(new ValidationErrorDetail
+                    {
+                        Field = "ConfirmSubmitApplication",
+                        ErrorMessage = modelError.ErrorMessage
+                    });
+                }
+                               
+                return View("~/Views/Roatp/SubmitApplication.cshtml", model);
+            }
+
+            var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
+            var providerRoute = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, "Apply-ProviderRoute");
+            var nextApplicationReferenceNumber = await _roatpApiClient.GetNextRoatpApplicationReference();
+
+            var applicationData = new RoatpApplicationData
+            {
+                ApplicationId = model.ApplicationId,
+                UKPRN = organisationDetails.OrganisationUkprn?.ToString(),
+                OrganisationName = organisationDetails.Name,
+                TradingName = organisationDetails.OrganisationDetails?.TradingName,
+                ApplicationRouteId = providerRoute.Value,
+                ReferenceNumber = nextApplicationReferenceNumber,
+                ApplicationSubmittedOn = DateTime.Now,
+                ApplicationSubmittedBy = User.GetUserId()
+            };
+
+            var submitResult = await _roatpApiClient.SubmitRoatpApplication(applicationData);
+
+            if (submitResult)
+            {
+                var userDetails = await _usersApiClient.GetUserBySignInId(User.GetSignInId());
+                var applicationSubmitConfirmation = new ApplicationSubmitConfirmation
+                {
+                    ApplicantFullName = $"{userDetails.GivenNames} {userDetails.FamilyName}",
+                    ApplicationRouteId = providerRoute.Value,
+                    EmailAddress = User.GetEmail()
+                };
+
+                await _submitApplicationEmailService.SendGetHelpWithQuestionEmail(applicationSubmitConfirmation);
+                return RedirectToAction("ApplicationSubmitted", new { model.ApplicationId });
+            }
+            else
+            {
+                return RedirectToAction("TaskList", new { model.ApplicationId });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ApplicationSubmitted(Guid applicationId)
+        {
+            var applicationData = await _roatpApiClient.GetApplicationData(applicationId);
+
+            var model = new ApplicationSummaryViewModel
+            {
+                ApplicationId = applicationId,
+                UKPRN = applicationData.UKPRN,
+                OrganisationName = applicationData.OrganisationName,
+                TradingName = applicationData.TradingName,
+                ApplicationRouteId = applicationData.ApplicationRouteId,
+                ApplicationReference = applicationData.ReferenceNumber
+            };
+
+            return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
+        }
+
         private async Task SavePreambleInformation(Guid applicationId, ApplicationDetails applicationDetails)
         {
             var preambleQuestions = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(applicationDetails);
@@ -1028,7 +1117,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     fileUploadAnswerValue= page.PageOfAnswers[0].Answers.FirstOrDefault(x => x.QuestionId == question.QuestionId)?.Value;
             }
         
-        return !string.IsNullOrEmpty(fileUploadAnswerValue);
+            return !string.IsNullOrEmpty(fileUploadAnswerValue);
         }
 
         private void RunCustomValidations(Page page, List<Answer> answers)

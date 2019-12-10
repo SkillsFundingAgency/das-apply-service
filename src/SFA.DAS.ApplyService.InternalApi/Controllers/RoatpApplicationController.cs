@@ -11,6 +11,9 @@
     using Polly;
     using Polly.Retry;
     using Microsoft.AspNetCore.Authorization;
+    using MediatR;
+    using SFA.DAS.ApplyService.Application.Apply.Roatp;
+    using SFA.DAS.ApplyService.Domain.Entities;
 
     [Authorize]
     public class RoatpApplicationController : Controller
@@ -21,11 +24,14 @@
         
         private AsyncRetryPolicy _retryPolicy;
 
-        public RoatpApplicationController(ILogger<RoatpApplicationController> logger, RoatpApiClient apiClient)
+        private readonly IMediator _mediator;
+
+        public RoatpApplicationController(ILogger<RoatpApplicationController> logger, RoatpApiClient apiClient, IMediator mediator)
         {
             _logger = logger;
             _apiClient = apiClient;
             _retryPolicy = GetRetryPolicy();
+            _mediator = mediator;
         }
 
         [Route("all-roatp-routes")]
@@ -47,6 +53,31 @@
      
             return Ok(registerStatus);
         
+        }
+
+        [Route("next-application-reference")]
+        public async Task<IActionResult> GetNextApplicationReference()
+        {
+            var applicationReference = await _mediator.Send(new GetNextApplicationReferenceRequest());
+
+            return Ok(new { applicationReference } );
+        }
+
+        [HttpPost]
+        [Route("submit")]
+        public async Task<IActionResult> SubmitApplication([FromBody] RoatpApplicationData applicationData)
+        {
+            var submitResult = await _mediator.Send(new SubmitApplicationRequest(applicationData));
+
+            return Ok(submitResult);
+        }
+
+        [Route("application-data")]
+        public async Task<IActionResult> GetApplicationData(Guid applicationId)
+        {
+            var applicationData = await _mediator.Send(new GetApplicationDataRequest(applicationId));
+
+            return Ok(applicationData);
         }
 
         private AsyncRetryPolicy GetRetryPolicy()
