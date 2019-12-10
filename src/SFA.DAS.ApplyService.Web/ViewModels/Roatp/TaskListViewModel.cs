@@ -21,7 +21,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         public List<NotRequiredOverrideConfiguration> NotRequiredOverrides { get; set; }
     
-        public string PageStatusCompleted => "completed";
         public int IntroductionSectionId => 1;
         public int Sequence1Id => 1;
 
@@ -36,15 +35,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         {
             var status = RoatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, sequenceId, sectionId, ApplicationRouteId);
 
-            if (status == String.Empty)
-            {
-                return "hidden";
-            }
-
-            var cssClass = status.ToLower();
-            cssClass = cssClass.Replace(" ", "");
-            
-            return cssClass;
+            return ConvertTaskListSectionStatusToCssClass(status);
         }
 
         public string SectionStatus(int sequenceId, int sectionId)
@@ -58,15 +49,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             {
                 var status = WhosInControlSectionStatus;
 
-                if (status == String.Empty)
-                {
-                    return "hidden";
-                }
-
-                var cssClass = status.ToLower();
-                cssClass = cssClass.Replace(" ", "");
-
-                return cssClass;
+                return ConvertTaskListSectionStatusToCssClass(status);
             }
         }
 
@@ -79,11 +62,11 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                     if ((CompaniesHouseDataConfirmed && !CharityCommissionDataConfirmed)
                         || (!CompaniesHouseDataConfirmed && CharityCommissionDataConfirmed))
                     {
-                        return "In Progress";
+                        return TaskListSectionStatus.InProgress;
                     }
                     if (CompaniesHouseDataConfirmed && CharityCommissionDataConfirmed)
                     {
-                        return "Completed";
+                        return TaskListSectionStatus.Completed;
                     }
                 }
 
@@ -91,7 +74,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                 {
                     if (CompaniesHouseDataConfirmed)
                     {
-                        return "Completed";
+                        return TaskListSectionStatus.Completed;
                     }
                 }
 
@@ -99,7 +82,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                 {
                     if (CharityCommissionDataConfirmed)
                     {
-                        return "Completed";
+                        return TaskListSectionStatus.Completed;
                     }
                 }
 
@@ -107,11 +90,11 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                 {
                     if (WhosInControlConfirmed)
                     {
-                        return "Completed";
+                        return TaskListSectionStatus.Completed;
                     }
                 }
 
-                return "Next";
+                return TaskListSectionStatus.Next;
             }          
         }
         
@@ -119,28 +102,20 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         {
             var status = FinishSectionStatus(sectionId);
 
-            if (status == String.Empty)
-            {
-                return "hidden";
-            }
-
-            var cssClass = status.ToLower();
-            cssClass = cssClass.Replace(" ", "");
-
-            return cssClass;           
+            return ConvertTaskListSectionStatusToCssClass(status);
         }
 
         public string FinishSectionStatus(int sectionId)
         {
             if (!ApplicationSequencesCompleted())
             {
-                return string.Empty;
+                return TaskListSectionStatus.Blank;
             }
             var finishSequence = ApplicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.Finish);
 
             if (!PreviousSectionCompleted(finishSequence.SequenceId, sectionId))
             {
-                return string.Empty;
+                return TaskListSectionStatus.Blank;
             }
 
             if (sectionId == RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation)
@@ -148,11 +123,11 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                 var commercialInConfidenceAnswer = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCommercialInConfidence).GetAwaiter().GetResult();
                 if (commercialInConfidenceAnswer != null && !String.IsNullOrWhiteSpace(commercialInConfidenceAnswer.Value))
                 {
-                    return "Completed";
+                    return TaskListSectionStatus.Completed;
                 }
                 else
                 {
-                    return "Next";
+                    return TaskListSectionStatus.Next;
                 }
             }
 
@@ -166,16 +141,16 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                     && String.IsNullOrWhiteSpace(accuratePersonalDetails.Value)
                     && String.IsNullOrWhiteSpace(permissionSubmitApplication.Value))
                 {
-                    return "Next";
+                    return TaskListSectionStatus.Next;
                 }
 
                 if (permissionPersonalDetails.Value == ConfirmedAnswer 
                     && accuratePersonalDetails.Value == ConfirmedAnswer 
                     && permissionSubmitApplication.Value == ConfirmedAnswer)
                 {
-                    return "Completed";
+                    return TaskListSectionStatus.Completed;
                 }
-                return "In Progress";
+                return TaskListSectionStatus.InProgress;
             }
 
             if (sectionId == RoatpWorkflowSectionIds.Finish.TermsAndConditions)
@@ -196,18 +171,18 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
                 if (String.IsNullOrWhiteSpace(conditionsOfAcceptance2?.Value) && String.IsNullOrWhiteSpace(conditionsOfAcceptance3?.Value))
                 {
-                    return "Next";
+                    return TaskListSectionStatus.Next;
                 }
 
                 if (conditionsOfAcceptance2?.Value == ConfirmedAnswer && conditionsOfAcceptance3?.Value == ConfirmedAnswer)
                 {
-                    return "Completed";
+                    return TaskListSectionStatus.Completed;
                 }
 
-                return "In Progress";
+                return TaskListSectionStatus.InProgress;
             }
 
-            return "Next";
+            return TaskListSectionStatus.Next;
         }
 
         public bool PreviousSectionCompleted(int sequenceId, int sectionId)
@@ -216,7 +191,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
             if (sequenceId == RoatpWorkflowSequenceIds.YourOrganisation && sectionId == RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation)
             {
-                return (WhosInControlSectionStatus == "Completed");
+                return (WhosInControlSectionStatus == TaskListSectionStatus.Completed);
             }
 
             if (sequenceId == RoatpWorkflowSequenceIds.Finish)
@@ -225,7 +200,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                 {
                     return true;
                 }
-                return (FinishSectionStatus(sectionId-1) == "Completed");
+                return (FinishSectionStatus(sectionId-1) == TaskListSectionStatus.Completed);
             }
 
             return RoatpTaskListWorkflowService.PreviousSectionCompleted(sequence, sectionId, sequence.Sequential);
@@ -240,7 +215,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                 foreach(var section in yourOrganisationSequence.Sections)
                 {
                     var sectionStatus = RoatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, RoatpWorkflowSequenceIds.YourOrganisation, section.SectionId, ApplicationRouteId);
-                    if (sectionStatus.ToLower() != PageStatusCompleted)
+                    if (sectionStatus != TaskListSectionStatus.Completed)
                     {
                         return true;
                     }
@@ -248,7 +223,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             }
 
             var statusOfIntroductionPage = SectionStatus(sequenceId,IntroductionSectionId);
-            if (sequenceId > Sequence1Id && sectionId != IntroductionSectionId && statusOfIntroductionPage.ToLower() != PageStatusCompleted)
+            if (sequenceId > Sequence1Id && sectionId != IntroductionSectionId && statusOfIntroductionPage != TaskListSectionStatus.Completed)
                 return true;
 
             return false;
@@ -313,8 +288,8 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             {
                 foreach(var section in sequence.Sections)
                 {
-                    var sectionStatus = SectionStatus(sequence.SequenceId, section.SectionId).ToLower();
-                    if (sectionStatus != "not required" && sectionStatus != "completed")
+                    var sectionStatus = SectionStatus(sequence.SequenceId, section.SectionId);
+                    if (sectionStatus != TaskListSectionStatus.NotRequired && sectionStatus != TaskListSectionStatus.Completed)
                     {
                         return false;
                     }
@@ -322,6 +297,24 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             }
 
             return true;
+        }
+
+        private string ConvertTaskListSectionStatusToCssClass(string sectionStatus)
+        {
+            if (sectionStatus == TaskListSectionStatus.Blank)
+            {
+                return "hidden";
+            }
+            if (sectionStatus == TaskListSectionStatus.InProgress)
+            {
+                return "inprogress";
+            }
+            if (sectionStatus == TaskListSectionStatus.NotRequired)
+            {
+                return "notrequired";
+            }
+
+            return sectionStatus.ToLower();
         }
     }
 }

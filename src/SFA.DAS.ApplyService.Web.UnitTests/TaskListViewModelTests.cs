@@ -110,9 +110,9 @@
             };
 
             model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute).Should().Be("Next");
+                RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute).Should().Be(TaskListSectionStatus.Next);
             model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed).ToLower().Should().Be("");
+                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed).ToLower().Should().Be(TaskListSectionStatus.Blank);
         }
 
         [Test]
@@ -178,9 +178,9 @@
             };
 
             model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute).Should().Be("Completed");
+                RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute).Should().Be(TaskListSectionStatus.Completed);
             model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed).Should().Be("Next");
+                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed).Should().Be(TaskListSectionStatus.Next);
         }
 
         [Test]
@@ -257,9 +257,9 @@
             };
 
             model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute).Should().Be("Completed");
+                RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute).Should().Be(TaskListSectionStatus.Completed);
             model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed).Should().Be("Completed");
+                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed).Should().Be(TaskListSectionStatus.Completed);
         }
 
         [Test]
@@ -395,11 +395,11 @@
             };
 
             model.SectionStatus(RoatpWorkflowSequenceIds.CriminalComplianceChecks,
-                RoatpWorkflowSectionIds.CriminalComplianceChecks.WhatYouWillNeed).Should().Be("Completed");
+                RoatpWorkflowSectionIds.CriminalComplianceChecks.WhatYouWillNeed).Should().Be(TaskListSectionStatus.Completed);
             model.SectionStatus(RoatpWorkflowSequenceIds.CriminalComplianceChecks,
-                RoatpWorkflowSectionIds.CriminalComplianceChecks.ChecksOnYourOrganisation).Should().Be("In Progress");
+                RoatpWorkflowSectionIds.CriminalComplianceChecks.ChecksOnYourOrganisation).Should().Be(TaskListSectionStatus.InProgress);
             model.SectionStatus(RoatpWorkflowSequenceIds.CriminalComplianceChecks,
-                RoatpWorkflowSectionIds.CriminalComplianceChecks.CheckOnWhosInControl).Should().Be("");
+                RoatpWorkflowSectionIds.CriminalComplianceChecks.CheckOnWhosInControl).Should().Be(TaskListSectionStatus.Blank);
         }
 
         [Test]
@@ -414,7 +414,7 @@
                 WhosInControlConfirmed = false
             };
 
-            model.WhosInControlSectionStatus.Should().Be("Next");
+            model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.Next);
         }
 
         [Test]
@@ -429,7 +429,7 @@
                 WhosInControlConfirmed = false
             };
 
-            model.WhosInControlSectionStatus.Should().Be("Next");
+            model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.Next);
         }
 
 
@@ -445,7 +445,7 @@
                 WhosInControlConfirmed = false
             };
 
-            model.WhosInControlSectionStatus.Should().Be("Completed");
+            model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.Completed);
         }
 
         [Test]
@@ -460,7 +460,7 @@
                 WhosInControlConfirmed = false
             };
 
-            model.WhosInControlSectionStatus.Should().Be("In Progress");
+            model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.InProgress);
         }
 
         [Test]
@@ -475,7 +475,7 @@
                 WhosInControlConfirmed = false
             };
 
-            model.WhosInControlSectionStatus.Should().Be("In Progress");
+            model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.InProgress);
         }
 
         [Test]
@@ -490,7 +490,7 @@
                 WhosInControlConfirmed = false
             };
 
-            model.WhosInControlSectionStatus.Should().Be("Completed");
+            model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.Completed);
         }
 
         [Test]
@@ -505,7 +505,7 @@
                 WhosInControlConfirmed = false
             };
 
-            model.WhosInControlSectionStatus.Should().Be("Next");
+            model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.Next);
         }
 
         [Test]
@@ -520,7 +520,7 @@
                 WhosInControlConfirmed = true
             };
 
-            model.WhosInControlSectionStatus.Should().Be("Completed");
+            model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.Completed);
         }
 
         [Test]
@@ -596,7 +596,7 @@
             };
 
             var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
-            status.Should().Be(string.Empty);
+            status.Should().Be(TaskListSectionStatus.Blank);
             var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
             css.Should().Be("hidden");
         }
@@ -679,9 +679,9 @@
             };
 
             var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
-            status.Should().Be("Next");
+            status.Should().Be(TaskListSectionStatus.Next);
             var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
-            css.Should().Be("next");
+            css.Should().Be(TaskListSectionStatus.Next.ToLower());
         }
 
         [Test]
@@ -762,7 +762,7 @@
             };
 
             var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
-            status.Should().Be("In Progress");
+            status.Should().Be(TaskListSectionStatus.InProgress);
             var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
             css.Should().Be("inprogress");
         }
@@ -845,7 +845,7 @@
             };
 
             var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
-            status.Should().Be("In Progress");
+            status.Should().Be(TaskListSectionStatus.InProgress);
             var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
             css.Should().Be("inprogress");
         }
@@ -943,7 +943,7 @@
             };
 
             var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
-            status.Should().Be(string.Empty);
+            status.Should().Be(TaskListSectionStatus.Blank);
             var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
             css.Should().Be("hidden");
         }
@@ -1043,9 +1043,9 @@
             };
 
             var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
-            status.Should().Be("Next");
+            status.Should().Be(TaskListSectionStatus.Next);
             var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
-            css.Should().Be("next");
+            css.Should().Be(TaskListSectionStatus.Next.ToLower());
         }
 
         [TestCase("Yes")]
@@ -1144,9 +1144,9 @@
             };
 
             var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
-            status.Should().Be("Completed");
+            status.Should().Be(TaskListSectionStatus.Completed);
             var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
-            css.Should().Be("completed");
+            css.Should().Be(TaskListSectionStatus.Completed.ToLower());
         }
 
         [Test]
@@ -1244,7 +1244,7 @@
             };
 
             var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
-            status.Should().Be(string.Empty);
+            status.Should().Be(TaskListSectionStatus.Blank);
             var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
             css.Should().Be("hidden");
         }
@@ -1364,7 +1364,7 @@
             };
 
             var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
-            status.Should().Be("Next");
+            status.Should().Be(TaskListSectionStatus.Next);
             var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
             css.Should().Be("next");
         }
@@ -1484,7 +1484,7 @@
             };
 
             var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
-            status.Should().Be("In Progress");
+            status.Should().Be(TaskListSectionStatus.InProgress);
             var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
             css.Should().Be("inprogress");
         }
@@ -1604,7 +1604,7 @@
             };
 
             var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
-            status.Should().Be("In Progress");
+            status.Should().Be(TaskListSectionStatus.InProgress);
             var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
             css.Should().Be("inprogress");
         }
@@ -1724,9 +1724,9 @@
             };
 
             var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
-            status.Should().Be("Completed");
+            status.Should().Be(TaskListSectionStatus.Completed);
             var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
-            css.Should().Be("completed");
+            css.Should().Be(TaskListSectionStatus.Completed.ToLower());
         }
 
         [Test]
@@ -1844,9 +1844,9 @@
             };
 
             var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.SubmitApplication);
-            status.Should().Be("Next");
+            status.Should().Be(TaskListSectionStatus.Next);
             var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.SubmitApplication);
-            css.Should().Be("next");
+            css.Should().Be(TaskListSectionStatus.Next.ToLower());
         }
     }
 }
