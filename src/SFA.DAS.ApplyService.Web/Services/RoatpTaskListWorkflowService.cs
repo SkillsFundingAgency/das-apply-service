@@ -5,6 +5,7 @@ using MoreLinq;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Web.Configuration;
+using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
 namespace SFA.DAS.ApplyService.Web.Services
 {
@@ -25,7 +26,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                                                           sectionId == condition.SectionId &&
                                                           sequenceId == condition.SequenceId))
             {
-                return "Not required";
+                return TaskListSectionStatus.NotRequired;
             }
 
 
@@ -102,19 +103,19 @@ namespace SFA.DAS.ApplyService.Web.Services
             var pagesActive = section.QnAData.Pages.Count(x => x.Active);
 
             if ((section.PagesComplete == section.PagesActive && section.PagesActive > 0))
-                return "Completed";
+                return TaskListSectionStatus.Completed;
 
             if (sequential && completedCount == 0)
             {
-                return "Next";
+                return TaskListSectionStatus.Next;
             }
 
             if (completedCount > 0)
             {
-                return "In Progress";
+                return TaskListSectionStatus.InProgress;
             }
 
-            return string.Empty;
+            return TaskListSectionStatus.Blank;
 
         }
     }
