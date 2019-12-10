@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 
-namespace SFA.DAS.ApplyService.Web.Controllers
+namespace SFA.DAS.ApplyService.Web.ViewModels
 {
     public class SequenceViewModel
     {

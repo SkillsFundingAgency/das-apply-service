@@ -50,48 +50,50 @@
                 <h1 class="govuk-heading-l">Enter the date of birth for trustees</h1>
             }
 
-            <form method="post" asp-action="TrusteesDobsConfirmed" novalidate enctype="multipart/form-data">
+                <form method="post" asp-action="TrusteesDobsConfirmed" novalidate enctype="multipart/form-data">
 
-                @Html.HiddenFor(x => x.ApplicationId)
+                    @Html.HiddenFor(x => x.ApplicationId)
+                    @Html.HiddenFor(x => x.GetHelpAction)
 
-                @foreach (var trustee in Model.TrusteeDatesOfBirth)
-                {
-                    <p class="govuk-body">@Html.Raw(trustee.Name)</p>
+                    @foreach (var trustee in Model.TrusteeDatesOfBirth)
+                    {
+                        <p class="govuk-body">@Html.Raw(trustee.Name)</p>
 
-                    <span class="govuk-hint" id="dob-hint">
-                        For example, 3 1980
-                    </span>
-                    <div class="govuk-date-input" id="dob">
-                        <div class="govuk-date-input__item">
-                            <div class="govuk-form-group" sfa-validation-for="@(trustee.Id + "_Month")">
-                                <label class="govuk-label govuk-date-input__label" for="@(trustee.Id + "_Month")">Month</label>
-                                <input value="@trustee.DobMonth"
-                                       class="govuk-input govuk-date-input__input govuk-input--width-2 @isError"
-                                       id="@(trustee.Id + "_Month")"
-                                       name="@(trustee.Id + "_Month")"
-                                       type="number"
-                                       pattern="[0-9]*"
-                                       sfa-validation-for="@(trustee.Id + "_Month")" />
+                        <span class="govuk-hint" id="dob-hint">
+                            For example, 3 1980
+                        </span>
+                        <div class="govuk-date-input" id="dob">
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group" sfa-validation-for="@(trustee.Id + "_Month")">
+                                    <label class="govuk-label govuk-date-input__label" for="@(trustee.Id + "_Month")">Month</label>
+                                    <input value="@trustee.DobMonth"
+                                           class="govuk-input govuk-date-input__input govuk-input--width-2 @isError"
+                                           id="@(trustee.Id + "_Month")"
+                                           name="@(trustee.Id + "_Month")"
+                                           type="number"
+                                           pattern="[0-9]*"
+                                           sfa-validation-for="@(trustee.Id + "_Month")" />
+                                </div>
+                            </div>
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group" sfa-validation-for="@(trustee.Id + "_Year")">
+                                    <label class="govuk-label govuk-date-input__label" for="@(trustee.Id + "_Year")">Year</label>
+                                    <input value="@trustee.DobYear"
+                                           class="govuk-input govuk-date-input__input govuk-input--width-4 @isError"
+                                           id="@(trustee.Id + "_Year")"
+                                           name="@(trustee.Id + "_Year")"
+                                           type="number"
+                                           pattern="[0-9]*"
+                                           sfa-validation-for="@(trustee.Id + "_Year")" />
+                                </div>
                             </div>
                         </div>
-                        <div class="govuk-date-input__item">
-                            <div class="govuk-form-group" sfa-validation-for="@(trustee.Id + "_Year")">
-                                <label class="govuk-label govuk-date-input__label" for="@(trustee.Id + "_Year")">Year</label>
-                                <input value="@trustee.DobYear"
-                                       class="govuk-input govuk-date-input__input govuk-input--width-4 @isError"
-                                       id="@(trustee.Id + "_Year")"
-                                       name="@(trustee.Id + "_Year")"
-                                       type="number"
-                                       pattern="[0-9]*"
-                                       sfa-validation-for="@(trustee.Id + "_Year")" />
-                            </div>
-                        </div>
-                    </div>
-                }
+                    }
 
-                <button type="submit" class="govuk-button">Save and continue</button>
+                    <button type="submit" class="govuk-button">Save and continue</button>
 
-            </form>
+                </form>
         </div>
     </div>
 </main>
+<partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />

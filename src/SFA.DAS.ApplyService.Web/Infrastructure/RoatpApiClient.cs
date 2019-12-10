@@ -8,6 +8,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     using Domain.Roatp;
     using Microsoft.Extensions.Logging;
     using SFA.DAS.ApplyService.Configuration;
+    using SFA.DAS.ApplyService.Domain.Entities;
 
     public class RoatpApiClient : IRoatpApiClient
     {
@@ -37,6 +38,27 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await (await _httpClient.GetAsync($"/ukprn-on-register?ukprn={ukprn}")).Content
                 .ReadAsAsync<OrganisationRegisterStatus>();
         }
-        
+
+        public async Task<string> GetNextRoatpApplicationReference()
+        {
+            var nextReferenceInSequence = await (await _httpClient.GetAsync("/next-application-reference")).Content.ReadAsAsync<NextApplicationReference>();
+            return nextReferenceInSequence.ApplicationReference;
+        }
+
+        public async Task<bool> SubmitRoatpApplication(RoatpApplicationData applicationData)
+        {
+            return await (await _httpClient.PostAsJsonAsync($"/submit", applicationData)).Content.ReadAsAsync<bool>();
+        }
+
+        public async Task<RoatpApplicationData> GetApplicationData(Guid applicationId)
+        {
+            return await (await _httpClient.GetAsync($"/application-data?applicationId={applicationId}")).Content
+                .ReadAsAsync<RoatpApplicationData>();
+        }
+    }
+
+    public class NextApplicationReference
+    {
+        public string ApplicationReference { get; set; }
     }
 }
