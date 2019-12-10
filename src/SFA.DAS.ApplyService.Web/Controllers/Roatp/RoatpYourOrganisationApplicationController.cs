@@ -16,7 +16,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     public class RoatpYourOrganisationApplicationController : Controller
     {
         private readonly ILogger<RoatpYourOrganisationApplicationController> _logger;
-        private readonly IOrganisationApiClient _organisationApiClient;
         private readonly IProcessPageFlowService _processPageFlowService;
         private const int Sequence1Id = 1;
 
@@ -27,7 +26,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _processPageFlowService = processPageFlowService;
         }
 
-        public async Task<IActionResult> ProviderRoute(Guid applicationId)
+        public IActionResult ProviderRoute(Guid applicationId)
         {
             return RedirectToAction("Page", "RoatpApplication",
                 new
@@ -53,7 +52,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 });
         }
 
-        public async Task<IActionResult> ExperienceAccreditation(Guid applicationId)
+        public IActionResult ExperienceAccreditation(Guid applicationId)
         {
             return RedirectToAction("Page", "RoatpApplication",
                 new

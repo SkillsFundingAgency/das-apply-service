@@ -41,6 +41,7 @@
                 </div>
             </div>
 
+
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <form method="post" asp-action="StartApplication" asp-controller="RoatpApplicationPreamble">
@@ -75,8 +76,12 @@
                             </div>
                         </fieldset>
                     </div>
+                    @Html.HiddenFor(x => x.PageId)
+                    @Html.HiddenFor(x => x.SequenceId)
+                    @Html.HiddenFor(x => x.SectionId)
                     <input type="submit" class="govuk-button" value="Save and continue" />
                 </form>
+
             </div>
           </div>
         </main>

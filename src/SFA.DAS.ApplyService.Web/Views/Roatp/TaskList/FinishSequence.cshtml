@@ -43,10 +43,12 @@
                         }
                     }
                     <strong class="@finishSectionCss" id="completed">
+
                         @if (Model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.TermsAndConditions) == "Completed")
                         {
                             @Html.Raw("Next");
                         }
+
                     </strong>
                 </li>
             }

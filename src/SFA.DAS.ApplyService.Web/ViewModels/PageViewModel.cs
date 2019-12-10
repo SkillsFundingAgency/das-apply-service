@@ -71,7 +71,13 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
         
         public string SectionTitle { get; }
 
+        public string GetHelpQuestion { get; set; }
+
         public bool GetHelpQuerySubmitted { get; set; }
+
+        public string GetHelpErrorMessage { get; set; }
+
+        public string GetHelpAction { get { return "Page"; } set { } }
 
         private void SetupPage(Page page, List<ValidationErrorDetail> errorMessages)
         {

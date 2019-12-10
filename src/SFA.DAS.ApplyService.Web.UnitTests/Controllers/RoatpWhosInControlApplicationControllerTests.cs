@@ -14,6 +14,7 @@ using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
 using System.Collections.Generic;
 using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.Session;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
@@ -24,6 +25,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IApplicationApiClient> _applicationClient;
         private Mock<IAnswerFormService> _answerFormService;
         private Mock<ITabularDataRepository> _tabularDataRepository;
+        private Mock<ISessionService> _sessionService;
         private RoatpWhosInControlApplicationController _controller;
 
         private TabularData _directors;
@@ -36,10 +38,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _applicationClient = new Mock<IApplicationApiClient>();
             _answerFormService = new Mock<IAnswerFormService>();
             _tabularDataRepository = new Mock<ITabularDataRepository>();
+            _sessionService = new Mock<ISessionService>();
             _controller = new RoatpWhosInControlApplicationController(_qnaClient.Object, 
                                                                       _applicationClient.Object, 
                                                                       _answerFormService.Object,
-                                                                      _tabularDataRepository.Object);
+                                                                      _tabularDataRepository.Object,
+                                                                      _sessionService.Object);
             _directors = new TabularData
             {
                 Caption = "Directors",
@@ -1037,7 +1041,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(individualPartnerAnswer);
 
-            var result = _controller.AddPartner(Guid.NewGuid(), true).GetAwaiter().GetResult();
+            var partnerTypeAnswer = new Answer
+            {
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.PartnershipType,
+                Value = ConfirmPartnershipTypeViewModel.PartnershipTypeIndividual
+            };
+            _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.PartnershipType)).ReturnsAsync(partnerTypeAnswer);
+
+            var result = _controller.AddPartner(Guid.NewGuid()).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
