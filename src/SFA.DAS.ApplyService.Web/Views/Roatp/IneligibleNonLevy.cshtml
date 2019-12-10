@@ -1,7 +1,7 @@
 ﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.EmployerProviderContinueApplicationViewModel
 
 @{
-    ViewBag.Title = "Your organisation cannot apply to join the RoATP as an employer provider ";
+    ViewBag.Title = "Your organisation cannot apply to join the RoATP as an employer provider";
     Layout = "_Layout";
 
     bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
@@ -86,9 +86,13 @@
                             </div>
                         </fieldset>
                     </div>
+                    @Html.HiddenFor(x => x.PageId)
+                    @Html.HiddenFor(x => x.SequenceId)
+                    @Html.HiddenFor(x => x.SectionId)
                     <input type="submit" class="govuk-button" value="Save and continue" />
                 </form>
             </div>
         </div>
     </main>
+    <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
 </div>
