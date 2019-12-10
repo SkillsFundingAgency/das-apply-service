@@ -22,8 +22,14 @@
         public int SectionId { get; set; }
         public string PageId { get; set; }
 
+        public string GetHelpQuestion { get; set; }
+
         public bool GetHelpQuerySubmitted { get; set; }
 
+        public string GetHelpErrorMessage { get; set; }
+
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
+
+        public string GetHelpAction { get { return "SelectApplicationRoute"; } set { } }
     }
 }

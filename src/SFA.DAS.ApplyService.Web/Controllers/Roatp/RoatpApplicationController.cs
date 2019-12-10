@@ -26,17 +26,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     using Microsoft.Extensions.Options;
     using MoreLinq;
     using SFA.DAS.ApplyService.EmailService;
+    using SFA.DAS.ApplyService.Web.Controllers.Roatp;
     using SFA.DAS.ApplyService.Web.Infrastructure.Validations;
     using SFA.DAS.ApplyService.Web.Services;
     using ViewModels.Roatp;
 
     [Authorize]
-    public class RoatpApplicationController : Controller
+    public class RoatpApplicationController : RoatpApplyControllerBase
     {
         private readonly IApplicationApiClient _apiClient;
         private readonly ILogger<RoatpApplicationController> _logger;
         private readonly IUsersApiClient _usersApiClient;
-        private readonly ISessionService _sessionService;
         private readonly IConfigurationService _configService;
         private readonly IUserService _userService;
         private readonly IQnaApiClient _qnaApiClient;
@@ -51,8 +51,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IRoatpApiClient _roatpApiClient;
         private readonly ISubmitApplicationConfirmationEmailService _submitApplicationEmailService;
 
-        private const string ApplicationDetailsKey = "Roatp_Application_Details";
-        private const string GetHelpSubmittedForPageKey = "Roatp_GetHelpSubmitted_{0}";
         private const string InputClassUpperCase = "app-uppercase";
         private const int Section1Id = 1;
         private const string NotApplicableAnswerText = "None of the above";
@@ -65,6 +63,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks, 
             ICustomValidatorFactory customValidatorFactory, IOptions<List<NotRequiredOverrideConfiguration>> notRequiredOverrides, 
             IRoatpApiClient roatpApiClient, ISubmitApplicationConfirmationEmailService submitApplicationEmailService)
+            :base(sessionService)
         {
             _apiClient = apiClient;
             _logger = logger;
@@ -341,13 +340,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return View("~/Views/Application/Pages/MultipleAnswers.cshtml", viewModel);
             }
 
-            var getHelpSessionKey = string.Format(GetHelpSubmittedForPageKey, pageId);
-            var getHelpSubmitted = _sessionService.Get<bool>(getHelpSessionKey);
-            viewModel.GetHelpQuerySubmitted = getHelpSubmitted;
+            PopulateGetHelpWithQuestion(viewModel, pageId);         
 
-            return View("~/Views/Application/Pages/Index.cshtml", viewModel);
-
-            
+            return View("~/Views/Application/Pages/Index.cshtml", viewModel);            
         }
         
                 

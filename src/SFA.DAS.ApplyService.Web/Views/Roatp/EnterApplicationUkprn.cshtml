@@ -72,7 +72,9 @@
                                 <p>After you’ve registered and received a UKPRN, sign back in to continue with this application.</p>
                             </div>
                         </details>
-
+                        @Html.HiddenFor(x => x.PageId)
+                        @Html.HiddenFor(x => x.SequenceId)
+                        @Html.HiddenFor(x => x.SectionId)
                         <input type="submit" class="govuk-button" value="Save and continue" />
                     </form>
                 </div>
