@@ -305,11 +305,11 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             {
                 return "hidden";
             }
-            if (sectionStatus == TaskListSectionStatus.InProgress)
+            else if (sectionStatus == TaskListSectionStatus.InProgress)
             {
                 return "inprogress";
             }
-            if (sectionStatus == TaskListSectionStatus.NotRequired)
+            else if (sectionStatus == TaskListSectionStatus.NotRequired)
             {
                 return "notrequired";
             }
