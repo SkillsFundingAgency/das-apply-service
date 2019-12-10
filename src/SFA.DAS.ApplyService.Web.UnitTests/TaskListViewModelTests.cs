@@ -22,7 +22,11 @@
         private ApplicationSection _whatYouNeedSection;
         private RoatpTaskListWorkflowService _roatpTaskListWorkflowService;
         private Mock<IQnaApiClient> _qnaApiClient;
-        
+
+        private const string MainProviderRoute = "1";
+        private const string EmployerProviderRoute = "2";
+        private const string SupportingProviderRoute = "3";
+
         [SetUp]
         public void Before_each_test()
         {
@@ -665,6 +669,10 @@
                 }
             };
 
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails)).ReturnsAsync(new Answer { Value = null });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails)).ReturnsAsync(new Answer { Value = null });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication)).ReturnsAsync(new Answer { Value = null });
+
             var model = new TaskListViewModel(_qnaApiClient.Object)
             {
                 ApplicationSequences = applicationSequences
@@ -677,7 +685,7 @@
         }
 
         [Test]
-        public void Finish_application_checks_shows_completed_if_all_questions_answered_and_shutter_page_not_activated()
+        public void Finish_application_checks_shows_in_progress_if_all_not_questions_answered()
         {
             var applicationSequences = new List<ApplicationSequence>
             {
@@ -744,29 +752,23 @@
                 }
             };
 
-            var shutterPage = new Page
-            {
-                PageId = RoatpWorkflowPageIds.Finish.ApplicationPermissionsChecksShutterPage,
-                Active = false,
-                Complete = false,
-                Questions = new List<Question>()
-            };
-            _qnaApiClient.Setup(x => x.GetPage(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>()))
-                .ReturnsAsync(shutterPage);
-
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails)).ReturnsAsync(new Answer { Value = null });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication)).ReturnsAsync(new Answer { Value = null });
+            
             var model = new TaskListViewModel(_qnaApiClient.Object)
             {
                 ApplicationSequences = applicationSequences
             };
 
             var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
-            status.Should().Be("Completed");
+            status.Should().Be("In Progress");
             var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
-            css.Should().Be("completed");
+            css.Should().Be("inprogress");
         }
 
         [Test]
-        public void Finish_application_checks_shows_in_progress_if_questions_answered_and_shutter_page_activated()
+        public void Finish_application_checks_shows_in_progress_if_questions_answered_and_shutter_page_shown_for_conditions_not_met()
         {
             var applicationSequences = new List<ApplicationSequence>
             {
@@ -833,15 +835,9 @@
                 }
             };
 
-            var shutterPage = new Page
-            {
-                PageId = RoatpWorkflowPageIds.Finish.ApplicationPermissionsChecksShutterPage,
-                Active = true,
-                Complete = true,
-                Questions = new List<Question>()
-            };
-            _qnaApiClient.Setup(x => x.GetPage(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>()))
-                .ReturnsAsync(shutterPage);
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails)).ReturnsAsync(new Answer { Value = "No" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication)).ReturnsAsync(new Answer { Value = null });
 
             var model = new TaskListViewModel(_qnaApiClient.Object)
             {
@@ -852,6 +848,1005 @@
             status.Should().Be("In Progress");
             var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
             css.Should().Be("inprogress");
+        }
+
+        [Test]
+        public void Finish_commercial_in_confidence_shows_blank_if_previous_section_not_complete()
+        {
+            var applicationSequences = new List<ApplicationSequence>
+            {
+                new ApplicationSequence
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
+                    Sections = new List<ApplicationSection>
+                    {
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    },
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                new ApplicationSequence
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    SequenceId = RoatpWorkflowSequenceIds.Finish,
+                    Sections = new List<ApplicationSection>
+                    {
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.Finish.TermsAndConditions,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    },
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = false,
+                                        Questions = new List<Question>()
+                                    }
+
+                                }
+                            }
+                        },
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = false,
+                                        Questions = new List<Question>()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails)).ReturnsAsync(new Answer { Value = "No" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication)).ReturnsAsync(new Answer { Value = null });
+
+            var model = new TaskListViewModel(_qnaApiClient.Object)
+            {
+                ApplicationSequences = applicationSequences
+            };
+
+            var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
+            status.Should().Be(string.Empty);
+            var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
+            css.Should().Be("hidden");
+        }
+
+        [Test]
+        public void Finish_commercial_in_confidence_shows_next_if_no_questions_answered_and_previous_section_complete()
+        {
+            var applicationSequences = new List<ApplicationSequence>
+            {
+                new ApplicationSequence
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
+                    Sections = new List<ApplicationSection>
+                    {
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    },
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                new ApplicationSequence
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    SequenceId = RoatpWorkflowSequenceIds.Finish,
+                    Sections = new List<ApplicationSection>
+                    {
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.Finish.TermsAndConditions,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    },
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = false,
+                                        Questions = new List<Question>()
+                                    }
+
+                                }
+                            }
+                        },
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = false,
+                                        Questions = new List<Question>()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication)).ReturnsAsync(new Answer { Value = "Yes" });
+
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence)).ReturnsAsync(new Answer { Value = null });
+
+            var model = new TaskListViewModel(_qnaApiClient.Object)
+            {
+                ApplicationSequences = applicationSequences
+            };
+
+            var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
+            status.Should().Be("Next");
+            var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
+            css.Should().Be("next");
+        }
+
+        [TestCase("Yes")]
+        [TestCase("No")]
+        public void Finish_commercial_in_confidence_shows_completed_if_answer_supplied(string answerValue)
+        {
+            var applicationSequences = new List<ApplicationSequence>
+            {
+                new ApplicationSequence
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
+                    Sections = new List<ApplicationSection>
+                    {
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    },
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                new ApplicationSequence
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    SequenceId = RoatpWorkflowSequenceIds.Finish,
+                    Sections = new List<ApplicationSection>
+                    {
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.Finish.TermsAndConditions,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    },
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = false,
+                                        Questions = new List<Question>()
+                                    }
+
+                                }
+                            }
+                        },
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = false,
+                                        Questions = new List<Question>()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication)).ReturnsAsync(new Answer { Value = "Yes" });
+
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence)).ReturnsAsync(new Answer { Value = answerValue });
+
+            var model = new TaskListViewModel(_qnaApiClient.Object)
+            {
+                ApplicationSequences = applicationSequences
+            };
+
+            var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
+            status.Should().Be("Completed");
+            var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
+            css.Should().Be("completed");
+        }
+
+        [Test]
+        public void Finish_terms_and_conditions_shows_blank_if_previous_section_not_complete()
+        {
+            var applicationSequences = new List<ApplicationSequence>
+            {
+                new ApplicationSequence
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
+                    Sections = new List<ApplicationSection>
+                    {
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    },
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                new ApplicationSequence
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    SequenceId = RoatpWorkflowSequenceIds.Finish,
+                    Sections = new List<ApplicationSection>
+                    {
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.Finish.TermsAndConditions,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    },
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = false,
+                                        Questions = new List<Question>()
+                                    }
+
+                                }
+                            }
+                        },
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = false,
+                                        Questions = new List<Question>()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication)).ReturnsAsync(new Answer { Value = "Yes" });
+
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence)).ReturnsAsync(new Answer { Value = null });
+
+            var model = new TaskListViewModel(_qnaApiClient.Object)
+            {
+                ApplicationSequences = applicationSequences
+            };
+
+            var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
+            status.Should().Be(string.Empty);
+            var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
+            css.Should().Be("hidden");
+        }
+
+        [Test]
+        public void Finish_terms_and_conditions_shows_next_if_no_questions_answered_and_previous_section_complete()
+        {
+            var applicationSequences = new List<ApplicationSequence>
+            {
+                new ApplicationSequence
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
+                    Sections = new List<ApplicationSection>
+                    {
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    },
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                new ApplicationSequence
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    SequenceId = RoatpWorkflowSequenceIds.Finish,
+                    Sections = new List<ApplicationSection>
+                    {
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.Finish.TermsAndConditions,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    },
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = false,
+                                        Questions = new List<Question>()
+                                    }
+
+                                }
+                            }
+                        },
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    }
+                                }
+                            }
+                        },
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.Finish.TermsAndConditions,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = false,
+                                        Questions = new List<Question>()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication)).ReturnsAsync(new Answer { Value = "Yes" });
+
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence)).ReturnsAsync(new Answer { Value = "No" });
+
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2MainEmployer)).ReturnsAsync(new Answer { Value = null });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3MainEmployer)).ReturnsAsync(new Answer { Value = null });
+
+            var model = new TaskListViewModel(_qnaApiClient.Object)
+            {
+                ApplicationSequences = applicationSequences,
+                ApplicationRouteId = MainProviderRoute
+            };
+
+            var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
+            status.Should().Be("Next");
+            var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
+            css.Should().Be("next");
+        }
+
+        [Test]
+        public void Finish_terms_and_conditions_shows_in_progress_if_not_all_questions_answered()
+        {
+            var applicationSequences = new List<ApplicationSequence>
+            {
+                new ApplicationSequence
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
+                    Sections = new List<ApplicationSection>
+                    {
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    },
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                new ApplicationSequence
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    SequenceId = RoatpWorkflowSequenceIds.Finish,
+                    Sections = new List<ApplicationSection>
+                    {
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.Finish.TermsAndConditions,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    },
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = false,
+                                        Questions = new List<Question>()
+                                    }
+
+                                }
+                            }
+                        },
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    }
+                                }
+                            }
+                        },
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.Finish.TermsAndConditions,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = false,
+                                        Questions = new List<Question>()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication)).ReturnsAsync(new Answer { Value = "Yes" });
+
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence)).ReturnsAsync(new Answer { Value = "No" });
+
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2Supporting)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3Supporting)).ReturnsAsync(new Answer { Value = null });
+
+            var model = new TaskListViewModel(_qnaApiClient.Object)
+            {
+                ApplicationSequences = applicationSequences,
+                ApplicationRouteId = SupportingProviderRoute
+            };
+
+            var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
+            status.Should().Be("In Progress");
+            var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
+            css.Should().Be("inprogress");
+        }
+
+        [Test]
+        public void Finish_terms_and_conditions_shows_in_progress_if_questions_answered_and_shutter_page_shown_for_conditions_not_met()
+        {
+            var applicationSequences = new List<ApplicationSequence>
+            {
+                new ApplicationSequence
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
+                    Sections = new List<ApplicationSection>
+                    {
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    },
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                new ApplicationSequence
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    SequenceId = RoatpWorkflowSequenceIds.Finish,
+                    Sections = new List<ApplicationSection>
+                    {
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.Finish.TermsAndConditions,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    },
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = false,
+                                        Questions = new List<Question>()
+                                    }
+
+                                }
+                            }
+                        },
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    }
+                                }
+                            }
+                        },
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.Finish.TermsAndConditions,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = false,
+                                        Questions = new List<Question>()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication)).ReturnsAsync(new Answer { Value = "Yes" });
+
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence)).ReturnsAsync(new Answer { Value = "No" });
+
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2Supporting)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3Supporting)).ReturnsAsync(new Answer { Value = "No" });
+
+            var model = new TaskListViewModel(_qnaApiClient.Object)
+            {
+                ApplicationSequences = applicationSequences,
+                ApplicationRouteId = SupportingProviderRoute
+            };
+
+            var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
+            status.Should().Be("In Progress");
+            var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
+            css.Should().Be("inprogress");
+        }
+
+        [Test]
+        public void Finish_terms_and_conditions_shows_completed_if_all_questions_answered()
+        {
+            var applicationSequences = new List<ApplicationSequence>
+            {
+                new ApplicationSequence
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
+                    Sections = new List<ApplicationSection>
+                    {
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    },
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                new ApplicationSequence
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    SequenceId = RoatpWorkflowSequenceIds.Finish,
+                    Sections = new List<ApplicationSection>
+                    {
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.Finish.TermsAndConditions,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    },
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = false,
+                                        Questions = new List<Question>()
+                                    }
+
+                                }
+                            }
+                        },
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    }
+                                }
+                            }
+                        },
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.Finish.TermsAndConditions,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = false,
+                                        Questions = new List<Question>()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication)).ReturnsAsync(new Answer { Value = "Yes" });
+
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence)).ReturnsAsync(new Answer { Value = "No" });
+
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2MainEmployer)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3MainEmployer)).ReturnsAsync(new Answer { Value = "Yes" });
+
+            var model = new TaskListViewModel(_qnaApiClient.Object)
+            {
+                ApplicationSequences = applicationSequences,
+                ApplicationRouteId = EmployerProviderRoute
+            };
+
+            var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
+            status.Should().Be("Completed");
+            var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
+            css.Should().Be("completed");
+        }
+
+        [Test]
+        public void Finish_submit_application_shows_next_if_previous_section_completed()
+        {
+            var applicationSequences = new List<ApplicationSequence>
+            {
+                new ApplicationSequence
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
+                    Sections = new List<ApplicationSection>
+                    {
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    },
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                new ApplicationSequence
+                {
+                    ApplicationId = Guid.NewGuid(),
+                    SequenceId = RoatpWorkflowSequenceIds.Finish,
+                    Sections = new List<ApplicationSection>
+                    {
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.Finish.TermsAndConditions,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    },
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = false,
+                                        Questions = new List<Question>()
+                                    }
+
+                                }
+                            }
+                        },
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = true,
+                                        Questions = new List<Question>()
+                                    }
+                                }
+                            }
+                        },
+                        new ApplicationSection
+                        {
+                            SectionId = RoatpWorkflowSectionIds.Finish.TermsAndConditions,
+                            QnAData = new QnAData
+                            {
+                                Pages = new List<Page>
+                                {
+                                    new Page
+                                    {
+                                        Active = true,
+                                        Complete = false,
+                                        Questions = new List<Question>()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication)).ReturnsAsync(new Answer { Value = "Yes" });
+
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence)).ReturnsAsync(new Answer { Value = "No" });
+
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2Supporting)).ReturnsAsync(new Answer { Value = "Yes" });
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3Supporting)).ReturnsAsync(new Answer { Value = "Yes" });
+
+            var model = new TaskListViewModel(_qnaApiClient.Object)
+            {
+                ApplicationSequences = applicationSequences,
+                ApplicationRouteId = SupportingProviderRoute
+            };
+
+            var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.SubmitApplication);
+            status.Should().Be("Next");
+            var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.SubmitApplication);
+            css.Should().Be("next");
         }
     }
 }

@@ -6,13 +6,17 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
     using System.Linq;
     using Domain.Entities;
     using SFA.DAS.ApplyService.Application.Apply.Roatp;
+    using SFA.DAS.ApplyService.Domain.Apply;
     using SFA.DAS.ApplyService.Web.Configuration;
     using SFA.DAS.ApplyService.Web.Infrastructure;
     using SFA.DAS.ApplyService.Web.Services;
 
     public class TaskListViewModel : ApplicationSummaryViewModel
     {
+        private const string MainApplicationRouteId = "1";
         private const string EmployerApplicationRouteId = "2";
+        private const string SupportingApplicationRouteId = "3";
+        private const string ConfirmedAnswer = "Yes";
         private readonly IQnaApiClient _qnaApiClient;
 
         public List<NotRequiredOverrideConfiguration> NotRequiredOverrides { get; set; }
@@ -128,48 +132,82 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         public string FinishSectionStatus(int sectionId)
         {
-            var shutterPageActive = false;
             if (!ApplicationSequencesCompleted())
             {
                 return string.Empty;
             }
+            var finishSequence = ApplicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.Finish);
 
-            var shutterPageIds = new List<string>();
+            if (!PreviousSectionCompleted(finishSequence.SequenceId, sectionId))
+            {
+                return string.Empty;
+            }
+
+            if (sectionId == RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation)
+            {
+                var commercialInConfidenceAnswer = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCommercialInConfidence).GetAwaiter().GetResult();
+                if (commercialInConfidenceAnswer != null && !String.IsNullOrWhiteSpace(commercialInConfidenceAnswer.Value))
+                {
+                    return "Completed";
+                }
+                else
+                {
+                    return "Next";
+                }
+            }
+
             if (sectionId == RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks)
             {
-                shutterPageIds.Add(RoatpWorkflowPageIds.Finish.ApplicationPermissionsChecksShutterPage);
-            }
-            else if (sectionId == RoatpWorkflowSectionIds.Finish.TermsAndConditions)
-            {
-                shutterPageIds.Add(RoatpWorkflowPageIds.Finish.TermsConditionsCOAPart2ShutterPage);
-                shutterPageIds.Add(RoatpWorkflowPageIds.Finish.TermsConditionsCOAPart3ShutterPage);
-            }
+                var permissionPersonalDetails = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails).GetAwaiter().GetResult();
+                var accuratePersonalDetails = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails).GetAwaiter().GetResult();
+                var permissionSubmitApplication = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication).GetAwaiter().GetResult();
 
-            if (shutterPageIds.Any())
-            {
-                var finishSequence = ApplicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.Finish);
-                var section = finishSequence.Sections.FirstOrDefault(x => x.SectionId == sectionId);
-                
-                foreach(var shutterPageId in shutterPageIds)
+                if (String.IsNullOrWhiteSpace(permissionPersonalDetails.Value) 
+                    && String.IsNullOrWhiteSpace(accuratePersonalDetails.Value)
+                    && String.IsNullOrWhiteSpace(permissionSubmitApplication.Value))
                 {
-                    var shutterPage = _qnaApiClient.GetPage(ApplicationId, section.Id, shutterPageId)
-                                        .GetAwaiter().GetResult();
+                    return "Next";
+                }
 
-                    if (shutterPage != null && shutterPage.Active)
-                    {
-                        shutterPageActive = true;
-                        return "In Progress";                        
-                    }
-                }                    
-                
+                if (permissionPersonalDetails.Value == ConfirmedAnswer 
+                    && accuratePersonalDetails.Value == ConfirmedAnswer 
+                    && permissionSubmitApplication.Value == ConfirmedAnswer)
+                {
+                    return "Completed";
+                }
+                return "In Progress";
             }
 
-            var sectionStatus = RoatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, RoatpWorkflowSequenceIds.Finish, sectionId, ApplicationRouteId);
-            if (!shutterPageActive)
+            if (sectionId == RoatpWorkflowSectionIds.Finish.TermsAndConditions)
             {
-                return sectionStatus;
+                Answer conditionsOfAcceptance2 = null;
+                Answer conditionsOfAcceptance3 = null;
+
+                if (ApplicationRouteId == MainApplicationRouteId || ApplicationRouteId == EmployerApplicationRouteId)
+                {
+                    conditionsOfAcceptance2 = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCOA2MainEmployer).GetAwaiter().GetResult();
+                    conditionsOfAcceptance3 = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCOA3MainEmployer).GetAwaiter().GetResult();
+                }
+                else if (ApplicationRouteId == SupportingApplicationRouteId)
+                {
+                    conditionsOfAcceptance2 = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCOA2Supporting).GetAwaiter().GetResult();
+                    conditionsOfAcceptance3 = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCOA3Supporting).GetAwaiter().GetResult();
+                }
+
+                if (String.IsNullOrWhiteSpace(conditionsOfAcceptance2?.Value) && String.IsNullOrWhiteSpace(conditionsOfAcceptance3?.Value))
+                {
+                    return "Next";
+                }
+
+                if (conditionsOfAcceptance2?.Value == ConfirmedAnswer && conditionsOfAcceptance3?.Value == ConfirmedAnswer)
+                {
+                    return "Completed";
+                }
+
+                return "In Progress";
             }
-            return string.Empty;
+
+            return "Next";
         }
 
         public bool PreviousSectionCompleted(int sequenceId, int sectionId)
