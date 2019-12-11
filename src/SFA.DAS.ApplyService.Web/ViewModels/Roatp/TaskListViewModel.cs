@@ -301,20 +301,25 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         private string ConvertTaskListSectionStatusToCssClass(string sectionStatus)
         {
-            if (sectionStatus == TaskListSectionStatus.Blank)
+            switch (sectionStatus)
             {
-                return "hidden";
+                case TaskListSectionStatus.Blank:
+                    {
+                        return "hidden";                        
+                    }
+                case TaskListSectionStatus.InProgress:
+                    {
+                        return "inprogress";
+                    }
+                case TaskListSectionStatus.NotRequired:
+                    {
+                        return "notrequired";
+                    }
+                default:
+                    {
+                        return sectionStatus.ToLower();
+                    }
             }
-            else if (sectionStatus == TaskListSectionStatus.InProgress)
-            {
-                return "inprogress";
-            }
-            else if (sectionStatus == TaskListSectionStatus.NotRequired)
-            {
-                return "notrequired";
-            }
-
-            return sectionStatus.ToLower();
         }
     }
 }
