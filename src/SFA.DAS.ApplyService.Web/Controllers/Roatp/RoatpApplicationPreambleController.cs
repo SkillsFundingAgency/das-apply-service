@@ -330,7 +330,7 @@
 
             if (existingApplicationStatuses.Any(x => x.Status == ApplicationStatus.Submitted))
             {
-                return RedirectToAction("ApplicationSubmitted", "RoatpShutterPages", new ExistingApplicationViewModel { UKPRN = providerDetails.UKPRN });
+                return RedirectToAction("ApplicationPreviouslySubmitted", "RoatpShutterPages", new ExistingApplicationViewModel { UKPRN = providerDetails.UKPRN });
             }
             
             CompaniesHouseSummary companyDetails = null;

@@ -1291,7 +1291,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var result = _controller.VerifyOrganisationDetails().GetAwaiter().GetResult();
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("ApplicationSubmitted");
+            redirectResult.ActionName.Should().Be("ApplicationPreviouslySubmitted");
         }
 
         [Test]
