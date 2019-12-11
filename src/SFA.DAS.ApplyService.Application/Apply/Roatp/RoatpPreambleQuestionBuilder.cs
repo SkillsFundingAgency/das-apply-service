@@ -100,7 +100,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         {
             public static int WhatYouWillNeed = 1;
             public static int ChecksOnYourOrganisation = 2;
-            public static int CheckOnWhosInControl = 3;
+            public static int WhatYouWillNeed_CheckOnWhosInControl = 3;
+            public static int CheckOnWhosInControl = 4;
         }
 
         public static class Finish
