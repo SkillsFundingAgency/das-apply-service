@@ -1,6 +1,4 @@
-﻿using SFA.DAS.ApplyService.Web.Configuration;
-using SFA.DAS.ApplyService.Web.Services;
-
+﻿
 namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
     using System;
@@ -8,50 +6,21 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
     using System.Linq;
     using Domain.Entities;
     using SFA.DAS.ApplyService.Application.Apply.Roatp;
+    using SFA.DAS.ApplyService.Web.Configuration;
+    using SFA.DAS.ApplyService.Web.Services;
 
-    public class TaskListViewModel
+    public class TaskListViewModel : ApplicationSummaryViewModel
     {
-        private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
+        //private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
 
-        public TaskListViewModel(IRoatpTaskListWorkflowService roatpTaskListWorkflowService)
-        {
-            _roatpTaskListWorkflowService = roatpTaskListWorkflowService;
-        }
-
+        //public TaskListViewModel(IRoatpTaskListWorkflowService roatpTaskListWorkflowService)
+        //{
+        //    _roatpTaskListWorkflowService = roatpTaskListWorkflowService;
+        //}
 
         private const string EmployerApplicationRouteId = "2";
 
-        public Guid ApplicationId { get; set; }
-        public string UKPRN { get; set; }
-        public string OrganisationName { get; set; }
-        public string TradingName { get; set; }
-
         public List<NotRequiredOverrideConfiguration> NotRequiredOverrides { get; set; }
-
-
-        public string ApplicationRouteShortText
-        {
-            get
-            {
-                switch(ApplicationRouteId)
-                {
-                    case "1":
-                        {
-                            return "Main";                            
-                        }
-                    case "2":
-                        {
-                            return "Employer";
-                        }
-                    case "3":
-                        {
-                            return "Supporting";
-                        }
-                }
-
-                return string.Empty;
-            }
-        }
     
         public string PageStatusCompleted => "completed";
         public int IntroductionSectionId => 1;
@@ -61,7 +30,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         
         public string CssClass(int sequenceId, int sectionId)
         {
-            var status = _roatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, sequenceId, sectionId, ApplicationRouteId);
+            var status = RoatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, sequenceId, sectionId, ApplicationRouteId);
 
             if (status == String.Empty)
             {
@@ -76,14 +45,14 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         public string SectionStatus(int sequenceId, int sectionId)
         {
-            return _roatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, sequenceId, sectionId, ApplicationRouteId);
+            return RoatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, sequenceId, sectionId, ApplicationRouteId);
         }
 
         public bool PreviousSectionCompleted(int sequenceId, int sectionId)
         {
             var sequence = ApplicationSequences.FirstOrDefault(x => x.SequenceId == sequenceId);
 
-            return _roatpTaskListWorkflowService.PreviousSectionCompleted(sequence, sectionId);
+            return RoatpTaskListWorkflowService.PreviousSectionCompleted(sequence, sectionId);
         }
 
         public bool IntroductionPageNextSectionUnavailable(int sequenceId, int sectionId)
@@ -94,7 +63,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
                 foreach(var section in yourOrganisationSequence.Sections)
                 {
-                    var sectionStatus = _roatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, RoatpWorkflowSequenceIds.YourOrganisation, section.SectionId, ApplicationRouteId);
+                    var sectionStatus = RoatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, RoatpWorkflowSequenceIds.YourOrganisation, section.SectionId, ApplicationRouteId);
                     if (sectionStatus.ToLower() != PageStatusCompleted)
                     {
                         return true;
@@ -113,7 +82,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public bool CompaniesHouseManualEntry { get; set; }
         public bool VerifiedCharityCommission { get; set; }
         public bool CharityCommissionManualEntry { get; set; }
-        public string ApplicationRouteId { get; set; }
 
         public string WhosInControlStartPageId
         {

@@ -26,7 +26,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, Guid sectionId, string pageId, List<Answer> answers);
         Task<IEnumerable<ApplicationSequence>> GetSequences(Guid applicationId);
         Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId, Guid sequenceId);
-        Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag);
+        Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag, string questionId = null);
 
         Task<UploadPageAnswersResult> Upload(Guid applicationId, Guid sectionId, string pageId, IFormFileCollection files);
 
