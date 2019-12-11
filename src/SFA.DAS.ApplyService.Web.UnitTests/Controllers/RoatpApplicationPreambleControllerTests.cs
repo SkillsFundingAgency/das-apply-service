@@ -1046,9 +1046,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var result = _controller.StartApplication(model).GetAwaiter().GetResult();
 
-            var viewResult = result as ViewResult;
-            viewResult.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("ConfirmLevyStatus");
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("ConfirmLevyStatus");
         }
 
         [Test]
@@ -1070,9 +1070,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
             var result = _controller.SubmitLevyStatus(model).GetAwaiter().GetResult();
 
-            var viewResult = result as ViewResult;
-            viewResult.Should().NotBeNull();
-            viewResult.ViewName.Should().Contain("IneligibleNonLevy");
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("IneligibleNonLevy");
         }
 
         [Test]
@@ -1119,7 +1119,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 ContinueWithApplication = "Y"
             };
 
-            var result = _controller.ConfirmNonLevyContinue(model).GetAwaiter().GetResult();
+            var result = _controller.ConfirmNonLevyContinue(model);
 
             var redirectResult = result as RedirectToActionResult;
 
@@ -1420,7 +1420,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 ContinueWithApplication = "N"
             };
 
-            var result = _controller.ConfirmNonLevyContinue(model).GetAwaiter().GetResult();
+            var result = _controller.ConfirmNonLevyContinue(model);
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.ActionName.Should().Be("NonLevyAbandonedApplication");

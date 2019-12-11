@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Internal;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Web.Configuration;
 
-namespace SFA.DAS.ApplyService.Web.Controllers
+namespace SFA.DAS.ApplyService.Web.ViewModels
 {
-    public class PageViewModel
+    public class PageViewModel : IPageViewModel
     {
         public Guid ApplicationId { get; set; }
 
@@ -71,6 +71,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         
         public string SectionTitle { get; }
 
+        public string GetHelpQuestion { get; set; }
+
+        public bool GetHelpQuerySubmitted { get; set; }
+
+        public string GetHelpErrorMessage { get; set; }
+
+        public string GetHelpAction { get { return "Page"; } set { } }
+
         private void SetupPage(Page page, List<ValidationErrorDetail> errorMessages)
         {
             Title = page.Title;
@@ -114,7 +122,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 RedirectAction = RedirectAction
             }));
 
-            foreach (var question in questionsWithRetainedAnswers.Where(x=> !string.IsNullOrEmpty(x.Value)))
+            foreach (var question in questionsWithRetainedAnswers.Where(x=>!string.IsNullOrEmpty(x.Value)))
             {
                 foreach (var q in Questions.Where(q => question.QuestionId == q.QuestionId))
                 {

@@ -97,9 +97,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [Route("application-submitted")]
-        public async Task<IActionResult> ApplicationSubmitted(ExistingApplicationViewModel model)
+        public async Task<IActionResult> ApplicationPreviouslySubmitted(ExistingApplicationViewModel model)
         {
-            return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
+            return View("~/Views/Roatp/ApplicationPreviouslySubmitted.cshtml", model);
         }
     }
 }

@@ -27,6 +27,7 @@ namespace SFA.DAS.ApplyService.Data
             SqlMapper.AddTypeHandler(typeof(OrganisationDetails), new OrganisationDetailsHandler());
             SqlMapper.AddTypeHandler(typeof(QnAData), new QnADataHandler());
             SqlMapper.AddTypeHandler(typeof(ApplicationData), new ApplicationDataHandler());
+            SqlMapper.AddTypeHandler(typeof(RoatpApplicationData), new RoatpApplicationDataHandler());
             SqlMapper.AddTypeHandler(typeof(FinancialApplicationGrade), new FinancialApplicationGradeDataHandler());
         }
 
@@ -982,6 +983,45 @@ namespace SFA.DAS.ApplyService.Data
                  new { ukprn });
 
                 return await Task.FromResult(applicationStatuses);
+            }
+        }
+
+        public async Task<string> GetNextRoatpApplicationReference()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var nextInSequence = (await connection.QueryAsync<int>(@"SELECT NEXT VALUE FOR RoatpAppReferenceSequence")).FirstOrDefault();
+
+                return $"APR{nextInSequence}";
+            }
+        }
+
+        public async Task<bool> SubmitRoatpApplication(RoatpApplicationData applicationData)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(
+                    @"UPDATE Applications SET ApplicationData = @applicationData, ApplicationStatus = 'Submitted', UpdatedAt = @updatedAt, UpdatedBy = @updatedBy
+                      WHERE Id = @applicationId",
+                    new
+                    {
+                        applicationData,
+                        applicationData.ApplicationId,
+                        updatedAt = applicationData.ApplicationSubmittedOn,
+                        updatedBy = applicationData.ApplicationSubmittedBy
+                    });
+
+                return await Task.FromResult(true);
+            }
+        }
+
+        public async Task<RoatpApplicationData> GetRoatpApplicationData(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<RoatpApplicationData>(@"SELECT ApplicationData FROM Applications 
+                                                                            WHERE Id = @applicationId",
+                    new { applicationId })).FirstOrDefault();
             }
         }
     }

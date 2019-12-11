@@ -54,7 +54,12 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<bool> IsSectionCompleted(Guid applicationId, Guid applicationSectionId);
 
         Task RemoveSectionCompleted(Guid applicationId, Guid applicationSectionId);
-
+        
         Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatusByUkprn(string ukprn);
+
+        Task<string> GetNextRoatpApplicationReference();
+        Task<bool> SubmitRoatpApplication(RoatpApplicationData applicationData);
+        Task<RoatpApplicationData> GetRoatpApplicationData(Guid applicationId);
+
     }
 }

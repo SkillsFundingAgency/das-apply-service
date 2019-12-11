@@ -57,6 +57,8 @@
             <div class="govuk-grid-column-two-thirds">
                 <form method="post" asp-action="ConfirmSoleTraderOrPartnership">
                     @Html.HiddenFor(x => x.ApplicationId)
+                    @Html.HiddenFor(x => x.GetHelpAction)
+
                     <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="OrganisationType" sfa-validationerror-class="govuk-error-message">
                         @if (showErrors)
                         {
@@ -103,13 +105,14 @@
                         </summary>
                         <div class="govuk-details__text">
                             <p class="govuk-body">A sole trader is someone who's self-employed and is the only owner of their business.</p>
-                            <p class="govuk-body">A partnership is when two or more people agree to share the profits, costs and risks of running a business.</p>                            
+                            <p class="govuk-body">A partnership is when two or more people agree to share the profits, costs and risks of running a business.</p>
                         </div>
                     </details>
                 </form>
             </div>
         </div>
     </main>
+    <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
 </div>
 
 

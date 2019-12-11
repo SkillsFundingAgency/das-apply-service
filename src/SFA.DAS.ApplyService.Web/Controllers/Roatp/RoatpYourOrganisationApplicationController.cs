@@ -16,7 +16,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     public class RoatpYourOrganisationApplicationController : Controller
     {
         private readonly ILogger<RoatpYourOrganisationApplicationController> _logger;
-        private readonly IOrganisationApiClient _organisationApiClient;
         private readonly IProcessPageFlowService _processPageFlowService;
         private const int Sequence1Id = 1;
 
@@ -27,7 +26,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _processPageFlowService = processPageFlowService;
         }
 
-        public async Task<IActionResult> ProviderRoute(Guid applicationId)
+        public IActionResult ProviderRoute(Guid applicationId)
         {
             return RedirectToAction("Page", "RoatpApplication",
                 new
@@ -53,17 +52,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 });
         }
 
-        public async Task<IActionResult> ExperienceAccreditation(Guid applicationId)
+        public IActionResult ExperienceAccreditation(Guid applicationId)
         {
-            var pageId = await GetStartPageForExperienceAccreditationSection(applicationId);
-
             return RedirectToAction("Page", "RoatpApplication",
                 new
                 {
                     applicationId = applicationId,
                     sequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
                     sectionId = RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
-                    pageId = pageId,
+                    pageId = RoatpWorkflowPageIds.ExperienceAndAccreditations.StartPage,
                     redirectAction = "TaskList"
                 });
         }
@@ -80,18 +77,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return await Task.FromResult(RoatpWorkflowPageIds.YourOrganisationIntroductionMain);
 
         }
-
-        private async Task<string> GetStartPageForExperienceAccreditationSection(Guid applicationId)
-        {
-            var providerTypeId = await _processPageFlowService.GetApplicationProviderTypeId(applicationId);
-
-            if (providerTypeId == ApplicationRoute.SupportingProviderApplicationRoute)
-            {
-                return await Task.FromResult(RoatpWorkflowPageIds.ExperienceAndAccreditations.SupportingStartPage);
-            }
-
-            return await Task.FromResult(RoatpWorkflowPageIds.ExperienceAndAccreditations.MainEmployerStartPage);
-        }
-
+        
     }
 }

@@ -68,6 +68,8 @@
                     @Html.HiddenFor(x => x.Index)
                     @Html.HiddenFor(x => x.Name)
                     @Html.HiddenFor(x => x.BackAction)
+                    @Html.HiddenFor(x => x.GetHelpAction)
+
                     <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="Confirmation" sfa-validationerror-class="govuk-error-message">
                         @if (showErrors)
                         {
@@ -110,6 +112,7 @@
             </div>
         </div>
     </main>
+    <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
 </div>
 
 

@@ -110,7 +110,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
                         };
                         errorMessages.Add(errorMessage);
                     }
-                    if (monthValue > DateTime.Now.Month && yearValue == DateTime.Now.Year)
+                    if (monthValue > DateTime.Now.Month && yearValue == DateTime.Now.Year || monthValue == 1 && yearValue == (DateTime.Now.Year + 1))
                     {
                         var errorMessage = new ValidationErrorDetail
                         {
