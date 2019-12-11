@@ -9,10 +9,10 @@ namespace SFA.DAS.ApplyService.Domain.Apply
     {
         public string QuestionId { get; set; }
         
-        [JsonIgnore]
+       [JsonIgnore]
         public string Value
         {
-            get { return JsonValue as string; }
+            get { return JsonValue.ToString(); }
             set { JsonValue = value; }
         }
 

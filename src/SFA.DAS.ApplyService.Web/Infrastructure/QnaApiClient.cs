@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -181,12 +182,19 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, Guid sectionId, string pageId, List<Answer> answers)
         {
+            var answersModified = answers.Select(answer => new AnswerModified {QuestionId = answer.QuestionId, Value = answer.Value}).ToList();
+
             return await (await _httpClient.PostAsJsonAsync(
                         $"/Applications/{applicationId}/sections/{sectionId}/pages/{pageId}",
-                        answers)).Content
+                        answersModified)).Content
                     .ReadAsAsync<SetPageAnswersResponse>();
         }
 
+        private class AnswerModified
+        {
+            public string QuestionId { get; set; }
+            public string Value { get; set; }
+    }
         public async Task<HttpResponseMessage> DownloadFile(Guid applicationId, Guid sectionId, string pageId, string questionId, string fileName)
         {
             using (var request = new HttpRequestMessage(HttpMethod.Get, $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/questions/{questionId}/download/{fileName}"))

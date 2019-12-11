@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using Remotion.Linq;
 using SFA.DAS.ApplyService.Domain.Apply;
 
@@ -20,6 +21,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public string InputClasses { get; set; }
         public string Value { get; set; }
         public dynamic JsonValue { get; set; }
+
+        public dynamic JsonValueDeserialized => JsonConvert.DeserializeObject(JsonValue);
+
         public List<Option> Options { get; set; }
         public List<ValidationDefinition> Validations { get; set; }
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
