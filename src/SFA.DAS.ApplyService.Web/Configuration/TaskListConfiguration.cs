@@ -7,6 +7,7 @@ namespace SFA.DAS.ApplyService.Web.Configuration
     {
         public int Id { get; set; }
         public string Title { get; set; }
+        public bool Sequential { get; set; }
 
         public List<StartupPage> StartupPages { get; set; }
     }

@@ -27,7 +27,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             var propertyData = "This is an {{unrecognised}} token";
 
             Answer nullAnswer = null;
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), It.IsAny<string>())).ReturnsAsync(nullAnswer);
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(nullAnswer);
 
             var tokenisedData = _tokeniser.GetTokenisedValue(Guid.NewGuid(), propertyData).GetAwaiter().GetResult();
 
@@ -45,7 +45,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 QuestionId = "QID1",
                 Value = "QuestionValue"
             };
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), It.IsAny<string>())).ReturnsAsync(previousAnswer);
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(previousAnswer);
 
             var tokenisedData = _tokeniser.GetTokenisedValue(Guid.NewGuid(), propertyData).GetAwaiter().GetResult();
 
@@ -76,6 +76,26 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         public void Tokeniser_ignores_start_token_after_end_token()
         {
             var propertyData = "This is no}} valid {{ token";
+
+            var tokenisedData = _tokeniser.GetTokenisedValue(Guid.NewGuid(), propertyData).GetAwaiter().GetResult();
+
+            tokenisedData.Should().Be(propertyData);
+        }
+
+        [Test]
+        public void Tokeniser_handles_nulls_correctly()
+        {
+            string propertyData = null;
+
+            var tokenisedData = _tokeniser.GetTokenisedValue(Guid.NewGuid(), propertyData).GetAwaiter().GetResult();
+
+            tokenisedData.Should().Be(string.Empty);
+        }
+
+        [Test]
+        public void Tokeniser_handles_empty_strings_correctly()
+        {
+            string propertyData = string.Empty;
 
             var tokenisedData = _tokeniser.GetTokenisedValue(Guid.NewGuid(), propertyData).GetAwaiter().GetResult();
 

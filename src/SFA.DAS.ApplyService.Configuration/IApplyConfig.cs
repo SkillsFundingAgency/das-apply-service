@@ -11,7 +11,7 @@ namespace SFA.DAS.ApplyService.Configuration
         string SessionRedisConnectionString { get; set; }
         DfeSignInConfig DfeSignIn { get; set; }
         string SqlConnectionString { get; set; }
-        FileStorageConfig FileStorage { get; set; }
+
         
         NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
 

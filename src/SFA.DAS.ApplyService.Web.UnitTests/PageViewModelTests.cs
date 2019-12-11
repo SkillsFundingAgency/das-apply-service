@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Web.Configuration;
-using SFA.DAS.ApplyService.Web.Controllers;
+using SFA.DAS.ApplyService.Web.ViewModels;
 using System;
 using System.Collections.Generic;
 
@@ -19,6 +19,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         private string _pageContext;
         private string _redirectAction;
         private string _returnUrl;
+        private string _sectionTitle;
 
         [SetUp]
         public void Before_each_test()
@@ -29,6 +30,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             _pageContext = "page context";
             _redirectAction = "TaskList";
             _returnUrl = "/return";
+            _sectionTitle = "section title";
 
             _config = new List<QnaPageOverrideConfiguration>
             {
@@ -70,7 +72,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 _returnUrl,
                 new List<ValidationErrorDetail>(),
                 _config,
-                _configLinks);
+                _configLinks,
+                _sectionTitle);
 
             model.CTAButtonText.Should().Be(PageViewModel.DefaultCTAButtonText);
         }
@@ -91,7 +94,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 _returnUrl,
                 new List<ValidationErrorDetail>(),
                 _config,
-                _configLinks);
+                _configLinks,
+                _sectionTitle);
 
             model.CTAButtonText.Should().Be(PageViewModel.DefaultCTAButtonText);
         }
@@ -112,7 +116,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 _returnUrl,
                 new List<ValidationErrorDetail>(),
                 _config,
-                _configLinks);
+                _configLinks,
+                _sectionTitle);
             
             model.CTAButtonText.Should().Be(_config[0].CTAButtonText);
         }
@@ -133,7 +138,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 _returnUrl,
                 new List<ValidationErrorDetail>(),
                 _config,
-                _configLinks);
+                _configLinks,
+                _sectionTitle);
 
             model.HideCTA.Should().BeTrue();
         }

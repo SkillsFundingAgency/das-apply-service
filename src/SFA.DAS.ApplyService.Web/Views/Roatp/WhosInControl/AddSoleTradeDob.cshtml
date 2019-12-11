@@ -1,0 +1,107 @@
+﻿@using MoreLinq;
+@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.SoleTradeDobViewModel
+
+@{
+    var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
+    var showErrors = !String.IsNullOrEmpty(isError);
+    
+    var errorMessages = Model.ErrorMessages != null ? Model.ErrorMessages.DistinctBy(x => x.ErrorMessage) : null;
+    var showDobMonthError = errorMessages != null && errorMessages.FirstOrDefault(x => x.Field == "SoleTraderDobMonth") != null;
+    var showDobYearError = errorMessages != null && errorMessages.FirstOrDefault(x => x.Field == "SoleTraderDobYear") != null;
+
+}
+
+<div class="govuk-phase-banner govuk-width-container roatp__navigation">
+    <nav>
+        <ul id="navigation" class="roatp__navigation " aria-label="Top Level Navigation">
+            <li class="roatp__navigation-item">
+                <a class="govuk-header__link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Application overview</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<div class="grid-row">
+    <a class="govuk-back-link" href="@Url.Action("SoleTraderOrPartnership", "RoatpWhosInControlApplication", new { Model.ApplicationId })">Back</a>
+</div>
+
+@if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
+{
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+        <h2 class="govuk-error-summary__title" id="error-summary-title">
+            There is a problem
+        </h2>
+        <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+                @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
+                {
+                    <li><a href="#@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
+                }
+            </ul>
+        </div>
+    </div>
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <span class="govuk-caption-l">@Model.SectionTitle</span>
+            <h1 class="govuk-heading-l">What is @Html.Raw(Model.SoleTraderName)'s date of birth?</h1>
+
+            <form method="post" asp-action="SoleTradeDobConfirmed" novalidate enctype="multipart/form-data">
+
+                @Html.HiddenFor(x => x.ApplicationId)
+                @Html.HiddenFor(x => x.SoleTraderName)
+                @Html.HiddenFor(x => x.GetHelpAction)
+
+                <span class="govuk-hint" id="dob-hint">
+                    For example, 3 1980
+                </span>
+                @if (showErrors)
+                {
+                    <span class="govuk-error-message">
+
+                        @Html.Raw(errorMessages.FirstOrDefault(x => x.Field == "SoleTraderDobMonth")?.ErrorMessage)
+                        @if (showDobMonthError && showDobYearError)
+                        {
+                            <br />
+                        }
+                        @Html.Raw(errorMessages.FirstOrDefault(x => x.Field == "SoleTraderDobYear")?.ErrorMessage)
+                    </span>
+                }
+                <div class="govuk-date-input" id="dob">
+                    <div class="govuk-date-input__item">
+                        <div class="govuk-form-group" sfa-validation-for="SoleTraderDobMonth">
+                            <label class="govuk-label govuk-date-input__label" for="SoleTraderDobMonth">Month</label>
+                            <input value="@Model.SoleTraderDobMonth"
+                                   class="govuk-input govuk-date-input__input govuk-input--width-2 @isError"
+                                   id="SoleTraderDobMonth"
+                                   name="SoleTraderDobMonth"
+                                   type="number"
+                                   pattern="[0-9]*"
+                                   sfa-validation-for="SoleTraderDobMonth" />
+                        </div>
+                    </div>
+                    <div class="govuk-date-input__item">
+                        <div class="govuk-form-group" sfa-validation-for="SoleTraderDobYear">
+                            <label class="govuk-label govuk-date-input__label" for="SoleTraderDobYear">Year</label>
+                            <input value="@Model.SoleTraderDobYear"
+                                   class="govuk-input govuk-date-input__input govuk-input--width-4 @isError"
+                                   id="SoleTraderDobYear"
+                                   name="SoleTraderDobYear"
+                                   type="number"
+                                   pattern="[0-9]*"
+                                   sfa-validation-for="SoleTraderDobYear" />
+                        </div>
+                    </div>
+                </div>
+
+
+                <button type="submit" class="govuk-button">Save and continue</button>
+
+            </form>
+        </div>
+    </div>
+</main>
+<partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />

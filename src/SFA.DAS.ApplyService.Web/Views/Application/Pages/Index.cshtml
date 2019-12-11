@@ -1,7 +1,9 @@
-@model SFA.DAS.ApplyService.Web.Controllers.PageViewModel
+@model SFA.DAS.ApplyService.Web.ViewModels.PageViewModel
 
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + (@Model.Title ?? "Page not active");
+
+    var hasSectionTitle = !string.IsNullOrEmpty(Model.SectionTitle);
 }
 
 <div class="govuk-phase-banner govuk-width-container roatp__navigation">
@@ -52,21 +54,26 @@
                     </div>
                 }
 
-                @if (Model.Questions.Count() > 1)
+                @if (Model.Questions.Count() != 1)
                 {
                     var hasModelTitle = !string.IsNullOrEmpty(Model.Title);
                     var hasBodyText = !string.IsNullOrEmpty(Model.BodyText);
 
+                    if (hasSectionTitle)
+                    {
+                        <span class="govuk-caption-l">@Model.SectionTitle</span>
+                    }
+
                     if ((hasModelTitle || hasBodyText) && Model.PageContext != null)
                     {
-                        <span class="govuk-caption-xl">
+                        <span class="govuk-caption-l">
                             @Html.Raw(Model.PageContext)
                         </span>
                     }
 
                     @if (hasModelTitle)
                     {
-                        <h1 class="govuk-heading-xl">
+                        <h1 class="govuk-heading-l">
                             @Html.Raw(Model.Title)
                         </h1>
                     }
@@ -89,7 +96,9 @@
                 }
 
                 @* no action is specified for the form, post back to the get url to preserve the page hierarchy parameters *@
-                    <form method="post" novalidate enctype="multipart/form-data">
+                    <form method="post" novalidate enctype="multipart/form-data" asp-action="SaveAnswers" asp-route-applicationId="@Model.ApplicationId"
+                          asp-route-sectionId="@Model.SectionId" asp-route-sequenceId="@Model.SequenceId" asp-route-pageId="@Model.PageId">
+                        <input type="hidden" id="ApplicationId" name="ApplicationId" value="@Model.ApplicationId" />
                         <input type="hidden" id="RedirectAction" name="RedirectAction" value="@Model.RedirectAction" />
 
                         @if (Model.Questions.Count() == 1)
@@ -100,12 +109,16 @@
                                     <fieldset class="govuk-fieldset">
                                         @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio" || question.Type == "CheckboxList")
                                         {
-                                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                                                 @if (Model.PageContext != null)
                                                 {
-                                                    <span class="govuk-caption-xl">
+                                                    <span class="govuk-caption-l">
                                                         @Html.Raw(Model.PageContext)
                                                     </span>
+                                                }
+                                                @if (hasSectionTitle)
+                                                {
+                                                    <span class="govuk-caption-l">@Model.SectionTitle</span>
                                                 }
                                                 <h1 class="govuk-fieldset__heading">
                                                     @Html.Raw(question.Label)
@@ -126,12 +139,16 @@
                                             }
                                             @if (Model.PageContext != null)
                                             {
-                                                <span class="govuk-caption-xl">
+                                                <span class="govuk-caption-l">
                                                     @Html.Raw(Model.PageContext)
                                                 </span>
                                             }
+                                            @if (hasSectionTitle)
+                                            {
+                                                <span class="govuk-caption-l">@Model.SectionTitle</span>
+                                            }
                                             <h2 class="govuk-label-wrapper">
-                                                <label class="govuk-label govuk-label--xl" for="@question.QuestionId">
+                                                <label class="govuk-label govuk-label--l" for="@question.QuestionId">
                                                     @Html.Raw(question.Label)
                                                 </label>
                                             </h2>
@@ -221,20 +238,41 @@
 
                         @foreach (var linksConfiguration in Model.LinksConfiguration)
                         {
-
+                            var pageId = Model.PageId;
+                            var first = true;
                             @foreach (var link in linksConfiguration.Links)
+                            {
+
+                                if (!string.IsNullOrEmpty(link.LinkPageId))
                                 {
-                                <p class="govuk-body govuk-!-margin-bottom-2">
-                                    <a href="@Url.Action(link.Action, link.Controller, new { Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = Model.PageId})">@link.Caption</a>
-                                </p>
+                                    pageId = link.LinkPageId;
                                 }
+
+                                    if (first && Model.SectionId != 1)
+                                    {
+                                    <p class="govuk-body skipbutton" id="skipbutton">
+                                        <a href="@Url.Action(link.Action, link.Controller, new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pageId})">@link.Caption</a>
+                                    </p>
+                                }
+                                    else
+                                {
+                                    first = false;
+                                   
+                                    
+                                    <p class="govuk-body govuk-!-margin-bottom-2">
+                                        <a href="@Url.Action(link.Action, link.Controller, new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pageId})">@link.Caption</a>
+                                    </p>
+                                }
+                            }
                         }
 
 
-                            <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details" />
+                        <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details" />
                     </form>
             }
 
         </div>
     </div>
 </main>
+
+<partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />

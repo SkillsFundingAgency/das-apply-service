@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply;
-using SFA.DAS.ApplyService.Application.Apply.Download;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
-using SFA.DAS.ApplyService.Application.Apply.Upload;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types;
+using StartApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartApplicationResponse;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
@@ -48,36 +47,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .ReadAsAsync<List<Domain.Entities.Application>>();
         }
 
-        public async Task<UploadResult> Upload(Guid applicationId, string userId, int sequenceId, int sectionId,
-            string pageId, IFormFileCollection files)
-        {
-            var formDataContent = new MultipartFormDataContent();
-            foreach (var file in files)
-            {
-                var fileContent = new StreamContent(file.OpenReadStream())
-                { Headers = { ContentLength = file.Length, ContentType = new MediaTypeHeaderValue(file.ContentType) } };
-                formDataContent.Add(fileContent, file.Name, file.FileName);
-            }
+       
 
-            return await (await _httpClient.PostAsync(
-                    $"/Upload/Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}",
-                    formDataContent)).Content
-                .ReadAsAsync<UploadResult>();
-        }
-
-        public async Task<HttpResponseMessage> Download(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId,string filename)
-        {
-            var downloadResponse = await _httpClient.GetAsync(
-                $"/Download/Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}");
-            return downloadResponse;
-        }
-
-        public async Task<FileInfoResponse> FileInfo(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId,string filename)
-        {
-            var downloadResponse = await (await _httpClient.GetAsync(
-                $"/FileInfo/Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Section/{sectionId}/Page/{pageId}/Question/{questionId}/{filename}")).Content.ReadAsAsync<FileInfoResponse>();
-            return downloadResponse;
-        }
         
         public async Task<ApplicationSequence> GetSequence(Guid applicationId, Guid userId)
         {
@@ -113,13 +84,13 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .Content.ReadAsAsync<Page>();
         }
 
-        public async Task<UpdatePageAnswersResult> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId,
+        public async Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId,
             int sectionId, string pageId, List<Answer> answers, bool saveNewAnswers)
         {
             return await (await _httpClient.PostAsJsonAsync(
                     $"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}",
                     new { answers, saveNewAnswers })).Content
-                .ReadAsAsync<UpdatePageAnswersResult>();
+                .ReadAsAsync<SetPageAnswersResponse>();
         }
 
         public async Task<StartApplicationResponse> StartApplication(Guid userId, string applicationType)
@@ -227,6 +198,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task<bool> IsSectionCompleted(Guid applicationId, Guid applicationSectionId)
         {
             return await (await _httpClient.GetAsync($"/Application/{applicationId}/IsSectionComplete/{applicationSectionId}")).Content.ReadAsAsync<bool>();
+        }
+
+        public async Task RemoveSectionCompleted(Guid applicationId, Guid applicationSectionId)
+        {
+            await _httpClient.DeleteAsync($"/Application/{applicationId}/RemoveSectionComplete/{applicationSectionId}");
         }
     }
 }

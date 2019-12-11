@@ -1,4 +1,6 @@
 ﻿
+using SFA.DAS.ApplyService.Web.Services;
+
 namespace SFA.DAS.ApplyService.Web.UnitTests
 {
     using System;
@@ -18,6 +20,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         private ApplicationSequence _yourApplicationSequence;
         private ApplicationSection _providerRouteSection;
         private ApplicationSection _whatYouNeedSection;
+        private RoatpTaskListWorkflowService _roatpTaskListWorkflowService;
         
         [SetUp]
         public void Before_each_test()
@@ -29,8 +32,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 Id = Guid.NewGuid(),
                 ApplicationId = _applicationId,
                 SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
-                Sections = new List<ApplicationSection>()
+                Sections = new List<ApplicationSection>(),
+                Sequential = true
             };
+            _roatpTaskListWorkflowService = new RoatpTaskListWorkflowService();
             _providerRouteSection = new ApplicationSection
             {
                 SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
@@ -99,9 +104,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             };
 
             model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute, true).Should().Be("Next");
+                RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute).Should().Be("Next");
             model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed, true).ToLower().Should().Be("");
+                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed).ToLower().Should().Be("");
         }
 
         [Test]
@@ -165,9 +170,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             };
 
             model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute, true).Should().Be("Completed");
+                RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute).Should().Be("Completed");
             model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed, true).Should().Be("Next");
+                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed).Should().Be("Next");
         }
 
         [Test]
@@ -242,9 +247,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             };
 
             model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute, true).Should().Be("Completed");
+                RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute).Should().Be("Completed");
             model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed, true).Should().Be("Completed");
+                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed).Should().Be("Completed");
         }
 
         [Test]
@@ -285,12 +290,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                                         new Answer {QuestionId = "CC-1", Value = "1"}
                                     }
                                 }
-                            }
+                            },
+                            Active = true,
+                            Complete = true
                         }
                     }
                 }
             };
-            criminalWhatYouNeedSection.SectionCompleted = true;
+
             var criminalOrganisationChecksSection = new ApplicationSection
             {
                 SequenceId = RoatpWorkflowSequenceIds.CriminalComplianceChecks,
@@ -364,8 +371,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                     }
                 }
             };
-            criminalComplianceSequence.Sections.Add(criminalWhatYouNeedSection);
-            criminalComplianceSequence.Sections.Add(criminalOrganisationChecksSection);
+           criminalComplianceSequence.Sections.Add(criminalWhatYouNeedSection);
+           criminalComplianceSequence.Sections.Add(criminalOrganisationChecksSection);
             criminalComplianceSequence.Sections.Add(criminalIndividualChecksSection);
             _applicationSequences.Add(criminalComplianceSequence);
 
@@ -378,11 +385,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             };
 
             model.SectionStatus(RoatpWorkflowSequenceIds.CriminalComplianceChecks,
-                RoatpWorkflowSectionIds.CriminalComplianceChecks.WhatYouWillNeed, false).Should().Be("Completed");
+                RoatpWorkflowSectionIds.CriminalComplianceChecks.WhatYouWillNeed).Should().Be("Completed");
             model.SectionStatus(RoatpWorkflowSequenceIds.CriminalComplianceChecks,
-                RoatpWorkflowSectionIds.CriminalComplianceChecks.ChecksOnYourOrganisation, false).Should().Be("In Progress");
+                RoatpWorkflowSectionIds.CriminalComplianceChecks.ChecksOnYourOrganisation).Should().Be("In Progress");
             model.SectionStatus(RoatpWorkflowSequenceIds.CriminalComplianceChecks,
-                RoatpWorkflowSectionIds.CriminalComplianceChecks.CheckOnWhosInControl, false).Should().Be("");
+                RoatpWorkflowSectionIds.CriminalComplianceChecks.CheckOnWhosInControl).Should().Be("");
         }
     }
 }

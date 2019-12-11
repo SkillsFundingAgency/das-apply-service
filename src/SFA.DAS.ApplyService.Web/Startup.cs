@@ -18,6 +18,7 @@ using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.DfeSignIn;
+using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web;
 using SFA.DAS.ApplyService.Web.Infrastructure;
@@ -30,8 +31,14 @@ using StackExchange.Redis;
 namespace SFA.DAS.ApplyService.Web
 {
     using Controllers;
+    using SFA.DAS.ApplyService.Application.Email;
+    using SFA.DAS.ApplyService.EmailService;
     using SFA.DAS.ApplyService.Web.Configuration;
+    using SFA.DAS.ApplyService.Web.Infrastructure.Validations;
     using SFA.DAS.ApplyService.Web.Services;
+    using SFA.DAS.Http;
+    using SFA.DAS.Http.TokenGenerators;
+    using SFA.DAS.Notifications.Api.Client;
 
     public class Startup
     {
@@ -76,6 +83,8 @@ namespace SFA.DAS.ApplyService.Web
             services.Configure<List<TaskListConfiguration>>(_configuration.GetSection("TaskListSequences"));
             services.Configure<List<QnaPageOverrideConfiguration>>(_configuration.GetSection("QnaPageOverrides"));
             services.Configure<List<QnaLinksConfiguration>>(_configuration.GetSection("QnaLinks"));
+            services.Configure<List<CustomValidationConfiguration>>(_configuration.GetSection("CustomValidations"));
+            services.Configure<List<NotRequiredOverrideConfiguration>>(_configuration.GetSection("NotRequiredOverrides"));
 
             if (_env.IsDevelopment())
             {
@@ -165,6 +174,29 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IProcessPageFlowService, ProcessPageFlowService>();
             services.AddTransient<IQuestionPropertyTokeniser, QuestionPropertyTokeniser>();
             services.AddTransient<IPageNavigationTrackingService, PageNavigationTrackingService>();
+            services.AddTransient<ICustomValidatorFactory, CustomValidatorFactory>();
+            services.AddTransient<IAnswerFormService, AnswerFormService>();
+            services.AddTransient<IGetHelpWithQuestionEmailService, GetHelpWithQuestionEmailService>();
+            services.AddTransient<INotificationsApi>(x => {
+                var apiConfiguration = new Notifications.Api.Client.Configuration.NotificationsApiClientConfiguration
+                {
+                    ApiBaseUrl = _configService.NotificationsApiClientConfiguration.ApiBaseUrl,
+                    ClientToken = _configService.NotificationsApiClientConfiguration.ClientToken,
+                    ClientId = _configService.NotificationsApiClientConfiguration.ClientId,
+                    ClientSecret = _configService.NotificationsApiClientConfiguration.ClientSecret,
+                    IdentifierUri = _configService.NotificationsApiClientConfiguration.IdentifierUri,
+                    Tenant = _configService.NotificationsApiClientConfiguration.Tenant
+                };
+
+                var httpClient = string.IsNullOrWhiteSpace(apiConfiguration.ClientId)
+                    ? new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(apiConfiguration)).Build()
+                    : new HttpClientBuilder().WithBearerAuthorisationHeader(new AzureADBearerTokenGenerator(apiConfiguration)).Build();
+
+                return new NotificationsApi(httpClient, apiConfiguration);
+            });
+            services.AddTransient<IEmailTemplateClient, EmailTemplateClient>();
+            services.AddTransient<ISubmitApplicationConfirmationEmailService, SubmitApplicationConfirmationEmailService>();
+            services.AddTransient<ITabularDataRepository, TabularDataRepository>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)

@@ -1,5 +1,5 @@
 @using SFA.DAS.ApplyService.Domain.Entities
-@model SFA.DAS.ApplyService.Web.Controllers.SequenceViewModel
+@model SFA.DAS.ApplyService.Web.ViewModels.SequenceViewModel
 
 @{
     ViewBag.Title = "Feedback";
@@ -78,8 +78,8 @@
             {
                 <div>
                     <form asp-action="Submit" asp-controller="Application">
-                        <input type="hidden" id="applicationId" name="applicationId" value="@Model.ApplicationId" />
-                        <input type="hidden" id="sequenceId" name="sequenceId" value="@Model.SequenceId" />
+                        <input type="hidden" id="applicationId" name="Id" value="@Model.ApplicationId" />
+                        <input type="hidden" id="sequenceId" name="sequenceNo" value="@Model.SequenceId" />
                         <div class="govuk-form-group">
                             <button type="submit" class="govuk-button">
                                 Submit application
