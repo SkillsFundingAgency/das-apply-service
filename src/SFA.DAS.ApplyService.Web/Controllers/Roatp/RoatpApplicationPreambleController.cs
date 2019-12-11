@@ -82,16 +82,10 @@
 
             if (model.ConditionsAccepted != "Y")
             {
-                return RedirectToAction("TermsAndConditionsNotAgreed");
+                return RedirectToAction("TermsAndConditionsNotAgreed", "RoatpShutterPages");
             }
 
             return RedirectToAction("EnterApplicationUkprn");
-        }
-
-        [Route("not-accept-terms-conditions")]
-        public IActionResult TermsAndConditionsNotAgreed()
-        {
-            return View("~/Views/Roatp/TermsAndConditionsNotAgreed.cshtml");
         }
 
         [Route("enter-uk-provider-reference-number")]
@@ -141,7 +135,7 @@
 
             if (!ukrlpLookupResults.Success)
             {
-                return RedirectToAction("UkrlpNotAvailable");
+                return RedirectToAction("UkrlpNotAvailable", "RoatpShutterPages");
             }
 
             if (ukrlpLookupResults.Results.Any())
@@ -164,7 +158,7 @@
                 };
 
                 _sessionService.Set(ApplicationDetailsKey, applicationDetails);
-                return RedirectToAction("UkprnNotFound");
+                return RedirectToAction("UkprnNotFound", "RoatpShutterPages");
             }
         }
 
@@ -181,48 +175,7 @@
 
             return View("~/Views/Roatp/ConfirmOrganisation.cshtml", viewModel);
         }
-       
-        [Route("uk-provider-reference-number-not-found")]
-        public IActionResult UkprnNotFound()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                UKPRN = applicationDetails.UKPRN.ToString()
-            };
-
-            return View("~/Views/Roatp/UkprnNotFound.cshtml", viewModel);
-        }
-
-        [Route("company-not-found")]
-        public IActionResult CompanyNotFound()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                UKPRN = applicationDetails.UKPRN.ToString(),
-                ProviderDetails = applicationDetails.UkrlpLookupDetails
-            };
-
-            return View("~/Views/Roatp/CompanyNotFound.cshtml", viewModel);
-        }
-
-        [Route("charity-not-found")]
-        public IActionResult CharityNotFound()
-        {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-
-            var viewModel = new UkprnSearchResultsViewModel
-            {
-                UKPRN = applicationDetails.UKPRN.ToString(),
-                ProviderDetails = applicationDetails.UkrlpLookupDetails
-            };
-
-            return View("~/Views/Roatp/CharityNotFound.cshtml", viewModel);
-        }
-        
+               
         [Route("start-application")]
         [HttpPost]
         public async Task<IActionResult> StartApplication(SelectApplicationRouteViewModel model)
@@ -339,31 +292,7 @@
 
             return RedirectToAction("NonLevyAbandonedApplication");
         }
-        
-        [Route("chosen-not-apply-roatp")]
-        public IActionResult NonLevyAbandonedApplication()
-        {
-            return View("~/Views/Roatp/NonLevyAbandonedApplication.cshtml");
-        }
-
-        [Route("ukrlp-unavailable")]
-        public IActionResult UkrlpNotAvailable()
-        {
-            return View("~/Views/Roatp/UkrlpNotAvailable.cshtml");
-        }
-
-        [Route("companies-house-unavailable")]
-        public IActionResult CompaniesHouseNotAvailable()
-        {
-            return View("~/Views/Roatp/CompaniesHouseNotAvailable.cshtml");
-        }
-
-        [Route("charity-commission-unavailable")]
-        public IActionResult CharityCommissionNotAvailable()
-        {
-            return View("~/Views/Roatp/CharityCommissionNotAvailable.cshtml");
-        }
-
+     
         [Route("choose-provider-route")]
         public async Task<IActionResult> SelectApplicationRoute()
         {
@@ -406,17 +335,17 @@
                 
                 if (companyDetails.Status == CompaniesHouseSummary.ServiceUnavailable)
                 {
-                    return RedirectToAction("CompaniesHouseNotAvailable");
+                    return RedirectToAction("CompaniesHouseNotAvailable", "RoatpShutterPages");
                 }
 
                 if (companyDetails.Status == CompaniesHouseSummary.CompanyStatusNotFound)
                 {
-                    return RedirectToAction("CompanyNotFound");
+                    return RedirectToAction("CompanyNotFound", "RoatpShutterPages");
                 }
                 
                 if (!CompaniesHouseValidator.CompaniesHouseStatusValid(companyDetails.CompanyNumber, companyDetails.Status))
                 {
-                    return RedirectToAction("CompanyNotFound");
+                    return RedirectToAction("CompanyNotFound", "RoatpShutterPages");
                 }
 
                 applicationDetails.CompanySummary = companyDetails;
@@ -439,20 +368,20 @@
                     bool isValidCharityNumber = int.TryParse(verificationId, out charityNumber);
                     if (!isValidCharityNumber)
                     {
-                        return RedirectToAction("CharityNotFound");
+                        return RedirectToAction("CharityNotFound", "RoatpShutterPages");
                     }
 
                     var charityApiResponse = await _charityCommissionApiClient.GetCharityDetails(charityNumber);
 
                     if (!charityApiResponse.Success)
                     {
-                        return RedirectToAction("CharityCommissionNotAvailable");
+                        return RedirectToAction("CharityCommissionNotAvailable", "RoatpShutterPages");
                     } 
                     charityDetails = charityApiResponse.Response;
 
                     if (charityDetails == null || !charityDetails.IsActivelyTrading)
                     {
-                        return RedirectToAction("CharityNotFound");
+                        return RedirectToAction("CharityNotFound", "RoatpShutterPages");
                     }
                     
                     applicationDetails.CharitySummary = Mapper.Map<CharityCommissionSummary>(charityDetails);
