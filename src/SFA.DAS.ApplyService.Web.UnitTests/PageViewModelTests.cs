@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Web.Configuration;
-using SFA.DAS.ApplyService.Web.Controllers;
+using SFA.DAS.ApplyService.Web.ViewModels;
 using System;
 using System.Collections.Generic;
 

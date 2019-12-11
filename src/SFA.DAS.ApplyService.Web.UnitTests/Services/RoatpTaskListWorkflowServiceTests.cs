@@ -11,21 +11,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
     [TestFixture]
     public class RoatpTaskListWorkflowServiceTests
     {
-        private RoatpTaskListWorkflowService _service;
-
-
-        [SetUp]
-        public void Before_each_test()
-        {
-            _service = new RoatpTaskListWorkflowService();
-        }
-
-
         [Test]
         public void Get_SectionStatus_Empty_When_Null_Sequences_Used()
         {
             var expectedResult = string.Empty;
-            var actualResult = _service.SectionStatus(null, null, 0, 0, null);
+            var actualResult = RoatpTaskListWorkflowService.SectionStatus(null, null, 0, 0, null);
             Assert.AreEqual(expectedResult, actualResult);
         }
 
@@ -33,7 +23,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         public void Get_SectionStatus_Empty_When_Empty_Sequences_Used()
         {
             var expectedResult = string.Empty;
-            var actualResult = _service.SectionStatus(new List<ApplicationSequence>(), null, 0, 0, null);
+            var actualResult = RoatpTaskListWorkflowService.SectionStatus(new List<ApplicationSequence>(), null, 0, 0, null);
             Assert.AreEqual(expectedResult, actualResult);
         }
 
@@ -42,7 +32,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         public void Get_SectionStatus_Empty_When_Empty_Sections_Used()
         {
             var expectedResult = string.Empty;
-            var actualResult = _service.SectionStatus(new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = 1 } }, null, 1, 0, null);
+            var actualResult = RoatpTaskListWorkflowService.SectionStatus(new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = 1 } }, null, 1, 0, null);
             Assert.AreEqual(expectedResult, actualResult);
         }
 
@@ -50,7 +40,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         public void Get_SectionStatus_Empty_When_Unmatched_Sections_Used()
         {
             var expectedResult = string.Empty;
-            var actualResult = _service.SectionStatus(new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = 1, Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = 2 } } } }, null, 1, 3, null);
+            var actualResult = RoatpTaskListWorkflowService.SectionStatus(new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = 1, Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = 2 } } } }, null, 1, 3, null);
             Assert.AreEqual(expectedResult, actualResult);
         }
 
@@ -60,7 +50,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         {
             var sectionId = 2;
             var expectedResult = string.Empty;
-            var actualResult = _service.SectionStatus(new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = 1,
+            var actualResult = RoatpTaskListWorkflowService.SectionStatus(new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = 1,
                 Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = sectionId,
                                                                                     QnAData = new QnAData {Pages = new List<Page>()}} } } }, 
                 null, 1, sectionId, null);
@@ -87,7 +77,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             };
 
 
-            var actualResult = _service.SectionStatus(new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = sequenceId,
+            var actualResult = RoatpTaskListWorkflowService.SectionStatus(new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = sequenceId,
                     Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = sectionId,
                         QnAData = new QnAData {Pages = new List<Page>()}} } } },
                 notRequiredOverrides, sequenceId, sectionId, applicationRouteId);
