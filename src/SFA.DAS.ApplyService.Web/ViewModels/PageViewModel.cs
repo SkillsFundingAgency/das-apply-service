@@ -122,7 +122,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
                 RedirectAction = RedirectAction
             }));
 
-            foreach (var question in questionsWithRetainedAnswers.Where(x=> !string.IsNullOrEmpty(x.Value)))
+            foreach (var question in questionsWithRetainedAnswers.Where(x=>!string.IsNullOrEmpty(x.Value)))
             {
                 foreach (var q in Questions.Where(q => question.QuestionId == q.QuestionId))
                 {
