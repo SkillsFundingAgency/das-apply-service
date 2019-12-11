@@ -116,10 +116,16 @@ namespace SFA.DAS.ApplyService.Configuration
 
             return webConfig;
         }
+
+        public string GetEnvironmentName()
+        {
+            return _environment;
+        }
     }
 
     public interface IConfigurationService
     {
         Task<IApplyConfig> GetConfig();
+        string GetEnvironmentName();
     }
 }
