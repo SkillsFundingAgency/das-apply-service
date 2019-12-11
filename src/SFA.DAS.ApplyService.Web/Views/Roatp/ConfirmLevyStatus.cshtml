@@ -30,59 +30,63 @@
     </div>
 }
 
-<div class="govuk-width-container">
+    <div class="govuk-width-container">
 
-    <main class="govuk-main-wrapper " id="main-content" role="main">
+        <main class="govuk-main-wrapper " id="main-content" role="main">
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-l">Is your organisation a levy-paying employer?</h1>
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <h1 class="govuk-heading-l">Is your organisation a levy-paying employer?</h1>
+                </div>
             </div>
-        </div>
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <form method="post" asp-action="SubmitLevyStatus" asp-controller="RoatpApplicationPreamble">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <form method="post" asp-action="SubmitLevyStatus" asp-controller="RoatpApplicationPreamble">
 
-                    <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="LevyPayingEmployer" sfa-validationerror-class="govuk-error-message">
-                        @if (showErrors)
-                        {
-                            <span class="govuk-error-message">
-                                @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "LevyPayingEmployer")?.ErrorMessage)
-                            </span>
-                        }
-                        <fieldset class="govuk-fieldset">
+                        <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="LevyPayingEmployer" sfa-validationerror-class="govuk-error-message">
+                            @if (showErrors)
+                            {
+                                <span class="govuk-error-message">
+                                    @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "LevyPayingEmployer")?.ErrorMessage)
+                                </span>
+                            }
+                            <fieldset class="govuk-fieldset">
 
-                            <div class="govuk-radios">
+                                <div class="govuk-radios">
 
-                                <div class="govuk-radios__item">
+                                    <div class="govuk-radios__item">
 
-                                    <input asp-for="LevyPayingEmployer" class="govuk-radios__input" id="LevyPayingEmployer-Yes"
-                                           name="LevyPayingEmployer" type="radio" value="Y"
-                                           sfa-validation-for="LevyPayingEmployer" sfa-validationerror-class="form-control-error">
-                                    <label class="govuk-label govuk-radios__label" for="LevyPayingEmployer-Yes">
-                                        Yes
-                                    </label>
+                                        <input asp-for="LevyPayingEmployer" class="govuk-radios__input" id="LevyPayingEmployer-Yes"
+                                               name="LevyPayingEmployer" type="radio" value="Y"
+                                               sfa-validation-for="LevyPayingEmployer" sfa-validationerror-class="form-control-error">
+                                        <label class="govuk-label govuk-radios__label" for="LevyPayingEmployer-Yes">
+                                            Yes
+                                        </label>
+
+                                    </div>
+
+                                    <div class="govuk-radios__item">
+
+                                        <input asp-for="LevyPayingEmployer" class="govuk-radios__input" id="LevyPayingEmployer-No"
+                                               name="LevyPayingEmployer" type="radio" value="N"
+                                               sfa-validation-for="LevyPayingEmployer" sfa-validationerror-class="form-control-error">
+                                        <label class="govuk-label govuk-radios__label" for="LevyPayingEmployer-No">
+                                            No
+                                        </label>
+
+                                    </div>
 
                                 </div>
-
-                                <div class="govuk-radios__item">
-
-                                    <input asp-for="LevyPayingEmployer" class="govuk-radios__input" id="LevyPayingEmployer-No"
-                                           name="LevyPayingEmployer" type="radio" value="N"
-                                           sfa-validation-for="LevyPayingEmployer" sfa-validationerror-class="form-control-error">
-                                    <label class="govuk-label govuk-radios__label" for="LevyPayingEmployer-No">
-                                        No
-                                    </label>
-
-                                </div>
-
-                            </div>
-                        </fieldset>
-                    </div>
-                    <input type="submit" class="govuk-button" value="Save and continue" />
-                </form>
+                            </fieldset>
+                        </div>
+                        @Html.HiddenFor(x => x.PageId)
+                        @Html.HiddenFor(x => x.SequenceId)
+                        @Html.HiddenFor(x => x.SectionId)
+                        <input type="submit" class="govuk-button" value="Save and continue" />
+                    </form>
+                </div>
             </div>
-        </div>
-    </main>
-</div>
+        </main>
+        <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
+    </div>

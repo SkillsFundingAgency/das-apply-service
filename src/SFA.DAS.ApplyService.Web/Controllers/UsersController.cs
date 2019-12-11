@@ -17,6 +17,8 @@ using SFA.DAS.ApplyService.Web.ViewModels;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
+    using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
+    using System.Collections.Generic;
     using System.Linq;
 
     public class UsersController : Controller
@@ -154,6 +156,41 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public IActionResult NotSetUp()
         {
             return View();
+        }
+
+        [HttpGet]
+        [Route("first-time-apprenticeship-service")]
+        public IActionResult ExistingAccount()
+        {
+            return View(new ExistingAccountViewModel());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmExistingAccount(ExistingAccountViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.ErrorMessages = new List<ValidationErrorDetail>();
+
+                var modelErrors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var modelError in modelErrors)
+                {
+                    model.ErrorMessages.Add(new ValidationErrorDetail
+                    {
+                        Field = "ExistingAccount",
+                        ErrorMessage = modelError.ErrorMessage
+                    });
+                }
+
+                return View("~/Views/Users/ExistingAccount.cshtml", model);
+            }
+
+            if (model.FirstTimeSignin == "Y")
+            {
+                return RedirectToAction("CreateAccount");
+            }
+
+            return RedirectToAction("SignIn");
         }
     }
 }
