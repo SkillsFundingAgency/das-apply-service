@@ -308,20 +308,20 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                     {
                         new Page
                         {
-                            PageId = "1",
+                            PageId = "2",
                             Questions = new List<Question>
                             {
                                 new Question
                                 {
-                                    QuestionId = "CC-1"
+                                    QuestionId = "CC-10"
                                 },
                                 new Question
                                 {
-                                    QuestionId = "CC-2"
+                                    QuestionId = "CC-11"
                                 },
                                 new Question
                                 {
-                                    QuestionId = "CC-3"
+                                    QuestionId = "CC-12"
                                 }
                             },
                             PageOfAnswers = new List<PageOfAnswers>
@@ -331,8 +331,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                                     Id = Guid.NewGuid(),
                                     Answers = new List<Answer>
                                     {
-                                        new Answer {QuestionId = "CC-1", Value = "1"},
-                                        new Answer {QuestionId = "CC-2", Value = "1"}
+                                        new Answer {QuestionId = "CC-10", Value = "1"},
+                                        new Answer {QuestionId = "CC-11", Value = "1"}
                                     }
                                 }
                             }
@@ -340,6 +340,43 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                     }
                 }
             };
+
+            var criminalWhatYouNeedIndividualChecksSection = new ApplicationSection
+            {
+                SequenceId = RoatpWorkflowSequenceIds.CriminalComplianceChecks,
+                SectionId = RoatpWorkflowSectionIds.CriminalComplianceChecks.WhatYouWillNeed_CheckOnWhosInControl,
+                QnAData = new QnAData
+                {
+                    Pages = new List<Page>
+                    {
+                        new Page
+                        {
+                            PageId = "3",
+                            Questions = new List<Question>
+                            {
+                                new Question
+                                {
+                                    QuestionId = "CC-20"
+                                }
+                            },
+                            PageOfAnswers = new List<PageOfAnswers>
+                            {
+                                new PageOfAnswers
+                                {
+                                    Id = Guid.NewGuid(),
+                                    Answers = new List<Answer>
+                                    {
+                                        new Answer {QuestionId = "CC-20", Value = "1"}
+                                    }
+                                }
+                            },
+                            Active = true,
+                            Complete = true
+                        }
+                    }
+                }
+            };
+
             var criminalIndividualChecksSection = new ApplicationSection
             {
                 SequenceId = RoatpWorkflowSequenceIds.CriminalComplianceChecks,
@@ -350,20 +387,20 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                     {
                         new Page
                         {
-                            PageId = "1",
+                            PageId = "4",
                             Questions = new List<Question>
                             {
                                 new Question
                                 {
-                                    QuestionId = "CC-10"
-                                },
-                                new Question
-                                {
-                                    QuestionId = "CC-20"
-                                },
-                                new Question
-                                {
                                     QuestionId = "CC-30"
+                                },
+                                new Question
+                                {
+                                    QuestionId = "CC-31"
+                                },
+                                new Question
+                                {
+                                    QuestionId = "CC-32"
                                 }
                             },
                             PageOfAnswers = new List<PageOfAnswers>()
@@ -371,8 +408,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                     }
                 }
             };
-           criminalComplianceSequence.Sections.Add(criminalWhatYouNeedSection);
-           criminalComplianceSequence.Sections.Add(criminalOrganisationChecksSection);
+
+            criminalComplianceSequence.Sections.Add(criminalWhatYouNeedSection);
+            criminalComplianceSequence.Sections.Add(criminalOrganisationChecksSection);
+            criminalComplianceSequence.Sections.Add(criminalWhatYouNeedIndividualChecksSection);
             criminalComplianceSequence.Sections.Add(criminalIndividualChecksSection);
             _applicationSequences.Add(criminalComplianceSequence);
 
@@ -388,6 +427,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 RoatpWorkflowSectionIds.CriminalComplianceChecks.WhatYouWillNeed).Should().Be("Completed");
             model.SectionStatus(RoatpWorkflowSequenceIds.CriminalComplianceChecks,
                 RoatpWorkflowSectionIds.CriminalComplianceChecks.ChecksOnYourOrganisation).Should().Be("In Progress");
+            model.SectionStatus(RoatpWorkflowSequenceIds.CriminalComplianceChecks,
+                RoatpWorkflowSectionIds.CriminalComplianceChecks.WhatYouWillNeed_CheckOnWhosInControl).Should().Be("Completed");
             model.SectionStatus(RoatpWorkflowSequenceIds.CriminalComplianceChecks,
                 RoatpWorkflowSectionIds.CriminalComplianceChecks.CheckOnWhosInControl).Should().Be("");
         }
