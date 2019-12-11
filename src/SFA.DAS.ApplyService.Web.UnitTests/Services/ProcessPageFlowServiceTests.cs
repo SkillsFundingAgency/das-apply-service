@@ -65,7 +65,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         public void Get_Application_ProviderTypeId_For_Given_Sequence(string providerTypeId, int expectedProviderTypeId)
         {
             var answer = new Answer {QuestionId = "test-x" ,Value = providerTypeId};
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(_applicationId, RoatpWorkflowQuestionTags.ProviderRoute))
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(_applicationId, RoatpWorkflowQuestionTags.ProviderRoute, It.IsAny<string>()))
                 .ReturnsAsync(answer);
             _service = new ProcessPageFlowService(_qnaApiClient.Object, _configuration.Object);
             var returnedProviderTypeId = _service.GetApplicationProviderTypeId(_applicationId).Result;

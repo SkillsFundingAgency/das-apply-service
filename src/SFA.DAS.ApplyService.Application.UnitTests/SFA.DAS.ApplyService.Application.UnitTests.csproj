@@ -33,6 +33,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\SFA.DAS.ApplyService.Application\SFA.DAS.ApplyService.Application.csproj" />
+      <ProjectReference Include="..\SFA.DAS.ApplyService.EmailService\SFA.DAS.ApplyService.EmailService.csproj" />
     </ItemGroup>
 
 </Project>
