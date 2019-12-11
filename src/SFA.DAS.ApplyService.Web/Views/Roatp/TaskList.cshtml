@@ -12,6 +12,9 @@
             <li class="roatp__navigation-item roatp__navigation-item--active">
                 <a class="govuk-header__link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Application overview</a>
             </li>
+            <li class="roatp__navigation-item roatp__navigation-signout">
+                <a class="govuk-header__link" href="@Url.Action("SignOut", "Users")">Save and sign out</a>
+            </li>
         </ul>
     </nav>
 </div>
