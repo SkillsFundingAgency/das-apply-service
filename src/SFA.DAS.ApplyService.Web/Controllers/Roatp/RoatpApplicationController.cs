@@ -514,7 +514,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             foreach (var overrideConfig in notRequiredOverrides)
             {
                 var applicationDataValue = await _qnaApiClient.GetAnswerByTag(applicationId, overrideConfig.ConditionalCheckField);
-                if (applicationDataValue != null && applicationDataValue.Value != null)
+                if (applicationDataValue?.Value != null)
                 {
                     overrideConfig.Value = applicationDataValue.Value;
                 }
