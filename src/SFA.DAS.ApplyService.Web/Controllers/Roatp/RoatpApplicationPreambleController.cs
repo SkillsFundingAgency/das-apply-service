@@ -20,6 +20,7 @@
     using SFA.DAS.ApplyService.InternalApi.Types;
     using SFA.DAS.ApplyService.Web.Resources;
     using System.Collections.Generic;
+    using SFA.DAS.ApplyService.Domain.Entities;
 
     [Authorize]
     public class RoatpApplicationPreambleController : RoatpApplyControllerBase
@@ -31,7 +32,8 @@
         private readonly ICharityCommissionApiClient _charityCommissionApiClient;
         private readonly IOrganisationApiClient _organisationApiClient;
         private readonly IUsersApiClient _usersApiClient;
-
+        private readonly IApplicationApiClient _applicationApiClient;
+        
         private const string GetHelpSubmittedForPageFormatString = "Roatp_GetHelpSubmitted_{0}";
 
         private string[] StatusOnlyCompanyNumberPrefixes = new[] { "IP", "SP", "IC", "SI", "NP", "NV", "RC", "SR", "NR", "NO" };
@@ -43,7 +45,8 @@
                                                   ICompaniesHouseApiClient companiesHouseApiClient, 
                                                   ICharityCommissionApiClient charityCommissionApiClient,
                                                   IOrganisationApiClient organisationApiClient,
-                                                  IUsersApiClient usersApiClient)
+                                                  IUsersApiClient usersApiClient,
+                                                  IApplicationApiClient applicationApiClient)
             :base(sessionService)
         {
             _logger = logger;
@@ -54,6 +57,7 @@
             _charityCommissionApiClient = charityCommissionApiClient;
             _organisationApiClient = organisationApiClient;
             _usersApiClient = usersApiClient;
+            _applicationApiClient = applicationApiClient;
         }
 
         [Route("terms-conditions-making-application")]
@@ -87,7 +91,7 @@
 
             return RedirectToAction("EnterApplicationUkprn");
         }
-
+        
         [Route("enter-uk-provider-reference-number")]
         public IActionResult EnterApplicationUkprn(string ukprn)
         {
@@ -175,7 +179,7 @@
 
             return View("~/Views/Roatp/ConfirmOrganisation.cshtml", viewModel);
         }
-               
+                
         [Route("start-application")]
         [HttpPost]
         public async Task<IActionResult> StartApplication(SelectApplicationRouteViewModel model)
@@ -290,9 +294,9 @@
                 return RedirectToAction("SelectApplicationRoute");
             }
 
-            return RedirectToAction("NonLevyAbandonedApplication");
+            return RedirectToAction("NonLevyAbandonedApplication", "RoatpShutterPages");
         }
-     
+                
         [Route("choose-provider-route")]
         public async Task<IActionResult> SelectApplicationRoute()
         {
@@ -316,6 +320,19 @@
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
             var providerDetails = applicationDetails.UkrlpLookupDetails;
+
+            var existingApplicationStatuses = await _applicationApiClient.GetExistingApplicationStatus(providerDetails.UKPRN);
+            
+            if (existingApplicationStatuses.Any(x => x.Status == ApplicationStatus.InProgress))
+            {
+                return RedirectToAction("ApplicationInProgress", "RoatpShutterPages", new ExistingApplicationViewModel { UKPRN = providerDetails.UKPRN });
+            }
+
+            if (existingApplicationStatuses.Any(x => x.Status == ApplicationStatus.Submitted))
+            {
+                return RedirectToAction("ApplicationPreviouslySubmitted", "RoatpShutterPages", new ExistingApplicationViewModel { UKPRN = providerDetails.UKPRN });
+            }
+            
             CompaniesHouseSummary companyDetails = null;
             Charity charityDetails = null;
 
@@ -511,7 +528,7 @@
 
             return View("~/Views/Roatp/ChosenToRemainOnRegister.cshtml", model);
         }
-
+        
         private bool ProviderEligibleToChangeRoute(OrganisationRegisterStatus roatpRegisterStatus)
         {
             if (roatpRegisterStatus.UkprnOnRegister 
