@@ -4,20 +4,10 @@
 @{
     ViewBag.Title = "Application overview";
     Layout = "_Layout";
-    
+
 }
-<div class="govuk-phase-banner govuk-width-container roatp__navigation">
-    <nav>
-        <ul id="navigation" class="roatp__navigation " aria-label="Top Level Navigation">
-            <li class="roatp__navigation-item roatp__navigation-item--active">
-                <a class="govuk-header__link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Application overview</a>
-            </li>
-            <li class="roatp__navigation-item roatp__navigation-signout">
-                <a class="govuk-header__link" href="@Url.Action("SignOut", "Users")">Save and sign out</a>
-            </li>
-        </ul>
-    </nav>
-</div>
+
+@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
 
 <div class="govuk-width-container">
 
@@ -28,9 +18,9 @@
                 <h1 class="govuk-heading-l">Application overview</h1>
                 <p class="govuk-body">Make sure you have read <a href="https://www.gov.uk/guidance/becoming-an-apprenticeship-training-provider" target="_blank">the becoming an apprenticeship training provider GOV.UK page (opens in a new window or tab)</a>.</p>
                 @*<p class="govuk-body">
-                    UKPRN: @Model.UKPRN <br />
-                    Organisation name: @Model.OrganisationName
-                </p>*@
+                        UKPRN: @Model.UKPRN <br />
+                        Organisation name: @Model.OrganisationName
+                    </p>*@
                 <dl class="govuk-summary-list govuk-!-margin-bottom-9">
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
@@ -99,26 +89,26 @@
                                     var sequenceSection = section.SequenceId + "_" + section.SectionId;
 
                                     @if (!Model.IntroductionPageNextSectionUnavailable(section.SequenceId, section.SectionId) && Model.SectionStatus(section.SequenceId, section.SectionId).ToLower() != "not required")
-                                        {
-                                            <li class="app-task-list__item">
-                                                <a class="app-task-list__task_name" href="@Url.Action("Section", "RoatpApplication", new {section.ApplicationId, section.SequenceId, section.SectionId})">
-                                                    @Html.Raw(section.Title)
-
-                                                </a>
-                                                <strong class="govuk-tag app-task-list__task-@Model.CssClass(section.SequenceId, section.SectionId)" id="status_@sequenceSection"> @Model.SectionStatus(section.SequenceId, section.SectionId)</strong>
-                                            </li>
-                                        }
-                                        else
-                                        {
-                                            <li class="app-task-list__item">
+                                    {
+                                        <li class="app-task-list__item">
+                                            <a class="app-task-list__task_name" href="@Url.Action("Section", "RoatpApplication", new {section.ApplicationId, section.SequenceId, section.SectionId})">
                                                 @Html.Raw(section.Title)
-                                                @if (Model.SectionStatus(section.SequenceId, section.SectionId).ToLower() == "not required")
-                                                {
-                                                    <strong class="govuk-tag app-task-list__task-@Model.CssClass(section.SequenceId, section.SectionId)" id="status_@sequenceSection"> @Model.SectionStatus(section.SequenceId, section.SectionId)</strong>
 
-                                                }
-                                            </li>
-                                        
+                                            </a>
+                                            <strong class="govuk-tag app-task-list__task-@Model.CssClass(section.SequenceId, section.SectionId)" id="status_@sequenceSection"> @Model.SectionStatus(section.SequenceId, section.SectionId)</strong>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="app-task-list__item">
+                                            @Html.Raw(section.Title)
+                                            @if (Model.SectionStatus(section.SequenceId, section.SectionId).ToLower() == "not required")
+                                            {
+                                                <strong class="govuk-tag app-task-list__task-@Model.CssClass(section.SequenceId, section.SectionId)" id="status_@sequenceSection"> @Model.SectionStatus(section.SequenceId, section.SectionId)</strong>
+
+                                            }
+                                        </li>
+
                                     }
                                 }
                             </ul>
