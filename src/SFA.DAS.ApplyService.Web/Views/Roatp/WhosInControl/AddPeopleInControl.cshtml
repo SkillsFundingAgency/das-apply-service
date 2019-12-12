@@ -3,22 +3,10 @@
 
 @{
     ViewBag.Title = "Who is in control of your organisation?";
-    Layout = "_Layout";    
+    Layout = "_Layout";
 }
 
-<div class="govuk-phase-banner govuk-width-container roatp__navigation">
-    <nav>
-        <ul id="navigation" class="roatp__navigation " aria-label="Top Level Navigation">
-
-            <li class="roatp__navigation-item">
-
-                <a class="govuk-header__link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Application overview</a>
-
-            </li>
-
-        </ul>
-    </nav>
-</div>
+@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
 
 <div class="grid-row">
     <form asp-controller="RoatpApplication" asp-action="TaskList" method="get" name="backForm">

@@ -86,7 +86,7 @@
 
             if (model.ConditionsAccepted != "Y")
             {
-                return RedirectToAction("TermsAndConditionsNotAgreed");
+                return RedirectToAction("TermsAndConditionsNotAgreed", "RoatpShutterPages");
             }
 
             return RedirectToAction("EnterApplicationUkprn");
