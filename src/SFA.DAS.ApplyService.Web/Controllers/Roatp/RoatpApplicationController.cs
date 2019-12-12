@@ -334,8 +334,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             viewModel = await TokeniseViewModelProperties(viewModel);
-            ProcessJsonValues(viewModel);
-
+      
             if (viewModel.AllowMultipleAnswers)
             {
                 return View("~/Views/Application/Pages/MultipleAnswers.cshtml", viewModel);
@@ -344,19 +343,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             PopulateGetHelpWithQuestion(viewModel, pageId);         
 
             return View("~/Views/Application/Pages/Index.cshtml", viewModel);            
-        }
-
-        private void ProcessJsonValues(PageViewModel viewModel)
-        {
-            foreach (var questionModel in viewModel.Questions)
-            {
-                try
-                {
-                    questionModel.JsonValue =
-                        JsonConvert.DeserializeObject(questionModel.JsonValue);
-                }
-                catch {}
-            }
         }
 
         [HttpGet]

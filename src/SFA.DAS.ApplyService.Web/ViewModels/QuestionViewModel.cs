@@ -21,8 +21,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
         public string InputClasses { get; set; }
         public string Value { get; set; }
         public dynamic JsonValue { get; set; }
-
-     
         public List<Option> Options { get; set; }
         public List<ValidationDefinition> Validations { get; set; }
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
