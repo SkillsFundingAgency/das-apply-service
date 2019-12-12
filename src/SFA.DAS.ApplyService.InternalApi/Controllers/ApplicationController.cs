@@ -22,6 +22,7 @@ using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using StartApplicationRequest = SFA.DAS.ApplyService.Application.Apply.StartApplicationRequest;
 using StartApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartApplicationResponse;
+using SFA.DAS.ApplyService.Domain.Roatp;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -186,5 +187,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             await _mediator.Send(new RemoveApplicationSectionCompletedRequest(applicationId, applicationSectionId));
         }
-    }
+
+        [HttpGet("/Applications/Existing/{ukprn}")]
+        public async Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatus(string ukprn)
+        {
+            return await _mediator.Send(new GetExistingApplicationStatusRequest(ukprn));
+        }
+     }
 }

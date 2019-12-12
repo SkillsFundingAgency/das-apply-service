@@ -1,18 +1,7 @@
 ﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ConfirmDirectorsPscsViewModel
 
-<div class="govuk-phase-banner govuk-width-container roatp__navigation">
-    <nav>
-        <ul id="navigation" class="roatp__navigation " aria-label="Top Level Navigation">
+@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
 
-            <li class="roatp__navigation-item">
-
-                <a class="govuk-header__link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Application overview</a>
-
-            </li>
-
-        </ul>
-    </nav>
-</div>
 
 <div class="grid-row">
     <a class="govuk-back-link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Back</a>
