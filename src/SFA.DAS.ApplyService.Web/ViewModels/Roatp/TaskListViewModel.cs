@@ -11,13 +11,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
     public class TaskListViewModel : ApplicationSummaryViewModel
     {
-        //private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
-
-        //public TaskListViewModel(IRoatpTaskListWorkflowService roatpTaskListWorkflowService)
-        //{
-        //    _roatpTaskListWorkflowService = roatpTaskListWorkflowService;
-        //}
-
         private const string EmployerApplicationRouteId = "2";
 
         public List<NotRequiredOverrideConfiguration> NotRequiredOverrides { get; set; }
