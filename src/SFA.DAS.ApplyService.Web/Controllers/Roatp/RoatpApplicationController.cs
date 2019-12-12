@@ -334,7 +334,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             viewModel = await TokeniseViewModelProperties(viewModel);
-      
+
             if (viewModel.AllowMultipleAnswers)
             {
                 return View("~/Views/Application/Pages/MultipleAnswers.cshtml", viewModel);

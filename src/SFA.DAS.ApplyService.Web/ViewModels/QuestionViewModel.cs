@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 using Remotion.Linq;
 using SFA.DAS.ApplyService.Domain.Apply;
 
