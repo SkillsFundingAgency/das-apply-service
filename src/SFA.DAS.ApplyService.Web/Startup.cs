@@ -31,9 +31,14 @@ using StackExchange.Redis;
 namespace SFA.DAS.ApplyService.Web
 {
     using Controllers;
+    using SFA.DAS.ApplyService.Application.Email;
+    using SFA.DAS.ApplyService.EmailService;
     using SFA.DAS.ApplyService.Web.Configuration;
     using SFA.DAS.ApplyService.Web.Infrastructure.Validations;
     using SFA.DAS.ApplyService.Web.Services;
+    using SFA.DAS.Http;
+    using SFA.DAS.Http.TokenGenerators;
+    using SFA.DAS.Notifications.Api.Client;
 
     public class Startup
     {
@@ -170,8 +175,27 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IQuestionPropertyTokeniser, QuestionPropertyTokeniser>();
             services.AddTransient<IPageNavigationTrackingService, PageNavigationTrackingService>();
             services.AddTransient<ICustomValidatorFactory, CustomValidatorFactory>();
-            services.AddTransient<IRoatpTaskListWorkflowService, RoatpTaskListWorkflowService>();
             services.AddTransient<IAnswerFormService, AnswerFormService>();
+            services.AddTransient<IGetHelpWithQuestionEmailService, GetHelpWithQuestionEmailService>();
+            services.AddTransient<INotificationsApi>(x => {
+                var apiConfiguration = new Notifications.Api.Client.Configuration.NotificationsApiClientConfiguration
+                {
+                    ApiBaseUrl = _configService.NotificationsApiClientConfiguration.ApiBaseUrl,
+                    ClientToken = _configService.NotificationsApiClientConfiguration.ClientToken,
+                    ClientId = _configService.NotificationsApiClientConfiguration.ClientId,
+                    ClientSecret = _configService.NotificationsApiClientConfiguration.ClientSecret,
+                    IdentifierUri = _configService.NotificationsApiClientConfiguration.IdentifierUri,
+                    Tenant = _configService.NotificationsApiClientConfiguration.Tenant
+                };
+
+                var httpClient = string.IsNullOrWhiteSpace(apiConfiguration.ClientId)
+                    ? new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(apiConfiguration)).Build()
+                    : new HttpClientBuilder().WithBearerAuthorisationHeader(new AzureADBearerTokenGenerator(apiConfiguration)).Build();
+
+                return new NotificationsApi(httpClient, apiConfiguration);
+            });
+            services.AddTransient<IEmailTemplateClient, EmailTemplateClient>();
+            services.AddTransient<ISubmitApplicationConfirmationEmailService, SubmitApplicationConfirmationEmailService>();
             services.AddTransient<ITabularDataRepository, TabularDataRepository>();
         }
 

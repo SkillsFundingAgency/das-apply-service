@@ -12,7 +12,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
        [JsonIgnore]
         public string Value
         {
-            get { return JsonValue.ToString(); }
+            get { return JsonValue?.ToString(); }
             set { JsonValue = value; }
         }
 

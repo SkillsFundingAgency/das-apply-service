@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using Remotion.Linq;
 using SFA.DAS.ApplyService.Domain.Apply;
 
-namespace SFA.DAS.ApplyService.Web.Controllers
+namespace SFA.DAS.ApplyService.Web.ViewModels
 {
     public class QuestionViewModel
     {
@@ -22,8 +22,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public string Value { get; set; }
         public dynamic JsonValue { get; set; }
 
-        public dynamic JsonValueDeserialized => JsonConvert.DeserializeObject(JsonValue);
-
+     
         public List<Option> Options { get; set; }
         public List<ValidationDefinition> Validations { get; set; }
         public List<ValidationErrorDetail> ErrorMessages { get; set; }

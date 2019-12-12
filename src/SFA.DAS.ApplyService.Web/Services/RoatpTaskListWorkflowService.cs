@@ -8,9 +8,9 @@ using SFA.DAS.ApplyService.Web.Configuration;
 
 namespace SFA.DAS.ApplyService.Web.Services
 {
-    public class RoatpTaskListWorkflowService: IRoatpTaskListWorkflowService
+    public class RoatpTaskListWorkflowService
     {
-        public string SectionStatus(IEnumerable<ApplicationSequence> applicationSequences, List<NotRequiredOverrideConfiguration> notRequiredOverrides, int sequenceId, int sectionId, string applicationRouteId)
+        public static string SectionStatus(IEnumerable<ApplicationSequence> applicationSequences, List<NotRequiredOverrideConfiguration> notRequiredOverrides, int sequenceId, int sectionId, string applicationRouteId)
         {
             var sequence = applicationSequences?.FirstOrDefault(x => (int)x.SequenceId == sequenceId);
 
@@ -58,7 +58,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             return sectionText;
         }
 
-        public bool PreviousSectionCompleted(ApplicationSequence sequence, int sectionId)
+        public static bool PreviousSectionCompleted(ApplicationSequence sequence, int sectionId)
         {
             if (sequence.Sequential && sectionId > 1)
             {
@@ -90,7 +90,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             return true;
         }
 
-        private int SectionCompletedQuestionsCount(ApplicationSection section)
+        private static int SectionCompletedQuestionsCount(ApplicationSection section)
         {
             int answeredQuestions = 0;
             
@@ -115,7 +115,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             return answeredQuestions;
         }
 
-        private string GetSectionText(int completedCount, ApplicationSection section,  bool sequential)
+        private static string GetSectionText(int completedCount, ApplicationSection section,  bool sequential)
         {
             var pagesCompleted = section.QnAData.Pages.Count(x => x.Complete);
             var pagesActive = section.QnAData.Pages.Count(x => x.Active);
@@ -137,7 +137,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         }
 
-        private string SectionText(int completedCount, bool sectionCompleted, bool sequential)
+        private static string SectionText(int completedCount, bool sectionCompleted, bool sequential)
         {
             if (sectionCompleted)
             {

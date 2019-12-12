@@ -29,7 +29,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         private readonly IQnaTokenService _tokenService;
         private static readonly HttpClient _httpClient = new HttpClient();
         private readonly RetryPolicy<HttpResponseMessage> _retryPolicy;
-
+        private readonly string _environmentName;
 
         protected readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
         {
@@ -51,6 +51,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 _httpClient.BaseAddress = new Uri(configurationService.GetConfig().Result.QnaApiAuthentication.ApiBaseAddress);
             }
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+
+            _environmentName = configurationService.GetEnvironmentName();
         }
 
         public async Task<Answer> GetAnswer(Guid applicationId, Guid sectionId, string pageId, string questionId)
@@ -79,9 +81,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await Task.FromResult(new Answer { QuestionId = questionId, Value = string.Empty });
         }
 
-        public async Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag)
+        public async Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag, string questionId = null)
         {
-            var answer = new Answer();
+            var answer = new Answer { QuestionId  = questionId };
             var applicationDataJson = await (await _httpClient.GetAsync(
                     $"Applications/{applicationId}/applicationData")
                 )
@@ -101,19 +103,51 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<UploadPageAnswersResult> Upload(Guid applicationId, Guid sectionId, string pageId, IFormFileCollection files)
         {
-
             var formDataContent = new MultipartFormDataContent();
-            foreach (var file in files)
+
+            if (files is null || files.Count < 1)
             {
-                var fileContent = new StreamContent(file.OpenReadStream())
+                // This is so QnA knows there are no files
+                formDataContent = new MultipartFormDataContent { Headers = { ContentLength = 0 } };
+            }
+            else
+            {
+                foreach (var file in files)
+                {
+                    var fileContent = new StreamContent(file.OpenReadStream())
                     { Headers = { ContentLength = file.Length, ContentType = new MediaTypeHeaderValue(file.ContentType) } };
-                formDataContent.Add(fileContent, file.Name, file.FileName);
+                    formDataContent.Add(fileContent, file.Name, file.FileName);
+                }
             }
 
-            return await (await _httpClient.PostAsync(
+            var response = await _httpClient.PostAsync(
                     $"/applications/{applicationId}/sections/{sectionId}/pages/{pageId}/upload",
-                    formDataContent)).Content
-                .ReadAsAsync<UploadPageAnswersResult>();
+                    formDataContent);
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonConvert.DeserializeObject<UploadPageAnswersResult>(json);
+            }
+            else
+            {
+                var apiError = JsonConvert.DeserializeObject<ApiError>(json);
+                var apiErrorMessage = apiError?.Message ?? json;
+
+                _logger.LogError($"Error Uploading files into QnA. Application: {applicationId} | SectionId: {sectionId} | PageId: {pageId} | Response: {apiErrorMessage}");
+
+                var validationErrorMessage = "Cannot upload files at this time. Please contact your system administrator.";
+
+                if (!_environmentName.EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // Show Api error message if outside of PROD and PREPROD environments
+                    validationErrorMessage = apiErrorMessage;
+                }
+
+                var validationError = new KeyValuePair<string, string> (string.Empty, validationErrorMessage);
+                return new UploadPageAnswersResult { ValidationPassed = false, ValidationErrors = new List<KeyValuePair<string, string>> { validationError } };
+            }
         }
 
       
@@ -183,11 +217,33 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, Guid sectionId, string pageId, List<Answer> answers)
         {
             var answersModified = answers.Select(answer => new AnswerModified {QuestionId = answer.QuestionId, Value = answer.Value}).ToList();
+            var response = await _httpClient.PostAsJsonAsync(
+                        $"/Applications/{applicationId}/sections/{sectionId}/pages/{pageId}", answersModified);
 
-            return await (await _httpClient.PostAsJsonAsync(
-                        $"/Applications/{applicationId}/sections/{sectionId}/pages/{pageId}",
-                        answersModified)).Content
-                    .ReadAsAsync<SetPageAnswersResponse>();
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonConvert.DeserializeObject<SetPageAnswersResponse>(json);
+            }
+            else
+            {
+                var apiError = JsonConvert.DeserializeObject<ApiError>(json);
+                var apiErrorMessage = apiError?.Message ?? json;
+
+                _logger.LogError($"Error Updating Page Answers into QnA. Application: {applicationId} | SectionId: {sectionId} | PageId: {pageId} | Response: {apiErrorMessage}");
+
+                var validationErrorMessage = "Cannot save answers at this time. Please contact your system administrator.";
+
+                if(!_environmentName.EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // Show Api error message if outside of PROD and PREPROD environments
+                    validationErrorMessage = apiErrorMessage;
+                }
+
+                var validationError = new KeyValuePair<string, string>(string.Empty, validationErrorMessage);
+                return new SetPageAnswersResponse { ValidationPassed = false, ValidationErrors = new List<KeyValuePair<string, string>> { validationError } };
+            }
         }
 
         private class AnswerModified
