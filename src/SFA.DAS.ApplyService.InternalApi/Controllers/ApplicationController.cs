@@ -169,5 +169,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             return await _mediator.Send(new CheckOrganisationStandardStatusRequest(applicationId, standardId));
         }
+
+        [HttpGet("/Applications/Existing/{ukprn}")]
+        public async Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatus(string ukprn)
+        {
+            return await _mediator.Send(new GetExistingApplicationStatusRequest(ukprn));
+        }
     }
 }
