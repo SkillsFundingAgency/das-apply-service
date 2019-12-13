@@ -906,7 +906,7 @@
     color: #0b0c0c;
 }
 
-.roatp__navigation-item--inactive span {
+.roatp__navigation-item--inactive a {
     font-family: "nta", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -918,13 +918,13 @@
 }
 
 @media print {
-    .roatp__navigation-item--inactive span {
+    .roatp__navigation-item--inactive a {
         font-family: sans-serif;
     }
 }
 
 @media (min-width: 40.0625em) {
-    .roatp__navigation-item--inactive span {
+    .roatp__navigation-item--inactive a {
         font-size: 16px;
         font-size: 1rem;
         line-height: 1.25;
@@ -932,13 +932,13 @@
 }
 
 @media print {
-    .roatp__navigation-item--inactive span {
+    .roatp__navigation-item--inactive a {
         font-size: 14pt;
         line-height: 1.2;
     }
 }
 
-.roatp__navigation-item--inactive span:hover {
+.roatp__navigation-item--inactive a:hover {
     text-decoration: none;
 }
 
