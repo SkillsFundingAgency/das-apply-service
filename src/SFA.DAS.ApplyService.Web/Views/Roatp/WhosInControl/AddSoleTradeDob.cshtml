@@ -4,22 +4,14 @@
 @{
     var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
     var showErrors = !String.IsNullOrEmpty(isError);
-    
+
     var errorMessages = Model.ErrorMessages != null ? Model.ErrorMessages.DistinctBy(x => x.ErrorMessage) : null;
     var showDobMonthError = errorMessages != null && errorMessages.FirstOrDefault(x => x.Field == "SoleTraderDobMonth") != null;
     var showDobYearError = errorMessages != null && errorMessages.FirstOrDefault(x => x.Field == "SoleTraderDobYear") != null;
 
 }
 
-<div class="govuk-phase-banner govuk-width-container roatp__navigation">
-    <nav>
-        <ul id="navigation" class="roatp__navigation " aria-label="Top Level Navigation">
-            <li class="roatp__navigation-item">
-                <a class="govuk-header__link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Application overview</a>
-            </li>
-        </ul>
-    </nav>
-</div>
+@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
 
 <div class="grid-row">
     <a class="govuk-back-link" href="@Url.Action("SoleTraderOrPartnership", "RoatpWhosInControlApplication", new { Model.ApplicationId })">Back</a>
