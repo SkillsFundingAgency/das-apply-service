@@ -145,6 +145,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse POST: applicationId: [{applicationStartResponse?.ApplicationId}]");
             var response = await _apiClient.StartApplication(applicationStartResponse.ApplicationId, userId, applicationType);
+            _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking response from StartApplication POST: applicationId: [{response?.ApplicationId}]");
 
             if (response != null)
             {
