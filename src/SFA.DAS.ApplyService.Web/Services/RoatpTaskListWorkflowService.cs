@@ -5,6 +5,7 @@ using MoreLinq;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Web.Configuration;
+using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
 namespace SFA.DAS.ApplyService.Web.Services
 {
@@ -25,39 +26,22 @@ namespace SFA.DAS.ApplyService.Web.Services
                                                           sectionId == condition.SectionId &&
                                                           sequenceId == condition.SequenceId))
             {
-                return "Not required";
+                return TaskListSectionStatus.NotRequired;
             }
 
-            if (!PreviousSectionCompleted(sequence, sectionId))
+            if (!PreviousSectionCompleted(sequence, sectionId, sequence.Sequential))
             {
                 return string.Empty;
             }
 
             var questionsCompleted = SectionCompletedQuestionsCount(section);
-
-            // NOTES: MFCMFC The SectionText() method can be removed once the QnA json and process conforms to writing details
-            // into the QnA, and has been fixed.  Current areas affected is all of sequence 1
-            // In addition, there is probably a case for removing all calls and reads to the ApplyRepository 'Completed' calls
-            // (MarkSectionAsCompleted, IsSectionCompleted,RemoveSectionCompleted), and the table 'ApplicationWorkflow' may be dropped
-            // I will need to double check there are no other uses for this endpoint before doing that
-            var sectionCompleteBasedOnPagesActiveAndComplete = GetSectionText(questionsCompleted, section, sequence.Sequential);
-            var sectionCompleteBasedOnDatabaseSettingOfIsComplete = SectionText(questionsCompleted, section.SectionCompleted, sequence.Sequential);
-
+                        
+            var sectionText = GetSectionText(questionsCompleted, section, sequence.Sequential); 
             
-            var sectionText = sectionCompleteBasedOnPagesActiveAndComplete;
-
-            if (sectionCompleteBasedOnDatabaseSettingOfIsComplete != sectionCompleteBasedOnPagesActiveAndComplete)
-            {
-                if (sequence.Sequential)
-                {
-                    sectionText = sectionCompleteBasedOnDatabaseSettingOfIsComplete;
-                }
-            }
-
             return sectionText;
         }
 
-        public static bool PreviousSectionCompleted(ApplicationSequence sequence, int sectionId)
+        public static bool PreviousSectionCompleted(ApplicationSequence sequence, int sectionId, bool sequential)
         {
             if (sequence.Sequential && sectionId > 1)
             {
@@ -67,16 +51,14 @@ namespace SFA.DAS.ApplyService.Web.Services
                     return false;
                 }
 
-                if (previousSection.SectionCompleted)
+                if (previousSection.PagesActive == previousSection.PagesComplete && previousSection.PagesComplete > 0)
                 {
                     return true;
                 }
 
                 var previousSectionsCompletedCount = SectionCompletedQuestionsCount(previousSection);
                 if (previousSectionsCompletedCount == 0)
-                    return false;
-
-                
+                    return false;                               
 
                 var previousSectionQuestionsCount = previousSection.QnAData.Pages.Where(p => p.NotRequired == false).SelectMany(x => x.Questions)
                     .DistinctBy(q => q.QuestionId).Count();
@@ -120,42 +102,20 @@ namespace SFA.DAS.ApplyService.Web.Services
             var pagesActive = section.QnAData.Pages.Count(x => x.Active);
 
             if ((section.PagesComplete == section.PagesActive && section.PagesActive > 0))
-                return "Completed";
+                return TaskListSectionStatus.Completed;
 
             if (sequential && completedCount == 0)
             {
-                return "Next";
+                return TaskListSectionStatus.Next;
             }
 
             if (completedCount > 0)
             {
-                return "In Progress";
+                return TaskListSectionStatus.InProgress;
             }
 
-            return string.Empty;
+            return TaskListSectionStatus.Blank;
 
         }
-
-        private static string SectionText(int completedCount, bool sectionCompleted, bool sequential)
-        {
-            if (sectionCompleted)
-            {
-                return "Completed";
-            }
-
-            if (sequential && completedCount == 0)
-            {
-                return "Next";
-            }
-
-            if (completedCount > 0)
-            {
-                return "In Progress";
-            }
-
-            return string.Empty;
-
-        }
-
     }
 }
