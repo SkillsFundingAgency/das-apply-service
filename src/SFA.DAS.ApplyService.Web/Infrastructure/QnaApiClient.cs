@@ -222,7 +222,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 var apiError = JsonConvert.DeserializeObject<ApiError>(json);
                 var apiErrorMessage = apiError?.Message ?? json;
 
-                _logger.LogError($"Error Starting Application in QnA. UserReference : {userReference} | WorkflowType : {workflowType} | ApplicationData : {applicationData} | Response: {apiErrorMessage}");
+                _logger.LogError($"Error Starting Application in QnA. UserReference : {userReference} | WorkflowType : {workflowType} | ApplicationData : {applicationData} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}");
 
                 return new StartApplicationResponse { ApplicationId = Guid.Empty };
             }
