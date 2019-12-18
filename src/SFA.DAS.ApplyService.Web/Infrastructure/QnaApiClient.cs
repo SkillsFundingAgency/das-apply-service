@@ -207,10 +207,25 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 ApplicationData = applicationData
             };
 
-            return await(await _httpClient.PostAsJsonAsync(
-                    "/Applications/Start",
-                    startApplicationRequest)).Content
-                .ReadAsAsync<StartApplicationResponse>();
+            var response = await _httpClient.PostAsJsonAsync(
+                        $"/Applications/Start",
+                        startApplicationRequest);
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonConvert.DeserializeObject<StartApplicationResponse>(json);
+            }
+            else
+            {
+                var apiError = JsonConvert.DeserializeObject<ApiError>(json);
+                var apiErrorMessage = apiError?.Message ?? json;
+
+                _logger.LogError($"Error Starting Application in QnA. UserReference : {userReference} | WorkflowType : {workflowType} | ApplicationData : {applicationData} | Response: {apiErrorMessage}");
+
+                return new StartApplicationResponse { ApplicationId = Guid.Empty };
+            }
         }
 
         public async Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, Guid sectionId, string pageId, List<Answer> answers)
