@@ -6,41 +6,36 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
     using System.Linq;
     using Domain.Entities;
     using SFA.DAS.ApplyService.Application.Apply.Roatp;
+    using SFA.DAS.ApplyService.Domain.Apply;
     using SFA.DAS.ApplyService.Web.Configuration;
+    using SFA.DAS.ApplyService.Web.Infrastructure;
     using SFA.DAS.ApplyService.Web.Services;
 
     public class TaskListViewModel : ApplicationSummaryViewModel
     {
-        //private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
-
-        //public TaskListViewModel(IRoatpTaskListWorkflowService roatpTaskListWorkflowService)
-        //{
-        //    _roatpTaskListWorkflowService = roatpTaskListWorkflowService;
-        //}
-
+        private const string MainApplicationRouteId = "1";
         private const string EmployerApplicationRouteId = "2";
+        private const string SupportingApplicationRouteId = "3";
+        private const string ConfirmedAnswer = "Yes";
+        private readonly IQnaApiClient _qnaApiClient;
 
         public List<NotRequiredOverrideConfiguration> NotRequiredOverrides { get; set; }
     
-        public string PageStatusCompleted => "completed";
         public int IntroductionSectionId => 1;
         public int Sequence1Id => 1;
 
         public IEnumerable<ApplicationSequence> ApplicationSequences { get; set; }
         
+        public TaskListViewModel(IQnaApiClient qnaApiClient)
+        {
+            _qnaApiClient = qnaApiClient;
+        }
+
         public string CssClass(int sequenceId, int sectionId)
         {
             var status = RoatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, sequenceId, sectionId, ApplicationRouteId);
 
-            if (status == String.Empty)
-            {
-                return "hidden";
-            }
-
-            var cssClass = status.ToLower();
-            cssClass = cssClass.Replace(" ", "");
-            
-            return cssClass;
+            return ConvertTaskListSectionStatusToCssClass(status);
         }
 
         public string SectionStatus(int sequenceId, int sectionId)
@@ -48,11 +43,167 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             return RoatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, sequenceId, sectionId, ApplicationRouteId);
         }
 
+        public string WhosInControlCss
+        {
+            get
+            {
+                var status = WhosInControlSectionStatus;
+
+                return ConvertTaskListSectionStatusToCssClass(status);
+            }
+        }
+
+        public string WhosInControlSectionStatus
+        {
+            get
+            {
+                if (VerifiedCompaniesHouse && VerifiedCharityCommission)
+                {
+                    if ((CompaniesHouseDataConfirmed && !CharityCommissionDataConfirmed)
+                        || (!CompaniesHouseDataConfirmed && CharityCommissionDataConfirmed))
+                    {
+                        return TaskListSectionStatus.InProgress;
+                    }
+                    if (CompaniesHouseDataConfirmed && CharityCommissionDataConfirmed)
+                    {
+                        return TaskListSectionStatus.Completed;
+                    }
+                }
+
+                if (VerifiedCompaniesHouse && !VerifiedCharityCommission)
+                {
+                    if (CompaniesHouseDataConfirmed)
+                    {
+                        return TaskListSectionStatus.Completed;
+                    }
+                }
+
+                if (!VerifiedCompaniesHouse && VerifiedCharityCommission)
+                {
+                    if (CharityCommissionDataConfirmed)
+                    {
+                        return TaskListSectionStatus.Completed;
+                    }
+                }
+
+                if (!VerifiedCompaniesHouse && !VerifiedCharityCommission)
+                {
+                    if (WhosInControlConfirmed)
+                    {
+                        return TaskListSectionStatus.Completed;
+                    }
+                }
+
+                return TaskListSectionStatus.Next;
+            }          
+        }
+        
+        public string FinishCss(int sectionId)
+        {
+            var status = FinishSectionStatus(sectionId);
+
+            return ConvertTaskListSectionStatusToCssClass(status);
+        }
+
+        public string FinishSectionStatus(int sectionId)
+        {
+            if (!ApplicationSequencesCompleted())
+            {
+                return TaskListSectionStatus.Blank;
+            }
+            var finishSequence = ApplicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.Finish);
+
+            if (!PreviousSectionCompleted(finishSequence.SequenceId, sectionId))
+            {
+                return TaskListSectionStatus.Blank;
+            }
+
+            if (sectionId == RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation)
+            {
+                var commercialInConfidenceAnswer = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCommercialInConfidence).GetAwaiter().GetResult();
+                if (commercialInConfidenceAnswer != null && !String.IsNullOrWhiteSpace(commercialInConfidenceAnswer.Value))
+                {
+                    return TaskListSectionStatus.Completed;
+                }
+                else
+                {
+                    return TaskListSectionStatus.Next;
+                }
+            }
+
+            if (sectionId == RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks)
+            {
+                var permissionPersonalDetails = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails).GetAwaiter().GetResult();
+                var accuratePersonalDetails = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails).GetAwaiter().GetResult();
+                var permissionSubmitApplication = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication).GetAwaiter().GetResult();
+
+                if (String.IsNullOrWhiteSpace(permissionPersonalDetails.Value) 
+                    && String.IsNullOrWhiteSpace(accuratePersonalDetails.Value)
+                    && String.IsNullOrWhiteSpace(permissionSubmitApplication.Value))
+                {
+                    return TaskListSectionStatus.Next;
+                }
+
+                if (permissionPersonalDetails.Value == ConfirmedAnswer 
+                    && accuratePersonalDetails.Value == ConfirmedAnswer 
+                    && permissionSubmitApplication.Value == ConfirmedAnswer)
+                {
+                    return TaskListSectionStatus.Completed;
+                }
+                return TaskListSectionStatus.InProgress;
+            }
+
+            if (sectionId == RoatpWorkflowSectionIds.Finish.TermsAndConditions)
+            {
+                Answer conditionsOfAcceptance2 = null;
+                Answer conditionsOfAcceptance3 = null;
+
+                if (ApplicationRouteId == MainApplicationRouteId || ApplicationRouteId == EmployerApplicationRouteId)
+                {
+                    conditionsOfAcceptance2 = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCOA2MainEmployer).GetAwaiter().GetResult();
+                    conditionsOfAcceptance3 = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCOA3MainEmployer).GetAwaiter().GetResult();
+                }
+                else if (ApplicationRouteId == SupportingApplicationRouteId)
+                {
+                    conditionsOfAcceptance2 = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCOA2Supporting).GetAwaiter().GetResult();
+                    conditionsOfAcceptance3 = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCOA3Supporting).GetAwaiter().GetResult();
+                }
+
+                if (String.IsNullOrWhiteSpace(conditionsOfAcceptance2?.Value) && String.IsNullOrWhiteSpace(conditionsOfAcceptance3?.Value))
+                {
+                    return TaskListSectionStatus.Next;
+                }
+
+                if (conditionsOfAcceptance2?.Value == ConfirmedAnswer && conditionsOfAcceptance3?.Value == ConfirmedAnswer)
+                {
+                    return TaskListSectionStatus.Completed;
+                }
+
+                return TaskListSectionStatus.InProgress;
+            }
+
+            return TaskListSectionStatus.Next;
+        }
+
         public bool PreviousSectionCompleted(int sequenceId, int sectionId)
         {
             var sequence = ApplicationSequences.FirstOrDefault(x => x.SequenceId == sequenceId);
 
-            return RoatpTaskListWorkflowService.PreviousSectionCompleted(sequence, sectionId);
+            if (sequenceId == RoatpWorkflowSequenceIds.YourOrganisation && sectionId == RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation)
+            {
+                return (WhosInControlSectionStatus == TaskListSectionStatus.Completed);
+            }
+
+            if (sequenceId == RoatpWorkflowSequenceIds.Finish)
+            {
+                if (sectionId == 1)
+                {
+                    return true;
+                }
+                return (FinishSectionStatus(sectionId-1) == TaskListSectionStatus.Completed);
+            }
+
+            return RoatpTaskListWorkflowService.PreviousSectionCompleted(sequence, sectionId, sequence.Sequential);
         }
 
         public bool IntroductionPageNextSectionUnavailable(int sequenceId, int sectionId)
@@ -66,7 +217,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                 foreach(var section in yourOrganisationSequence.Sections)
                 {
                     var sectionStatus = RoatpTaskListWorkflowService.SectionStatus(ApplicationSequences, NotRequiredOverrides, RoatpWorkflowSequenceIds.YourOrganisation, section.SectionId, ApplicationRouteId);
-                    if (sectionStatus.ToLower() != PageStatusCompleted)
+                    if (sectionStatus != TaskListSectionStatus.Completed)
                     {
                         return true;
                     }
@@ -85,7 +236,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             }
 
             var statusOfIntroductionPage = SectionStatus(sequenceId,IntroductionSectionId);
-            if (sequenceId > Sequence1Id && sectionId != IntroductionSectionId && statusOfIntroductionPage.ToLower() != PageStatusCompleted)
+            if (sequenceId > Sequence1Id && sectionId != IntroductionSectionId && statusOfIntroductionPage != TaskListSectionStatus.Completed)
                 return true;
 
             return false;
@@ -95,6 +246,10 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public bool CompaniesHouseManualEntry { get; set; }
         public bool VerifiedCharityCommission { get; set; }
         public bool CharityCommissionManualEntry { get; set; }
+
+        public bool CompaniesHouseDataConfirmed { get; set; }
+        public bool CharityCommissionDataConfirmed { get; set; }
+        public bool WhosInControlConfirmed { get; set; }
 
         public string WhosInControlStartPageId
         {
@@ -146,8 +301,8 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             {
                 foreach(var section in sequence.Sections)
                 {
-                    var sectionStatus = SectionStatus(sequence.SequenceId, section.SectionId).ToLower();
-                    if (sectionStatus != "not required" && sectionStatus != "completed")
+                    var sectionStatus = SectionStatus(sequence.SequenceId, section.SectionId);
+                    if (sectionStatus != TaskListSectionStatus.NotRequired && sectionStatus != TaskListSectionStatus.Completed)
                     {
                         return false;
                     }
@@ -155,6 +310,29 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             }
 
             return true;
+        }
+
+        private string ConvertTaskListSectionStatusToCssClass(string sectionStatus)
+        {
+            switch (sectionStatus)
+            {
+                case TaskListSectionStatus.Blank:
+                    {
+                        return "hidden";                        
+                    }
+                case TaskListSectionStatus.InProgress:
+                    {
+                        return "inprogress";
+                    }
+                case TaskListSectionStatus.NotRequired:
+                    {
+                        return "notrequired";
+                    }
+                default:
+                    {
+                        return sectionStatus.ToLower();
+                    }
+            }
         }
     }
 }

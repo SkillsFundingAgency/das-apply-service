@@ -147,6 +147,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         { 
             public static string StartPage = "235";
         }
+
+        public class Finish
+        {
+            public static string ApplicationPermissionsChecksShutterPage = "10005";
+            public static string TermsConditionsCOAPart2ShutterPage = "10006";
+            public static string TermsConditionsCOAPart3ShutterPage = "10007";
+        }
     }
 
     public static class RoatpWorkflowQuestionTags
@@ -167,6 +174,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string AddPartners = "Add-Partners";
         public static string SoleTradeDob = "Add-SoleTrade-DOB";
         public static string AddPeopleInControl = "Add-PeopleInControl";
+        public static string FinishPermissionPersonalDetails = "Finish-Permission-Personal-Details";
+        public static string FinishAccuratePersonalDetails = "Finish-Accurate-Personal-Details";
+        public static string FinishPermissionSubmitApplication = "Finish-Permission-SubmitApp";
+        public static string FinishCommercialInConfidence = "Finish-Commercial-Confidence";
+        public static string FinishCOA2MainEmployer = "COA-Part2-MainEmployer";
+        public static string FinishCOA2Supporting = "COA-Part2-Supporting";
+        public static string FinishCOA3MainEmployer = "COA-Part3-MainEmployer";
+        public static string FinishCOA3Supporting = "COA-Part3-Supporting";
     }
 
     public static class RoatpPreambleQuestionBuilder
