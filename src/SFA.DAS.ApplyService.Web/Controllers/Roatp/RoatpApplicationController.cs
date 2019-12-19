@@ -128,6 +128,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
             
+            _logger.LogInformation($"Application Details:: Ukprn: [{applicationDetails?.UKPRN}], ProviderName: [{applicationDetails?.UkrlpLookupDetails?.ProviderName}], RouteId: [{applicationDetails?.ApplicationRoute?.Id}]");
             var startApplicationData = new JObject
             {
                 ["OrganisationReferenceId"] = applicationDetails.UKPRN.ToString(),

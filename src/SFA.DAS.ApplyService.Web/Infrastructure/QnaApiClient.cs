@@ -134,7 +134,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 var apiError = JsonConvert.DeserializeObject<ApiError>(json);
                 var apiErrorMessage = apiError?.Message ?? json;
 
-                _logger.LogError($"Error Uploading files into QnA. Application: {applicationId} | SectionId: {sectionId} | PageId: {pageId} | Response: {apiErrorMessage}");
+                _logger.LogError($"Error Uploading files into QnA. Application: {applicationId} | SectionId: {sectionId} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}");
 
                 var validationErrorMessage = "Cannot upload files at this time. Please contact your system administrator.";
 
@@ -222,8 +222,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 var apiError = JsonConvert.DeserializeObject<ApiError>(json);
                 var apiErrorMessage = apiError?.Message ?? json;
 
-                _logger.LogError($"Error Starting Application in QnA. UserReference : {userReference} | WorkflowType : {workflowType} | ApplicationData : {applicationData} | Response: {apiErrorMessage}");
-                
+                _logger.LogError($"Error Starting Application in QnA. UserReference : {userReference} | WorkflowType : {workflowType} | ApplicationData : {applicationData} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}");
                 return new StartApplicationResponse { ApplicationId = Guid.Empty };
             }
         }
@@ -245,7 +244,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 var apiError = JsonConvert.DeserializeObject<ApiError>(json);
                 var apiErrorMessage = apiError?.Message ?? json;
 
-                _logger.LogError($"Error Updating Page Answers into QnA. Application: {applicationId} | SectionId: {sectionId} | PageId: {pageId} | Response: {apiErrorMessage}");
+                _logger.LogError($"Error Updating Page Answers into QnA. Application: {applicationId} | SectionId: {sectionId} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}");
 
                 var validationErrorMessage = "Cannot save answers at this time. Please contact your system administrator.";
 
