@@ -99,10 +99,6 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         private static string GetSectionText(int completedCount, ApplicationSection section,  bool sequential)
         {
-            if (section.SequenceId == 1 && section.SectionId == 5)
-            {
-                var x = "here";
-            }
             var pagesCompleted = section.QnAData.Pages.Count(x => x.Complete);
             var pagesActive = section.QnAData.Pages.Count(x => x.Active);
 
