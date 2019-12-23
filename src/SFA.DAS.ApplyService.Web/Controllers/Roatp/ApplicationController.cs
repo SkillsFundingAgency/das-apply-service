@@ -42,8 +42,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
             var selectedSection = sections.Single(x => x.SectionId == sectionId);
 
-
-            await _apiClient.RemoveSectionCompleted(applicationId, selectedSection.Id);
             await _qnaApiClient.DeleteFile(applicationId, selectedSection.Id, pageId, questionId, filename);
 
             return RedirectToAction("Page", "RoatpApplication", new { applicationId, sequenceId = sequenceNo, sectionId, pageId, redirectAction });

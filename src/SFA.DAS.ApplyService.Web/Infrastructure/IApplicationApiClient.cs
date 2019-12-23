@@ -14,6 +14,7 @@ using StartApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartApp
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     using Application.Apply.GetAnswers;
+    using SFA.DAS.ApplyService.Domain.Roatp;
 
     public interface IApplicationApiClient
     {
@@ -44,9 +45,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<Organisation> GetOrganisationByUkprn(string ukprn);
         Task<Organisation> GetOrganisationByName(string name);
         Task<GetAnswersResponse> GetAnswer(Guid applicationId, string questionIdentifer);
-
-        Task<bool> MarkSectionAsCompleted(Guid applicationId, Guid applicationSectionId);
-        Task<bool> IsSectionCompleted(Guid applicationId, Guid applicationSectionId);
-        Task RemoveSectionCompleted(Guid applicationId, Guid applicationSectionId);
+        Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatus(string ukprn);
     }
 }
