@@ -18,7 +18,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             _sessionService = sessionService;
         }
-
+        
         [Route("not-accept-terms-conditions")]
         public async Task<IActionResult> TermsAndConditionsNotAgreed()
         {
@@ -66,6 +66,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return View("~/Views/Roatp/CharityNotFound.cshtml", viewModel);
         }
 
+        [Route("chosen-not-apply-roatp")]
+        public async Task<IActionResult> NonLevyAbandonedApplication()
+        {
+            return View("~/Views/Roatp/NonLevyAbandonedApplication.cshtml");
+        }
+
         [Route("ukrlp-unavailable")]
         public async Task<IActionResult> UkrlpNotAvailable()
         {
@@ -83,12 +89,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             return View("~/Views/Roatp/CharityCommissionNotAvailable.cshtml");
         }
-        
-        [Route("not-eligible")]
-        public async Task<IActionResult> IneligibleToJoin()
+
+        [Route("application-in-progress")]
+        public async Task<IActionResult> ApplicationInProgress(ExistingApplicationViewModel model)
         {
-            return View("~/Views/Roatp/IneligibleToJoin.cshtml");
+            return View("~/Views/Roatp/ApplicationInProgress.cshtml", model);
         }
 
+        [Route("application-submitted")]
+        public async Task<IActionResult> ApplicationPreviouslySubmitted(ExistingApplicationViewModel model)
+        {
+            return View("~/Views/Roatp/ApplicationPreviouslySubmitted.cshtml", model);
+        }
     }
 }

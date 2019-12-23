@@ -12,19 +12,8 @@
     var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
 }
 
-<div class="govuk-phase-banner govuk-width-container roatp__navigation">
-    <nav>
-        <ul id="navigation" class="roatp__navigation " aria-label="Top Level Navigation">
+@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
 
-            <li class="roatp__navigation-item">
-
-                <a class="govuk-header__link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Application overview</a>
-
-            </li>
-
-        </ul>
-    </nav>
-</div>
 
 <div class="grid-row">
     <form asp-controller="RoatpWhosInControlApplication" asp-action="@Model.BackAction" method="get" name="backForm">

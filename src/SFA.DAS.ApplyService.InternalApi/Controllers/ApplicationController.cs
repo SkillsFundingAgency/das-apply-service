@@ -22,6 +22,7 @@ using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using StartApplicationRequest = SFA.DAS.ApplyService.Application.Apply.StartApplicationRequest;
 using StartApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartApplicationResponse;
+using SFA.DAS.ApplyService.Domain.Roatp;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -169,22 +170,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(new CheckOrganisationStandardStatusRequest(applicationId, standardId));
         }
 
-        [HttpPost("/Application/{applicationId}/SectionCompleted/{applicationSectionId}")]
-        public async Task<bool> MarkSectionAsCompleted(Guid applicationId, Guid applicationSectionId)
+        [HttpGet("/Applications/Existing/{ukprn}")]
+        public async Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatus(string ukprn)
         {
-            return await _mediator.Send(new MarkApplicationSectionAsCompletedRequest(applicationId, applicationSectionId));
-        }
-
-        [HttpGet("/Application/{applicationId}/IsSectionComplete/{applicationSectionId}")]
-        public async Task<bool> IsSectionCompleted(Guid applicationId, Guid applicationSectionId)
-        {
-            return await _mediator.Send(new GetApplicationSectionCompletedRequest(applicationId, applicationSectionId));
-        }
-
-        [HttpDelete("/Application/{applicationId}/RemoveSectionComplete/{applicationSectionId}")]
-        public async Task RemoveSectionCompleted(Guid applicationId, Guid applicationSectionId)
-        {
-            await _mediator.Send(new RemoveApplicationSectionCompletedRequest(applicationId, applicationSectionId));
+            return await _mediator.Send(new GetExistingApplicationStatusRequest(ukprn));
         }
     }
 }

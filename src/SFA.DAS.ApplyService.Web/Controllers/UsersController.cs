@@ -93,11 +93,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             if (string.IsNullOrEmpty(_contextAccessor.HttpContext.User.FindFirstValue("display_name")))
-                return SignOut(CookieAuthenticationDefaults.AuthenticationScheme,
-                    OpenIdConnectDefaults.AuthenticationScheme);
+            {
+                var authenticationProperties = new AuthenticationProperties
+                {
+                    RedirectUri = Url.Action("Index", "Home")
+                };
+                return SignOut(authenticationProperties, CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme);
+            }
 
-            var assessorServiceBaseUrl = (await _config.GetConfig()).AssessorServiceBaseUrl;
-            return Redirect($"{assessorServiceBaseUrl}/Account/SignOut");
+            return RedirectToAction("Index", "Home");
         }
 
         public IActionResult InviteSent()
