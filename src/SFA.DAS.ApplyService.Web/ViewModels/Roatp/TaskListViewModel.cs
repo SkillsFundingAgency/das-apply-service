@@ -86,12 +86,9 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                     }
                 }
 
-                if (!VerifiedCompaniesHouse && !VerifiedCharityCommission)
+                if (WhosInControlConfirmed)
                 {
-                    if (WhosInControlConfirmed)
-                    {
-                        return TaskListSectionStatus.Completed;
-                    }
+                    return TaskListSectionStatus.Completed;
                 }
 
                 return TaskListSectionStatus.Next;
