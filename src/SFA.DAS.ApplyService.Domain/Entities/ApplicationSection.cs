@@ -55,12 +55,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         }
 
         public bool NotRequired { get; set; }
-
-        [JsonIgnore]
-        public bool SectionCompleted { get; set; }
-        // convert to GETTER that is : return section.PagesComplete == section.PagesActive && section.PagesActive > 0
-        // rather than a field updated and returned from database table
-        // then refactor RoatpTaskListWorkflowService to use this
     }
 
     public class ApplicationSectionStatus

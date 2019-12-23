@@ -131,7 +131,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 {
                     return RedirectToAction("ConfirmTrusteesNoDob", new { applicationId });
                 }
-                await _applicationApiClient.MarkSectionAsCompleted(applicationId, whosInControlSection.Id);
 
                 return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
             }
@@ -256,11 +255,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             };
 
             var updateResult = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage, trusteeAnswers);
-
-            if (updateResult.ValidationPassed)
-            {
-                await _applicationApiClient.MarkSectionAsCompleted(model.ApplicationId, whosInControlSection.Id);
-            }
 
             return RedirectToAction("TaskList", "RoatpApplication", new { model.ApplicationId });
         }
@@ -655,13 +649,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 }
             };
 
-            var updateResult = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob, soleTradeDobAnswer);
-
-            if (updateResult.ValidationPassed)
-            {
-                await _applicationApiClient.MarkSectionAsCompleted(model.ApplicationId, whosInControlSection.Id);
-            }
-
+            var result = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob, soleTradeDobAnswer);
+            
             return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId });
         }
 
@@ -892,9 +881,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             var yourOrganisationSections = await _qnaApiClient.GetSections(applicationId, yourOrganisationSequence.Id);
             var whosInControlSection =
                 yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
-
-            await _applicationApiClient.MarkSectionAsCompleted(applicationId, whosInControlSection.Id);
-
+            
             return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
         }
 
