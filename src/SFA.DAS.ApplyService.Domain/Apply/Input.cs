@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace SFA.DAS.ApplyService.Domain.Apply
@@ -18,10 +17,9 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public string Value { get; set; }
         public string Label { get; set; }
         public string HintText { get; set; }
-        public bool HasHintText
-        {
-            get => !String.IsNullOrWhiteSpace(HintText);
-        }
-        
+        public bool HasHintText => !string.IsNullOrWhiteSpace(HintText);
+        public string ConditionalContentText { get; set; }
+        public bool HasConditionalContentText => !string.IsNullOrWhiteSpace(ConditionalContentText);
+
     }
 }
