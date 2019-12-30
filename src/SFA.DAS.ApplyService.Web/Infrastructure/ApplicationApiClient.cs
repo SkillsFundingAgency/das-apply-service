@@ -36,6 +36,20 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
         }
 
+        public async Task<StartApplicationResponse> StartApplication(StartApplicationRequest startApplicationRequest)
+        {
+            var httpResponse = await _httpClient.PostAsJsonAsync("/Application/Start", startApplicationRequest);
+            var startApplicationResponse = await httpResponse.Content.ReadAsAsync<StartApplicationResponse>();
+            return startApplicationResponse;
+        }
+
+
+
+
+
+
+
+        // NOTE: This is old stuff or things which are not migrated over yet
         public async Task<List<Domain.Entities.Application>> GetApplications(Guid userId, bool createdBy)
         {
             if (!createdBy)
@@ -47,9 +61,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await (await _httpClient.GetAsync($"/Applications/{userId}")).Content
                 .ReadAsAsync<List<Domain.Entities.Application>>();
         }
-
-       
-
         
         public async Task<ApplicationSequence> GetSequence(Guid applicationId, Guid userId)
         {
@@ -92,20 +103,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                     $"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}",
                     new { answers, saveNewAnswers })).Content
                 .ReadAsAsync<SetPageAnswersResponse>();
-        }
-
-        public async Task<StartApplicationResponse> StartApplication(Guid userId, string applicationType)
-        {
-            return await StartApplication(Guid.NewGuid(), userId, applicationType);
-        }
-
-        public async Task<StartApplicationResponse> StartApplication(Guid applicationId, Guid userId, string applicationType)
-        {
-            var request = new StartApplyRequest { ApplicationId = applicationId, UserId = userId, ApplicationType = applicationType };
-
-            var httpResponse = await _httpClient.PostAsJsonAsync("/Application/Start", request);
-            var startApplicationResponse = await httpResponse.Content.ReadAsAsync<StartApplicationResponse>();
-            return startApplicationResponse;
         }
 
         public async Task<bool> Submit(Guid applicationId, int sequenceId, Guid userId, string userEmail)

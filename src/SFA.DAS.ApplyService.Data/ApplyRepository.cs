@@ -24,6 +24,9 @@ namespace SFA.DAS.ApplyService.Data
         {
             _logger = logger;
             _config = configurationService.GetConfig().Result;
+
+            SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
+
             SqlMapper.AddTypeHandler(typeof(OrganisationDetails), new OrganisationDetailsHandler());
             SqlMapper.AddTypeHandler(typeof(QnAData), new QnADataHandler());
             SqlMapper.AddTypeHandler(typeof(ApplicationData), new ApplicationDataHandler());
@@ -31,6 +34,25 @@ namespace SFA.DAS.ApplyService.Data
             SqlMapper.AddTypeHandler(typeof(FinancialApplicationGrade), new FinancialApplicationGradeDataHandler());
         }
 
+
+
+        public async Task<Guid> StartApplication(Guid applicationId, ApplyData applyData, Guid organisationId, Guid createdBy)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return await connection.QuerySingleAsync<Guid>(
+                    @"INSERT INTO Apply (ApplicationId, OrganisationId, ApplicationStatus, ApplyData, ReviewStatus, CreatedBy, CreatedAt)
+                                        OUTPUT INSERTED.[ApplicationId] 
+                                        VALUES (@applicationId, @organisationId, @applicationStatus, @applyData, @reviewStatus, @createdBy, GETUTCDATE())",
+                    new { applicationId, organisationId, applicationStatus = "In Progress", applyData, reviewStatus = "Draft", createdBy });
+            }
+        }
+
+
+
+
+
+        // NOTE: This is old stuff or things which are not migrated over yet
         public async Task<List<Domain.Entities.Application>> GetUserApplications(Guid userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))

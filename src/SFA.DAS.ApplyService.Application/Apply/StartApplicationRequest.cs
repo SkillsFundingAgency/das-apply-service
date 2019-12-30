@@ -1,21 +1,15 @@
 using System;
+using System.Collections.Generic;
 using MediatR;
+using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply
 {
     public class StartApplicationRequest : IRequest<StartApplicationResponse>
     {
         public Guid ApplicationId { get; set; }
-
-        public Guid UserId { get; set; }
-
-        public string ApplicationType { get; set; }
-
-        public StartApplicationRequest(Guid applicationId, Guid userId, string applicationType)
-        {
-            ApplicationId = applicationId;
-            UserId = userId;
-            ApplicationType = applicationType;
-        }
+        public List<ApplySequence> ApplySequences { get; set; }
+        public Guid CreatingContactId { get; set; }
+        public int ProviderRoute { get; set; }
     }
 }

@@ -27,7 +27,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string TradingName { get; set; }
         public int ProviderRoute { get; set; } // was string - ApplicationRouteId
         public DateTime? ApplicationSubmittedOn { get; set; }
-        public Guid ApplicationSubmittedBy { get; set; }
+        public Guid? ApplicationSubmittedBy { get; set; }
     }
 
     public class ApplySequence
@@ -38,8 +38,8 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         //public string Status { get; set; }
         //public bool IsActive { get; set; }
         //public bool NotRequired { get; set; }
-        public bool Sequential { get; set; }
-        public string Description { get; set; }
+        //public bool Sequential { get; set; }
+        //public string Description { get; set; }
         //public DateTime? ApprovedDate { get; set; }
         //public string ApprovedBy { get; set; }
     }

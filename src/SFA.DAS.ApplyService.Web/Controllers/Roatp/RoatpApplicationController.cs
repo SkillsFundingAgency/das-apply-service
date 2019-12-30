@@ -52,7 +52,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly ISubmitApplicationConfirmationEmailService _submitApplicationEmailService;
 
         private const string InputClassUpperCase = "app-uppercase";
-        private const int Section1Id = 1;
         private const string NotApplicableAnswerText = "None of the above";
         private const string InvalidCheckBoxListSelectionErrorMessage = "If your answer is 'none of the above', you must only select that option";
 
@@ -85,7 +84,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Applications(string applicationType)
+        public async Task<IActionResult> Applications()
         {
             var user = User.Identity.Name;
 
@@ -102,7 +101,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (!applications.Any())
             {              
-                return await StartApplication(userId, applicationType);
+                return await StartApplication(userId);
             }
             
             if (applications.Count() > 1)
@@ -124,51 +123,80 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
         }
 
-        private async Task<IActionResult> StartApplication(Guid userId, string applicationType)
+        private async Task<IActionResult> StartApplication(Guid userId)
         {
+            var applicationType = ApplicationTypes.RegisterTrainingProviders;
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-            
+
             _logger.LogInformation($"Application Details:: Ukprn: [{applicationDetails?.UKPRN}], ProviderName: [{applicationDetails?.UkrlpLookupDetails?.ProviderName}], RouteId: [{applicationDetails?.ApplicationRoute?.Id}]");
+            var providerRoute = applicationDetails.ApplicationRoute.Id;
+
             var startApplicationData = new JObject
             {
                 ["OrganisationReferenceId"] = applicationDetails.UKPRN.ToString(),
                 ["OrganisationName"] = applicationDetails.UkrlpLookupDetails.ProviderName,
-                ["Apply-ProviderRoute"] = applicationDetails.ApplicationRoute.Id.ToString()
+                ["Apply-ProviderRoute"] = providerRoute.ToString()
             };
 
             var startApplicationJson = JsonConvert.SerializeObject(startApplicationData);
 
-            var applicationStartResponse =
-                await _qnaApiClient.StartApplication(userId.ToString(), applicationType, startApplicationJson);
+            var qnaResponse = await _qnaApiClient.StartApplication(userId.ToString(), applicationType, startApplicationJson);
+            _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse POST: applicationId: [{qnaResponse ?.ApplicationId}]");
 
-            _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse POST: applicationId: [{applicationStartResponse?.ApplicationId}]");
-            var response = await _apiClient.StartApplication(applicationStartResponse.ApplicationId, userId, applicationType);
-            _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking response from StartApplication POST: applicationId: [{response?.ApplicationId}]");
-
-            if (response != null)
+            if (qnaResponse != null)
             {
-                await SavePreambleInformation(response.ApplicationId, applicationDetails);
+                var allQnaSequences = await _qnaApiClient.GetSequences(qnaResponse.ApplicationId);
+                // NOTE: THIS LINE MIGHT BE TOO INTENSIVE ON QNA API
+                var allQnaSections = allQnaSequences.Select(async sequence => await _qnaApiClient.GetSections(qnaResponse.ApplicationId, sequence.Id)).Select(t => t.Result);
 
-                if (applicationDetails.UkrlpLookupDetails.VerifiedByCompaniesHouse)
-                {
-                    await SaveCompaniesHouseInformation(response.ApplicationId, applicationDetails);
-                }
+                var startApplicationRequest = BuildStartApplicationRequest(qnaResponse.ApplicationId, userId, providerRoute, allQnaSequences, allQnaSections);
 
-                if (applicationDetails.UkrlpLookupDetails.VerifiedbyCharityCommission)
+                var response = await _apiClient.StartApplication(startApplicationRequest);
+                _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking response from StartApplication POST: applicationId: [{response?.ApplicationId}]");
+
+                if (response != null)
                 {
-                    await SaveCharityCommissionInformation(response.ApplicationId, applicationDetails);
+                    await SavePreambleInformation(response.ApplicationId, applicationDetails);
+
+                    if (applicationDetails.UkrlpLookupDetails.VerifiedByCompaniesHouse)
+                    {
+                        await SaveCompaniesHouseInformation(response.ApplicationId, applicationDetails);
+                    }
+
+                    if (applicationDetails.UkrlpLookupDetails.VerifiedbyCharityCommission)
+                    {
+                        await SaveCharityCommissionInformation(response.ApplicationId, applicationDetails);
+                    }
                 }
             }
 
-            return RedirectToAction("Applications", new { applicationType = applicationType });
+            return RedirectToAction("Applications", new { applicationType });
         }
 
-        [HttpGet]
-        public async Task<IActionResult> StartApplication(string applicationType)
+        private static Application.Apply.StartApplicationRequest BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<IEnumerable<ApplicationSection>> qnaSections)
         {
-            var response = await _apiClient.StartApplication(await _userService.GetUserId(), applicationType);
-            
-            return RedirectToAction("TaskList", new { applicationId = response.ApplicationId });            
+            return new Application.Apply.StartApplicationRequest
+            {
+                ApplicationId = qnaApplicationId,
+                CreatingContactId = creatingContactId,
+                ProviderRoute = providerRoute,
+                ApplySequences = qnaSequences.Select(sequence => new ApplySequence
+                {
+                    SequenceId = sequence.Id,
+                    SequenceNo = sequence.SequenceId,
+                    Sections = qnaSections.SelectMany(y => y.Where(x => x.SectionId == sequence.SequenceId).Select(section => new ApplySection
+                    {
+                        SectionId = section.Id,
+                        SectionNo = section.SectionId,
+                        //Status = "Draft",
+                        //RequestedFeedbackAnswered = false
+                    })).ToList(),
+                    //Status = "Draft",
+                    //IsActive = sequence.IsActive,
+                    //NotRequired = sequence.NotRequired,
+                    //Sequential = false
+                }).ToList()
+            };
         }
 
         [HttpGet]

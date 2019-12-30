@@ -37,9 +37,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpPost("Application/Start")]
-        public async Task<ActionResult<StartApplicationResponse>> Start([FromBody] StartApplyRequest request)
+        public async Task<ActionResult<StartApplicationResponse>> Start([FromBody] StartApplicationRequest request)
         {
-            return await _mediator.Send(new StartApplicationRequest(request.ApplicationId, request.UserId, request.ApplicationType));
+            return await _mediator.Send(request);
         }
 
         [HttpGet("Application/{applicationId}")]

@@ -1,14 +1,10 @@
+using MediatR;
+using SFA.DAS.ApplyService.Application.Organisations;
+using SFA.DAS.ApplyService.Application.Users;
+using SFA.DAS.ApplyService.Domain.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
-using MediatR;
-using Newtonsoft.Json;
-using SFA.DAS.ApplyService.Application.Organisations;
-using SFA.DAS.ApplyService.Domain.Apply;
-using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply
 {
@@ -16,124 +12,45 @@ namespace SFA.DAS.ApplyService.Application.Apply
     {
         private readonly IApplyRepository _applyRepository;
         private readonly IOrganisationRepository _organisationRepository;
-        public StartApplicationHandler(IApplyRepository applyRepository, IOrganisationRepository organisationRepository)
+        private readonly IContactRepository _contactRepository;
+
+        public StartApplicationHandler(IApplyRepository applyRepository, IOrganisationRepository organisationRepository, IContactRepository contactRepository)
         {
             _applyRepository = applyRepository;
             _organisationRepository = organisationRepository;
+            _contactRepository = contactRepository;
         }
 
         public async Task<StartApplicationResponse> Handle(StartApplicationRequest request, CancellationToken cancellationToken)
         {
-            var assets = await _applyRepository.GetAssets();
+            var applicationId = Guid.Empty;
 
-            var org = await _organisationRepository.GetUserOrganisation(request.UserId);
+            var creatingContact = await _contactRepository.GetContact(request.CreatingContactId);
+            var org = await _organisationRepository.GetOrganisationByUserId(request.CreatingContactId);
 
-            var workflowId = await _applyRepository.GetLatestWorkflow(request.ApplicationType);
-            var applicationId =
-                await _applyRepository.CreateApplication(request.ApplicationId, request.ApplicationType, org.Id, request.UserId, workflowId);
-
-            return new StartApplicationResponse() {ApplicationId = applicationId};
-        }
-
-        private void DisableSequencesAndSectionsAsAppropriate(Organisation org, List<ApplicationSequence> sequences, List<ApplicationSection> sections)
-        {
-            bool isEpao = IsOrganisationOnEPAORegister(org);
-            if (isEpao)
+            if (org != null && creatingContact != null)
             {
-                RemoveSectionsOneAndTwo(sections);
-            }
+                var sequences = request.ApplySequences;
+                //MakeSequencesSequentialAsAppropriate(request.ProviderRoute, sequences);
+                //DisableSequencesAndSectionsAsAppropriate(request.ProviderRoute, sequences);
 
-            bool isFinancialExempt = IsFinancialExempt(org.OrganisationDetails?.FHADetails);
-            if (isFinancialExempt)
-            {
-                RemoveSectionThree(sections);
-            }
-
-            if (isEpao && isFinancialExempt)
-            {
-                RemoveSequenceOne(sequences);
-            }
-        }
-
-        private static bool IsOrganisationOnEPAORegister(Organisation org)
-        {
-            if (org is null) return false;
-
-            return org.RoEPAOApproved;
-        }
-
-        private static bool IsFinancialExempt(FHADetails financials)
-        {
-            if (financials is null) return false;
-
-            bool financialExempt = financials.FinancialExempt ?? false;
-            bool financialIsNotDue = (financials.FinancialDueDate?.Date ?? DateTime.MinValue) > DateTime.Today;
-
-            return financialExempt || financialIsNotDue;
-        }
-
-        private void RemoveSequenceOne(List<ApplicationSequence> sequences)
-        {
-            var stage1 = sequences.Single(seq => seq.SequenceId == SequenceId.Stage1);
-            stage1.IsActive = false;
-            stage1.NotRequired = true;
-            stage1.Status = ApplicationSequenceStatus.Approved;
-
-            SetSubmissionData(stage1.ApplicationId, stage1.SequenceId).GetAwaiter().GetResult();
-
-            sequences.Single(seq => seq.SequenceId == SequenceId.Stage2).IsActive = true;
-        }
-
-        private async Task SetSubmissionData(Guid applicationId, int sequenceId)
-        {
-            var application = await _applyRepository.GetApplication(applicationId);
-
-            if (application != null)
-            {
-                if(application.ApplicationData == null)
+                var applyData = new ApplyData
                 {
-                    application.ApplicationData = new ApplicationData();
-                }
+                    Sequences = sequences,
+                    ApplyDetails = new ApplyDetails
+                    {
+                        ReferenceNumber = await _applyRepository.GetNextRoatpApplicationReference(),
+                        UKPRN = org.OrganisationUkprn?.ToString(),
+                        OrganisationName = org.Name,
+                        TradingName = org.OrganisationDetails?.TradingName,
+                        ProviderRoute = request.ProviderRoute
+                    }
+                };
 
-                if (sequenceId == SequenceId.Stage1)
-                {
-                    application.ApplicationData.LatestInitSubmissionDate = DateTime.UtcNow;
-                    application.ApplicationData.InitSubmissionClosedDate = DateTime.UtcNow;
-                }
-                else if (sequenceId == SequenceId.Stage2)
-                {
-                    application.ApplicationData.LatestStandardSubmissionDate = DateTime.UtcNow;
-                    application.ApplicationData.StandardSubmissionClosedDate = DateTime.UtcNow;
-                }
-
-                await _applyRepository.UpdateApplicationData(application.Id, application.ApplicationData);
+                applicationId = await _applyRepository.StartApplication(request.ApplicationId, applyData, org.Id, creatingContact.Id);
             }
-        }
 
-        private void RemoveSectionThree(List<ApplicationSection> sections)
-        {
-            foreach(var sec in sections.Where(s => s.SectionId == 3))
-            {
-                sec.NotRequired = true;
-                sec.Status = ApplicationSectionStatus.Evaluated;
-
-                if (sec.QnAData.FinancialApplicationGrade is null)
-                {
-                    sec.QnAData.FinancialApplicationGrade = new FinancialApplicationGrade();
-                }
-
-                sec.QnAData.FinancialApplicationGrade.SelectedGrade = FinancialApplicationSelectedGrade.Exempt;
-                sec.QnAData.FinancialApplicationGrade.GradedDateTime = DateTime.UtcNow;
-            }
-        }
-
-        private void RemoveSectionsOneAndTwo(List<ApplicationSection> sections)
-        {
-            foreach (var sec in sections.Where(s => s.SectionId == 1 || s.SectionId == 2))
-            {
-                sec.NotRequired = true;
-                sec.Status = ApplicationSectionStatus.Evaluated;
-            }
+            return new StartApplicationResponse() { ApplicationId = applicationId };
         }
     }
 }

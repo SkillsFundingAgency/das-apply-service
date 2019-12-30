@@ -86,4 +86,7 @@
   <ItemGroup>
     <PreDeploy Include="Script.PreDeployment1.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="SFA.DAS.ApplyService.Database.publish.xml" />
+  </ItemGroup>
 </Project>

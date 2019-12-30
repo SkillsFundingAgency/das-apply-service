@@ -142,24 +142,30 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
 
-            var response = new StartApplicationResponse
+            var applicationId = Guid.NewGuid();
+            var qnaResponse = new StartApplicationResponse
             {
-                ApplicationId = Guid.NewGuid()
+                ApplicationId = applicationId
             };
 
-            _qnaApiClient.Setup(x => x.StartApplication(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(response).Verifiable();
+            var apiResponse = new StartApplicationResponse
+            {
+                ApplicationId = applicationId
+            };
 
-            _apiClient.Setup(x => x.StartApplication(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>())).ReturnsAsync(response).Verifiable();
+            _qnaApiClient.Setup(x => x.StartApplication(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(qnaResponse).Verifiable();
+
+            _apiClient.Setup(x => x.StartApplication(It.IsAny<StartApplicationRequest>())).ReturnsAsync(apiResponse).Verifiable();
 
             var providerRouteSection = new ApplicationSection
             {
-                ApplicationId = Guid.NewGuid(),
+                ApplicationId = applicationId,
                 SectionId = 1
             };
 
             _qnaApiClient.Setup(x => x.GetSectionBySectionNo(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(providerRouteSection);
 
-            var result = _controller.Applications(ApplicationTypes.RegisterTrainingProviders).GetAwaiter().GetResult();
+            var result = _controller.Applications().GetAwaiter().GetResult();
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
@@ -183,7 +189,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
 
-            var result = _controller.Applications(ApplicationTypes.RegisterTrainingProviders).GetAwaiter().GetResult();
+            var result = _controller.Applications().GetAwaiter().GetResult();
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
@@ -204,7 +210,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
 
-            var result = _controller.Applications(ApplicationTypes.RegisterTrainingProviders).GetAwaiter().GetResult();
+            var result = _controller.Applications().GetAwaiter().GetResult();
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
