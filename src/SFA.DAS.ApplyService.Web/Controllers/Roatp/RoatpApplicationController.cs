@@ -484,6 +484,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
 
+            var populatedNotRequiredOverrides = await PopulateNotRequiredOverridesWithApplicationData(applicationId, _notRequiredOverrides);
+
             var yourOrganisationSequence =
                 sequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
             var yourOrganisationSections = await _qnaApiClient.GetSections(applicationId, yourOrganisationSequence.Id);
@@ -514,7 +516,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 ApplicationId = applicationId,
                 ApplicationSequences = filteredSequences,
-                NotRequiredOverrides = _notRequiredOverrides,
+                NotRequiredOverrides = populatedNotRequiredOverrides,
                 UKPRN = organisationDetails.OrganisationUkprn?.ToString(),
                 OrganisationName = organisationDetails.Name,
                 TradingName = organisationDetails.OrganisationDetails?.TradingName,
@@ -529,6 +531,24 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             };
 
             return View("~/Views/Roatp/TaskList.cshtml", model);
+        }
+
+        private async Task<List<NotRequiredOverrideConfiguration>> PopulateNotRequiredOverridesWithApplicationData(Guid applicationId, List<NotRequiredOverrideConfiguration> notRequiredOverrides)
+        {
+            foreach (var overrideConfig in notRequiredOverrides)
+            {
+                var applicationDataValue = await _qnaApiClient.GetAnswerByTag(applicationId, overrideConfig.ConditionalCheckField);
+                if (applicationDataValue?.Value != null)
+                {
+                    overrideConfig.Value = applicationDataValue.Value;
+                }
+                else
+                {
+                    overrideConfig.Value = string.Empty;
+                }
+            }
+
+            return notRequiredOverrides;
         }
 
         private async Task RemoveIrrelevantQuestions(Guid applicationId, ApplicationSection section)
@@ -1029,7 +1049,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
-            var providerRoute = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, "Apply-ProviderRoute");
+            var providerRoute = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.ProviderRoute);
             var nextApplicationReferenceNumber = await _roatpApiClient.GetNextRoatpApplicationReference();
                             
             var applicationData = new RoatpApplicationData
