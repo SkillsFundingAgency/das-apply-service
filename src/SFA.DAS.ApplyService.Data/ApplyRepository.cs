@@ -48,7 +48,20 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<Domain.Entities.Apply> GetApplication(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var application = await connection.QuerySingleOrDefaultAsync<Domain.Entities.Apply>(@"SELECT * FROM apply WHERE ApplicationId = @applicationId", new { applicationId });
 
+                //if (application != null)
+                //{
+                //    application.ApplyingOrganisation = await GetOrganisationForApplication(applicationId);
+                //}
+
+                return application;
+            }
+        }
 
 
 
@@ -483,20 +496,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<Domain.Entities.Application> GetApplication(Guid applicationId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                var application = await connection.QuerySingleOrDefaultAsync<Domain.Entities.Application>(@"SELECT * FROM Applications WHERE Id = @applicationId", new {applicationId});
 
-                if(application != null)
-                {
-                    application.ApplyingOrganisation = await GetOrganisationForApplication(applicationId);
-                }
-
-                return application;
-            }
-        }
 
         public async Task UpdateApplicationStatus(Guid applicationId, string status)
         {

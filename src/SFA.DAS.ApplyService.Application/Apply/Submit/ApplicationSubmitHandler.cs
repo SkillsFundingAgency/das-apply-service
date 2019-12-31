@@ -25,104 +25,108 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
         
         public async Task<bool> Handle(ApplicationSubmitRequest request, CancellationToken cancellationToken)
         {
+            ///////////////////////////////////////////////////////////
+            // TODO: THIS WILL NEED RE-WRITING FOR NEW RoATP PROCESS
+            ///////////////////////////////////////////////////////////
+
             bool canSubmit = request != null && await _applyRepository.CanSubmitApplication(request);
 
-            if (canSubmit)
-            {
-                await SubmitApplicationSequence(request);
+            //if (canSubmit)
+            //{
+            //    await SubmitApplicationSequence(request);
 
-                var updatedApplication = await _applyRepository.GetApplication(request.ApplicationId);
+            //    var updatedApplication = await _applyRepository.GetApplication(request.ApplicationId);
 
-                var contact = await _contactRepository.GetContact(request.UserEmail);
-                var reference = updatedApplication.ApplicationData.ReferenceNumber;
-                var standard = updatedApplication.ApplicationData.StandardName;
+            //    var contact = await _contactRepository.GetContact(request.UserEmail);
+            //    var reference = updatedApplication.ApplicationData.ReferenceNumber;
+            //    var standard = updatedApplication.ApplicationData.StandardName;
 
-                await NotifyContact(contact, request.SequenceId, reference, standard);
-            }
+            //    await NotifyContact(contact, request.SequenceId, reference, standard);
+            //}
 
             return canSubmit;
         }
 
-        private async Task SubmitApplicationSequence(ApplicationSubmitRequest request)
-        {
-            var application = await _applyRepository.GetApplication(request.ApplicationId);
+        //private async Task SubmitApplicationSequence(ApplicationSubmitRequest request)
+        //{
+        //    var application = await _applyRepository.GetApplication(request.ApplicationId);
 
-            if(application.ApplicationData == null)
-            {
-                // Note: If this has happened then are bigger issues elsewhere. Perhaps raise an exception rather than masking it??
-                application.ApplicationData = new ApplicationData();
-            }
+        //    if(application.ApplicationData == null)
+        //    {
+        //        // Note: If this has happened then are bigger issues elsewhere. Perhaps raise an exception rather than masking it??
+        //        application.ApplicationData = new ApplicationData();
+        //    }
 
-            if(string.IsNullOrWhiteSpace(application.ApplicationData.ReferenceNumber))
-            {
-                application.ApplicationData.ReferenceNumber = await CreateReferenceNumber(request.ApplicationId);
-            }
+        //    if(string.IsNullOrWhiteSpace(application.ApplicationData.ReferenceNumber))
+        //    {
+        //        application.ApplicationData.ReferenceNumber = await CreateReferenceNumber(request.ApplicationId);
+        //    }
 
-            if(request.SequenceId == 1)
-            {
-                if (application.ApplicationData.InitSubmissions == null)
-                {
-                    application.ApplicationData.InitSubmissions = new List<InitSubmission>();
-                }
+        //    if(request.SequenceId == 1)
+        //    {
+        //        if (application.ApplicationData.InitSubmissions == null)
+        //        {
+        //            application.ApplicationData.InitSubmissions = new List<InitSubmission>();
+        //        }
 
-                var submission = new InitSubmission
-                {
-                    SubmittedAt = DateTime.UtcNow,
-                    SubmittedBy = request.UserId,
-                    SubmittedByEmail = request.UserEmail
-                };
+        //        var submission = new InitSubmission
+        //        {
+        //            SubmittedAt = DateTime.UtcNow,
+        //            SubmittedBy = request.UserId,
+        //            SubmittedByEmail = request.UserEmail
+        //        };
 
-                application.ApplicationData.InitSubmissions.Add(submission);
-                application.ApplicationData.InitSubmissionsCount = application.ApplicationData.InitSubmissions.Count;
-                application.ApplicationData.LatestInitSubmissionDate = submission.SubmittedAt;
-            }
-            else if(request.SequenceId == 2)
-            {
-                if (application.ApplicationData.StandardSubmissions == null)
-                {
-                    application.ApplicationData.StandardSubmissions = new List<StandardSubmission>();
-                }
+        //        application.ApplicationData.InitSubmissions.Add(submission);
+        //        application.ApplicationData.InitSubmissionsCount = application.ApplicationData.InitSubmissions.Count;
+        //        application.ApplicationData.LatestInitSubmissionDate = submission.SubmittedAt;
+        //    }
+        //    else if(request.SequenceId == 2)
+        //    {
+        //        if (application.ApplicationData.StandardSubmissions == null)
+        //        {
+        //            application.ApplicationData.StandardSubmissions = new List<StandardSubmission>();
+        //        }
 
-                var submission = new StandardSubmission
-                {
-                    SubmittedAt = DateTime.UtcNow,
-                    SubmittedBy = request.UserId,
-                    SubmittedByEmail = request.UserEmail
-                };
+        //        var submission = new StandardSubmission
+        //        {
+        //            SubmittedAt = DateTime.UtcNow,
+        //            SubmittedBy = request.UserId,
+        //            SubmittedByEmail = request.UserEmail
+        //        };
 
-                application.ApplicationData.StandardSubmissions.Add(submission);
-                application.ApplicationData.StandardSubmissionsCount = application.ApplicationData.StandardSubmissions.Count;
-                application.ApplicationData.LatestStandardSubmissionDate = submission.SubmittedAt;
-            }
+        //        application.ApplicationData.StandardSubmissions.Add(submission);
+        //        application.ApplicationData.StandardSubmissionsCount = application.ApplicationData.StandardSubmissions.Count;
+        //        application.ApplicationData.LatestStandardSubmissionDate = submission.SubmittedAt;
+        //    }
 
-            await _applyRepository.SubmitApplicationSequence(request, application.ApplicationData);
-        }
+        //    await _applyRepository.SubmitApplicationSequence(request, application.ApplicationData);
+        //}
 
-        private async Task<string> CreateReferenceNumber(Guid applicationId)
-        {
-            var referenceNumber = string.Empty;
+        //private async Task<string> CreateReferenceNumber(Guid applicationId)
+        //{
+        //    var referenceNumber = string.Empty;
 
-            var seq = await _applyRepository.GetNextAppReferenceSequence();
-            var refFormat = await _applyRepository.GetWorkflowReferenceFormat(applicationId);
+        //    var seq = await _applyRepository.GetNextAppReferenceSequence();
+        //    var refFormat = await _applyRepository.GetWorkflowReferenceFormat(applicationId);
 
-            if (seq > 0 && !string.IsNullOrEmpty(refFormat))
-            {
-                referenceNumber = string.Format($"{refFormat}{seq:D6}");
-            }
+        //    if (seq > 0 && !string.IsNullOrEmpty(refFormat))
+        //    {
+        //        referenceNumber = string.Format($"{refFormat}{seq:D6}");
+        //    }
 
-            return referenceNumber;
-        }
+        //    return referenceNumber;
+        //}
 
-        private async Task NotifyContact(Contact contact, int sequenceId, string reference, string standard)
-        {
-            if (sequenceId == 1)
-            {
-                await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_INITIAL_SUBMISSION, contact, new { reference });
-            }
-            else if (sequenceId == 2)
-            {
-                await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_STANDARD_SUBMISSION, contact, new { reference, standard });
-            }
-        }
+        //private async Task NotifyContact(Contact contact, int sequenceId, string reference, string standard)
+        //{
+        //    if (sequenceId == 1)
+        //    {
+        //        await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_INITIAL_SUBMISSION, contact, new { reference });
+        //    }
+        //    else if (sequenceId == 2)
+        //    {
+        //        await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_STANDARD_SUBMISSION, contact, new { reference, standard });
+        //    }
+        //}
     }
 }

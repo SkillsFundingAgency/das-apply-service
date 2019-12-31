@@ -20,7 +20,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     {
         Task<StartApplicationResponse> StartApplication(StartApplicationRequest startApplicationRequest);
 
-
+        Task<Domain.Entities.Apply> GetApplication(Guid applicationId);
 
 
 
@@ -39,7 +39,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, Guid userId);
         Task ImportWorkflow(IFormFile file);
         Task UpdateApplicationData<T>(T applicationData, Guid applicationId);
-        Task<Domain.Entities.Application> GetApplication(Guid applicationId);
+        
        
         Task<string> GetApplicationStatus(Guid applicationId, int standardCode);
 

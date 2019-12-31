@@ -12,7 +12,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
     {
         Task<Guid> StartApplication(Guid applicationId, ApplyData applyData, Guid organisationId, Guid createdBy);
 
-
+        Task<Domain.Entities.Apply> GetApplication(Guid applicationId);
 
 
 
@@ -44,7 +44,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<ApplicationSequence>> GetSequences(Guid applicationId);
         Task OpenSequence(Guid applicationId, int nextSequenceId);
         Task UpdateApplicationData(Guid applicationId, ApplicationData applicationData);
-        Task<Domain.Entities.Application> GetApplication(Guid requestApplicationId);
         Task UpdateApplicationStatus(Guid applicationId, string status);
         Task DeleteRelatedApplications(Guid applicationId);
 

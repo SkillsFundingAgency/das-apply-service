@@ -229,42 +229,44 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (application.ApplicationStatus == ApplicationStatus.FeedbackAdded)
             {
-                return View("~/Views/Application/FeedbackIntro.cshtml", application.Id);
+                return View("~/Views/Application/FeedbackIntro.cshtml", application.ApplicationId);
             }
 
-            var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
+            return RedirectToAction("Sequence", new { applicationId = application.ApplicationId });
 
-            StandardApplicationData applicationData = null;
+            //var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
 
-            if (application.ApplicationData != null)
-            {
-                applicationData = new StandardApplicationData
-                {
-                    StandardName = application.ApplicationData.StandardName
-                };
-            }
+            //StandardApplicationData applicationData = null;
 
-            // Only go to search if application hasn't got a selected standard?
-            if (sequence.SequenceId == SequenceId.Stage1)
-            {
-                return RedirectToAction("Sequence", new {applicationId});
-            }
-            else if (sequence.SequenceId == SequenceId.Stage2 && string.IsNullOrWhiteSpace(applicationData?.StandardName))
-            {
-                var org = await _apiClient.GetOrganisationByUserId(User.GetUserId());
-                if (org.RoEPAOApproved)
-                {
-                    return RedirectToAction("Index", "Standard", new {applicationId});  
-                }
+            //if (application.ApplicationData != null)
+            //{
+            //    applicationData = new StandardApplicationData
+            //    {
+            //        StandardName = application.ApplicationData.StandardName
+            //    };
+            //}
 
-                return View("~/Views/Application/Stage2Intro.cshtml", applicationId);
-            }
-            else if (sequence.SequenceId == SequenceId.Stage2)
-            {
-                return RedirectToAction("Sequence", new {applicationId});
-            }
+            //// Only go to search if application hasn't got a selected standard?
+            //if (sequence.SequenceId == SequenceId.Stage1)
+            //{
+            //    return RedirectToAction("Sequence", new {applicationId});
+            //}
+            //else if (sequence.SequenceId == SequenceId.Stage2 && string.IsNullOrWhiteSpace(applicationData?.StandardName))
+            //{
+            //    var org = await _apiClient.GetOrganisationByUserId(User.GetUserId());
+            //    if (org.RoEPAOApproved)
+            //    {
+            //        return RedirectToAction("Index", "Standard", new {applicationId});  
+            //    }
 
-            throw new BadRequestException("Section does not have a valid DisplayType");
+            //    return View("~/Views/Application/Stage2Intro.cshtml", applicationId);
+            //}
+            //else if (sequence.SequenceId == SequenceId.Stage2)
+            //{
+            //    return RedirectToAction("Sequence", new {applicationId});
+            //}
+
+            //throw new BadRequestException("Section does not have a valid DisplayType");
         }
 
         [HttpGet]
@@ -994,11 +996,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var config = await _configService.GetConfig();
             return View("~/Views/Application/Submitted.cshtml", new SubmittedViewModel
             {
-                ReferenceNumber = application?.ApplicationData?.ReferenceNumber,
+                ReferenceNumber = application?.ApplyData?.ApplyDetails?.ReferenceNumber,
                 FeedbackUrl = config.FeedbackUrl,
-                StandardName = application?.ApplicationData?.StandardName,
-                StandardReference = application?.ApplicationData?.StandardReference,
-                StandardLevel = application?.ApplicationData?.StandardLevel
+                //StandardName = application?.ApplicationData?.StandardName,
+                //StandardReference = application?.ApplicationData?.StandardReference,
+                //StandardLevel = application?.ApplicationData?.StandardLevel
             });
         }
 
@@ -1009,9 +1011,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var config = await _configService.GetConfig();
             return View("~/Views/Application/NotSubmitted.cshtml", new SubmittedViewModel
             {
-                ReferenceNumber = application?.ApplicationData?.ReferenceNumber,
+                ReferenceNumber = application?.ApplyData?.ApplyDetails?.ReferenceNumber,
                 FeedbackUrl = config.FeedbackUrl,
-                StandardName = application?.ApplicationData?.StandardName
+                //StandardName = application?.ApplicationData?.StandardName
             });
         }
 

@@ -27,34 +27,38 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.ReturnRequestHandl
         [SetUp]
         public void Setup()
         {
-            var initSubmissions = new List<InitSubmission> { new InitSubmission() };
-            var standardSubmissions = new List<StandardSubmission> { new StandardSubmission() };
-            var applicationData = new ApplicationData { InitSubmissions = initSubmissions, StandardSubmissions = standardSubmissions };
-            var application = new Domain.Entities.Application() { ApplicationData = applicationData };
-
-            var sequence1 = new ApplicationSequence { ApplicationId = application.Id, SequenceId = SequenceId.Stage1, Sections = new List<ApplicationSection>() };
-            var sequence2 = new ApplicationSequence { ApplicationId = application.Id, SequenceId = SequenceId.Stage2, Sections = new List<ApplicationSection>() };
-
-            ApplyRepository = new Mock<IApplyRepository>();
-            ApplyRepository.Setup(r => r.GetSequences(It.IsAny<Guid>())).ReturnsAsync(new List<ApplicationSequence> { sequence1, sequence2 });
-            ApplyRepository.Setup(r => r.GetApplication(It.IsAny<Guid>())).ReturnsAsync(application);
-
-            ContactRepository = new Mock<IContactRepository>();
-            ContactRepository.Setup(r => r.GetContact(It.IsAny<Guid>())).ReturnsAsync(new Contact());
-
-            ConfigService = new Mock<IConfigurationService>();
-            ConfigService.Setup(x => x.GetConfig()).ReturnsAsync(new ApplyConfig
-            {
-                AssessorServiceBaseUrl = "https://host/signinpage"
-            });
-
-            EmailService = new Mock<IEmailService>();
-
-            OrganisationRepository = new Mock<IOrganisationRepository>();
+            ///////////////////////////////////////////////////////////
+            // TODO: THIS WILL NEED RE-WRITING FOR NEW RoATP PROCESS
+            ///////////////////////////////////////////////////////////
             
-            OrganisationRepository.Setup(r => r.GetOrganisationByApplicationId(It.IsAny<Guid>())).ReturnsAsync(new Organisation() { RoEPAOApproved = true});
-            
-            Handler = new ReturnRequestHandler(ApplyRepository.Object, ContactRepository.Object, EmailService.Object,ConfigService.Object, OrganisationRepository.Object, new Mock<ILogger<ReturnRequestHandler>>().Object);
+            //var initSubmissions = new List<InitSubmission> { new InitSubmission() };
+            //var standardSubmissions = new List<StandardSubmission> { new StandardSubmission() };
+            //var applicationData = new ApplicationData { InitSubmissions = initSubmissions, StandardSubmissions = standardSubmissions };
+            //var application = new Domain.Entities.Application() { ApplicationData = applicationData };
+
+            //var sequence1 = new ApplicationSequence { ApplicationId = application.Id, SequenceId = SequenceId.Stage1, Sections = new List<ApplicationSection>() };
+            //var sequence2 = new ApplicationSequence { ApplicationId = application.Id, SequenceId = SequenceId.Stage2, Sections = new List<ApplicationSection>() };
+
+            //ApplyRepository = new Mock<IApplyRepository>();
+            //ApplyRepository.Setup(r => r.GetSequences(It.IsAny<Guid>())).ReturnsAsync(new List<ApplicationSequence> { sequence1, sequence2 });
+            //ApplyRepository.Setup(r => r.GetApplication(It.IsAny<Guid>())).ReturnsAsync(application);
+
+            //ContactRepository = new Mock<IContactRepository>();
+            //ContactRepository.Setup(r => r.GetContact(It.IsAny<Guid>())).ReturnsAsync(new Contact());
+
+            //ConfigService = new Mock<IConfigurationService>();
+            //ConfigService.Setup(x => x.GetConfig()).ReturnsAsync(new ApplyConfig
+            //{
+            //    AssessorServiceBaseUrl = "https://host/signinpage"
+            //});
+
+            //EmailService = new Mock<IEmailService>();
+
+            //OrganisationRepository = new Mock<IOrganisationRepository>();
+
+            //OrganisationRepository.Setup(r => r.GetOrganisationByApplicationId(It.IsAny<Guid>())).ReturnsAsync(new Organisation() { RoEPAOApproved = true});
+
+            //Handler = new ReturnRequestHandler(ApplyRepository.Object, ContactRepository.Object, EmailService.Object,ConfigService.Object, OrganisationRepository.Object, new Mock<ILogger<ReturnRequestHandler>>().Object);
         }
     }
 }

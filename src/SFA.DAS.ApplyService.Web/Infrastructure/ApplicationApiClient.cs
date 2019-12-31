@@ -45,6 +45,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
 
 
+        public async Task<Domain.Entities.Apply> GetApplication(Guid applicationId)
+        {
+            return await (await _httpClient.GetAsync($"Application/{applicationId}")).Content
+                .ReadAsAsync<Domain.Entities.Apply>();
+        }
+
 
 
 
@@ -107,6 +113,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<bool> Submit(Guid applicationId, int sequenceId, Guid userId, string userEmail)
         {
+            ///////////////////////////////////////////////////////////
+            // TODO: THIS WILL NEED RE-WRITING FOR NEW RoATP PROCESS
+            ///////////////////////////////////////////////////////////
             return await (await _httpClient.PostAsJsonAsync(
                     "/Applications/Submit", new {applicationId, sequenceId, userId, userEmail })).Content
                     .ReadAsAsync<bool>();
@@ -137,14 +146,13 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task UpdateApplicationData<T>(T applicationData, Guid applicationId)
         {
+            ///////////////////////////////////////////////////////////
+            // TODO: THIS WILL NEED RE-WRITING FOR NEW RoATP PROCESS
+            ///////////////////////////////////////////////////////////
             await _httpClient.PostAsJsonAsync($"/Application/{applicationId}/UpdateApplicationData", applicationData);
         }
 
-        public async Task<Domain.Entities.Application> GetApplication(Guid applicationId)
-        {
-            return await (await _httpClient.GetAsync($"Application/{applicationId}")).Content
-                .ReadAsAsync<Domain.Entities.Application>();
-        }
+
 
         public async Task<string> GetApplicationStatus(Guid applicationId, int standardCode)
         {

@@ -43,11 +43,15 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet("Application/{applicationId}")]
-        public async Task<ActionResult<Domain.Entities.Application>> GetApplication(Guid applicationId)
+        public async Task<ActionResult<Domain.Entities.Apply>> GetApplication(Guid applicationId)
         {
             return await _mediator.Send(new GetApplicationRequest(applicationId));
         }
 
+
+
+
+        // NOTE: This is old stuff or things which are not migrated over yet
         [HttpGet("Answer/{QuestionIdentifier}/{applicationId}")]
         public async Task<ActionResult<GetAnswersResponse>> GetAnswer(Guid applicationId, string questionIdentifier)
         {
@@ -140,6 +144,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("/Applications/Submit")]
         public async Task<ActionResult<bool>> Submit([FromBody] ApplicationSubmitRequest request)
         {
+            ///////////////////////////////////////////////////////////
+            // TODO: THIS WILL NEED RE-WRITING FOR NEW RoATP PROCESS
+            ///////////////////////////////////////////////////////////
             var submitted = await _mediator.Send(request);
             return submitted;
         }
@@ -154,6 +161,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("/Application/{applicationId}/UpdateApplicationData")]
         public async Task<ActionResult> UpdateApplicationData(Guid applicationId, [FromBody] object applicationData)
         {
+            ///////////////////////////////////////////////////////////
+            // TODO: THIS WILL NEED RE-WRITING FOR NEW RoATP PROCESS
+            ///////////////////////////////////////////////////////////
             await _mediator.Send(new UpdateApplicationDataRequest(applicationId, applicationData));
             return Ok();
         }

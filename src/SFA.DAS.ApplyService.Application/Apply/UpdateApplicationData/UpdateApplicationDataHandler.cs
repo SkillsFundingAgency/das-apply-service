@@ -23,25 +23,29 @@ namespace SFA.DAS.ApplyService.Application.Apply.UpdateApplicationData
         
         public async Task<Unit> Handle(UpdateApplicationDataRequest request, CancellationToken cancellationToken)
         {
-            if (request?.ApplicationData == null) return Unit.Value;
+            ///////////////////////////////////////////////////////////
+            // TODO: THIS WILL NEED RE-WRITING FOR NEW RoATP PROCESS
+            ///////////////////////////////////////////////////////////
+            
+            //if (request?.ApplicationData == null) return Unit.Value;
 
-            var standardAppData = JsonConvert.DeserializeObject<StandardApplicationData>(request.ApplicationData.ToString()); 
-            var application = await _applyRepository.GetApplication(request.ApplicationId);
+            //var standardAppData = JsonConvert.DeserializeObject<StandardApplicationData>(request.ApplicationData.ToString()); 
+            //var application = await _applyRepository.GetApplication(request.ApplicationId);
 
-            //application data entry must exist in application table
-            if (application == null || standardAppData == null) return Unit.Value;
+            ////application data entry must exist in application table
+            //if (application == null || standardAppData == null) return Unit.Value;
 
-            if (application?.ApplicationData == null)
-            {
-                application.ApplicationData = new ApplicationData();
-            }
+            //if (application?.ApplicationData == null)
+            //{
+            //    application.ApplicationData = new ApplicationData();
+            //}
 
-            application.ApplicationData.StandardName = standardAppData.StandardName;
-            application.ApplicationData.StandardCode = standardAppData.StandardCode;
-            application.ApplicationData.StandardReference = standardAppData.StandardReference;
-            application.ApplicationData.StandardLevel = standardAppData.StandardLevel;
+            //application.ApplicationData.StandardName = standardAppData.StandardName;
+            //application.ApplicationData.StandardCode = standardAppData.StandardCode;
+            //application.ApplicationData.StandardReference = standardAppData.StandardReference;
+            //application.ApplicationData.StandardLevel = standardAppData.StandardLevel;
 
-            await _applyRepository.UpdateApplicationData(request.ApplicationId, application.ApplicationData);
+            //await _applyRepository.UpdateApplicationData(request.ApplicationId, application.ApplicationData);
 
             return Unit.Value;
         }
