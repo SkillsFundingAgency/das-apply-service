@@ -11,64 +11,68 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.ReturnRequestHandl
 {
     public class When_returning_sequence_2_with_approve : ReturnRequestHandlerTestsBase
     {
-        [Test]
-        public void Then_The_Sequence_Is_Closed_And_Status_Is_Approved()
-        {
-            var request = new ReturnRequest(Guid.NewGuid(), 2, "Approve");
+        ///////////////////////////////////////////////////////////
+        // TODO: THIS WILL NEED RE-WRITING FOR NEW RoATP PROCESS
+        ///////////////////////////////////////////////////////////
+        
+        //[Test]
+        //public void Then_The_Sequence_Is_Closed_And_Status_Is_Approved()
+        //{
+        //    var request = new ReturnRequest(Guid.NewGuid(), 2, "Approve");
 
-            Handler.Handle(request, new CancellationToken()).Wait();
+        //    Handler.Handle(request, new CancellationToken()).Wait();
 
-            ApplyRepository.Verify(r => r.UpdateSequenceStatus(request.ApplicationId, request.SequenceId, ApplicationSequenceStatus.Approved, ApplicationStatus.InProgress), Times.Once);
-            ApplyRepository.Verify(r => r.CloseSequence(request.ApplicationId, request.SequenceId), Times.Once);
-        }
+        //    ApplyRepository.Verify(r => r.UpdateSequenceStatus(request.ApplicationId, request.SequenceId, ApplicationSequenceStatus.Approved, ApplicationStatus.InProgress), Times.Once);
+        //    ApplyRepository.Verify(r => r.CloseSequence(request.ApplicationId, request.SequenceId), Times.Once);
+        //}
 
-        [Test]
-        public void Then_Application_Is_Approved()
-        {
-            var request = new ReturnRequest(Guid.NewGuid(), 2, "Approve");
+        //[Test]
+        //public void Then_Application_Is_Approved()
+        //{
+        //    var request = new ReturnRequest(Guid.NewGuid(), 2, "Approve");
 
-            Handler.Handle(request, new CancellationToken()).Wait();
+        //    Handler.Handle(request, new CancellationToken()).Wait();
 
-            ApplyRepository.Verify(r => r.OpenSequence(request.ApplicationId, It.IsAny<int>()), Times.Never);
-            ApplyRepository.Verify(r => r.UpdateApplicationStatus(request.ApplicationId, ApplicationStatus.Approved), Times.Once);
-        }
+        //    ApplyRepository.Verify(r => r.OpenSequence(request.ApplicationId, It.IsAny<int>()), Times.Never);
+        //    ApplyRepository.Verify(r => r.UpdateApplicationStatus(request.ApplicationId, ApplicationStatus.Approved), Times.Once);
+        //}
 
-        [Test]
-        public void Then_The_APPLY_EPAO_RESPONSE_Email_Is_Sent()
-        {
-            var request = new ReturnRequest(Guid.NewGuid(), 2, "Approve");
+        //[Test]
+        //public void Then_The_APPLY_EPAO_RESPONSE_Email_Is_Sent()
+        //{
+        //    var request = new ReturnRequest(Guid.NewGuid(), 2, "Approve");
 
-            Handler.Handle(request, new CancellationToken()).Wait();
+        //    Handler.Handle(request, new CancellationToken()).Wait();
 
-            EmailService.Verify(r => r.SendEmailToContact(EmailTemplateName.APPLY_EPAO_RESPONSE, It.IsAny<Contact>(), It.IsAny<object>()), Times.Once);
-        }
+        //    EmailService.Verify(r => r.SendEmailToContact(EmailTemplateName.APPLY_EPAO_RESPONSE, It.IsAny<Contact>(), It.IsAny<object>()), Times.Once);
+        //}
 
-        [Test]
-        public void Then_close_down_related_applications_if_initial_application()
-        {
-            var request = new ReturnRequest(Guid.NewGuid(), 2, "Approve");
+        //[Test]
+        //public void Then_close_down_related_applications_if_initial_application()
+        //{
+        //    var request = new ReturnRequest(Guid.NewGuid(), 2, "Approve");
 
-            OrganisationRepository.Setup(r => r.GetOrganisationByApplicationId(It.IsAny<Guid>())).ReturnsAsync(new Organisation() { RoEPAOApproved = false});
+        //    OrganisationRepository.Setup(r => r.GetOrganisationByApplicationId(It.IsAny<Guid>())).ReturnsAsync(new Organisation() { RoEPAOApproved = false});
             
-            Handler.Handle(request, new CancellationToken()).Wait();
+        //    Handler.Handle(request, new CancellationToken()).Wait();
 
-            ApplyRepository.Verify(r => r.DeleteRelatedApplications(request.ApplicationId), Times.Once);
-        }
+        //    ApplyRepository.Verify(r => r.DeleteRelatedApplications(request.ApplicationId), Times.Once);
+        //}
 
-        [Test]
-        public void Then_dont_close_down_related_applications_if_not_the_initial_application()
-        {
-            var sequence1 = new ApplicationSequence { SequenceId = SequenceId.Stage1, NotRequired = true };
-            var sequence2 = new ApplicationSequence { SequenceId = SequenceId.Stage2, NotRequired = false };
-            ApplyRepository.Setup(r => r.GetSequences(It.IsAny<Guid>())).ReturnsAsync(new List<ApplicationSequence> { sequence1, sequence2 });
+        //[Test]
+        //public void Then_dont_close_down_related_applications_if_not_the_initial_application()
+        //{
+        //    var sequence1 = new ApplicationSequence { SequenceId = SequenceId.Stage1, NotRequired = true };
+        //    var sequence2 = new ApplicationSequence { SequenceId = SequenceId.Stage2, NotRequired = false };
+        //    ApplyRepository.Setup(r => r.GetSequences(It.IsAny<Guid>())).ReturnsAsync(new List<ApplicationSequence> { sequence1, sequence2 });
 
-            var request = new ReturnRequest(Guid.NewGuid(), 2, "Approve");
+        //    var request = new ReturnRequest(Guid.NewGuid(), 2, "Approve");
 
-            OrganisationRepository.Setup(r => r.GetOrganisationByApplicationId(It.IsAny<Guid>())).ReturnsAsync(new Organisation() { RoEPAOApproved = true});
+        //    OrganisationRepository.Setup(r => r.GetOrganisationByApplicationId(It.IsAny<Guid>())).ReturnsAsync(new Organisation() { RoEPAOApproved = true});
             
-            Handler.Handle(request, new CancellationToken()).Wait();
+        //    Handler.Handle(request, new CancellationToken()).Wait();
 
-            ApplyRepository.Verify(r => r.DeleteRelatedApplications(request.ApplicationId), Times.Never);
-        }
+        //    ApplyRepository.Verify(r => r.DeleteRelatedApplications(request.ApplicationId), Times.Never);
+        //}
     }
 }
