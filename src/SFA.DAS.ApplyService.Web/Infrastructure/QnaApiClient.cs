@@ -19,6 +19,7 @@ using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using StartApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartApplicationResponse;
+using System.IO;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
@@ -106,8 +107,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
             if (files is null || files.Count < 1)
             {
-                // This is so QnA knows there are no files
-                formDataContent = new MultipartFormDataContent { Headers = { ContentLength = 0 } };
+                var emptyStream = new MemoryStream();
+                var fileContent = new StreamContent(emptyStream)
+                { Headers = { ContentLength = emptyStream.Length, ContentType = new MediaTypeHeaderValue("application/pdf") } };
+                formDataContent.Add(fileContent, "empty.pdf");
             }
             else
             {
