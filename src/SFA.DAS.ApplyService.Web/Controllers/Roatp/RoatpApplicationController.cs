@@ -104,22 +104,23 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return await StartApplication(userId);
             }
             
-            if (applications.Count() > 1)
+            if (applications.Count > 1)
                 return View(applications);
 
             var application = applications.First();
             
             switch (application.ApplicationStatus)
             {
-                case ApplicationStatus.Submitted:
-                    return RedirectToAction("ApplicationSubmitted", new { applicationId = application.Id });
-                case ApplicationStatus.FeedbackAdded:
-                    return View("~/Views/Application/FeedbackIntro.cshtml", application.Id);
-                case ApplicationStatus.Rejected:
                 case ApplicationStatus.Approved:
-                    return View(applications);
+                    return View("~/Views/Application/Approved.cshtml", application);
+                case ApplicationStatus.Rejected:
+                    return View("~/Views/Application/Rejected.cshtml", application);
+                case ApplicationStatus.FeedbackAdded:
+                    return View("~/Views/Application/FeedbackIntro.cshtml", application.ApplicationId);
+                case ApplicationStatus.Submitted:
+                    return RedirectToAction("ApplicationSubmitted", new { applicationId = application.ApplicationId });
                 default:
-                    return RedirectToAction("TaskList", new {applicationId = application.Id});
+                    return RedirectToAction("TaskList", new {applicationId = application.ApplicationId });
             }
         }
 
@@ -232,7 +233,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return View("~/Views/Application/FeedbackIntro.cshtml", application.ApplicationId);
             }
 
-            return RedirectToAction("Sequence", new { applicationId = application.ApplicationId });
+            return RedirectToAction("TaskList", new { applicationId = application.ApplicationId });
 
             //var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
 

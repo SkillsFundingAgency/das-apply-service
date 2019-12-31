@@ -51,23 +51,21 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .ReadAsAsync<Domain.Entities.Apply>();
         }
 
-
-
-
-
-        // NOTE: This is old stuff or things which are not migrated over yet
-        public async Task<List<Domain.Entities.Application>> GetApplications(Guid userId, bool createdBy)
+        public async Task<List<Domain.Entities.Apply>> GetApplications(Guid userId, bool createdBy)
         {
             if (!createdBy)
             {
                 return await (await _httpClient.GetAsync($"/Applications/{userId}/Organisation")).Content
-                .ReadAsAsync<List<Domain.Entities.Application>>();
+                .ReadAsAsync<List<Domain.Entities.Apply>>();
             }
 
             return await (await _httpClient.GetAsync($"/Applications/{userId}")).Content
-                .ReadAsAsync<List<Domain.Entities.Application>>();
+                .ReadAsAsync<List<Domain.Entities.Apply>>();
         }
-        
+
+
+
+        // NOTE: This is old stuff or things which are not migrated over yet       
         public async Task<ApplicationSequence> GetSequence(Guid applicationId, Guid userId)
         {
             return await (await _httpClient.GetAsync($"Application/{applicationId}/User/{userId}/Sections")).Content

@@ -48,6 +48,19 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(new GetApplicationRequest(applicationId));
         }
 
+        [HttpGet("Applications/{userId}")]
+        public async Task<ActionResult<List<Domain.Entities.Apply>>> GetApplications(string userId)
+        {
+            return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), true));
+        }
+
+        [HttpGet("Applications/{userId}/Organisation")]
+        public async Task<ActionResult<List<Domain.Entities.Apply>>> GetOrganisationApplications(string userId)
+        {
+            return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), false));
+        }
+
+
 
 
 
@@ -62,18 +75,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<ActionResult<GetAnswersResponse>> GetJsonAnswer(Guid applicationId, string questionIdentifier)
         {
             return await _mediator.Send(new GetAnswersRequest(applicationId, questionIdentifier, true));
-        }
-
-        [HttpGet("Applications/{userId}")]
-        public async Task<ActionResult<List<Domain.Entities.Application>>> GetApplications(string userId)
-        {
-            return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), true));
-        }
-
-        [HttpGet("Applications/{userId}/Organisation")]
-        public async Task<ActionResult<List<Domain.Entities.Application>>> GetOrganisationApplications(string userId)
-        {
-            return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), false));
         }
 
         [HttpGet("Application/{applicationId}/User/{userId}/Sections")]

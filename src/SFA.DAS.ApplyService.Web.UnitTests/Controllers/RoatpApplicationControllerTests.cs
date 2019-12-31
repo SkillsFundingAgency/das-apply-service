@@ -105,7 +105,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Applications_starts_a_new_application_if_no_applications_for_that_user()
         {
-            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(new List<Domain.Entities.Application>());
+            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(new List<Domain.Entities.Apply>());
 
             var applicationDetails = new ApplicationDetails
             {
@@ -178,11 +178,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Applications_shows_task_list_if_an_application_in_progress()
         {
-            var inProgressApp = new Domain.Entities.Application
+            var inProgressApp = new Domain.Entities.Apply
             {
                 ApplicationStatus = ApplicationStatus.InProgress
             };
-            var applications = new List<Domain.Entities.Application>
+            var applications = new List<Domain.Entities.Apply>
             {
                 inProgressApp
             };
@@ -199,11 +199,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Applications_shows_confirmation_page_if_application_submitted()
         {
-            var submittedApp = new Domain.Entities.Application
+            var submittedApp = new Domain.Entities.Apply
             {
                 ApplicationStatus = ApplicationStatus.Submitted
             };
-            var applications = new List<Domain.Entities.Application>
+            var applications = new List<Domain.Entities.Apply>
             {
                 submittedApp
             };

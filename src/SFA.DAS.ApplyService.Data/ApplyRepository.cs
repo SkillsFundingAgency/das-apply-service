@@ -63,29 +63,30 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-
-
-        // NOTE: This is old stuff or things which are not migrated over yet
-        public async Task<List<Domain.Entities.Application>> GetUserApplications(Guid userId)
+        public async Task<List<Domain.Entities.Apply>> GetUserApplications(Guid userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                return (await connection.QueryAsync<Domain.Entities.Application>(@"SELECT a.* FROM Contacts c
-                                                    INNER JOIN Applications a ON a.ApplyingOrganisationId = c.ApplyOrganisationID
+                return (await connection.QueryAsync<Domain.Entities.Apply>(@"SELECT a.* FROM Contacts c
+                                                    INNER JOIN Apply a ON a.OrganisationId = c.ApplyOrganisationID
                                                     WHERE c.Id = @userId AND a.CreatedBy = @userId", new { userId })).ToList();
             }
         }
 
-        public async Task<List<Domain.Entities.Application>> GetOrganisationApplications(Guid userId)
+        public async Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                return (await connection.QueryAsync<Domain.Entities.Application>(@"SELECT a.* FROM Contacts c
-                                                    INNER JOIN Applications a ON a.ApplyingOrganisationId = c.ApplyOrganisationID
+                return (await connection.QueryAsync<Domain.Entities.Apply>(@"SELECT a.* FROM Contacts c
+                                                    INNER JOIN Apply a ON a.OrganisationId = c.ApplyOrganisationID
                                                     WHERE c.Id = @userId", new { userId })).ToList();
             }
         }
 
+
+
+
+        // NOTE: This is old stuff or things which are not migrated over yet
         public async Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId, int sectionId, Guid? userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))

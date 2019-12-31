@@ -21,11 +21,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<StartApplicationResponse> StartApplication(StartApplicationRequest startApplicationRequest);
 
         Task<Domain.Entities.Apply> GetApplication(Guid applicationId);
+        Task<List<Domain.Entities.Apply>> GetApplications(Guid userId, bool createdBy);
 
 
 
 
-        Task<List<Domain.Entities.Application>> GetApplications(Guid userId, bool createdBy);
         Task<ApplicationSequence> GetSequence(Guid applicationId, Guid userId);
         Task<IEnumerable<ApplicationSequence>> GetSequences(Guid applicationId);
         Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId, int sectionId, Guid userId);

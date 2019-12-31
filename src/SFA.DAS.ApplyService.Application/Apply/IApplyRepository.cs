@@ -13,12 +13,10 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<Guid> StartApplication(Guid applicationId, ApplyData applyData, Guid organisationId, Guid createdBy);
 
         Task<Domain.Entities.Apply> GetApplication(Guid applicationId);
-
-
+        Task<List<Domain.Entities.Apply>> GetUserApplications(Guid userId);
+        Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid userId);
 
         // NOTE: This is old stuff or things which are not migrated over yet
-        Task<List<Domain.Entities.Application>> GetUserApplications(Guid userId);
-        Task<List<Domain.Entities.Application>> GetOrganisationApplications(Guid userId);
         Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId,  int sectionId, Guid? userId);
         Task<List<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid? userId);
         Task<List<ApplicationSection>> GetSections(Guid applicationId);
