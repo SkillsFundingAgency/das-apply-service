@@ -147,8 +147,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             if (qnaResponse != null)
             {
                 var allQnaSequences = await _qnaApiClient.GetSequences(qnaResponse.ApplicationId);
-                // NOTE: THIS LINE MIGHT BE TOO INTENSIVE ON QNA API
-                var allQnaSections = allQnaSequences.Select(async sequence => await _qnaApiClient.GetSections(qnaResponse.ApplicationId, sequence.Id)).Select(t => t.Result);
+                var allQnaSections = await _qnaApiClient.GetSections(qnaResponse.ApplicationId);
 
                 var startApplicationRequest = BuildStartApplicationRequest(qnaResponse.ApplicationId, userId, providerRoute, allQnaSequences, allQnaSections);
 
@@ -174,7 +173,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return RedirectToAction("Applications", new { applicationType });
         }
 
-        private static Application.Apply.StartApplicationRequest BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<IEnumerable<ApplicationSection>> qnaSections)
+        private static Application.Apply.StartApplicationRequest BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
         {
             return new Application.Apply.StartApplicationRequest
             {
@@ -185,13 +184,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 {
                     SequenceId = sequence.Id,
                     SequenceNo = sequence.SequenceId,
-                    Sections = qnaSections.SelectMany(y => y.Where(x => x.SectionId == sequence.SequenceId).Select(section => new ApplySection
+                    Sections = qnaSections.Where(x => x.SequenceId == sequence.SequenceId).Select(section => new ApplySection
                     {
                         SectionId = section.Id,
                         SectionNo = section.SectionId,
                         //Status = "Draft",
                         //RequestedFeedbackAnswered = false
-                    })).ToList(),
+                    }).OrderBy(section => section.SectionNo).ToList(),
                     //Status = "Draft",
                     //IsActive = sequence.IsActive,
                     //NotRequired = sequence.NotRequired,
