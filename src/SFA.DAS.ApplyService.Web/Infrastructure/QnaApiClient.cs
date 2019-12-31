@@ -159,6 +159,14 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .Content.ReadAsAsync<Page>();
         }
 
+        public async Task<Page> GetPageBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId)
+        {
+            return await (await _httpClient.GetAsync(
+                    $"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}")
+                )
+                .Content.ReadAsAsync<Page>();
+        }
+
         public async Task<ApplicationSection> GetSection(Guid applicationId, Guid sectionId)
         {
             return await (await _httpClient.GetAsync(
@@ -174,6 +182,14 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .Content.ReadAsAsync<ApplicationSection>();
         }
 
+        public async Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId)
+        {
+            return await (await _httpClient.GetAsync(
+                    $"Applications/{applicationId}/sections")
+                )
+                .Content.ReadAsAsync<IEnumerable<ApplicationSection>>();
+        }
+
         public async Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId, Guid sequenceId)
         {
             return await(await _httpClient.GetAsync(
@@ -186,6 +202,14 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         {
             return await(await _httpClient.GetAsync(
                     $"Applications/{applicationId}/Sequences/{sequenceId}")
+                )
+                .Content.ReadAsAsync<ApplicationSequence>();
+        }
+
+        public async Task<ApplicationSequence> GetSequenceBySequenceNo(Guid applicationId, int sequenceNo)
+        {
+            return await (await _httpClient.GetAsync(
+                    $"Applications/{applicationId}/Sequences/{sequenceNo}")
                 )
                 .Content.ReadAsAsync<ApplicationSequence>();
         }

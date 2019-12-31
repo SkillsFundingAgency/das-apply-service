@@ -13,18 +13,20 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     using Domain.Apply;
     using Domain.Entities;
     using SFA.DAS.ApplyService.Application.Apply;
-    using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 
     public interface IQnaApiClient
     {
         Task<StartApplicationResponse> StartApplication(string userReference, string workflowType, string applicationData);
         Task<ApplicationSequence> GetSequence(Guid applicationId, Guid sequenceId);
+        Task<ApplicationSequence> GetSequenceBySequenceNo(Guid applicationId, int sequenceNo);
         Task<ApplicationSection> GetSection(Guid applicationId, Guid sectionId);
         Task<ApplicationSection> GetSectionBySectionNo(Guid applicationId, int sequenceNo, int sectionNo);
         Task<Page> GetPage(Guid applicationId, Guid sectionId, string pageId);
+        Task<Page> GetPageBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId);
         Task<Answer> GetAnswer(Guid applicationId, Guid sectionId, string pageId, string questionId); 
         Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, Guid sectionId, string pageId, List<Answer> answers);
         Task<IEnumerable<ApplicationSequence>> GetSequences(Guid applicationId);
+        Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId);
         Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId, Guid sequenceId);
         Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag, string questionId = null);
 
