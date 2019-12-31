@@ -1,0 +1,48 @@
+@model List<SFA.DAS.ApplyService.Domain.Apply.TabularData>
+
+@if (Model != null && Model.Count > 0)
+{
+    <details class="govuk-details">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+                Who's in control
+            </span>
+        </summary>
+        <div class="govuk-details__text">
+            <p class="govuk-body">These are the people you confirmed as being in control of your organisation.</p>
+            @foreach (var tableData in Model)
+            {
+                if (tableData.HeadingTitles != null && tableData.DataRows != null)
+                {
+                    <table class="govuk-table">
+                        @if (tableData.Caption != null)
+                        {
+                            <caption class="govuk-table__caption">
+                                @tableData.Caption
+                            </caption>
+                        }
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                @foreach (var title in tableData.HeadingTitles)
+                                {
+                                    <th class="govuk-table__header" scope="col">@Html.Raw(title)</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody class="govuk-table_body">
+                            @foreach (var dataRow in tableData.DataRows)
+                            {
+                                <tr class="govuk-table__row">
+                                    @foreach (var column in dataRow.Columns)
+                                    {
+                                        <td class="govuk-table__cell">@Html.Raw(column)</td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            }
+        </div>
+    </details>
+}
