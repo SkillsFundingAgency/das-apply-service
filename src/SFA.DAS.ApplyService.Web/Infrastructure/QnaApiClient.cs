@@ -107,6 +107,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
             if (files is null || files.Count < 1)
             {
+                // we need to add an empty file so that the header lengths match
                 var emptyStream = new MemoryStream();
                 var fileContent = new StreamContent(emptyStream)
                 { Headers = { ContentLength = emptyStream.Length, ContentType = new MediaTypeHeaderValue("application/pdf") } };
