@@ -40,6 +40,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(request);
         }
 
+        [HttpPost("/Application/Submit")]
+        public async Task<ActionResult<bool>> Submit([FromBody] SubmitApplicationRequest request)
+        {
+            return await _mediator.Send(request);
+        }
+
         [HttpGet("Application/{applicationId}")]
         public async Task<ActionResult<Domain.Entities.Apply>> GetApplication(Guid applicationId)
         {
@@ -58,11 +64,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), false));
         }
 
-        [HttpPost("/Applications/Submit")]
-        public async Task<ActionResult<bool>> Submit([FromBody] SubmitApplicationRequest request)
-        {
-            return await _mediator.Send(request);
-        }
+
 
 
 

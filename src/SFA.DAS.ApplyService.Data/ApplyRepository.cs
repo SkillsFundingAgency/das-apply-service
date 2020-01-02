@@ -98,10 +98,10 @@ namespace SFA.DAS.ApplyService.Data
                                                         SELECT a.*
                                                         FROM Apply a
                                                         INNER JOIN Organisations o ON o.Id = a.OrganisationId
-														INNER JOIN Contacts con ON a.OrganisationId = con.OrganisationID
+														INNER JOIN Contacts con ON a.OrganisationId = con.ApplyOrganisationID
                                                         WHERE a.OrganisationId = (SELECT OrganisationId FROM Apply WHERE ApplicationId = @applicationId)
 														AND a.CreatedBy <> (SELECT CreatedBy FROM Apply WHERE ApplicationId = @applicationId)
-                                                        AND a.ApplicationStatus NOT IN (@applicationStatusApproved, @applicationStatusApprovedDeclined)",
+                                                        AND a.ApplicationStatus NOT IN (@applicationStatusApproved, @applicationStatusApprovedRejected)",
                                                             new
                                                             {
                                                                 applicationId,
