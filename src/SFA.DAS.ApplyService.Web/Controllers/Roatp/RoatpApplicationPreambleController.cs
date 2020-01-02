@@ -528,6 +528,25 @@
 
             return View("~/Views/Roatp/ChosenToRemainOnRegister.cshtml", model);
         }
+
+        [Route("change-ukprn")]
+        [HttpGet]
+        public async Task<IActionResult> ChangeUkprn(Guid applicationId)
+        {
+            var model = new ChangeUkprnViewModel { ApplicationId = applicationId };
+
+            return View("~/Views/Roatp/ChangeUkprn.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmChangeUkprn(ChangeUkprnViewModel model)
+        {
+            // update status of current application to perform soft delete - dependency on APR-1176
+            
+            _sessionService.Remove(ApplicationDetailsKey);
+
+            return RedirectToAction("TermsAndConditions");
+        }
         
         private bool ProviderEligibleToChangeRoute(OrganisationRegisterStatus roatpRegisterStatus)
         {
