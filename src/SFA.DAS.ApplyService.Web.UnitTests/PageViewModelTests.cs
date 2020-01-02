@@ -73,7 +73,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 new List<ValidationErrorDetail>(),
                 _config,
                 _configLinks,
-                _sectionTitle);
+                _sectionTitle,
+                new List<TabularData>()
+                );
 
             model.CTAButtonText.Should().Be(PageViewModel.DefaultCTAButtonText);
         }
@@ -95,7 +97,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 new List<ValidationErrorDetail>(),
                 _config,
                 _configLinks,
-                _sectionTitle);
+                _sectionTitle,
+                new List<TabularData>());
 
             model.CTAButtonText.Should().Be(PageViewModel.DefaultCTAButtonText);
         }
@@ -117,7 +120,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 new List<ValidationErrorDetail>(),
                 _config,
                 _configLinks,
-                _sectionTitle);
+                _sectionTitle,
+                new List<TabularData>());
             
             model.CTAButtonText.Should().Be(_config[0].CTAButtonText);
         }
@@ -139,7 +143,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 new List<ValidationErrorDetail>(),
                 _config,
                 _configLinks,
-                _sectionTitle);
+                _sectionTitle,
+                new List<TabularData>());
 
             model.HideCTA.Should().BeTrue();
         }

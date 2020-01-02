@@ -16,6 +16,8 @@ namespace SFA.DAS.ApplyService.Web.Services
             var sequence = applicationSequences?.FirstOrDefault(x => (int)x.SequenceId == sequenceId);
 
             var section = sequence?.Sections?.FirstOrDefault(x => x.SectionId == sectionId);
+
+            
             if (section == null)
             {
                 return string.Empty;
@@ -36,7 +38,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             var questionsCompleted = SectionCompletedQuestionsCount(section);
                         
-            var sectionText = GetSectionText(questionsCompleted, section, sequence.Sequential); 
+            var sectionText = GetSectionText(questionsCompleted, section, sequence.Sequential);
             
             return sectionText;
         }
