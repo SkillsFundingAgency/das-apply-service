@@ -71,6 +71,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                 {
                     ConditionalCheckField = "ProviderTypeId",
                     MustEqual = applicationRouteId,
+                    Value = applicationRouteId,
                     SequenceId = sequenceId,
                     SectionId = sectionId
                 }

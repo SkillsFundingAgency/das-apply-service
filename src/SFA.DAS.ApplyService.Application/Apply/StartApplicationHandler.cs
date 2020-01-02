@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Domain.Apply;
@@ -16,21 +17,28 @@ namespace SFA.DAS.ApplyService.Application.Apply
     {
         private readonly IApplyRepository _applyRepository;
         private readonly IOrganisationRepository _organisationRepository;
-        public StartApplicationHandler(IApplyRepository applyRepository, IOrganisationRepository organisationRepository)
+        private readonly ILogger<StartApplicationHandler> _logger;
+
+        public StartApplicationHandler(IApplyRepository applyRepository, IOrganisationRepository organisationRepository, ILogger<StartApplicationHandler> logger)
         {
             _applyRepository = applyRepository;
             _organisationRepository = organisationRepository;
+            _logger = logger;
         }
 
         public async Task<StartApplicationResponse> Handle(StartApplicationRequest request, CancellationToken cancellationToken)
         {
-            var assets = await _applyRepository.GetAssets();
+            _logger.LogInformation($"StartApplicationHandler.Handle: PRE userId: [{request.UserId}], applicationType: [{request.ApplicationType}], applicationId: [{request.ApplicationId}]");
 
             var org = await _organisationRepository.GetUserOrganisation(request.UserId);
+            _logger.LogInformation($"StartApplicationHandler.Handle: POST org: {org?.Name}");
+
 
             var workflowId = await _applyRepository.GetLatestWorkflow(request.ApplicationType);
+            _logger.LogInformation($"StartApplicationHandler.Handle: POST workflowId: [{workflowId}]");
             var applicationId =
                 await _applyRepository.CreateApplication(request.ApplicationId, request.ApplicationType, org.Id, request.UserId, workflowId);
+            _logger.LogInformation($"StartApplicationHandler.Handle: POST applicationId: [{applicationId}]");
 
             return new StartApplicationResponse() {ApplicationId = applicationId};
         }
