@@ -55,16 +55,6 @@
         
         }
 
-        [HttpPost]
-        [Route("submit")]
-        public async Task<IActionResult> SubmitApplication([FromBody] RoatpApplicationData applicationData)
-        {
-            // TODO: Remove this end point and mediator handers. Use ApplicationController.SubmitApplication
-            var submitResult = await _mediator.Send(new SubmitApplicationRequest(applicationData));
-
-            return Ok(submitResult);
-        }
-
         private AsyncRetryPolicy GetRetryPolicy()
         {
             return Policy

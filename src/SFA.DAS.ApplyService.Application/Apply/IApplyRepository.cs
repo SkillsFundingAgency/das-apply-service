@@ -16,6 +16,10 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<Domain.Entities.Apply>> GetUserApplications(Guid userId);
         Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid userId);
 
+        Task<bool> CanSubmitApplication(Guid applicationId);
+        Task SubmitApplication(Guid applicationId, ApplyData applyData, Guid submittedBy);
+
+
         // NOTE: This is old stuff or things which are not migrated over yet
         Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId,  int sectionId, Guid? userId);
         Task<List<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid? userId);
@@ -34,9 +38,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<ApplicationSummaryItem>> GetClosedApplications();
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
-        Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();
-        Task<bool> CanSubmitApplication(ApplicationSubmitRequest request);
-        Task SubmitApplicationSequence(ApplicationSubmitRequest request, ApplicationData applicationdata);
+        Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();        
         Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string sequenceStatus, string applicationStatus);
         Task CloseSequence(Guid applicationId, int sequenceId);
         Task<List<ApplicationSequence>> GetSequences(Guid applicationId);
@@ -61,6 +63,5 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatusByUkprn(string ukprn);
 
         Task<string> GetNextRoatpApplicationReference();
-        Task<bool> SubmitRoatpApplication(RoatpApplicationData applicationData);
     }
 }

@@ -30,7 +30,6 @@ namespace SFA.DAS.ApplyService.Data
             SqlMapper.AddTypeHandler(typeof(OrganisationDetails), new OrganisationDetailsHandler());
             SqlMapper.AddTypeHandler(typeof(QnAData), new QnADataHandler());
             SqlMapper.AddTypeHandler(typeof(ApplicationData), new ApplicationDataHandler());
-            SqlMapper.AddTypeHandler(typeof(RoatpApplicationData), new RoatpApplicationDataHandler());
             SqlMapper.AddTypeHandler(typeof(FinancialApplicationGrade), new FinancialApplicationGradeDataHandler());
         }
 
@@ -82,6 +81,52 @@ namespace SFA.DAS.ApplyService.Data
                                                     WHERE c.Id = @userId", new { userId })).ToList();
             }
         }
+
+        public async Task<bool> CanSubmitApplication(Guid applicationId)
+        {
+            var canSubmit = false;
+
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var application = await GetApplication(applicationId);
+                var invalidApplicationStatuses = new List<string> { ApplicationStatus.Approved, ApplicationStatus.Rejected };
+
+                // Application must exist and has not already been Approved or Rejected
+                if (application != null && !invalidApplicationStatuses.Contains(application.ApplicationStatus))
+                {
+                    var otherAppsInProgress = await connection.QueryAsync<Domain.Entities.Apply>(@"
+                                                        SELECT a.*
+                                                        FROM Apply a
+                                                        INNER JOIN Organisations o ON o.Id = a.OrganisationId
+														INNER JOIN Contacts con ON a.OrganisationId = con.OrganisationID
+                                                        WHERE a.OrganisationId = (SELECT OrganisationId FROM Apply WHERE ApplicationId = @applicationId)
+														AND a.CreatedBy <> (SELECT CreatedBy FROM Apply WHERE ApplicationId = @applicationId)
+                                                        AND a.ApplicationStatus NOT IN (@applicationStatusApproved, @applicationStatusApprovedDeclined)",
+                                                            new
+                                                            {
+                                                                applicationId,
+                                                                applicationStatusApproved = ApplicationStatus.Approved,
+                                                                applicationStatusApprovedRejected = ApplicationStatus.Rejected
+                                                            });
+
+                    canSubmit = !otherAppsInProgress.Any();
+                }
+            }
+
+            return canSubmit;
+        }
+
+        public async Task SubmitApplication(Guid applicationId, ApplyData applyData, Guid submittedBy)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE Apply
+                                                SET  ApplicationStatus = @ApplicationStatus, ApplyData = @applyData, ReviewStatus = @ReviewStatus, UpdatedBy = @submittedBy, UpdatedAt = GETUTCDATE() 
+                                                WHERE  (Apply.ApplicationId = @applicationId)",
+                                                new { applicationId, ApplicationStatus = ApplicationStatus.Submitted, applyData, ReviewStatus = "New", submittedBy });
+            }
+        }
+
 
 
 
@@ -294,99 +339,6 @@ namespace SFA.DAS.ApplyService.Data
             {
                 await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata, Status = @Status WHERE Id = @Id", section);       
             }
-        }
-
-        public async Task<bool> CanSubmitApplication(ApplicationSubmitRequest request)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                var orgId = await connection.QuerySingleOrDefaultAsync<Guid>(@"SELECT ApplyingOrganisationId
-                                                                      FROM Applications
-                                                                      WHERE Id = @ApplicationId", new { request.ApplicationId });
-
-                if (orgId == default(Guid)) return false;
-
-                // Prevent submission if non-EPAO Organisation and another user has an application in progress
-                var otherAppsInProgress = await connection.QueryAsync<Domain.Entities.Application>(@"
-                                                        SELECT a.*
-                                                        FROM Applications a
-                                                        INNER JOIN Organisations o ON o.Id = a.ApplyingOrganisationId
-                                                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = a.Id
-                                                        INNER JOIN Contacts con ON a.ApplyingOrganisationId = con.ApplyOrganisationID
-                                                        WHERE a.ApplyingOrganisationId = @orgId AND a.CreatedBy <> @UserId
-                                                        AND a.ApplicationStatus NOT IN (@approvedStatus, @rejectedStatus)
-                                                        AND o.RoEPAOApproved = 0 AND seq.IsActive = 1
-                                                        AND (seq.SequenceId = 2 OR (seq.SequenceId = 1 AND seq.Status = @seqSubmittedStatus))",
-                                                        new
-                                                        {
-                                                            orgId,
-                                                            request.UserId,
-                                                            approvedStatus = ApplicationStatus.Approved,
-                                                            rejectedStatus = ApplicationStatus.Rejected,
-                                                            seqSubmittedStatus = ApplicationSequenceStatus.Submitted,
-                                                        });
-
-                return !otherAppsInProgress.Any();
-            }
-        }
-
-        public async Task SubmitApplicationSequence(ApplicationSubmitRequest request, ApplicationData applicationdata)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                var sections = await GetSections(request.ApplicationId, request.SequenceId, request.UserId);
-
-                foreach(var section in sections)
-                {
-                    if(section.Status == ApplicationSectionStatus.Draft)
-                    {
-                        section.Status = ApplicationSequenceStatus.Submitted;
-                    }
-                    else if (section.QnAData.Pages.Any(p => p.HasNewFeedback))
-                    {
-                        section.Status = ApplicationSequenceStatus.Submitted;
-                    }
-                    else if (section.QnAData.FinancialApplicationGrade != null)
-                    {
-                        switch (section.QnAData.FinancialApplicationGrade.SelectedGrade)
-                        {
-                            case null:
-                            case FinancialApplicationSelectedGrade.Inadequate:
-                                section.Status = ApplicationSequenceStatus.Submitted;
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-
-                    foreach(var page in section.QnAData.Pages)
-                    {
-                        if (page.HasNewFeedback)
-                        {
-                            page.Feedback.ForEach(f => f.IsNew = false);
-                            page.Feedback.ForEach(f => f.IsCompleted = true);
-                            section.QnAData.RequestedFeedbackAnswered = true;
-                        }
-                    }
-                }
-
-                await UpdateSections(sections);
-
-                await connection.ExecuteAsync(@"UPDATE ApplicationSequences
-                                                SET    Status = 'Submitted'
-                                                FROM   ApplicationSequences INNER JOIN
-                                                         Applications ON ApplicationSequences.ApplicationId = Applications.Id INNER JOIN
-                                                         Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
-                                                WHERE  (ApplicationSequences.ApplicationId = @ApplicationId) AND (ApplicationSequences.SequenceId = @SequenceId) AND Contacts.Id = @UserId;
-
-                                                UPDATE       Applications
-                                                SET                ApplicationStatus = 'Submitted', ApplicationData = @applicationdata
-                                                FROM            Applications INNER JOIN
-                                                                Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
-                                                WHERE  (Applications.Id = @ApplicationId) AND Contacts.Id = @UserId	",
-                    new {request.ApplicationId, request.UserId, request.SequenceId, applicationdata });
-                }
-
         }
 
         public async Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string sequenceStatus, string applicationStatus)
@@ -1004,25 +956,6 @@ namespace SFA.DAS.ApplyService.Data
                 var nextInSequence = (await connection.QueryAsync<int>(@"SELECT NEXT VALUE FOR RoatpAppReferenceSequence")).FirstOrDefault();
 
                 return $"APR{nextInSequence}";
-            }
-        }
-
-        public async Task<bool> SubmitRoatpApplication(RoatpApplicationData applicationData)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(
-                    @"UPDATE Applications SET ApplicationData = @applicationData, ApplicationStatus = 'Submitted', UpdatedAt = @updatedAt, UpdatedBy = @updatedBy
-                      WHERE Id = @applicationId",
-                    new
-                    {
-                        applicationData,
-                        applicationData.ApplicationId,
-                        updatedAt = applicationData.ApplicationSubmittedOn,
-                        updatedBy = applicationData.ApplicationSubmittedBy
-                    });
-
-                return await Task.FromResult(true);
             }
         }
     }

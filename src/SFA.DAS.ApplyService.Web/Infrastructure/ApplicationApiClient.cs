@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
+using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
@@ -16,7 +18,6 @@ using StartApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartApp
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    using Application.Apply.GetAnswers;
     using SFA.DAS.ApplyService.Domain.Roatp;
 
     public class ApplicationApiClient : IApplicationApiClient
@@ -43,6 +44,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return startApplicationResponse;
         }
 
+        public async Task<bool> SubmitApplication(SubmitApplicationRequest submitApplicationRequest)
+        {
+            var httpResponse = await _httpClient.PostAsJsonAsync("/Application/Submit", submitApplicationRequest);
+            var submitApplicationResponse = await httpResponse.Content.ReadAsAsync<bool>();
+            return submitApplicationResponse;
+        }
 
 
         public async Task<Domain.Entities.Apply> GetApplication(Guid applicationId)
@@ -107,16 +114,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                     $"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}",
                     new { answers, saveNewAnswers })).Content
                 .ReadAsAsync<SetPageAnswersResponse>();
-        }
-
-        public async Task<bool> Submit(Guid applicationId, int sequenceId, Guid userId, string userEmail)
-        {
-            ///////////////////////////////////////////////////////////
-            // TODO: THIS WILL NEED RE-WRITING FOR NEW RoATP PROCESS
-            ///////////////////////////////////////////////////////////
-            return await (await _httpClient.PostAsJsonAsync(
-                    "/Applications/Submit", new {applicationId, sequenceId, userId, userEmail })).Content
-                    .ReadAsAsync<bool>();
         }
 
         public async Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId,

@@ -10,7 +10,5 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     {
         Task<IEnumerable<ApplicationRoute>> GetApplicationRoutes();
         Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(long ukprn);
-
-        Task<bool> SubmitRoatpApplication(RoatpApplicationData applicationData);
     }
 }

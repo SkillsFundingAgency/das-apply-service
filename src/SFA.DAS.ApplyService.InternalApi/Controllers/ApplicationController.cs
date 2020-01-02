@@ -59,6 +59,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), false));
         }
 
+        [HttpPost("/Applications/Submit")]
+        public async Task<ActionResult<bool>> Submit([FromBody] SubmitApplicationRequest request)
+        {
+            return await _mediator.Send(request);
+        }
 
 
 
@@ -139,16 +144,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             var updatedPage = await _mediator.Send(
                 new UpdatePageAnswersRequest(Guid.Parse(applicationId), Guid.Parse(userId), sequenceId, sectionId, pageId, request.Answers, request.SaveNewAnswers));
             return updatedPage;
-        }
-
-        [HttpPost("/Applications/Submit")]
-        public async Task<ActionResult<bool>> Submit([FromBody] ApplicationSubmitRequest request)
-        {
-            ///////////////////////////////////////////////////////////
-            // TODO: THIS WILL NEED RE-WRITING FOR NEW RoATP PROCESS
-            ///////////////////////////////////////////////////////////
-            var submitted = await _mediator.Send(request);
-            return submitted;
         }
 
         [HttpPost("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/DeleteAnswer/{answerId}")]

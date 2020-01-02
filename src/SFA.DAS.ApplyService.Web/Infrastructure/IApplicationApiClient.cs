@@ -4,6 +4,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
+using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -13,12 +15,12 @@ using StartApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartApp
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    using Application.Apply.GetAnswers;
     using SFA.DAS.ApplyService.Domain.Roatp;
 
     public interface IApplicationApiClient
     {
         Task<StartApplicationResponse> StartApplication(StartApplicationRequest startApplicationRequest);
+        Task<bool> SubmitApplication(SubmitApplicationRequest submitApplicationRequest);
 
         Task<Domain.Entities.Apply> GetApplication(Guid applicationId);
         Task<List<Domain.Entities.Apply>> GetApplications(Guid userId, bool createdBy);
@@ -35,7 +37,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId, int sectionId,
             string pageId, List<Answer> answers, bool saveNewAnswers);
 
-        Task<bool> Submit(Guid applicationId, int sequenceId, Guid userId, string userEmail);
         Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, Guid userId);
         Task ImportWorkflow(IFormFile file);
         

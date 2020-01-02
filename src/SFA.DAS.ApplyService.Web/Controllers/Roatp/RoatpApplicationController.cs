@@ -934,7 +934,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
             }
 
-            if (await _apiClient.Submit(applicationId, sequenceId, User.GetUserId(), User.GetEmail()))
+            var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
+            var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
+
+            var submitApplicationRequest = new Application.Apply.Submit.SubmitApplicationRequest
+            {
+                ApplicationId = applicationId,
+                ProviderRoute = int.Parse(providerRoute.Value),
+                SubmittingContactId = User.GetUserId()
+            };
+
+            if (await _apiClient.SubmitApplication(submitApplicationRequest))
             {
                 return RedirectToAction("Submitted", new { applicationId });
             }
@@ -1078,22 +1088,21 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return View("~/Views/Roatp/SubmitApplication.cshtml", model);
             }
 
+            // TODO: Validate all sections are completed (i.e all questions answered)
+            // FUTURE WORK: Validate all sections have had requested feedback answered
+
+
             var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
             var providerRoute = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.ProviderRoute);
-           // var nextApplicationReferenceNumber = await _roatpApiClient.GetNextRoatpApplicationReference();
-                            
-            var applicationData = new RoatpApplicationData
+
+            var submitApplicationRequest = new Application.Apply.Submit.SubmitApplicationRequest
             {
                 ApplicationId = model.ApplicationId,
-                UKPRN = organisationDetails.OrganisationUkprn?.ToString(),
-                OrganisationName = organisationDetails.Name,
-                TradingName = organisationDetails.OrganisationDetails?.TradingName,
-                ApplicationRouteId = providerRoute.Value,
-                ApplicationSubmittedOn = DateTime.Now,
-                ApplicationSubmittedBy = User.GetUserId()
+                ProviderRoute = int.Parse(providerRoute.Value),
+                SubmittingContactId = User.GetUserId()
             };
 
-            var submitResult = await _roatpApiClient.SubmitRoatpApplication(applicationData);
+            var submitResult = await _apiClient.SubmitApplication(submitApplicationRequest);
 
             if (submitResult)
             {

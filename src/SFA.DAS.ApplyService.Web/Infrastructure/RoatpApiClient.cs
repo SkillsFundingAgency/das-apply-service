@@ -38,11 +38,5 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await (await _httpClient.GetAsync($"/ukprn-on-register?ukprn={ukprn}")).Content
                 .ReadAsAsync<OrganisationRegisterStatus>();
         }
-
-        public async Task<bool> SubmitRoatpApplication(RoatpApplicationData applicationData)
-        {
-            // TODO: Remove this API call. Should be using the one in IApplicationApiClient
-            return await (await _httpClient.PostAsJsonAsync($"/submit", applicationData)).Content.ReadAsAsync<bool>();
-        }
     }
 }
