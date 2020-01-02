@@ -41,17 +41,20 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<string> GetNextRoatpApplicationReference()
         {
+            // TODO: Remove this API call. Should be internal to Create Application
             var nextReferenceInSequence = await (await _httpClient.GetAsync("/next-application-reference")).Content.ReadAsAsync<NextApplicationReference>();
             return nextReferenceInSequence.ApplicationReference;
         }
 
         public async Task<bool> SubmitRoatpApplication(RoatpApplicationData applicationData)
         {
+            // TODO: Remove this API call. Should be using the one in IApplicationApiClient
             return await (await _httpClient.PostAsJsonAsync($"/submit", applicationData)).Content.ReadAsAsync<bool>();
         }
 
         public async Task<RoatpApplicationData> GetApplicationData(Guid applicationId)
         {
+            // TODO: Remove this API call. Should be using the one in IApplicationApiClient
             return await (await _httpClient.GetAsync($"/application-data?applicationId={applicationId}")).Content
                 .ReadAsAsync<RoatpApplicationData>();
         }
@@ -59,6 +62,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
     public class NextApplicationReference
     {
+        // TODO: Remove this class
         public string ApplicationReference { get; set; }
     }
 }
