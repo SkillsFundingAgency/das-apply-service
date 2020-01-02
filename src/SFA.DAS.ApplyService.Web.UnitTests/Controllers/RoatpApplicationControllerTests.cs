@@ -50,6 +50,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<ICustomValidatorFactory> _customValidatorFactory;
         private Mock<IRoatpApiClient> _roatpApiClient;
         private Mock<ISubmitApplicationConfirmationEmailService> _submitApplicationEmailService;
+        private Mock<ITabularDataRepository> _tabularDataRepository;
 
         [SetUp]
         public void Before_each_test()
@@ -78,13 +79,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _customValidatorFactory = new Mock<ICustomValidatorFactory>();
             _roatpApiClient = new Mock<IRoatpApiClient>();
             _submitApplicationEmailService = new Mock<ISubmitApplicationConfirmationEmailService>();
+            _tabularDataRepository = new Mock<ITabularDataRepository>();
 
             _controller = new RoatpApplicationController(_apiClient.Object, _logger.Object, _sessionService.Object, _configService.Object,
                                                          _userService.Object, _usersApiClient.Object, _qnaApiClient.Object, _configuration.Object,
                                                          _processPageFlowService.Object, _questionPropertyTokeniser.Object, _pageOverrideConfiguration.Object,
                                                          _pageNavigationTrackingService.Object, _qnaLinks.Object, _customValidatorFactory.Object,
                                                          _notRequiredOverrides.Object, _roatpApiClient.Object,
-                                                         _submitApplicationEmailService.Object)
+                                                         _submitApplicationEmailService.Object, _tabularDataRepository.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
@@ -257,7 +259,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 QuestionId = "YO-1",
                 Value = ApplicationRoute.MainProviderApplicationRoute.ToString()
             };
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), "Apply-ProviderRoute", It.IsAny<string>())).ReturnsAsync(providerRouteAnswer);
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.ProviderRoute, It.IsAny<string>())).ReturnsAsync(providerRouteAnswer);
 
             var applicationReference = "APR1102200";
             _roatpApiClient.Setup(x => x.GetNextRoatpApplicationReference()).ReturnsAsync(applicationReference);
