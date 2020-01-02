@@ -44,6 +44,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
                         application.ApplyData.ApplyDetails.ProviderRoute = request.ProviderRoute;
                     }
 
+                    application.ApplyData.ApplyDetails.ApplicationSubmittedOn = DateTime.UtcNow;
+                    application.ApplyData.ApplyDetails.ApplicationSubmittedBy = submittingContact.Id;
+
                     await _applyRepository.SubmitApplication(application.ApplicationId, application.ApplyData, submittingContact.Id);
 
                     return true;
