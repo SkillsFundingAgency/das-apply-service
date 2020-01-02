@@ -18,7 +18,7 @@ using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
-using StartApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartApplicationResponse;
+using StartQnaApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartQnaApplicationResponse;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
@@ -222,7 +222,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .Content.ReadAsAsync<IEnumerable<ApplicationSequence>>();
         }
 
-        public async Task<StartApplicationResponse> StartApplication(string userReference, string workflowType, string applicationData)
+        public async Task<StartQnaApplicationResponse> StartApplication(string userReference, string workflowType, string applicationData)
         {
             var startApplicationRequest = new StartQnaApplicationRequest
             {
@@ -239,7 +239,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
             if (response.IsSuccessStatusCode)
             {
-                return JsonConvert.DeserializeObject<StartApplicationResponse>(json);
+                return JsonConvert.DeserializeObject<StartQnaApplicationResponse>(json);
             }
             else
             {
@@ -247,7 +247,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 var apiErrorMessage = apiError?.Message ?? json;
 
                 _logger.LogError($"Error Starting Application in QnA. UserReference : {userReference} | WorkflowType : {workflowType} | ApplicationData : {applicationData} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}");
-                return new StartApplicationResponse { ApplicationId = Guid.Empty };
+                return new StartQnaApplicationResponse { ApplicationId = Guid.Empty };
             }
         }
 

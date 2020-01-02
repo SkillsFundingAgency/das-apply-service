@@ -16,7 +16,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
     public interface IQnaApiClient
     {
-        Task<StartApplicationResponse> StartApplication(string userReference, string workflowType, string applicationData);
+        Task<StartQnaApplicationResponse> StartApplication(string userReference, string workflowType, string applicationData);
         Task<ApplicationSequence> GetSequence(Guid applicationId, Guid sequenceId);
         Task<ApplicationSequence> GetSequenceBySequenceNo(Guid applicationId, int sequenceNo);
         Task<ApplicationSection> GetSection(Guid applicationId, Guid sectionId);

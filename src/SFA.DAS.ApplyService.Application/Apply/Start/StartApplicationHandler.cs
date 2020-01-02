@@ -6,9 +6,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.ApplyService.Application.Apply
+namespace SFA.DAS.ApplyService.Application.Apply.Start
 {
-    public class StartApplicationHandler : IRequestHandler<StartApplicationRequest, StartApplicationResponse>
+    public class StartApplicationHandler : IRequestHandler<StartApplicationRequest, Guid>
     {
         private readonly IApplyRepository _applyRepository;
         private readonly IOrganisationRepository _organisationRepository;
@@ -21,7 +21,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
             _contactRepository = contactRepository;
         }
 
-        public async Task<StartApplicationResponse> Handle(StartApplicationRequest request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(StartApplicationRequest request, CancellationToken cancellationToken)
         {
             var applicationId = Guid.Empty;
 
@@ -50,7 +50,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
                 applicationId = await _applyRepository.StartApplication(request.ApplicationId, applyData, org.Id, creatingContact.Id);
             }
 
-            return new StartApplicationResponse() { ApplicationId = applicationId };
+            return applicationId;
         }
     }
 }

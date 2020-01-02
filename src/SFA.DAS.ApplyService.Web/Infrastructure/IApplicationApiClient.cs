@@ -5,13 +5,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
+using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types;
 
-using StartApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartApplicationResponse;
+using StartQnaApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartQnaApplicationResponse;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
@@ -19,7 +20,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
     public interface IApplicationApiClient
     {
-        Task<StartApplicationResponse> StartApplication(StartApplicationRequest startApplicationRequest);
+        Task<Guid> StartApplication(StartApplicationRequest startApplicationRequest);
         Task<bool> SubmitApplication(SubmitApplicationRequest submitApplicationRequest);
 
         Task<Domain.Entities.Apply> GetApplication(Guid applicationId);

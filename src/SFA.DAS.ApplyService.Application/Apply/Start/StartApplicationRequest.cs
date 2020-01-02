@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using MediatR;
 using SFA.DAS.ApplyService.Domain.Entities;
 
-namespace SFA.DAS.ApplyService.Application.Apply
+namespace SFA.DAS.ApplyService.Application.Apply.Start
 {
-    public class StartApplicationRequest : IRequest<StartApplicationResponse>
+    public class StartApplicationRequest : IRequest<Guid>
     {
         public Guid ApplicationId { get; set; }
         public List<ApplySequence> ApplySequences { get; set; }

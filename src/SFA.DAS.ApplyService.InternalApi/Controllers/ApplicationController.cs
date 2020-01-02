@@ -8,6 +8,7 @@ using SFA.DAS.ApplyService.Application.Apply.GetOrganisationForApplication;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.GetSection;
 using SFA.DAS.ApplyService.Application.Apply.GetSequence;
+using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 using SFA.DAS.ApplyService.Domain.Apply;
@@ -19,8 +20,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
-using StartApplicationRequest = SFA.DAS.ApplyService.Application.Apply.StartApplicationRequest;
-using StartApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartApplicationResponse;
 using SFA.DAS.ApplyService.Domain.Roatp;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
@@ -36,7 +35,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpPost("Application/Start")]
-        public async Task<ActionResult<StartApplicationResponse>> Start([FromBody] StartApplicationRequest request)
+        public async Task<ActionResult<Guid>> Start([FromBody] StartApplicationRequest request)
         {
             return await _mediator.Send(request);
         }

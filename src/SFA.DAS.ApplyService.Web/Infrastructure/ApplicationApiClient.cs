@@ -8,13 +8,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
+using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types;
-using StartApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartApplicationResponse;
+using StartQnaApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartQnaApplicationResponse;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
@@ -37,10 +38,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
         }
 
-        public async Task<StartApplicationResponse> StartApplication(StartApplicationRequest startApplicationRequest)
+        public async Task<Guid> StartApplication(StartApplicationRequest startApplicationRequest)
         {
             var httpResponse = await _httpClient.PostAsJsonAsync("/Application/Start", startApplicationRequest);
-            var startApplicationResponse = await httpResponse.Content.ReadAsAsync<StartApplicationResponse>();
+            var startApplicationResponse = await httpResponse.Content.ReadAsAsync<Guid>();
             return startApplicationResponse;
         }
 

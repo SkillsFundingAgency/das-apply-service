@@ -151,21 +151,21 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 var startApplicationRequest = BuildStartApplicationRequest(qnaResponse.ApplicationId, userId, providerRoute, allQnaSequences, allQnaSections);
 
-                var response = await _apiClient.StartApplication(startApplicationRequest);
-                _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking response from StartApplication POST: applicationId: [{response?.ApplicationId}]");
+                var applicationId = await _apiClient.StartApplication(startApplicationRequest);
+                _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking response from StartApplication POST: applicationId: [{applicationId}]");
 
-                if (response != null)
+                if (applicationId != Guid.Empty)
                 {
-                    await SavePreambleInformation(response.ApplicationId, applicationDetails);
+                    await SavePreambleInformation(applicationId, applicationDetails);
 
                     if (applicationDetails.UkrlpLookupDetails.VerifiedByCompaniesHouse)
                     {
-                        await SaveCompaniesHouseInformation(response.ApplicationId, applicationDetails);
+                        await SaveCompaniesHouseInformation(applicationId, applicationDetails);
                     }
 
                     if (applicationDetails.UkrlpLookupDetails.VerifiedbyCharityCommission)
                     {
-                        await SaveCharityCommissionInformation(response.ApplicationId, applicationDetails);
+                        await SaveCharityCommissionInformation(applicationId, applicationDetails);
                     }
                 }
             }
@@ -173,9 +173,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return RedirectToAction("Applications", new { applicationType });
         }
 
-        private static Application.Apply.StartApplicationRequest BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
+        private static Application.Apply.Start.StartApplicationRequest BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
         {
-            return new Application.Apply.StartApplicationRequest
+            return new Application.Apply.Start.StartApplicationRequest
             {
                 ApplicationId = qnaApplicationId,
                 CreatingContactId = creatingContactId,

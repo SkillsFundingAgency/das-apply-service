@@ -2,7 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.Application.Apply.Start;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHandlerTests
 {
@@ -15,8 +15,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
 
             var result = await Handler.Handle(request, CancellationToken.None);
 
-            result.Should().BeOfType<StartApplicationResponse>();
-            result.As<StartApplicationResponse>().ApplicationId.Should().Be(ApplicationId);
+            result.Should().Be(ApplicationId);
         }
     }
 }
