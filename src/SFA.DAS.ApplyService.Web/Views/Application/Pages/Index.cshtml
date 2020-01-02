@@ -34,7 +34,7 @@
                                 @foreach (var error in Model.ErrorMessages)
                                 {
                                     <li>
-                                        <a href="#@error.Field">@error.ErrorMessage</a>
+                                        <a href="#@error.Field">@Html.Raw(error.ErrorMessage)</a>
                                     </li>
                                 }
                             </ul>
@@ -254,7 +254,7 @@
                         }
                     }
 
-
+                    <partial name="~/Views/Application/Pages/PeopleInControlComponent.cshtml" for="PeopleInControlDetails" />
                     <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details" />
                 </form>
             }
