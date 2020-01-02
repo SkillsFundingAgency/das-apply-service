@@ -1080,7 +1080,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
             var providerRoute = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.ProviderRoute);
-            var nextApplicationReferenceNumber = await _roatpApiClient.GetNextRoatpApplicationReference();
+           // var nextApplicationReferenceNumber = await _roatpApiClient.GetNextRoatpApplicationReference();
                             
             var applicationData = new RoatpApplicationData
             {
@@ -1089,7 +1089,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 OrganisationName = organisationDetails.Name,
                 TradingName = organisationDetails.OrganisationDetails?.TradingName,
                 ApplicationRouteId = providerRoute.Value,
-                ReferenceNumber = nextApplicationReferenceNumber,
                 ApplicationSubmittedOn = DateTime.Now,
                 ApplicationSubmittedBy = User.GetUserId()
             };

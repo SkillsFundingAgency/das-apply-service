@@ -55,15 +55,6 @@
         
         }
 
-        [Route("next-application-reference")]
-        public async Task<IActionResult> GetNextApplicationReference()
-        {
-            // TODO: Remove this end point and mediator handers. This is internal to Create Application
-            var applicationReference = await _mediator.Send(new GetNextApplicationReferenceRequest());
-
-            return Ok(new { applicationReference } );
-        }
-
         [HttpPost]
         [Route("submit")]
         public async Task<IActionResult> SubmitApplication([FromBody] RoatpApplicationData applicationData)
