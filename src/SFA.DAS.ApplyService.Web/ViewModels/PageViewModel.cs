@@ -21,7 +21,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
         public PageViewModel(Guid applicationId, int sequenceId, int sectionId, string pageId, Page page, string pageContext, 
                              string redirectAction, string returnUrl, List<ValidationErrorDetail> errorMessages, 
                              List<QnaPageOverrideConfiguration> pageOverrideConfiguration, List<QnaLinksConfiguration> linksConfiguration,
-                             string sectionTitle)
+                             string sectionTitle, List<TabularData> peopleInControlDetails)
         {
             ApplicationId = applicationId;
             SequenceId = sequenceId.ToString();
@@ -34,6 +34,8 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
             _pageOverrideConfiguration = pageOverrideConfiguration;
             LinksConfiguration = linksConfiguration.Where(x=>x.PageId == pageId).ToList();
             SectionTitle = sectionTitle;
+            PeopleInControlDetails = peopleInControlDetails;
+
             if (page != null)
             {
                 SetupPage(page, errorMessages);
@@ -59,6 +61,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
         public List<PageOfAnswers> PageOfAnswers { get; set; }
         public string BodyText { get; set; }
 
+        public List<TabularData> PeopleInControlDetails { get; set; }
         public PageDetails Details { get; set; }
 
         public string RedirectAction { get; set; }
