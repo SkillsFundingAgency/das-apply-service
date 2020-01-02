@@ -142,16 +142,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             _logger.LogInformation($"API ImportWorkflow > After post to Internal API");
         }
 
-        public async Task UpdateApplicationData<T>(T applicationData, Guid applicationId)
-        {
-            ///////////////////////////////////////////////////////////
-            // TODO: THIS WILL NEED RE-WRITING FOR NEW RoATP PROCESS
-            ///////////////////////////////////////////////////////////
-            await _httpClient.PostAsJsonAsync($"/Application/{applicationId}/UpdateApplicationData", applicationData);
-        }
-
-
-
         public async Task<string> GetApplicationStatus(Guid applicationId, int standardCode)
         {
             return await(await _httpClient.GetAsync(

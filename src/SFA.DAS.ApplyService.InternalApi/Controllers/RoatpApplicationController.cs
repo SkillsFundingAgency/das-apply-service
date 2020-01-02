@@ -74,15 +74,6 @@
             return Ok(submitResult);
         }
 
-        [Route("application-data")]
-        public async Task<IActionResult> GetApplicationData(Guid applicationId)
-        {
-            // TODO: Remove this end point and mediator handers. Use ApplicationController.GetApplicationData
-            var applicationData = await _mediator.Send(new GetApplicationDataRequest(applicationId));
-
-            return Ok(applicationData);
-        }
-
         private AsyncRetryPolicy GetRetryPolicy()
         {
             return Policy

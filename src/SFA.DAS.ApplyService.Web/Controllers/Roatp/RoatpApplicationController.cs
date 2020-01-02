@@ -1118,15 +1118,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> ApplicationSubmitted(Guid applicationId)
         {
-            var applicationData = await _roatpApiClient.GetApplicationData(applicationId);
+            var application = await _apiClient.GetApplication(applicationId);           
+            var applicationData = application.ApplyData.ApplyDetails;
 
             var model = new ApplicationSummaryViewModel
             {
-                ApplicationId = applicationId,
+                ApplicationId = application.ApplicationId,
                 UKPRN = applicationData.UKPRN,
                 OrganisationName = applicationData.OrganisationName,
                 TradingName = applicationData.TradingName,
-                ApplicationRouteId = applicationData.ApplicationRouteId,
+                ApplicationRouteId = applicationData.ProviderRoute.ToString(),
                 ApplicationReference = applicationData.ReferenceNumber
             };
 

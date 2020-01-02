@@ -9,7 +9,6 @@ using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.GetSection;
 using SFA.DAS.ApplyService.Application.Apply.GetSequence;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
-using SFA.DAS.ApplyService.Application.Apply.UpdateApplicationData;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -156,16 +155,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<IActionResult> DeleteAnswer(string applicationId, string userId, int sequenceId, int sectionId, string pageId, Guid answerId)
         {
             await _mediator.Send(new DeletePageAnswerRequest(Guid.Parse(applicationId), Guid.Parse(userId), sequenceId, sectionId, pageId, answerId));
-            return Ok();
-        }
-
-        [HttpPost("/Application/{applicationId}/UpdateApplicationData")]
-        public async Task<ActionResult> UpdateApplicationData(Guid applicationId, [FromBody] object applicationData)
-        {
-            ///////////////////////////////////////////////////////////
-            // TODO: THIS WILL NEED RE-WRITING FOR NEW RoATP PROCESS
-            ///////////////////////////////////////////////////////////
-            await _mediator.Send(new UpdateApplicationDataRequest(applicationId, applicationData));
             return Ok();
         }
 

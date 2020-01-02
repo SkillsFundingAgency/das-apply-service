@@ -13,6 +13,5 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         Task<string> GetNextRoatpApplicationReference();
         Task<bool> SubmitRoatpApplication(RoatpApplicationData applicationData);
-        Task<RoatpApplicationData> GetApplicationData(Guid applicationId);
     }
 }

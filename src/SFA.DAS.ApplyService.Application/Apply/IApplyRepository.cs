@@ -41,7 +41,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task CloseSequence(Guid applicationId, int sequenceId);
         Task<List<ApplicationSequence>> GetSequences(Guid applicationId);
         Task OpenSequence(Guid applicationId, int nextSequenceId);
-        Task UpdateApplicationData(Guid applicationId, ApplicationData applicationData);
         Task UpdateApplicationStatus(Guid applicationId, string status);
         Task DeleteRelatedApplications(Guid applicationId);
 
@@ -63,7 +62,5 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         Task<string> GetNextRoatpApplicationReference();
         Task<bool> SubmitRoatpApplication(RoatpApplicationData applicationData);
-        Task<RoatpApplicationData> GetRoatpApplicationData(Guid applicationId);
-
     }
 }

@@ -51,13 +51,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             // TODO: Remove this API call. Should be using the one in IApplicationApiClient
             return await (await _httpClient.PostAsJsonAsync($"/submit", applicationData)).Content.ReadAsAsync<bool>();
         }
-
-        public async Task<RoatpApplicationData> GetApplicationData(Guid applicationId)
-        {
-            // TODO: Remove this API call. Should be using the one in IApplicationApiClient
-            return await (await _httpClient.GetAsync($"/application-data?applicationId={applicationId}")).Content
-                .ReadAsAsync<RoatpApplicationData>();
-        }
     }
 
     public class NextApplicationReference

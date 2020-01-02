@@ -486,18 +486,6 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task UpdateApplicationData(Guid applicationId, ApplicationData applicationData)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(@"UPDATE Applications
-                                                SET    ApplicationData = @applicationData
-                                                WHERE  Applications.Id = @applicationId",
-                    new {applicationId, applicationData});
-            }
-        }
-
-
 
         public async Task UpdateApplicationStatus(Guid applicationId, string status)
         {
@@ -1035,16 +1023,6 @@ namespace SFA.DAS.ApplyService.Data
                     });
 
                 return await Task.FromResult(true);
-            }
-        }
-
-        public async Task<RoatpApplicationData> GetRoatpApplicationData(Guid applicationId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection.QueryAsync<RoatpApplicationData>(@"SELECT ApplicationData FROM Applications 
-                                                                            WHERE Id = @applicationId",
-                    new { applicationId })).FirstOrDefault();
             }
         }
     }
