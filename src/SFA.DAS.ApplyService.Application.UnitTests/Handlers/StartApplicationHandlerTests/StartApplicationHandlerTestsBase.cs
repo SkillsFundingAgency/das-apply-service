@@ -6,6 +6,7 @@ using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHandlerTests
 {
@@ -15,6 +16,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
         protected static Guid UserId;
         protected Mock<IApplyRepository> ApplyRepository;
         protected Mock<IOrganisationRepository> OrganisationRepository;
+        protected Mock<ILogger<StartApplicationHandler>> Logger;
         protected StartApplicationHandler Handler;
         protected Guid ApplyingOrganisationId;
         protected Guid ApplicationId;
@@ -28,7 +30,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
             ApplyingOrganisationId = Guid.NewGuid();
             ApplicationId = Guid.NewGuid();
             ApplicationType = ApplicationTypes.EndpointAssessor;
-
+            Logger = new Mock<ILogger<StartApplicationHandler>>();
             ApplyRepository = new Mock<IApplyRepository>();
 
             ApplyRepository.Setup(r => r.GetAssets()).ReturnsAsync(new List<Asset>());
@@ -49,7 +51,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.StartApplicationHa
 
             OrganisationRepository = new Mock<IOrganisationRepository>();
 
-            Handler = new StartApplicationHandler(ApplyRepository.Object, OrganisationRepository.Object);
+            Handler = new StartApplicationHandler(ApplyRepository.Object, OrganisationRepository.Object, Logger.Object);
         }
     }
 }
