@@ -50,6 +50,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly ICustomValidatorFactory _customValidatorFactory;
         private readonly IRoatpApiClient _roatpApiClient;
         private readonly ISubmitApplicationConfirmationEmailService _submitApplicationEmailService;
+        private readonly ITabularDataRepository _tabularDataRepository;
 
         private const string InputClassUpperCase = "app-uppercase";
         private const int Section1Id = 1;
@@ -62,7 +63,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
             IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks, 
             ICustomValidatorFactory customValidatorFactory, IOptions<List<NotRequiredOverrideConfiguration>> notRequiredOverrides, 
-            IRoatpApiClient roatpApiClient, ISubmitApplicationConfirmationEmailService submitApplicationEmailService)
+            IRoatpApiClient roatpApiClient, ISubmitApplicationConfirmationEmailService submitApplicationEmailService,
+            ITabularDataRepository tabularDataRepository)
             :base(sessionService)
         {
             _apiClient = apiClient;
@@ -82,6 +84,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _notRequiredOverrides = notRequiredOverrides.Value;
             _roatpApiClient = roatpApiClient;
             _submitApplicationEmailService = submitApplicationEmailService;
+            _tabularDataRepository = tabularDataRepository;
         }
 
         [HttpGet]
@@ -298,6 +301,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 // when the model state has errors the page will be displayed with the values which failed validation
                 var page = JsonConvert.DeserializeObject<Page>((string) this.TempData["InvalidPage"]);
 
+                var peopleInControlDetails = await GetPeopleInControlDetails(applicationId, sequenceId, sectionId);
+
                 var errorMessages = !ModelState.IsValid
                     ? ModelState.SelectMany(k => k.Value.Errors.Select(e => new ValidationErrorDetail()
                     {
@@ -307,7 +312,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     : null;
 
                 viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, pageContext, redirectAction,
-                    returnUrl, errorMessages, _pageOverrideConfiguration, _qnaLinks, sectionTitle);
+                    returnUrl, errorMessages, _pageOverrideConfiguration, _qnaLinks, sectionTitle, peopleInControlDetails);
             }
             else
             {
@@ -328,9 +333,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
 
                 page = await GetDataFedOptions(applicationId, page);
+                var peopleInControlDetails = await GetPeopleInControlDetails(applicationId, sequenceId, sectionId);
 
                 viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, page, pageContext, redirectAction,
-                    returnUrl, null, _pageOverrideConfiguration, _qnaLinks, sectionTitle);
+                    returnUrl, null, _pageOverrideConfiguration, _qnaLinks, sectionTitle, peopleInControlDetails);
 
             }
 
@@ -410,8 +416,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     })).DistinctBy(f => f.Field).ToList()
                     : null;
 
+                var peopleInControlDetails = await GetPeopleInControlDetails(applicationId, sequenceId, sectionId);
+
                 viewModel = new PageViewModel(applicationId, sequenceId, sectionId, pageId, pageInvalid, pageContext, redirectAction,
-                    returnUrl, errorMessages, _pageOverrideConfiguration, _qnaLinks, selectedSection.Title);
+                    returnUrl, errorMessages, _pageOverrideConfiguration, _qnaLinks, selectedSection.Title, peopleInControlDetails);
 
 
                 viewModel = await TokeniseViewModelProperties(viewModel);
@@ -487,6 +495,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
 
+            var populatedNotRequiredOverrides = await PopulateNotRequiredOverridesWithApplicationData(applicationId, _notRequiredOverrides);
+
             var yourOrganisationSequence =
                 sequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
             var yourOrganisationSections = await _qnaApiClient.GetSections(applicationId, yourOrganisationSequence.Id);
@@ -517,7 +527,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 ApplicationId = applicationId,
                 ApplicationSequences = filteredSequences,
-                NotRequiredOverrides = _notRequiredOverrides,
+                NotRequiredOverrides = populatedNotRequiredOverrides,
                 UKPRN = organisationDetails.OrganisationUkprn?.ToString(),
                 OrganisationName = organisationDetails.Name,
                 TradingName = organisationDetails.OrganisationDetails?.TradingName,
@@ -532,6 +542,24 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             };
 
             return View("~/Views/Roatp/TaskList.cshtml", model);
+        }
+
+        private async Task<List<NotRequiredOverrideConfiguration>> PopulateNotRequiredOverridesWithApplicationData(Guid applicationId, List<NotRequiredOverrideConfiguration> notRequiredOverrides)
+        {
+            foreach (var overrideConfig in notRequiredOverrides)
+            {
+                var applicationDataValue = await _qnaApiClient.GetAnswerByTag(applicationId, overrideConfig.ConditionalCheckField);
+                if (applicationDataValue?.Value != null)
+                {
+                    overrideConfig.Value = applicationDataValue.Value;
+                }
+                else
+                {
+                    overrideConfig.Value = string.Empty;
+                }
+            }
+
+            return notRequiredOverrides;
         }
 
         private async Task RemoveIrrelevantQuestions(Guid applicationId, ApplicationSection section)
@@ -1032,7 +1060,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
-            var providerRoute = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, "Apply-ProviderRoute");
+            var providerRoute = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.ProviderRoute);
             var nextApplicationReferenceNumber = await _roatpApiClient.GetNextRoatpApplicationReference();
                             
             var applicationData = new RoatpApplicationData
@@ -1150,6 +1178,40 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     }
                 }
             }
+        }
+
+        private async Task<List<TabularData>> GetPeopleInControlDetails(Guid applicationId, int sequenceId, int sectionId)
+        {
+            var result = new List<TabularData>();
+
+            if (sequenceId == RoatpWorkflowSequenceIds.CriminalComplianceChecks && sectionId == RoatpWorkflowSectionIds.CriminalComplianceChecks.CheckOnWhosInControl)
+            {
+                var personData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddPeopleInControl);
+                if (personData != null && personData.DataRows != null && personData.DataRows.Count > 0)
+                {
+                    result.Add(personData);
+                }
+
+                var directorsData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.CompaniesHouseDirectors);
+                if (directorsData != null && directorsData.DataRows != null && directorsData.DataRows.Count > 0)
+                {
+                    result.Add(directorsData);
+                }
+
+                var pscsData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.CompaniesHousePscs);
+                if (pscsData != null && pscsData.DataRows != null && pscsData.DataRows.Count > 0)
+                {
+                    result.Add(pscsData);
+                }
+
+                var trusteesData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
+                if (trusteesData != null && trusteesData.DataRows != null && trusteesData.DataRows.Count > 0)
+                {
+                    result.Add(trusteesData);
+                }
+            }
+
+            return result;
         }
     }
 }

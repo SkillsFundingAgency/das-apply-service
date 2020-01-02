@@ -23,14 +23,13 @@ namespace SFA.DAS.ApplyService.Web.Services
                 return string.Empty;
             }
 
-            if (notRequiredOverrides!=null && notRequiredOverrides.Any(condition => condition.ConditionalCheckField == "ProviderTypeId" &&
-                                                          applicationRouteId == condition.MustEqual &&
+            if (notRequiredOverrides!=null && notRequiredOverrides.Any(condition => 
+                                                          condition.Value == condition.MustEqual &&
                                                           sectionId == condition.SectionId &&
                                                           sequenceId == condition.SequenceId))
             {
                 return TaskListSectionStatus.NotRequired;
             }
-
 
             if (!PreviousSectionCompleted(sequence, sectionId, sequence.Sequential))
             {
