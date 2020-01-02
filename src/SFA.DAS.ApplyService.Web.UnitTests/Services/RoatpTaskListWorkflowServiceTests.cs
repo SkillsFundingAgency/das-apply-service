@@ -69,9 +69,15 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             {
                 new NotRequiredOverrideConfiguration
                 {
-                    ConditionalCheckField = "ProviderTypeId",
-                    MustEqual = applicationRouteId,
-                    Value = applicationRouteId,
+                    Conditions = new List<NotRequiredCondition>
+                    {
+                        new NotRequiredCondition
+                        {
+                            ConditionalCheckField = "ProviderTypeId",
+                            MustEqual = applicationRouteId,
+                            Value = applicationRouteId
+                        }
+                    },
                     SequenceId = sequenceId,
                     SectionId = sectionId
                 }
@@ -83,6 +89,84 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
                         QnAData = new QnAData {Pages = new List<Page>()}} } } },
                 notRequiredOverrides, sequenceId, sectionId, applicationRouteId);
             Assert.AreEqual(expectedResult, actualResult.ToLower());
+        }
+
+        [Test]
+        public void Get_SectionStatus_Not_Required_When_Multiple_Conditions_Matched()
+        {
+            var sequenceId = 1;
+            var sectionId = 2;
+            var applicationRouteId = "3";
+            var orgType = "HEI";
+            var expectedResult = "not required";
+            var notRequiredOverrides = new List<NotRequiredOverrideConfiguration>
+            {
+                new NotRequiredOverrideConfiguration
+                {
+                    Conditions = new List<NotRequiredCondition>
+                    {
+                        new NotRequiredCondition
+                        {
+                            ConditionalCheckField = "ProviderTypeId",
+                            MustEqual = applicationRouteId,
+                            Value = applicationRouteId
+                        },
+                        new NotRequiredCondition
+                        {
+                            ConditionalCheckField = "OrganisationType",
+                            MustEqual = orgType,
+                            Value = orgType
+                        }
+                    },
+                    SequenceId = sequenceId,
+                    SectionId = sectionId
+                }
+            };
+
+            var actualResult = RoatpTaskListWorkflowService.SectionStatus(new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = sequenceId,
+                    Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = sectionId,
+                        QnAData = new QnAData {Pages = new List<Page>()}} } } },
+                notRequiredOverrides, sequenceId, sectionId, applicationRouteId);
+            Assert.AreEqual(expectedResult, actualResult.ToLower());
+        }
+
+        [Test]
+        public void Get_SectionStatus_Only_One_Of_Multiple_Not_Required_Conditions_Matched()
+        {
+            var sequenceId = 1;
+            var sectionId = 2;
+            var applicationRouteId = "3";
+            var orgType = "HEI";
+
+            var notRequiredOverrides = new List<NotRequiredOverrideConfiguration>
+            {
+                new NotRequiredOverrideConfiguration
+                {
+                    Conditions = new List<NotRequiredCondition>
+                    {
+                        new NotRequiredCondition
+                        {
+                            ConditionalCheckField = "ProviderTypeId",
+                            MustEqual = applicationRouteId,
+                            Value = applicationRouteId
+                        },
+                        new NotRequiredCondition
+                        {
+                            ConditionalCheckField = "OrganisationType",
+                            MustEqual = orgType,
+                            Value = "unmatched"
+                        }
+                    },
+                    SequenceId = sequenceId,
+                    SectionId = sectionId
+                }
+            };
+
+            var actualResult = RoatpTaskListWorkflowService.SectionStatus(new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = sequenceId,
+                    Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = sectionId,
+                        QnAData = new QnAData {Pages = new List<Page>()}} } } },
+                notRequiredOverrides, sequenceId, sectionId, applicationRouteId);
+            Assert.IsEmpty(actualResult);
         }
     }
 }
