@@ -546,14 +546,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private async Task<List<NotRequiredOverrideConfiguration>> PopulateNotRequiredOverridesWithApplicationData(Guid applicationId, List<NotRequiredOverrideConfiguration> notRequiredOverrides)
         {
+            var applicationData = await _qnaApiClient.GetApplicationData(applicationId);
+
             foreach (var overrideConfig in notRequiredOverrides)
             {
                 foreach(var condition in overrideConfig.Conditions)
                 {
-                    var applicationDataValue = await _qnaApiClient.GetAnswerByTag(applicationId, condition.ConditionalCheckField);
-                    if (applicationDataValue?.Value != null)
+                    var applicationDataValue = applicationData[condition.ConditionalCheckField];
+                    if (applicationDataValue != null)
                     {
-                        condition.Value = applicationDataValue.Value;
+                        condition.Value = applicationDataValue.Value<string>();
                     }
                     else
                     {

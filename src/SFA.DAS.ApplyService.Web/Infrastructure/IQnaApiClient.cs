@@ -12,6 +12,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     using System.Threading.Tasks;
     using Domain.Apply;
     using Domain.Entities;
+    using Newtonsoft.Json.Linq;
     using SFA.DAS.ApplyService.Application.Apply;
     using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 
@@ -27,7 +28,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<IEnumerable<ApplicationSequence>> GetSequences(Guid applicationId);
         Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId, Guid sequenceId);
         Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag, string questionId = null);
-
+        Task<JObject> GetApplicationData(Guid applicationId);
         Task<UploadPageAnswersResult> Upload(Guid applicationId, Guid sectionId, string pageId, IFormFileCollection files);
 
         Task<HttpResponseMessage> DownloadFile(Guid applicationId, Guid sectionId, string pageId, string questionId,

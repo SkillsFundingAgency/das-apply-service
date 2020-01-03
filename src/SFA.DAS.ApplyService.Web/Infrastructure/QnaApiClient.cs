@@ -83,11 +83,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag, string questionId = null)
         {
             var answer = new Answer { QuestionId  = questionId };
-            var applicationDataJson = await (await _httpClient.GetAsync(
-                    $"Applications/{applicationId}/applicationData")
-                )
-                .Content.ReadAsAsync<object>();
-            var applicationData = JObject.Parse(applicationDataJson.ToString());
+
+            var applicationData = await GetApplicationData(applicationId);
             if (applicationData != null)
             {
                 var answerData = applicationData[questionTag];
@@ -98,6 +95,16 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
 
             return await Task.FromResult(answer);
+        }
+
+        public async Task<JObject> GetApplicationData(Guid applicationId)
+        {
+            var applicationDataJson = await (await _httpClient.GetAsync(
+                   $"Applications/{applicationId}/applicationData")
+               )
+               .Content.ReadAsAsync<object>();
+
+            return JObject.Parse(applicationDataJson.ToString()); 
         }
 
         public async Task<UploadPageAnswersResult> Upload(Guid applicationId, Guid sectionId, string pageId, IFormFileCollection files)
