@@ -69,13 +69,25 @@
                                             @applicationRoute.RouteName
                                         </label>
                                         <span id="route-@applicationRoute.Id-item-hint" class="govuk-hint govuk-radios__hint">
-                                            @applicationRoute.Description
+                                            @Html.Raw(applicationRoute.Description)
                                         </span>
                                     </div>
                                 }
                             </div>
                         </fieldset>
                     </div>
+                    <details class="govuk-details" role="group">
+                        <summary class="govuk-details__summary" role="button" aria-controls="details-content-provider-route" aria-expanded="false">
+                            <span class="govuk-details__summary-text">
+                                What is a connected company or charity?
+                            </span>
+                        </summary>
+                        <div class="govuk-details__text" id="details-content-provider-route" aria-hidden="true">
+                            <p>A connected company is part of the same group and has the same ultimate parent company as your organisation.</p>
+                            <p>A connected charity is part of the same group of charities and has a majority of the same controlling trustees as your organisation.</p>
+                        </div>
+                    </details>
+
                     @Html.HiddenFor(x => x.PageId)
                     @Html.HiddenFor(x => x.SequenceId)
                     @Html.HiddenFor(x => x.SectionId)
