@@ -82,12 +82,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
         public static class YourOrganisation
         {
-            public static int ProviderRoute = 1;
-            public static int WhatYouWillNeed = 2;
-            public static int OrganisationDetails = 3;
-            public static int WhosInControl = 4;
-            public static int DescribeYourOrganisation = 5;
-            public static int ExperienceAndAccreditations = 6;
+            public static int WhatYouWillNeed = 1;
+            public static int OrganisationDetails = 2;
+            public static int WhosInControl = 3;
+            public static int DescribeYourOrganisation = 4;
+            public static int ExperienceAndAccreditations = 5;
         }
 
         public static class FinancialEvidence
@@ -236,9 +235,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             {
                 QuestionId = RoatpPreambleQuestionIdConstants.ApplyProviderRoute,
                 Value = applicationDetails.ApplicationRoute?.Id.ToString(),
-                PageId = RoatpWorkflowPageIds.YourOrganisation,
-                SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
-                SectionId = RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute
+                PageId = RoatpWorkflowPageIds.Preamble,
+                SequenceId = RoatpWorkflowSequenceIds.Preamble,
+                SectionId = RoatpWorkflowSectionIds.Preamble
             });
 
             questions.Add(new PreambleAnswer
