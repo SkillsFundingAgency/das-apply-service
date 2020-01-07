@@ -38,84 +38,88 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
 
         public async Task<Unit> Handle(ReturnRequest request, CancellationToken cancellationToken)
         {
-            if (request.RequestReturnType == "ReturnWithFeedback")
-            {
-                await _applyRepository.UpdateSequenceStatus(request.ApplicationId, request.SequenceId,
-                    ApplicationSequenceStatus.FeedbackAdded, ApplicationStatus.FeedbackAdded);
-            }
-            else if (request.RequestReturnType == "Approve" || request.RequestReturnType == "ApproveWithFeedback")
-            {
-                await _applyRepository.UpdateSequenceStatus(request.ApplicationId, request.SequenceId,
-                    ApplicationSequenceStatus.Approved, ApplicationStatus.InProgress);
+            ///////////////////////////////////////////////////////////
+            // TODO: THIS WILL NEED RE-WRITING FOR NEW RoATP PROCESS
+            ///////////////////////////////////////////////////////////
 
-                await _applyRepository.CloseSequence(request.ApplicationId, request.SequenceId);
+            //if (request.RequestReturnType == "ReturnWithFeedback")
+            //{
+            //    await _applyRepository.UpdateSequenceStatus(request.ApplicationId, request.SequenceId,
+            //        ApplicationSequenceStatus.FeedbackAdded, ApplicationStatus.FeedbackAdded);
+            //}
+            //else if (request.RequestReturnType == "Approve" || request.RequestReturnType == "ApproveWithFeedback")
+            //{
+            //    await _applyRepository.UpdateSequenceStatus(request.ApplicationId, request.SequenceId,
+            //        ApplicationSequenceStatus.Approved, ApplicationStatus.InProgress);
 
-                var sequences = await _applyRepository.GetSequences(request.ApplicationId);
-                var nextSequence = sequences.FirstOrDefault(seq => (int)seq.SequenceId == request.SequenceId + 1);
+            //    await _applyRepository.CloseSequence(request.ApplicationId, request.SequenceId);
 
-                if (nextSequence != null)
-                {
-                    await _applyRepository.OpenSequence(request.ApplicationId, (int)nextSequence.SequenceId);
-                }
-                else
-                {
-                    // This is the last sequence, so approve the whole application
-                    await _applyRepository.UpdateApplicationStatus(request.ApplicationId, ApplicationStatus.Approved);
+            //    var sequences = await _applyRepository.GetSequences(request.ApplicationId);
+            //    var nextSequence = sequences.FirstOrDefault(seq => (int)seq.SequenceId == request.SequenceId + 1);
 
-                    if(await OrganisationIsNotYetOnTheRegister(request.ApplicationId))
-                    {
-                        _logger.LogInformation($"Organisation attached to ApplicationId: {request.ApplicationId} is not yet on the register. Check to see if any related applications need to be removed.");
-                        await _applyRepository.DeleteRelatedApplications(request.ApplicationId);
-                    }
-                }
-            }
-            else
-            {
-                await _applyRepository.UpdateSequenceStatus(request.ApplicationId, request.SequenceId,
-                    ApplicationSequenceStatus.Rejected, ApplicationStatus.Rejected);
-            }
+            //    if (nextSequence != null)
+            //    {
+            //        await _applyRepository.OpenSequence(request.ApplicationId, (int)nextSequence.SequenceId);
+            //    }
+            //    else
+            //    {
+            //        // This is the last sequence, so approve the whole application
+            //        await _applyRepository.UpdateApplicationStatus(request.ApplicationId, ApplicationStatus.Approved);
 
-            await NotifyContact(request.ApplicationId, request.SequenceId);
+            //        if(await OrganisationIsNotYetOnTheRegister(request.ApplicationId))
+            //        {
+            //            _logger.LogInformation($"Organisation attached to ApplicationId: {request.ApplicationId} is not yet on the register. Check to see if any related applications need to be removed.");
+            //            await _applyRepository.DeleteRelatedApplications(request.ApplicationId);
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            //    await _applyRepository.UpdateSequenceStatus(request.ApplicationId, request.SequenceId,
+            //        ApplicationSequenceStatus.Rejected, ApplicationStatus.Rejected);
+            //}
+
+            //await NotifyContact(request.ApplicationId, request.SequenceId);
 
             return Unit.Value;
         }
 
-        private async Task<bool> OrganisationIsNotYetOnTheRegister(Guid applicationId)
-        {
-            var org = await _organisationRepository.GetOrganisationByApplicationId(applicationId);
-            return !org.RoEPAOApproved;
-        }
+        //private async Task<bool> OrganisationIsNotYetOnTheRegister(Guid applicationId)
+        //{
+        //    var org = await _organisationRepository.GetOrganisationByApplicationId(applicationId);
+        //    return !org.RoEPAOApproved;
+        //}
 
-        private async Task NotifyContact(Guid applicationId, int sequenceId)
-        {
-            var application = await _applyRepository.GetApplication(applicationId);
-            var standard = application.ApplicationData?.StandardName ?? string.Empty;
-            var reference = application.ApplicationData?.ReferenceNumber ?? string.Empty;
-            var config = await _configurationService.GetConfig();
-            var assessorSignInPage = $"{config.AssessorServiceBaseUrl}/Account/SignIn";
+        //private async Task NotifyContact(Guid applicationId, int sequenceId)
+        //{
+            //var application = await _applyRepository.GetApplication(applicationId);
+            //var standard = application.ApplicationData?.StandardName ?? string.Empty;
+            //var reference = application.ApplicationData?.ReferenceNumber ?? string.Empty;
+            //var config = await _configurationService.GetConfig();
+            //var assessorSignInPage = $"{config.AssessorServiceBaseUrl}/Account/SignIn";
 
-            if (sequenceId == 1)
-            {
-                var lastInitSubmission = application.ApplicationData?.InitSubmissions.OrderByDescending(sub => sub.SubmittedAt).FirstOrDefault();
+            //if (sequenceId == 1)
+            //{
+            //    var lastInitSubmission = application.ApplicationData?.InitSubmissions.OrderByDescending(sub => sub.SubmittedAt).FirstOrDefault();
 
-                if (lastInitSubmission != null)
-                {
-                    var contactToNotify = await _contactRepository.GetContact(lastInitSubmission.SubmittedBy);
-                    await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_UPDATE, contactToNotify, 
-                        new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.GivenNames, LoginLink = assessorSignInPage });
-                }
-            }
-            else if (sequenceId == 2)
-            {
-                var lastStandardSubmission = application.ApplicationData?.StandardSubmissions.OrderByDescending(sub => sub.SubmittedAt).FirstOrDefault();
+            //    if (lastInitSubmission != null)
+            //    {
+            //        var contactToNotify = await _contactRepository.GetContact(lastInitSubmission.SubmittedBy);
+            //        await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_UPDATE, contactToNotify, 
+            //            new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.GivenNames, LoginLink = assessorSignInPage });
+            //    }
+            //}
+            //else if (sequenceId == 2)
+            //{
+            //    var lastStandardSubmission = application.ApplicationData?.StandardSubmissions.OrderByDescending(sub => sub.SubmittedAt).FirstOrDefault();
 
-                if (lastStandardSubmission != null)
-                {
-                    var contactToNotify = await _contactRepository.GetContact(lastStandardSubmission.SubmittedBy);
-                    await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_RESPONSE, contactToNotify, 
-                        new {ServiceName=SERVICE_NAME,ServiceTeam=SERVICE_TEAM, Contact= contactToNotify.GivenNames, standard, LoginLink = assessorSignInPage });
-                }
-            }
-        }
+            //    if (lastStandardSubmission != null)
+            //    {
+            //        var contactToNotify = await _contactRepository.GetContact(lastStandardSubmission.SubmittedBy);
+            //        await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_RESPONSE, contactToNotify, 
+            //            new {ServiceName=SERVICE_NAME,ServiceTeam=SERVICE_TEAM, Contact= contactToNotify.GivenNames, standard, LoginLink = assessorSignInPage });
+            //    }
+            //}
+        //}
     }
 }
