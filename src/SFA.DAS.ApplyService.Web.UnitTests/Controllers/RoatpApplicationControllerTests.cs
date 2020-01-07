@@ -7,6 +7,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
+using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -107,7 +108,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Applications_starts_a_new_application_if_no_applications_for_that_user()
         {
-            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(new List<Domain.Entities.Application>());
+            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(new List<Domain.Entities.Apply>());
 
             var applicationDetails = new ApplicationDetails
             {
@@ -144,24 +145,25 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(applicationDetails);
 
-            var response = new StartApplicationResponse
+            var applicationId = Guid.NewGuid();
+            var qnaResponse = new StartQnaApplicationResponse
             {
-                ApplicationId = Guid.NewGuid()
+                ApplicationId = applicationId
             };
 
-            _qnaApiClient.Setup(x => x.StartApplication(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(response).Verifiable();
+            _qnaApiClient.Setup(x => x.StartApplication(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(qnaResponse).Verifiable();
 
-            _apiClient.Setup(x => x.StartApplication(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>())).ReturnsAsync(response).Verifiable();
+            _apiClient.Setup(x => x.StartApplication(It.IsAny<StartApplicationRequest>())).ReturnsAsync(applicationId).Verifiable();
 
             var providerRouteSection = new ApplicationSection
             {
-                ApplicationId = Guid.NewGuid(),
+                ApplicationId = applicationId,
                 SectionId = 1
             };
 
             _qnaApiClient.Setup(x => x.GetSectionBySectionNo(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(providerRouteSection);
 
-            var result = _controller.Applications(ApplicationTypes.RegisterTrainingProviders).GetAwaiter().GetResult();
+            var result = _controller.Applications().GetAwaiter().GetResult();
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
@@ -174,18 +176,18 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Applications_shows_task_list_if_an_application_in_progress()
         {
-            var inProgressApp = new Domain.Entities.Application
+            var inProgressApp = new Domain.Entities.Apply
             {
                 ApplicationStatus = ApplicationStatus.InProgress
             };
-            var applications = new List<Domain.Entities.Application>
+            var applications = new List<Domain.Entities.Apply>
             {
                 inProgressApp
             };
 
             _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
 
-            var result = _controller.Applications(ApplicationTypes.RegisterTrainingProviders).GetAwaiter().GetResult();
+            var result = _controller.Applications().GetAwaiter().GetResult();
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
@@ -195,18 +197,18 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Applications_shows_confirmation_page_if_application_submitted()
         {
-            var submittedApp = new Domain.Entities.Application
+            var submittedApp = new Domain.Entities.Apply
             {
                 ApplicationStatus = ApplicationStatus.Submitted
             };
-            var applications = new List<Domain.Entities.Application>
+            var applications = new List<Domain.Entities.Apply>
             {
                 submittedApp
             };
 
             _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
 
-            var result = _controller.Applications(ApplicationTypes.RegisterTrainingProviders).GetAwaiter().GetResult();
+            var result = _controller.Applications().GetAwaiter().GetResult();
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
@@ -261,10 +263,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
             _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.ProviderRoute, It.IsAny<string>())).ReturnsAsync(providerRouteAnswer);
 
-            var applicationReference = "APR1102200";
-            _roatpApiClient.Setup(x => x.GetNextRoatpApplicationReference()).ReturnsAsync(applicationReference);
-
-            _roatpApiClient.Setup(x => x.SubmitRoatpApplication(It.IsAny<RoatpApplicationData>())).ReturnsAsync(true);
+            _apiClient.Setup(x => x.SubmitApplication(It.IsAny<Application.Apply.Submit.SubmitApplicationRequest>())).ReturnsAsync(true);
 
             _submitApplicationEmailService.Setup(x => x.SendGetHelpWithQuestionEmail(It.IsAny<ApplicationSubmitConfirmation>())).Returns(Task.FromResult(true));
 
