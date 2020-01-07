@@ -21,6 +21,7 @@
     using SFA.DAS.ApplyService.Web.Resources;
     using System.Collections.Generic;
     using SFA.DAS.ApplyService.Domain.Entities;
+    using SFA.DAS.ApplyService.Application.Apply.Roatp;
 
     [Authorize]
     public class RoatpApplicationPreambleController : RoatpApplyControllerBase
@@ -33,6 +34,7 @@
         private readonly IOrganisationApiClient _organisationApiClient;
         private readonly IUsersApiClient _usersApiClient;
         private readonly IApplicationApiClient _applicationApiClient;
+        private readonly IQnaApiClient _qnaApiClient;
         
         private const string GetHelpSubmittedForPageFormatString = "Roatp_GetHelpSubmitted_{0}";
 
@@ -46,7 +48,8 @@
                                                   ICharityCommissionApiClient charityCommissionApiClient,
                                                   IOrganisationApiClient organisationApiClient,
                                                   IUsersApiClient usersApiClient,
-                                                  IApplicationApiClient applicationApiClient)
+                                                  IApplicationApiClient applicationApiClient,
+                                                  IQnaApiClient qnaApiClient)
             :base(sessionService)
         {
             _logger = logger;
@@ -58,6 +61,7 @@
             _organisationApiClient = organisationApiClient;
             _usersApiClient = usersApiClient;
             _applicationApiClient = applicationApiClient;
+            _qnaApiClient = qnaApiClient;
         }
 
         [Route("terms-conditions-making-application")]
@@ -211,7 +215,14 @@
                 return RedirectToAction("ConfirmLevyStatus");
             }
 
-            return await StartRoatpApplication(model);
+            if (model.ApplicationId == null || model.ApplicationId == Guid.Empty)
+            {
+                return await StartRoatpApplication(model);
+            }
+            else
+            {
+                return await UpdateApplicationProviderRoute(model);
+            }
         }
 
         [Route("organisation-levy-paying-employer")]
@@ -258,7 +269,15 @@
                 {
                     ApplicationRouteId = applicationDetails.ApplicationRoute.Id
                 };
-                return await StartRoatpApplication(selectApplicationRouteModel);
+
+                if (selectApplicationRouteModel.ApplicationId == null || selectApplicationRouteModel.ApplicationId == Guid.Empty)
+                {
+                    return await StartRoatpApplication(selectApplicationRouteModel);
+                }
+                else
+                {
+                    return await UpdateApplicationProviderRoute(selectApplicationRouteModel);
+                }
             }
             return RedirectToAction("IneligibleNonLevy");
         }
@@ -301,6 +320,7 @@
         public async Task<IActionResult> SelectApplicationRoute()
         {
             var model = new SelectApplicationRouteViewModel();
+
             var applicationRoutes = await GetApplicationRoutesForOrganisation();
 
             model.ApplicationRoutes = applicationRoutes;
@@ -449,7 +469,28 @@
 
             return RedirectToAction("Applications", "RoatpApplication", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
 		}
-		
+
+        private async Task<IActionResult> UpdateApplicationProviderRoute(SelectApplicationRouteViewModel model)
+        {
+            var providerRouteAnswer = new List<Answer> 
+            {
+                new Answer
+                {
+                    QuestionId = RoatpPreambleQuestionIdConstants.ApplyProviderRoute,
+                    Value = model.ApplicationRouteId.ToString()
+                }
+            };
+
+            var section = await _qnaApiClient.GetSectionBySectionNo(model.ApplicationId, RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble);
+
+            if (section != null)
+            {
+                await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, section.Id, RoatpWorkflowPageIds.Preamble, providerRouteAnswer);
+            }
+
+            return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId });
+        }
+
         [Route("already-on-roatp")]
         public async Task<IActionResult> ProviderAlreadyOnRegister()
         {

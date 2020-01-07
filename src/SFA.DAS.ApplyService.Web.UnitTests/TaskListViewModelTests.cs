@@ -44,12 +44,12 @@
             _providerRouteSection = new ApplicationSection
             {
                 SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
-                SectionId = RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute
+                SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed
             };
             _whatYouNeedSection = new ApplicationSection
             {
                 SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
-                SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed
+                SectionId = RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails
             };
 
             _yourApplicationSequence.Sections.Add(_providerRouteSection);
@@ -110,9 +110,9 @@
             };
 
             model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute).Should().Be(TaskListSectionStatus.Next);
+                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed).Should().Be(TaskListSectionStatus.Next);
             model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed).ToLower().Should().Be(TaskListSectionStatus.Blank);
+                RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails).ToLower().Should().Be(TaskListSectionStatus.Blank);
         }
 
         [Test]
@@ -178,9 +178,9 @@
             };
 
             model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute).Should().Be(TaskListSectionStatus.Completed);
+                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed).Should().Be(TaskListSectionStatus.Completed);
             model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed).Should().Be(TaskListSectionStatus.Next);
+                RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails).Should().Be(TaskListSectionStatus.Next);
         }
 
         [Test]
@@ -257,9 +257,9 @@
             };
 
             model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute).Should().Be(TaskListSectionStatus.Completed);
-            model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
                 RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed).Should().Be(TaskListSectionStatus.Completed);
+            model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
+                RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails).Should().Be(TaskListSectionStatus.Completed);
         }
 
         [Test]

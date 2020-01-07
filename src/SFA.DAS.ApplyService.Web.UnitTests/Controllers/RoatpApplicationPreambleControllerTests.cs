@@ -40,6 +40,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IOrganisationApiClient> _organisationApiClient;
         private Mock<IUsersApiClient> _usersApiClient;
         private Mock<IApplicationApiClient> _applicationApiClient;
+        private Mock<IQnaApiClient> _qnaApiClient;
 
         private RoatpApplicationPreambleController _controller;
 
@@ -62,6 +63,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _organisationApiClient = new Mock<IOrganisationApiClient>();
             _usersApiClient = new Mock<IUsersApiClient>();
             _applicationApiClient = new Mock<IApplicationApiClient>();
+            _qnaApiClient = new Mock<IQnaApiClient>();
 
             _controller = new RoatpApplicationPreambleController(_logger.Object, _roatpApiClient.Object,
                 _ukrlpApiClient.Object,
@@ -69,7 +71,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 _charityCommissionApiClient.Object,
                 _organisationApiClient.Object,
                 _usersApiClient.Object,
-                _applicationApiClient.Object);
+                _applicationApiClient.Object,
+                _qnaApiClient.Object);
 
             _activeCompany = new CompaniesHouseSummary
             {

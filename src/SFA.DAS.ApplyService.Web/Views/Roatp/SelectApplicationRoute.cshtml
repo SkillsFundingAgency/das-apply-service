@@ -7,12 +7,24 @@
     bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
 
     var isError = showErrors ? "govuk-input--error" : "";
+
+    var backAction = "ConfirmOrganisation";
+    var backController = "RoatpApplicationPreamble";
+
+    var submitAction = "StartApplication";
+
+    if (Model.ApplicationId != null && Model.ApplicationId != Guid.Empty)
+    {
+        submitAction = "UpdateApplicationProviderRoute";
+        backController = "RoatpApplication";
+        backAction = "TaskList";
+    }
 }
 
 @{ await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml"); }
 
 <div class="grid-row">
-    <form asp-controller="RoatpApplicationPreamble" asp-action="ConfirmOrganisation" method="get" name="backForm">
+    <form asp-controller="@backController" asp-action="@backAction" method="get" name="backForm">
         <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
     </form>
 </div>
@@ -44,7 +56,7 @@
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <form method="post" asp-action="StartApplication" asp-controller="RoatpApplicationPreamble">
+                <form method="post" asp-action="@submitAction" asp-controller="RoatpApplicationPreamble">
 
                     <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ApplicationRouteId" sfa-validationerror-class="govuk-error-message">
                         @if (showErrors)
@@ -87,7 +99,7 @@
                             <p>A connected charity is part of the same group of charities and has a majority of the same controlling trustees as your organisation.</p>
                         </div>
                     </details>
-
+                    @Html.HiddenFor(x => x.ApplicationId)
                     @Html.HiddenFor(x => x.PageId)
                     @Html.HiddenFor(x => x.SequenceId)
                     @Html.HiddenFor(x => x.SectionId)
