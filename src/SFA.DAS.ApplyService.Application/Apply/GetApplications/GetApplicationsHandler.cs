@@ -6,7 +6,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply.GetApplications
 {
-    public class GetApplicationsHandler : IRequestHandler<GetApplicationsRequest, List<Domain.Entities.Application>>
+    public class GetApplicationsHandler : IRequestHandler<GetApplicationsRequest, List<Domain.Entities.Apply>>
     {
         private readonly IApplyRepository _applyRepository;
 
@@ -15,7 +15,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.GetApplications
             _applyRepository = applyRepository;
         }
         
-        public async Task<List<Domain.Entities.Application>> Handle(GetApplicationsRequest request, CancellationToken cancellationToken)
+        public async Task<List<Domain.Entities.Apply>> Handle(GetApplicationsRequest request, CancellationToken cancellationToken)
         {
             if(!request.CreatedBy)
             {
