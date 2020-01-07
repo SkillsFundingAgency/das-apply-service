@@ -32,5 +32,6 @@
 
         public string GetHelpAction { get { return "SelectApplicationRoute"; } set { } }
 
+        public string LevyPayingEmployer { get; set; }
     }
 }
