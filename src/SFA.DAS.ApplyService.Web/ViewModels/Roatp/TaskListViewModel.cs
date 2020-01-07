@@ -57,6 +57,11 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         {
             get
             {
+                if (SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails) == TaskListSectionStatus.Blank)
+                {
+                    return TaskListSectionStatus.Blank;
+                }
+
                 if (VerifiedCompaniesHouse && VerifiedCharityCommission)
                 {
                     if ((CompaniesHouseDataConfirmed && !CharityCommissionDataConfirmed)
@@ -186,9 +191,45 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         {
             var sequence = ApplicationSequences.FirstOrDefault(x => x.SequenceId == sequenceId);
 
-            if (sequenceId == RoatpWorkflowSequenceIds.YourOrganisation && sectionId == RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation)
+            if (sequenceId == RoatpWorkflowSequenceIds.YourOrganisation)
             {
-                return (WhosInControlSectionStatus == TaskListSectionStatus.Completed);
+                switch(sectionId)
+                {
+                    case RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed:
+                        {
+                            return true;                            
+                        }
+                    case RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails:
+                        {
+                            return (SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed)
+                                    == TaskListSectionStatus.Completed);                            
+                        }
+                    case RoatpWorkflowSectionIds.YourOrganisation.WhosInControl:
+                        {
+                            return (SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed)
+                                    == TaskListSectionStatus.Completed)
+                                    && (SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails)
+                                    == TaskListSectionStatus.Completed);                            
+                        }
+                    case RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation:
+                        {
+                            return (SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed)
+                                    == TaskListSectionStatus.Completed)
+                                    && (SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails)
+                                    == TaskListSectionStatus.Completed)
+                                    && (WhosInControlSectionStatus == TaskListSectionStatus.Completed);                            
+                        }
+                    case RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations:
+                        {
+                            return (SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed)
+                                    == TaskListSectionStatus.Completed)
+                                    && (SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails)
+                                    == TaskListSectionStatus.Completed)
+                                    && (WhosInControlSectionStatus == TaskListSectionStatus.Completed)
+                                    && (SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation)
+                                    == TaskListSectionStatus.Completed);                            
+                        }
+                }
             }
 
             if (sequenceId == RoatpWorkflowSequenceIds.Finish)

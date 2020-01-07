@@ -82,11 +82,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
         public static class YourOrganisation
         {
-            public static int WhatYouWillNeed = 1;
-            public static int OrganisationDetails = 2;
-            public static int WhosInControl = 3;
-            public static int DescribeYourOrganisation = 4;
-            public static int ExperienceAndAccreditations = 5;
+            public const int WhatYouWillNeed = 1;
+            public const int OrganisationDetails = 2;
+            public const int WhosInControl = 3;
+            public const int DescribeYourOrganisation = 4;
+            public const int ExperienceAndAccreditations = 5;
         }
 
         public static class FinancialEvidence

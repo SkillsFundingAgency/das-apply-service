@@ -18,9 +18,8 @@
         private Guid _applicationId;
         private List<ApplicationSequence> _applicationSequences;
         private ApplicationSequence _yourApplicationSequence;
-        private ApplicationSection _providerRouteSection;
-        private ApplicationSection _whatYouNeedSection;
-        private RoatpTaskListWorkflowService _roatpTaskListWorkflowService;
+        private ApplicationSection _orgDetailsSection1;
+        private ApplicationSection _orgDetailsSection2;
         private Mock<IQnaApiClient> _qnaApiClient;
 
         private const string MainProviderRoute = "1";
@@ -40,30 +39,29 @@
                 Sections = new List<ApplicationSection>(),
                 Sequential = true
             };
-            _roatpTaskListWorkflowService = new RoatpTaskListWorkflowService();
-            _providerRouteSection = new ApplicationSection
+            _orgDetailsSection1 = new ApplicationSection
             {
                 SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
                 SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed
             };
-            _whatYouNeedSection = new ApplicationSection
+            _orgDetailsSection2 = new ApplicationSection
             {
                 SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
                 SectionId = RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails
             };
 
-            _yourApplicationSequence.Sections.Add(_providerRouteSection);
-            _yourApplicationSequence.Sections.Add(_whatYouNeedSection);
+            _yourApplicationSequence.Sections.Add(_orgDetailsSection1);
+            _yourApplicationSequence.Sections.Add(_orgDetailsSection2);
             _applicationSequences.Add(_yourApplicationSequence);
             _qnaApiClient = new Mock<IQnaApiClient>();
         }
 
         [Test]
-        public void Task_list_shows_next_for_provider_route_if_not_complete()
+        public void Task_list_shows_next_for_first_your_organisation_section_if_not_complete()
         {
             // This should be prefilled in the pre-amble but test in case the sequencing changes
 
-            _providerRouteSection.QnAData = new QnAData
+            _orgDetailsSection1.QnAData = new QnAData
             {
                 Pages = new List<Page>
                 {
@@ -82,7 +80,7 @@
                 }
             };
 
-            _whatYouNeedSection.QnAData = new QnAData
+            _orgDetailsSection2.QnAData = new QnAData
             {
                 Pages = new List<Page>
                 {
@@ -116,9 +114,9 @@
         }
 
         [Test]
-        public void Task_list_shows_next_for_your_organisation_what_you_need_if_not_complete()
+        public void Task_list_shows_next_for_second_your_organisation_section_if_not_complete()
         {
-            _providerRouteSection.QnAData = new QnAData
+            _orgDetailsSection1.QnAData = new QnAData
             {
                 Pages = new List<Page>
                 {
@@ -150,7 +148,7 @@
                 }
             };
 
-            _whatYouNeedSection.QnAData = new QnAData
+            _orgDetailsSection2.QnAData = new QnAData
             {
                 Pages = new List<Page>
                 {
@@ -186,7 +184,7 @@
         [Test]
         public void Task_list_shows_completed_your_organisation_section()
         {
-            _providerRouteSection.QnAData = new QnAData
+            _orgDetailsSection1.QnAData = new QnAData
             {
                 Pages = new List<Page>
                 {
@@ -217,7 +215,7 @@
                 }
             };
 
-            _whatYouNeedSection.QnAData = new QnAData
+            _orgDetailsSection2.QnAData = new QnAData
             {
                 Pages = new List<Page>
                 {
@@ -260,6 +258,122 @@
                 RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed).Should().Be(TaskListSectionStatus.Completed);
             model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
                 RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails).Should().Be(TaskListSectionStatus.Completed);
+        }
+
+        [Test]
+        public void Task_list_shows_blank_for_sequential_sections_if_previous_sections_are_blank()
+        {
+            _orgDetailsSection1.QnAData = new QnAData
+            {
+                Pages = new List<Page>
+                {
+                    new Page
+                    {
+                        PageId = "1",
+                        Questions = new List<Question>
+                        {
+                            new Question
+                            {
+                                QuestionId = "YO-1"
+                            }
+                        },
+                        PageOfAnswers = new List<PageOfAnswers>
+                        {
+                            new PageOfAnswers
+                            {
+                                Id = Guid.NewGuid(),
+                                Answers = new List<Answer>()
+                            }
+                        },
+                        Active = true,
+                        Complete = false
+                    }
+                }
+            };
+
+            _orgDetailsSection2.QnAData = new QnAData
+            {
+                Pages = new List<Page>
+                {
+                    new Page
+                    {
+                        PageId = "2",
+                        Questions = new List<Question>
+                        {
+                            new Question
+                            {
+                                QuestionId = "YO-2"
+                            }
+                        },
+                        PageOfAnswers = new List<PageOfAnswers>
+                        {
+                            new PageOfAnswers
+                            {
+                                Id = Guid.NewGuid(),
+                                Answers = new List<Answer>()
+                            }
+                        },
+                        Active = true,
+                        Complete = false
+                    }
+                }
+            };
+
+            var orgDetailsSection3 = new ApplicationSection
+            {
+                SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
+                SectionId = RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation,
+                QnAData = new QnAData
+                {
+                    Pages = new List<Page>
+                    {
+                        new Page
+                        {
+                            PageId = "3",
+                            Questions = new List<Question>
+                            {
+                                new Question
+                                {
+                                    QuestionId = "YO-3"
+                                }
+                            },
+                            PageOfAnswers = new List<PageOfAnswers>
+                            {
+                                new PageOfAnswers
+                                {
+                                    Id = Guid.NewGuid(),
+                                    Answers = new List<Answer> 
+                                    {
+                                        new Answer
+                                        {
+                                            QuestionId = "YO-3",
+                                            Value = "Y"
+                                        }
+                                    }
+                                }
+                            },
+                            Active = true,
+                            Complete = true
+                        }
+                    }
+                }
+            };
+            _yourApplicationSequence.Sections.Add(orgDetailsSection3);
+
+            var model = new TaskListViewModel(_qnaApiClient.Object)
+            {
+                ApplicationId = _applicationId,
+                ApplicationSequences = _applicationSequences,
+                UKPRN = "10001234",
+                OrganisationName = "Org Name"
+            };
+
+            model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
+                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed).Should().Be(TaskListSectionStatus.Next);
+            model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
+                RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails).Should().Be(TaskListSectionStatus.Blank);
+            model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation,
+                RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation).Should().Be(TaskListSectionStatus.Blank);
         }
 
         [Test]
