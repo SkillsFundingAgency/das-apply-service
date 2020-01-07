@@ -53,7 +53,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly ITabularDataRepository _tabularDataRepository;
 
         private const string InputClassUpperCase = "app-uppercase";
-        private const int Section1Id = 1;
         private const string NotApplicableAnswerText = "None of the above";
         private const string InvalidCheckBoxListSelectionErrorMessage = "If your answer is 'none of the above', you must only select that option";
 
@@ -88,7 +87,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Applications(string applicationType)
+        public async Task<IActionResult> Applications()
         {
             var user = User.Identity.Name;
 
@@ -105,76 +104,102 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (!applications.Any())
             {              
-                return await StartApplication(userId, applicationType);
+                return await StartApplication(userId);
             }
             
-            if (applications.Count() > 1)
+            if (applications.Count > 1)
                 return View(applications);
 
             var application = applications.First();
             
             switch (application.ApplicationStatus)
             {
-                case ApplicationStatus.Submitted:
-                    return RedirectToAction("ApplicationSubmitted", new { applicationId = application.Id });
-                case ApplicationStatus.FeedbackAdded:
-                    return View("~/Views/Application/FeedbackIntro.cshtml", application.Id);
-                case ApplicationStatus.Rejected:
                 case ApplicationStatus.Approved:
-                    return View(applications);
+                    return View("~/Views/Application/Approved.cshtml", application);
+                case ApplicationStatus.Rejected:
+                    return View("~/Views/Application/Rejected.cshtml", application);
+                case ApplicationStatus.FeedbackAdded:
+                    return View("~/Views/Application/FeedbackIntro.cshtml", application.ApplicationId);
+                case ApplicationStatus.Submitted:
+                    return RedirectToAction("ApplicationSubmitted", new { applicationId = application.ApplicationId });
                 default:
-                    return RedirectToAction("TaskList", new {applicationId = application.Id});
+                    return RedirectToAction("TaskList", new {applicationId = application.ApplicationId });
             }
         }
 
-        private async Task<IActionResult> StartApplication(Guid userId, string applicationType)
+        private async Task<IActionResult> StartApplication(Guid userId)
         {
+            var applicationType = ApplicationTypes.RegisterTrainingProviders;
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-            
+
             _logger.LogInformation($"Application Details:: Ukprn: [{applicationDetails?.UKPRN}], ProviderName: [{applicationDetails?.UkrlpLookupDetails?.ProviderName}], RouteId: [{applicationDetails?.ApplicationRoute?.Id}]");
+            var providerRoute = applicationDetails.ApplicationRoute.Id;
+
             var startApplicationData = new JObject
             {
                 ["OrganisationReferenceId"] = applicationDetails.UKPRN.ToString(),
                 ["OrganisationName"] = applicationDetails.UkrlpLookupDetails.ProviderName,
-                ["Apply-ProviderRoute"] = applicationDetails.ApplicationRoute.Id.ToString()
+                ["Apply-ProviderRoute"] = providerRoute.ToString()
             };
 
             var startApplicationJson = JsonConvert.SerializeObject(startApplicationData);
-
             _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse PRE: userid: [{userId.ToString()}], applicationType: [{applicationType}], startApplicationJson: [{startApplicationJson}]");
+            var qnaResponse = await _qnaApiClient.StartApplication(userId.ToString(), applicationType, startApplicationJson);
+            _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse POST: applicationId: [{qnaResponse ?.ApplicationId}]");
 
-
-            var applicationStartResponse =
-                await _qnaApiClient.StartApplication(userId.ToString(), applicationType, startApplicationJson);
-
-                _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse POST: applicationId: [{applicationStartResponse?.ApplicationId}]");
-            var response = await _apiClient.StartApplication(applicationStartResponse.ApplicationId, userId, applicationType);
-            _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking response from StartApplication POST: applicationId: [{response?.ApplicationId}]");
-
-            if (response != null)
+            if (qnaResponse != null)
             {
-                await SavePreambleInformation(response.ApplicationId, applicationDetails);
+                var allQnaSequences = await _qnaApiClient.GetSequences(qnaResponse.ApplicationId);
+                var allQnaSections = await _qnaApiClient.GetSections(qnaResponse.ApplicationId);
 
-                if (applicationDetails.UkrlpLookupDetails.VerifiedByCompaniesHouse)
-                {
-                    await SaveCompaniesHouseInformation(response.ApplicationId, applicationDetails);
-                }
+                var startApplicationRequest = BuildStartApplicationRequest(qnaResponse.ApplicationId, userId, providerRoute, allQnaSequences, allQnaSections);
 
-                if (applicationDetails.UkrlpLookupDetails.VerifiedbyCharityCommission)
+                var applicationId = await _apiClient.StartApplication(startApplicationRequest);
+                _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking response from StartApplication POST: applicationId: [{applicationId}]");
+
+                if (applicationId != Guid.Empty)
                 {
-                    await SaveCharityCommissionInformation(response.ApplicationId, applicationDetails);
+                    await SavePreambleInformation(applicationId, applicationDetails);
+
+                    if (applicationDetails.UkrlpLookupDetails.VerifiedByCompaniesHouse)
+                    {
+                        await SaveCompaniesHouseInformation(applicationId, applicationDetails);
+                    }
+
+                    if (applicationDetails.UkrlpLookupDetails.VerifiedbyCharityCommission)
+                    {
+                        await SaveCharityCommissionInformation(applicationId, applicationDetails);
+                    }
                 }
             }
 
-            return RedirectToAction("Applications", new { applicationType = applicationType });
+            return RedirectToAction("Applications", new { applicationType });
         }
 
-        [HttpGet]
-        public async Task<IActionResult> StartApplication(string applicationType)
+        private static Application.Apply.Start.StartApplicationRequest BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
         {
-            var response = await _apiClient.StartApplication(await _userService.GetUserId(), applicationType);
-            
-            return RedirectToAction("TaskList", new { applicationId = response.ApplicationId });            
+            return new Application.Apply.Start.StartApplicationRequest
+            {
+                ApplicationId = qnaApplicationId,
+                CreatingContactId = creatingContactId,
+                ProviderRoute = providerRoute,
+                ApplySequences = qnaSequences.Select(sequence => new ApplySequence
+                {
+                    SequenceId = sequence.Id,
+                    SequenceNo = sequence.SequenceId,
+                    Sections = qnaSections.Where(x => x.SequenceId == sequence.SequenceId).Select(section => new ApplySection
+                    {
+                        SectionId = section.Id,
+                        SectionNo = section.SectionId,
+                        //Status = "Draft",
+                        //RequestedFeedbackAnswered = false
+                    }).OrderBy(section => section.SectionNo).ToList(),
+                    //Status = "Draft",
+                    //IsActive = sequence.IsActive,
+                    //NotRequired = sequence.NotRequired,
+                    //Sequential = false
+                }).ToList()
+            };
         }
 
         [HttpGet]
@@ -207,42 +232,44 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (application.ApplicationStatus == ApplicationStatus.FeedbackAdded)
             {
-                return View("~/Views/Application/FeedbackIntro.cshtml", application.Id);
+                return View("~/Views/Application/FeedbackIntro.cshtml", application.ApplicationId);
             }
 
-            var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
+            return RedirectToAction("TaskList", new { applicationId = application.ApplicationId });
 
-            StandardApplicationData applicationData = null;
+            //var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
 
-            if (application.ApplicationData != null)
-            {
-                applicationData = new StandardApplicationData
-                {
-                    StandardName = application.ApplicationData.StandardName
-                };
-            }
+            //StandardApplicationData applicationData = null;
 
-            // Only go to search if application hasn't got a selected standard?
-            if (sequence.SequenceId == SequenceId.Stage1)
-            {
-                return RedirectToAction("Sequence", new {applicationId});
-            }
-            else if (sequence.SequenceId == SequenceId.Stage2 && string.IsNullOrWhiteSpace(applicationData?.StandardName))
-            {
-                var org = await _apiClient.GetOrganisationByUserId(User.GetUserId());
-                if (org.RoEPAOApproved)
-                {
-                    return RedirectToAction("Index", "Standard", new {applicationId});  
-                }
+            //if (application.ApplicationData != null)
+            //{
+            //    applicationData = new StandardApplicationData
+            //    {
+            //        StandardName = application.ApplicationData.StandardName
+            //    };
+            //}
 
-                return View("~/Views/Application/Stage2Intro.cshtml", applicationId);
-            }
-            else if (sequence.SequenceId == SequenceId.Stage2)
-            {
-                return RedirectToAction("Sequence", new {applicationId});
-            }
+            //// Only go to search if application hasn't got a selected standard?
+            //if (sequence.SequenceId == SequenceId.Stage1)
+            //{
+            //    return RedirectToAction("Sequence", new {applicationId});
+            //}
+            //else if (sequence.SequenceId == SequenceId.Stage2 && string.IsNullOrWhiteSpace(applicationData?.StandardName))
+            //{
+            //    var org = await _apiClient.GetOrganisationByUserId(User.GetUserId());
+            //    if (org.RoEPAOApproved)
+            //    {
+            //        return RedirectToAction("Index", "Standard", new {applicationId});  
+            //    }
 
-            throw new BadRequestException("Section does not have a valid DisplayType");
+            //    return View("~/Views/Application/Stage2Intro.cshtml", applicationId);
+            //}
+            //else if (sequence.SequenceId == SequenceId.Stage2)
+            //{
+            //    return RedirectToAction("Sequence", new {applicationId});
+            //}
+
+            //throw new BadRequestException("Section does not have a valid DisplayType");
         }
 
         [HttpGet]
@@ -914,7 +941,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
             }
 
-            if (await _apiClient.Submit(applicationId, sequenceId, User.GetUserId(), User.GetEmail()))
+            var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
+            var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
+
+            var submitApplicationRequest = new Application.Apply.Submit.SubmitApplicationRequest
+            {
+                ApplicationId = applicationId,
+                ProviderRoute = int.Parse(providerRoute.Value),
+                SubmittingContactId = User.GetUserId()
+            };
+
+            if (await _apiClient.SubmitApplication(submitApplicationRequest))
             {
                 return RedirectToAction("Submitted", new { applicationId });
             }
@@ -976,11 +1013,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var config = await _configService.GetConfig();
             return View("~/Views/Application/Submitted.cshtml", new SubmittedViewModel
             {
-                ReferenceNumber = application?.ApplicationData?.ReferenceNumber,
+                ReferenceNumber = application?.ApplyData?.ApplyDetails?.ReferenceNumber,
                 FeedbackUrl = config.FeedbackUrl,
-                StandardName = application?.ApplicationData?.StandardName,
-                StandardReference = application?.ApplicationData?.StandardReference,
-                StandardLevel = application?.ApplicationData?.StandardLevel
+                //StandardName = application?.ApplicationData?.StandardName,
+                //StandardReference = application?.ApplicationData?.StandardReference,
+                //StandardLevel = application?.ApplicationData?.StandardLevel
             });
         }
 
@@ -991,9 +1028,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var config = await _configService.GetConfig();
             return View("~/Views/Application/NotSubmitted.cshtml", new SubmittedViewModel
             {
-                ReferenceNumber = application?.ApplicationData?.ReferenceNumber,
+                ReferenceNumber = application?.ApplyData?.ApplyDetails?.ReferenceNumber,
                 FeedbackUrl = config.FeedbackUrl,
-                StandardName = application?.ApplicationData?.StandardName
+                //StandardName = application?.ApplicationData?.StandardName
             });
         }
 
@@ -1058,23 +1095,21 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return View("~/Views/Roatp/SubmitApplication.cshtml", model);
             }
 
+            // TODO: Validate all sections are completed (i.e all questions answered)
+            // FUTURE WORK: Validate all sections have had requested feedback answered
+
+
             var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
             var providerRoute = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.ProviderRoute);
-            var nextApplicationReferenceNumber = await _roatpApiClient.GetNextRoatpApplicationReference();
-                            
-            var applicationData = new RoatpApplicationData
+
+            var submitApplicationRequest = new Application.Apply.Submit.SubmitApplicationRequest
             {
                 ApplicationId = model.ApplicationId,
-                UKPRN = organisationDetails.OrganisationUkprn?.ToString(),
-                OrganisationName = organisationDetails.Name,
-                TradingName = organisationDetails.OrganisationDetails?.TradingName,
-                ApplicationRouteId = providerRoute.Value,
-                ReferenceNumber = nextApplicationReferenceNumber,
-                ApplicationSubmittedOn = DateTime.Now,
-                ApplicationSubmittedBy = User.GetUserId()
+                ProviderRoute = int.Parse(providerRoute.Value),
+                SubmittingContactId = User.GetUserId()
             };
 
-            var submitResult = await _roatpApiClient.SubmitRoatpApplication(applicationData);
+            var submitResult = await _apiClient.SubmitApplication(submitApplicationRequest);
 
             if (submitResult)
             {
@@ -1098,15 +1133,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> ApplicationSubmitted(Guid applicationId)
         {
-            var applicationData = await _roatpApiClient.GetApplicationData(applicationId);
+            var application = await _apiClient.GetApplication(applicationId);           
+            var applicationData = application.ApplyData.ApplyDetails;
 
             var model = new ApplicationSummaryViewModel
             {
-                ApplicationId = applicationId,
+                ApplicationId = application.ApplicationId,
                 UKPRN = applicationData.UKPRN,
                 OrganisationName = applicationData.OrganisationName,
                 TradingName = applicationData.TradingName,
-                ApplicationRouteId = applicationData.ApplicationRouteId,
+                ApplicationRouteId = applicationData.ProviderRoute.ToString(),
                 ApplicationReference = applicationData.ReferenceNumber
             };
 

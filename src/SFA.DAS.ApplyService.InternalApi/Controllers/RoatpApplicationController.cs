@@ -55,31 +55,6 @@
         
         }
 
-        [Route("next-application-reference")]
-        public async Task<IActionResult> GetNextApplicationReference()
-        {
-            var applicationReference = await _mediator.Send(new GetNextApplicationReferenceRequest());
-
-            return Ok(new { applicationReference } );
-        }
-
-        [HttpPost]
-        [Route("submit")]
-        public async Task<IActionResult> SubmitApplication([FromBody] RoatpApplicationData applicationData)
-        {
-            var submitResult = await _mediator.Send(new SubmitApplicationRequest(applicationData));
-
-            return Ok(submitResult);
-        }
-
-        [Route("application-data")]
-        public async Task<IActionResult> GetApplicationData(Guid applicationId)
-        {
-            var applicationData = await _mediator.Send(new GetApplicationDataRequest(applicationId));
-
-            return Ok(applicationData);
-        }
-
         private AsyncRetryPolicy GetRetryPolicy()
         {
             return Policy
