@@ -89,7 +89,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     UserEmail = User.GetEmail()
                 };
 
-            await _apiClient.UpdateApplicationData(applicationData, model.ApplicationId);
+            // NOTE: This is not needed in RoATP application process. Commented out for now!
+            //await _apiClient.UpdateApplicationData(applicationData, model.ApplicationId);
 
             return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.EndpointAssessor });
         }
