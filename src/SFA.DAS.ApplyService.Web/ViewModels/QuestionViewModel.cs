@@ -18,6 +18,8 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
         public string QuestionBodyText { get; set; }
         public string Hint { get; set; }
         public string InputClasses { get; set; }
+        public string InputPrefix { get; set; }
+        public string InputSuffix { get; set; }
         public string Value { get; set; }
         public dynamic JsonValue { get; set; }
         public List<Option> Options { get; set; }
@@ -32,7 +34,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
 
         public string DisplayAnswerValue(Answer answer)
         {
-            if (Type == "Date" || Type == "DateOfBirth")
+            if (Type == "Date" || Type == "DateOfBirth" || Type == "MonthAndYear")
             {
                 var dateparts = answer.Value.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -42,7 +44,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
                     var datetime = DateTime.Parse($"{dateparts[0]}/{dateparts[1]}/{dateparts[2]}");
                     return datetime.ToString("dd/MM/yyyy");
                 }
-                else if (Type == "DateOfBirth")
+                else if (Type == "DateOfBirth" || Type == "MonthAndYear")
                 {
                     var datetime = DateTime.Parse($"{dateparts[0]}/{dateparts[1]}");
                     return datetime.ToString("MM/yyyy");
