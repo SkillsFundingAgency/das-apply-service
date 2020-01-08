@@ -519,14 +519,13 @@
         [Test]
         public void Whos_in_control_section_status_shows_as_next_if_companies_house_verified_and_not_confirmed()
         {
-            var model = new TaskListViewModel(_qnaApiClient.Object)
-            {
-                VerifiedCompaniesHouse = true,
-                VerifiedCharityCommission = false,
-                CompaniesHouseDataConfirmed = false,
-                CharityCommissionDataConfirmed = false,
-                WhosInControlConfirmed = false
-            };
+            var model = GetTaskListViewModelWithSectionsUpToWhosInControlCompleted();
+
+            model.VerifiedCompaniesHouse = true;
+            model.VerifiedCharityCommission = false;
+            model.CompaniesHouseDataConfirmed = false;
+            model.CharityCommissionDataConfirmed = false;
+            model.WhosInControlConfirmed = false;
 
             model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.Next);
         }
@@ -534,106 +533,98 @@
         [Test]
         public void Whos_in_control_section_status_shows_as_next_if_charity_commission_verified_and_not_confirmed()
         {
-            var model = new TaskListViewModel(_qnaApiClient.Object)
-            {
-                VerifiedCompaniesHouse = false,
-                VerifiedCharityCommission = true,
-                CompaniesHouseDataConfirmed = false,
-                CharityCommissionDataConfirmed = false,
-                WhosInControlConfirmed = false
-            };
+            var model = GetTaskListViewModelWithSectionsUpToWhosInControlCompleted();
 
+            model.VerifiedCompaniesHouse = false;
+            model.VerifiedCharityCommission = true;
+            model.CompaniesHouseDataConfirmed = false;
+            model.CharityCommissionDataConfirmed = false;
+            model.WhosInControlConfirmed = false;
+            
             model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.Next);
         }
-
-
+        
         [Test]
         public void Whos_in_control_section_status_shows_as_complete_if_companies_house_verified_and_confirmed()
         {
-            var model = new TaskListViewModel(_qnaApiClient.Object)
-            {
-                VerifiedCompaniesHouse = true,
-                VerifiedCharityCommission = false,
-                CompaniesHouseDataConfirmed = true,
-                CharityCommissionDataConfirmed = false,
-                WhosInControlConfirmed = false
-            };
-
+            var model = GetTaskListViewModelWithSectionsUpToWhosInControlCompleted();
+            
+            model.VerifiedCompaniesHouse = true;
+            model.VerifiedCharityCommission = false;
+            model.CompaniesHouseDataConfirmed = true;
+            model.CharityCommissionDataConfirmed = false;
+            model.WhosInControlConfirmed = false;
+            
             model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.Completed);
         }
 
         [Test]
         public void Whos_in_control_section_status_shows_as_in_progress_if_companies_house_and_charity_commission_verified_and_only_confirmed_company()
         {
-            var model = new TaskListViewModel(_qnaApiClient.Object)
-            {
-                VerifiedCompaniesHouse = true,
-                VerifiedCharityCommission = true,
-                CompaniesHouseDataConfirmed = true,
-                CharityCommissionDataConfirmed = false,
-                WhosInControlConfirmed = false
-            };
+            var model = GetTaskListViewModelWithSectionsUpToWhosInControlCompleted();
 
+            model.VerifiedCompaniesHouse = true;
+            model.VerifiedCharityCommission = true;
+            model.CompaniesHouseDataConfirmed = true;
+            model.CharityCommissionDataConfirmed = false;
+            model.WhosInControlConfirmed = false;
+            
             model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.InProgress);
         }
 
         [Test]
         public void Whos_in_control_section_status_shows_as_in_progress_if_companies_house_and_charity_commission_verified_and_only_confirmed_charity()
         {
-            var model = new TaskListViewModel(_qnaApiClient.Object)
-            {
-                VerifiedCompaniesHouse = true,
-                VerifiedCharityCommission = true,
-                CompaniesHouseDataConfirmed = false,
-                CharityCommissionDataConfirmed = true,
-                WhosInControlConfirmed = false
-            };
+            var model = GetTaskListViewModelWithSectionsUpToWhosInControlCompleted();
 
+            model.VerifiedCompaniesHouse = true;
+            model.VerifiedCharityCommission = true;
+            model.CompaniesHouseDataConfirmed = false;
+            model.CharityCommissionDataConfirmed = true;
+            model.WhosInControlConfirmed = false;
+            
             model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.InProgress);
         }
 
         [Test]
         public void Whos_in_control_section_status_shows_as_completed_if_companies_house_and_charity_commission_verified_and_both_confirmed()
         {
-            var model = new TaskListViewModel(_qnaApiClient.Object)
-            {
-                VerifiedCompaniesHouse = true,
-                VerifiedCharityCommission = true,
-                CompaniesHouseDataConfirmed = true,
-                CharityCommissionDataConfirmed = true,
-                WhosInControlConfirmed = false
-            };
+            var model = GetTaskListViewModelWithSectionsUpToWhosInControlCompleted();
 
+            model.VerifiedCompaniesHouse = true;
+            model.VerifiedCharityCommission = true;
+            model.CompaniesHouseDataConfirmed = true;
+            model.CharityCommissionDataConfirmed = true;
+            model.WhosInControlConfirmed = false;
+            
             model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.Completed);
         }
 
         [Test]
         public void Whos_in_control_section_status_shows_as_next_if_not_verified_by_companies_house_or_charity_commission_and_whos_in_control_not_confirmed()
         {
-            var model = new TaskListViewModel(_qnaApiClient.Object)
-            {
-                VerifiedCompaniesHouse = false,
-                VerifiedCharityCommission = false,
-                CompaniesHouseDataConfirmed = false,
-                CharityCommissionDataConfirmed = false,
-                WhosInControlConfirmed = false
-            };
+            var model = GetTaskListViewModelWithSectionsUpToWhosInControlCompleted();
 
+            model.VerifiedCompaniesHouse = false;
+            model.VerifiedCharityCommission = false;
+            model.CompaniesHouseDataConfirmed = false;
+            model.CharityCommissionDataConfirmed = false;
+            model.WhosInControlConfirmed = false;
+            
             model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.Next);
         }
 
         [Test]
         public void Whos_in_control_section_status_shows_as_completed_if_not_verified_by_companies_house_or_charity_commission_and_whos_in_control_confirmed()
         {
-            var model = new TaskListViewModel(_qnaApiClient.Object)
-            {
-                VerifiedCompaniesHouse = false,
-                VerifiedCharityCommission = false,
-                CompaniesHouseDataConfirmed = false,
-                CharityCommissionDataConfirmed = false,
-                WhosInControlConfirmed = true
-            };
+            var model = GetTaskListViewModelWithSectionsUpToWhosInControlCompleted();
 
+            model.VerifiedCompaniesHouse = false;
+            model.VerifiedCharityCommission = false;
+            model.CompaniesHouseDataConfirmed = false;
+            model.CharityCommissionDataConfirmed = false;
+            model.WhosInControlConfirmed = true;
+            
             model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.Completed);
         }
 
@@ -1961,6 +1952,95 @@
             status.Should().Be(TaskListSectionStatus.Next);
             var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.SubmitApplication);
             css.Should().Be(TaskListSectionStatus.Next.ToLower());
+        }
+
+        private TaskListViewModel GetTaskListViewModelWithSectionsUpToWhosInControlCompleted()
+        {
+            var model = new TaskListViewModel(_qnaApiClient.Object);
+
+            var applicationSequences = new List<ApplicationSequence>();
+
+            var yourOrganisationSequence = new ApplicationSequence
+            {
+                ApplicationId = Guid.NewGuid(),
+                SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
+                Sequential = true,
+                Sections = new List<ApplicationSection>
+                {
+                    new ApplicationSection
+                    {
+                        ApplicationId = Guid.NewGuid(),
+                        SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
+                        SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed,
+                        QnAData = GetQnaDataWithCompletedSection()
+                    },
+                    new ApplicationSection
+                    {
+                        ApplicationId = Guid.NewGuid(),
+                        SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
+                        SectionId = RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails,
+                        QnAData = GetQnaDataWithCompletedSection()
+                    },
+                    new ApplicationSection
+                    {
+                        ApplicationId = Guid.NewGuid(),
+                        SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
+                        SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
+                        QnAData = new QnAData
+                        {
+                            Pages = new List<Page>
+                            {
+                                new Page
+                                {
+                                    Active = true,
+                                    Complete = false
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            applicationSequences.Add(yourOrganisationSequence);
+
+            model.ApplicationSequences = applicationSequences;
+
+            return model;
+        }
+
+        private QnAData GetQnaDataWithCompletedSection()
+        {
+            return new QnAData
+            {
+                Pages = new List<Page>
+                {
+                    new Page
+                    {
+                        Active = true,
+                        Complete = true,
+                        Questions = new List<Question>
+                        {
+                            new Question
+                            {
+                                QuestionId = "TEST1"
+                            }
+                        },
+                        PageOfAnswers = new List<PageOfAnswers>
+                        {
+                            new PageOfAnswers
+                            {
+                                Answers = new List<Answer>
+                                {
+                                    new Answer
+                                    {
+                                        QuestionId = "TEST1",
+                                        Value = "Y"
+                                    }
+                                }
+                            }
+                        }                                 
+                    }
+                }
+            };
         }
     }
 }
