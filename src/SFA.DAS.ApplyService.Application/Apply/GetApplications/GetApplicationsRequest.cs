@@ -5,7 +5,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply.GetApplications
 {
-    public class GetApplicationsRequest : IRequest<List<Domain.Entities.Application>>
+    public class GetApplicationsRequest : IRequest<List<Domain.Entities.Apply>>
     {
         public Guid UserId { get; }
 
