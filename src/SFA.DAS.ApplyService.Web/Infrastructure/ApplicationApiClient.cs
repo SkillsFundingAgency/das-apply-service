@@ -7,16 +7,18 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
+using SFA.DAS.ApplyService.Application.Apply.Start;
+using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types;
-using StartApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartApplicationResponse;
+using StartQnaApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartQnaApplicationResponse;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    using Application.Apply.GetAnswers;
     using SFA.DAS.ApplyService.Domain.Roatp;
 
     public class ApplicationApiClient : IApplicationApiClient
@@ -36,21 +38,42 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
         }
 
-        public async Task<List<Domain.Entities.Application>> GetApplications(Guid userId, bool createdBy)
+        public async Task<Guid> StartApplication(StartApplicationRequest startApplicationRequest)
+        {
+            var httpResponse = await _httpClient.PostAsJsonAsync("/Application/Start", startApplicationRequest);
+            var startApplicationResponse = await httpResponse.Content.ReadAsAsync<Guid>();
+            return startApplicationResponse;
+        }
+
+        public async Task<bool> SubmitApplication(SubmitApplicationRequest submitApplicationRequest)
+        {
+            var httpResponse = await _httpClient.PostAsJsonAsync("/Application/Submit", submitApplicationRequest);
+            var submitApplicationResponse = await httpResponse.Content.ReadAsAsync<bool>();
+            return submitApplicationResponse;
+        }
+
+
+        public async Task<Domain.Entities.Apply> GetApplication(Guid applicationId)
+        {
+            return await (await _httpClient.GetAsync($"Application/{applicationId}")).Content
+                .ReadAsAsync<Domain.Entities.Apply>();
+        }
+
+        public async Task<List<Domain.Entities.Apply>> GetApplications(Guid userId, bool createdBy)
         {
             if (!createdBy)
             {
                 return await (await _httpClient.GetAsync($"/Applications/{userId}/Organisation")).Content
-                .ReadAsAsync<List<Domain.Entities.Application>>();
+                .ReadAsAsync<List<Domain.Entities.Apply>>();
             }
 
             return await (await _httpClient.GetAsync($"/Applications/{userId}")).Content
-                .ReadAsAsync<List<Domain.Entities.Application>>();
+                .ReadAsAsync<List<Domain.Entities.Apply>>();
         }
 
-       
 
-        
+
+        // NOTE: This is old stuff or things which are not migrated over yet       
         public async Task<ApplicationSequence> GetSequence(Guid applicationId, Guid userId)
         {
             return await (await _httpClient.GetAsync($"Application/{applicationId}/User/{userId}/Sections")).Content
@@ -94,27 +117,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .ReadAsAsync<SetPageAnswersResponse>();
         }
 
-        public async Task<StartApplicationResponse> StartApplication(Guid userId, string applicationType)
-        {
-            return await StartApplication(Guid.NewGuid(), userId, applicationType);
-        }
-
-        public async Task<StartApplicationResponse> StartApplication(Guid applicationId, Guid userId, string applicationType)
-        {
-            var request = new StartApplyRequest { ApplicationId = applicationId, UserId = userId, ApplicationType = applicationType };
-
-            var httpResponse = await _httpClient.PostAsJsonAsync("/Application/Start", request);
-            var startApplicationResponse = await httpResponse.Content.ReadAsAsync<StartApplicationResponse>();
-            return startApplicationResponse;
-        }
-
-        public async Task<bool> Submit(Guid applicationId, int sequenceId, Guid userId, string userEmail)
-        {
-            return await (await _httpClient.PostAsJsonAsync(
-                    "/Applications/Submit", new {applicationId, sequenceId, userId, userEmail })).Content
-                    .ReadAsAsync<bool>();
-        }
-
         public async Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId,
             Guid userId)
         {
@@ -136,17 +138,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             await _httpClient.PostAsync($"/Import/Workflow", formDataContent);
 
             _logger.LogInformation($"API ImportWorkflow > After post to Internal API");
-        }
-
-        public async Task UpdateApplicationData<T>(T applicationData, Guid applicationId)
-        {
-            await _httpClient.PostAsJsonAsync($"/Application/{applicationId}/UpdateApplicationData", applicationData);
-        }
-
-        public async Task<Domain.Entities.Application> GetApplication(Guid applicationId)
-        {
-            return await (await _httpClient.GetAsync($"Application/{applicationId}")).Content
-                .ReadAsAsync<Domain.Entities.Application>();
         }
 
         public async Task<string> GetApplicationStatus(Guid applicationId, int standardCode)

@@ -8,8 +8,8 @@ using SFA.DAS.ApplyService.Application.Apply.GetOrganisationForApplication;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.GetSection;
 using SFA.DAS.ApplyService.Application.Apply.GetSequence;
+using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
-using SFA.DAS.ApplyService.Application.Apply.UpdateApplicationData;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -20,8 +20,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
-using StartApplicationRequest = SFA.DAS.ApplyService.Application.Apply.StartApplicationRequest;
-using StartApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartApplicationResponse;
 using SFA.DAS.ApplyService.Domain.Roatp;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
@@ -37,17 +35,41 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpPost("Application/Start")]
-        public async Task<ActionResult<StartApplicationResponse>> Start([FromBody] StartApplyRequest request)
+        public async Task<ActionResult<Guid>> Start([FromBody] StartApplicationRequest request)
         {
-            return await _mediator.Send(new StartApplicationRequest(request.ApplicationId, request.UserId, request.ApplicationType));
+            return await _mediator.Send(request);
+        }
+
+        [HttpPost("/Application/Submit")]
+        public async Task<ActionResult<bool>> Submit([FromBody] SubmitApplicationRequest request)
+        {
+            return await _mediator.Send(request);
         }
 
         [HttpGet("Application/{applicationId}")]
-        public async Task<ActionResult<Domain.Entities.Application>> GetApplication(Guid applicationId)
+        public async Task<ActionResult<Domain.Entities.Apply>> GetApplication(Guid applicationId)
         {
             return await _mediator.Send(new GetApplicationRequest(applicationId));
         }
 
+        [HttpGet("Applications/{userId}")]
+        public async Task<ActionResult<List<Domain.Entities.Apply>>> GetApplications(string userId)
+        {
+            return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), true));
+        }
+
+        [HttpGet("Applications/{userId}/Organisation")]
+        public async Task<ActionResult<List<Domain.Entities.Apply>>> GetOrganisationApplications(string userId)
+        {
+            return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), false));
+        }
+
+
+
+
+
+
+        // NOTE: This is old stuff or things which are not migrated over yet
         [HttpGet("Answer/{QuestionIdentifier}/{applicationId}")]
         public async Task<ActionResult<GetAnswersResponse>> GetAnswer(Guid applicationId, string questionIdentifier)
         {
@@ -58,18 +80,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<ActionResult<GetAnswersResponse>> GetJsonAnswer(Guid applicationId, string questionIdentifier)
         {
             return await _mediator.Send(new GetAnswersRequest(applicationId, questionIdentifier, true));
-        }
-
-        [HttpGet("Applications/{userId}")]
-        public async Task<ActionResult<List<Domain.Entities.Application>>> GetApplications(string userId)
-        {
-            return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), true));
-        }
-
-        [HttpGet("Applications/{userId}/Organisation")]
-        public async Task<ActionResult<List<Domain.Entities.Application>>> GetOrganisationApplications(string userId)
-        {
-            return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), false));
         }
 
         [HttpGet("Application/{applicationId}/User/{userId}/Sections")]
@@ -137,24 +147,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return updatedPage;
         }
 
-        [HttpPost("/Applications/Submit")]
-        public async Task<ActionResult<bool>> Submit([FromBody] ApplicationSubmitRequest request)
-        {
-            var submitted = await _mediator.Send(request);
-            return submitted;
-        }
-
         [HttpPost("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/DeleteAnswer/{answerId}")]
         public async Task<IActionResult> DeleteAnswer(string applicationId, string userId, int sequenceId, int sectionId, string pageId, Guid answerId)
         {
             await _mediator.Send(new DeletePageAnswerRequest(Guid.Parse(applicationId), Guid.Parse(userId), sequenceId, sectionId, pageId, answerId));
-            return Ok();
-        }
-
-        [HttpPost("/Application/{applicationId}/UpdateApplicationData")]
-        public async Task<ActionResult> UpdateApplicationData(Guid applicationId, [FromBody] object applicationData)
-        {
-            await _mediator.Send(new UpdateApplicationDataRequest(applicationId, applicationData));
             return Ok();
         }
 
