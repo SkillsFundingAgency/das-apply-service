@@ -21,6 +21,7 @@
     using SFA.DAS.ApplyService.Web.Resources;
     using System.Collections.Generic;
     using SFA.DAS.ApplyService.Domain.Entities;
+    using SFA.DAS.ApplyService.Application.Apply.Roatp;
 
     [Authorize]
     public class RoatpApplicationPreambleController : RoatpApplyControllerBase
@@ -33,6 +34,7 @@
         private readonly IOrganisationApiClient _organisationApiClient;
         private readonly IUsersApiClient _usersApiClient;
         private readonly IApplicationApiClient _applicationApiClient;
+        private readonly IQnaApiClient _qnaApiClient;
         
         private const string GetHelpSubmittedForPageFormatString = "Roatp_GetHelpSubmitted_{0}";
 
@@ -46,7 +48,8 @@
                                                   ICharityCommissionApiClient charityCommissionApiClient,
                                                   IOrganisationApiClient organisationApiClient,
                                                   IUsersApiClient usersApiClient,
-                                                  IApplicationApiClient applicationApiClient)
+                                                  IApplicationApiClient applicationApiClient,
+                                                  IQnaApiClient qnaApiClient)
             :base(sessionService)
         {
             _logger = logger;
@@ -58,6 +61,7 @@
             _organisationApiClient = organisationApiClient;
             _usersApiClient = usersApiClient;
             _applicationApiClient = applicationApiClient;
+            _qnaApiClient = qnaApiClient;
         }
 
         [Route("terms-conditions-making-application")]
@@ -540,7 +544,13 @@
 
         [HttpPost]
         public async Task<IActionResult> ConfirmChangeUkprn(ChangeUkprnViewModel model)
-        {            
+        {
+            var ukprnAnswer = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.UKPRN);
+            if (ukprnAnswer != null && ukprnAnswer.Value != null)
+            {
+                _logger.LogInformation($"Cancelling RoATP application for UKPRN {ukprnAnswer.Value}");
+            }
+
             _sessionService.Remove(ApplicationDetailsKey);
 
             return RedirectToAction("TermsAndConditions");

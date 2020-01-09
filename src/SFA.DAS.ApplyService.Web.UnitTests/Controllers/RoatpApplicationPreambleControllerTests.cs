@@ -27,6 +27,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
     using SFA.DAS.ApplyService.Domain.CompaniesHouse;
     using SFA.DAS.ApplyService.Web.AutoMapper;
     using Trustee = InternalApi.Types.CharityCommission.Trustee;
+    using SFA.DAS.ApplyService.Domain.Apply;
 
     [TestFixture]
     public class RoatpApplicationPreambleControllerTests
@@ -40,6 +41,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IOrganisationApiClient> _organisationApiClient;
         private Mock<IUsersApiClient> _usersApiClient;
         private Mock<IApplicationApiClient> _applicationApiClient;
+        private Mock<IQnaApiClient> _qnaApiClient;
 
         private RoatpApplicationPreambleController _controller;
 
@@ -62,6 +64,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _organisationApiClient = new Mock<IOrganisationApiClient>();
             _usersApiClient = new Mock<IUsersApiClient>();
             _applicationApiClient = new Mock<IApplicationApiClient>();
+            _qnaApiClient = new Mock<IQnaApiClient>();
 
             _controller = new RoatpApplicationPreambleController(_logger.Object, _roatpApiClient.Object,
                 _ukrlpApiClient.Object,
@@ -69,7 +72,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 _charityCommissionApiClient.Object,
                 _organisationApiClient.Object,
                 _usersApiClient.Object,
-                _applicationApiClient.Object);
+                _applicationApiClient.Object,
+                _qnaApiClient.Object);
 
             _activeCompany = new CompaniesHouseSummary
             {
@@ -1440,6 +1444,25 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("ChosenToRemainOnRegister");
         }
 
+        [Test]
+        public void Change_UKPRN_clears_application_data_and_redirects_to_terms_and_conditions()
+        {
+            var model = new ChangeUkprnViewModel { ApplicationId = Guid.NewGuid() };
+
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>()))
+                         .ReturnsAsync(new Answer { Value = "10001234" })
+                         .Verifiable();
+
+            _sessionService.Setup(x => x.Remove(It.IsAny<string>())).Verifiable();
+
+            var result = _controller.ConfirmChangeUkprn(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("TermsAndConditions");
+
+            _qnaApiClient.VerifyAll();
+            _sessionService.VerifyAll();
+        }
     }
 
 }
