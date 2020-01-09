@@ -540,9 +540,7 @@
 
         [HttpPost]
         public async Task<IActionResult> ConfirmChangeUkprn(ChangeUkprnViewModel model)
-        {
-            // update status of current application to perform soft delete - dependency on APR-1176
-            
+        {            
             _sessionService.Remove(ApplicationDetailsKey);
 
             return RedirectToAction("TermsAndConditions");
