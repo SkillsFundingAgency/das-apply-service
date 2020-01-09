@@ -6,6 +6,8 @@ namespace SFA.DAS.ApplyService.Domain.Apply
     {
         public string Type { get; set; }
         public string InputClasses { get; set; }
+        public string InputPrefix { get; set; }
+        public string InputSuffix { get; set; }
         public List<Option> Options { get; set; }
         public List<ValidationDefinition> Validations { get; set; }
         public string DataEndpoint { get; set; }

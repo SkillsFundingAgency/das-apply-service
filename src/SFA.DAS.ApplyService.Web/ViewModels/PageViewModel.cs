@@ -112,6 +112,8 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
                 QuestionId = q.QuestionId,
                 Type = q.Input.Type,
                 InputClasses = q.Input.InputClasses,
+                InputPrefix = q.Input.InputPrefix,
+                InputSuffix = q.Input.InputSuffix,
                 Hint = q.Hint,
                 Options = q.Input.Options,
                 Validations = q.Input.Validations,
