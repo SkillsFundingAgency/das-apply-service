@@ -19,7 +19,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         {
             _logger.LogInformation($"Updating application status to {request.ApplicationStatus} for application ID {request.ApplicationId}");
 
-            _repository.UpdateApplicationStatus(request.ApplicationId, request.ApplicationStatus);
+            try
+            {
+                _repository.UpdateApplicationStatus(request.ApplicationId, request.ApplicationStatus);
+            }
+            catch (Exception updateException)
+            {
+                _logger.LogError($"Updating application status failed for application ID {request.ApplicationId}", updateException);
+            }
 
             return true;
         }
