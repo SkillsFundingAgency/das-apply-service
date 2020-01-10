@@ -689,9 +689,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
 
             var errorMessages = new List<ValidationErrorDetail>();
-            var answers = new List<Answer>();
 
-            GetAnswersFromForm(page, answers);
+            var answers = GetAnswersFromForm(page);
             ApplyFormattingToAnswers(answers, page);
             
             RunCustomValidations(page, answers);
@@ -836,49 +835,89 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return null;
         }
 
-        private void GetAnswersFromForm(Page page, List<Answer> answers)
+        private List<Answer> GetAnswersFromForm(Page page)
         {
-            Dictionary<string, JObject> answerValues = new Dictionary<string, JObject>();
+            List<Answer> answers = new List<Answer>();
 
-            foreach (var formVariable in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__")))
+            // Add answers from the Form post
+            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__")))
             {
-                var answerKey = formVariable.Key.Split("_Key_");
-                if (!answerValues.ContainsKey(answerKey[0]))
+                if (!keyValuePair.Key.EndsWith("Search"))
                 {
-                    answerValues.Add(answerKey[0], new JObject());
-                }
-
-                answerValues[answerKey[0]].Add(
-                    answerKey.Count() == 1 ? string.Empty : answerKey[1],
-                    formVariable.Value.ToString());
-            }
-
-            foreach(var file in HttpContext.Request.Form.Files)
-            {
-                if (!answerValues.ContainsKey(file.Name))
-                {
-                    answerValues.Add(file.Name, new JObject());
-                }
-
-                answerValues[file.Name].Add(string.Empty, file.FileName);
-            }
-
-            foreach (var answer in answerValues)
-            {
-                if(answer.Value.Count > 1)
-                {
-                    answers.Add(new Answer() { QuestionId = answer.Key, JsonValue = answer.Value });
-                }
-                else
-                {
-                    answers.Add(new Answer() { QuestionId = answer.Key, Value = answer.Value.Value<string>(string.Empty) });
+                    answers.Add(new Answer() { QuestionId = keyValuePair.Key, Value = keyValuePair.Value });
                 }
             }
-            var unansweredQuestions = page.Questions.Where(x => !answers.Any(y => y.QuestionId == x.QuestionId));
-            foreach(var question in unansweredQuestions)
+
+            // Check if any Page Question is missing and add the default answer
+            foreach (var questionId in page.Questions.Select(q => q.QuestionId))
             {
-                answers.Add(new Answer() { QuestionId = question.QuestionId, Value = "" });
+                if (!answers.Any(a => a.QuestionId == questionId))
+                {
+                    // Add default answer if it's missing
+                    answers.Add(new Answer { QuestionId = questionId, Value = string.Empty });
+                }
             }
+
+            #region FurtherQuestion_Processing
+            // Get all questions that have FurtherQuestions in a ComplexRadio
+            var questionsWithFutherQuestions = page.Questions.Where(x => x.Input.Type == "ComplexRadio" && x.Input.Options != null && x.Input.Options.Any(o => o.FurtherQuestions.Any()));
+
+            foreach (var question in questionsWithFutherQuestions)
+            {
+                var answerForQuestion = answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
+
+                // Remove FurtherQuestion answers to all other Options as they were not selected and thus should not be stored
+                foreach (var furtherQuestion in question.Input.Options.Where(opt => opt.Value != answerForQuestion?.Value && opt.FurtherQuestions != null).SelectMany(opt => opt.FurtherQuestions))
+                {
+                    foreach (var answer in answers.Where(a => a.QuestionId == furtherQuestion.QuestionId))
+                    {
+                        answer.Value = string.Empty;
+                    }
+                }
+            }
+            #endregion FurtherQuestion_Processing
+
+            // Address inputs require special processing
+            if (page.Questions.Any(x => x.Input.Type == "Address"))
+            {
+                answers = ProcessPageVmQuestionsForAddress(page, answers);
+            }
+
+            return answers;
+        }
+
+        private static List<Answer> ProcessPageVmQuestionsForAddress(Page page, List<Answer> answers)
+        {
+            if (page.Questions.Any(x => x.Input.Type == "Address"))
+            {
+                Dictionary<string, JObject> answerValues = new Dictionary<string, JObject>();
+
+                foreach (var formVariable in answers.Where(x => x.QuestionId.Contains("_Key_")))
+                {
+                    var answerKey = formVariable.QuestionId.Split("_Key_");
+                    if (!answerValues.ContainsKey(answerKey[0]))
+                    {
+                        answerValues.Add(answerKey[0], new JObject());
+                    }
+
+                    answerValues[answerKey[0]].Add(
+                        answerKey.Count() == 1 ? string.Empty : answerKey[1],
+                        formVariable.Value.ToString());
+                }
+
+                answers = answers.Where(x => !x.QuestionId.Contains("_Key")).ToList();
+
+                foreach (var answer in answerValues)
+                {
+                    if (answer.Value.Count > 1)
+                    {
+                        answers.Add(new Answer() { QuestionId = answer.Key, Value = answer.Value.ToString() });
+                    }
+                }
+
+            }
+
+            return answers;
         }
 
         private bool FileValidationPassed(List<Answer> answers, Page page, List<ValidationErrorDetail> errorMessages)
