@@ -1453,6 +1453,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                          .ReturnsAsync(new Answer { Value = "10001234" })
                          .Verifiable();
 
+            _applicationApiClient.Setup(x => x.UpdateApplicationStatus(It.IsAny<Guid>(), It.IsAny<string>())).ReturnsAsync(true).Verifiable();
+
             _sessionService.Setup(x => x.Remove(It.IsAny<string>())).Verifiable();
 
             var result = _controller.ConfirmChangeUkprn(model).GetAwaiter().GetResult();
@@ -1460,6 +1462,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var redirectResult = result as RedirectToActionResult;
             redirectResult.ActionName.Should().Be("TermsAndConditions");
 
+            _applicationApiClient.Verify(x => x.UpdateApplicationStatus(It.IsAny<Guid>(), It.IsAny<string>()), Times.Once);
             _qnaApiClient.VerifyAll();
             _sessionService.VerifyAll();
         }

@@ -551,6 +551,8 @@
                 _logger.LogInformation($"Cancelling RoATP application for UKPRN {ukprnAnswer.Value}");
             }
 
+            await _applicationApiClient.UpdateApplicationStatus(model.ApplicationId, ApplicationStatus.Cancelled);
+            
             _sessionService.Remove(ApplicationDetailsKey);
 
             return RedirectToAction("TermsAndConditions");

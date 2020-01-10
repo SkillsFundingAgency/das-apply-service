@@ -443,11 +443,9 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"UPDATE Applications
-                                                SET  ApplicationStatus = @status
-                                                FROM Applications
-                                                INNER JOIN Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
-                                                WHERE  (Applications.Id = @ApplicationId)", new {applicationId, status});
+                await connection.ExecuteAsync(@"UPDATE Apply
+                                                SET  ApplicationStatus = @status                                                
+                                                WHERE ApplicationId = @ApplicationId", new {applicationId, status});
             }
         }
 
