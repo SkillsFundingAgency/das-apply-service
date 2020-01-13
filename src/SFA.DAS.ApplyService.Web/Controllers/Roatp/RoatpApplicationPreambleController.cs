@@ -335,7 +335,7 @@
             model.ApplicationRoutes = applicationRoutes;
 
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-            if (applicationDetails.ApplicationRoute != null)
+            if (applicationDetails != null && applicationDetails.ApplicationRoute != null)
             {
                 model.ApplicationRouteId = applicationDetails.ApplicationRoute.Id;
             }
@@ -478,11 +478,48 @@
 
             return RedirectToAction("Applications", "RoatpApplication", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
 		}
+
+        [HttpGet]
+        public async Task<IActionResult> ConfirmChangeRoute(Guid applicationId)
+        {
+            var model = new ConfirmChangeRouteViewModel { ApplicationId = applicationId };
+            PopulateGetHelpWithQuestion(model, "ConfirmChangeRoute");
+            return View("~/Views/Roatp/ConfirmChangeRoute.cshtml", model);
+        }
         
+        [HttpPost]
+        public async Task<IActionResult> SubmitConfirmChangeRoute(ConfirmChangeRouteViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.ErrorMessages = new List<ValidationErrorDetail>();
+
+                var modelErrors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var modelError in modelErrors)
+                {
+                    model.ErrorMessages.Add(new ValidationErrorDetail
+                    {
+                        Field = "ConfirmChangeRoute",
+                        ErrorMessage = modelError.ErrorMessage
+                    });
+                }
+
+                return View("~/Views/Roatp/ConfirmChangeRoute.cshtml", model);
+            }
+
+            if (model.ConfirmChangeRoute == "Y")
+            {
+                return RedirectToAction("ChangeApplicationProviderRoute", new { applicationId = model.ApplicationId });
+            }
+
+            return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId });
+        }
+
         [HttpGet]
         public async Task<IActionResult> ChangeApplicationProviderRoute(Guid applicationId)
         {
             var model = new SelectApplicationRouteViewModel { ApplicationId = applicationId };
+            PopulateGetHelpWithQuestion(model, "ApplicationRoute");
             model.ApplicationRoutes = await GetApplicationRoutesForOrganisation(applicationId);
             var applicationRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
             model.ApplicationRouteId = Convert.ToInt32(applicationRoute.Value);

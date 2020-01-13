@@ -1334,6 +1334,31 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("ApplicationInProgress");
         }
 
+
+        [Test]
+        public void Confirm_change_provider_route_selects_yes_and_redirected_to_change_route_page()
+        {
+            var model = new ConfirmChangeRouteViewModel { ApplicationId = Guid.NewGuid(), ConfirmChangeRoute = "Y" };
+
+            var result = _controller.SubmitConfirmChangeRoute(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("ChangeApplicationProviderRoute");
+        }
+
+        [Test]
+        public void Confirm_change_provider_route_selects_no_and_redirected_to_task_list()
+        {
+            var model = new ConfirmChangeRouteViewModel { ApplicationId = Guid.NewGuid(), ConfirmChangeRoute = "N" };
+
+            var result = _controller.SubmitConfirmChangeRoute(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("TaskList");
+        }
+
         [TestCase(OrganisationStatus.Active)]
         [TestCase(OrganisationStatus.ActiveNotTakingOnApprentices)]
         [TestCase(OrganisationStatus.Onboarding)]
@@ -1680,7 +1705,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void Providr_ineligible_to_change_route_to_employer_is_directed_to_shutter_page()
+        public void Provider_ineligible_to_change_route_to_employer_is_directed_to_shutter_page()
         {
             var model = new EmployerProviderContinueApplicationViewModel
             {
@@ -1695,6 +1720,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("NonLevyAbandonedApplication");
             redirectResult.ControllerName.Should().Be("RoatpShutterPages");
         }
+
     }
 
 }
