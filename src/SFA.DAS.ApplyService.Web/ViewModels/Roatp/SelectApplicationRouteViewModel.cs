@@ -30,7 +30,20 @@
 
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
 
-        public string GetHelpAction { get { return "SelectApplicationRoute"; } set { } }
+        public string GetHelpAction 
+        { 
+            get 
+            {
+                if (ApplicationId != null && ApplicationId != Guid.Empty)
+                {
+                    return "ChangeApplicationProviderRoute";
+                }   
+                return "SelectApplicationRoute"; 
+            } 
+            set 
+            { 
+            } 
+        }
 
         public string LevyPayingEmployer { get; set; }
     }
