@@ -155,7 +155,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await response.Content.ReadAsAsync<Page>();
         }
 
-    
+
         public async Task<Answer> GetAnswer(Guid applicationId, Guid sectionId, string pageId, string questionId)
         {
             var pageContainingQuestion = await GetPage(applicationId, sectionId, pageId);
@@ -166,25 +166,25 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 {
                     if (question.QuestionId == questionId && pageContainingQuestion.PageOfAnswers != null)
                     {
-                            foreach (var pageOfAnswers in pageContainingQuestion.PageOfAnswers)
-                            {
-                                var pageAnswer = pageOfAnswers.Answers.FirstOrDefault(x => x.QuestionId == questionId);
+                        foreach (var pageOfAnswers in pageContainingQuestion.PageOfAnswers)
+                        {
+                            var pageAnswer = pageOfAnswers.Answers.FirstOrDefault(x => x.QuestionId == questionId);
 
-                                if (pageAnswer != null)
-                                {
-                                    return pageAnswer;
-                                }
+                            if (pageAnswer != null)
+                            {
+                                return pageAnswer;
                             }
+                        }
                     }
                 }
             }
-            
+
             return new Answer { QuestionId = questionId };
         }
 
         public async Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag, string questionId = null)
         {
-            var answer = new Answer { QuestionId  = questionId };
+            var answer = new Answer { QuestionId = questionId };
 
             var applicationDataJson = await GetApplicationData(applicationId);
 
@@ -226,7 +226,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
                 var validationErrorMessage = "Cannot save answers at this time. Please contact your system administrator.";
 
-                if(!_environmentName.EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
+                if (!_environmentName.EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
                 {
                     // Show API error message if outside of PROD and PREPROD environments
                     validationErrorMessage = apiErrorMessage;
