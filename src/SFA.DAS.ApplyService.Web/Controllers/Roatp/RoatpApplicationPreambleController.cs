@@ -335,7 +335,7 @@
             model.ApplicationRoutes = applicationRoutes;
 
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-            if (applicationDetails != null && applicationDetails.ApplicationRoute != null)
+            if (applicationDetails?.ApplicationRoute != null)
             {
                 model.ApplicationRouteId = applicationDetails.ApplicationRoute.Id;
             }
