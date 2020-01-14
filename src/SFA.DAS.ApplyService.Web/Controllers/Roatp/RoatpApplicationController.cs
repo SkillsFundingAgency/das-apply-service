@@ -888,30 +888,42 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private static List<Answer> ProcessPageVmQuestionsForAddress(Page page, List<Answer> answers)
         {
+
             if (page.Questions.Any(x => x.Input.Type == "Address"))
             {
-                Dictionary<string, JObject> answerValues = new Dictionary<string, JObject>();
+                Dictionary<string, JObject> answerValueDictionary = new Dictionary<string, JObject>();
 
+                // Address input fields will contain _Key_
                 foreach (var formVariable in answers.Where(x => x.QuestionId.Contains("_Key_")))
                 {
                     var answerKey = formVariable.QuestionId.Split("_Key_");
-                    if (!answerValues.ContainsKey(answerKey[0]))
+                    if (!answerValueDictionary.ContainsKey(answerKey[0]))
                     {
-                        answerValues.Add(answerKey[0], new JObject());
+                        answerValueDictionary.Add(answerKey[0], new JObject());
                     }
 
-                    answerValues[answerKey[0]].Add(
+                    answerValueDictionary[answerKey[0]].Add(
                         answerKey.Count() == 1 ? string.Empty : answerKey[1],
                         formVariable.Value.ToString());
                 }
 
-                answers = answers.Where(x => !x.QuestionId.Contains("_Key")).ToList();
+                // Remove anything that contains _Key_
+                answers = answers.Where(x => !x.QuestionId.Contains("_Key_")).ToList();
 
-                foreach (var answer in answerValues)
+                foreach (var answerValue in answerValueDictionary)
                 {
-                    if (answer.Value.Count > 1)
+                    if (answerValue.Value.Count > 1)
                     {
-                        answers.Add(new Answer() { QuestionId = answer.Key, Value = answer.Value.ToString() });
+                        var answer = answers.FirstOrDefault(a => a.QuestionId == answerValue.Key);
+
+                        if (answer is null)
+                        {
+                            answers.Add(new Answer() { QuestionId = answerValue.Key, Value = answerValue.Value.ToString() });
+                        }
+                        else
+                        {
+                            answer.Value = answerValue.Value.ToString();
+                        }
                     }
                 }
 
