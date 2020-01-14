@@ -681,6 +681,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         
         private async Task<IActionResult> SaveAnswersGiven(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, string __formAction)
         {
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // NOTE: This logic is different from EPAO... ideally we should move towards EPAO's version for maintainability //
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             var sequences = await _qnaApiClient.GetSequences(applicationId);
             var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
             var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
@@ -692,6 +695,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var answers = GetAnswersFromForm(page);
             ApplyFormattingToAnswers(answers, page);
+
+            foreach(var fileUploadAnswer in GetAnswersFromFiles())
+            {
+                var answer = answers.FirstOrDefault(a => a.QuestionId == fileUploadAnswer.QuestionId);
+
+                if (answer is null)
+                {
+                    answers.Add(new Answer() { QuestionId = fileUploadAnswer.QuestionId, Value = fileUploadAnswer.Value });
+                }
+                else
+                {
+                    answer.Value = fileUploadAnswer.Value;
+                }
+            }
             
             RunCustomValidations(page, answers);
             if(ModelState.IsValid == false)
@@ -881,6 +898,23 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             if (page.Questions.Any(x => x.Input.Type == "Address"))
             {
                 answers = ProcessPageVmQuestionsForAddress(page, answers);
+            }
+
+            return answers;
+        }
+
+        private List<Answer> GetAnswersFromFiles()
+        {
+            List<Answer> answers = new List<Answer>();
+
+            // Add answers from the Files sent within the Form post
+            if (HttpContext.Request.Form.Files != null)
+            {
+                foreach (var file in HttpContext.Request.Form.Files)
+                {
+                    answers.Add(new Answer() { QuestionId = file.Name, Value = file.FileName });
+                }
+
             }
 
             return answers;
