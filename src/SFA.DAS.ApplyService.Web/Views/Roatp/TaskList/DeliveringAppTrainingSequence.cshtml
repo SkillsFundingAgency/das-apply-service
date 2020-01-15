@@ -1,0 +1,58 @@
+﻿@using SFA.DAS.ApplyService.Application.Apply.Roatp
+@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.TaskListViewModel
+
+@{
+    var applicationSequence = Model.ApplicationSequences
+        .Single(seq => (int)seq.SequenceId == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining);
+
+    <li>
+        <h2 class="app-task-list__section">
+            @Html.Raw(Convert.ToInt32(applicationSequence.SequenceId)). @Html.Raw(applicationSequence.Description)
+        </h2>
+        <ul class="app-task-list__items">
+            @foreach (var section in applicationSequence.Sections.OrderBy(sec => sec.SectionId))
+            {
+
+                var sequenceSection = section.SequenceId + "_" + section.SectionId;
+
+                
+                @if (!Model.IntroductionPageNextSectionUnavailable(section.SequenceId, section.SectionId) && Model.SectionStatus(section.SequenceId, section.SectionId).ToLower() != "not required")
+                {
+                    if (section.SectionId == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy)
+                    {
+                        <li class="app-task-list__item">
+                            <a class="app-task-list__task_name" href="@Url.Action("StartPage", "RoatpManagementHierarchy", new { Model.ApplicationId })">
+                                Tell us who's in control
+                                <strong class="govuk-tag app-task-list__task-@Model.CssClass(section.SequenceId, section.SectionId)" id="status_@sequenceSection"> @Model.SectionStatus(section.SequenceId, section.SectionId)</strong>
+                            </a>                        </li>
+                    }
+                    else
+                    {
+
+
+                        <li class="app-task-list__item">
+                            <a class="app-task-list__task_name" href="@Url.Action("Section", "RoatpApplication", new {section.ApplicationId, section.SequenceId, section.SectionId})">
+                                @Html.Raw(section.Title)
+
+                            </a>
+                            <strong class="govuk-tag app-task-list__task-@Model.CssClass(section.SequenceId, section.SectionId)" id="status_@sequenceSection"> @Model.SectionStatus(section.SequenceId, section.SectionId)</strong>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="app-task-list__item">
+                        @Html.Raw(section.Title)
+                        @if (Model.SectionStatus(section.SequenceId, section.SectionId).ToLower() == "not required")
+                        {
+                            <strong class="govuk-tag app-task-list__task-@Model.CssClass(section.SequenceId, section.SectionId)" id="status_@sequenceSection"> @Model.SectionStatus(section.SequenceId, section.SectionId)</strong>
+
+                        }
+                    </li>
+
+                }
+                
+            }
+        </ul>
+    </li>
+}

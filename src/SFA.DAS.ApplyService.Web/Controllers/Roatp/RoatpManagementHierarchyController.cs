@@ -87,7 +87,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining);
             var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
             var managementHierarchySection =
-                yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.DelivreringApprenticeshipTraining.ManagementHierarchy);
+                yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy);
 
             var managementHierarchyData = await _tabularDataRepository.GetTabularDataAnswer(model.ApplicationId, RoatpWorkflowQuestionTags.AddManagementHierarchy);
 
@@ -227,21 +227,22 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         //}
 
 
-        //[HttpPost]
-        //public async Task<IActionResult> CompleteManagementHierarchySection(Guid applicationId)
-        //{
-        //    // tech debt - this will be reworked by the changes to the QnA config JSON and method
-        //    // for determining that application section completed is derived (APR-1008)
+        [HttpPost]
+        public async Task<IActionResult> CompleteManagementHierarchySection(Guid applicationId)
+        {
+            // tech debt - this will be reworked by the changes to the QnA config JSON and method
+            // for determining that application section completed is derived (APR-1008)
 
-        //    var applicationSequences = await _qnaApiClient.GetSequences(applicationId);
-        //    var yourOrganisationSequence =
-        //        applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
-        //    var yourOrganisationSections = await _qnaApiClient.GetSections(applicationId, yourOrganisationSequence.Id);
-        //    var whosInControlSection =
-        //        yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+            var applicationSequences = await _qnaApiClient.GetSequences(applicationId);
+            var deliveringApprenticeshipTrainingSequence =
+                applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining);
+            var deliveringApprenticeshipTrainingSections = await _qnaApiClient.GetSections(applicationId, deliveringApprenticeshipTrainingSequence.Id);
+            var managemetnHierarchySection
+                =
+                deliveringApprenticeshipTrainingSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy);
 
-        //    return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
-        //}
+            return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
+        }
 
         //private IActionResult ConfirmRemovalOfManagementHierarchy(Guid applicationId, string name, string actionName, string backActionName)
         //{

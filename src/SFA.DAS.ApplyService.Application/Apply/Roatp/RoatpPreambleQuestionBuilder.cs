@@ -62,9 +62,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
     public class RoatpDeliveringApprenticeshipTrainingQuestionIdConstants
     {
-        //MFCMFC not sure this shouldn't be DAT-720'
-        public static string ManagementHierarchy = "DAT-721";
-
+        public static string ManagementHierarchy = "DAT-720";
     }
 
     public static class RoatpWorkflowSequenceIds
@@ -111,7 +109,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static int CheckOnWhosInControl = 4;
         }
 
-        public static class DelivreringApprenticeshipTraining
+        public static class DeliveringApprenticeshipTraining
         {
             public static int ManagementHierarchy = 3;
         }
@@ -151,7 +149,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static class ManagementHierarchy
         {
             // MFCMFC I just added something, this number may be wrong - also correct where it's used
-            public static string AddManagementHierarchy = "7210";
+            public static string AddManagementHierarchy = "7200";
         }
 
         public class DescribeYourOrganisation
