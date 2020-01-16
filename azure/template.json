@@ -38,15 +38,13 @@
             ]
         },
         "uiCustomHostname": {
-            "type": "string",
-            "defaultValue": ""
+            "type": "string"
         },
         "uiCertificateName": {
             "type": "string"
         },
         "apiCustomHostname": {
-            "type": "string",
-            "defaultValue": ""
+            "type": "string"
         },
         "apiCertificateName": {
             "type": "string"
