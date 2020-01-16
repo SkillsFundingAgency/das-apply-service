@@ -21,10 +21,10 @@
             "type": "string"
         },
         "configurationStorageConnectionString": {
-            "type": "string"
+            "type": "securestring"
         },
         "loggingRedisConnectionString": {
-            "type": "string"
+            "type": "securestring"
         },
         "sharedKeyVaultName": {
             "type": "string"
