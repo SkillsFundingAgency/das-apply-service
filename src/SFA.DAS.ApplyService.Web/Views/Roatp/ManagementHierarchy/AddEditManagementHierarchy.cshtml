@@ -12,8 +12,7 @@
     var showTimeInRoleError = !String.IsNullOrEmpty(timeInRoleError);
     var isPartOfOtherOrgError = showErrors && Model.ErrorMessages.FirstOrDefault(x => x.Field == "IsPartOfOtherOrgThatGetsFunding") != null ? "govuk-input--error" : "";
     var showIsPartOfOtherOrgError = !String.IsNullOrEmpty(isPartOfOtherOrgError);
-    //var showTimeInRoleYearsError = !String.IsNullOrEmpty(timeInRoleYearsError);
-
+ 
     var errorMessages = Model.ErrorMessages != null ? Model.ErrorMessages.DistinctBy(x => x.ErrorMessage) : null;
 
     var checkedOtherOrgYes = Model.IsPartOfOtherOrgThatGetsFunding=="Yes" ? "checked": null;
@@ -124,13 +123,6 @@
                 <span id="OtherOrgName-hint" class="govuk-hint govuk-radios__hint">
 
                 </span>
-                @*<input class="govuk-input  "
-        type="text"
-        id="OtherOrgName"
-        name="OtherOrgName"
-        value="@Model.OtherOrgName"
-        maxlength="750" />*@
-
                 <textarea class="govuk-textarea " id="OtherOrgName" name="OtherOrgName" rows="5">@Model.OtherOrgName</textarea>
             </div>
         </div>

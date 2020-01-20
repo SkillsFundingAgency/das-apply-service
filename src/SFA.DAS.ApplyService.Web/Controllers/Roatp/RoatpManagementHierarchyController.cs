@@ -195,14 +195,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 questionId,
                 managementHierarchyData);
 
-            if (managementHierarchyData.DataRows.Count == 0)
-            {
-                // var x = "here";
-                //await _applicationApiClient.DeleteAnswer(model.ApplicationId,
-                //    RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
-                //    RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy, "7200", new Guid("00000000-0000-0000-0000-000000000000"), User.GetUserId());
-                await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, section.Id, "7200", new List<Answer>{new Answer{QuestionId = "DAT-720",Value=null}});
-            }
+            // MFC Leaving this in cos used in follow up story
+            //if (managementHierarchyData.DataRows.Count == 0)
+            //{
+            //    await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, section.Id, "7200", new List<Answer>{new Answer{QuestionId = "DAT-720",Value=null}});
+            //}
 
             return RedirectToAction(redirectAction, new { model.ApplicationId });
         }
@@ -311,17 +308,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         [HttpPost]
         public async Task<IActionResult> CompleteManagementHierarchySection(Guid applicationId)
         {
-            // tech debt - this will be reworked by the changes to the QnA config JSON and method
-            // for determining that application section completed is derived (APR-1008)
-
             var applicationSequences = await _qnaApiClient.GetSequences(applicationId);
             var deliveringApprenticeshipTrainingSequence =
                 applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining);
-            var deliveringApprenticeshipTrainingSections = await _qnaApiClient.GetSections(applicationId, deliveringApprenticeshipTrainingSequence.Id);
-            //var managemetnHierarchySection
-            //    =
-            //    deliveringApprenticeshipTrainingSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy);
-
+           
             return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
         }
 
