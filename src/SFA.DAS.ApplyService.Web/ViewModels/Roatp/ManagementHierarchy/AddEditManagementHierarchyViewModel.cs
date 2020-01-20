@@ -21,7 +21,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string TimeInRoleMonths { get; set; }
         public string TimeInRoleYears { get; set; }
 
-        public bool IsPartOfOtherOrgThatGetsFunding { get; set; }
+        public string IsPartOfOtherOrgThatGetsFunding { get; set; }
 
         public string OtherOrgName { get; set; }
 

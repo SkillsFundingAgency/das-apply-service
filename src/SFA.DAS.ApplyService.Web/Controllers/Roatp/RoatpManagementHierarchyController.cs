@@ -79,7 +79,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             if (errorMessages.Any())
             {
                 model.ErrorMessages = errorMessages;
-                return View("~/Views/Roatp/WhosInControl/AddManagementHierarchy.cshtml", model);
+                return View("~/Views/Roatp/ManagementHierarchy/AddManagementHierarchy.cshtml", model);
             }
 
             var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
@@ -100,8 +100,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                    model.JobRole,
                    model.TimeInRoleYears,
                    model.TimeInRoleMonths,
-                   model.IsPartOfOtherOrgThatGetsFunding.ToString(),
-                   model.OtherOrgName
+                   model.IsPartOfOtherOrgThatGetsFunding,
+                   model.IsPartOfOtherOrgThatGetsFunding=="Yes"? model.OtherOrgName : string.Empty
                 }
             };
 
@@ -137,94 +137,175 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return RedirectToAction("ConfirmManagementHierarchy", new { model.ApplicationId });
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> EditManagementHierarchy(Guid applicationId, int index)
-        //{
-        //    var personTableData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddManagementHierarchy);
-        //    if (personTableData != null)
-        //    {
-        //        if (index >= personTableData.DataRows.Count)
-        //        {
-        //            return RedirectToAction("ConfirmManagementHierarchy", new { applicationId });
-        //        }
 
-        //        var person = personTableData.DataRows[index];
-        //        var name = person.Columns[0];
-        //        var dateOfBirth = person.Columns[1];
-        //        var model = new AddEditManagementHierarchyViewModel
-        //        {
-        //            ApplicationId = applicationId,
-        //            PersonInControlName = name,
-        //            Index = index,
-        //            Identifier = "person",
-        //            PersonInControlDobMonth = DateOfBirthFormatter.GetMonthNumberFromShortDateOfBirth(dateOfBirth),
-        //            PersonInControlDobYear = DateOfBirthFormatter.GetYearFromShortDateOfBirth(dateOfBirth),
-        //            DateOfBirthOptional = false,
-        //            GetHelpAction = "EditManagementHierarchy"
-        //        };
-        //        PopulateGetHelpWithQuestion(model, "EditManagementHierarchy");
-        //        return View($"~/Views/Roatp/WhosInControl/EditManagementHierarchy.cshtml", model);
-        //    }
-        //    return RedirectToAction("ConfirmManagementHierarchy", new { applicationId });
-        //}
+        [HttpPost]
+        public async Task<IActionResult> RemoveManagementHierarchy(ConfirmRemoveManagementHierarchyViewModel model)
+        {
+            return await RemoveItemFromManagementHierarchy(
+                model,
+                RoatpWorkflowPageIds.ManagementHierarchy.AddManagementHierarchy,
+                RoatpDeliveringApprenticeshipTrainingQuestionIdConstants.ManagementHierarchy,
+                RoatpWorkflowQuestionTags.AddManagementHierarchy,
+                "ConfirmManagementHierarchy",
+                model.BackAction);
+        }
 
-        //[HttpPost]
-        //public async Task<IActionResult> UpdateManagementHierarchyDetails(AddEditManagementHierarchyViewModel model)
-        //{
-        //    var errorMessages = ManagementHierarchyValidator.Validate(model);
+        private async Task<IActionResult> RemoveItemFromManagementHierarchy(ConfirmRemoveManagementHierarchyViewModel model, string pageId, string questionId, string questionTag, string redirectAction, string backAction)
+        {
+            if (String.IsNullOrEmpty(model.Confirmation))
+            {
+                model.ErrorMessages = new List<ValidationErrorDetail>
+                {
+                    new ValidationErrorDetail
+                    {
+                        Field = "Confirmation",
+                        ErrorMessage = $"Tell us if you want to remove {model.Name}"
+                    }
+                };
+                model.BackAction = backAction;
 
-        //    if (errorMessages.Any())
-        //    {
-        //        model.ErrorMessages = errorMessages;
-        //        return View("~/Views/Roatp/WhosInControl/EditManagementHierarchy.cshtml", model);
-        //    }
+                return View("~/Views/Roatp/ManagementHierarchy/ConfirmManagementHierarchyRemoval.cshtml", model);
+            }
 
-        //    var peopleTableData = await _tabularDataRepository.GetTabularDataAnswer(model.ApplicationId, RoatpWorkflowQuestionTags.AddManagementHierarchy);
-        //    if (peopleTableData != null)
-        //    {
-        //        var person = new TabularDataRow
-        //        {
-        //            Columns = new List<string>
-        //            {
-        //                model.PersonInControlName,
-        //                DateOfBirthFormatter.FormatDateOfBirth(model.PersonInControlDobMonth, model.PersonInControlDobYear)
-        //            }
-        //        };
+            if (model.Confirmation != "Y")
+            {
+                return RedirectToAction(redirectAction, new { model.ApplicationId });
+            }
 
-        //        var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
-        //        var yourOrganisationSequence =
-        //            applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
-        //        var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
-        //        var whosInControlSection =
-        //            yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+            var managementHierarchyData = await _tabularDataRepository.GetTabularDataAnswer(model.ApplicationId, questionTag);
 
-        //        var result = await _tabularDataRepository.EditTabularDataRecord(
-        //            model.ApplicationId,
-        //            whosInControlSection.Id,
-        //            RoatpWorkflowPageIds.WhosInControl.AddManagementHierarchy,
-        //            RoatpYourOrganisationQuestionIdConstants.AddManagementHierarchy,
-        //            RoatpWorkflowQuestionTags.AddManagementHierarchy,
-        //            person,
-        //            model.Index);
-        //    }
+            if ((managementHierarchyData == null) || (model.Index < 0 || model.Index > managementHierarchyData.DataRows.Count))
+            {
+                return RedirectToAction(redirectAction, new { model.ApplicationId });
+            }
 
-        //    return RedirectToAction("ConfirmManagementHierarchy", new { model.ApplicationId });
-        //}
+            managementHierarchyData.DataRows.RemoveAt(model.Index);
 
-        //[HttpGet]
-        //public async Task<IActionResult> RemoveManagementHierarchy(Guid applicationId, int index)
-        //{
-        //    var personTableData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddManagementHierarchy);
+            var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
+            var sequence =
+                applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining);
+            var sections = await _qnaApiClient.GetSections(model.ApplicationId, sequence.Id);
+            var section =
+                sections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy);
 
-        //    if (index >= personTableData.DataRows.Count)
-        //    {
-        //        return RedirectToAction("ConfirmManagementHierarchy", new { applicationId });
-        //    }
+            var result = await _tabularDataRepository.SaveTabularDataAnswer(
+                model.ApplicationId,
+                section.Id,
+                pageId,
+                questionId,
+                managementHierarchyData);
 
-        //    var personName = personTableData.DataRows[index].Columns[0];
+            if (managementHierarchyData.DataRows.Count == 0)
+            {
+                // var x = "here";
+                //await _applicationApiClient.DeleteAnswer(model.ApplicationId,
+                //    RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
+                //    RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy, "7200", new Guid("00000000-0000-0000-0000-000000000000"), User.GetUserId());
+                await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, section.Id, "7200", new List<Answer>{new Answer{QuestionId = "DAT-720",Value=null}});
+            }
 
-        //    return ConfirmRemovalOfPersonInControl(applicationId, personName, "RemovePscDetails", "ConfirmManagementHierarchy");
-        //}
+            return RedirectToAction(redirectAction, new { model.ApplicationId });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditManagementHierarchy(Guid applicationId, int index)
+        {
+            var personTableData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddManagementHierarchy);
+            if (personTableData != null)
+            {
+                if (index >= personTableData.DataRows.Count)
+                {
+                    return RedirectToAction("ConfirmManagementHierarchy", new { applicationId });
+                }
+
+                var person = personTableData.DataRows[index];
+                var name = person.Columns[0];
+                var jobRole = person.Columns[1];
+
+                var timeInRoleMonths = person.Columns[2];
+                var timeInRoleYears = person.Columns[3];
+                var isPartOfOtherOrg = person.Columns[4];
+                var otherOrgName = person.Columns[5];
+                var model = new AddEditManagementHierarchyViewModel
+                {
+                    ApplicationId = applicationId,
+                    FullName = name,
+                    Index = index,
+                    Identifier = "person",
+                    JobRole = jobRole,
+                    TimeInRoleMonths = timeInRoleMonths,
+                    TimeInRoleYears = timeInRoleYears,
+                    IsPartOfOtherOrgThatGetsFunding = isPartOfOtherOrg,
+                    OtherOrgName = otherOrgName,
+                    GetHelpAction = "EditManagementHierarchy"
+                };
+                PopulateGetHelpWithQuestion(model, "EditManagementHierarchy");
+                return View($"~/Views/Roatp/ManagementHierarchy/EditManagementHierarchy.cshtml", model);
+            }
+            return RedirectToAction("ConfirmManagementHierarchy", new { applicationId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateManagementHierarchyDetails(AddEditManagementHierarchyViewModel model)
+        {
+            var errorMessages = ManagementHierarchyValidator.Validate(model);
+
+            if (errorMessages.Any())
+            {
+                model.ErrorMessages = errorMessages;
+                return View("~/Views/Roatp/ManagementHierarchy/EditManagementHierarchy.cshtml", model);
+            }
+
+            var peopleTableData = await _tabularDataRepository.GetTabularDataAnswer(model.ApplicationId, RoatpWorkflowQuestionTags.AddManagementHierarchy);
+            if (peopleTableData != null)
+            {
+                var person = new TabularDataRow
+                {
+                    Columns = new List<string>
+                    {
+                        model.FullName,
+                        model.JobRole,
+                        model.TimeInRoleYears,
+                        model.TimeInRoleMonths,
+                        model.IsPartOfOtherOrgThatGetsFunding,
+                        model.IsPartOfOtherOrgThatGetsFunding=="Yes"? model.OtherOrgName : string.Empty
+                    }
+                };
+
+                var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
+                var sequence =
+                    applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining);
+                var sections = await _qnaApiClient.GetSections(model.ApplicationId, sequence.Id);
+                var section =
+                    sections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy);
+
+                var result = await _tabularDataRepository.EditTabularDataRecord(
+                    model.ApplicationId,
+                    section.Id,
+                    RoatpWorkflowPageIds.ManagementHierarchy.AddManagementHierarchy,
+                    RoatpDeliveringApprenticeshipTrainingQuestionIdConstants.ManagementHierarchy,
+                    RoatpWorkflowQuestionTags.AddManagementHierarchy,
+                    person,
+                    model.Index);
+            }
+
+            return RedirectToAction("ConfirmManagementHierarchy", new { model.ApplicationId });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> RemoveManagementHierarchy(Guid applicationId, int index)
+        {
+            var personTableData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddManagementHierarchy);
+
+            if (index >= personTableData.DataRows.Count)
+            {
+                return RedirectToAction("ConfirmManagementHierarchy", new { applicationId });
+            }
+
+            var personName = personTableData.DataRows[index].Columns[0];
+
+            return ConfirmRemovalOfManagementHierarchy(applicationId, personName, "RemoveManagementHierarchy", "ConfirmManagementHierarchy");
+        }
 
 
         [HttpPost]
@@ -237,26 +318,26 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             var deliveringApprenticeshipTrainingSequence =
                 applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining);
             var deliveringApprenticeshipTrainingSections = await _qnaApiClient.GetSections(applicationId, deliveringApprenticeshipTrainingSequence.Id);
-            var managemetnHierarchySection
-                =
-                deliveringApprenticeshipTrainingSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy);
+            //var managemetnHierarchySection
+            //    =
+            //    deliveringApprenticeshipTrainingSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy);
 
             return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
         }
 
-        //private IActionResult ConfirmRemovalOfManagementHierarchy(Guid applicationId, string name, string actionName, string backActionName)
-        //{
-        //    var model = new ConfirmRemoveManagementHierarchyViewModel
-        //    {
-        //        ApplicationId = applicationId,
-        //        Name = name,
-        //        ActionName = actionName,
-        //        BackAction = backActionName,
-        //        GetHelpAction = actionName
-        //    };
-        //    PopulateGetHelpWithQuestion(model, actionName);
+        private IActionResult ConfirmRemovalOfManagementHierarchy(Guid applicationId, string name, string actionName, string backActionName)
+        {
+            var model = new ConfirmRemoveManagementHierarchyViewModel
+            {
+                ApplicationId = applicationId,
+                Name = name,
+                ActionName = actionName,
+                BackAction = backActionName,
+                GetHelpAction = actionName
+            };
+            PopulateGetHelpWithQuestion(model, actionName);
 
-        //    return View("~/Views/Roatp/WhosInControl/ConfirmPscRemoval.cshtml", model);
-        //}
+            return View("~/Views/Roatp/ManagementHierarchy/ConfirmManagementHierarchyRemoval.cshtml", model);
+        }
     }
 }

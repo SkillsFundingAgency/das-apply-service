@@ -22,7 +22,7 @@
                     {
                         <li class="app-task-list__item">
                             <a class="app-task-list__task_name" href="@Url.Action("StartPage", "RoatpManagementHierarchy", new { Model.ApplicationId })">
-                                Tell us who's in control
+                                @Html.Raw(section.Title)
                                 <strong class="govuk-tag app-task-list__task-@Model.CssClass(section.SequenceId, section.SectionId)" id="status_@sequenceSection"> @Model.SectionStatus(section.SequenceId, section.SectionId)</strong>
                             </a>                        </li>
                     }
