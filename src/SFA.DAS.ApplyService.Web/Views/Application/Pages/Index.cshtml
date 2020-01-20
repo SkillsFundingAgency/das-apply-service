@@ -218,6 +218,11 @@
                             <script src="@Url.Content("~/javascripts/gov-uk-postcode-lookup-service.min.js")"></script>
                         }
                     }
+                    
+                    @if (Model.InfoText != null)
+                    {
+                        @Html.Raw(Model.InfoText)
+                    }
 
                     @if (!Model.HideCTA)
                     {
