@@ -378,8 +378,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             return View("~/Views/Application/Pages/Index.cshtml", viewModel);            
         }
-        
-                
+
         [HttpGet]
         public async Task<IActionResult> Skip(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
