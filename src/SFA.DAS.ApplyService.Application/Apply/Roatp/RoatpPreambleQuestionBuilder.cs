@@ -148,8 +148,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
         public static class ManagementHierarchy
         {
-            // MFCMFC I just added something, this number may be wrong - also correct where it's used
-            public static string AddManagementHierarchy = "7200";
+              public static string AddManagementHierarchy = "7200";
         }
 
         public class DescribeYourOrganisation

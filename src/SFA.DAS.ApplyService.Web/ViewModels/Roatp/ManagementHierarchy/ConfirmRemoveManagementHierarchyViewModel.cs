@@ -13,7 +13,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string ActionName { get; set; }
         public string BackAction { get; set; }
 
-        //MFCMFC check this text
         public string Title { get { return "Are you sure you want to remove this person from management hierarchy?"; } set { } }
         public string SequenceId { get { return RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining.ToString(); } set { } }
         public int SectionId { get { return RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy; } set { } }

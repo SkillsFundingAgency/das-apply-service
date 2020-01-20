@@ -29,6 +29,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _tabularDataRepository = tabularDataRepository;
         }
 
+        [HttpGet]
         [Route("management-hierarchy")]
         public async Task<IActionResult> StartPage(Guid applicationId)
         {
@@ -64,10 +65,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         public IActionResult AddManagementHierarchy(Guid applicationId)
         {
             var model = new AddEditManagementHierarchyViewModel { ApplicationId = applicationId, GetHelpAction = "AddManagementHierarchy" };
-            
-            //MFCMFC not sure about the variable being injected here.....
             PopulateGetHelpWithQuestion(model, RoatpWorkflowPageIds.ManagementHierarchy.AddManagementHierarchy);
-
             return View("~/Views/Roatp/ManagementHierarchy/AddManagementHierarchy.cshtml", model);
         }
 
@@ -194,12 +192,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 pageId,
                 questionId,
                 managementHierarchyData);
-
-            // MFC Leaving this in cos used in follow up story
-            //if (managementHierarchyData.DataRows.Count == 0)
-            //{
-            //    await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, section.Id, "7200", new List<Answer>{new Answer{QuestionId = "DAT-720",Value=null}});
-            //}
 
             return RedirectToAction(redirectAction, new { model.ApplicationId });
         }
