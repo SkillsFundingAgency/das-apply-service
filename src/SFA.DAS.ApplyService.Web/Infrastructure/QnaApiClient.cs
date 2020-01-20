@@ -237,6 +237,37 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
         }
 
+        public async Task<ResetPageAnswersResponse> ResetPageAnswers(Guid applicationId, Guid sectionId, string pageId)
+        {
+
+            var response = await _httpClient.PostAsJsonAsync($"/Applications/{applicationId}/sections/{sectionId}/pages/{pageId}/reset", new{});
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonConvert.DeserializeObject<ResetPageAnswersResponse>(json);
+            }
+            else
+            {
+                var apiError = JsonConvert.DeserializeObject<ApiError>(json);
+                var apiErrorMessage = apiError?.Message ?? json;
+
+                _logger.LogError($"Error Resetting Page Answers into QnA. Application: {applicationId} | SectionId: {sectionId} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}");
+
+                var validationErrorMessage = "Cannot save answers at this time. Please contact your system administrator.";
+
+                if (!_environmentName.EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // Show API error message if outside of PROD and PREPROD environments
+                    validationErrorMessage = apiErrorMessage;
+                }
+
+                var validationError = new KeyValuePair<string, string>(string.Empty, validationErrorMessage);
+                return new ResetPageAnswersResponse { ValidationPassed = false, ValidationErrors = new List<KeyValuePair<string, string>> { validationError } };
+            }
+        }
+
         public async Task<AddPageAnswerResponse> AddPageAnswerToMultipleAnswerPage(Guid applicationId, Guid sectionId, string pageId, List<Answer> answer)
         {
             // Not used. May need in future. See how EPAO Assessor Service does it
