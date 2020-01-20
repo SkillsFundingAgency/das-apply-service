@@ -252,19 +252,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             {
                 var apiError = JsonConvert.DeserializeObject<ApiError>(json);
                 var apiErrorMessage = apiError?.Message ?? json;
+                var errorMessage =
+                    $"Error Resetting Page Answers into QnA. Application: {applicationId} | SectionId: {sectionId} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}";
 
-                _logger.LogError($"Error Resetting Page Answers into QnA. Application: {applicationId} | SectionId: {sectionId} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}");
+                _logger.LogError(errorMessage);
 
-                var validationErrorMessage = "Cannot save answers at this time. Please contact your system administrator.";
-
-                if (!_environmentName.EndsWith("PROD", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    // Show API error message if outside of PROD and PREPROD environments
-                    validationErrorMessage = apiErrorMessage;
-                }
-
-                var validationError = new KeyValuePair<string, string>(string.Empty, validationErrorMessage);
-                return new ResetPageAnswersResponse { ValidationPassed = false, ValidationErrors = new List<KeyValuePair<string, string>> { validationError } };
+                return new ResetPageAnswersResponse { ValidationPassed = false, ValidationErrors = null  };
             }
         }
 
