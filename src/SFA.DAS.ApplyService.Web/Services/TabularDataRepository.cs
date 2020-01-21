@@ -45,7 +45,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             if (tabularData.DataRows.Count == 0)
             {
-                var resultReset = await _apiClient.ResetPageAnswers(applicationId, sectionId, questionId);
+                var resultReset = await _apiClient.ResetPageAnswers(applicationId, sectionId, pageId);
                 return await Task.FromResult(resultReset.ValidationPassed);
             }
            
