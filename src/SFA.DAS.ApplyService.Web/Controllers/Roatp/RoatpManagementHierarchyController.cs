@@ -193,12 +193,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 questionId,
                 managementHierarchyData);
 
-
-            if (managementHierarchyData.DataRows.Count == 0)
-            {
-                await _qnaApiClient.ResetPageAnswers(model.ApplicationId, section.Id, RoatpWorkflowPageIds.ManagementHierarchy.AddManagementHierarchy);
-            }
-
             return RedirectToAction(redirectAction, new { model.ApplicationId });
         }
 

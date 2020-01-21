@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 
@@ -42,9 +43,15 @@ namespace SFA.DAS.ApplyService.Web.Services
                 }
             };
 
+            if (tabularData.DataRows.Count == 0)
+            {
+                var resultReset = await _apiClient.ResetPageAnswers(applicationId, sectionId, questionId);
+                return await Task.FromResult(resultReset.ValidationPassed);
+            }
+           
             var result = await _apiClient.UpdatePageAnswers(applicationId, sectionId, pageId, answers);
-
             return await Task.FromResult(result.ValidationPassed);
+
         }
         
         public async Task<bool> AddTabularDataRecord(Guid applicationId, Guid sectionId, string pageId, string questionId, string questionTag, TabularDataRow record)
