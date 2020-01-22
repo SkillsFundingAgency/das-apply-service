@@ -690,7 +690,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var errorMessages = new List<ValidationErrorDetail>();
             var answers = new List<Answer>();
 
-            GetAnswersFromForm(page, answers);
+            answers.AddRange(GetAnswersFromForm(page));
+            answers.AddRange(GetAnswersFromFiles());
             ApplyFormattingToAnswers(answers, page);
             
             RunCustomValidations(page, answers);
@@ -835,49 +836,118 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return null;
         }
 
-        private void GetAnswersFromForm(Page page, List<Answer> answers)
+        private List<Answer> GetAnswersFromForm(Page page)
         {
-            Dictionary<string, JObject> answerValues = new Dictionary<string, JObject>();
+            List<Answer> answers = new List<Answer>();
 
-            foreach (var formVariable in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__")))
+            // These are special in that they drive other things and thus should not be deemed as an answer
+            var exludedInputs = new List<string> { "postcodeSearch", "checkAll" };
+
+            // Add answers from the Form post
+            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__") && !exludedInputs.Contains(f.Key, StringComparer.InvariantCultureIgnoreCase)))
             {
-                var answerKey = formVariable.Key.Split("_Key_");
-                if (!answerValues.ContainsKey(answerKey[0]))
-                {
-                    answerValues.Add(answerKey[0], new JObject());
-                }
-
-                answerValues[answerKey[0]].Add(
-                    answerKey.Count() == 1 ? string.Empty : answerKey[1],
-                    formVariable.Value.ToString());
+                answers.Add(new Answer() { QuestionId = keyValuePair.Key, Value = keyValuePair.Value });
             }
 
-            foreach(var file in HttpContext.Request.Form.Files)
+            // Check if any Page Question is missing and add the default answer
+            foreach (var questionId in page.Questions.Select(q => q.QuestionId))
             {
-                if (!answerValues.ContainsKey(file.Name))
+                if (!answers.Any(a => a.QuestionId == questionId))
                 {
-                    answerValues.Add(file.Name, new JObject());
+                    // Add default answer if it's missing
+                    answers.Add(new Answer { QuestionId = questionId, Value = string.Empty });
+                }
+            }
+
+            #region FurtherQuestion_Processing
+            // Get all questions that have FurtherQuestions in a ComplexRadio
+            var questionsWithFutherQuestions = page.Questions.Where(x => x.Input.Type == "ComplexRadio" && x.Input.Options != null && x.Input.Options.Any(o => o.FurtherQuestions.Any()));
+
+            foreach (var question in questionsWithFutherQuestions)
+            {
+                var answerForQuestion = answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
+
+                // Remove FurtherQuestion answers to all other Options as they were not selected and thus should not be stored
+                foreach (var furtherQuestion in question.Input.Options.Where(opt => opt.Value != answerForQuestion?.Value && opt.FurtherQuestions != null).SelectMany(opt => opt.FurtherQuestions))
+                {
+                    foreach (var answer in answers.Where(a => a.QuestionId == furtherQuestion.QuestionId))
+                    {
+                        answer.Value = string.Empty;
+                    }
+                }
+            }
+            #endregion FurtherQuestion_Processing
+
+            // Address inputs require special processing
+            if (page.Questions.Any(x => x.Input.Type == "Address"))
+            {
+                answers = ProcessPageVmQuestionsForAddress(page, answers);
+            }
+
+            return answers;
+        }
+
+        private List<Answer> GetAnswersFromFiles()
+        {
+            List<Answer> answers = new List<Answer>();
+
+            // Add answers from the Files sent within the Form post
+            if (HttpContext.Request.Form.Files != null)
+            {
+                foreach (var file in HttpContext.Request.Form.Files)
+                {
+                    answers.Add(new Answer() { QuestionId = file.Name, Value = file.FileName });
                 }
 
-                answerValues[file.Name].Add(string.Empty, file.FileName);
             }
 
-            foreach (var answer in answerValues)
+            return answers;
+        }
+
+        private static List<Answer> ProcessPageVmQuestionsForAddress(Page page, List<Answer> answers)
+        {
+
+            if (page.Questions.Any(x => x.Input.Type == "Address"))
             {
-                if(answer.Value.Count > 1)
+                Dictionary<string, JObject> answerValueDictionary = new Dictionary<string, JObject>();
+
+                // Address input fields will contain _Key_
+                foreach (var formVariable in answers.Where(x => x.QuestionId.Contains("_Key_")))
                 {
-                    answers.Add(new Answer() { QuestionId = answer.Key, JsonValue = answer.Value });
+                    var answerKey = formVariable.QuestionId.Split("_Key_");
+                    if (!answerValueDictionary.ContainsKey(answerKey[0]))
+                    {
+                        answerValueDictionary.Add(answerKey[0], new JObject());
+                    }
+
+                    answerValueDictionary[answerKey[0]].Add(
+                        answerKey.Count() == 1 ? string.Empty : answerKey[1],
+                        formVariable.Value.ToString());
                 }
-                else
+
+                // Remove anything that contains _Key_ as it has now been processed correctly
+                answers = answers.Where(x => !x.QuestionId.Contains("_Key_")).ToList();
+
+                foreach (var answerValue in answerValueDictionary)
                 {
-                    answers.Add(new Answer() { QuestionId = answer.Key, Value = answer.Value.Value<string>(string.Empty) });
+                    if (answerValue.Value.Count > 1)
+                    {
+                        var answer = answers.FirstOrDefault(a => a.QuestionId == answerValue.Key);
+
+                        if (answer is null)
+                        {
+                            answers.Add(new Answer() { QuestionId = answerValue.Key, Value = answerValue.Value.ToString() });
+                        }
+                        else
+                        {
+                            answer.Value = answerValue.Value.ToString();
+                        }
+                    }
                 }
+
             }
-            var unansweredQuestions = page.Questions.Where(x => !answers.Any(y => y.QuestionId == x.QuestionId));
-            foreach(var question in unansweredQuestions)
-            {
-                answers.Add(new Answer() { QuestionId = question.QuestionId, Value = "" });
-            }
+
+            return answers;
         }
 
         private bool FileValidationPassed(List<Answer> answers, Page page, List<ValidationErrorDetail> errorMessages)
