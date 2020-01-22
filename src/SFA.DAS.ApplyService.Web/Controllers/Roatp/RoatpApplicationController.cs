@@ -22,6 +22,7 @@ using SFA.DAS.ApplyService.Web.ViewModels;
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
     using Configuration;
+    using global::AutoMapper;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Options;
     using MoreLinq;
@@ -176,7 +177,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return RedirectToAction("Applications", new { applicationType });
         }
 
-        private static Application.Apply.Start.StartApplicationRequest BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
+        private Application.Apply.Start.StartApplicationRequest BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
         {
             return new Application.Apply.Start.StartApplicationRequest
             {
@@ -198,7 +199,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     //IsActive = sequence.IsActive,
                     //NotRequired = sequence.NotRequired,
                     //Sequential = false
-                }).ToList()
+                }).ToList(),
+                NotRequiredSectionOverrides = Mapper.Map<List<NotRequiredSectionOverride>>(_notRequiredOverrides)
             };
         }
 
@@ -521,7 +523,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
 
-            var populatedNotRequiredOverrides = await PopulateNotRequiredOverridesWithApplicationData(applicationId, _notRequiredOverrides);
+            var application = await _apiClient.GetApplication(applicationId);
+            var notRequiredOverrides = Mapper.Map<List<NotRequiredOverrideConfiguration>>(application.ApplyData?.NotRequiredSectionOverrides);
+            var populatedNotRequiredOverrides = await PopulateNotRequiredOverridesWithApplicationData(applicationId, notRequiredOverrides);
 
             var yourOrganisationSequence =
                 sequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);

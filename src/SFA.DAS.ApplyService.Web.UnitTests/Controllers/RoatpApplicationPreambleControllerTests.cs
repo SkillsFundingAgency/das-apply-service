@@ -252,6 +252,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 cfg.AddProfile<CharityTrusteeProfile>();
                 cfg.AddProfile<RoatpCreateOrganisationRequestProfile>();
                 cfg.AddProfile<RoatpContactAddressProfile>();
+                cfg.AddProfile<RoatpSectionOverrideProfile>();
             });
 
             Mapper.AssertConfigurationIsValid();

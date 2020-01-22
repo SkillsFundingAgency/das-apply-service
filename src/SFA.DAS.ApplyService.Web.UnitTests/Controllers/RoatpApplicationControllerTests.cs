@@ -1,9 +1,11 @@
-﻿using FluentAssertions;
+﻿using AutoMapper;
+using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
@@ -15,6 +17,7 @@ using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Domain.Ukrlp;
 using SFA.DAS.ApplyService.EmailService;
 using SFA.DAS.ApplyService.Session;
+using SFA.DAS.ApplyService.Web.AutoMapper;
 using SFA.DAS.ApplyService.Web.Configuration;
 using SFA.DAS.ApplyService.Web.Controllers;
 using SFA.DAS.ApplyService.Web.Infrastructure;
@@ -52,11 +55,28 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IRoatpApiClient> _roatpApiClient;
         private Mock<ISubmitApplicationConfirmationEmailService> _submitApplicationEmailService;
         private Mock<ITabularDataRepository> _tabularDataRepository;
+        private ClaimsPrincipal _user;
 
         [SetUp]
         public void Before_each_test()
         {
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            Mapper.Reset();
+
+            Mapper.Initialize(cfg =>
+            {
+                cfg.AddProfile<CompaniesHouseSummaryProfile>();
+                cfg.AddProfile<DirectorInformationProfile>();
+                cfg.AddProfile<PersonSignificantControlInformationProfile>();
+                cfg.AddProfile<CharityCommissionProfile>();
+                cfg.AddProfile<CharityTrusteeProfile>();
+                cfg.AddProfile<RoatpCreateOrganisationRequestProfile>();
+                cfg.AddProfile<RoatpContactAddressProfile>();
+                cfg.AddProfile<RoatpSectionOverrideProfile>();
+            });
+
+            Mapper.AssertConfigurationIsValid();
+
+            var _user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
             {
                 new Claim(ClaimTypes.Name, "example name"),
                 new Claim(ClaimTypes.NameIdentifier, "1"),
@@ -81,6 +101,23 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _roatpApiClient = new Mock<IRoatpApiClient>();
             _submitApplicationEmailService = new Mock<ISubmitApplicationConfirmationEmailService>();
             _tabularDataRepository = new Mock<ITabularDataRepository>();
+            
+            var config = new List<TaskListConfiguration>
+            {
+                new TaskListConfiguration
+                {
+                    Id = 1,
+                    Sequential = true,
+                    Title = "Your organisation"
+                },
+                new TaskListConfiguration
+                {
+                    Id = 4,
+                    Sequential = false,
+                    Title = "Protecting your apprentices"
+                }
+            };
+            _configuration.Setup(x => x.Value).Returns(config);
 
             _controller = new RoatpApplicationController(_apiClient.Object, _logger.Object, _sessionService.Object, _configService.Object,
                                                          _userService.Object, _usersApiClient.Object, _qnaApiClient.Object, _configuration.Object,
@@ -91,7 +128,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             {
                 ControllerContext = new ControllerContext()
                 {
-                    HttpContext = new DefaultHttpContext() { User = user }
+                    HttpContext = new DefaultHttpContext() { User = _user }
                 }
             };
 
@@ -192,6 +229,126 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
             redirectResult.ActionName.Should().Be("TaskList");
+        }
+
+        [Test]
+        public void Task_list_processes_not_required_rules_from_apply_data()
+        {
+            const int NotRequiredSequenceId = 4;
+            const int NotRequiredSectionId = 1;
+
+            var inProgressApp = new Domain.Entities.Apply
+            {
+                ApplicationStatus = ApplicationStatus.InProgress,
+                ApplyData = new ApplyData
+                {
+                    ApplyDetails = new ApplyDetails
+                    {
+                        UKPRN = "10001234"
+                    },
+                    NotRequiredSectionOverrides = new List<NotRequiredSectionOverride>()
+                    {
+                        new NotRequiredSectionOverride
+                        {
+                            SequenceId = NotRequiredSequenceId,
+                            SectionId = NotRequiredSectionId,
+                            Conditions = new List<Domain.Entities.NotRequiredCondition>
+                            {
+                                new Domain.Entities.NotRequiredCondition
+                                {
+                                    ConditionalCheckField = "TEST-01",
+                                    MustEqual = "1",
+                                    Value = null
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            _apiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(inProgressApp);
+
+            var organisationDetails = new Organisation 
+            { 
+                OrganisationUkprn = 12345678,
+                Name = "Test Org",
+                OrganisationDetails = new OrganisationDetails
+                {
+                    TradingName = "Trading Name"
+                }
+            };
+
+            _apiClient.Setup(x => x.GetOrganisationByUserId(It.IsAny<Guid>())).ReturnsAsync(organisationDetails);
+            
+            var applicationData = JObject.Parse("{ \"TEST-01\" : \"1\" }");
+            _qnaApiClient.Setup(x => x.GetApplicationData(It.IsAny<Guid>())).ReturnsAsync(applicationData);
+
+            var sequences = new List<ApplicationSequence>
+            {
+                new ApplicationSequence
+                {
+                    Id = Guid.NewGuid(),
+                    SequenceId = RoatpWorkflowSequenceIds.Preamble
+                },
+                new ApplicationSequence
+                {
+                    Id = Guid.NewGuid(),
+                    SequenceId = RoatpWorkflowSequenceIds.YourOrganisation
+                },
+                new ApplicationSequence
+                {
+                    Id = Guid.NewGuid(),
+                    SequenceId = NotRequiredSequenceId
+                }
+            };
+            _qnaApiClient.Setup(x => x.GetSequences(It.IsAny<Guid>())).ReturnsAsync(sequences);
+
+            var sections = new List<ApplicationSection>
+            {
+                new ApplicationSection
+                {
+                    Id = Guid.NewGuid(),
+                    ApplicationId = Guid.NewGuid(),
+                    SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl
+                },
+                new ApplicationSection
+                {
+                    Id = Guid.NewGuid(),
+                    ApplicationId = Guid.NewGuid(),
+                    SectionId = NotRequiredSectionId
+                }
+            };
+            _qnaApiClient.Setup(x => x.GetSections(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(sections);
+
+            var answer = new Answer
+            {
+                QuestionId = "TEST-01",
+                Value = "1"
+            };
+
+            _qnaApiClient.Setup(x => x.GetAnswer(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>()))
+                .ReturnsAsync(answer);
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(answer);
+
+            _controller = new RoatpApplicationController(_apiClient.Object, _logger.Object, _sessionService.Object, _configService.Object,
+                                                         _userService.Object, _usersApiClient.Object, _qnaApiClient.Object, _configuration.Object,
+                                                         _processPageFlowService.Object, _questionPropertyTokeniser.Object, _pageOverrideConfiguration.Object,
+                                                         _pageNavigationTrackingService.Object, _qnaLinks.Object, _customValidatorFactory.Object,
+                                                         _notRequiredOverrides.Object, _roatpApiClient.Object,
+                                                         _submitApplicationEmailService.Object, _tabularDataRepository.Object)
+            {
+                ControllerContext = new ControllerContext()
+                {
+                    HttpContext = new DefaultHttpContext() { User = _user }
+                }
+            };
+
+            var result = _controller.TaskList(Guid.NewGuid()).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var model = viewResult.Model as TaskListViewModel;
+            model.SectionStatus(NotRequiredSequenceId, NotRequiredSectionId).ToLower().Should().Be("not required");
         }
 
         [Test]

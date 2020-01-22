@@ -43,8 +43,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Start
                         UKPRN = org.OrganisationUkprn?.ToString(),
                         OrganisationName = org.Name,
                         TradingName = org.OrganisationDetails?.TradingName,
-                        ProviderRoute = request.ProviderRoute
-                    }
+                        ProviderRoute = request.ProviderRoute                        
+                    },
+                    NotRequiredSectionOverrides = request.NotRequiredSectionOverrides
                 };
 
                 applicationId = await _applyRepository.StartApplication(request.ApplicationId, applyData, org.Id, creatingContact.Id);
