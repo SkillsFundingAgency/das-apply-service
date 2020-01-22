@@ -691,7 +691,22 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var answers = new List<Answer>();
 
             answers.AddRange(GetAnswersFromForm(page));
-            answers.AddRange(GetAnswersFromFiles());
+
+            // We need to back fill files as GetAnswersFromForm will place blank answers. This won't be a problem when we've fully moved over to the EPAO's way of saving answers
+            foreach(var fileUploadAnswer in GetAnswersFromFiles())
+            {
+                var answer = answers.FirstOrDefault(a => a.QuestionId == fileUploadAnswer.QuestionId);
+
+                if(answer != null)
+                {
+                    answer.Value = fileUploadAnswer.Value;
+                }
+                else
+                {
+                    answers.Add(fileUploadAnswer);
+                }
+            }
+
             ApplyFormattingToAnswers(answers, page);
             
             RunCustomValidations(page, answers);
