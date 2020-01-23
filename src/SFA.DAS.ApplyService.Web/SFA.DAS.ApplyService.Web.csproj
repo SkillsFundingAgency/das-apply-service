@@ -19,7 +19,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.0" />
     <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="3.19.8" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.5.4" />
-    <PackageReference Include="SFA.DAS.QnA.Api.Views" Version="0.2.138" />
+    <PackageReference Include="SFA.DAS.QnA.Api.Views" Version="0.2.150" />
     <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="1.4.0" />
     <PackageReference Include="WindowsAzure.Storage" Version="9.3.2" />
     <PackageReference Include="SFA.DAS.NLog.Targets.Redis" Version="1.1.5" />
