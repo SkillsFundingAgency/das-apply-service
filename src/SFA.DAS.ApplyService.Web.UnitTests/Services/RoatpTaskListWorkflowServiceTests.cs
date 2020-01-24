@@ -15,7 +15,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         public void Get_SectionStatus_Empty_When_Null_Sequences_Used()
         {
             var expectedResult = string.Empty;
-            var actualResult = RoatpTaskListWorkflowService.SectionStatus(null, null, 0, 0, null);
+            var actualResult = RoatpTaskListWorkflowService.SectionStatus(null, null, 0, 0);
             Assert.AreEqual(expectedResult, actualResult);
         }
 
@@ -23,7 +23,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         public void Get_SectionStatus_Empty_When_Empty_Sequences_Used()
         {
             var expectedResult = string.Empty;
-            var actualResult = RoatpTaskListWorkflowService.SectionStatus(new List<ApplicationSequence>(), null, 0, 0, null);
+            var actualResult = RoatpTaskListWorkflowService.SectionStatus(new List<ApplicationSequence>(), null, 0, 0);
             Assert.AreEqual(expectedResult, actualResult);
         }
 
@@ -32,7 +32,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         public void Get_SectionStatus_Empty_When_Empty_Sections_Used()
         {
             var expectedResult = string.Empty;
-            var actualResult = RoatpTaskListWorkflowService.SectionStatus(new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = 1 } }, null, 1, 0, null);
+            var actualResult = RoatpTaskListWorkflowService.SectionStatus(new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = 1 } }, null, 1, 0);
             Assert.AreEqual(expectedResult, actualResult);
         }
 
@@ -40,7 +40,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         public void Get_SectionStatus_Empty_When_Unmatched_Sections_Used()
         {
             var expectedResult = string.Empty;
-            var actualResult = RoatpTaskListWorkflowService.SectionStatus(new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = 1, Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = 2 } } } }, null, 1, 3, null);
+            var actualResult = RoatpTaskListWorkflowService.SectionStatus(new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = 1, Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = 2 } } } }, null, 1, 3);
             Assert.AreEqual(expectedResult, actualResult);
         }
 
@@ -53,7 +53,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             var actualResult = RoatpTaskListWorkflowService.SectionStatus(new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = 1,
                 Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = sectionId,
                                                                                     QnAData = new QnAData {Pages = new List<Page>()}} } } }, 
-                null, 1, sectionId, null);
+                null, 1, sectionId);
             Assert.AreEqual(expectedResult, actualResult);
         }
 
@@ -81,7 +81,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             var actualResult = RoatpTaskListWorkflowService.SectionStatus(new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = sequenceId,
                     Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = sectionId,
                         QnAData = new QnAData {Pages = new List<Page>()}} } } },
-                notRequiredOverrides, sequenceId, sectionId, applicationRouteId);
+                notRequiredOverrides, sequenceId, sectionId);
             Assert.AreEqual(expectedResult, actualResult.ToLower());
         }
     }

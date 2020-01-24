@@ -29,10 +29,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
 
                 if (application.ApplyData != null && submittingContact != null)
                 {
-                    if (application.ApplyData.ApplyDetails == null)
-                    {
-                        application.ApplyData.ApplyDetails = new ApplyDetails();
-                    }
+                    application.ApplyData.ApplyDetails = request.ApplyData.ApplyDetails;
+                    application.ApplyData.Sequences = request.ApplyData.Sequences;
 
                     if (string.IsNullOrWhiteSpace(application.ApplyData.ApplyDetails.ReferenceNumber))
                     {
