@@ -555,7 +555,7 @@
             
             _sessionService.Remove(ApplicationDetailsKey);
 
-            return RedirectToAction("TermsAndConditions");
+            return RedirectToAction("EnterApplicationUkprn");
         }
         
         private bool ProviderEligibleToChangeRoute(OrganisationRegisterStatus roatpRegisterStatus)

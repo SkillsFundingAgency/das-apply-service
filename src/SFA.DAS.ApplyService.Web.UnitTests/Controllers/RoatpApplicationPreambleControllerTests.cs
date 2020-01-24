@@ -1445,7 +1445,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void Change_UKPRN_clears_application_data_and_redirects_to_terms_and_conditions()
+        public void Change_UKPRN_clears_application_data_and_redirects_to_enter_ukprn()
         {
             var model = new ChangeUkprnViewModel { ApplicationId = Guid.NewGuid() };
 
@@ -1460,7 +1460,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var result = _controller.ConfirmChangeUkprn(model).GetAwaiter().GetResult();
 
             var redirectResult = result as RedirectToActionResult;
-            redirectResult.ActionName.Should().Be("TermsAndConditions");
+            redirectResult.ActionName.Should().Be("EnterApplicationUkprn");
 
             _applicationApiClient.Verify(x => x.UpdateApplicationStatus(It.IsAny<Guid>(), It.IsAny<string>()), Times.Once);
             _qnaApiClient.VerifyAll();
