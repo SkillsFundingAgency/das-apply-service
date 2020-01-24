@@ -36,7 +36,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<Domain.Entities.Apply>> GetOpenApplications();
         Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications();
         Task<List<ApplicationSummaryItem>> GetClosedApplications();
-        Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
+        Task<List<Domain.Entities.Apply>> GetOpenFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();        
         Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string sequenceStatus, string applicationStatus);

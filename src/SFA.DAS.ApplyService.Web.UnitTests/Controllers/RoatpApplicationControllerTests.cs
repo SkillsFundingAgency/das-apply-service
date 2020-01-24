@@ -263,6 +263,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
             _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.ProviderRoute, It.IsAny<string>())).ReturnsAsync(providerRouteAnswer);
 
+            var application = new Domain.Entities.Apply
+            {
+                ApplyData = new ApplyData
+                {
+                    ApplyDetails = new ApplyDetails(),
+                    Sequences = new List<ApplySequence>()
+                }
+            };
+            _apiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(application);
+
             _apiClient.Setup(x => x.SubmitApplication(It.IsAny<Application.Apply.Submit.SubmitApplicationRequest>())).ReturnsAsync(true);
 
             _submitApplicationEmailService.Setup(x => x.SendGetHelpWithQuestionEmail(It.IsAny<ApplicationSubmitConfirmation>())).Returns(Task.FromResult(true));

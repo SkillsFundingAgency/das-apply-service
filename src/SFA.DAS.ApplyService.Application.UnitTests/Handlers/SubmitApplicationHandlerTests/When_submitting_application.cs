@@ -3,6 +3,7 @@ using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Domain.Entities;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -28,7 +29,16 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.SubmitApplicationH
         {
             ApplyRepository.Setup(r => r.CanSubmitApplication(It.IsAny<Guid>())).ReturnsAsync(true);
 
-            var request = new SubmitApplicationRequest { ApplicationId = Guid.NewGuid(), SubmittingContactId = Guid.NewGuid() };
+            var request = new SubmitApplicationRequest
+            {
+                ApplicationId = Guid.NewGuid(),
+                SubmittingContactId = Guid.NewGuid(),
+                ApplyData = new ApplyData
+                {
+                    ApplyDetails = new ApplyDetails(),
+                    Sequences = new List<ApplySequence>()
+                }
+            };
 
             var result = await Handler.Handle(request, new CancellationToken());
 
