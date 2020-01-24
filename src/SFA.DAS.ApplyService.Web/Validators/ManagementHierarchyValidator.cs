@@ -11,8 +11,8 @@ namespace SFA.DAS.ApplyService.Web.Validators
     {
         public const string FullNameMinLengthError = "Enter a full name";
         public const string ManagementHierarchyNameMaxLengthError = "Enter a full name using 255 characters or less";
-        public const string JobRoleMinLengthError = "Enter a job title";
-        public const string JobRoleMaxLengthError = "Enter a job title using 255 characters or less";
+        public const string JobRoleMinLengthError = "Enter a job role";
+        public const string JobRoleMaxLengthError = "Enter a job role using 255 characters or less";
         public const string TimeInRoleError = "Enter a year and month";
         public const string TimeInRoleMonthsTooBigError = "Enter 11 or less for month";
         public const string TimeInRoleYearsTooBigError = "Enter 99 or less for year";
