@@ -33,7 +33,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task UpdateSections(List<ApplicationSection> sections);
         Task UpdateSequences(List<ApplicationSequence> sequences);
         Task SaveSection(ApplicationSection section, Guid? userId = null);
-        Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceId);
+        Task<List<Domain.Entities.Apply>> GetOpenApplications();
         Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications();
         Task<List<ApplicationSummaryItem>> GetClosedApplications();
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();

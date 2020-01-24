@@ -171,5 +171,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             return await _mediator.Send(new GetExistingApplicationStatusRequest(ukprn));
         }
+
+        [HttpGet("/Applications/Open")]
+        public async Task<IEnumerable<Apply>> GetOpenApplications()
+        {
+            return await _mediator.Send(new GetOpenApplicationsRequest());
+        }
     }
 }

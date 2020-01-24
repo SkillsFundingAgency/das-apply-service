@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Review.Applications
 {
-    public class OpenApplicationsHandler : IRequestHandler<OpenApplicationsRequest, List<ApplicationSummaryItem>>
+    public class OpenApplicationsHandler : IRequestHandler<OpenApplicationsRequest, List<Domain.Entities.Apply>>
     {
         private readonly IApplyRepository _repository;
 
@@ -15,9 +15,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Applications
             _repository = repository;
         }
 
-        public async Task<List<ApplicationSummaryItem>> Handle(OpenApplicationsRequest request, CancellationToken cancellationToken)
+        public async Task<List<Domain.Entities.Apply>> Handle(OpenApplicationsRequest request, CancellationToken cancellationToken)
         {
-            return await _repository.GetOpenApplications(request.SequenceId);
+            return await _repository.GetOpenApplications();
         }
     }
 }
