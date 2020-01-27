@@ -286,7 +286,7 @@
                 }
             },
             "dependsOn": [
-                "api-app-inisghts",
+                "api-app-insights",
                 "api-app-service-certificate"
             ]
         },
