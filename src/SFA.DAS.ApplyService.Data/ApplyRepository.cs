@@ -486,10 +486,10 @@ namespace SFA.DAS.ApplyService.Data
                     .QueryAsync<Apply>(
                         @"SELECT ApplyData
 	                        FROM Apply
-	                        WHERE ApplicationStatus = @applicationStatusSubmitted",
+	                        WHERE ApplicationStatus = @gatewayAssessed",
                         new
                         {
-                            applicationStatusSubmitted = ApplicationStatus.Submitted
+                            gatewayAssessed = ApplicationStatus.GatewayAssessed
                         })).ToList();
             }
         }
@@ -616,11 +616,11 @@ namespace SFA.DAS.ApplyService.Data
                             )
                         ) s
                         where s.SequenceNo = @financialHealthSequence and s.NotRequired = 'false'
-                        and a.ApplicationStatus = @submittedStatus",
+                        and a.ApplicationStatus = @gatewayAssessed",
                         new
                         {
                             financialHealthSequence = 2,
-                            submittedStatus = ApplicationStatus.Submitted
+                            gatewayAssessed = ApplicationStatus.GatewayAssessed
                         })).ToList();
             }
         }
