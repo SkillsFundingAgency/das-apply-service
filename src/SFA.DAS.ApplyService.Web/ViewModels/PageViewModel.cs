@@ -65,7 +65,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
         public bool AllowMultipleAnswers { get; set; }
         public List<PageOfAnswers> PageOfAnswers { get; set; }
         public string BodyText { get; set; }
-
+        public string InfoText { get; set; }
         public List<TabularData> PeopleInControlDetails { get; set; }
         public PageDetails Details { get; set; }
 
@@ -90,6 +90,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
         private void SetupPage(Page page, List<ValidationErrorDetail> errorMessages)
         {
             Title = page.Title;
+            InfoText = page.InfoText;
             LinkTitle = page.LinkTitle;
             DisplayType = page.DisplayType;
             PageId = page.PageId;
