@@ -484,7 +484,7 @@ namespace SFA.DAS.ApplyService.Data
             {
                 return (await connection
                     .QueryAsync<Apply>(
-                        @"SELECT ApplyData
+                        @"SELECT ApplicationId, OrganisationId, ApplyData, ApplicationStatus, ReviewStatus
 	                        FROM Apply
 	                        WHERE ApplicationStatus = @gatewayAssessed",
                         new
@@ -602,7 +602,7 @@ namespace SFA.DAS.ApplyService.Data
             {
                 return (await connection
                     .QueryAsync<Apply>(
-                        @"SELECT a.ApplyData FROM Apply a
+                        @"SELECT a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, a.ApplyData FROM Apply a
                         CROSS APPLY OPENJSON(a.ApplyData)
                         WITH (
                             Sequences nvarchar(max) '$.Sequences' AS JSON

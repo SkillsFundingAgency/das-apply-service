@@ -36,7 +36,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public int SequenceNo { get; set; }
         public List<ApplySection> Sections { get; set; }
         //public string Status { get; set; }
-        //public bool IsActive { get; set; }
+        public bool IsActive { get; set; }
         public bool NotRequired { get; set; }
         //public bool Sequential { get; set; }
         //public string Description { get; set; }
