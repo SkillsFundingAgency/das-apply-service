@@ -855,10 +855,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             List<Answer> answers = new List<Answer>();
 
             // These are special in that they drive other things and thus should not be deemed as an answer
-            var exludedInputs = new List<string> { "postcodeSearch", "checkAll", "ApplicationId", "RedirectAction" };
+            var excludedInputs = new List<string> { "postcodeSearch", "checkAll", "ApplicationId", "RedirectAction" };
 
             // Add answers from the Form post
-            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__") && !exludedInputs.Contains(f.Key, StringComparer.InvariantCultureIgnoreCase)))
+            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__") && !excludedInputs.Contains(f.Key, StringComparer.InvariantCultureIgnoreCase)))
             {
                 answers.Add(new Answer() { QuestionId = keyValuePair.Key, Value = keyValuePair.Value });
             }
@@ -875,9 +875,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             #region FurtherQuestion_Processing
             // Get all questions that have FurtherQuestions in a ComplexRadio
-            var questionsWithFutherQuestions = page.Questions.Where(x => x.Input.Type == "ComplexRadio" && x.Input.Options != null && x.Input.Options.Any(o => o.FurtherQuestions.Any()));
+            var questionsWithFurtherQuestions = page.Questions.Where(x => x.Input.Type == "ComplexRadio" && x.Input.Options != null && x.Input.Options.Any(o => o.FurtherQuestions.Any()));
 
-            foreach (var question in questionsWithFutherQuestions)
+            foreach (var question in questionsWithFurtherQuestions)
             {
                 var answerForQuestion = answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
 
