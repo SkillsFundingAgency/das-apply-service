@@ -36,6 +36,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag, string questionId = null);
 
         Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, Guid sectionId, string pageId, List<Answer> answers);
+        Task<ResetPageAnswersResponse> ResetPageAnswers(Guid applicationId, Guid sectionId, string pageId);
         Task<AddPageAnswerResponse> AddPageAnswerToMultipleAnswerPage(Guid applicationId, Guid sectionId, string pageId, List<Answer> answer);
         Task<Page> RemovePageAnswerFromMultipleAnswerPage(Guid applicationId, Guid sectionId, string pageId, Guid answerId);
 
