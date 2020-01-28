@@ -34,24 +34,29 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
 
         public string DisplayAnswerValue(Answer answer)
         {
-            if (Type == "Date" || Type == "DateOfBirth" || Type == "MonthAndYear")
+            var answerValue = answer?.Value;
+
+            if (!string.IsNullOrWhiteSpace(answer?.Value))
             {
                 var dateparts = answer.Value.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
 
-                string[] formats = Type == "Date" ? new string[] { "dd,MM,yyyy" } : new string[] { "M,yyyy" };
-                if(Type == "Date")
+                if ("Date".Equals(Type, StringComparison.InvariantCultureIgnoreCase) && dateparts.Length == 3)
                 {
-                    var datetime = DateTime.Parse($"{dateparts[0]}/{dateparts[1]}/{dateparts[2]}");
-                    return datetime.ToString("dd/MM/yyyy");
+                    if (DateTime.TryParse($"{dateparts[0]}/{dateparts[1]}/{dateparts[2]}", out var datetime))
+                    {
+                        answerValue = datetime.ToString("dd/MM/yyyy");
+                    }
                 }
-                else if (Type == "DateOfBirth" || Type == "MonthAndYear")
+                else if ("MonthAndYear".Equals(Type, StringComparison.InvariantCultureIgnoreCase) && dateparts.Length == 2)
                 {
-                    var datetime = DateTime.Parse($"{dateparts[0]}/{dateparts[1]}");
-                    return datetime.ToString("MM/yyyy");
+                    if (DateTime.TryParse($"{dateparts[0]}/{dateparts[1]}", out var datetime))
+                    {
+                        answerValue = datetime.ToString("MM/yyyy");
+                    }
                 }
             }
 
-            return answer.Value;
+            return answerValue ?? string.Empty;
         }
     }
 }
