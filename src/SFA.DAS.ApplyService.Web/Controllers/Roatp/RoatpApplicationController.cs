@@ -855,7 +855,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             List<Answer> answers = new List<Answer>();
 
             // These are special in that they drive other things and thus should not be deemed as an answer
-            var exludedInputs = new List<string> { "postcodeSearch", "checkAll" };
+            var exludedInputs = new List<string> { "postcodeSearch", "checkAll", "ApplicationId", "RedirectAction" };
 
             // Add answers from the Form post
             foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__") && !exludedInputs.Contains(f.Key, StringComparer.InvariantCultureIgnoreCase)))
