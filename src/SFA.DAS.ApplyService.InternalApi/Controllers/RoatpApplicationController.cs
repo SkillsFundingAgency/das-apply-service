@@ -12,8 +12,8 @@
     using Polly.Retry;
     using Microsoft.AspNetCore.Authorization;
     using MediatR;
-    using SFA.DAS.ApplyService.Application.Apply.Roatp;
-    using SFA.DAS.ApplyService.Domain.Entities;
+    using Microsoft.Extensions.Options;
+    using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
 
     [Authorize]
     public class RoatpApplicationController : Controller
@@ -26,12 +26,15 @@
 
         private readonly IMediator _mediator;
 
-        public RoatpApplicationController(ILogger<RoatpApplicationController> logger, RoatpApiClient apiClient, IMediator mediator)
+        private readonly List<RoatpSequences> _roatpSequences;
+
+        public RoatpApplicationController(ILogger<RoatpApplicationController> logger, RoatpApiClient apiClient, IMediator mediator, IOptions<List<RoatpSequences>> roatpSequences)
         {
             _logger = logger;
             _apiClient = apiClient;
             _retryPolicy = GetRetryPolicy();
             _mediator = mediator;
+            _roatpSequences = roatpSequences.Value;
         }
 
         [Route("all-roatp-routes")]
@@ -53,6 +56,12 @@
      
             return Ok(registerStatus);
         
+        }
+
+        [Route("roatp-sequences")]
+        public async Task<IActionResult> RoatpSequences()
+        {
+            return Ok(_roatpSequences);
         }
 
         private AsyncRetryPolicy GetRetryPolicy()

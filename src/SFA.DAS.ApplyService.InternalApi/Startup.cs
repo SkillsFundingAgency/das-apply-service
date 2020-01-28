@@ -29,6 +29,7 @@ using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 
 namespace SFA.DAS.ApplyService.InternalApi
 {
+    using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
     using UKRLP;
     using static UKRLP.ProviderQueryPortTypeClient;
 
@@ -135,6 +136,10 @@ namespace SFA.DAS.ApplyService.InternalApi
                 mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
             else
                 mvcBuilder = services.AddMvc();
+
+            services.AddOptions();
+
+            services.Configure<List<RoatpSequences>>(_configuration.GetSection("RoatpSequences"));
 
             mvcBuilder.SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
