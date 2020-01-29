@@ -10,6 +10,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Models.Roatp
         public bool Sequential { get; set; }
 
         public List<string> ExcludeSections { get; set; }
+
+        public List<string> Roles { get; set; }
     }
    
 }
