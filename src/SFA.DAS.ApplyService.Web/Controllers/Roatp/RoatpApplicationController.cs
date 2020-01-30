@@ -763,6 +763,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     return RedirectToAction("Feedback", new {applicationId});
                 }
 
+                if ("ReturnToSection".Equals(nextAction, StringComparison.InvariantCultureIgnoreCase) && page.DisplayType==SectionDisplayType.PagesWithSections)
+                {
+                    return await Section(applicationId, selectedSequence.SequenceId,selectedSection.SectionId);
+                }
+
                 if (string.IsNullOrEmpty(nextActionId) || !"NextPage".Equals(nextAction, StringComparison.InvariantCultureIgnoreCase))
                 {
                     return await TaskList(applicationId);
