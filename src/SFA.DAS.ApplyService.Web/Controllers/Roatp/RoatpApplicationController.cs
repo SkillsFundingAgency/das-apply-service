@@ -287,6 +287,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 await RemoveIrrelevantQuestions(applicationId, section);
             }
 
+            if (section?.DisplayType == SectionDisplayType.PagesWithSections)
+            {
+                //var applicationSection = new ApplicationSection { Section = selectedSection, Id = applicationId };
+                //applicationSection.SequenceNo = sequenceNo;
+                //applicationSection.PageContext = BuildPageContext(application, sequence);
+                var applicationSection = selectedSection;
+                return View("~/Views/Application/PagesWithSections.cshtml", applicationSection);
+            }
+
             var pageId = section.QnAData.Pages.FirstOrDefault()?.PageId;
 
             return await Page(applicationId, sequenceId, sectionId, pageId, "TaskList",null);
