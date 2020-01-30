@@ -7,9 +7,13 @@
     var isSamePage = false;
     var nextPageTitle = "";
     var pagesToCheck = Model.QnAData.Pages.Where(p => p.Active && !p.NotRequired).ToList();
+    var pageId = pagesToCheck?.FirstOrDefault()?.PageId;
 }
+@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
 
-<a href="@Url.Action("Sequence", "RoatpApplication", new {applicationId = Model.ApplicationId})" class="govuk-back-link">Back to application overview</a>
+<div class="grid-row">
+    <a class="govuk-back-link" href="@Url.Action("Back", "RoatpApplication", new { Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pageId, redirectAction = "TaskList" })">Back</a>
+</div>
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -23,13 +27,13 @@
                 <ul class="govuk-list">
                     <li>
                         <ul class="app-task-list govuk-!-margin-bottom-7">
-                            @for (var i=0; i < pagesToCheck.Count; i++)
+                            @for (var i = 0; i < pagesToCheck.Count; i++)
                             {
                                 var pg = pagesToCheck[i];
                                 isSamePage = pageTitle == pg.Title;
                                 pageTitle = pg.Title;
                                 nextPageTitle = "";
-                                if (i < pagesToCheck.Count-1)
+                                if (i < pagesToCheck.Count - 1)
                                 {
                                     nextPageTitle = (pagesToCheck[i + 1]).Title;
                                 }
@@ -38,9 +42,9 @@
                                 {
                                     <h2 class="govuk-heading-m">@Html.Raw(pg.Title)</h2>
                                 }
-                           
+
                                 <li class="app-task-list__item">
-                                    <a class="govuk-link app-task-list__task-name" 
+                                    <a class="govuk-link app-task-list__task-name"
                                        href="@Url.Action("Page", "RoatpApplication", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pg.PageId, redirectAction="Section"})">
                                         @pg.LinkTitle
                                     </a>
@@ -49,16 +53,16 @@
                                         <strong class="govuk-tag app-task-list__task-completed" id="completed">Completed</strong>
                                     }
                                 </li>
-                                
+
                                 @if (nextPageTitle != pageTitle)
-                                 {
+                                {
                                     @Html.Raw("</ul>");
                                     if (i < pagesToCheck.Count - 1)
                                     {
                                         @Html.Raw("<ul class=\"app-task-list govuk-!-margin-bottom-7\">")
                                     }
                                 }
-                                
+
                             }
                         </ul>
                     </li>
