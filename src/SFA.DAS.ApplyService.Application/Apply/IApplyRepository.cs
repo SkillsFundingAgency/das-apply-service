@@ -34,10 +34,10 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task UpdateSequences(List<ApplicationSequence> sequences);
         Task SaveSection(ApplicationSection section, Guid? userId = null);
         Task<List<Domain.Entities.Apply>> GetOpenApplications();
-        Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications();
+        Task<List<Domain.Entities.Apply>> GetFeedbackAddedApplications();
         Task<List<Domain.Entities.Apply>> GetClosedApplications();
         Task<List<Domain.Entities.Apply>> GetOpenFinancialApplications();
-        Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
+        Task<List<Domain.Entities.Apply>> GetFeedbackAddedFinancialApplications();
         Task<List<Domain.Entities.Apply>> GetClosedFinancialApplications();        
         Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string sequenceStatus, string applicationStatus);
         Task CloseSequence(Guid applicationId, int sequenceId);

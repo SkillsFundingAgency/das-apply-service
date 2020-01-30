@@ -81,5 +81,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             return await _mediator.Send(new GetClosedApplicationsRequest());
         }
+
+        [HttpGet("/Applications/FeedbackAdded")]
+        public async Task<IEnumerable<Apply>> GetFeedbackAddedApplications()
+        {
+            return await _mediator.Send(new GetFeedbackAddedApplicationsRequest());
+        }
     }
 }
