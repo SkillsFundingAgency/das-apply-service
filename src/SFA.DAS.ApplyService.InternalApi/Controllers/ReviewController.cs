@@ -41,13 +41,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return Ok(applications);
         }
 
-        [HttpGet("Review/ClosedApplications")]
-        public async Task<ActionResult> ClosedApplications()
-        {
-            var applications = await _mediator.Send(new ClosedApplicationsRequest());
-            return Ok(applications);
-        }
-
         [HttpGet("Review/Applications/{applicationId}")]
         public async Task<ActionResult> ReviewApplications(Guid applicationId)
         {
