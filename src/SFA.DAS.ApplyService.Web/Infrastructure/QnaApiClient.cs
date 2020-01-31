@@ -205,7 +205,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
             return answer;
         }
-
+        
         public async Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, Guid sectionId, string pageId, List<Answer> answers)
         {
             // NOTE: This should be called SetPageAnswers, but leaving alone for now
@@ -234,6 +234,30 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
                 var validationError = new KeyValuePair<string, string>(string.Empty, validationErrorMessage);
                 return new SetPageAnswersResponse { ValidationPassed = false, ValidationErrors = new List<KeyValuePair<string, string>> { validationError } };
+            }
+        }
+
+        public async Task<ResetPageAnswersResponse> ResetPageAnswers(Guid applicationId, Guid sectionId, string pageId)
+        {
+
+            var response = await _httpClient.PostAsJsonAsync($"/Applications/{applicationId}/sections/{sectionId}/pages/{pageId}/reset", new{});
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonConvert.DeserializeObject<ResetPageAnswersResponse>(json);
+            }
+            else
+            {
+                var apiError = JsonConvert.DeserializeObject<ApiError>(json);
+                var apiErrorMessage = apiError?.Message ?? json;
+                var errorMessage =
+                    $"Error Resetting Page Answers into QnA. Application: {applicationId} | SectionId: {sectionId} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}";
+
+                _logger.LogError(errorMessage);
+
+                return new ResetPageAnswersResponse { ValidationPassed = false, ValidationErrors = null  };
             }
         }
 

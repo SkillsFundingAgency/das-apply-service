@@ -1,0 +1,115 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ConfirmChangeRouteViewModel
+
+@{
+    ViewBag.Title = "Changing your provider route";
+    Layout = "_Layout";
+
+    bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
+}
+
+@if (Model.ApplicationId != null && Model.ApplicationId != Guid.Empty)
+{
+    await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml");
+}
+else
+{
+    await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml");
+}
+
+<div class="grid-row">
+    <form asp-controller="RoatpApplication" asp-action="TaskList" method="get" name="backForm">
+        @Html.HiddenFor(x => x.ApplicationId)
+        <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+    </form>
+</div>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+        <h2 class="govuk-error-summary__title" id="error-summary-title">
+            There is a problem
+        </h2>
+        <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+                <li><a sfa-validation-for="ConfirmChangeRoute"></a></li>
+            </ul>
+        </div>
+    </div>
+}
+
+<div class="govuk-width-container">
+
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-l">Changing your provider route</h1>
+            </div>
+        </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <form method="post" asp-action="SubmitConfirmChangeRoute" asp-controller="RoatpApplicationPreamble">
+
+                    <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ConfirmChangeRoute" sfa-validationerror-class="govuk-error-message">
+                        @if (showErrors)
+                        {
+                            <span class="govuk-error-message">
+                                @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "ConfirmChangeRoute")?.ErrorMessage)
+                            </span>
+                        }
+
+                        <p class="govuk-body">
+                            If you change your provider route, we will ask you different application questions and you may be required to provide different answers and uploads.
+                        </p>
+
+                        <p class="govuk-body">
+                            Find out what you might need on <a href="https://www.gov.uk/guidance/register-of-apprenticeship-training-providers" target="_blank">the RoATP GOV.UK page (opens in a new windows or tab)</a>.
+                        </p>
+
+                        <p class="govuk-body">
+                            <h3 class="govuk-heading-m">
+                                Are you sure you want to change your provider route?
+                            </h3>
+                        </p>
+
+                        <fieldset class="govuk-fieldset">
+
+                            <div class="govuk-radios">
+
+                                <div class="govuk-radios__item">
+
+                                    <input asp-for="ConfirmChangeRoute" class="govuk-radios__input" id="ConfirmChangeRoute-Yes"
+                                           name="ConfirmChangeRoute" type="radio" value="Y"
+                                           sfa-validation-for="ConfirmChangeRoute" sfa-validationerror-class="form-control-error">
+                                    <label class="govuk-label govuk-radios__label" for="ConfirmChangeRoute-Yes">
+                                        Yes
+                                    </label>
+
+                                </div>
+
+                                <div class="govuk-radios__item">
+
+                                    <input asp-for="ConfirmChangeRoute" class="govuk-radios__input" id="ConfirmChangeRoute-No"
+                                           name="ConfirmChangeRoute" type="radio" value="N"
+                                           sfa-validation-for="ConfirmChangeRoute" sfa-validationerror-class="form-control-error">
+                                    <label class="govuk-label govuk-radios__label" for="ConfirmChangeRoute-No">
+                                        No
+                                    </label>
+
+                                </div>
+
+                            </div>
+                        </fieldset>
+                    </div>
+                    @Html.HiddenFor(x => x.ApplicationId)
+                    @Html.HiddenFor(x => x.PageId)
+                    @Html.HiddenFor(x => x.SequenceId)
+                    @Html.HiddenFor(x => x.SectionId)
+                    <input type="submit" class="govuk-button" value="Save and continue" />
+                </form>
+            </div>
+        </div>
+    </main>
+    <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
+</div>
