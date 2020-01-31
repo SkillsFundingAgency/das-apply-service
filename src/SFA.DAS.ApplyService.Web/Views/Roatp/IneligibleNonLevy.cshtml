@@ -7,7 +7,14 @@
     bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
 }
 
-@{ await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml"); }
+@if (Model.ApplicationId != null && Model.ApplicationId != Guid.Empty)
+{
+    await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml");
+}
+else
+{
+    await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml");
+}
 
 <div class="grid-row">
     <form asp-controller="RoatpApplicationPreamble" asp-action="ConfirmLevyStatus" method="get" name="backForm">
@@ -86,6 +93,7 @@
                             </div>
                         </fieldset>
                     </div>
+                    @Html.HiddenFor(x => x.ApplicationId)
                     @Html.HiddenFor(x => x.PageId)
                     @Html.HiddenFor(x => x.SequenceId)
                     @Html.HiddenFor(x => x.SectionId)
