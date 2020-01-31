@@ -87,12 +87,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
         public static class YourOrganisation
         {
-            public static int ProviderRoute = 1;
-            public static int WhatYouWillNeed = 2;
-            public static int OrganisationDetails = 3;
-            public static int WhosInControl = 4;
-            public static int DescribeYourOrganisation = 5;
-            public static int ExperienceAndAccreditations = 6;
+            public const int WhatYouWillNeed = 1;
+            public const int OrganisationDetails = 2;
+            public const int WhosInControl = 3;
+            public const int DescribeYourOrganisation = 4;
+            public const int ExperienceAndAccreditations = 5;
         }
 
         public static class FinancialEvidence
@@ -125,7 +124,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
     public static class RoatpWorkflowPageIds
     {
         public static string Preamble = "1";
-        public static string YourOrganisation = "2";
+        public static string ProviderRoute = "2";
         public static string YourOrganisationIntroductionMain = "10";
         public static string YourOrganisationIntroductionEmployer = "11";
         public static string YourOrganisationIntroductionSupporting = "12";
@@ -252,9 +251,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             {
                 QuestionId = RoatpPreambleQuestionIdConstants.ApplyProviderRoute,
                 Value = applicationDetails.ApplicationRoute?.Id.ToString(),
-                PageId = RoatpWorkflowPageIds.YourOrganisation,
-                SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
-                SectionId = RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute
+                PageId = RoatpWorkflowPageIds.ProviderRoute,
+                SequenceId = RoatpWorkflowSequenceIds.Preamble,
+                SectionId = RoatpWorkflowSectionIds.Preamble
             });
 
             questions.Add(new PreambleAnswer
