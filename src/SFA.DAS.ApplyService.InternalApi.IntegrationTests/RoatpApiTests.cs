@@ -71,7 +71,7 @@
         [Test]
         public void Matching_UKPRN_returns_single_result()
         {
-            var ukprn = "10012385";
+            var ukprn = "10001724";
             
             var result = _apiClient.GetUkrlpDetails(ukprn).GetAwaiter().GetResult();
 
@@ -83,7 +83,7 @@
             matchResult.ContactDetails.FirstOrDefault(x => x.ContactType == "L").Should().NotBeNull();
             matchResult.VerificationDate.Should().NotBeNull();
             matchResult.VerificationDetails
-                .FirstOrDefault(x => x.VerificationAuthority == "Sole Trader or Non-limited Partnership")
+                .FirstOrDefault(x => x.VerificationAuthority == "Companies House")
                 .Should().NotBeNull();
             matchResult.ProviderAliases.Count.Should().Be(1);
         }
