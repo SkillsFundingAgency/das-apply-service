@@ -59,16 +59,25 @@
                         </span>
                     }
 
-                    @if (hasModelTitle)
+                    @if (Model.DisplayType == "PagesWithSections" || Model.DisplayType=="OtherPagesInPagesWithSections")
                     {
                         <h1 class="govuk-heading-l">
-                            @Html.Raw(Model.Title)
+                            @Html.Raw(Model.BodyText)
                         </h1>
                     }
-
-                    @if (hasBodyText)
+                    else
                     {
-                        @Html.Raw(Model.BodyText)
+                        if (hasModelTitle)
+                        {
+                            <h1 class="govuk-heading-l">
+                                @Html.Raw(Model.Title)
+                            </h1>
+                        }
+
+                        @if (hasBodyText)
+                        {
+                            @Html.Raw(Model.BodyText)
+                        }
                     }
                 }
 

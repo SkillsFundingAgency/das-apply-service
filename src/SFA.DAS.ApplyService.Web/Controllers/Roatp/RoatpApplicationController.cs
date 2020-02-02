@@ -1180,11 +1180,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var trusteesQuestions = RoatpPreambleQuestionBuilder.CreateCharityCommissionWhosInControlQuestions(applicationDetails);
             await UpdateQuestionsWithinQnA(applicationId, trusteesQuestions);
         }
-        
+
         private async Task<PageViewModel> TokeniseViewModelProperties(PageViewModel viewModel)
         {
-            viewModel.Title =  await _questionPropertyTokeniser.GetTokenisedValue(viewModel.ApplicationId, viewModel.Title);
-            foreach(var questionModel in viewModel.Questions)
+            viewModel.Title =
+                await _questionPropertyTokeniser.GetTokenisedValue(viewModel.ApplicationId, viewModel.Title);
+
+            viewModel.BodyText =
+                await _questionPropertyTokeniser.GetTokenisedValue(viewModel.ApplicationId, viewModel.BodyText);
+
+        foreach(var questionModel in viewModel.Questions)
             {
                 questionModel.Hint = await _questionPropertyTokeniser.GetTokenisedValue(viewModel.ApplicationId, questionModel.Hint);
                 questionModel.Label = await _questionPropertyTokeniser.GetTokenisedValue(viewModel.ApplicationId, questionModel.Label);

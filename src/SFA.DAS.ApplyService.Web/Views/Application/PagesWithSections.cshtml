@@ -6,7 +6,7 @@
     var pageTitle = "";
     var isSamePage = false;
     var nextPageTitle = "";
-    var pagesToCheck = Model.QnAData.Pages.Where(p => p.Active && !p.NotRequired).ToList();
+    var pagesToCheck = Model.QnAData.Pages.Where(p => p.Active && !p.NotRequired && p.DisplayType!=null && p.DisplayType == "PagesWithSections").ToList();
     var pageId = pagesToCheck?.FirstOrDefault()?.PageId;
 }
 @{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }

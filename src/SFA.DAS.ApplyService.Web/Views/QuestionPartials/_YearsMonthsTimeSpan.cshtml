@@ -1,0 +1,44 @@
+﻿ @model dynamic
+ @{ 
+    var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
+	  var inputClasses = Model.InputClasses != null ? Model.InputClasses : "";
+    var yearId = string.Format("{0}_TimeInRoleYears", Model.QuestionId); 
+    var monthId = string.Format("{0}_TimeInRoleMonths", Model.QuestionId); 
+  }
+@if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
+{
+    foreach (var errorMessage in Model.ErrorMessages)
+    {
+        if (errorMessage.Field == Model.QuestionId)
+        {
+            <span class="govuk-error-message">@Html.Raw(errorMessage.ErrorMessage)</span>
+        }
+    }
+}
+<div class="govuk-date-input" id="yearsandmonths">
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group" sfa-validation-for="@yearId">
+                <label class="govuk-label govuk-date-input__label" for="@yearId">Years</label>
+                <input value="@(string.IsNullOrWhiteSpace(Model.Value?.ToString()) ? "" : Model.Value?.ToString().Split(',')[0])"
+                       class="govuk-input govuk-date-input__input govuk-input--width-2 @inputClasses @isError"
+                       id="@yearId"
+                       name="@yearId"
+                       type="number"
+                       pattern="[0-9]*"
+                       sfa-validation-for="@yearId" />
+            </div>
+        </div>
+        <div class="govuk-date-input__item">
+            <div class="govuk-form-group" sfa-validation-for="@monthId">
+                <label class="govuk-label govuk-date-input__label" for="@monthId">Months</label>
+                <input  value="@(string.IsNullOrWhiteSpace(Model.Value?.ToString()) ? "" : Model.Value?.ToString().Split(',')[1])"
+                       class="govuk-input govuk-date-input__input govuk-input--width-2 @inputClasses @isError"
+                       id="@monthId"
+                       name="@monthId"
+                       type="number"
+                       pattern="[0-9]*"
+                       sfa-validation-for="@monthId" />
+            </div>
+        </div>
+            
+    </div>
