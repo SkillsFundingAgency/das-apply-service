@@ -104,7 +104,7 @@
                         {
                             <div class="govuk-form-group @(!ViewData.ModelState.IsValid ? "govuk-form-group--error" : "")">
                                 <fieldset class="govuk-fieldset">
-                                    @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio" || question.Type == "CheckboxList")
+                                    @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio" || question.Type == "CheckboxList" || question.Type=="ComplexCheckboxList")
                                     {
                                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                                         @if (Model.PageContext != null)
@@ -138,11 +138,14 @@
                                             @Html.Raw(Model.BodyText)
                                         }
                                         else
-                                        {
-                                    <label class="govuk-label">
-                                    @Html.Raw(question.Label)
-                                    </label>
-                                        }
+                                            {
+                                                @if (Model.DisplayType == "PagesWithSections" || Model.DisplayType == "OtherPagesInPagesWithSections")
+                                                {
+                                                    <label class="govuk-label">
+                                                        @Html.Raw(question.Label)
+                                                    </label>
+                                                }
+                                            }
                                         }
                                         else
                                         {
@@ -181,7 +184,7 @@
                                             </span>
                                         }
 
-                                        @if (question.Type == "ComplexRadio" && (question.ErrorMessages == null || question.ErrorMessages.Count == 0))
+                                        @if ((question.Type == "ComplexRadio" || question.Type == "ComplexCheckboxList") && (question.ErrorMessages == null || question.ErrorMessages.Count == 0))
                                         {
                                             question.ErrorMessages = Model.ErrorMessages;
                                         }
@@ -226,7 +229,7 @@
                                     </span>
                                 }
 
-                                @if (question.Type == "ComplexRadio" && (question.ErrorMessages == null || question.ErrorMessages.Count == 0))
+                                @if ((question.Type == "ComplexRadio" || question.Type == "ComplexCheckboxList") && (question.ErrorMessages == null || question.ErrorMessages.Count == 0))
                                 {
                                     question.ErrorMessages = Model.ErrorMessages;
                                 }
