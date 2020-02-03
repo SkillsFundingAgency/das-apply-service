@@ -624,104 +624,35 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications()
+        public async Task<List<Domain.Entities.Apply>> GetFeedbackAddedApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                return (await connection
-                    .QueryAsync<ApplicationSummaryItem>(
-                        @"SELECT OrganisationName, ApplicationId, SequenceId,
-                            CASE WHEN SequenceId = 1 THEN 'Midpoint'
-                                 WHEN SequenceId = 2 THEN 'Standard'
-                                 ELSE 'Unknown'
-                            END As ApplicationType,
-                            StandardName,
-                            StandardCode,
-                            FeedbackAddedDate,
-                            SubmissionCount,
-                            SequenceStatus AS CurrentStatus
-                        FROM (
-	                        SELECT 
-                                org.Name AS OrganisationName,
-                                appl.id AS ApplicationId,
-                                seq.SequenceId AS SequenceId,
-                                CASE WHEN seq.SequenceId = 1 THEN NULL
-		                             ELSE JSON_VALUE(appl.ApplicationData, '$.StandardName')
-                                END As StandardName,
-                                CASE WHEN seq.SequenceId = 1 THEN NULL
-		                             ELSE JSON_VALUE(appl.ApplicationData, '$.StandardCode')
-                                END As StandardCode,
-                                CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.InitSubmissionFeedbackAddedDate')
-		                             WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardSubmissionFeedbackAddedDate')
-		                             ELSE NULL
-	                            END As FeedbackAddedDate,
-                                CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount')
-		                             WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardSubmissionsCount')
-		                             ELSE 0
-	                            END As SubmissionCount,
-                                seq.Status AS SequenceStatus
-	                        FROM Applications appl
-	                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
-	                        INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-	                        WHERE appl.ApplicationStatus = @applicationStatusFeedbackAdded
-                                AND seq.Status = @sequenceStatusFeedbackAdded
-                                AND seq.IsActive = 1
-	                        GROUP BY seq.SequenceId, seq.Status, appl.ApplyingOrganisationId, appl.id, org.Name, appl.ApplicationData 
-                        ) ab",
+                return(await connection
+                    .QueryAsync<Apply>(
+                        @"SELECT ApplicationId, OrganisationId, ApplyData, ApplicationStatus, ReviewStatus
+	                        FROM Apply
+	                        WHERE ApplicationStatus = @feedbackAdded",
                         new
                         {
-                            applicationStatusFeedbackAdded = ApplicationStatus.FeedbackAdded,
-                            sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded
+                            feedbackAdded = ApplicationStatus.FeedbackAdded
                         })).ToList();
             }
         }
 
-        public async Task<List<ApplicationSummaryItem>> GetClosedApplications()
+        public async Task<List<Domain.Entities.Apply>> GetClosedApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection
-                    .QueryAsync<ApplicationSummaryItem>(
-                        @"SELECT OrganisationName, ApplicationId, SequenceId,
-                            CASE WHEN SequenceId = 1 THEN 'Midpoint'
-                                 WHEN SequenceId = 2 THEN 'Standard'
-                                 ELSE 'Unknown'
-                            END As ApplicationType,
-                            StandardName,
-                            StandardCode,
-                            ClosedDate,
-                            SubmissionCount,
-                            SequenceStatus As CurrentStatus
-                        FROM (
-	                        SELECT 
-                                org.Name AS OrganisationName,
-                                appl.id AS ApplicationId,
-                                seq.SequenceId AS SequenceId,
-                            CASE WHEN seq.SequenceId = 1 THEN NULL
-		                            ELSE JSON_VALUE(appl.ApplicationData, '$.StandardName')
-                            END As StandardName,
-                            CASE WHEN seq.SequenceId = 1 THEN NULL
-		                            ELSE JSON_VALUE(appl.ApplicationData, '$.StandardCode')
-                            END As StandardCode,
-                            CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.InitSubmissionClosedDate')
-		                         WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardSubmissionClosedDate')
-		                         ELSE NULL
-	                        END As ClosedDate,
-                            CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount')
-		                         WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardSubmissionsCount')
-		                         ELSE 0
-	                        END As SubmissionCount,
-                                seq.Status As SequenceStatus
-	                        FROM Applications appl
-	                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
-	                        INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-	                        WHERE seq.Status IN (@sequenceStatusApproved, @sequenceStatusRejected) AND seq.NotRequired = 0 AND appl.DeletedAt IS NULL
-	                        GROUP BY seq.SequenceId, seq.Status, appl.ApplyingOrganisationId, appl.id, org.Name, appl.ApplicationData 
-                        ) ab",
+                    .QueryAsync<Apply>(
+                        @"SELECT ApplicationId, OrganisationId, ApplyData, ApplicationStatus, ReviewStatus
+	                        FROM Apply
+	                        WHERE ApplicationStatus IN ( @approvedStatus, @rejectedStatus )",
                         new
                         {
-                            sequenceStatusApproved = ApplicationSequenceStatus.Approved,
-                            sequenceStatusRejected = ApplicationSequenceStatus.Rejected
+                            approvedStatus = ApplicationStatus.Approved,
+                            rejectedStatus = ApplicationStatus.Rejected
                         })).ToList();
             }
         }
@@ -755,83 +686,62 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications()
+        public async Task<List<Domain.Entities.Apply>> GetFeedbackAddedFinancialApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection
-                    .QueryAsync<FinancialApplicationSummaryItem>(
-                        @"SELECT 
-                            org.Name AS OrganisationName,
-                            appl.id AS ApplicationId,
-                            seq.SequenceId AS SequenceId,
-                            sec.SectionId AS SectionId,
-                            JSON_QUERY(sec.QnAData, '$.FinancialApplicationGrade') AS Grade,
-                            ISNULL(JSON_VALUE(appl.ApplicationData, '$.InitSubmissionFeedbackAddedDate'),
-								   JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.GradedDateTime')) As FeedbackAddedDate,
-                            JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') As SubmissionCount,
-	                        seq.Status As CurrentStatus
-	                      FROM Applications appl
-	                      INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
-	                      INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id
-	                      INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-	                      WHERE seq.SequenceId = 1 AND sec.SectionId = 3 AND seq.IsActive = 1
-                            AND (
-                                    seq.Status = @sequenceStatusFeedbackAdded
-                                    OR ( 
-                                            sec.Status IN (@financialStatusGraded, @financialStatusEvaluated)
-                                            AND JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.SelectedGrade') = @selectedGradeInadequate
-                                        )
-                                )",
+                    .QueryAsync<Apply>(
+                        @"SELECT a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, a.ApplyData FROM Apply a
+                        CROSS APPLY OPENJSON(a.ApplyData)
+                        WITH (
+                            Sequences nvarchar(max) '$.Sequences' AS JSON
+                        ) AS i
+                        CROSS APPLY (
+                            SELECT *
+                            FROM OPENJSON(i.Sequences)
+                            WITH (
+                                [SequenceNo] nvarchar(max) '$.SequenceNo',
+                                [NotRequired] nvarchar(max) '$.NotRequired'
+                            )
+                        ) s
+                        where s.SequenceNo = @financialHealthSequence and s.NotRequired = 'false'
+                        and a.ApplicationStatus = @feedbackAdded",
                         new
                         {
-                            sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded,
-                            financialStatusGraded = ApplicationSectionStatus.Graded,
-                            financialStatusEvaluated = ApplicationSectionStatus.Evaluated,
-                            selectedGradeInadequate = FinancialApplicationSelectedGrade.Inadequate
+                            financialHealthSequence = 2,
+                            feedbackAdded = ApplicationStatus.FeedbackAdded
                         })).ToList();
             }
         }
 
-        public async Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications()
+        public async Task<List<Domain.Entities.Apply>> GetClosedFinancialApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection
-                    .QueryAsync<FinancialApplicationSummaryItem>(
-                        @"SELECT 
-                            org.Name AS OrganisationName,
-                            appl.id AS ApplicationId,
-                            seq.SequenceId AS SequenceId,
-                            sec.SectionId AS SectionId,
-                            JSON_QUERY(sec.QnAData, '$.FinancialApplicationGrade') AS Grade,
-                            JSON_VALUE(appl.ApplicationData, '$.InitSubmissionClosedDate') As ClosedDate,
-                            JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') As SubmissionCount,
-	                        CASE WHEN (seq.Status = @sequenceStatusApproved) THEN @sequenceStatusApproved
-                                 WHEN (seq.Status = @sequenceStatusRejected) THEN @sequenceStatusRejected
-                                 ELSE sec.Status
-	                        END As CurrentStatus
-	                      FROM Applications appl
-	                      INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
-	                      INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id
-	                      INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-	                      WHERE seq.SequenceId = 1 AND sec.SectionId = 3 AND seq.NotRequired = 0 AND appl.DeletedAt IS NULL
-	                        AND JSON_QUERY(sec.QnAData, '$.FinancialApplicationGrade') IS NOT NULL						  
-                            AND (
-                                    seq.Status IN (@sequenceStatusApproved, @sequenceStatusRejected)
-                                    OR ( 
-                                            sec.Status IN (@financialStatusGraded, @financialStatusEvaluated)
-                                            AND JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.SelectedGrade') <> @selectedGradeInadequate
-                                        )
-                                )",
-                        new
-                        {
-                            sequenceStatusApproved = ApplicationSequenceStatus.Approved,
-                            sequenceStatusRejected = ApplicationSequenceStatus.Rejected,
-                            financialStatusGraded = ApplicationSectionStatus.Graded,
-                            financialStatusEvaluated = ApplicationSectionStatus.Evaluated,
-                            selectedGradeInadequate = FinancialApplicationSelectedGrade.Inadequate
-                        })).ToList();
+                   .QueryAsync<Apply>(
+                       @"SELECT a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, a.ApplyData FROM Apply a
+                        CROSS APPLY OPENJSON(a.ApplyData)
+                        WITH (
+                            Sequences nvarchar(max) '$.Sequences' AS JSON
+                        ) AS i
+                        CROSS APPLY (
+                            SELECT *
+                            FROM OPENJSON(i.Sequences)
+                            WITH (
+                                [SequenceNo] nvarchar(max) '$.SequenceNo',
+                                [NotRequired] nvarchar(max) '$.NotRequired'
+                            )
+                        ) s
+                        where s.SequenceNo = @financialHealthSequence and s.NotRequired = 'false'
+                        and a.ApplicationStatus IN ( @approvedStatus, @rejectedStatus )",
+                       new
+                       {
+                           financialHealthSequence = 2,
+                           approvedStatus = ApplicationStatus.Approved,
+                           rejectedStatus = ApplicationStatus.Rejected
+                       })).ToList();
             }
         }
 
