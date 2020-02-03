@@ -60,6 +60,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string AddPeopleInControl = "YO-130";
     }
 
+    public class RoatpDeliveringApprenticeshipTrainingQuestionIdConstants
+    {
+        public static string ManagementHierarchy = "DAT-720";
+    }
+
     public static class RoatpWorkflowSequenceIds
     {
         public static int Preamble = 0;
@@ -103,6 +108,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static int CheckOnWhosInControl = 4;
         }
 
+        public static class DeliveringApprenticeshipTraining
+        {
+            public static int ManagementHierarchy = 3;
+        }
         public static class Finish
         {
             public static int ApplicationPermissionsAndChecks = 1;
@@ -134,6 +143,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static string AddPartners = "110";
             public static string AddSoleTraderDob = "120";
             public static string AddPeopleInControl = "130";
+        }
+
+        public static class ManagementHierarchy
+        {
+              public static string AddManagementHierarchy = "7200";
         }
 
         public class DescribeYourOrganisation
@@ -181,6 +195,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string FinishCOA2Supporting = "COA-Part2-Supporting";
         public static string FinishCOA3MainEmployer = "COA-Part3-MainEmployer";
         public static string FinishCOA3Supporting = "COA-Part3-Supporting";
+        public static string AddManagementHierarchy = "AddManagementHierarchy";
+
     }
 
     public static class RoatpPreambleQuestionBuilder
