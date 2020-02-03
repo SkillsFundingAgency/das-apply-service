@@ -71,28 +71,37 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             if (applicationId.HasValue && applicationId.Value != Guid.Empty)
             {
-                var sequences = await _qnaApiClient.GetSequences(applicationId.Value);
-                var currentSequence = sequences.Single(x => x.SequenceId == sequenceId);
-                var sections = await _qnaApiClient.GetSections(applicationId.Value, currentSequence.Id);
-                var currentSection = sections.FirstOrDefault(x => x.SectionId == sectionId);
-
-                var page = await _qnaApiClient.GetPage(applicationId.Value, currentSection.Id, pageId);
-                if (page == null || String.IsNullOrEmpty(page.Title))
+                if (sequenceId > 0 && sectionId > 0) 
                 {
-                    getHelpQuery.PageTitle = title;
+                    var sequences = await _qnaApiClient.GetSequences(applicationId.Value);
+                    var currentSequence = sequences.Single(x => x.SequenceId == sequenceId);
+                    var sections = await _qnaApiClient.GetSections(applicationId.Value, currentSequence.Id);
+                    var currentSection = sections.FirstOrDefault(x => x.SectionId == sectionId);
+
+                    var page = await _qnaApiClient.GetPage(applicationId.Value, currentSection.Id, pageId);
+                    if (page == null || String.IsNullOrEmpty(page.Title))
+                    {
+                        getHelpQuery.PageTitle = title;
+                    }
+                    else
+                    {
+                        getHelpQuery.PageTitle = page.Title;
+                    }
+                    var sequenceConfig = _taskListConfiguration.FirstOrDefault(x => x.Id == sequenceId);
+                    if (sequenceConfig != null)
+                    {
+                        getHelpQuery.ApplicationSequence = sequenceConfig.Title;
+                    }
+                    if (currentSection != null)
+                    {
+                        getHelpQuery.ApplicationSection = currentSection.Title;
+                    }
                 }
                 else
                 {
-                    getHelpQuery.PageTitle = page.Title;
-                }
-                var sequenceConfig = _taskListConfiguration.FirstOrDefault(x => x.Id == sequenceId);
-                if (sequenceConfig != null)
-                {
-                    getHelpQuery.ApplicationSequence = sequenceConfig.Title;
-                }
-                if (currentSection != null)
-                {
-                    getHelpQuery.ApplicationSection = currentSection.Title;
+                    getHelpQuery.PageTitle = title;
+                    getHelpQuery.ApplicationSequence = "Not available";
+                    getHelpQuery.ApplicationSection = "Not available";
                 }
 
                 var organisationName = await _qnaApiClient.GetAnswerByTag(applicationId.Value, RoatpWorkflowQuestionTags.UkrlpLegalName);

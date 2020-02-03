@@ -16,7 +16,7 @@
 
         public string Title { get { return "Choose your organisation's provider route"; } set { } }
 
-        public Guid ApplicationId => Guid.Empty;
+        public Guid ApplicationId { get; set; }
 
         public string SequenceId { get; set; }
         public int SectionId { get; set; }
@@ -30,6 +30,21 @@
 
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
 
-        public string GetHelpAction { get { return "SelectApplicationRoute"; } set { } }
+        public string GetHelpAction 
+        { 
+            get 
+            {
+                if (ApplicationId != null && ApplicationId != Guid.Empty)
+                {
+                    return "ChangeApplicationProviderRoute";
+                }   
+                return "SelectApplicationRoute"; 
+            } 
+            set 
+            { 
+            } 
+        }
+
+        public string LevyPayingEmployer { get; set; }
     }
 }
