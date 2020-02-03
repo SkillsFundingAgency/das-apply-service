@@ -648,11 +648,11 @@ namespace SFA.DAS.ApplyService.Data
                     .QueryAsync<Apply>(
                         @"SELECT ApplicationId, OrganisationId, ApplyData, ApplicationStatus, ReviewStatus
 	                        FROM Apply
-	                        WHERE ApplicationStatus IN ( @approvedStatus, @rejectedStatus )",
+	                        WHERE ApplicationStatus IN ( @approvedStatus, @declinedStatus )",
                         new
                         {
                             approvedStatus = ApplicationStatus.Approved,
-                            rejectedStatus = ApplicationStatus.Rejected
+                            declinedStatus = ApplicationStatus.Declined
                         })).ToList();
             }
         }
@@ -735,12 +735,12 @@ namespace SFA.DAS.ApplyService.Data
                             )
                         ) s
                         where s.SequenceNo = @financialHealthSequence and s.NotRequired = 'false'
-                        and a.ApplicationStatus IN ( @approvedStatus, @rejectedStatus )",
+                        and a.ApplicationStatus IN ( @approvedStatus, @declinedStatus )",
                        new
                        {
                            financialHealthSequence = 2,
                            approvedStatus = ApplicationStatus.Approved,
-                           rejectedStatus = ApplicationStatus.Rejected
+                           declinedStatus = ApplicationStatus.Declined
                        })).ToList();
             }
         }
