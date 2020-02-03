@@ -195,11 +195,11 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
-	                      WHERE apply.ApplicationStatus = @applicationStatusSubmitted AND apply.DeletedAt IS NULL
+	                      WHERE apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
 	                        AND apply.GatewayReviewStatus IN (@gatewayReviewStatusApproved, @gatewayReviewStatusDeclined)",
                         new
                         {
-                            applicationStatusSubmitted = ApplicationStatus.Submitted,
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
                             gatewayReviewStatusApproved = GatewayReviewStatus.Approved,
                             gatewayReviewStatusDeclined = GatewayReviewStatus.Declined
                         })).ToList();
