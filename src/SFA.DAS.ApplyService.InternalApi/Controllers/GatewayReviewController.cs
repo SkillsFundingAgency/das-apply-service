@@ -39,13 +39,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return Ok(applications);
         }
 
-        [HttpPost("GatewayReview/Applications/{applicationId}/Evaluate")]
+        [HttpPost("GatewayReview/{applicationId}/Evaluate")]
         public async Task EvaluateGateway(Guid applicationId, [FromBody] EvaluateGatewayApplicationRequest request)
         {
             await _mediator.Send(new EvaluateGatewayRequest(applicationId, request.IsGatewayApproved, request.EvaluatedBy));
         }
 
-        [HttpPost("GatewayReview/Applications/{applicationId}/StartReview")]
+        [HttpPost("GatewayReview/{applicationId}/StartReview")]
         public async Task StartGatewayReview(Guid applicationId, [FromBody] StartGatewayReviewApplicationRequest request)
         {
             await _mediator.Send(new StartGatewayReviewRequest(applicationId, request.Reviewer));
