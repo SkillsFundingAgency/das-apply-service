@@ -20,9 +20,9 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task SubmitApplication(Guid applicationId, ApplyData applyData, Guid submittedBy);
 
 
-        Task<List<GatewayApplicationSummaryItem>> GetNewGatewayApplications();
-        Task<List<GatewayApplicationSummaryItem>> GetInProgressGatewayApplications();
-        Task<List<GatewayApplicationSummaryItem>> GetClosedGatewayApplications();
+        Task<List<RoatpApplicationSummaryItem>> GetNewGatewayApplications();
+        Task<List<RoatpApplicationSummaryItem>> GetInProgressGatewayApplications();
+        Task<List<RoatpApplicationSummaryItem>> GetClosedGatewayApplications();
         Task StartGatewayReview(Guid applicationId, string reviewer);
         Task EvaluateGateway(Guid applicationId, bool isGatewayApproved, string evaluatedBy);
 

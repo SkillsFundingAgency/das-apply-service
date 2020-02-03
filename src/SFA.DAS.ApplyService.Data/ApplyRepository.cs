@@ -127,20 +127,23 @@ namespace SFA.DAS.ApplyService.Data
         }
 
 
-        public async Task<List<GatewayApplicationSummaryItem>> GetNewGatewayApplications()
+        public async Task<List<RoatpApplicationSummaryItem>> GetNewGatewayApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection
-                    .QueryAsync<GatewayApplicationSummaryItem>(
+                    .QueryAsync<RoatpApplicationSummaryItem>(
                         @"SELECT 
                             apply.Id AS Id,
                             apply.ApplicationId AS ApplicationId,
                             apply.ApplicationStatus AS ApplicationStatus,
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
+                            apply.ReviewStatus AS ReviewStatus,
+                            -- apply.FinancialReviewStatus AS FinancialReviewStatus,
                             org.Name AS OrganisationName,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.ApplicationStatus = @applicationStatusSubmitted AND apply.DeletedAt IS NULL
@@ -153,20 +156,23 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<GatewayApplicationSummaryItem>> GetInProgressGatewayApplications()
+        public async Task<List<RoatpApplicationSummaryItem>> GetInProgressGatewayApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection
-                    .QueryAsync<GatewayApplicationSummaryItem>(
+                    .QueryAsync<RoatpApplicationSummaryItem>(
                         @"SELECT 
                             apply.Id AS Id,
                             apply.ApplicationId AS ApplicationId,
                             apply.ApplicationStatus AS ApplicationStatus,
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
+                            apply.ReviewStatus AS ReviewStatus,
+                            -- apply.FinancialReviewStatus AS FinancialReviewStatus,
                             org.Name AS OrganisationName,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.ApplicationStatus = @applicationStatusSubmitted AND apply.DeletedAt IS NULL
@@ -179,20 +185,23 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<GatewayApplicationSummaryItem>> GetClosedGatewayApplications()
+        public async Task<List<RoatpApplicationSummaryItem>> GetClosedGatewayApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection
-                    .QueryAsync<GatewayApplicationSummaryItem>(
+                    .QueryAsync<RoatpApplicationSummaryItem>(
                         @"SELECT 
                             apply.Id AS Id,
                             apply.ApplicationId AS ApplicationId,
                             apply.ApplicationStatus AS ApplicationStatus,
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
+                            apply.ReviewStatus AS ReviewStatus,
+                            -- apply.FinancialReviewStatus AS FinancialReviewStatus,
                             org.Name AS OrganisationName,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
