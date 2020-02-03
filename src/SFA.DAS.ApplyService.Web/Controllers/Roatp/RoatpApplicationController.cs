@@ -572,17 +572,27 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private async Task<List<NotRequiredOverrideConfiguration>> PopulateNotRequiredOverridesWithApplicationData(Guid applicationId, List<NotRequiredOverrideConfiguration> notRequiredOverrides)
         {
+            var applicationData = await _qnaApiClient.GetApplicationData(applicationId) as JObject;
+
+            if (applicationData == null) 
+            { 
+                return notRequiredOverrides; 
+            }
+            
             foreach (var overrideConfig in notRequiredOverrides)
             {
-                var applicationDataValue = await _qnaApiClient.GetAnswerByTag(applicationId, overrideConfig.ConditionalCheckField);
-                if (applicationDataValue?.Value != null)
+                foreach(var condition in overrideConfig.Conditions)
                 {
-                    overrideConfig.Value = applicationDataValue.Value;
-                }
-                else
-                {
-                    overrideConfig.Value = string.Empty;
-                }
+                    var applicationDataValue = applicationData[condition.ConditionalCheckField];
+                    if (applicationDataValue != null)
+                    {
+                        condition.Value = applicationDataValue.Value<string>();
+                    }
+                    else
+                    {
+                        condition.Value = string.Empty;
+                    }
+                }                
             }
 
             return notRequiredOverrides;
@@ -1183,7 +1193,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private bool IsFileUploadWithNonEmptyValue(Page page)
         {
-            if (page.PageOfAnswers == null || page.PageOfAnswers.Count ==0 ||  page.Questions == null || page.Questions.Count == 0 || page.Questions[0].Input.Type != "FileUpload")
+            if (page.PageOfAnswers == null || page.PageOfAnswers.Count == 0 ||  page.Questions == null || page.Questions.Count == 0 || page.Questions[0].Input.Type != "FileUpload")
                 return false;
 
             var fileUploadAnswerValue = string.Empty;
