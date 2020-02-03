@@ -796,5 +796,31 @@ namespace SFA.DAS.ApplyService.Data
                 return $"APR{nextInSequence}";
             }
         }
+
+        public async Task<bool> RecordFinancialGrade(Guid applicationId, FinancialReviewDetails financialReviewDetails)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var applyDataResults = await connection.QueryAsync<ApplyData>("SELECT ApplyData FROM Apply WHERE ApplicationId = @applicationId",
+                    new
+                    {
+                        applicationId
+                    });
+
+                var applyData = applyDataResults.FirstOrDefault();
+                if (applyData != null)
+                {
+                    applyData.FinancialReviewDetails = financialReviewDetails;
+                    await connection.ExecuteAsync("UPDATE Apply SET ApplyData = @applyData WHERE ApplicationId = @applicationId",
+                        new
+                        {
+                            applicationId,
+                            applyData
+                        });
+                }
+            }
+
+            return await Task.FromResult(true);
+        }
     }
 }

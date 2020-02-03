@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.Financial;
 using SFA.DAS.ApplyService.Application.Apply.Financial.Applications;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -38,6 +39,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             var applications = await _mediator.Send(new ClosedFinancialApplicationsRequest());
             return Ok(applications);
+        }
+
+        [HttpPost("/Financial/Grade/{applicationId}")]
+        public async Task<IActionResult> RecordGrade(Guid applicationId, [FromBody] FinancialReviewDetails financialReviewDetails)
+        {
+            await _mediator.Send(new RecordGradeRequest(applicationId, financialReviewDetails));
+            return Ok();
         }
 
         [HttpPost("/Financial/{applicationId}/UpdateGrade")]

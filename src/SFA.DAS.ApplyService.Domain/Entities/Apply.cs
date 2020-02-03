@@ -16,6 +16,8 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     {
         public List<ApplySequence> Sequences { get; set; }
         public ApplyDetails ApplyDetails { get; set; }
+
+        public FinancialReviewDetails FinancialReviewDetails { get; set; }
     }
 
     public class ApplyDetails
@@ -55,5 +57,19 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         //public string EvaluatedBy { get; set; }
         //public bool NotRequired { get; set; }
         //public bool? RequestedFeedbackAnswered { get; set; }
+    }
+
+    public class FinancialReviewDetails
+    {
+        public string SelectedGrade { get; set; }
+        public DateTime? FinancialDueDate { get; set; }
+        public string GradedBy { get; set; }
+        public DateTime? GradedDateTime { get; set; }
+        public List<FinancialEvidence> FinancialEvidences { get; set; }
+    }
+
+    public class FinancialEvidence
+    {
+        public string Filename { get; set; }
     }
 }
