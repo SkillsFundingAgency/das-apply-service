@@ -42,7 +42,7 @@ namespace SFA.DAS.ApplyService.Data
                     @"INSERT INTO Apply (ApplicationId, OrganisationId, ApplicationStatus, ApplyData, ReviewStatus, GatewayReviewStatus, CreatedBy, CreatedAt)
                                         OUTPUT INSERTED.[ApplicationId] 
                                         VALUES (@applicationId, @organisationId, @applicationStatus, @applyData, @reviewStatus, @gatewayReviewStatus, @createdBy, GETUTCDATE())",
-                    new { applicationId, organisationId, applicationStatus = "In Progress", applyData, reviewStatus = "Draft", gatewayReviewStatus = "Draft", createdBy });
+                    new { applicationId, organisationId, applicationStatus = ApplicationStatus.InProgress, applyData, reviewStatus = ApplicationReviewStatus.Draft, gatewayReviewStatus = GatewayReviewStatus.Draft, createdBy });
             }
         }
 
@@ -122,7 +122,7 @@ namespace SFA.DAS.ApplyService.Data
                 await connection.ExecuteAsync(@"UPDATE Apply
                                                 SET  ApplicationStatus = @ApplicationStatus, ApplyData = @applyData, ReviewStatus = @ReviewStatus, GatewayReviewStatus = @GatewayReviewStatus, UpdatedBy = @submittedBy, UpdatedAt = GETUTCDATE() 
                                                 WHERE  (Apply.ApplicationId = @applicationId)",
-                                                new { applicationId, ApplicationStatus = ApplicationStatus.Submitted, applyData, ReviewStatus = "New", GatewayReviewStatus = "New", submittedBy });
+                                                new { applicationId, ApplicationStatus = ApplicationStatus.Submitted, applyData, ReviewStatus = ApplicationReviewStatus.New, GatewayReviewStatus = GatewayReviewStatus.New, submittedBy });
             }
         }
 
@@ -174,7 +174,7 @@ namespace SFA.DAS.ApplyService.Data
                         new
                         {
                             applicationStatusSubmitted = ApplicationStatus.Submitted,
-                            gatewayReviewStatusNew = GatewayReviewStatus.InProgress
+                            gatewayReviewStatusInProgress = GatewayReviewStatus.InProgress
                         })).ToList();
             }
         }
@@ -234,14 +234,24 @@ namespace SFA.DAS.ApplyService.Data
             {
                 application.UpdatedBy = evaluatedBy;
                 application.UpdatedAt = DateTime.UtcNow;
-                application.GatewayReviewStatus = isGatewayApproved ? GatewayReviewStatus.Approved : GatewayReviewStatus.Declined;
+
+                if(isGatewayApproved)
+                {
+                    application.ApplicationStatus = ApplicationStatus.GatewayAssessed;
+                    application.GatewayReviewStatus = GatewayReviewStatus.Approved;
+                }
+                else
+                {
+                    application.ApplicationStatus = ApplicationStatus.Declined;
+                    application.GatewayReviewStatus = GatewayReviewStatus.Declined;
+                }
 
                 using (var connection = new SqlConnection(_config.SqlConnectionString))
                 {
                     await connection.ExecuteAsync(@"UPDATE Apply
-                                                    SET  GatewayReviewStatus = @GatewayReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
+                                                    SET  ApplicationStatus = @ApplicationStatus, GatewayReviewStatus = @GatewayReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
                                                     WHERE Apply.ApplicationId = @ApplicationId",
-                                                    new { application.ApplicationId, application.ApplyData, application.GatewayReviewStatus, application.UpdatedBy });
+                                                    new { application.ApplicationId, application.ApplyData, application.ApplicationStatus, application.GatewayReviewStatus, application.UpdatedBy });
                 }
             }
         }
