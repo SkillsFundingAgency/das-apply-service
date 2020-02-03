@@ -27,6 +27,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
     using SFA.DAS.ApplyService.Domain.CompaniesHouse;
     using SFA.DAS.ApplyService.Web.AutoMapper;
     using Trustee = InternalApi.Types.CharityCommission.Trustee;
+    using SFA.DAS.ApplyService.Application.Apply.Roatp;
     using SFA.DAS.ApplyService.Domain.Apply;
 
     [TestFixture]
@@ -1333,6 +1334,31 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("ApplicationInProgress");
         }
 
+
+        [Test]
+        public void Confirm_change_provider_route_selects_yes_and_redirected_to_change_route_page()
+        {
+            var model = new ConfirmChangeRouteViewModel { ApplicationId = Guid.NewGuid(), ConfirmChangeRoute = "Y" };
+
+            var result = _controller.SubmitConfirmChangeRoute(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("ChangeApplicationProviderRoute");
+        }
+
+        [Test]
+        public void Confirm_change_provider_route_selects_no_and_redirected_to_task_list()
+        {
+            var model = new ConfirmChangeRouteViewModel { ApplicationId = Guid.NewGuid(), ConfirmChangeRoute = "N" };
+
+            var result = _controller.SubmitConfirmChangeRoute(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("TaskList");
+        }
+
         [TestCase(OrganisationStatus.Active)]
         [TestCase(OrganisationStatus.ActiveNotTakingOnApprentices)]
         [TestCase(OrganisationStatus.Onboarding)]
@@ -1445,6 +1471,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
+
         public void Change_UKPRN_clears_application_data_and_redirects_to_enter_ukprn()
         {
             var model = new ChangeUkprnViewModel { ApplicationId = Guid.NewGuid() };
@@ -1466,6 +1493,258 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _qnaApiClient.VerifyAll();
             _sessionService.VerifyAll();
         }
+
+        [Test]
+        public void Provider_changing_route_mid_application_not_currently_on_the_register_is_offered_all_available_routes()
+        {
+            var applicationId = Guid.NewGuid();
+            var applyApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute;
+            var ukprn = 10001234;
+            var ukprnAnswer = new Answer
+            {
+                Value = ukprn.ToString()
+            };
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UKPRN, It.IsAny<string>())).ReturnsAsync(ukprnAnswer);
+
+            var applicationRouteAnswer = new Answer
+            {
+                Value = applyApplicationRouteId.ToString()
+            };
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.ProviderRoute, It.IsAny<string>())).ReturnsAsync(applicationRouteAnswer);
+            
+            var notOnRegisterStatus = new OrganisationRegisterStatus
+            {
+                UkprnOnRegister = false
+            };
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(notOnRegisterStatus);
+
+            var result =_controller.ChangeApplicationProviderRoute(applicationId).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var model = viewResult.Model as SelectApplicationRouteViewModel;
+            model.Should().NotBeNull();
+
+            model.ApplicationId.Should().Be(applicationId);
+            model.ApplicationRouteId.Should().Be(applyApplicationRouteId);
+            model.ApplicationRoutes.Count().Should().Be(3);
+        }
+
+        [Test]
+        public void Provider_changing_route_mid_application_currently_active_on_the_register_is_only_offered_other_provider_routes()
+        {
+            var applicationId = Guid.NewGuid();
+            var applyApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute;
+            var ukprn = 10001234;
+            var ukprnAnswer = new Answer
+            {
+                Value = ukprn.ToString()
+            };
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UKPRN, It.IsAny<string>())).ReturnsAsync(ukprnAnswer);
+
+            var applicationRouteAnswer = new Answer
+            {
+                Value = applyApplicationRouteId.ToString()
+            };
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.ProviderRoute, It.IsAny<string>())).ReturnsAsync(applicationRouteAnswer);
+
+            var existingProviderStatus = new OrganisationRegisterStatus
+            {
+                UkprnOnRegister = true,
+                ProviderTypeId = ApplicationRoute.EmployerProviderApplicationRoute
+            };
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(existingProviderStatus);
+
+            var result = _controller.ChangeApplicationProviderRoute(applicationId).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var model = viewResult.Model as SelectApplicationRouteViewModel;
+            model.Should().NotBeNull();
+
+            model.ApplicationId.Should().Be(applicationId);
+            model.ApplicationRouteId.Should().Be(applyApplicationRouteId);
+            model.ApplicationRoutes.Should().NotContain(route => route.Id == existingProviderStatus.ProviderTypeId);
+        }
+
+        [Test]
+        public void Provider_changing_route_mid_application_currently_removed_on_the_register_is_offered_all_provider_routes()
+        {
+            var applicationId = Guid.NewGuid();
+            var applyApplicationRouteId = ApplicationRoute.MainProviderApplicationRoute;
+            var ukprn = 10001234;
+            var ukprnAnswer = new Answer
+            {
+                Value = ukprn.ToString()
+            };
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UKPRN, It.IsAny<string>())).ReturnsAsync(ukprnAnswer);
+
+            var applicationRouteAnswer = new Answer
+            {
+                Value = applyApplicationRouteId.ToString()
+            };
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.ProviderRoute, It.IsAny<string>())).ReturnsAsync(applicationRouteAnswer);
+
+            var notOnRegisterStatus = new OrganisationRegisterStatus
+            {
+                UkprnOnRegister = true,
+                StatusId = OrganisationStatus.Removed,
+                RemovedReasonId = RemovedReason.Merger
+            };
+            _roatpApiClient.Setup(x => x.GetOrganisationRegisterStatus(It.IsAny<long>())).ReturnsAsync(notOnRegisterStatus);
+
+            var result = _controller.ChangeApplicationProviderRoute(applicationId).GetAwaiter().GetResult();
+
+            var viewResult = result as ViewResult;
+            viewResult.Should().NotBeNull();
+            var model = viewResult.Model as SelectApplicationRouteViewModel;
+            model.Should().NotBeNull();
+
+            model.ApplicationId.Should().Be(applicationId);
+            model.ApplicationRouteId.Should().Be(applyApplicationRouteId);
+            model.ApplicationRoutes.Count().Should().Be(3);
+        }
+
+        [TestCase(ApplicationRoute.MainProviderApplicationRoute)]
+        [TestCase(ApplicationRoute.SupportingProviderApplicationRoute)]
+        public void Provider_changing_route_to_main_or_supporting_is_directed_to_task_list_with_route_changed(int chosenApplicationRouteId)
+        {
+            var model = new SelectApplicationRouteViewModel
+            {
+                ApplicationId = Guid.NewGuid(),
+                ApplicationRouteId = chosenApplicationRouteId
+            };
+
+            var preambleSection = new ApplicationSection { Id = Guid.NewGuid() };
+
+            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.Preamble,
+                                RoatpWorkflowSectionIds.Preamble)).ReturnsAsync(preambleSection).Verifiable();
+
+            _qnaApiClient.Setup(x => x.UpdatePageAnswers(It.IsAny<Guid>(), preambleSection.Id, It.IsAny<string>(), It.IsAny<List<Answer>>()))
+                               .ReturnsAsync(new ApplyService.Application.Apply.SetPageAnswersResponse
+                               {
+                                   ValidationPassed = true
+                               }).Verifiable();
+
+            var result = _controller.UpdateApplicationProviderRoute(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("TaskList");
+            redirectResult.ControllerName.Should().Be("RoatpApplication");
+
+            _qnaApiClient.VerifyAll();
+        }
+        
+        [Test]
+        public void Provider_changing_route_to_employer_is_asked_if_they_are_a_levy_paying_employer()
+        {
+            var model = new SelectApplicationRouteViewModel
+            {
+                ApplicationId = Guid.NewGuid(),
+                ApplicationRouteId = ApplicationRoute.EmployerProviderApplicationRoute
+            };
+
+            var ukprnAnswer = new Answer
+            {
+                Value = "10001234"
+            };
+
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.UKPRN, It.IsAny<string>()))
+                .ReturnsAsync(ukprnAnswer).Verifiable();
+            
+            var result = _controller.UpdateApplicationProviderRoute(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("ConfirmLevyStatus");
+
+            _qnaApiClient.VerifyAll();
+        }
+
+        [Test]
+        public void Provider_changing_route_to_employer_is_directed_to_confirm_continue_page_if_not_levy_paying()
+        {
+            var model = new EmployerLevyStatusViewModel
+            {
+                ApplicationId = Guid.NewGuid(),
+                UKPRN = "10001234",
+                ApplicationRouteId = ApplicationRoute.EmployerProviderApplicationRoute,
+                LevyPayingEmployer = "N"
+            };
+
+            var result = _controller.SubmitLevyStatus(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("IneligibleNonLevy");
+        }
+
+        [Test]
+        public void Provider_changing_route_to_employer_is_directed_to_task_list_with_route_changed_if_levy_paying()
+        {
+            var model = new EmployerLevyStatusViewModel
+            {
+                ApplicationId = Guid.NewGuid(),
+                UKPRN = "10001234",
+                ApplicationRouteId = ApplicationRoute.EmployerProviderApplicationRoute,
+                LevyPayingEmployer = "Y"
+            };
+
+            var preambleSection = new ApplicationSection { Id = Guid.NewGuid() };
+
+            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.Preamble,
+                                RoatpWorkflowSectionIds.Preamble)).ReturnsAsync(preambleSection).Verifiable();
+
+            _qnaApiClient.Setup(x => x.UpdatePageAnswers(It.IsAny<Guid>(), preambleSection.Id, It.IsAny<string>(), It.IsAny<List<Answer>>()))
+                               .ReturnsAsync(new ApplyService.Application.Apply.SetPageAnswersResponse
+                               {
+                                   ValidationPassed = true
+                               }).Verifiable();
+            
+            var result = _controller.SubmitLevyStatus(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("TaskList");
+            redirectResult.ControllerName.Should().Be("RoatpApplication");
+
+            _qnaApiClient.VerifyAll();
+        }
+
+        [Test]
+        public void Provider_ineligible_to_change_route_to_employer_but_wants_to_continue_with_application_is_presented_with_change_provider_route()
+        {
+            var model = new EmployerProviderContinueApplicationViewModel
+            {
+                ContinueWithApplication = "Y",
+                ApplicationId = Guid.NewGuid()
+            };
+
+            var result = _controller.ConfirmNonLevyContinue(model);
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("ChangeApplicationProviderRoute");
+        }
+
+        [Test]
+        public void Provider_ineligible_to_change_route_to_employer_is_directed_to_shutter_page()
+        {
+            var model = new EmployerProviderContinueApplicationViewModel
+            {
+                ContinueWithApplication = "N",
+                ApplicationId = Guid.NewGuid()
+            };
+
+            var result = _controller.ConfirmNonLevyContinue(model);
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("NonLevyAbandonedApplication");
+            redirectResult.ControllerName.Should().Be("RoatpShutterPages");
+        }
+
     }
 
 }
