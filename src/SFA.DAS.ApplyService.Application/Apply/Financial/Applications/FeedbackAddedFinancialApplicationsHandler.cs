@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Financial.Applications
 {
-    public class FeedbackAddedFinancialApplicationsHandler : IRequestHandler<FeedbackAddedFinancialApplicationsRequest, List<Domain.Entities.Apply>>
+    public class FeedbackAddedFinancialApplicationsHandler : IRequestHandler<FeedbackAddedFinancialApplicationsRequest, List<RoatpApplicationSummaryItem>>
     {
         private readonly IApplyRepository _repository;
 
@@ -15,7 +15,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial.Applications
             _repository = repository;
         }
 
-        public async Task<List<Domain.Entities.Apply>> Handle(FeedbackAddedFinancialApplicationsRequest request, CancellationToken cancellationToken)
+        public async Task<List<RoatpApplicationSummaryItem>> Handle(FeedbackAddedFinancialApplicationsRequest request, CancellationToken cancellationToken)
         {
             return await _repository.GetFeedbackAddedFinancialApplications();
         }

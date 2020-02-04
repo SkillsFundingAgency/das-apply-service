@@ -10,6 +10,8 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public string Ukprn { get; set; }
         public string ApplicationReferenceNumber { get; set; }
         public DateTime? SubmittedDate { get; set; }
+        public DateTime? FeedbackAddedDate { get; set; }
+        public DateTime? ClosedDate { get; set; }
         public string ApplicationStatus { get; set; }
         public string GatewayReviewStatus { get; set; }
         public string ReviewStatus { get; set; }

@@ -1,26 +1,16 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.ApplyService.Application.Apply.CheckOrganisationStandardStatus;
-using SFA.DAS.ApplyService.Application.Apply.DeleteAnswer;
-using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
-using SFA.DAS.ApplyService.Application.Apply.GetOrganisationForApplication;
-using SFA.DAS.ApplyService.Application.Apply.GetPage;
-using SFA.DAS.ApplyService.Application.Apply.GetSection;
-using SFA.DAS.ApplyService.Application.Apply.GetSequence;
 using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
-using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
-using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.InternalApi.Types;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Roatp;
+using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -71,19 +61,19 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet("/Applications/Open")]
-        public async Task<IEnumerable<Apply>> GetOpenApplications()
+        public async Task<IEnumerable<RoatpApplicationSummaryItem>> GetOpenApplications()
         {
             return await _mediator.Send(new GetOpenApplicationsRequest());
         }
 
         [HttpGet("/Applications/Closed")]
-        public async Task<IEnumerable<Apply>> GetClosedApplications()
+        public async Task<IEnumerable<RoatpApplicationSummaryItem>> GetClosedApplications()
         {
             return await _mediator.Send(new GetClosedApplicationsRequest());
         }
 
         [HttpGet("/Applications/FeedbackAdded")]
-        public async Task<IEnumerable<Apply>> GetFeedbackAddedApplications()
+        public async Task<IEnumerable<RoatpApplicationSummaryItem>> GetFeedbackAddedApplications()
         {
             return await _mediator.Send(new GetFeedbackAddedApplicationsRequest());
         }
