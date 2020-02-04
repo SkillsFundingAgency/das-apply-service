@@ -32,3 +32,14 @@ IF OBJECT_ID('dbo.Entities', 'U') IS NOT NULL
   DELETE FROM dbo.Entities; 
 
 GO 
+
+IF NOT EXISTS (
+  SELECT
+    *
+  FROM
+    INFORMATION_SCHEMA.COLUMNS
+  WHERE
+    TABLE_NAME = 'Apply' AND COLUMN_NAME = 'AssessorReviewStatus')
+BEGIN
+    DELETE FROM dbo.Apply
+END
