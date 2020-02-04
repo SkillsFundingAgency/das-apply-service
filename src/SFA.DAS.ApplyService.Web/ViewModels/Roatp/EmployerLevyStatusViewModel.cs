@@ -16,7 +16,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
         public string Title { get { return "Is your organisation a levy-paying employer?"; } set { } }
 
-        public Guid ApplicationId { get; }
+        public Guid ApplicationId { get; set; }
 
         public string SequenceId { get; set; }
         public int SectionId { get; set; }
