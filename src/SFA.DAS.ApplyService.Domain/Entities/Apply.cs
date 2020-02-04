@@ -9,6 +9,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public Guid OrganisationId { get; set; }
         public string ApplicationStatus { get; set; }
         public string ReviewStatus { get; set; }
+        public string GatewayReviewStatus { get; set; }
         public ApplyData ApplyData { get; set; }
     }
 
@@ -72,5 +73,34 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     public class FinancialEvidence
     {
         public string Filename { get; set; }
+    public static class ApplicationStatus
+    {
+        public const string New = "New";
+        public const string InProgress = "In Progress";
+        public const string Submitted = "Submitted";
+        public const string FeedbackAdded = "FeedbackAdded";
+        public const string Resubmitted = "Resubmitted";
+        public const string Declined = "Declined";
+        public const string Approved = "Approved";
+        public const string GatewayAssessed = "GatewayAssessed";
+    }
+
+    public static class ApplicationReviewStatus
+    {
+        public const string Draft = "Draft";
+        public const string New = "New";
+        public const string InProgress = "In Progress";
+        public const string HasFeedback = "Has Feedback";
+        public const string Approved = "Approved";
+        public const string Declined = "Declined";
+    }
+
+    public static class GatewayReviewStatus
+    {
+        public const string Draft = "Draft";
+        public const string New = "New";
+        public const string InProgress = "In Progress";
+        public const string Approved = "Approved";
+        public const string Declined = "Declined";
     }
 }
