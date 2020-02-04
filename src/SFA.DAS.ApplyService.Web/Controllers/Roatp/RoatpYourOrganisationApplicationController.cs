@@ -25,20 +25,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _logger = logger;
             _processPageFlowService = processPageFlowService;
         }
-
-        public IActionResult ProviderRoute(Guid applicationId)
-        {
-            return RedirectToAction("Page", "RoatpApplication",
-                new
-                {
-                    applicationId = applicationId,
-                    sequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
-                    sectionId = RoatpWorkflowSectionIds.YourOrganisation.ProviderRoute,
-                    pageId = RoatpWorkflowPageIds.YourOrganisation,
-                    redirectAction = "TaskList"
-                });
-        }
-
+        
         public async Task<IActionResult> WhatYouWillNeed(Guid applicationId)
         {
             var pageId = await GetIntroductionPageForApplication(applicationId);
