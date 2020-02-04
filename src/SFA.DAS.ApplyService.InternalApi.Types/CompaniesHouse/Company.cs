@@ -5,6 +5,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.CompaniesHouse
 {
     public class Company
     {
+        public string CompanyName { get; set; }
         public string CompanyNumber { get; set; }
         public string Name { get; set; }
         public string Status { get; set; }
@@ -19,5 +20,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.CompaniesHouse
         public Accounts Accounts { get; set; }
         public IEnumerable<Officer> Officers { get; set; }
         public IEnumerable<PersonWithSignificantControl> PeopleWithSignificantControl { get; set; }
+
+        public bool ManualEntryRequired { get; set; }
     }
 }

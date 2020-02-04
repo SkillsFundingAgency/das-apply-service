@@ -11,7 +11,7 @@ namespace SFA.DAS.ApplyService.Configuration
         string SessionRedisConnectionString { get; set; }
         DfeSignInConfig DfeSignIn { get; set; }
         string SqlConnectionString { get; set; }
-        FileStorageConfig FileStorage { get; set; }
+
         
         NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
 
@@ -25,6 +25,11 @@ namespace SFA.DAS.ApplyService.Configuration
         string FeedbackUrl { get; set; }
         string AssessorServiceBaseUrl { get; set; }
 
+        RoatpApiAuthentication RoatpApiAuthentication { get; set; }
+
+        UkrlpApiAuthentication UkrlpApiAuthentication { get; set; }
+
+        QnaApiAuthentication QnaApiAuthentication { get; set; }
     }
 
     public class ApiAuthentication

@@ -2,11 +2,12 @@
 using CharityCommissionService;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Configuration;
-using System;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
+    using System;
+
     /// <summary>
     /// Charity Commission API docs are located at: http://apps.charitycommission.gov.uk/Showcharity/API/SearchCharitiesV1/Docs/DevGuideHome.aspx
     /// Charity Commission WSDL is located at: https://apps.charitycommission.gov.uk/Showcharity/API/SearchCharitiesV1/SearchCharitiesV1.asmx?WSDL
@@ -27,28 +28,15 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
         public async Task<Types.CharityCommission.Charity> GetCharity(int charityNumber)
         {
-            var charity = await GetCharityDetails(charityNumber);
-
-            if (charity != null)
+            try
             {
-                // nothing to do at the moment
+                return await GetCharityDetails(charityNumber);
             }
-
-            return charity;
-        }
-
-        public async Task<bool> IsCharityActivelyTrading(int charityNumber)
-        {
-            var isTrading = false;
-
-            var charity = await GetCharityDetails(charityNumber);
-
-            if (charity != null)
+            catch (Exception ex)
             {
-                isTrading = "registered".Equals(charity.Status, StringComparison.InvariantCultureIgnoreCase) && charity.DissolvedOn == null;
+                _logger.LogError("Unable to retrieve details from Charity Commission API", ex);
+                throw new ServiceUnavailableException("Unable to retrieve details from Charity Commission API");
             }
-
-            return isTrading;
         }
 
         private async Task<Types.CharityCommission.Charity> GetCharityDetails(int charityNumber)

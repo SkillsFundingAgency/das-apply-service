@@ -26,11 +26,12 @@ using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
-using SFA.DAS.ApplyService.Encryption;
-using SFA.DAS.ApplyService.Storage;
 
 namespace SFA.DAS.ApplyService.InternalApi
 {
+    using UKRLP;
+    using static UKRLP.ProviderQueryPortTypeClient;
+
     public class Startup
     {
         private readonly IHostingEnvironment _env;
@@ -109,6 +110,13 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddHttpClient<CompaniesHouseApiClient>("CompaniesHouseApiClient", config =>
             {
                 config.BaseAddress = new Uri(_applyConfig.CompaniesHouseApiAuthentication.ApiBaseAddress); //  "https://api.companieshouse.gov.uk"
+                config.DefaultRequestHeaders.Add("Accept", "Application/json");
+            })
+            .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+
+            services.AddHttpClient<RoatpApiClient>("RoatpApiClient", config =>
+            {
+                config.BaseAddress = new Uri(_applyConfig.RoatpApiAuthentication.ApiBaseAddress);          // "https://providers-api.apprenticeships.education.gov.uk"
                 config.DefaultRequestHeaders.Add("Accept", "Application/json");
             })
             .SetHandlerLifetime(TimeSpan.FromMinutes(5));
@@ -194,9 +202,9 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<CharityCommissionApiClient,CharityCommissionApiClient>();
             // End of SOAP Services
 
-            services.AddTransient<IKeyProvider,PlaceholderKeyProvider>();
-            services.AddTransient<IStorageService,StorageService>();
-            services.AddTransient<IEncryptionService, EncryptionService>();
+            services.AddTransient<IRoatpApiClient, RoatpApiClient>();
+            services.AddTransient<IRoatpTokenService, RoatpTokenService>();
+
     
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
         }

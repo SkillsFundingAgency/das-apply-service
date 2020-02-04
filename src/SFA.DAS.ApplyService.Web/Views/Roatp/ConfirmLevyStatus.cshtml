@@ -1,0 +1,101 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.EmployerLevyStatusViewModel
+
+@{
+    ViewBag.Title = "Is your organisation a levy-paying employer?";
+    Layout = "_Layout";
+
+    bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
+}
+
+@if (Model.ApplicationId != null && Model.ApplicationId != Guid.Empty)
+{
+    await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml");
+}
+else
+{
+    await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml");
+}
+
+<div class="grid-row">
+    <form asp-controller="RoatpApplicationPreamble" asp-action="SelectApplicationRoute" method="get" name="backForm">
+        @Html.HiddenFor(x => x.ApplicationRouteId)
+        <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+    </form>
+</div>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+        <h2 class="govuk-error-summary__title" id="error-summary-title">
+            There is a problem
+        </h2>
+        <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+                <li><a sfa-validation-for="LevyPayingEmployer"></a></li>
+            </ul>
+        </div>
+    </div>
+}
+
+<div class="govuk-width-container">
+
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-l">Is your organisation a levy-paying employer?</h1>
+            </div>
+        </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <form method="post" asp-action="SubmitLevyStatus" asp-controller="RoatpApplicationPreamble">
+
+                    <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="LevyPayingEmployer" sfa-validationerror-class="govuk-error-message">
+                        @if (showErrors)
+                        {
+                            <span class="govuk-error-message">
+                                @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "LevyPayingEmployer")?.ErrorMessage)
+                            </span>
+                        }
+                        <fieldset class="govuk-fieldset">
+
+                            <div class="govuk-radios">
+
+                                <div class="govuk-radios__item">
+
+                                    <input asp-for="LevyPayingEmployer" class="govuk-radios__input" id="LevyPayingEmployer-Yes"
+                                           name="LevyPayingEmployer" type="radio" value="Y"
+                                           sfa-validation-for="LevyPayingEmployer" sfa-validationerror-class="form-control-error">
+                                    <label class="govuk-label govuk-radios__label" for="LevyPayingEmployer-Yes">
+                                        Yes
+                                    </label>
+
+                                </div>
+
+                                <div class="govuk-radios__item">
+
+                                    <input asp-for="LevyPayingEmployer" class="govuk-radios__input" id="LevyPayingEmployer-No"
+                                           name="LevyPayingEmployer" type="radio" value="N"
+                                           sfa-validation-for="LevyPayingEmployer" sfa-validationerror-class="form-control-error">
+                                    <label class="govuk-label govuk-radios__label" for="LevyPayingEmployer-No">
+                                        No
+                                    </label>
+
+                                </div>
+
+                            </div>
+                        </fieldset>
+                    </div>
+                    @Html.HiddenFor(x => x.ApplicationId)
+                    @Html.HiddenFor(x => x.ApplicationRouteId)
+                    @Html.HiddenFor(x => x.PageId)
+                    @Html.HiddenFor(x => x.SequenceId)
+                    @Html.HiddenFor(x => x.SectionId)
+                    <input type="submit" class="govuk-button" value="Save and continue" />
+                </form>
+            </div>
+        </div>
+    </main>
+    <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
+</div>

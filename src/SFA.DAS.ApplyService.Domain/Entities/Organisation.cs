@@ -1,7 +1,11 @@
-using System;
-
 namespace SFA.DAS.ApplyService.Domain.Entities
 {
+    using System;
+    using SFA.DAS.ApplyService.Domain.CompaniesHouse;
+    using System.Collections.Generic;
+    using CharityCommission;
+    using Ukrlp;
+
     public class Organisation : EntityBase
     {
         public string Name { get; set; }
@@ -32,11 +36,55 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string Postcode { get; set; }
         public string EndPointAssessmentOrgId { get; set; }
         public FHADetails FHADetails { get; set; }
+        public UKRLPDetails UKRLPDetails { get; set; }
+        public CompaniesHouseDetails CompaniesHouseDetails { get; set; }
+        public CharityCommissionDetails CharityCommissionDetails { get; set; }
+        public RoatpRegisterDetails RoatpDetails { get; set; }
     }
 
     public class FHADetails
     {
         public DateTime? FinancialDueDate { get; set; }
         public bool? FinancialExempt { get; set; }
+    }
+
+    public class UKRLPDetails
+    {
+        public string UKPRN { get; set; }
+        public string OrganisationName { get; set; }
+        public ContactAddress PrimaryContactAddress { get; set; }
+        public string ContactNumber { get; set; }
+        public string Website { get; set; }
+        public string Alias { get; set; }
+        public List<VerificationDetails> VerificationDetails { get; set; }
+    }
+
+    public class CompaniesHouseDetails
+    {
+        public string CompanyName { get; set; }
+        public string CompanyStatus { get; set; }
+        public string CompanyType { get; set; }
+        public List<DirectorInformation> Directors { get; set; }
+        public List<PersonSignificantControlInformation> PersonsSignificationControl { get; set; }
+        public DateTime? IncorporationDate { get; set; }
+        public bool ManualEntryRequired { get; set; }
+    }
+
+    public class CharityCommissionDetails
+    {
+        public string CharityName { get; set; }
+        public DateTime? RegistrationDate { get; set; }
+        public List<Trustee> Trustees { get; set; }
+        public bool TrusteeManualEntryRequired { get; set; }
+    }
+
+    public class RoatpRegisterDetails
+    {
+        public bool UkprnOnRegister { get; set; }
+        public Guid? OrganisationId { get; set; }
+        public int? ProviderTypeId { get; set; }
+        public int? StatusId { get; set; }
+        public int? RemovedReasonId { get; set; }
+        public DateTime? StatusDate { get; set; }
     }
 }

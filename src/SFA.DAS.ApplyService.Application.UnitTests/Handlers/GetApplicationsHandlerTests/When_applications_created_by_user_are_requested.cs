@@ -13,7 +13,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetApplicationsHan
         [Test]
         public async Task Then_application_created_by_orgainisation_are_returned()
         {
-            await Handler.Handle(new GetApplicationsRequest(new Guid(), true), new CancellationToken());
+            await Handler.Handle(new GetApplicationsRequest(Guid.NewGuid(), true), new CancellationToken());
             ApplyRepository.Verify(r => r.GetUserApplications(It.IsAny<Guid>()), Times.Once);
         }
     }

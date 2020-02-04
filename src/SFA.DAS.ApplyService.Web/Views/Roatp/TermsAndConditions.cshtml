@@ -1,0 +1,110 @@
+﻿@using MoreLinq;
+@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ConditionsOfAcceptanceViewModel
+
+@{
+    ViewBag.Title = "Do you agree to the terms and conditions of making an application?";
+    Layout = "_Layout";
+
+    bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
+}
+
+@{ await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml"); }
+
+@if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
+{
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+        <h2 class="govuk-error-summary__title" id="error-summary-title">
+            There is a problem
+        </h2>
+        <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+                @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
+                {
+                    <li><a href="#TermsConditions">@errorMessage.ErrorMessage</a></li>
+                }
+            </ul>
+        </div>
+    </div>
+}
+
+<div class="govuk-width-container">
+
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-l">Do you agree to the terms and conditions of making an application?</h1>
+            </div>
+        </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <p class="govuk-body">
+                    These terms and conditions are to ensure apprentices and government funding are protected.
+                </p>
+                <p class="govuk-body">
+                    By making an application to join the RoATP you agree to:
+                </p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>provide correct and accurate information</li>
+                    <li>your organisation developing and delivering training in line with <a href="https://www.instituteforapprenticeships.org/quality/what-is-a-quality-apprenticeship/" target="_blank">the Institute for Apprenticeships and Technical Education's 'quality statement'</a></li>
+                    <li>ESFA using information in the public domain to support the assessment of application questions</li>
+                    <li>ESFA using information it already has on your organisation to support the assessment of application questions</li>
+                </ul>
+                <p class="govuk-body">
+                    ESFA may ask for further information on any application answers - they may fail or reject your application if you do not comply within 5 working days of their request.
+                </p>
+                <p class="govuk-body">
+                    ESFA reserve the right to change these terms and conditions at any time. Your organisation is obligated to meet the changes made to these terms and conditions.
+                </p>
+                <p class="govuk-body">
+                    You'll be able to view these terms and conditions and any changes on <a id="TermsConditions" href="https://www.gov.uk/guidance/register-of-apprenticeship-training-providers" target="_blank">the RoATP GOV.UK page (opens in a new window or tab).</a>
+                </p>
+
+                <form method="post" asp-action="ConfirmTermsAndConditions" asp-controller="RoatpApplicationPreamble">
+                    <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ConditionsAccepted" sfa-validationerror-class="govuk-error-message">
+                        @if (showErrors)
+                        {
+                            <span class="govuk-error-message">
+                                @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
+                                {
+                                    @Html.Raw(errorMessage.ErrorMessage)
+                                }
+                            </span>
+                        }
+                        <fieldset class="govuk-fieldset">
+
+                            <div class="govuk-radios">
+
+                                <div class="govuk-radios__item">
+
+                                    <input asp-for="ConditionsAccepted" class="govuk-radios__input" id="ConditionsAccepted-Yes"
+                                           name="ConditionsAccepted" type="radio" value="Y"
+                                           sfa-validation-for="ConditionsAccepted" sfa-validationerror-class="form-control-error">
+                                    <label class="govuk-label govuk-radios__label" for="ConditionsAccepted-Yes">
+                                        Yes
+                                    </label>
+
+                                </div>
+
+                                <div class="govuk-radios__item">
+
+                                    <input asp-for="ConditionsAccepted" class="govuk-radios__input" id="ConditionsAccepted-No"
+                                           name="ConditionsAccepted" type="radio" value="N"
+                                           sfa-validation-for="ConditionsAccepted" sfa-validationerror-class="form-control-error">
+                                    <label class="govuk-label govuk-radios__label" for="ConditionsAccepted-No">
+                                        No
+                                    </label>
+
+                                </div>
+
+                            </div>
+                        </fieldset>
+                    </div>
+                    <input type="submit" class="govuk-button" value="Save and continue" />
+
+                </form>
+            </div>
+        </div>
+    </main>
+</div>

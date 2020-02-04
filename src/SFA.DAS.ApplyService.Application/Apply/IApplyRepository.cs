@@ -1,6 +1,7 @@
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Roatp;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,15 +10,24 @@ namespace SFA.DAS.ApplyService.Application.Apply
 {
     public interface IApplyRepository
     {
-        Task<List<Domain.Entities.Application>> GetUserApplications(Guid userId);
-        Task<List<Domain.Entities.Application>> GetOrganisationApplications(Guid userId);
+        Task<Guid> StartApplication(Guid applicationId, ApplyData applyData, Guid organisationId, Guid createdBy);
+
+        Task<Domain.Entities.Apply> GetApplication(Guid applicationId);
+        Task<List<Domain.Entities.Apply>> GetUserApplications(Guid userId);
+        Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid userId);
+
+        Task<bool> CanSubmitApplication(Guid applicationId);
+        Task SubmitApplication(Guid applicationId, ApplyData applyData, Guid submittedBy);
+
+
+        // NOTE: This is old stuff or things which are not migrated over yet
         Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId,  int sectionId, Guid? userId);
         Task<List<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid? userId);
         Task<List<ApplicationSection>> GetSections(Guid applicationId);
         Task<ApplicationSequence> GetSequence(Guid applicationId, int sequenceId, Guid? userId);
         Task<ApplicationSequence> GetActiveSequence(Guid applicationId);
         Task<List<Asset>> GetAssets();
-        Task<Guid> CreateApplication(string applicationType, Guid applyingOrganisationId, Guid userId, Guid workflowId);
+        Task<Guid> CreateApplication(Guid applicationId, string applicationType, Guid applyingOrganisationId, Guid userId, Guid workflowId);
         Task<Guid> GetLatestWorkflow(string applicationType);
         Task<List<ApplicationSection>> CopyWorkflowToApplication(Guid applicationId, Guid workflowId, string organisationType);
         Task UpdateSections(List<ApplicationSection> sections);
@@ -28,15 +38,11 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<ApplicationSummaryItem>> GetClosedApplications();
         Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
-        Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();
-        Task<bool> CanSubmitApplication(ApplicationSubmitRequest request);
-        Task SubmitApplicationSequence(ApplicationSubmitRequest request, ApplicationData applicationdata);
+        Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();        
         Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string sequenceStatus, string applicationStatus);
         Task CloseSequence(Guid applicationId, int sequenceId);
         Task<List<ApplicationSequence>> GetSequences(Guid applicationId);
         Task OpenSequence(Guid applicationId, int nextSequenceId);
-        Task UpdateApplicationData(Guid applicationId, ApplicationData applicationData);
-        Task<Domain.Entities.Application> GetApplication(Guid requestApplicationId);
         Task UpdateApplicationStatus(Guid applicationId, string status);
         Task DeleteRelatedApplications(Guid applicationId);
 
@@ -48,5 +54,14 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         Task<int> GetNextAppReferenceSequence();
         Task<string> GetWorkflowReferenceFormat(Guid requestApplicationId);
+
+        Task<bool> MarkSectionAsCompleted(Guid applicationId, Guid applicationSectionId);
+        Task<bool> IsSectionCompleted(Guid applicationId, Guid applicationSectionId);
+
+        Task RemoveSectionCompleted(Guid applicationId, Guid applicationSectionId);
+        
+        Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatusByUkprn(string ukprn);
+
+        Task<string> GetNextRoatpApplicationReference();
     }
 }

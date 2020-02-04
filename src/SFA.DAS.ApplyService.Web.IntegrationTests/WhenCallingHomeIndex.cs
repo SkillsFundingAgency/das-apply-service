@@ -25,6 +25,10 @@ namespace SFA.DAS.ApplyService.Web.IntegrationTests
         {
             var configurationService = new Mock<IConfigurationService>();
 
+            var configuration = new Mock<IConfiguration>();
+            configuration.SetupGet(x => x["EnvironmentName"]).Returns("LOCAL");
+            configuration.SetupGet(x => x["ConfigurationStorageConnectionString"]).Returns("UseDevelopmentStorage=true;");
+
             configurationService.Setup(c => c.GetConfig())
                 .ReturnsAsync(new ApplyConfig() {SessionRedisConnectionString = "HelloDave"});
 
@@ -32,7 +36,9 @@ namespace SFA.DAS.ApplyService.Web.IntegrationTests
             builder.ConfigureServices(services =>
             {
                 services.AddSingleton(p => configurationService.Object);
+                services.AddSingleton(p => configuration.Object);
             });
+            builder.UseStartup<Startup>();
 
             var testServer = new TestServer(builder);
             

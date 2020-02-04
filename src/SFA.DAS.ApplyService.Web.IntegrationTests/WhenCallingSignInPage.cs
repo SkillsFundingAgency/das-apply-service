@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Configuration;
+using Microsoft.Extensions.Configuration;
 
 namespace SFA.DAS.ApplyService.Web.IntegrationTests
 {
@@ -25,14 +26,20 @@ namespace SFA.DAS.ApplyService.Web.IntegrationTests
             configurationService.Setup(c => c.GetConfig())
                 .ReturnsAsync(new ApplyConfig() {SessionRedisConnectionString = "HelloDave"});
 
+            var configuration = new Mock<IConfiguration>();
+            configuration.SetupGet(x => x["EnvironmentName"]).Returns("LOCAL");
+            configuration.SetupGet(x => x["ConfigurationStorageConnectionString"]).Returns("UseDevelopmentStorage=true;");
+
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
 
             var builder = new WebHostBuilder();
             builder.ConfigureServices(services =>
             {
                 services.AddSingleton(p => configurationService.Object);
+                services.AddSingleton(p => configuration.Object);
                 services.AddTransient(p => httpContextAccessor.Object);
             });
+            builder.UseStartup<Startup>();
 
             var testServer = new TestServer(builder);
             

@@ -1,4 +1,4 @@
-@model SFA.DAS.ApplyService.Web.Controllers.PageViewModel
+@model SFA.DAS.ApplyService.Web.ViewModels.PageViewModel
 
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + (@Model.Title ?? "Page not active");
@@ -168,7 +168,7 @@
                                     @Html.Raw(question.Hint)
                                 </span>
 
-                                @await Html.PartialAsync($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
+                                @await Html.PartialAsync($"~/Views/QuestionPartials/_{question.Type}.cshtml", question)
                             </fieldset>
                         </div>
                     }
@@ -199,7 +199,7 @@
                                 </span>
                             }
 
-                            @await Html.PartialAsync($"~/Views/Application/Pages/Controls/_{question.Type}.cshtml", question)
+                            @await Html.PartialAsync($"~/Views/QuestionPartials/_{question.Type}.cshtml", question)
                         </div>
                     }
                 }

@@ -1,0 +1,87 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.SubmitApplicationViewModel
+
+@{
+    var title = $"Submit application on behalf of {Model.OrganisationName}";
+    ViewBag.Title = title;
+    Layout = "_Layout";
+
+    bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
+
+    var isError = showErrors ? "govuk-input--error" : "";
+}
+
+@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
+
+<div class="grid-row">
+    <form asp-controller="RoatpApplication" asp-action="TaskList" method="get" name="backForm">
+        @Html.HiddenFor(x => x.ApplicationId)
+        <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+    </form>
+</div>
+
+@if (showErrors)
+{
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+        <h2 class="govuk-error-summary__title" id="error-summary-title">
+            There is a problem
+        </h2>
+        <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+                <li><a sfa-validation-for="ConfirmSubmitApplication"></a></li>
+            </ul>
+        </div>
+    </div>
+}
+
+<div class="govuk-width-container">
+
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <span class="govuk-caption-l">Submit application</span>
+                <h1 class="govuk-heading-l">@title</h1>
+                <p class="govuk-body">
+                    Before you submit your application, you must check that all of your answers and any files you've uploaded are correct.
+                </p>
+                <p class="govuk-body">
+                    If any of the information provided in this application is wrong, we can fail or reject your application. Your organisation can only apply twice in a 12-month period.
+                </p>
+                <p class="govuk-body">
+                    You can check your answers and file uploads using the <a href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">application overview</a>, then going into each section.
+                </p>
+                <p class="govuk-body">
+                    You will not be able to view your answers once you submit this application.
+                </p>
+                <form method="post" asp-action="ConfirmSubmitApplication" asp-controller="RoatpApplication">
+                    <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ApplicationRouteId" sfa-validationerror-class="govuk-error-message">
+                        @if (showErrors)
+                        {
+                            <span class="govuk-error-message">
+                                @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "ConfirmSubmitApplication")?.ErrorMessage)
+                            </span>
+                        }
+                        @Html.HiddenFor(x => x.ApplicationId)
+                        @Html.HiddenFor(x => x.OrganisationName)
+                        <div class="govuk-checkboxes govuk-!-margin-bottom-5">
+                            <div class="govuk-checkboxes__item">
+                                <input type="checkbox" id="ConfirmSubmitApplication" name="ConfirmSubmitApplication" class="govuk-checkboxes__input" />
+                                <label class="govuk-label govuk-checkboxes__label" for="ConfirmSubmitApplication">
+                                    I confirm that all the answers and uploads in this application are accurate to the best of my knowledge.
+                                </label>
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-two-thirds">
+
+                            <input type="submit" class="govuk-button" value="Submit application" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>

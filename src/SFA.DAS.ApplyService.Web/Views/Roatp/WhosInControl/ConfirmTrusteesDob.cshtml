@@ -1,0 +1,92 @@
+﻿@using MoreLinq;
+@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ConfirmTrusteesDateOfBirthViewModel
+
+@{
+    var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
+}
+
+@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
+
+
+<div class="grid-row">
+    <a class="govuk-back-link" href="@Url.Action("ConfirmTrusteesNoDob", "RoatpWhosInControlApplication", new { Model.ApplicationId })">Back</a>
+</div>
+
+@if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
+{
+    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+        <h2 class="govuk-error-summary__title" id="error-summary-title">
+            There is a problem
+        </h2>
+        <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+                @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
+                {
+                    <li><a sfa-validation-for="@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
+                }
+            </ul>
+        </div>
+    </div>
+}
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <span class="govuk-caption-l">@Model.SectionTitle</span>
+            @if (Model.TrusteeDatesOfBirth.Count == 1)
+            {
+                <h1 class="govuk-heading-l">Enter the date of birth for trustee</h1>
+            }
+            else
+            {
+                <h1 class="govuk-heading-l">Enter the date of birth for trustees</h1>
+            }
+
+            <form method="post" asp-action="TrusteesDobsConfirmed" novalidate enctype="multipart/form-data">
+
+                @Html.HiddenFor(x => x.ApplicationId)
+                @Html.HiddenFor(x => x.GetHelpAction)
+
+                @foreach (var trustee in Model.TrusteeDatesOfBirth)
+                {
+                    <p class="govuk-body">@Html.Raw(trustee.Name)</p>
+
+                    <span class="govuk-hint" id="dob-hint">
+                        For example, 3 1980
+                    </span>
+                    <div class="govuk-date-input" id="dob">
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group" sfa-validation-for="@(trustee.Id + "_Month")">
+                                <label class="govuk-label govuk-date-input__label" for="@(trustee.Id + "_Month")">Month</label>
+                                <input value="@trustee.DobMonth"
+                                       class="govuk-input govuk-date-input__input govuk-input--width-2 @isError"
+                                       id="@(trustee.Id + "_Month")"
+                                       name="@(trustee.Id + "_Month")"
+                                       type="number"
+                                       pattern="[0-9]*"
+                                       sfa-validation-for="@(trustee.Id + "_Month")" />
+                            </div>
+                        </div>
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group" sfa-validation-for="@(trustee.Id + "_Year")">
+                                <label class="govuk-label govuk-date-input__label" for="@(trustee.Id + "_Year")">Year</label>
+                                <input value="@trustee.DobYear"
+                                       class="govuk-input govuk-date-input__input govuk-input--width-4 @isError"
+                                       id="@(trustee.Id + "_Year")"
+                                       name="@(trustee.Id + "_Year")"
+                                       type="number"
+                                       pattern="[0-9]*"
+                                       sfa-validation-for="@(trustee.Id + "_Year")" />
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <button type="submit" class="govuk-button">Save and continue</button>
+
+            </form>
+        </div>
+    </div>
+</main>
+<partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
@@ -16,6 +17,10 @@ using SFA.DAS.ApplyService.Web.ViewModels;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
+    using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class UsersController : Controller
     {
         private readonly IUsersApiClient _usersApiClient;
@@ -25,8 +30,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IConfigurationService _config;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly CreateAccountValidator _createAccountValidator;
+        private readonly IOrganisationApiClient _organisationApiClient;
 
-        public UsersController(IUsersApiClient usersApiClient, IApplicationApiClient applicationApiClient, ISessionService sessionService, ILogger<UsersController> logger, IConfigurationService config, IHttpContextAccessor contextAccessor, CreateAccountValidator createAccountValidator)
+        private const string TrainingProviderOrganisationType = "TrainingProvider";
+
+
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger, 
+                               IConfigurationService config, IHttpContextAccessor contextAccessor, 
+                               CreateAccountValidator createAccountValidator, IApplicationApiClient applicationApiClient,
+                               IOrganisationApiClient organisationApiClient)
         { 
             _usersApiClient = usersApiClient;
             _applicationApiClient = applicationApiClient;
@@ -35,6 +47,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _config = config;
             _contextAccessor = contextAccessor;
             _createAccountValidator = createAccountValidator;
+            _applicationApiClient = applicationApiClient;
+            _organisationApiClient = organisationApiClient;
         }
         
         [HttpGet]
@@ -79,11 +93,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             if (string.IsNullOrEmpty(_contextAccessor.HttpContext.User.FindFirstValue("display_name")))
-                return SignOut(CookieAuthenticationDefaults.AuthenticationScheme,
-                    OpenIdConnectDefaults.AuthenticationScheme);
+            {
+                var authenticationProperties = new AuthenticationProperties
+                {
+                    RedirectUri = Url.Action("Index", "Home")
+                };
+                return SignOut(authenticationProperties, CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme);
+            }
 
-            var assessorServiceBaseUrl = (await _config.GetConfig()).AssessorServiceBaseUrl;
-            return Redirect($"{assessorServiceBaseUrl}/Account/SignOut");
+            return RedirectToAction("Index", "Home");
         }
 
         public IActionResult InviteSent()
@@ -108,8 +126,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
             else if (user.ApplyOrganisationId is null)
             {
-                return RedirectToAction("Index", "OrganisationSearch");
+                return RedirectToAction("TermsAndConditions", "RoatpApplicationPreamble");
             }
+
+            var organisation = await _organisationApiClient.GetByUser(user.Id);
+
+            var selectedApplicationType = ApplicationTypes.EndpointAssessor;
+            if (organisation.OrganisationType == TrainingProviderOrganisationType)
+            {
+                selectedApplicationType = ApplicationTypes.RegisterTrainingProviders;
+            }           
             else
             {
                 var org = await _applicationApiClient.GetOrganisationByUserId(user.Id);
@@ -121,7 +147,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
             }
             
-            return RedirectToAction("Applications", "Application");
+            return RedirectToAction("Applications", "RoatpApplication", new { applicationType = selectedApplicationType });
+
         }
 
         [HttpGet("/Users/SignedOut")]
@@ -133,6 +160,41 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public IActionResult NotSetUp()
         {
             return View();
+        }
+
+        [HttpGet]
+        [Route("first-time-apprenticeship-service")]
+        public IActionResult ExistingAccount()
+        {
+            return View(new ExistingAccountViewModel());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmExistingAccount(ExistingAccountViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.ErrorMessages = new List<ValidationErrorDetail>();
+
+                var modelErrors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var modelError in modelErrors)
+                {
+                    model.ErrorMessages.Add(new ValidationErrorDetail
+                    {
+                        Field = "ExistingAccount",
+                        ErrorMessage = modelError.ErrorMessage
+                    });
+                }
+
+                return View("~/Views/Users/ExistingAccount.cshtml", model);
+            }
+
+            if (model.FirstTimeSignin == "Y")
+            {
+                return RedirectToAction("CreateAccount");
+            }
+
+            return RedirectToAction("SignIn");
         }
     }
 }

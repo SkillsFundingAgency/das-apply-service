@@ -69,17 +69,7 @@ Post-Deployment Script Template
 -- 	VALUES (NEWID(), 'Live', 'EPAOUserApproveConfirm', '539204f8-e99a-4efa-9d1f-d0e58b26dd7b', GETDATE(), 'System')
 -- END
 -- GO
--- 
--- IF NOT EXISTS( select * from sys.sequences where object_id = object_id('AppRefSequence'))
--- BEGIN
--- 	CREATE SEQUENCE [dbo].[AppRefSequence]  AS [int] START WITH 100001 INCREMENT BY 1 MINVALUE 100000 MAXVALUE 2147483647 CYCLE  CACHE 
--- END
--- GO
--- 
--- UPDATE ApplicationSections
--- SET QnAData = JSON_MODIFY(QnAData, '$.FinancialApplicationGrade.SelectedGrade', 'Outstanding')
--- WHERE  JSON_VALUE(QnAData, '$.FinancialApplicationGrade.SelectedGrade') = 'Excellent'
--- GO
+--
 
 -- AB 02/04/19 When coding has been done will need to swapout the templateIds for ApplyEPAOUpdate & ApplyEPAOResponse
 -- Was acf63bea-41ff-4a45-a376-9d557c30bca0 
@@ -111,71 +101,27 @@ END
 DELETE FROM EmailTemplates
 WHERE [TemplateName] IN ( 'EPAOUserApproveRequest' , 'EPAOUserApproveConfirm' )
 
--- START OF: ON-1502 Fixes - Remove once deployed to PROD
-/*
-UPDATE [ApplicationSections]
-   SET [Status] = 'Evaluated'
- WHERE [NotRequired] = 1
-GO
+IF NOT EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'RoATPGetHelpWithQuestion')
+BEGIN
+	INSERT INTO EmailTemplates ([Id], [Status],[TemplateName],[TemplateId],[Recipients],[CreatedAt],[CreatedBy]) 
+	VALUES (NEWID(), 'Live', N'RoATPGetHelpWithQuestion', N'9d1e1a7e-3557-4781-8901-ea627ae70ec2', N'RoATP.SUPPORT@education.gov.uk', GETDATE(), 'System')
+END
 
-UPDATE [ApplicationSections]
-   SET [QnAData] = JSON_MODIFY(QnAData, '$.FinancialApplicationGrade', JSON_QUERY('{"SelectedGrade":"Exempt", "GradedDateTime":"' + CONVERT(varchar(30), GETUTCDATE(), 126) + '"}'))
- WHERE [NotRequired] = 1 AND [SectionId] = 3
-GO
+IF NOT EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'RoATPApplicationSubmitted')
+BEGIN
+	INSERT INTO EmailTemplates ([Id], [Status],[TemplateName],[TemplateId],[CreatedAt],[CreatedBy]) 
+	VALUES (NEWID(), 'Live', N'RoATPApplicationSubmitted', N'f371098e-4e91-40ae-96da-d6f8d9c85251', GETDATE(), 'System')
+END
 
-UPDATE [ApplicationSequences]
-   SET [Status] = 'Approved'
- WHERE [NotRequired] = 1 AND [SequenceId] = 1
-GO
-
-UPDATE app
-   SET app.[ApplicationData] = JSON_MODIFY(app.ApplicationData, '$.InitSubmissionClosedDate', CONVERT(varchar(30), GETUTCDATE(), 126))
- FROM [Applications] app
- INNER JOIN [ApplicationSequences] seq ON app.Id = seq.ApplicationId
- WHERE seq.[NotRequired] = 1 AND seq.[SequenceId] = 1
-GO
-*/
--- END OF: ON-1502 Fixes - Remove once deployed to PROD
-
-
--- ON-1172 updating existing applications to include QuesstionTag against specific questions
-/*
-exec [Update_ApplicationSections_QuestionTags] 'CD-30', 'trading-name'
-exec [Update_ApplicationSections_QuestionTags] 'CD-01', 'use-trading-name'
-exec [Update_ApplicationSections_QuestionTags] 'CD-02', 'contact-name'
-EXEC [Update_ApplicationSections_QuestionTags] 'CD-03', 'contact-address'
-EXEC [Update_ApplicationSections_QuestionTags] 'CD-03_1', 'contact-address1'
-exec [Update_ApplicationSections_QuestionTags] 'CD-03_2', 'contact-address2'
-exec [Update_ApplicationSections_QuestionTags] 'CD-03_3', 'contact-address3'
-exec [Update_ApplicationSections_QuestionTags] 'CD-03_4', 'contact-address4'
-EXEC [Update_ApplicationSections_QuestionTags] 'CD-04', 'contact-postcode'
-exec [Update_ApplicationSections_QuestionTags] 'CD-05', 'contact-email'
-exec [Update_ApplicationSections_QuestionTags] 'CD-06', 'contact-phone-number'
-exec [Update_ApplicationSections_QuestionTags] 'CD-12', 'company-ukprn'
-exec [Update_ApplicationSections_QuestionTags] 'CD-17', 'company-number'
-exec [Update_ApplicationSections_QuestionTags] 'CD-26', 'charity-number'
-exec [Update_ApplicationSections_QuestionTags] 'CC-31', 'delivery-areas'
-exec [Update_ApplicationSections_QuestionTags] 'CD-40', 'standard-website'
-exec [Update_ApplicationSections_QuestionTags] 'CD-03_1', 'contact-address-1'
-exec [Update_ApplicationSections_QuestionTags] 'CD-03_2', 'contact-address-2'
-exec [Update_ApplicationSections_QuestionTags] 'CD-03_3', 'contact-address-3'
-exec [Update_ApplicationSections_QuestionTags] 'CD-03_4', 'contact-address-4'
-*/
--- END OF: ON-1172 remove or comment out once deployed to PROD
-
--- ON-1921 updating existing applications to include standard reference and standard level
-:r UpdateApplicationDataStandards-ON-1921.sql
--- END OF: ON-1921 remove or comment out once deployed to PROD
+IF NOT EXISTS (SELECT * FROM EmailTemplates WHERE TemplateName = N'RoATPApplicationSubmittedMain')
+BEGIN
+	INSERT INTO EmailTemplates ([Id], [Status],[TemplateName],[TemplateId],[CreatedAt],[CreatedBy]) 
+	VALUES (NEWID(), 'Live', N'RoATPApplicationSubmittedMain', N'c0008332-7a20-41a4-94d4-57acbcebaef8', GETDATE(), 'System')
+END
 
 -- ON-1917 Clean up double spaces on Organisation Name
 UPDATE [dbo].[Organisations]
 SET	   [Name] = REPLACE([Name], '  ', ' ')
       ,[OrganisationDetails] = JSON_MODIFY([OrganisationDetails], '$.LegalName', REPLACE(JSON_VALUE([OrganisationDetails], '$.LegalName'), '  ', ' '))
 WHERE CHARINDEX('  ', [Name]) > 0 OR CHARINDEX('  ', JSON_VALUE([OrganisationDetails], '$.LegalName')) > 0;
--- END OF: ON-1917 
-
-
--- Add the Workflows
-:r ..\WorkflowLatest.sql
-
-
+-- END OF: ON-1917

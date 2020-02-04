@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
@@ -88,9 +89,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     UserEmail = User.GetEmail()
                 };
 
-            await _apiClient.UpdateApplicationData(applicationData, model.ApplicationId);
+            // NOTE: This is not needed in RoATP application process. Commented out for now!
+            //await _apiClient.UpdateApplicationData(applicationData, model.ApplicationId);
 
-            return RedirectToAction("Applications", "Application");
+            return RedirectToAction("Applications", "Application", new { applicationType = ApplicationTypes.EndpointAssessor });
         }
     }
 }

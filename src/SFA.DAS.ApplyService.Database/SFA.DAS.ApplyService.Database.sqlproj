@@ -76,11 +76,17 @@
     <Build Include="Tables\EmailTemplates.sql" />
     <Build Include="StoredProcedures\Update_ApplicationSections_QuestionTags.sql" />
     <Build Include="Sequences\AppRefSequence.sql" />
+    <Build Include="Tables\ApplicationWorkflow.sql" />
+    <Build Include="Sequences\RoatpAppReferenceSequence.sql" />
+    <Build Include="Tables\Apply.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
   </ItemGroup>
   <ItemGroup>
     <PreDeploy Include="Script.PreDeployment1.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SFA.DAS.ApplyService.Database.publish.xml" />
   </ItemGroup>
 </Project>

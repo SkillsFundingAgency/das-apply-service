@@ -1,0 +1,57 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ConfirmTrusteesViewModel
+
+@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
+
+
+<div class="grid-row">
+    @if (Model.VerifiedCompaniesHouse)
+    {
+        <a class="govuk-back-link" href="@Url.Action("ConfirmDirectorsPscs", "RoatpWhosInControlApplication", new { Model.ApplicationId })">Back</a>
+    }
+    else
+    {
+        <a class="govuk-back-link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Back</a>
+    }
+</div>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <span class="govuk-caption-l">@Model.SectionTitle</span>
+            @if (Model.Trustees != null && Model.Trustees.TableData != null && Model.Trustees.TableData.DataRows.Count == 1)
+            {
+                <h1 class="govuk-heading-l">Confirm your organisation's trustee</h1>
+            }
+            else
+            {
+                <h1 class="govuk-heading-l">Confirm your organisation's trustees</h1>
+            }
+            <p class="govuk-body">These are the details we found on the Charity Commission for England and Wales.</p>
+
+            <form method="post" asp-action="TrusteesConfirmed" novalidate enctype="multipart/form-data">
+
+                @Html.HiddenFor(x => x.ApplicationId)
+                @Html.HiddenFor(x => x.GetHelpAction)
+
+                @{ await Html.RenderPartialAsync("~/Views/Roatp/WhosInControl/PeopleInControl.cshtml", Model.Trustees); }
+
+                <button type="submit" class="govuk-button">Confirm and continue</button>
+
+                <details class="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            What if these details are wrong?
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text">
+                        <p class="govuk-body">
+                            Contact the Charity Commission to <a href="https://www.gov.uk/change-your-charitys-details" target="_blank">change these details (opens in a new window or tab)</a>.
+                        </p>
+                    </div>
+                </details>
+
+            </form>
+        </div>
+    </div>
+</main>
+<partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />

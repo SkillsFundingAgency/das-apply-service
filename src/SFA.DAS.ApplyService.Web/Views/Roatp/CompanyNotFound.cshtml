@@ -1,0 +1,36 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.UkprnSearchResultsViewModel
+
+@{
+    ViewBag.Title = "Company number not found";
+    Layout = "_Layout";
+}
+
+@{ await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml"); }
+
+<div class="grid-row">
+    <form asp-controller="RoatpApplicationPreamble" asp-action="EnterApplicationUkprn" method="get" name="backForm">
+        <input type="hidden" asp-for="UKPRN" />
+        <input type="hidden" asp-for="ApplicationRouteId" />
+        <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+    </form>
+</div>
+
+<div class="govuk-width-container">
+
+    <main class="govuk-main-wrapper " id="main-content" role="main">
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-l">Company number @Model.CompaniesHouseNumber not found</h1>
+                <p class="govuk-body">This is because it either:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>does not exist</li>
+                    <li>is not active on Companies House</li>
+                </ul>
+                <p class="govuk-body">
+                    If you think this is wrong, contact the UKRLP helpdesk on 0345 202 1600 or <a href="mailto:helpdesk@ukrlp.co.uk">helpdesk@ukrlp.co.uk</a>. You can also <a href="https://www.gov.uk/contact-companies-house" target="_blank">contact Companies House (opens in a new window or tab).</a>
+                </p>
+            </div>
+        </div>
+    </main>
+</div>

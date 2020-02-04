@@ -22,7 +22,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers.ApplicationControllerTe
             var applicationApiClient = new Mock<IApplicationApiClient>();
 
             var newApplicationId = Guid.NewGuid();
-            applicationApiClient.Setup(client => client.StartApplication(It.IsAny<Guid>())).ReturnsAsync(new StartApplicationResponse(){ApplicationId = newApplicationId});
+            applicationApiClient.Setup(client => client.StartApplication(It.IsAny<Guid>(), It.IsAny<string>())).ReturnsAsync(new StartApplicationResponse(){ApplicationId = newApplicationId});
 
             var userService = new Mock<IUserService>();
             userService.Setup(us => us.GetUserId()).ReturnsAsync(Guid.NewGuid());
@@ -35,7 +35,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers.ApplicationControllerTe
                 userService.Object,
                 Mock.Of<IUsersApiClient>());
 
-            var result = await controller.StartApplication();
+            var result = await controller.StartApplication("EPAO");
             result.Should().BeOfType<RedirectToActionResult>();
             result.As<RedirectToActionResult>().ActionName.Should().Be("SequenceSignPost");
             result.As<RedirectToActionResult>().RouteValues["applicationId"].Should().Be(newApplicationId);

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
@@ -16,13 +18,28 @@ using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.DfeSignIn;
+using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Session;
+using SFA.DAS.ApplyService.Web;
 using SFA.DAS.ApplyService.Web.Infrastructure;
+using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
+using SFA.DAS.ApplyService.Web.Infrastructure.Services;
 using SFA.DAS.ApplyService.Web.Validators;
+using StructureMap;
 using StackExchange.Redis;
 
 namespace SFA.DAS.ApplyService.Web
 {
+    using Controllers;
+    using SFA.DAS.ApplyService.Application.Email;
+    using SFA.DAS.ApplyService.EmailService;
+    using SFA.DAS.ApplyService.Web.Configuration;
+    using SFA.DAS.ApplyService.Web.Infrastructure.Validations;
+    using SFA.DAS.ApplyService.Web.Services;
+    using SFA.DAS.Http;
+    using SFA.DAS.Http.TokenGenerators;
+    using SFA.DAS.Notifications.Api.Client;
+
     public class Startup
     {
         private readonly IConfiguration _configuration;
@@ -44,6 +61,8 @@ namespace SFA.DAS.ApplyService.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
+            IdentityModelEventSource.ShowPII = true;
+        
             ConfigureAuth(services);
             
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
@@ -58,7 +77,15 @@ namespace SFA.DAS.ApplyService.Web
             
             services.AddMvc(options => { options.Filters.Add<PerformValidationFilter>(); })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            
+
+            services.AddOptions();
+
+            services.Configure<List<TaskListConfiguration>>(_configuration.GetSection("TaskListSequences"));
+            services.Configure<List<QnaPageOverrideConfiguration>>(_configuration.GetSection("QnaPageOverrides"));
+            services.Configure<List<QnaLinksConfiguration>>(_configuration.GetSection("QnaLinks"));
+            services.Configure<List<CustomValidationConfiguration>>(_configuration.GetSection("CustomValidations"));
+            services.Configure<List<NotRequiredOverrideConfiguration>>(_configuration.GetSection("NotRequiredOverrides"));
+
             if (_env.IsDevelopment())
             {
                 services.AddDataProtection()
@@ -108,13 +135,13 @@ namespace SFA.DAS.ApplyService.Web
 
             ConfigureDependencyInjection(services);
         }
-        
+
         private void ConfigureDependencyInjection(IServiceCollection services)
         {
             services.RegisterAllTypes<IValidator>(new[] { typeof(IValidator).Assembly });
-            
+
             services.AddTransient<ITokenService, TokenService>();
-            
+
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddSingleton<IConfigurationService>(sp => new ConfigurationService(
@@ -125,17 +152,51 @@ namespace SFA.DAS.ApplyService.Web
                 "SFA.DAS.ApplyService"));
 
             services.AddTransient<ISessionService>(s => new SessionService(
-                s.GetService<IHttpContextAccessor>(), 
+                s.GetService<IHttpContextAccessor>(),
                 _configuration["EnvironmentName"]));
 
-            services.AddTransient<IDfeSignInService,DfeSignInService>();
+            services.AddTransient<IDfeSignInService, DfeSignInService>();
 
-            services.AddTransient<IUsersApiClient,UsersApiClient>();
-            services.AddTransient<IApplicationApiClient,ApplicationApiClient>();
-            services.AddTransient<OrganisationApiClient,OrganisationApiClient>();
-            services.AddTransient<OrganisationSearchApiClient,OrganisationSearchApiClient>();
-            services.AddTransient<CreateAccountValidator,CreateAccountValidator>();
-            services.AddTransient<IUserService,UserService>();
+            services.AddTransient<IUsersApiClient, UsersApiClient>();
+            services.AddTransient<UsersApiClient, UsersApiClient>();
+            services.AddTransient<IApplicationApiClient, ApplicationApiClient>();
+            services.AddTransient<OrganisationApiClient, OrganisationApiClient>();
+            services.AddTransient<OrganisationSearchApiClient, OrganisationSearchApiClient>();
+            services.AddTransient<CreateAccountValidator, CreateAccountValidator>();
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IQnaTokenService, QnaTokenService>();
+            services.AddTransient<IQnaApiClient, QnaApiClient>();
+            services.AddTransient<IOrganisationApiClient, OrganisationApiClient>();
+            services.AddTransient<IRoatpApiClient, RoatpApiClient>();
+            services.AddTransient<IUkrlpApiClient, UkrlpApiClient>();
+            services.AddTransient<ICompaniesHouseApiClient, CompaniesHouseApiClient>();
+            services.AddTransient<ICharityCommissionApiClient, CharityCommissionApiClient>();
+            services.AddTransient<IProcessPageFlowService, ProcessPageFlowService>();
+            services.AddTransient<IQuestionPropertyTokeniser, QuestionPropertyTokeniser>();
+            services.AddTransient<IPageNavigationTrackingService, PageNavigationTrackingService>();
+            services.AddTransient<ICustomValidatorFactory, CustomValidatorFactory>();
+            services.AddTransient<IAnswerFormService, AnswerFormService>();
+            services.AddTransient<IGetHelpWithQuestionEmailService, GetHelpWithQuestionEmailService>();
+            services.AddTransient<INotificationsApi>(x => {
+                var apiConfiguration = new Notifications.Api.Client.Configuration.NotificationsApiClientConfiguration
+                {
+                    ApiBaseUrl = _configService.NotificationsApiClientConfiguration.ApiBaseUrl,
+                    ClientToken = _configService.NotificationsApiClientConfiguration.ClientToken,
+                    ClientId = _configService.NotificationsApiClientConfiguration.ClientId,
+                    ClientSecret = _configService.NotificationsApiClientConfiguration.ClientSecret,
+                    IdentifierUri = _configService.NotificationsApiClientConfiguration.IdentifierUri,
+                    Tenant = _configService.NotificationsApiClientConfiguration.Tenant
+                };
+
+                var httpClient = string.IsNullOrWhiteSpace(apiConfiguration.ClientId)
+                    ? new HttpClientBuilder().WithBearerAuthorisationHeader(new JwtBearerTokenGenerator(apiConfiguration)).Build()
+                    : new HttpClientBuilder().WithBearerAuthorisationHeader(new AzureADBearerTokenGenerator(apiConfiguration)).Build();
+
+                return new NotificationsApi(httpClient, apiConfiguration);
+            });
+            services.AddTransient<IEmailTemplateClient, EmailTemplateClient>();
+            services.AddTransient<ISubmitApplicationConfirmationEmailService, SubmitApplicationConfirmationEmailService>();
+            services.AddTransient<ITabularDataRepository, TabularDataRepository>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)
@@ -149,6 +210,8 @@ namespace SFA.DAS.ApplyService.Web
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILogger<Startup> logger)
         {
+            MappingStartup.AddMappings();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

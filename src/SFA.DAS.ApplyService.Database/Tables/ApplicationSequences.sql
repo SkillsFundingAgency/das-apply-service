@@ -4,7 +4,8 @@ CREATE TABLE [dbo].[ApplicationSequences](
 	[SequenceId] [int] NOT NULL,
 	[Status] [nvarchar](50) NOT NULL,
 	[IsActive] [bit] NOT NULL DEFAULT 0,
-	[NotRequired] [bit] NOT NULL DEFAULT 0
+	[NotRequired] [bit] NOT NULL DEFAULT 0, 
+    [Description] NVARCHAR(255) NULL
 ) ON [PRIMARY]
 GO
 
