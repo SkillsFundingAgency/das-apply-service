@@ -73,6 +73,8 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     public class FinancialEvidence
     {
         public string Filename { get; set; }
+    }
+    
     public static class ApplicationStatus
     {
         public const string New = "New";
