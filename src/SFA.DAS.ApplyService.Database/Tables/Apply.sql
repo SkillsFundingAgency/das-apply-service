@@ -5,11 +5,14 @@
     [OrganisationId] UNIQUEIDENTIFIER NOT NULL, 
     [ApplicationStatus] NVARCHAR(20) NOT NULL DEFAULT 'New', 
     [ApplyData] NVARCHAR(MAX) NULL, 
-    [ReviewStatus] NVARCHAR(20) NOT NULL DEFAULT 'Draft', 
+    [AssessorReviewStatus] NVARCHAR(20) NOT NULL DEFAULT 'Draft', 
     [CreatedAt] DATETIME2 NOT NULL, 
     [CreatedBy] NVARCHAR(256) NOT NULL, 
     [UpdatedAt] DATETIME2 NULL, 
     [UpdatedBy] NVARCHAR(256) NULL, 
     [DeletedAt] DATETIME2 NULL, 
-    [DeletedBy] NVARCHAR(256) NULL
+    [DeletedBy] NVARCHAR(256) NULL,
+    [FinancialReviewStatus] NVARCHAR(20) NOT NULL DEFAULT 'Draft',
+    [GatewayReviewStatus] NVARCHAR(20) NOT NULL DEFAULT 'Draft',
+    [FinancialGrade] NVARCHAR(MAX) NULL
 )
