@@ -32,6 +32,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string FeedbackAdded = "FeedbackAdded";
         public const string Rejected = "Rejected";
         public const string Approved = "Approved";
+        public const string Cancelled = "Cancelled";
     }
 
     public class ApplicationData

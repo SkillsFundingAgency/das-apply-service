@@ -182,5 +182,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         {
             return await (await _httpClient.GetAsync($"/Applications/Existing/{ukprn}")).Content.ReadAsAsync<IEnumerable<RoatpApplicationStatus>>();
         }
+
+        public async Task<bool> UpdateApplicationStatus(Guid applicationId, string applicationStatus)
+        {
+            var httpResponse = await _httpClient.PostAsJsonAsync($"/Application/Status", new { applicationId, applicationStatus });
+            return await httpResponse.Content.ReadAsAsync<bool>();            
+        }
     }
 }

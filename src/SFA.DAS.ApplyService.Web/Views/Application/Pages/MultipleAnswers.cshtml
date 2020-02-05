@@ -91,7 +91,7 @@
 
             @if (Model.PageOfAnswers.Any())
             {
-                @foreach (var answerPage in Model.PageOfAnswers)
+                @foreach (var answerPage in Model.PageOfAnswers.Where(poa => poa.Answers.Any()))
                 {
                     <dl class="govuk-summary-list">
                         @foreach (var answer in answerPage.Answers)
