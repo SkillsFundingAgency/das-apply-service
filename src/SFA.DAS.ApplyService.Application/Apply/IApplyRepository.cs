@@ -55,7 +55,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task DeleteRelatedApplications(Guid applicationId);
 
         Task StartApplicationReview(Guid applicationId, int sectionId);
-        Task StartFinancialReview(Guid applicationId);
         Task<Organisation> GetOrganisationForApplication(Guid applicationId);
 
         Task<string> CheckOrganisationStandardStatus(Guid applicationId, int standardId);
@@ -75,5 +74,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<bool> RecordFinancialGrade(Guid applicationId, FinancialReviewDetails financialReviewDetails);
 
         Task<bool> StartAssessorReview(Guid applicationId, string reviewer);
+
+        Task<bool> StartFinancialReview(Guid applicationId, string reviewer);
     }
 }

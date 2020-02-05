@@ -709,7 +709,7 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	                      
-                        CROSS APPLY OPENJSON(a.ApplyData)
+                        CROSS APPLY OPENJSON(apply.ApplyData)
                         WITH (
                             Sequences nvarchar(max) '$.Sequences' AS JSON
                         ) AS i
@@ -722,13 +722,11 @@ namespace SFA.DAS.ApplyService.Data
                             )
                         ) s
                         where s.SequenceNo = @financialHealthSequence and s.NotRequired = 'false'
-                        AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
-	                        AND apply.GatewayReviewStatus = @gatewayAssessed",
+                        AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL",
                         new
                         {
                             financialHealthSequence = 2,
-                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
-                            gatewayAssessed = ApplicationStatus.GatewayAssessed
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed
                         })).ToList();
             }
         }
@@ -781,7 +779,7 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	
-                        CROSS APPLY OPENJSON(a.ApplyData)
+                        CROSS APPLY OPENJSON(apply.ApplyData)
                         WITH (
                             Sequences nvarchar(max) '$.Sequences' AS JSON
                         ) AS i
@@ -827,18 +825,7 @@ namespace SFA.DAS.ApplyService.Data
                     new { applicationId, sectionId });
             }
         }
-
-        public async Task StartFinancialReview(Guid applicationId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(@"UPDATE ApplicationSections 
-                                                SET Status = 'In Progress'
-                                                WHERE ApplicationId = @applicationId AND SectionId = 3 AND SequenceId = 1",
-                    new {applicationId});
-            }
-        }
-
+        
         public async Task<Organisation> GetOrganisationForApplication(Guid applicationId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -1028,6 +1015,28 @@ namespace SFA.DAS.ApplyService.Data
                             updatedBy = reviewer,
                             draftStatus = AssessorReviewStatus.Draft,
                             newStatus = AssessorReviewStatus.New
+                        });
+            }
+
+            return await Task.FromResult(true);
+        }
+
+        public async Task<bool> StartFinancialReview(Guid applicationId, string reviewer)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE Apply SET FinancialReviewStatus = @financialReviewStatus,
+                                                UpdatedAt = @updatedAt, UpdatedBy = @updatedBy
+                                                WHERE ApplicationId = @applicationId
+                                                AND FinancialReviewStatus IN ( @draftStatus, @newStatus )",
+                        new
+                        {
+                            applicationId,
+                            financialReviewStatus = FinancialReviewStatus.InProgress,
+                            updatedAt = DateTime.UtcNow,
+                            updatedBy = reviewer,
+                            draftStatus = FinancialReviewStatus.Draft,
+                            newStatus = FinancialReviewStatus.New
                         });
             }
 
