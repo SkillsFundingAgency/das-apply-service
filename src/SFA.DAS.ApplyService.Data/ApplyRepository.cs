@@ -138,7 +138,7 @@ namespace SFA.DAS.ApplyService.Data
                             apply.ApplicationId AS ApplicationId,
                             apply.ApplicationStatus AS ApplicationStatus,
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
-                            apply.ReviewStatus AS ReviewStatus,
+                            apply.AssessorReviewStatus AS AssessorReviewStatus,
                             apply.FinancialReviewStatus AS FinancialReviewStatus,
                             org.Name AS OrganisationName,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
@@ -167,7 +167,7 @@ namespace SFA.DAS.ApplyService.Data
                             apply.ApplicationId AS ApplicationId,
                             apply.ApplicationStatus AS ApplicationStatus,
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
-                            apply.ReviewStatus AS ReviewStatus,
+                            apply.AssessorReviewStatus AS AssessorReviewStatus,
                             apply.FinancialReviewStatus AS FinancialReviewStatus,
                             org.Name AS OrganisationName,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
@@ -196,7 +196,7 @@ namespace SFA.DAS.ApplyService.Data
                             apply.ApplicationId AS ApplicationId,
                             apply.ApplicationStatus AS ApplicationStatus,
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
-                            apply.ReviewStatus AS ReviewStatus,
+                            apply.AssessorReviewStatus AS AssessorReviewStatus,
                             apply.FinancialReviewStatus AS FinancialReviewStatus,
                             org.Name AS OrganisationName,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
@@ -628,7 +628,7 @@ namespace SFA.DAS.ApplyService.Data
                             apply.ApplicationId AS ApplicationId,
                             apply.ApplicationStatus AS ApplicationStatus,
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
-                            apply.ReviewStatus AS ReviewStatus,
+                            apply.AssessorReviewStatus AS AssessorReviewStatus,
                             apply.FinancialReviewStatus AS FinancialReviewStatus,
                             org.Name AS OrganisationName,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
@@ -636,10 +636,11 @@ namespace SFA.DAS.ApplyService.Data
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
-	                      WHERE apply.ApplicationStatus = @applicationStatusSubmitted AND apply.DeletedAt IS NULL
+	                      WHERE apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
 	                        AND apply.GatewayReviewStatus = @gatewayAssessed",
                         new
                         {
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
                             gatewayAssessed = GatewayReviewStatus.Approved
                         })).ToList();
             }
@@ -672,7 +673,7 @@ namespace SFA.DAS.ApplyService.Data
                             apply.ApplicationId AS ApplicationId,
                             apply.ApplicationStatus AS ApplicationStatus,
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
-                            apply.ReviewStatus AS ReviewStatus,
+                            apply.AssessorReviewStatus AS AssessorReviewStatus,
                             apply.FinancialReviewStatus AS FinancialReviewStatus,
                             org.Name AS OrganisationName,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
@@ -700,7 +701,7 @@ namespace SFA.DAS.ApplyService.Data
                             apply.ApplicationId AS ApplicationId,
                             apply.ApplicationStatus AS ApplicationStatus,
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
-                            apply.ReviewStatus AS ReviewStatus,
+                            apply.AssessorReviewStatus AS AssessorReviewStatus,
                             apply.FinancialReviewStatus AS FinancialReviewStatus,
                             org.Name AS OrganisationName,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
@@ -721,11 +722,12 @@ namespace SFA.DAS.ApplyService.Data
                             )
                         ) s
                         where s.SequenceNo = @financialHealthSequence and s.NotRequired = 'false'
-                        AND apply.ApplicationStatus = @applicationStatusSubmitted AND apply.DeletedAt IS NULL
+                        AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
 	                        AND apply.GatewayReviewStatus = @gatewayAssessed",
                         new
                         {
                             financialHealthSequence = 2,
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
                             gatewayAssessed = ApplicationStatus.GatewayAssessed
                         })).ToList();
             }
@@ -737,7 +739,7 @@ namespace SFA.DAS.ApplyService.Data
             {
                 return (await connection
                     .QueryAsync<RoatpApplicationSummaryItem>(
-                        @"SELECT a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.ReviewStatus, a.ApplyData FROM Apply a
+                        @"SELECT a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.AssessorReviewStatus, a.ApplyData FROM Apply a
                         CROSS APPLY OPENJSON(a.ApplyData)
                         WITH (
                             Sequences nvarchar(max) '$.Sequences' AS JSON
@@ -771,7 +773,7 @@ namespace SFA.DAS.ApplyService.Data
                             apply.ApplicationId AS ApplicationId,
                             apply.ApplicationStatus AS ApplicationStatus,
                             apply.GatewayReviewStatus AS GatewayReviewStatus,
-                            apply.ReviewStatus AS ReviewStatus,
+                            apply.AssessorReviewStatus AS AssessorReviewStatus,
                             apply.FinancialReviewStatus AS FinancialReviewStatus,
                             org.Name AS OrganisationName,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
