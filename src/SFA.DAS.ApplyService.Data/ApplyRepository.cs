@@ -1011,5 +1011,27 @@ namespace SFA.DAS.ApplyService.Data
 
             return await Task.FromResult(true);
         }
+
+        public async Task<bool> StartAssessorReview(Guid applicationId, string reviewer)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE Apply SET AssessorReviewStatus = @assessorReviewStatus,
+                                                UpdatedAt = @updatedAt, UpdatedBy = @updatedBy
+                                                WHERE ApplicationId = @applicationId
+                                                AND AssessorReviewStatus IN ( @draftStatus, @newStatus )",
+                        new
+                        {
+                            applicationId,
+                            assessorReviewStatus = AssessorReviewStatus.InProgress,
+                            updatedAt = DateTime.UtcNow,
+                            updatedBy = reviewer,
+                            draftStatus = AssessorReviewStatus.Draft,
+                            newStatus = AssessorReviewStatus.New
+                        });
+            }
+
+            return await Task.FromResult(true);
+        }
     }
 }

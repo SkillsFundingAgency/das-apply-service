@@ -73,5 +73,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<string> GetNextRoatpApplicationReference();
 
         Task<bool> RecordFinancialGrade(Guid applicationId, FinancialReviewDetails financialReviewDetails);
+
+        Task<bool> StartAssessorReview(Guid applicationId, string reviewer);
     }
 }

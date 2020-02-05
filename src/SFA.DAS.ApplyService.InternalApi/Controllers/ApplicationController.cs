@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
-using SFA.DAS.ApplyService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Application.Apply.Assessor;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -76,6 +76,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<IEnumerable<RoatpApplicationSummaryItem>> GetFeedbackAddedApplications()
         {
             return await _mediator.Send(new GetFeedbackAddedApplicationsRequest());
+        }
+
+        [HttpPost("/Application/{applicationId}/StartAssessorReview")]
+        public async Task<bool> StartAssessorReview(Guid applicationId, [FromBody] string reviewer)
+        {
+            return await _mediator.Send(new StartAssessorReviewRequest(applicationId, reviewer));
         }
     }
 }
