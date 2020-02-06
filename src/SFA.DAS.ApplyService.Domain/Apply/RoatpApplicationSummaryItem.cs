@@ -14,7 +14,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public DateTime? ClosedDate { get; set; }
         public string ApplicationStatus { get; set; }
         public string GatewayReviewStatus { get; set; }
-        public string ReviewStatus { get; set; }
+        public string AssessorReviewStatus { get; set; }
         public string FinancialReviewStatus { get; set; }
     }
 }
