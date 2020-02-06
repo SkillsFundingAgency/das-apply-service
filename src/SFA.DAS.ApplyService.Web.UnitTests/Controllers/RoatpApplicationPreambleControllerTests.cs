@@ -1471,6 +1471,30 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
+
+        public void Change_UKPRN_clears_application_data_and_redirects_to_enter_ukprn()
+        {
+            var model = new ChangeUkprnViewModel { ApplicationId = Guid.NewGuid() };
+
+            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>()))
+                         .ReturnsAsync(new Answer { Value = "10001234" })
+                         .Verifiable();
+
+            _applicationApiClient.Setup(x => x.UpdateApplicationStatus(It.IsAny<Guid>(), It.IsAny<string>())).ReturnsAsync(true).Verifiable();
+
+            _sessionService.Setup(x => x.Remove(It.IsAny<string>())).Verifiable();
+
+            var result = _controller.ConfirmChangeUkprn(model).GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.ActionName.Should().Be("EnterApplicationUkprn");
+
+            _applicationApiClient.Verify(x => x.UpdateApplicationStatus(It.IsAny<Guid>(), It.IsAny<string>()), Times.Once);
+            _qnaApiClient.VerifyAll();
+            _sessionService.VerifyAll();
+        }
+
+        [Test]
         public void Provider_changing_route_mid_application_not_currently_on_the_register_is_offered_all_available_routes()
         {
             var applicationId = Guid.NewGuid();

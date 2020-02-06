@@ -63,11 +63,18 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), false));
         }
+        
+        [HttpGet("/Applications/Existing/{ukprn}")]
+        public async Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatus(string ukprn)
+        {
+            return await _mediator.Send(new GetExistingApplicationStatusRequest(ukprn));
+        }
 
-
-
-
-
+        [HttpPost("/Application/Status")]
+        public async Task<ActionResult<bool>> UpdateApplicationStatus([FromBody] UpdateApplicationStatusRequest request)
+        {
+            return await _mediator.Send(request);
+        }
 
         // NOTE: This is old stuff or things which are not migrated over yet
         [HttpGet("Answer/{QuestionIdentifier}/{applicationId}")]
@@ -166,10 +173,5 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(new CheckOrganisationStandardStatusRequest(applicationId, standardId));
         }
 
-        [HttpGet("/Applications/Existing/{ukprn}")]
-        public async Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatus(string ukprn)
-        {
-            return await _mediator.Send(new GetExistingApplicationStatusRequest(ukprn));
-        }
     }
 }
