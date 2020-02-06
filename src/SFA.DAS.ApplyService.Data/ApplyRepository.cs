@@ -652,7 +652,7 @@ namespace SFA.DAS.ApplyService.Data
             {
                 return(await connection
                     .QueryAsync<RoatpApplicationSummaryItem>(
-                        @"SELECT ApplicationId, OrganisationId, ApplyData, ApplicationStatus, ReviewStatus
+                        @"SELECT ApplicationId, OrganisationId, ApplyData, ApplicationStatus, AssessorReviewStatus
 	                        FROM Apply
 	                        WHERE ApplicationStatus = @feedbackAdded",
                         new
