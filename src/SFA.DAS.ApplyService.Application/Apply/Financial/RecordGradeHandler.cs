@@ -21,7 +21,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
         public async Task<bool> Handle(RecordGradeRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Recording financial grade {request.FinancialReviewDetails.SelectedGrade} for application ID {request.ApplicationId}");
-            return await _applyRepository.RecordFinancialGrade(request.ApplicationId, request.FinancialReviewDetails);
+            return await _applyRepository.RecordFinancialGrade(request.ApplicationId, request.FinancialReviewDetails, request.FinancialReviewStatus);
         }
     }
 }

@@ -8,11 +8,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
     {
         public Guid ApplicationId { get; set; }
         public FinancialReviewDetails FinancialReviewDetails { get; set; }
-
-        public RecordGradeRequest(Guid applicationId, FinancialReviewDetails financialReviewDetails)
+        public string FinancialReviewStatus { get; set; }
+        public RecordGradeRequest(Guid applicationId, FinancialReviewDetails financialReviewDetails, string financialReviewStatus)
         {
             ApplicationId = applicationId;
             FinancialReviewDetails = financialReviewDetails;
+            FinancialReviewStatus = financialReviewStatus;
         }
     }
 }

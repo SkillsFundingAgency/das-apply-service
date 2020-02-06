@@ -44,9 +44,9 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<RoatpApplicationSummaryItem>> GetOpenApplications();
         Task<List<RoatpApplicationSummaryItem>> GetFeedbackAddedApplications();
         Task<List<RoatpApplicationSummaryItem>> GetClosedApplications();
-        Task<List<RoatpApplicationSummaryItem>> GetOpenFinancialApplications();
-        Task<List<RoatpApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
-        Task<List<RoatpApplicationSummaryItem>> GetClosedFinancialApplications();        
+        Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications();
+        Task<List<RoatpFinancialSummaryItem>> GetFeedbackAddedFinancialApplications();
+        Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications();        
         Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string sequenceStatus, string applicationStatus);
         Task CloseSequence(Guid applicationId, int sequenceId);
         Task<List<ApplicationSequence>> GetSequences(Guid applicationId);
@@ -71,7 +71,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         Task<string> GetNextRoatpApplicationReference();
 
-        Task<bool> RecordFinancialGrade(Guid applicationId, FinancialReviewDetails financialReviewDetails);
+        Task<bool> RecordFinancialGrade(Guid applicationId, FinancialReviewDetails financialReviewDetails, string financialReviewStatus);
 
         Task<bool> StartAssessorReview(Guid applicationId, string reviewer);
 

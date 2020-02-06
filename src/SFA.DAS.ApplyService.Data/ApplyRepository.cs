@@ -23,16 +23,13 @@ namespace SFA.DAS.ApplyService.Data
         {
             _logger = logger;
             _config = configurationService.GetConfig().Result;
-
+            
             SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
-
             SqlMapper.AddTypeHandler(typeof(OrganisationDetails), new OrganisationDetailsHandler());
             SqlMapper.AddTypeHandler(typeof(QnAData), new QnADataHandler());
             SqlMapper.AddTypeHandler(typeof(ApplicationData), new ApplicationDataHandler());
-            SqlMapper.AddTypeHandler(typeof(FinancialApplicationGrade), new FinancialApplicationGradeDataHandler());
+            SqlMapper.AddTypeHandler(typeof(FinancialReviewDetails), new FinancialReviewDetailsDataHandler());
         }
-
-
 
         public async Task<Guid> StartApplication(Guid applicationId, ApplyData applyData, Guid organisationId, Guid createdBy)
         {
@@ -50,7 +47,10 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                var application = await connection.QuerySingleOrDefaultAsync<Apply>(@"SELECT * FROM apply WHERE ApplicationId = @applicationId", new { applicationId });
+                var application = await connection.QuerySingleOrDefaultAsync<Apply>(@"SELECT
+                                                                                     ApplicationId, OrganisationId, ApplicationStatus, AssessorReviewStatus,
+                                                                                     GatewayReviewStatus, ApplyData
+                                                                                     FROM apply WHERE ApplicationId = @applicationId", new { applicationId });
 
                 //if (application != null)
                 //{
@@ -690,12 +690,12 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<RoatpApplicationSummaryItem>> GetOpenFinancialApplications()
+        public async Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection
-                    .QueryAsync<RoatpApplicationSummaryItem>(
+                    .QueryAsync<RoatpFinancialSummaryItem>(
                         @"SELECT 
                             apply.Id AS Id,
                             apply.ApplicationId AS ApplicationId,
@@ -706,7 +706,8 @@ namespace SFA.DAS.ApplyService.Data
                             org.Name AS OrganisationName,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
+                            JSON_QUERY(apply.ApplyData, '$.FinancialReviewDetails') AS FinancialReviewDetails
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	                      
                         CROSS APPLY OPENJSON(apply.ApplyData)
@@ -722,22 +723,27 @@ namespace SFA.DAS.ApplyService.Data
                             )
                         ) s
                         where s.SequenceNo = @financialHealthSequence and s.NotRequired = 'false'
-                        AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL",
+                        AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
+                        AND apply.FinancialReviewStatus IN ( @financialStatusDraft, @financialStatusNew, @financialStatusInProgress)",
                         new
                         {
                             financialHealthSequence = 2,
-                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
+                            financialStatusDraft = FinancialReviewStatus.Draft,
+                            financialStatusNew = FinancialReviewStatus.New,
+                            financialStatusInProgress = FinancialReviewStatus.InProgress
                         })).ToList();
             }
         }
 
-        public async Task<List<RoatpApplicationSummaryItem>> GetFeedbackAddedFinancialApplications()
+        public async Task<List<RoatpFinancialSummaryItem>> GetFeedbackAddedFinancialApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection
-                    .QueryAsync<RoatpApplicationSummaryItem>(
-                        @"SELECT a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.AssessorReviewStatus, a.ApplyData FROM Apply a
+                    .QueryAsync<RoatpFinancialSummaryItem>(
+                        @"SELECT a.ApplicationId, a.OrganisationId, a.ApplicationStatus, a.AssessorReviewStatus, a.ApplyData,
+                            JSON_QUERY(a.ApplyData, '$.FinancialReviewDetails') AS FinancialReviewDetails FROM Apply a
                         CROSS APPLY OPENJSON(a.ApplyData)
                         WITH (
                             Sequences nvarchar(max) '$.Sequences' AS JSON
@@ -760,12 +766,12 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<RoatpApplicationSummaryItem>> GetClosedFinancialApplications()
+        public async Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection
-                   .QueryAsync<RoatpApplicationSummaryItem>(
+                   .QueryAsync<RoatpFinancialSummaryItem>(
                        @"SELECT 
                             apply.Id AS Id,
                             apply.ApplicationId AS ApplicationId,
@@ -776,7 +782,8 @@ namespace SFA.DAS.ApplyService.Data
                             org.Name AS OrganisationName,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
+                            JSON_QUERY(apply.ApplyData, '$.FinancialReviewDetails') AS FinancialReviewDetails
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	
                         CROSS APPLY OPENJSON(apply.ApplyData)
@@ -792,12 +799,13 @@ namespace SFA.DAS.ApplyService.Data
                             )
                         ) s
                         where s.SequenceNo = @financialHealthSequence and s.NotRequired = 'false'
-                        and apply.ApplicationStatus IN ( @approvedStatus, @declinedStatus )",
+                        and apply.FinancialReviewStatus IN ( @approvedStatus, @declinedStatus, @exemptStatus )",
                        new
                        {
                            financialHealthSequence = 2,
-                           approvedStatus = ApplicationStatus.Approved,
-                           declinedStatus = ApplicationStatus.Declined
+                           approvedStatus = FinancialReviewStatus.Approved,
+                           declinedStatus = FinancialReviewStatus.Rejected,
+                           exemptStatus = FinancialReviewStatus.Exempt
                        })).ToList();
             }
         }
@@ -973,26 +981,46 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<bool> RecordFinancialGrade(Guid applicationId, FinancialReviewDetails financialReviewDetails)
+        public async Task<bool> RecordFinancialGrade(Guid applicationId, FinancialReviewDetails financialReviewDetails, string financialReviewStatus)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                var applyDataResults = await connection.QueryAsync<ApplyData>("SELECT ApplyData FROM Apply WHERE ApplicationId = @applicationId",
-                    new
-                    {
-                        applicationId
-                    });
-
-                var applyData = applyDataResults.FirstOrDefault();
-                if (applyData != null)
+                try
                 {
+                    var result = await connection.QueryAsync<ApplyData>(@"SELECT ApplyData FROM Apply WHERE ApplicationId = @applicationId",
+                                                                            new { applicationId });
+                    var applyData = result.FirstOrDefault();
+                    if (applyData == null)
+                    {
+                        _logger.LogError($"Unable to record financial grade for application {applicationId} - no apply data found");
+                        return await Task.FromResult(false);
+                    }
                     applyData.FinancialReviewDetails = financialReviewDetails;
-                    await connection.ExecuteAsync("UPDATE Apply SET ApplyData = @applyData WHERE ApplicationId = @applicationId",
+                    
+                    var recordsAffected = await connection.ExecuteAsync(@"UPDATE Apply 
+                                                                        SET ApplyData = @applyData,
+                                                                        FinancialGrade = @grade
+                                                                        WHERE ApplicationId = @applicationId",
                         new
                         {
                             applicationId,
-                            applyData
+                            applyData,
+                            grade = financialReviewDetails.SelectedGrade
                         });
+                    if (recordsAffected > 0)
+                    {
+                        await connection.ExecuteAsync("UPDATE Apply SET FinancialReviewStatus = @financialReviewStatus WHERE ApplicationId = @applicationId",
+                            new
+                            {
+                                applicationId,
+                                financialReviewStatus
+                            });
+                    }
+                }
+                catch (Exception exception)
+                {
+                    _logger.LogError($"Unable to record financial grade for application {applicationId}", exception);
+                    return await Task.FromResult(false);
                 }
             }
 
