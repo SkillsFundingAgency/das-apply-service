@@ -7,12 +7,34 @@
     bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
 
     var isError = showErrors ? "govuk-input--error" : "";
+
+    var backAction = "ConfirmOrganisation";
+    var backController = "RoatpApplicationPreamble";
+
+    var submitAction = "StartApplication";
+
+    if (Model.ApplicationId != null && Model.ApplicationId != Guid.Empty)
+    {
+        submitAction = "UpdateApplicationProviderRoute";
+        backController = "RoatpApplication";
+        backAction = "TaskList";
+    }
+}
+@if (Model.ApplicationId != null && Model.ApplicationId != Guid.Empty)
+{
+    await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml");
+}
+else
+{
+    await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml");
 }
 
-@{ await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml"); }
-
 <div class="grid-row">
-    <form asp-controller="RoatpApplicationPreamble" asp-action="ConfirmOrganisation" method="get" name="backForm">
+    <form asp-controller="@backController" asp-action="@backAction" method="get" name="backForm">
+        @if (Model.ApplicationId != null && Model.ApplicationId != Guid.Empty)
+        {
+            @Html.HiddenFor(x => x.ApplicationId)
+        }
         <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
     </form>
 </div>
@@ -31,20 +53,20 @@
     </div>
 }
 
-    <div class="govuk-width-container">
+<div class="govuk-width-container">
 
-        <main class="govuk-main-wrapper " id="main-content" role="main">
+    <main class="govuk-main-wrapper " id="main-content" role="main">
 
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-two-thirds">
-                    <h1 class="govuk-heading-l">Choose your organisation's provider route</h1>
-                </div>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-l">Choose your organisation's provider route</h1>
             </div>
+        </div>
 
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <form method="post" asp-action="StartApplication" asp-controller="RoatpApplicationPreamble">
+                <form method="post" asp-action="@submitAction" asp-controller="RoatpApplicationPreamble">
 
                     <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ApplicationRouteId" sfa-validationerror-class="govuk-error-message">
                         @if (showErrors)
@@ -69,13 +91,25 @@
                                             @applicationRoute.RouteName
                                         </label>
                                         <span id="route-@applicationRoute.Id-item-hint" class="govuk-hint govuk-radios__hint">
-                                            @applicationRoute.Description
+                                            @Html.Raw(applicationRoute.Description)
                                         </span>
                                     </div>
                                 }
                             </div>
                         </fieldset>
                     </div>
+                    <details class="govuk-details" role="group">
+                        <summary class="govuk-details__summary" role="button" aria-controls="details-content-provider-route" aria-expanded="false">
+                            <span class="govuk-details__summary-text">
+                                What is a connected company or charity?
+                            </span>
+                        </summary>
+                        <div class="govuk-details__text" id="details-content-provider-route" aria-hidden="true">
+                            <p>A connected company is part of the same group and has the same ultimate parent company as your organisation.</p>
+                            <p>A connected charity is part of the same group of charities and has a majority of the same controlling trustees as your organisation.</p>
+                        </div>
+                    </details>
+                    @Html.HiddenFor(x => x.ApplicationId)
                     @Html.HiddenFor(x => x.PageId)
                     @Html.HiddenFor(x => x.SequenceId)
                     @Html.HiddenFor(x => x.SectionId)
@@ -83,9 +117,9 @@
                 </form>
 
             </div>
-          </div>
-        </main>
-        <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
-    </div>
+        </div>
+    </main>
+    <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
+</div>
 
 

@@ -24,7 +24,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             }
 
             if (notRequiredOverrides!=null && notRequiredOverrides.Any(condition => 
-                                                          condition.Value == condition.MustEqual &&
+                                                          condition.AllConditionsMet &&
                                                           sectionId == condition.SectionId &&
                                                           sequenceId == condition.SequenceId))
             {
