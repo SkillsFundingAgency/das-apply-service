@@ -795,15 +795,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             // Only preserve answers if there are no FileUpload question types
             if (page.Questions.All(q => !"FileUpload".Equals(q.Input?.Type, StringComparison.InvariantCultureIgnoreCase)))
             {
-                foreach (var question in page.Questions)
+                // Multiple Answers acts differently and already preserves the answers
+                if (!page.AllowMultipleAnswers)
                 {
-                    foreach (var answer in answers)
-                    {
-                        if (question.QuestionId == answer.QuestionId)
-                        {
-                            question.Value = answer.Value;
-                        }
-                    }
+                    PageOfAnswers poa = new PageOfAnswers { Answers = answers };
+                    page.PageOfAnswers.Add(poa);
                 }
             }
         }
