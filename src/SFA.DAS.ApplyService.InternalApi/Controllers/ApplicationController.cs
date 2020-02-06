@@ -79,9 +79,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpPost("/Application/{applicationId}/StartAssessorReview")]
-        public async Task<bool> StartAssessorReview(Guid applicationId, [FromBody] string reviewer)
+        public async Task<bool> StartAssessorReview(Guid applicationId, [FromBody] StartAssessorReviewApplicationRequest request)
         {
-            return await _mediator.Send(new StartAssessorReviewRequest(applicationId, reviewer));
+            return await _mediator.Send(new StartAssessorReviewRequest(applicationId, request.Reviewer));
         }
+    }
+
+    public class StartAssessorReviewApplicationRequest
+    {
+        public string Reviewer { get; set; }
     }
 }
