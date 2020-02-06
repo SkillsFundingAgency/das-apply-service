@@ -792,7 +792,7 @@ namespace SFA.DAS.ApplyService.Data
                             )
                         ) s
                         where s.SequenceNo = @financialHealthSequence and s.NotRequired = 'false'
-                        and a.ApplicationStatus IN ( @approvedStatus, @declinedStatus )",
+                        and apply.ApplicationStatus IN ( @approvedStatus, @declinedStatus )",
                        new
                        {
                            financialHealthSequence = 2,
