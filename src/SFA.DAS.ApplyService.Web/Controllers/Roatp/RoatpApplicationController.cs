@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NPOI.SS.Formula.Functions;
 using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Configuration;
@@ -289,10 +290,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (section?.DisplayType == SectionDisplayType.PagesWithSections)
             {
-                //var applicationSection = new ApplicationSection { Section = selectedSection, Id = applicationId };
-                //applicationSection.SequenceNo = sequenceNo;
-                //applicationSection.PageContext = BuildPageContext(application, sequence);
-                var applicationSection = selectedSection;
+                var applicationSection = ProcessPagesInSectionsForStatusText(selectedSection);
                 return View("~/Views/Application/PagesWithSections.cshtml", applicationSection);
             }
 
@@ -301,6 +299,64 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return await Page(applicationId, sequenceId, sectionId, pageId, "TaskList",null);
         }
 
+
+        //MFCMFC put into a testable service
+        private ApplicationSection ProcessPagesInSectionsForStatusText(ApplicationSection selectedSection)
+        {
+            foreach (var page in selectedSection.QnAData.Pages.Where(x => x.DisplayType == SectionDisplayType.PagesWithSections))
+            {
+                page.StatusText = AssociatedPagesWithSectionStatus(page, selectedSection.QnAData, true);
+            }
+
+            return selectedSection;
+        }
+        // private function in testable service
+
+        private string AssociatedPagesWithSectionStatus(Page page, QnAData selectedSectionQnAData, bool isFirstPage)
+        {
+            if (isFirstPage && page.Complete != true) return "";
+            if (page.Next.All(x => x.Action != "NextPage") ) return TaskListSectionStatus.Completed;
+          
+            foreach (var nxt in page.Next.Where(x=>x.Action=="NextPage"))
+            {
+                var pageId = nxt.ReturnId;
+       
+                var pageNext = selectedSectionQnAData.Pages.FirstOrDefault(x => x.PageId == pageId && x.Active);
+                if (pageNext != null)
+                {
+                    return !pageNext.Complete ? TaskListSectionStatus.InProgress : AssociatedPagesWithSectionStatus(pageNext, selectedSectionQnAData, false);
+                }
+            }
+
+            return TaskListSectionStatus.Completed;
+        }
+
+        //protected void CheckDependentPages(Next chosenAction, string branchingPageId, QnAData qnaData, Page page, bool subPages = false)
+        //{
+        //    if (page != null)
+        //    {
+        //        // process all sub pages or those which are not the chosen action
+        //        foreach (var nextAction in page.Next.Where(n => subPages || !(n.Action == chosenAction.Action && n.ReturnId == chosenAction.ReturnId)))
+        //        {
+        //            if ("NextPage".Equals(nextAction.Action, StringComparison.InvariantCultureIgnoreCase))
+        //            {
+        //                var nextPage = qnaData.Pages.FirstOrDefault(p => p.PageId == nextAction.ReturnId);
+        //                if (nextPage != null)
+        //                {
+        //                    if (nextPage.ActivatedByPageId != null && nextPage.ActivatedByPageId.Split(",", StringSplitOptions.RemoveEmptyEntries).Contains(branchingPageId))
+        //                    {
+        //                        nextPage.Active = false;
+        //                    }
+
+        //                    foreach (var nextPagesAction in nextPage.Next)
+        //                    {
+        //                        DeactivateDependentPages(nextPagesAction, branchingPageId, qnaData, nextPage, true);
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
         [HttpGet]
         public async Task<IActionResult> Back(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {

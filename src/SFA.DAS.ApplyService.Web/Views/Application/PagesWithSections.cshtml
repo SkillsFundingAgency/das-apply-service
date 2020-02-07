@@ -1,4 +1,5 @@
-﻿@model SFA.DAS.ApplyService.Domain.Entities.ApplicationSection
+﻿@using SFA.DAS.ApplyService.Web.ViewModels.Roatp
+@model SFA.DAS.ApplyService.Domain.Entities.ApplicationSection
 
 @{
     ViewBag.Title = @Model.Title;
@@ -48,9 +49,14 @@
                                        href="@Url.Action("Page", "RoatpApplication", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pg.PageId, redirectAction="Section"})">
                                         @pg.LinkTitle
                                     </a>
-                                    @if (pg.Complete)
+                                    @if (pg.StatusText== TaskListSectionStatus.Completed)
                                     {
                                         <strong class="govuk-tag app-task-list__task-completed" id="completed">Completed</strong>
+                                    }
+                                    
+                                    @if (pg.StatusText==TaskListSectionStatus.InProgress)
+                                    {
+                                        <strong class="govuk-tag app-task-list__task-inprogress" id="inprogress">In progress</strong>
                                     }
                                 </li>
 
