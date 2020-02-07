@@ -135,6 +135,42 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<Guid> SnapshotApplication(Guid applicationId, Guid snapshotApplicationId, List<ApplySequence> newSequences)
+        {
+            var currentApplication = await GetApplication(applicationId);
+
+            if (currentApplication != null)
+            {
+                var newApplyData = new ApplyData
+                {
+                    Sequences = newSequences,
+                    ApplyDetails = currentApplication.ApplyData?.ApplyDetails
+                };
+
+                using (var connection = new SqlConnection(_config.SqlConnectionString))
+                {
+                    // todo: CHECK updated SQL
+                    return await connection.QuerySingleAsync<Guid>(
+                        @"INSERT INTO ApplySnapshots (ApplicationId, SnapshotApplicationId, SnapshotDate, OrganisationId, ApplicationStatus, ApplyData, GatewayReviewStatus, AssessorReviewStatus, FinancialReviewStatus, FinancialGrade)
+                          OUTPUT INSERTED.[NewApplicationId] 
+                          VALUES (@ApplicationId, @snapshotApplicationId, GETUTCDATE(), @OrganisationId, @ApplicationStatus, @newApplyData, @GatewayReviewStatus, @AssessorReviewStatus, @FinancialReviewStatus, @FinancialGrade)",
+                        new
+                        {
+                            currentApplication.ApplicationId,
+                            snapshotApplicationId,
+                            currentApplication.OrganisationId,
+                            currentApplication.ApplicationStatus,
+                            newApplyData,
+                            currentApplication.GatewayReviewStatus,
+                            currentApplication.AssessorReviewStatus,
+                            currentApplication.FinancialReviewStatus,
+                            currentApplication.FinancialGrade
+                        });
+                }
+            }
+
+            return Guid.Empty;
+        }
 
         public async Task<List<RoatpApplicationSummaryItem>> GetNewGatewayApplications()
         {
