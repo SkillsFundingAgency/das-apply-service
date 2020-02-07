@@ -178,11 +178,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private Application.Apply.Start.StartApplicationRequest BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
         {
+            var providerRoutes = _roatpApiClient.GetApplicationRoutes().GetAwaiter().GetResult();
+            var selectedProviderRoute = providerRoutes.FirstOrDefault(x => x.Id == providerRoute);
+            var providerRouteName = selectedProviderRoute?.RouteName;
+
             return new Application.Apply.Start.StartApplicationRequest
             {
                 ApplicationId = qnaApplicationId,
                 CreatingContactId = creatingContactId,
-                ProviderRoute = providerRoute,
+                ProviderRoute = providerRouteName,
                 ApplySequences = qnaSequences.Select(sequence => new ApplySequence
                 {
                     SequenceId = sequence.Id,
@@ -1013,53 +1017,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             return fileValidationPassed;
         }
-
-        [HttpPost]
-        public async Task<IActionResult> Submit(Guid applicationId, int sequenceId)
-        {
-            var canUpdate = await CanUpdateApplication(applicationId, sequenceId);
-            if (!canUpdate)
-            {
-                return RedirectToAction("Sequence", new { applicationId });
-            }
-
-            var activeSequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
-            var errors = ValidateSubmit(activeSequence);
-            if (errors.Any())
-            {
-                var sequenceVm = new SequenceViewModel(activeSequence, applicationId, errors);
-
-                if (activeSequence.Status == ApplicationSequenceStatus.FeedbackAdded)
-                {
-                    return View("~/Views/Application/Feedback.cshtml", sequenceVm);
-                }
-                else
-                {
-                    return View("~/Views/Application/Sequence.cshtml", sequenceVm);
-                }
-            }
-
-            var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
-            var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
-
-            var submitApplicationRequest = new Application.Apply.Submit.SubmitApplicationRequest
-            {
-                ApplicationId = applicationId,
-                ProviderRoute = int.Parse(providerRoute.Value),
-                SubmittingContactId = User.GetUserId()
-            };
-
-            if (await _apiClient.SubmitApplication(submitApplicationRequest))
-            {
-                return RedirectToAction("Submitted", new { applicationId });
-            }
-            else
-            {
-                // unable to submit
-                return RedirectToAction("NotSubmitted", new { applicationId });
-            }
-        }
-
+        
         private List<ValidationErrorDetail> ValidateSubmit(ApplicationSequence sequence)
         {
             var validationErrors = new List<ValidationErrorDetail>();
@@ -1209,11 +1167,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 applicationSequence.Sections = sections.ToList();
                 sequence.NotRequired = SequenceNotRequired(applicationSequence, _notRequiredOverrides);
             }
+            
+            var providerRoutes = await _roatpApiClient.GetApplicationRoutes();
+            var selectedProviderRoute = providerRoutes.FirstOrDefault(x => x.Id.ToString() == providerRoute.Value);
+            var providerRouteName = selectedProviderRoute?.RouteName;
 
             var submitApplicationRequest = new Application.Apply.Submit.SubmitApplicationRequest
             {
                 ApplicationId = model.ApplicationId,
-                ProviderRoute = int.Parse(providerRoute.Value),
+                ProviderRoute = providerRouteName,
                 SubmittingContactId = User.GetUserId(),
                 ApplyData = application.ApplyData
             };
