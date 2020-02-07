@@ -19,8 +19,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     {
         public List<ApplySequence> Sequences { get; set; }
         public ApplyDetails ApplyDetails { get; set; }
-
-        public FinancialReviewDetails FinancialReviewDetails { get; set; }
     }
 
     public class ApplyDetails
