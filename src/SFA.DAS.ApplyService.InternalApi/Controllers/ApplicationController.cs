@@ -53,7 +53,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), false));
         }
-
+        
         [HttpGet("/Applications/Existing/{ukprn}")]
         public async Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatus(string ukprn)
         {

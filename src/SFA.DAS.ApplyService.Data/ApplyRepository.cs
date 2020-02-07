@@ -88,7 +88,7 @@ namespace SFA.DAS.ApplyService.Data
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 var application = await GetApplication(applicationId);
-                var invalidApplicationStatuses = new List<string> { ApplicationStatus.Approved, ApplicationStatus.Declined };
+                var invalidApplicationStatuses = new List<string> { ApplicationStatus.Approved, ApplicationStatus.Rejected };
 
                 // Application must exist and has not already been Approved or Rejected
                 if (application != null && !invalidApplicationStatuses.Contains(application.ApplicationStatus))
@@ -105,7 +105,7 @@ namespace SFA.DAS.ApplyService.Data
                                                             {
                                                                 applicationId,
                                                                 applicationStatusApproved = ApplicationStatus.Approved,
-                                                                applicationStatusApprovedRejected = ApplicationStatus.Declined
+                                                                applicationStatusApprovedRejected = ApplicationStatus.Rejected
                                                             });
 
                     canSubmit = !otherAppsInProgress.Any();
@@ -263,7 +263,7 @@ namespace SFA.DAS.ApplyService.Data
                 }
                 else
                 {
-                    application.ApplicationStatus = ApplicationStatus.Declined;
+                    application.ApplicationStatus = ApplicationStatus.Rejected;
                     application.GatewayReviewStatus = GatewayReviewStatus.Declined;
                 }
 
@@ -594,11 +594,9 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"UPDATE Applications
-                                                SET  ApplicationStatus = @status
-                                                FROM Applications
-                                                INNER JOIN Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
-                                                WHERE  (Applications.Id = @ApplicationId)", new {applicationId, status});
+                await connection.ExecuteAsync(@"UPDATE Apply
+                                                SET  ApplicationStatus = @status                                                
+                                                WHERE ApplicationId = @ApplicationId", new {applicationId, status});
             }
         }
 
@@ -611,7 +609,7 @@ namespace SFA.DAS.ApplyService.Data
                                                                                                     WHERE a.ApplyingOrganisationId = (SELECT ApplyingOrganisationId FROM Applications WHERE Applications.Id = @applicationId)
                                                                                                     AND a.Id <> @applicationId
                                                                                                     AND a.ApplicationStatus NOT IN (@approvedStatus, @rejectedStatus)",
-                                                                                            new { applicationId, approvedStatus = ApplicationStatus.Approved, rejectedStatus = ApplicationStatus.Declined });
+                                                                                            new { applicationId, approvedStatus = ApplicationStatus.Approved, rejectedStatus = ApplicationStatus.Rejected });
 
                 // For now Reject them (and add deleted information)
                 foreach (var app in inProgressRelatedApplications)
@@ -624,7 +622,7 @@ namespace SFA.DAS.ApplyService.Data
                                                         UPDATE Applications
                                                         SET  ApplicationStatus = @rejectedSequenceStatus, DeletedAt = GETUTCDATE(), DeletedBy = 'System'
                                                         WHERE  Applications.Id = @applicationId;",
-                                                    new { applicationId = app.Id, rejectedStatus = ApplicationStatus.Declined, rejectedSequenceStatus = ApplicationSequenceStatus.Rejected });
+                                                    new { applicationId = app.Id, rejectedStatus = ApplicationStatus.Rejected, rejectedSequenceStatus = ApplicationSequenceStatus.Rejected });
                 }
             }
         }
@@ -697,7 +695,7 @@ namespace SFA.DAS.ApplyService.Data
                         new
                         {
                             approvedStatus = ApplicationStatus.Approved,
-                            declinedStatus = ApplicationStatus.Declined
+                            declinedStatus = ApplicationStatus.Rejected
                         })).ToList();
             }
         }
@@ -971,12 +969,8 @@ namespace SFA.DAS.ApplyService.Data
             {
                 var applicationStatuses = await connection.QueryAsync<RoatpApplicationStatus>(
                     @"select a.Id AS ApplicationId, a.ApplicationStatus AS Status
-                      from dbo.Applications a
-                      inner join dbo.Organisations o
-                      on a.ApplyingOrganisationId = o.Id
-                      where JSON_VALUE(o.OrganisationDetails, '$.OrganisationReferenceType') = 'UKRLP'
-                      and o.OrganisationType = 'TrainingProvider'
-                      and OrganisationUKPRN = @ukprn",
+                      from dbo.Apply a
+                      where JSON_VALUE(ApplyData, '$.ApplyDetails.UKPRN') = @ukprn",
                  new { ukprn });
 
                 return await Task.FromResult(applicationStatuses);

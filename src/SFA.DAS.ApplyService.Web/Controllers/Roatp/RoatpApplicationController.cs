@@ -100,7 +100,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var userId = applyUser?.Id ?? Guid.Empty;
 
             var applications = await _apiClient.GetApplications(userId, false);
-            applications = applications.Where(app => app.ApplicationStatus != ApplicationStatus.Declined).ToList();
+            applications = applications.Where(app => app.ApplicationStatus != ApplicationStatus.Rejected).ToList();
 
             if (!applications.Any())
             {              
@@ -116,7 +116,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 case ApplicationStatus.Approved:
                     return View("~/Views/Application/Approved.cshtml", application);
-                case ApplicationStatus.Declined:
+                case ApplicationStatus.Rejected:
                     return View("~/Views/Application/Rejected.cshtml", application);
                 case ApplicationStatus.FeedbackAdded:
                     return View("~/Views/Application/FeedbackIntro.cshtml", application.ApplicationId);
@@ -224,7 +224,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return View("~/Views/Application/Approved.cshtml", application);
             }
 
-            if (application.ApplicationStatus == ApplicationStatus.Declined)
+            if (application.ApplicationStatus == ApplicationStatus.Rejected)
             {
                 return View("~/Views/Application/Rejected.cshtml", application);
             }
@@ -744,12 +744,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
             }
 
+            var isFileUploadPage = page.Questions.Any(q => "FileUpload".Equals(q.Input.Type, StringComparison.InvariantCultureIgnoreCase));
+
             bool validationPassed;
             List<KeyValuePair<string, string>> validationErrors;
             string nextAction;
             string nextActionId;
 
-            if (page.Questions.Any(q => "FileUpload".Equals(q.Input.Type, StringComparison.InvariantCultureIgnoreCase)))
+            if (isFileUploadPage)
             {
                 var uploadFileResult = await _qnaApiClient.Upload(applicationId, selectedSection.Id, pageId, HttpContext.Request.Form.Files);
                 validationPassed = uploadFileResult.ValidationPassed;
@@ -798,29 +800,31 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
-            PreserveAnswersInPage(page, answers);
+
+            if (isFileUploadPage != true)
+            {
+                page = StoreEnteredAnswers(answers, page);
+            }
+
             var invalidPage = await GetDataFedOptions(applicationId, page);
             this.TempData["InvalidPage"] = JsonConvert.SerializeObject(invalidPage);
 
             return await Page(applicationId, sequenceId, sectionId, pageId, redirectAction, page?.Questions);
         }
 
-        private void PreserveAnswersInPage(Page page, List<Answer> answers)
+        private static Page StoreEnteredAnswers(List<Answer> answers, Page page)
         {
-            // Only preserve answers if there are no FileUpload question types
-            if (page.Questions.All(q => !"FileUpload".Equals(q.Input?.Type, StringComparison.InvariantCultureIgnoreCase)))
+            if (answers != null && answers.Any())
             {
-                foreach (var question in page.Questions)
+                if (page.PageOfAnswers is null || !page.PageOfAnswers.Any())
                 {
-                    foreach (var answer in answers)
-                    {
-                        if (question.QuestionId == answer.QuestionId)
-                        {
-                            question.Value = answer.Value;
-                        }
-                    }
+                    page.PageOfAnswers = new List<PageOfAnswers> { new PageOfAnswers { Answers = new List<Answer>() } };
                 }
+
+                page.PageOfAnswers.Add(new PageOfAnswers { Answers = answers });
             }
+
+            return page;
         }
 
         private static void ApplyFormattingToAnswers(List<Answer> answers, Page page)
