@@ -10,15 +10,15 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string ApplicationStatus { get; set; }
         public string AssessorReviewStatus { get; set; }
         public string GatewayReviewStatus { get; set; }
+        public string FinancialReviewStatus { get; set; }
         public ApplyData ApplyData { get; set; }
+        public FinancialReviewDetails FinancialGrade { get; set; }
     }
 
     public class ApplyData
     {
         public List<ApplySequence> Sequences { get; set; }
         public ApplyDetails ApplyDetails { get; set; }
-
-        public FinancialReviewDetails FinancialReviewDetails { get; set; }
     }
 
     public class ApplyDetails
@@ -121,7 +121,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string New = "New";
         public const string InProgress = "In Progress";
         public const string Graded = "Graded";
-        public const string Rejected = "Rejected";
         public const string Approved = "Approved";
+        public const string Declined = "Declined";
     }
 }
