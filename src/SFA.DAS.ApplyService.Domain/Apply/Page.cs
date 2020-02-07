@@ -1,7 +1,5 @@
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 
 namespace SFA.DAS.ApplyService.Domain.Apply

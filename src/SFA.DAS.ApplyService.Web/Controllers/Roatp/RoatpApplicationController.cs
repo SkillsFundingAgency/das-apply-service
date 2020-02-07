@@ -302,32 +302,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return await Page(applicationId, sequenceId, sectionId, pageId, "TaskList",null);
         }
 
-        //protected void CheckDependentPages(Next chosenAction, string branchingPageId, QnAData qnaData, Page page, bool subPages = false)
-        //{
-        //    if (page != null)
-        //    {
-        //        // process all sub pages or those which are not the chosen action
-        //        foreach (var nextAction in page.Next.Where(n => subPages || !(n.Action == chosenAction.Action && n.ReturnId == chosenAction.ReturnId)))
-        //        {
-        //            if ("NextPage".Equals(nextAction.Action, StringComparison.InvariantCultureIgnoreCase))
-        //            {
-        //                var nextPage = qnaData.Pages.FirstOrDefault(p => p.PageId == nextAction.ReturnId);
-        //                if (nextPage != null)
-        //                {
-        //                    if (nextPage.ActivatedByPageId != null && nextPage.ActivatedByPageId.Split(",", StringSplitOptions.RemoveEmptyEntries).Contains(branchingPageId))
-        //                    {
-        //                        nextPage.Active = false;
-        //                    }
-
-        //                    foreach (var nextPagesAction in nextPage.Next)
-        //                    {
-        //                        DeactivateDependentPages(nextPagesAction, branchingPageId, qnaData, nextPage, true);
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
         [HttpGet]
         public async Task<IActionResult> Back(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
