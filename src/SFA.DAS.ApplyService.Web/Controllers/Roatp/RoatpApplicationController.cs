@@ -52,6 +52,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IRoatpApiClient _roatpApiClient;
         private readonly ISubmitApplicationConfirmationEmailService _submitApplicationEmailService;
         private readonly ITabularDataRepository _tabularDataRepository;
+        private readonly IPagesWithSectionsFlowService _pagesWithSectionsFlowService;
 
         private const string InputClassUpperCase = "app-uppercase";
         private const string NotApplicableAnswerText = "None of the above";
@@ -60,7 +61,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public RoatpApplicationController(IApplicationApiClient apiClient, ILogger<RoatpApplicationController> logger,
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
             IQnaApiClient qnaApiClient, IOptions<List<TaskListConfiguration>> configuration, IProcessPageFlowService processPageFlowService,
-            IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
+            IPagesWithSectionsFlowService pagesWithSectionsFlowService,
+        IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
             IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks, 
             ICustomValidatorFactory customValidatorFactory, IOptions<List<NotRequiredOverrideConfiguration>> notRequiredOverrides, 
             IRoatpApiClient roatpApiClient, ISubmitApplicationConfirmationEmailService submitApplicationEmailService,
@@ -75,6 +77,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _usersApiClient = usersApiClient;
             _qnaApiClient = qnaApiClient;
             _processPageFlowService = processPageFlowService;
+            _pagesWithSectionsFlowService = pagesWithSectionsFlowService;
             _configuration = configuration.Value;
             _questionPropertyTokeniser = questionPropertyTokeniser;
             _pageNavigationTrackingService = pageNavigationTrackingService;
@@ -290,45 +293,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (section?.DisplayType == SectionDisplayType.PagesWithSections)
             {
-                var applicationSection = ProcessPagesInSectionsForStatusText(selectedSection);
+                var applicationSection = _pagesWithSectionsFlowService.ProcessPagesInSectionsForStatusText(selectedSection);
                 return View("~/Views/Application/PagesWithSections.cshtml", applicationSection);
             }
 
             var pageId = section.QnAData.Pages.FirstOrDefault()?.PageId;
 
             return await Page(applicationId, sequenceId, sectionId, pageId, "TaskList",null);
-        }
-
-
-        //MFCMFC put into a testable service
-        private ApplicationSection ProcessPagesInSectionsForStatusText(ApplicationSection selectedSection)
-        {
-            foreach (var page in selectedSection.QnAData.Pages.Where(x => x.DisplayType == SectionDisplayType.PagesWithSections))
-            {
-                page.StatusText = AssociatedPagesWithSectionStatus(page, selectedSection.QnAData, true);
-            }
-
-            return selectedSection;
-        }
-        // private function in testable service
-
-        private string AssociatedPagesWithSectionStatus(Page page, QnAData selectedSectionQnAData, bool isFirstPage)
-        {
-            if (isFirstPage && page.Complete != true) return "";
-            if (page.Next.All(x => x.Action != "NextPage") ) return TaskListSectionStatus.Completed;
-          
-            foreach (var nxt in page.Next.Where(x=>x.Action=="NextPage"))
-            {
-                var pageId = nxt.ReturnId;
-       
-                var pageNext = selectedSectionQnAData.Pages.FirstOrDefault(x => x.PageId == pageId && x.Active);
-                if (pageNext != null)
-                {
-                    return !pageNext.Complete ? TaskListSectionStatus.InProgress : AssociatedPagesWithSectionStatus(pageNext, selectedSectionQnAData, false);
-                }
-            }
-
-            return TaskListSectionStatus.Completed;
         }
 
         //protected void CheckDependentPages(Next chosenAction, string branchingPageId, QnAData qnaData, Page page, bool subPages = false)
@@ -928,6 +899,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return null;
         }
 
+        // TODO This needs isolating into a testable service
         private List<Answer> GetAnswersFromForm(Page page)
         {
             List<Answer> answers = new List<Answer>();
@@ -953,26 +925,47 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             #region FurtherQuestion_Processing
             // Get all questions that have FurtherQuestions in a ComplexRadio
-           // var questionsWithFutherQuestions = page.Questions.Where(x => (x.Input.Type == "ComplexRadio" ) && x.Input.Options != null && x.Input.Options.Any(o =>  o.FurtherQuestions.Any()));
-
             var questionsWithFutherQuestions = page.Questions.Where(x => (x.Input.Type == "ComplexRadio" || x.Input.Type == "ComplexCheckBoxList") && x.Input.Options != null && x.Input.Options.Any(o => o.FurtherQuestions != null && o.FurtherQuestions.Any()));
 
-            //var zz = page.Questions.Where(x =>
-            //    (x.Input.Type == "ComplexRadio" || x.Input.Type == "ComplexCheckBoxList") && x.Input.Options != null);
-
-            //var zz2 = zz.First().Input.Options;
-            //var zz3 = zz2.Any(o => o.FurtherQuestions!=null &&  o.FurtherQuestions.Any());
-
+       
             foreach (var question in questionsWithFutherQuestions)
             {
-                var answerForQuestion = answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
-
-                // Remove FurtherQuestion answers to all other Options as they were not selected and thus should not be stored
-                foreach (var furtherQuestion in question.Input.Options.Where(opt => opt.Value != answerForQuestion?.Value && opt.FurtherQuestions != null).SelectMany(opt => opt.FurtherQuestions))
+                if (question.Input.Type == "ComplexRadio")
                 {
-                    foreach (var answer in answers.Where(a => a.QuestionId == furtherQuestion.QuestionId))
+                    var answerForQuestion = answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
+
+
+                    // Remove FurtherQuestion answers to all other Options as they were not selected and thus should not be stored
+                    foreach (var furtherQuestion in question.Input.Options
+                        .Where(opt => opt.Value != answerForQuestion?.Value && opt.FurtherQuestions != null)
+                        .SelectMany(opt => opt.FurtherQuestions))
                     {
-                        answer.Value = string.Empty;
+                        foreach (var answer in answers.Where(a => a.QuestionId == furtherQuestion.QuestionId))
+                        {
+                            answer.Value = string.Empty;
+                        }
+                    }
+                }
+
+                if (question.Input.Type == "ComplexCheckBoxList")
+                {
+                    var answerForQuestion = answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
+
+                    if (answerForQuestion?.Value == null) continue;
+                    
+                    var splitAnswers = answerForQuestion.Value.Split(",", StringSplitOptions.RemoveEmptyEntries);
+                    // Remove FurtherQuestion answers to all other Options as they were not selected and thus should not be stored
+                    foreach (var option in question.Input.Options
+                        .Where(opt => opt.FurtherQuestions != null))
+                    {
+                        foreach (var furtherQuestion in option.FurtherQuestions)
+                            if (!splitAnswers.Contains(option.Value))
+                            {
+                                foreach (var answer in answers.Where(a => a.QuestionId == furtherQuestion.QuestionId))
+                                {
+                                    answer.Value = string.Empty;
+                                }
+                            }
                     }
                 }
             }
