@@ -834,7 +834,7 @@ namespace SFA.DAS.ApplyService.Data
                        {
                            financialHealthSequence = 2,
                            financialStatusApproved = FinancialReviewStatus.Approved,
-                           financialStatusDeclined = FinancialReviewStatus.Rejected,
+                           financialStatusDeclined = FinancialReviewStatus.Declined,
                            financialStatusExempt = FinancialReviewStatus.Exempt
                        })).ToList();
             }

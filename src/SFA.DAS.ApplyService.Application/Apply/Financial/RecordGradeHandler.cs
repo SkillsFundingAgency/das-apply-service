@@ -42,7 +42,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
                     return FinancialReviewStatus.Exempt;
 
                 default:
-                    return FinancialReviewStatus.Rejected;
+                    return FinancialReviewStatus.Declined;
             }
         }
     }
