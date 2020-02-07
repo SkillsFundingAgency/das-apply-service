@@ -120,9 +120,21 @@ namespace SFA.DAS.ApplyService.Data
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(@"UPDATE Apply
-                                                SET  ApplicationStatus = @ApplicationStatus, ApplyData = @applyData, AssessorReviewStatus = @ReviewStatus, GatewayReviewStatus = @GatewayReviewStatus, UpdatedBy = @submittedBy, UpdatedAt = GETUTCDATE() 
+                                                SET ApplicationStatus = @ApplicationStatus, 
+                                                    ApplyData = @applyData, 
+                                                    AssessorReviewStatus = @ReviewStatus, 
+                                                    GatewayReviewStatus = @GatewayReviewStatus, 
+                                                    FinancialReviewStatus = @FinancialReviewStatus,
+                                                    UpdatedBy = @submittedBy, 
+                                                    UpdatedAt = GETUTCDATE() 
                                                 WHERE  (Apply.ApplicationId = @applicationId)",
-                                                new { applicationId, ApplicationStatus = ApplicationStatus.Submitted, applyData, ReviewStatus = ApplicationReviewStatus.New, GatewayReviewStatus = GatewayReviewStatus.New, submittedBy });
+                                                new { applicationId, 
+                                                      ApplicationStatus = ApplicationStatus.Submitted, 
+                                                      applyData, 
+                                                      ReviewStatus = ApplicationReviewStatus.New, 
+                                                      GatewayReviewStatus = GatewayReviewStatus.New, 
+                                                      FinancialReviewStatus = FinancialReviewStatus.New,
+                                                      submittedBy });
             }
         }
 
@@ -999,23 +1011,16 @@ namespace SFA.DAS.ApplyService.Data
                     
                     var recordsAffected = await connection.ExecuteAsync(@"UPDATE Apply 
                                                                         SET ApplyData = @applyData,
-                                                                        FinancialGrade = @grade
+                                                                        FinancialGrade = @grade,
+                                                                        FinancialReviewStatus = @financialReviewStatus
                                                                         WHERE ApplicationId = @applicationId",
                         new
                         {
                             applicationId,
                             applyData,
-                            grade = financialReviewDetails.SelectedGrade
+                            grade = financialReviewDetails.SelectedGrade,
+                            financialReviewStatus
                         });
-                    if (recordsAffected > 0)
-                    {
-                        await connection.ExecuteAsync("UPDATE Apply SET FinancialReviewStatus = @financialReviewStatus WHERE ApplicationId = @applicationId",
-                            new
-                            {
-                                applicationId,
-                                financialReviewStatus
-                            });
-                    }
                 }
                 catch (Exception exception)
                 {
@@ -1031,14 +1036,14 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"UPDATE Apply SET AssessorReviewStatus = @assessorReviewStatus,
+                await connection.ExecuteAsync(@"UPDATE Apply SET AssessorReviewStatus = @assessorReviewStatusInProgress,
                                                 UpdatedAt = @updatedAt, UpdatedBy = @updatedBy
                                                 WHERE ApplicationId = @applicationId
                                                 AND AssessorReviewStatus IN ( @draftStatus, @newStatus )",
                         new
                         {
                             applicationId,
-                            assessorReviewStatus = AssessorReviewStatus.InProgress,
+                            assessorReviewStatusInProgress = AssessorReviewStatus.InProgress,
                             updatedAt = DateTime.UtcNow,
                             updatedBy = reviewer,
                             draftStatus = AssessorReviewStatus.Draft,
@@ -1053,14 +1058,14 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"UPDATE Apply SET FinancialReviewStatus = @financialReviewStatus,
+                await connection.ExecuteAsync(@"UPDATE Apply SET FinancialReviewStatus = @financialReviewStatusInProgress,
                                                 UpdatedAt = @updatedAt, UpdatedBy = @updatedBy
                                                 WHERE ApplicationId = @applicationId
                                                 AND FinancialReviewStatus IN ( @draftStatus, @newStatus )",
                         new
                         {
                             applicationId,
-                            financialReviewStatus = FinancialReviewStatus.InProgress,
+                            financialReviewStatusInProgress = FinancialReviewStatus.InProgress,
                             updatedAt = DateTime.UtcNow,
                             updatedBy = reviewer,
                             draftStatus = FinancialReviewStatus.Draft,
