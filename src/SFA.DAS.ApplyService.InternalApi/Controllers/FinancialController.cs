@@ -41,7 +41,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return Ok(applications);
         }
 
-        [HttpPost("/Financial/Grade/{applicationId}")]
+        [HttpPost("/Financial/{applicationId}/Grade")]
         public async Task<IActionResult> RecordGrade(Guid applicationId, [FromBody] FinancialReviewDetails financialReviewDetails)
         {
             await _mediator.Send(new RecordGradeRequest(applicationId, financialReviewDetails));
