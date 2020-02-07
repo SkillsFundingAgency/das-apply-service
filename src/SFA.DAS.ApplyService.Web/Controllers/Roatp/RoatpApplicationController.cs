@@ -811,7 +811,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     return RedirectToAction("Feedback", new {applicationId});
                 }
 
-                if ("ReturnToSection".Equals(nextAction, StringComparison.InvariantCultureIgnoreCase) && page.DisplayType==SectionDisplayType.PagesWithSections)
+                if ("ReturnToSection".Equals(nextAction, StringComparison.InvariantCultureIgnoreCase) && (page.DisplayType==SectionDisplayType.PagesWithSections || page.DisplayType =="OtherPagesInPagesWithSections"))
                 {
                     return await Section(applicationId, selectedSequence.SequenceId,selectedSection.SectionId);
                 }
