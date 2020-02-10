@@ -69,6 +69,9 @@
                     @Html.HiddenFor(x => x.GetHelpAction)
 
                     <button type="submit" class="govuk-button">Continue</button>
+                    <p class="govuk-body skipbutton" id="skipbutton">
+                        <a href="/apply-training-provider-tasklist?ApplicationId=@Model.ApplicationId&sequenceId=7&amp;sectionId=3&pageId=@Model.PageId">Return to this question later</a>
+                    </p>
                 </form>
             </div>
         </div>
