@@ -16,7 +16,7 @@
 
 
 <div class="grid-row">
-    <a href="/RoatpManagementHierarchy/ConfirmManagementHierarchy?ApplicationId=@Model.ApplicationId" class="govuk-back-link">Back</a>
+    <a href="@Url.Action("ConfirmManagementHierarchy", "RoatpManagementHierarchy", new {Model.ApplicationId})" class="govuk-back-link">Back</a>
 </div>
 
 @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
