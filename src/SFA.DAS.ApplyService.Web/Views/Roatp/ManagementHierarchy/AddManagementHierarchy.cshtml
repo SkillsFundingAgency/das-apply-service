@@ -58,7 +58,7 @@
 
                     <button type="submit" class="govuk-button">Confirm and continue</button>
                     <p class="govuk-body skipbutton" id="skipbutton">
-                        <a href="/apply-training-provider-tasklist?ApplicationId=@Model.ApplicationId&sequenceId=7&amp;sectionId=3&pageId=@Model.PageId">Return to this question later</a>
+                        <a href="@Url.Action("Tasklist", "RoatpApplication", new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = Model.PageId})">Return to this question later</a>
                     </p>
                 </form>
             </div>

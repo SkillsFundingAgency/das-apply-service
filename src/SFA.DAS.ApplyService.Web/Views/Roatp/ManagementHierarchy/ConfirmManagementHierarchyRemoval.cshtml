@@ -94,7 +94,7 @@
                     </div>
                     <input type="submit" class="govuk-button" value="Confirm and continue" />
                     <p class="govuk-body skipbutton" id="skipbutton">
-                        <a href="/RoatpManagementHierarchy/ConfirmManagementHierarchy?ApplicationId=@Model.ApplicationId">Return to this question later</a>
+                        <a href="@Url.Action("ConfirmManagementHierarchy", "RoatpManagementHierarchy", new {Model.ApplicationId})">Return to this question later</a>
                     </p>
                 </form>
             </div>
