@@ -149,7 +149,6 @@ namespace SFA.DAS.ApplyService.Data
 
                 using (var connection = new SqlConnection(_config.SqlConnectionString))
                 {
-                    // todo: CHECK updated SQL
                     return await connection.QuerySingleAsync<Guid>(
                         @"INSERT INTO ApplySnapshots (ApplicationId, SnapshotApplicationId, SnapshotDate, OrganisationId, ApplicationStatus, ApplyData, GatewayReviewStatus, AssessorReviewStatus, FinancialReviewStatus, FinancialGrade)
                           OUTPUT INSERTED.[NewApplicationId] 
