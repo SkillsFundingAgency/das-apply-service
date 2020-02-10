@@ -1,15 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NPOI.SS.Formula.Functions;
-using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
@@ -23,7 +20,6 @@ using SFA.DAS.ApplyService.Web.ViewModels;
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
     using Configuration;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Options;
     using MoreLinq;
     using SFA.DAS.ApplyService.EmailService;
@@ -927,6 +923,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                     if (answerForQuestion?.Value == null) continue;
                     
+                    // This different funcationality required as the checkbox may and will return a comma delimited list of responses
                     var splitAnswers = answerForQuestion.Value.Split(",", StringSplitOptions.RemoveEmptyEntries);
                     // Remove FurtherQuestion answers to all other Options as they were not selected and thus should not be stored
                     foreach (var option in question.Input.Options
