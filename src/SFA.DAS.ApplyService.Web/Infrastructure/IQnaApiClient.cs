@@ -42,7 +42,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         Task<SkipPageResponse> SkipPage(Guid applicationId, Guid sectionId, string pageId);
         Task<SkipPageResponse> SkipPageBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId);
-
         Task<HttpResponseMessage> DownloadFile(Guid applicationId, Guid sectionId, string pageId, string questionId, string filename);
         Task DeleteFile(Guid applicationId, Guid sectionId, string pageId, string questionId, string filename);
        
