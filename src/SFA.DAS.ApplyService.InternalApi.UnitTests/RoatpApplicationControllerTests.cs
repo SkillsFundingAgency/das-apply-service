@@ -38,7 +38,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             {
                 cfg.AddProfile<RoatpProfile>();
             });
-            
+
             Mapper.AssertConfigurationIsValid();
         }
 

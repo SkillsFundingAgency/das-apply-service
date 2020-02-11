@@ -15,7 +15,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
         public string Title { get { return "Your organisation cannot apply to join the RoATP as an employer provider"; }  set { } }
 
-        public Guid ApplicationId { get; }
+        public Guid ApplicationId { get; set; }
 
         public string SequenceId { get; set; }
         public int SectionId { get; set; }
