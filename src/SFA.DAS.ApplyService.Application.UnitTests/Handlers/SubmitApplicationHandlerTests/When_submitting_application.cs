@@ -35,7 +35,21 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.SubmitApplicationH
                 SubmittingContactId = Guid.NewGuid(),
                 ApplyData = new ApplyData
                 {
-                    ApplyDetails = new ApplyDetails()
+                    ApplyDetails = new ApplyDetails(),
+                    Sequences = new List<ApplySequence>
+                    {
+                        new ApplySequence
+                        {
+                            SequenceNo = 1,
+                            Sections = new List<ApplySection>
+                            {
+                                new ApplySection
+                                {
+                                    SectionNo = 1
+                                }
+                            }
+                        }
+                    }
                 }
             };
 
