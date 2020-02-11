@@ -1,7 +1,7 @@
 ﻿
 using System.Collections.Generic;
 
-namespace SFA.DAS.ApplyService.InternalApi.Models.Roatp
+namespace SFA.DAS.ApplyService.Domain.Roatp
 {
     public class RoatpSequences
     {

@@ -56,7 +56,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         //public string ReviewedBy { get; set; }
         //public DateTime? EvaluatedDate { get; set; }
         //public string EvaluatedBy { get; set; }
-        //public bool NotRequired { get; set; }
+        public bool NotRequired { get; set; }
         //public bool? RequestedFeedbackAnswered { get; set; }
     }
 
@@ -111,6 +111,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string InProgress = "In Progress";
         public const string Approved = "Approved";
         public const string Declined = "Declined";
+        public const string NotRequired = "Not Required";
     }
 
     public static class FinancialReviewStatus
@@ -123,5 +124,12 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Graded = "Graded";
         public const string Approved = "Approved";
         public const string Declined = "Declined";
+    }
+
+    public static class SequenceReviewStatus
+    {
+        public const string New = "";
+        public const string InProgress = "In Progress";
+        public const string Evaluated = "Evaluated";
     }
 }

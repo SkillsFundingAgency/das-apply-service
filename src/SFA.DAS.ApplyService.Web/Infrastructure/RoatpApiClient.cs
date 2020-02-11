@@ -8,7 +8,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     using Domain.Roatp;
     using Microsoft.Extensions.Logging;
     using SFA.DAS.ApplyService.Configuration;
-    using SFA.DAS.ApplyService.Domain.Entities;
 
     public class RoatpApiClient : IRoatpApiClient
     {
@@ -38,5 +37,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await (await _httpClient.GetAsync($"/ukprn-on-register?ukprn={ukprn}")).Content
                 .ReadAsAsync<OrganisationRegisterStatus>();
         }
+
     }
 }
