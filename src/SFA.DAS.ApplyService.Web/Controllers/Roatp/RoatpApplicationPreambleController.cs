@@ -65,8 +65,10 @@
         }
 
         [Route("terms-conditions-making-application")]
-        public IActionResult TermsAndConditions()
+        public IActionResult TermsAndConditions(SelectApplicationRouteViewModel routeViewModel)
         {
+            var routeId = routeViewModel.ApplicationRouteId;
+
             return View("~/Views/Roatp/TermsAndConditions.cshtml", new ConditionsOfAcceptanceViewModel());
         }
 
