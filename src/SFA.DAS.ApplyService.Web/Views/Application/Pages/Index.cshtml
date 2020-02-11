@@ -59,16 +59,25 @@
                         </span>
                     }
 
-                    @if (hasModelTitle)
+                    @if (Model.DisplayType == "PagesWithSections" || Model.DisplayType=="OtherPagesInPagesWithSections")
                     {
                         <h1 class="govuk-heading-l">
-                            @Html.Raw(Model.Title)
+                            @Html.Raw(Model.BodyText)
                         </h1>
                     }
-
-                    @if (hasBodyText)
+                    else
                     {
-                        @Html.Raw(Model.BodyText)
+                        if (hasModelTitle)
+                        {
+                            <h1 class="govuk-heading-l">
+                                @Html.Raw(Model.Title)
+                            </h1>
+                        }
+
+                        @if (hasBodyText)
+                        {
+                            @Html.Raw(Model.BodyText)
+                        }
                     }
                 }
 
@@ -95,35 +104,56 @@
                         {
                             <div class="govuk-form-group @(!ViewData.ModelState.IsValid ? "govuk-form-group--error" : "")">
                                 <fieldset class="govuk-fieldset">
-                                    @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio" || question.Type == "CheckboxList")
+                                    @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio" || question.Type == "CheckboxList" || question.Type=="ComplexCheckBoxList")
                                     {
-                                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                                            @if (Model.PageContext != null)
-                                            {
-                                                <span class="govuk-caption-l">
-                                                    @Html.Raw(Model.PageContext)
-                                                </span>
-                                            }
-                                            @if (hasSectionTitle)
-                                            {
-                                                <span class="govuk-caption-l">@Model.SectionTitle</span>
-                                            }
+                                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                                        @if (Model.PageContext != null)
+                                        {
+                                            <span class="govuk-caption-l">
+                                                @Html.Raw(Model.PageContext)
+                                            </span>
+                                        }
+                                        @if (hasSectionTitle)
+                                        {
+                                            <span class="govuk-caption-l">@Model.SectionTitle</span>
+                                        }
+
+
+                                        @if (Model.DisplayType == "PagesWithSections" || Model.DisplayType == "OtherPagesInPagesWithSections")
+                                        {
+                                            <h1 class="govuk-heading-l">
+                                                @Html.Raw(Model.BodyText)
+                                            </h1>
+                                           
+                                        }
+                                        else
+                                        {
                                             <h1 class="govuk-fieldset__heading">
                                                 @Html.Raw(question.Label)
                                             </h1>
-                                        </legend>
-                                        if (!string.IsNullOrWhiteSpace(@Model.BodyText))
+                                        }
+                                    </legend>
+                                        if (!string.IsNullOrWhiteSpace(@Model.BodyText) && Model.DisplayType != "PagesWithSections" && Model.DisplayType != "OtherPagesInPagesWithSections")
                                         {
                                             @Html.Raw(Model.BodyText)
                                         }
-                                    }
-                                    else
-                                    {
+                                        else
+                                            {
+                                                @if (Model.DisplayType == "PagesWithSections" || Model.DisplayType == "OtherPagesInPagesWithSections")
+                                                {
+                                                    <label class="govuk-label">
+                                                        @Html.Raw(question.Label)
+                                                    </label>
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
                                         if (!string.IsNullOrWhiteSpace(@Model.BodyText))
                                         {
-                                            <div>
-                                                @Html.Raw(Model.BodyText)
-                                            </div>
+                                        <div>
+                                            @Html.Raw(Model.BodyText)
+                                        </div>
                                         }
                                         @if (Model.PageContext != null)
                                         {
@@ -140,31 +170,31 @@
                                                 @Html.Raw(question.Label)
                                             </label>
                                         </h2>
-                                    }
+                                        }
 
-                                    @if (question.QuestionBodyText != null)
-                                    {
-                                        @Html.Raw(question.QuestionBodyText)
-                                    }
+                                        @if (question.QuestionBodyText != null)
+                                        {
+                                            @Html.Raw(question.QuestionBodyText)
+                                        }
 
-                                    @if (question.Hint != null)
-                                    {
-                                        <span class="govuk-hint">
-                                            @Html.Raw(question.Hint)
-                                        </span>
-                                    }
+                                        @if (question.Hint != null)
+                                        {
+                                            <span class="govuk-hint">
+                                                @Html.Raw(question.Hint)
+                                            </span>
+                                        }
 
-                                    @if (question.Type == "ComplexRadio" && (question.ErrorMessages == null || question.ErrorMessages.Count == 0))
-                                    {
-                                        question.ErrorMessages = Model.ErrorMessages;
-                                    }
-                                    @{
-                                        var questionType = question.Type.Replace("DataFed_", "");
+                                        @if ((question.Type == "ComplexRadio" || question.Type == "ComplexCheckBoxList") && (question.ErrorMessages == null || question.ErrorMessages.Count == 0))
+                                        {
+                                            question.ErrorMessages = Model.ErrorMessages;
+                                        }
+                                        @{
+                                            var questionType = question.Type.Replace("DataFed_", "");
 
-                                    }
+                                        }
 
-                                    @(await Html.PartialAsync($"~/Views/QuestionPartials/_{questionType}.cshtml", question))
-                                </fieldset>
+                                        @(await Html.PartialAsync($"~/Views/QuestionPartials/_{questionType}.cshtml", question))
+</fieldset>
                             </div>
                         }
                     }
@@ -199,7 +229,7 @@
                                     </span>
                                 }
 
-                                @if (question.Type == "ComplexRadio" && (question.ErrorMessages == null || question.ErrorMessages.Count == 0))
+                                @if ((question.Type == "ComplexRadio" || question.Type == "ComplexCheckBoxList") && (question.ErrorMessages == null || question.ErrorMessages.Count == 0))
                                 {
                                     question.ErrorMessages = Model.ErrorMessages;
                                 }
@@ -244,7 +274,7 @@
                             if (first && Model.SectionId != 1)
                             {
                                 <p class="govuk-body skipbutton" id="skipbutton">
-                                    <a href="@Url.Action(link.Action, link.Controller, new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pageId})">@link.Caption</a>
+                                    <a class="govuk-link" href="@Url.Action(link.Action, link.Controller, new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pageId})">@link.Caption</a>
                                 </p>
                             }
                             else
@@ -253,7 +283,7 @@
 
 
                                 <p class="govuk-body govuk-!-margin-bottom-2">
-                                    <a href="@Url.Action(link.Action, link.Controller, new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pageId})">@link.Caption</a>
+                                    <a class="govuk-link" href="@Url.Action(link.Action, link.Controller, new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pageId})">@link.Caption</a>
                                 </p>
                             }
                         }

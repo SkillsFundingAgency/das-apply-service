@@ -1,6 +1,6 @@
 # ![crest](https://assets.publishing.service.gov.uk/government/assets/crests/org_crest_27px-916806dcf065e7273830577de490d5c7c42f36ddec83e907efe62086785f24fb.png) Digital Apprenticeships Service
 
-##  EPAO Onboarding and Certification - Apply Service
+##  RoATP Apply Service
 
 ![Build Status](https://sfa-gov-uk.visualstudio.com/_apis/public/build/definitions/c39e0c0b-7aff-4606-b160-3566f3bbce23/831/badge)
 
@@ -25,7 +25,7 @@
 
 ##### Code
 
-- Grab the das-assessor-service configuration json file from [das-employer-config](https://github.com/SkillsFundingAgency/das-employer-config/blob/master/das-apply-service/SFA.DAS.ApplyService.json)
+- Grab the das-apply-service configuration json file from [das-employer-config](https://github.com/SkillsFundingAgency/das-employer-config/blob/master/das-apply-service/SFA.DAS.ApplyService.json)
 - Create a Configuration table in your (Development) local Azure Storage account.
 - Add a row to the Configuration table with fields: PartitionKey: LOCAL, RowKey: SFA.DAS.ApplyService_1.0, Data: {The contents of the local config json file}.
 - Alter the SqlConnectionString value in the json to point to your database.
