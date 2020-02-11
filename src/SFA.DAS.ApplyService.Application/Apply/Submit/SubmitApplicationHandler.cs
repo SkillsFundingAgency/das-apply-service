@@ -44,6 +44,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
                     
                     application.ApplyData.ApplyDetails.ApplicationSubmittedOn = DateTime.UtcNow;
                     application.ApplyData.ApplyDetails.ApplicationSubmittedBy = submittingContact.Id;
+
+                    foreach(var sequence in application.ApplyData.Sequences)
+                    {
+                        if (!sequence.NotRequired)
+                        {
+                            sequence.Status = ApplicationStatus.Submitted;
+                        }
+                    }
                     
                     await _applyRepository.SubmitApplication(application.ApplicationId, application.ApplyData, submittingContact.Id);
 

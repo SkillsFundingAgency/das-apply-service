@@ -1089,5 +1089,97 @@ namespace SFA.DAS.ApplyService.Data
 
             return await Task.FromResult(true);
         }
+
+        public async Task<bool> StartAssessorSectionReview(Guid applicationId, int sequenceId, int sectionId, string reviewer)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var applyDataResults = await connection.QueryAsync<ApplyData>(@"SELECT ApplyData FROM Apply WHERE ApplicationId = @applicationId",
+                    new { applicationId });
+
+                var applyData = applyDataResults.FirstOrDefault();
+                if (applyData == null)
+                {
+                    return await Task.FromResult(false);
+                }
+
+                var sequenceUnderReview = applyData.Sequences.FirstOrDefault(x => x.SequenceNo == sequenceId);
+                if (sequenceUnderReview == null)
+                {
+                    return await Task.FromResult(false);
+                }
+                var sectionUnderReview = sequenceUnderReview.Sections.FirstOrDefault(x => x.SectionNo == sectionId);
+                if (sectionUnderReview == null)
+                {
+                    return await Task.FromResult(false);
+                }
+                if (String.IsNullOrWhiteSpace(sectionUnderReview.Status) 
+                    || (sectionUnderReview.Status != AssessorReviewStatus.Approved && sectionUnderReview.Status != AssessorReviewStatus.Declined))
+                {
+                    sectionUnderReview.Status = AssessorReviewStatus.InProgress;
+
+                    await connection.ExecuteAsync(@"UPDATE Apply SET ApplyData = @applyData,
+                                                UpdatedAt = @updatedAt, UpdatedBy = @updatedBy
+                                                WHERE ApplicationId = @applicationId",
+                            new
+                            {
+                                applicationId,
+                                updatedAt = DateTime.UtcNow,
+                                updatedBy = reviewer,
+                                applyData
+                            });
+                }                
+            }
+
+            return await Task.FromResult(true);
+        }
+
+        public async Task<bool> AssessorEvaluateSection(Guid applicationId, int sequenceId, int sectionId, bool sectionCompleted, string reviewer)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var applyDataResults = await connection.QueryAsync<ApplyData>(@"SELECT ApplyData FROM Apply WHERE ApplicationId = @applicationId",
+                    new { applicationId });
+
+                var applyData = applyDataResults.FirstOrDefault();
+                if (applyData == null)
+                {
+                    return await Task.FromResult(false);
+                }
+
+                var sequenceUnderReview = applyData.Sequences.FirstOrDefault(x => x.SequenceNo == sequenceId);
+                if (sequenceUnderReview == null)
+                {
+                    return await Task.FromResult(false);
+                }
+                var sectionUnderReview = sequenceUnderReview.Sections.FirstOrDefault(x => x.SectionNo == sectionId);
+                if (sectionUnderReview == null)
+                {
+                    return await Task.FromResult(false);
+                }
+
+                var status = AssessorReviewStatus.Approved;
+                if (!sectionCompleted)
+                {
+                    status = AssessorReviewStatus.Declined;
+                }
+                if (!String.IsNullOrWhiteSpace(sectionUnderReview.Status))
+                {
+                    sectionUnderReview.Status = status;
+
+                    await connection.ExecuteAsync(@"UPDATE Apply SET ApplyData = @applyData,
+                                                UpdatedAt = @updatedAt, UpdatedBy = @updatedBy
+                                                WHERE ApplicationId = @applicationId",
+                            new
+                            {
+                                applicationId,
+                                updatedAt = DateTime.UtcNow,
+                                updatedBy = reviewer,
+                                applyData
+                            });
+                }
+            }
+            return await Task.FromResult(true);
+        }
     }
 }

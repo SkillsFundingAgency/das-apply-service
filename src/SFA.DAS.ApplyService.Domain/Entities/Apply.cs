@@ -38,7 +38,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public Guid SequenceId { get; set; }
         public int SequenceNo { get; set; }
         public List<ApplySection> Sections { get; set; }
-        //public string Status { get; set; }
+        public string Status { get; set; }
         public bool IsActive { get; set; }
         public bool NotRequired { get; set; }
         //public bool Sequential { get; set; }
@@ -51,7 +51,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     {
         public Guid SectionId { get; set; }
         public int SectionNo { get; set; }
-        //public string Status { get; set; }
+        public string Status { get; set; }
         //public DateTime? ReviewStartDate { get; set; }
         //public string ReviewedBy { get; set; }
         //public DateTime? EvaluatedDate { get; set; }

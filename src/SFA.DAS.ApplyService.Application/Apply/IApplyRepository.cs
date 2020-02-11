@@ -40,7 +40,9 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<bool> StartAssessorReview(Guid applicationId, string reviewer);
         Task<bool> StartFinancialReview(Guid applicationId, string reviewer);
 
+        Task<bool> StartAssessorSectionReview(Guid applicationId, int sequenceId, int sectionId, string reviewer);
 
+        Task<bool> AssessorEvaluateSection(Guid applicationId, int sequenceId, int sectionId, bool sectionCompleted, string reviewer);
 
         // NOTE: This is old stuff or things which are not migrated over yet
         Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId,  int sectionId, Guid? userId);
