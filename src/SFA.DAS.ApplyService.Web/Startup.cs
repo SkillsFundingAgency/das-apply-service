@@ -172,6 +172,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<ICompaniesHouseApiClient, CompaniesHouseApiClient>();
             services.AddTransient<ICharityCommissionApiClient, CharityCommissionApiClient>();
             services.AddTransient<IProcessPageFlowService, ProcessPageFlowService>();
+            services.AddTransient<IPagesWithSectionsFlowService, PagesWithSectionsFlowService>();
             services.AddTransient<IQuestionPropertyTokeniser, QuestionPropertyTokeniser>();
             services.AddTransient<IPageNavigationTrackingService, PageNavigationTrackingService>();
             services.AddTransient<ICustomValidatorFactory, CustomValidatorFactory>();
