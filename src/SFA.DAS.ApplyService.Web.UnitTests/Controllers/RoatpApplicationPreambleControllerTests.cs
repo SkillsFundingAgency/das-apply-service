@@ -1081,7 +1081,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void Provider_routed_to_task_list_if_levy_paying_employer()
+        public void Provider_routed_to_terms_and_conditions_if_levy_paying_employer()
         {
             _sessionService.Setup(x => x.Get<ApplicationDetails>(It.IsAny<string>())).Returns(_applicationDetails);
 
@@ -1110,10 +1110,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var result = _controller.SubmitLevyStatus(model).GetAwaiter().GetResult();
 
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("Applications");
-            redirectResult.ControllerName.Should().Be("RoatpApplication");
+            var viewResult = result as ViewResult;
+            viewResult.ViewName.Should().NotBeNull();
+            viewResult.ViewName.Should().Contain("TermsAndConditions");
         }
 
         [Test]
@@ -1607,7 +1606,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
         [TestCase(ApplicationRoute.MainProviderApplicationRoute)]
         [TestCase(ApplicationRoute.SupportingProviderApplicationRoute)]
-        public void Provider_changing_route_to_main_or_supporting_is_directed_to_task_list_with_route_changed(int chosenApplicationRouteId)
+        public void Provider_changing_route_to_main_or_supporting_is_directed_to_terms_and_conditions_with_route_changed(int chosenApplicationRouteId)
         {
             var model = new SelectApplicationRouteViewModel
             {
@@ -1630,8 +1629,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("TaskList");
-            redirectResult.ControllerName.Should().Be("RoatpApplication");
+            redirectResult.ActionName.Should().Be("TermsAndConditions");
+            redirectResult.ControllerName.Should().BeNull();
 
             _qnaApiClient.VerifyAll();
         }
@@ -1681,7 +1680,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void Provider_changing_route_to_employer_is_directed_to_task_list_with_route_changed_if_levy_paying()
+        public void Provider_changing_route_to_employer_is_directed_to_terms_and_conditions_with_route_changed_if_levy_paying()
         {
             var model = new EmployerLevyStatusViewModel
             {
@@ -1706,8 +1705,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("TaskList");
-            redirectResult.ControllerName.Should().Be("RoatpApplication");
+            redirectResult.ActionName.Should().Be("TermsAndConditions");
+            redirectResult.ControllerName.Should().BeNull();
 
             _qnaApiClient.VerifyAll();
         }
