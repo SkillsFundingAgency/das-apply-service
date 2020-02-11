@@ -79,6 +79,7 @@
     <Build Include="Tables\ApplicationWorkflow.sql" />
     <Build Include="Sequences\RoatpAppReferenceSequence.sql" />
     <Build Include="Tables\Apply.sql" />
+    <Build Include="Tables\ApplySnapshots.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
