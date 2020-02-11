@@ -47,6 +47,20 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
             }
             sectionUnderReview.Status = status;
 
+            var evaluatedSections = sequenceUnderReview.Sections.Count(x => x.Status == AssessorReviewStatus.Approved || x.Status == AssessorReviewStatus.Declined);
+            var sequenceSections = sequenceUnderReview.Sections.Count(x => !x.NotRequired);
+
+            var sequenceStatus = SequenceReviewStatus.New;
+            if (evaluatedSections == sequenceSections && evaluatedSections > 0)
+            {
+                sequenceStatus = SequenceReviewStatus.Evaluated;
+            }
+            else if (evaluatedSections < sequenceSections)
+            {
+                sequenceStatus = SequenceReviewStatus.InProgress;
+            }
+            sequenceUnderReview.Status = sequenceStatus;
+
             _logger.LogInformation($"Assessor evaluation of {sectionUnderReview.Status} for application {request.ApplicationId} sequence {request.SequenceId} section {request.SectionId}");
 
             return await _applyRepository.UpdateApplyData(request.ApplicationId, applyData, request.Reviewer);

@@ -1159,10 +1159,21 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var providerRoute = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.ProviderRoute);
 
             var application = await _apiClient.GetApplication(model.ApplicationId);
-            foreach(var sequence in application.ApplyData.Sequences)
+
+            var roatpSequences = await _apiClient.GetRoatpSequences();
+
+            foreach (var sequence in application.ApplyData.Sequences)
             {
                 var applicationSequence = await _qnaApiClient.GetSequenceBySequenceNo(model.ApplicationId, sequence.SequenceNo);
                 var sections = await _qnaApiClient.GetSections(model.ApplicationId, applicationSequence.Id);
+                foreach(var section in sections)
+                {
+                    var applySection = sequence.Sections.FirstOrDefault(x => x.SectionNo == section.SectionId);
+                    if (applySection != null)
+                    {
+                        applySection.NotRequired = await SectionNotRequired(applicationSequence, _notRequiredOverrides, section.SectionId, roatpSequences);
+                    }
+                }
                 
                 applicationSequence.Sections = sections.ToList();
                 sequence.NotRequired = SequenceNotRequired(applicationSequence, _notRequiredOverrides);
@@ -1338,6 +1349,28 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return (sectionCount == notRequiredCount);
+        }
+
+        private async Task<bool> SectionNotRequired(ApplicationSequence sequence, List<NotRequiredOverrideConfiguration> notRequiredOverrides, 
+                                                    int sectionId, IEnumerable<RoatpSequences> roatpSequences)
+        {
+            var sequences = new List<ApplicationSequence>
+            {
+                sequence
+            };
+
+            if (RoatpTaskListWorkflowService.SectionStatus(sequences, notRequiredOverrides, sequence.SequenceId, sectionId) == TaskListSectionStatus.NotRequired)
+            {
+                return true;
+            }
+
+            var currentSequence = roatpSequences.FirstOrDefault(x => x.Id == sequence.SequenceId);
+            if (currentSequence?.ExcludeSections != null && currentSequence.ExcludeSections.Contains(sectionId.ToString()))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
