@@ -13,12 +13,14 @@ namespace SFA.DAS.ApplyService.Web.Configuration
             get
             {
                 var conditionsMet = true;
-                foreach(var condition in Conditions)
-                {
-                    if (condition.Value != condition.MustEqual)
+                if (Conditions != null) {
+                    foreach (var condition in Conditions)
                     {
-                        conditionsMet = false;
-                        break;
+                        if (condition.Value != condition.MustEqual)
+                        {
+                            conditionsMet = false;
+                            break;
+                        }
                     }
                 }
                 return conditionsMet;
