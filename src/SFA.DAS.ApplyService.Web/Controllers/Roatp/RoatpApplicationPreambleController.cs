@@ -66,10 +66,11 @@
 
         [Route("terms-conditions-making-application")]
         public IActionResult TermsAndConditions(SelectApplicationRouteViewModel routeViewModel)
-        {
-            var routeId = routeViewModel.ApplicationRouteId;
+        { 
+            if (routeViewModel?.ApplicationRouteId == ApplicationRoute.SupportingProviderApplicationRoute)
+                return View("~/Views/Roatp/TermsAndConditionsSupporting.cshtml", new ConditionsOfAcceptanceViewModel { ApplicationId = routeViewModel.ApplicationId, ApplicationRouteId = routeViewModel.ApplicationRouteId });
 
-            return View("~/Views/Roatp/TermsAndConditions.cshtml", new ConditionsOfAcceptanceViewModel());
+            return View("~/Views/Roatp/TermsAndConditions.cshtml", new ConditionsOfAcceptanceViewModel {ApplicationId = routeViewModel.ApplicationId, ApplicationRouteId = routeViewModel.ApplicationRouteId});
         }
 
         [HttpPost]
@@ -92,10 +93,17 @@
 
             if (model.ConditionsAccepted != "Y")
             {
-                return RedirectToAction("TermsAndConditionsNotAgreed", "RoatpShutterPages");
+                return RedirectToAction("TermsAndConditionsNotAgreed", "RoatpShutterPages", model);
             }
 
-            return RedirectToAction("EnterApplicationUkprn");
+            if (model.ApplicationId == null || model.ApplicationId == Guid.Empty)
+            {
+                return await StartApplication(new SelectApplicationRouteViewModel
+                    {ApplicationRouteId = model.ApplicationRouteId, ApplicationId = model.ApplicationId});
+
+            }
+
+            return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId });
         }
         
         [Route("enter-uk-provider-reference-number")]
@@ -279,7 +287,7 @@
 
                 if (selectApplicationRouteModel.ApplicationId == null || selectApplicationRouteModel.ApplicationId == Guid.Empty)
                 {
-                    return await StartRoatpApplication(selectApplicationRouteModel);
+                    return TermsAndConditions(new SelectApplicationRouteViewModel {ApplicationRouteId = model.ApplicationRouteId});
                 }
                 else
                 {
@@ -557,7 +565,7 @@
                 var result = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, section.Id, RoatpWorkflowPageIds.ProviderRoute, providerRouteAnswer);
             }
 
-            return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId });
+            return RedirectToAction("TermsAndConditions", new { applicationId = model.ApplicationId, applicationRouteId = model.ApplicationRouteId });
         }
 
         [Route("already-on-roatp")]
