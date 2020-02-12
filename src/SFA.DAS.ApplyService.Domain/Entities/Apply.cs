@@ -8,7 +8,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public Guid ApplicationId { get; set; }
         public Guid OrganisationId { get; set; }
         public string ApplicationStatus { get; set; }
-        public string ReviewStatus { get; set; }
+        public string AssessorReviewStatus { get; set; }
         public ApplyData ApplyData { get; set; }
     }
 
