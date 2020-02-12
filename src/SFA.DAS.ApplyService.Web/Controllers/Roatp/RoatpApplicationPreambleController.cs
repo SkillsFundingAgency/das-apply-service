@@ -65,8 +65,26 @@
         }
 
         [Route("terms-conditions-making-application")]
-        public IActionResult TermsAndConditions(SelectApplicationRouteViewModel routeViewModel)
-        { 
+        public async Task<IActionResult> TermsAndConditions(SelectApplicationRouteViewModel routeViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                var model = new SelectApplicationRouteViewModel();
+                model.ApplicationRoutes = await GetApplicationRoutesForOrganisation();
+                model.ErrorMessages = new List<ValidationErrorDetail>();
+                var modelErrors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var modelError in modelErrors)
+                {
+                    model.ErrorMessages.Add(new ValidationErrorDetail
+                    {
+                        Field = "ApplicationRouteId",
+                        ErrorMessage = modelError.ErrorMessage
+                    });
+                }
+
+                return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
+            }
+
             if (routeViewModel?.ApplicationRouteId == ApplicationRoute.SupportingProviderApplicationRoute)
                 return View("~/Views/Roatp/TermsAndConditionsSupporting.cshtml", new ConditionsOfAcceptanceViewModel { ApplicationId = routeViewModel.ApplicationId, ApplicationRouteId = routeViewModel.ApplicationRouteId });
 
@@ -287,7 +305,7 @@
 
                 if (selectApplicationRouteModel.ApplicationId == null || selectApplicationRouteModel.ApplicationId == Guid.Empty)
                 {
-                    return TermsAndConditions(new SelectApplicationRouteViewModel {ApplicationRouteId = model.ApplicationRouteId});
+                    return await TermsAndConditions(new SelectApplicationRouteViewModel {ApplicationRouteId = model.ApplicationRouteId});
                 }
                 else
                 {
