@@ -50,7 +50,7 @@
 
                 @foreach (var trustee in Model.TrusteeDatesOfBirth)
                 {
-                    <p class="govuk-body">@Html.Raw(trustee.Name)</p>
+                    <p class="govuk-body">@(trustee.Name)</p>
 
                     <span class="govuk-hint" id="dob-hint">
                         For example, 3 1980
