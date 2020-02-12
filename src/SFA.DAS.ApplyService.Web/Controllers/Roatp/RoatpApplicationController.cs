@@ -139,7 +139,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 ["OrganisationReferenceId"] = applicationDetails.UKPRN.ToString(),
                 ["OrganisationName"] = applicationDetails.UkrlpLookupDetails.ProviderName,
-                ["Apply-ProviderRoute"] = providerRoute.ToString()
+                ["ApplyProviderRoute"] = providerRoute.ToString()
             };
 
             var startApplicationJson = JsonConvert.SerializeObject(startApplicationData);
