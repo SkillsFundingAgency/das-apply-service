@@ -33,16 +33,6 @@ IF OBJECT_ID('dbo.Entities', 'U') IS NOT NULL
 
 GO 
 
-IF NOT EXISTS (
-  SELECT
-    *
-  FROM
-    INFORMATION_SCHEMA.COLUMNS
-  WHERE
-    TABLE_NAME = 'Apply' AND COLUMN_NAME = 'AssessorReviewStatus')
-BEGIN
-    DELETE FROM dbo.Apply
-END
 
 IF (EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo'  AND  TABLE_NAME = 'ApplicationWorkflow'))
     DROP TABLE ApplicationWorkflow;
