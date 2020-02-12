@@ -42,7 +42,7 @@
                     <tr class="govuk-table__row">
                         @foreach (var column in Model.ManagementHierarchyData.DataRows[index].Columns.Take(numberOfTitles))
                         {
-                            <td class="govuk-table__cell">@Html.Raw(column)</td>
+                            <td class="govuk-table__cell">@column</td>
                         }
                         <td class="govuk-table__cell"><a href="@Url.Action("EditManagementHierarchy", "RoatpManagementHierarchy", new { Model.ApplicationId, index })">Change</a></td>
                         <td class="govuk-table__cell"><a href="@Url.Action("RemoveManagementHierarchy", "RoatpManagementHierarchy", new { Model.ApplicationId, index })">Remove</a></td>

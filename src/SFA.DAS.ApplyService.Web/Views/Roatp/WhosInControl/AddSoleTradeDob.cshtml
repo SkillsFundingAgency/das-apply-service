@@ -39,7 +39,7 @@
         <div class="govuk-grid-column-two-thirds">
 
             <span class="govuk-caption-l">@Model.SectionTitle</span>
-            <h1 class="govuk-heading-l">What is @Html.Raw(Model.SoleTraderName)'s date of birth?</h1>
+            <h1 class="govuk-heading-l">What is @(Model.SoleTraderName)'s date of birth?</h1>
 
             <form method="post" asp-action="SoleTradeDobConfirmed" novalidate enctype="multipart/form-data">
 

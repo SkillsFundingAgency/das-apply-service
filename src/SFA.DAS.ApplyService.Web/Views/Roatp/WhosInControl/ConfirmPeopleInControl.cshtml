@@ -49,7 +49,7 @@
                     <tr class="govuk-table__row">
                         @foreach (var column in Model.PeopleInControlData.DataRows[index].Columns)
                         {
-                            <td class="govuk-table__cell">@Html.Raw(column)</td>
+                            <td class="govuk-table__cell">@column</td>
                         }
                         <td class="govuk-table__cell"><a href="@Url.Action("EditPeopleInControl", "RoatpWhosInControlApplication", new { Model.ApplicationId, index })">Change</a></td>
                         <td class="govuk-table__cell"><a href="@Url.Action("RemovePeopleInControl", "RoatpWhosInControlApplication", new { Model.ApplicationId, index })">Remove</a></td>
