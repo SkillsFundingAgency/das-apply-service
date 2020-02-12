@@ -489,16 +489,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             var model = new ConfirmPartnersViewModel { ApplicationId = applicationId };
 
-            var partnerType = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.PartnershipType);
-            if (partnerType != null && partnerType.Value != null && partnerType.Value == ConfirmPartnershipTypeViewModel.PartnershipTypeIndividual)
-            {
-                model.BackAction = "AddPartnerIndividual";
-            }
-            else
-            {
-                model.BackAction = "AddPartnerOrganisation";
-            }
-
+            model.BackAction = "AddPartner";            
             model.PartnerData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.AddPartners);
 
             if (model.PartnerData == null || model.PartnerData.DataRows == null || model.PartnerData.DataRows.Count == 0)
