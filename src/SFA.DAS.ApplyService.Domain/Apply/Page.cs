@@ -1,5 +1,4 @@
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -27,6 +26,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
 
         public PageDetails Details { get; set; }
 
+        public string StatusText { get; set; }
         public string DisplayType { get; set; }
         public bool IsQuestionAnswered(string questionId)
         {

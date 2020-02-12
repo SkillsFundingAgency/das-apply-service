@@ -91,7 +91,7 @@
 
             @if (Model.PageOfAnswers.Any())
             {
-                @foreach (var answerPage in Model.PageOfAnswers)
+                @foreach (var answerPage in Model.PageOfAnswers.Where(poa => poa.Answers.Any()))
                 {
                     <dl class="govuk-summary-list">
                         @foreach (var answer in answerPage.Answers)
@@ -136,7 +136,7 @@
                     {
                         <div class="govuk-form-group @(!ViewData.ModelState.IsValid ? "govuk-form-group--error" : "")">
                             <fieldset class="govuk-fieldset">
-                                @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio" || question.Type == "CheckboxList")
+                                @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio" || question.Type == "CheckboxList" || question.Type == "ComplexCheckBoxList")
                                 {
                                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
                                         @if (Model.PageContext != null)
