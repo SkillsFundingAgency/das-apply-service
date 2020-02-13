@@ -171,30 +171,30 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
     public static class RoatpWorkflowQuestionTags
     {
-        public static string ProviderRoute = "Apply-ProviderRoute";
+        public static string ProviderRoute = "ApplyProviderRoute";
         public static string UKPRN = "UKPRN";
-        public static string UkrlpLegalName = "UKRLP-LegalName";
-        public static string UkrlpVerificationCompany = "UKRLP-Verification-Company";
-        public static string CompaniesHouseDirectors = "Companies-House-Directors";
-        public static string CompaniesHousePscs = "Companies-House-PSCs";
-        public static string ManualEntryRequiredCompaniesHouse = "CH-ManualEntryRequired";
-        public static string UkrlpVerificationCharity = "UKRLP-Verification-Charity";
-        public static string CharityCommissionTrustees = "Charity-Trustees";
-        public static string ManualEntryRequiredCharityCommission = "CC-TrusteeManualEntry";
-        public static string UkrlpVerificationSoleTraderPartnership = "UKRLP-Verification-SoleTraderPartnership";
-        public static string SoleTraderOrPartnership = "SoleTrade-or-Partnership";
-        public static string PartnershipType = "Partnership-Type";
-        public static string AddPartners = "Add-Partners";
-        public static string SoleTradeDob = "Add-SoleTrade-DOB";
-        public static string AddPeopleInControl = "Add-PeopleInControl";
-        public static string FinishPermissionPersonalDetails = "Finish-Permission-Personal-Details";
-        public static string FinishAccuratePersonalDetails = "Finish-Accurate-Personal-Details";
-        public static string FinishPermissionSubmitApplication = "Finish-Permission-SubmitApp";
-        public static string FinishCommercialInConfidence = "Finish-Commercial-Confidence";
-        public static string FinishCOA2MainEmployer = "COA-Part2-MainEmployer";
-        public static string FinishCOA2Supporting = "COA-Part2-Supporting";
-        public static string FinishCOA3MainEmployer = "COA-Part3-MainEmployer";
-        public static string FinishCOA3Supporting = "COA-Part3-Supporting";
+        public static string UkrlpLegalName = "UKRLPLegalName";
+        public static string UkrlpVerificationCompany = "UKRLPVerificationCompany";
+        public static string CompaniesHouseDirectors = "CompaniesHouseDirectors";
+        public static string CompaniesHousePscs = "CompaniesHousePSCs";
+        public static string ManualEntryRequiredCompaniesHouse = "CHManualEntryRequired";
+        public static string UkrlpVerificationCharity = "UKRLPVerificationCharity";
+        public static string CharityCommissionTrustees = "CharityTrustees";
+        public static string ManualEntryRequiredCharityCommission = "CCTrusteeManualEntry";
+        public static string UkrlpVerificationSoleTraderPartnership = "UKRLPVerificationSoleTraderPartnership";
+        public static string SoleTraderOrPartnership = "SoleTradeOrPartnership";
+        public static string PartnershipType = "PartnershipType";
+        public static string AddPartners = "AddPartners";
+        public static string SoleTradeDob = "AddSoleTradeDOB";
+        public static string AddPeopleInControl = "AddPeopleInControl";
+        public static string FinishPermissionPersonalDetails = "FinishPermissionPersonalDetails";
+        public static string FinishAccuratePersonalDetails = "FinishAccuratePersonalDetails";
+        public static string FinishPermissionSubmitApplication = "FinishPermissionSubmitApp";
+        public static string FinishCommercialInConfidence = "FinishCommercialConfidence";
+        public static string FinishCOA2MainEmployer = "COAPart2MainEmployer";
+        public static string FinishCOA2Supporting = "COAPart2Supporting";
+        public static string FinishCOA3MainEmployer = "COAPart3MainEmployer";
+        public static string FinishCOA3Supporting = "COAPart3Supporting";
         public static string AddManagementHierarchy = "AddManagementHierarchy";
 
     }
