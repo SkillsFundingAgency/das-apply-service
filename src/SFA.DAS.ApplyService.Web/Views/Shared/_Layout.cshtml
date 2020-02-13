@@ -6,10 +6,16 @@
 <!DOCTYPE html>
 <html lang="en" class="govuk-template ">
 <head>
-    <environment exclude="Development">
+
+    <!-- REMOVE GOOGLE ANALYTICS FOR PRIVATE BETA -->
+
+    <!-- <environment exclude="Development">
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-120145707-1" ></script>
         <script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'UA-120145707-1');</script>
-    </environment>
+    </environment> -->
+
+    <!-- /REMOVE GOOGLE ANALYTICS FOR PRIVATE BETA -->
+
     <meta charset="utf-8"/>
     <title>@ViewBag.Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -49,13 +55,53 @@
     document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
 </script>
 
-<environment exclude="Development">
+<!-- REMOVE GOOGLE ANALYTICS FOR PRIVATE BETA -->
+
+<!-- <environment exclude="Development">
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-MKHR6KG');</script>
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MKHR6KG" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-</environment>
+</environment> -->
+
+<!-- /REMOVE GOOGLE ANALYTICS FOR PRIVATE BETA -->
 
 <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
 @{ var config = await Config.GetConfig(); }
+
+
+<!-- REMOVE NEW COOKIE BANNER FOR PRIVATE BETA -->
+
+<!-- <div data-module="cookie-banner" role="region" aria-label="cookie banner">
+   <div class="das-cookie-banner">
+      <div class="das-cookie-banner__wrapper govuk-width-container">
+         <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+               <h2 class="govuk-heading-m das-cookie-banner__header">Tell us whether you accept cookies</h2>
+               <p class="govuk-body">We use <a href="/Home/Cookies" class="govuk-link govuk-link--no-visited-state">cookies to collect information</a> about how you use Manage Apprenticeships. We use this information to make the website work as well as possible and improve the service.</p>
+               <div class="das-cookie-banner__buttons">
+                  <div class="das-cookie-banner__button-wrap das-cookie-banner__button-accept">
+                     <button class="govuk-button das-button--outline das-cookie-banner__button" type="submit" data-accept-cookies="true">Accept all cookies</button>
+                  </div>
+                  <div class="das-cookie-banner__button-wrap das-cookie-banner__button-settings">
+                     <a class="govuk-button das-button--outline das-cookie-banner__button" role="button" href="/Home/Cookies">Set cookie preferences</a>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="das-cookie-banner__confirmation govuk-width-container" tabindex="-1">
+         <p class="govuk-body das-cookie-banner__confirmation-message">
+            You've accepted all cookies. You can <a class="govuk-link" href="/Home/Cookies">change your cookie settings</a> at any time.
+         </p>
+         <button class="das-cookie-banner__hide-button" data-hide-cookie-banner="true">Hide</button>
+      </div>
+   </div>
+</div> -->
+
+<!-- /REMOVE NEW COOKIE BANNER FOR PRIVATE BETA -->
+
+<div class="das-cookie-banner js-cookie-banner">
+    <p class="govuk-width-container">GOV.UK uses cookies to make the site simpler. We won't use non-essential cookies without your permission.<a class="govuk-link" asp-controller="Home" asp-action="Cookies">Find out more about cookies</a></p>
+</div>
 
 <header class="govuk-header " role="banner" data-module="header">
     <div class="govuk-header__container govuk-width-container govuk-header__container--das-epao">
@@ -137,6 +183,10 @@
 
 <script src="/javascripts/govuk-frontend-2.5.1.min.js"></script>
 <environment include="Development">
+    <!-- <script src="/javascripts/cookie-banner/_cookies.js"></script>
+    <script src="/javascripts/cookie-banner/_cookieBanner.js"></script>
+    <script src="/javascripts/cookie-banner/_cookieSettings.js"></script> -->
+    <script src="/javascripts/cookie-banner/das-cookie-banner.js"></script>
     <script src="/javascripts/application.js"></script>
 </environment>
 <environment exclude="Development">
