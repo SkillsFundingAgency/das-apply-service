@@ -233,15 +233,15 @@
                 return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
             }
 
-            if (model.ApplicationRouteId == ApplicationRoute.EmployerProviderApplicationRoute)
-            {
-                var applicationRoutes = await GetApplicationRoutesForOrganisation();
-                var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-                applicationDetails.ApplicationRoute = applicationRoutes.FirstOrDefault(x => x.Id == model.ApplicationRouteId);
-                _sessionService.Set(ApplicationDetailsKey, applicationDetails);
+            //if (model.ApplicationRouteId == ApplicationRoute.EmployerProviderApplicationRoute)
+            //{
+            //    var applicationRoutes = await GetApplicationRoutesForOrganisation();
+            //    var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+            //    applicationDetails.ApplicationRoute = applicationRoutes.FirstOrDefault(x => x.Id == model.ApplicationRouteId);
+            //    _sessionService.Set(ApplicationDetailsKey, applicationDetails);
 
-                return RedirectToAction("ConfirmLevyStatus", new { ukprn = applicationDetails.UKPRN, applicationRouteId = model.ApplicationRouteId });
-            }
+            //    return RedirectToAction("ConfirmLevyStatus", new { ukprn = applicationDetails.UKPRN, applicationRouteId = model.ApplicationRouteId });
+            //}
 
             if (model.ApplicationId == null || model.ApplicationId == Guid.Empty)
             {
@@ -371,6 +371,20 @@
             PopulateGetHelpWithQuestion(model, "ApplicationRoute");
 
             return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
+        }
+
+        public async Task<IActionResult> ProcessRoute(SelectApplicationRouteViewModel model)
+        {
+            if (model.ApplicationRouteId == ApplicationRoute.EmployerProviderApplicationRoute)
+                {
+                var applicationRoutes = await GetApplicationRoutesForOrganisation();
+                var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+                applicationDetails.ApplicationRoute = applicationRoutes.FirstOrDefault(x => x.Id == model.ApplicationRouteId);
+                _sessionService.Set(ApplicationDetailsKey, applicationDetails);
+                
+             return RedirectToAction("ConfirmLevyStatus", new { ukprn = applicationDetails.UKPRN, applicationRouteId = model.ApplicationRouteId });
+                 }
+            return await TermsAndConditions(new SelectApplicationRouteViewModel { ApplicationRouteId = model.ApplicationRouteId });
         }
 
         public async Task<IActionResult> VerifyOrganisationDetails()
