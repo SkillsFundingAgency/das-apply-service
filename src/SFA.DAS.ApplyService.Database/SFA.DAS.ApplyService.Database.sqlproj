@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -62,23 +62,13 @@
     <Folder Include="Sequences" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Tables\Assets.sql" />
     <Build Include="Tables\Contacts.sql" />
-    <Build Include="Tables\Entities.sql" />
     <Build Include="Tables\Organisations.sql" />
-    <Build Include="Tables\QnAs.sql" />
-    <Build Include="Tables\Applications.sql" />
-    <Build Include="Tables\ApplicationSections.sql" />
-    <Build Include="Tables\ApplicationSequences.sql" />
-    <Build Include="Tables\Workflows.sql" />
-    <Build Include="Tables\WorkflowSections.sql" />
-    <Build Include="Tables\WorkflowSequences.sql" />
     <Build Include="Tables\EmailTemplates.sql" />
-    <Build Include="StoredProcedures\Update_ApplicationSections_QuestionTags.sql" />
     <Build Include="Sequences\AppRefSequence.sql" />
-    <Build Include="Tables\ApplicationWorkflow.sql" />
     <Build Include="Sequences\RoatpAppReferenceSequence.sql" />
     <Build Include="Tables\Apply.sql" />
+    <Build Include="Tables\ApplySnapshots.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

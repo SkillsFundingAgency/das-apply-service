@@ -17,6 +17,7 @@ using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
+using System.IO;
 using StartQnaApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartQnaApplicationResponse;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
@@ -204,6 +205,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
             return answer;
         }
+        
         public async Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, Guid sectionId, string pageId, List<Answer> answers)
         {
             // NOTE: This should be called SetPageAnswers, but leaving alone for now
@@ -232,6 +234,30 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
                 var validationError = new KeyValuePair<string, string>(string.Empty, validationErrorMessage);
                 return new SetPageAnswersResponse { ValidationPassed = false, ValidationErrors = new List<KeyValuePair<string, string>> { validationError } };
+            }
+        }
+
+        public async Task<ResetPageAnswersResponse> ResetPageAnswers(Guid applicationId, Guid sectionId, string pageId)
+        {
+
+            var response = await _httpClient.PostAsJsonAsync($"/Applications/{applicationId}/sections/{sectionId}/pages/{pageId}/reset", new{});
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonConvert.DeserializeObject<ResetPageAnswersResponse>(json);
+            }
+            else
+            {
+                var apiError = JsonConvert.DeserializeObject<ApiError>(json);
+                var apiErrorMessage = apiError?.Message ?? json;
+                var errorMessage =
+                    $"Error Resetting Page Answers into QnA. Application: {applicationId} | SectionId: {sectionId} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}";
+
+                _logger.LogError(errorMessage);
+
+                return new ResetPageAnswersResponse { ValidationPassed = false, ValidationErrors = null  };
             }
         }
 
@@ -270,8 +296,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
             if (files is null || files.Count < 1)
             {
-                // This is so QnA knows there are no files
-                formDataContent = new MultipartFormDataContent { Headers = { ContentLength = 0 } };
+                // we need to add an empty file so that the header lengths match
+                var emptyStream = new MemoryStream();
+                var fileContent = new StreamContent(emptyStream)
+                { Headers = { ContentLength = emptyStream.Length, ContentType = new MediaTypeHeaderValue("application/pdf") } };
+                formDataContent.Add(fileContent, "empty.pdf");
             }
             else
             {
