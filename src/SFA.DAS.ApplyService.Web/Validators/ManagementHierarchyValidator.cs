@@ -100,7 +100,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
                         Field = "JobRole"
                     });
             }
-            else if (model.FullName.Length > 255)
+            else if (model.JobRole.Length > 255)
             {
                 errorMessages.Add(
                     new ValidationErrorDetail

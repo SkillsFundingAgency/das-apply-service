@@ -40,7 +40,7 @@ namespace SFA.DAS.ApplyService.Data
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return await connection.QuerySingleAsync<Guid>(
-                    @"INSERT INTO Apply (ApplicationId, OrganisationId, ApplicationStatus, ApplyData, ReviewStatus, CreatedBy, CreatedAt)
+                    @"INSERT INTO Apply (ApplicationId, OrganisationId, ApplicationStatus, ApplyData, AssessorReviewStatus, CreatedBy, CreatedAt)
                                         OUTPUT INSERTED.[ApplicationId] 
                                         VALUES (@applicationId, @organisationId, @applicationStatus, @applyData, @reviewStatus, @createdBy, GETUTCDATE())",
                     new { applicationId, organisationId, applicationStatus = "In Progress", applyData, reviewStatus = "Draft", createdBy });
@@ -121,7 +121,7 @@ namespace SFA.DAS.ApplyService.Data
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(@"UPDATE Apply
-                                                SET  ApplicationStatus = @ApplicationStatus, ApplyData = @applyData, ReviewStatus = @ReviewStatus, UpdatedBy = @submittedBy, UpdatedAt = GETUTCDATE() 
+                                                SET  ApplicationStatus = @ApplicationStatus, ApplyData = @applyData, AssessorReviewStatus = @ReviewStatus, UpdatedBy = @submittedBy, UpdatedAt = GETUTCDATE() 
                                                 WHERE  (Apply.ApplicationId = @applicationId)",
                                                 new { applicationId, ApplicationStatus = ApplicationStatus.Submitted, applyData, ReviewStatus = "New", submittedBy });
             }
