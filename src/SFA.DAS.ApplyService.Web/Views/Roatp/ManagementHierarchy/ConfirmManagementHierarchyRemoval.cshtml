@@ -16,10 +16,7 @@
 
 
 <div class="grid-row">
-    <form asp-controller="RoatpWhosInControlApplication" asp-action="@Model.BackAction" method="get" name="backForm">
-        @Html.HiddenFor(x => x.ApplicationId)
-        <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
-    </form>
+    <a href="@Url.Action("ConfirmManagementHierarchy", "RoatpManagementHierarchy", new {Model.ApplicationId})" class="govuk-back-link">Back</a>
 </div>
 
 @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
@@ -96,7 +93,9 @@
                         </fieldset>
                     </div>
                     <input type="submit" class="govuk-button" value="Confirm and continue" />
-
+                    <p class="govuk-body skipbutton" id="skipbutton">
+                        <a href="@Url.Action("ConfirmManagementHierarchy", "RoatpManagementHierarchy", new {Model.ApplicationId})">Return to this question later</a>
+                    </p>
                 </form>
             </div>
         </div>
