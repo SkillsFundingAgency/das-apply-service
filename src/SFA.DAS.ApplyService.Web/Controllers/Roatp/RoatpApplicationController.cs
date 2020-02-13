@@ -1073,7 +1073,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var canUpdate = await CanUpdateApplication(applicationId);
             if (!canUpdate)
             {
-                return RedirectToAction("Sequence", new { applicationId });
+                return RedirectToAction("TaskList", new { applicationId });
             }
 
             var activeSequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
@@ -1230,6 +1230,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ConfirmSubmitApplication(SubmitApplicationViewModel model)
         {
+            var canUpdate = await CanUpdateApplication(model.ApplicationId);
+            if (!canUpdate)
+            {
+                return RedirectToAction("TaskList", new { applicationId = model.ApplicationId });
+            }
+
+
             if (!ModelState.IsValid)
             {
                 model.ErrorMessages = new List<ValidationErrorDetail>();
