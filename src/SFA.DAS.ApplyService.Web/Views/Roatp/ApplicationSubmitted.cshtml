@@ -5,8 +5,15 @@
     Layout = "_Layout";
 }
 
-@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
-
+<div class="govuk-phase-banner govuk-width-container roatp__navigation">
+    <nav>
+        <ul id="navigation" class="roatp__navigation " aria-label="Top Level Navigation">
+            <li class="roatp__navigation-item roatp__navigation-signout">
+                <a class="govuk-header__link" href="@Url.Action("SignOut", "Users")">Save and sign out</a>
+            </li>
+        </ul>
+    </nav>
+</div>
 
 <div class="govuk-width-container">
 
