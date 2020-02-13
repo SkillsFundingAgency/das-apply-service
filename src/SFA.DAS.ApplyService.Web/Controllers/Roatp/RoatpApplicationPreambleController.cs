@@ -233,16 +233,6 @@
                 return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
             }
 
-            //if (model.ApplicationRouteId == ApplicationRoute.EmployerProviderApplicationRoute)
-            //{
-            //    var applicationRoutes = await GetApplicationRoutesForOrganisation();
-            //    var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-            //    applicationDetails.ApplicationRoute = applicationRoutes.FirstOrDefault(x => x.Id == model.ApplicationRouteId);
-            //    _sessionService.Set(ApplicationDetailsKey, applicationDetails);
-
-            //    return RedirectToAction("ConfirmLevyStatus", new { ukprn = applicationDetails.UKPRN, applicationRouteId = model.ApplicationRouteId });
-            //}
-
             if (model.ApplicationId == null || model.ApplicationId == Guid.Empty)
             {
                 return await StartRoatpApplication(model);
