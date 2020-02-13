@@ -20,6 +20,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<StartQnaApplicationResponse> StartApplication(string userReference, string workflowType, string applicationData);
 
         Task<object> GetApplicationData(Guid applicationId);
+        Task<object> GetQuestionTagData(Guid applicationId, string questionTag);
 
         Task<IEnumerable<ApplicationSequence>> GetSequences(Guid applicationId);
         Task<ApplicationSequence> GetSequence(Guid applicationId, Guid sequenceId);
