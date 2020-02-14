@@ -15,12 +15,12 @@
 
 @{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
 
-<div class="grid-row">
+@*<div class="grid-row">
     <form asp-controller="RoatpApplication" asp-action="TaskList" method="get" name="backForm">
         @Html.HiddenFor(x => x.ApplicationId)
         <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
     </form>
-</div>
+</div>*@
 @if (showErrors)
 {
     <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
