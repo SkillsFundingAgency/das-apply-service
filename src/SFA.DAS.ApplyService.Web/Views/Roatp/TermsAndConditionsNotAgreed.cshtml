@@ -1,4 +1,4 @@
-﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.SearchByUkprnViewModel
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ConditionsOfAcceptanceViewModel
 
 @{
     ViewBag.Title = "You do not accept the terms and conditions of making an application";
@@ -7,10 +7,14 @@
 
 @{ await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml"); }
 
+@*<div class="grid-row">
+        <form asp-controller="RoatpApplicationPreamble" asp-action="TermsAndConditions" method="get" name="backForm">
+            <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+        </form>
+    </div>*@
+
 <div class="grid-row">
-    <form asp-controller="RoatpApplicationPreamble" asp-action="TermsAndConditions" method="get" name="backForm">
-        <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
-    </form>
+    <a class="govuk-back-link" href="@Url.Action("TermsAndConditions", "RoatpApplicationPreamble", new { Model.ApplicationId, Model.ApplicationRouteId })">Back</a>
 </div>
 
 <div class="govuk-width-container">
@@ -19,8 +23,8 @@
 
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-l">You do not agree to the terms and conditions of making an application</h1>
-                <p class="govuk-body">This means your organisation cannot apply to join the RoATP.</p>
+                <h1 class="govuk-heading-l">You do not accept the conditions of acceptance for the RoATP</h1>
+                <p class="govuk-body">This means you or your organisation cannot make an application to join the RoATP.</p>
                 <p class="govuk-body"><a href="https://www.gov.uk">Back to GOV.UK</a></p>
             </div>
         </div>
