@@ -88,13 +88,13 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await response.Content.ReadAsAsync<object>();
         }
 
-        public async Task<object> GetQuestionTagData(Guid applicationId, string questionTag)
+        public async Task<string> GetQuestionTagData(Guid applicationId, string questionTag)
         {
             var response = await _httpClient.GetAsync($"Applications/{applicationId}/applicationData/{questionTag}");
             
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadAsAsync<object>();
+                return await response.Content.ReadAsAsync<string>();
             }
             else
             {
