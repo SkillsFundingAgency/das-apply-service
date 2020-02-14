@@ -20,9 +20,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
         
         [Route("not-accept-terms-conditions")]
-        public async Task<IActionResult> TermsAndConditionsNotAgreed()
+        public async Task<IActionResult> TermsAndConditionsNotAgreed(ConditionsOfAcceptanceViewModel model)
         {
-            return View("~/Views/Roatp/TermsAndConditionsNotAgreed.cshtml");
+            return View("~/Views/Roatp/TermsAndConditionsNotAgreed.cshtml", model);
         }
 
         [Route("uk-provider-reference-number-not-found")]

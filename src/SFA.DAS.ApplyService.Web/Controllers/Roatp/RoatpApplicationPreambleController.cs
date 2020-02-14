@@ -65,9 +65,30 @@
         }
 
         [Route("terms-conditions-making-application")]
-        public IActionResult TermsAndConditions()
+        public async Task<IActionResult> TermsAndConditions(SelectApplicationRouteViewModel routeViewModel)
         {
-            return View("~/Views/Roatp/TermsAndConditions.cshtml", new ConditionsOfAcceptanceViewModel());
+            if (!ModelState.IsValid)
+            {
+                var model = new SelectApplicationRouteViewModel();
+                model.ApplicationRoutes = await GetApplicationRoutesForOrganisation();
+                model.ErrorMessages = new List<ValidationErrorDetail>();
+                var modelErrors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var modelError in modelErrors)
+                {
+                    model.ErrorMessages.Add(new ValidationErrorDetail
+                    {
+                        Field = "ApplicationRouteId",
+                        ErrorMessage = modelError.ErrorMessage
+                    });
+                }
+
+                return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
+            }
+
+            if (routeViewModel?.ApplicationRouteId == ApplicationRoute.SupportingProviderApplicationRoute)
+                return View("~/Views/Roatp/TermsAndConditionsSupporting.cshtml", new ConditionsOfAcceptanceViewModel { ApplicationId = routeViewModel.ApplicationId, ApplicationRouteId = routeViewModel.ApplicationRouteId });
+
+            return View("~/Views/Roatp/TermsAndConditions.cshtml", new ConditionsOfAcceptanceViewModel {ApplicationId = routeViewModel.ApplicationId, ApplicationRouteId = routeViewModel.ApplicationRouteId});
         }
 
         [HttpPost]
@@ -90,10 +111,17 @@
 
             if (model.ConditionsAccepted != "Y")
             {
-                return RedirectToAction("TermsAndConditionsNotAgreed", "RoatpShutterPages");
+                return RedirectToAction("TermsAndConditionsNotAgreed", "RoatpShutterPages", model);
             }
 
-            return RedirectToAction("EnterApplicationUkprn");
+            if (model.ApplicationId == null || model.ApplicationId == Guid.Empty)
+            {
+                return await StartApplication(new SelectApplicationRouteViewModel
+                    {ApplicationRouteId = model.ApplicationRouteId, ApplicationId = model.ApplicationId});
+
+            }
+
+            return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId });
         }
         
         [Route("enter-uk-provider-reference-number")]
@@ -205,16 +233,6 @@
                 return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
             }
 
-            if (model.ApplicationRouteId == ApplicationRoute.EmployerProviderApplicationRoute)
-            {
-                var applicationRoutes = await GetApplicationRoutesForOrganisation();
-                var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-                applicationDetails.ApplicationRoute = applicationRoutes.FirstOrDefault(x => x.Id == model.ApplicationRouteId);
-                _sessionService.Set(ApplicationDetailsKey, applicationDetails);
-
-                return RedirectToAction("ConfirmLevyStatus", new { ukprn = applicationDetails.UKPRN, applicationRouteId = model.ApplicationRouteId });
-            }
-
             if (model.ApplicationId == null || model.ApplicationId == Guid.Empty)
             {
                 return await StartRoatpApplication(model);
@@ -277,7 +295,7 @@
 
                 if (selectApplicationRouteModel.ApplicationId == null || selectApplicationRouteModel.ApplicationId == Guid.Empty)
                 {
-                    return await StartRoatpApplication(selectApplicationRouteModel);
+                    return await TermsAndConditions(new SelectApplicationRouteViewModel {ApplicationRouteId = model.ApplicationRouteId});
                 }
                 else
                 {
@@ -343,6 +361,20 @@
             PopulateGetHelpWithQuestion(model, "ApplicationRoute");
 
             return View("~/Views/Roatp/SelectApplicationRoute.cshtml", model);
+        }
+
+        public async Task<IActionResult> ProcessRoute(SelectApplicationRouteViewModel model)
+        {
+            if (model.ApplicationRouteId == ApplicationRoute.EmployerProviderApplicationRoute)
+                {
+                var applicationRoutes = await GetApplicationRoutesForOrganisation();
+                var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+                applicationDetails.ApplicationRoute = applicationRoutes.FirstOrDefault(x => x.Id == model.ApplicationRouteId);
+                _sessionService.Set(ApplicationDetailsKey, applicationDetails);
+                
+             return RedirectToAction("ConfirmLevyStatus", new { ukprn = applicationDetails.UKPRN, applicationRouteId = model.ApplicationRouteId });
+                 }
+            return await TermsAndConditions(new SelectApplicationRouteViewModel { ApplicationRouteId = model.ApplicationRouteId });
         }
 
         public async Task<IActionResult> VerifyOrganisationDetails()
@@ -555,7 +587,7 @@
                 var result = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, section.Id, RoatpWorkflowPageIds.ProviderRoute, providerRouteAnswer);
             }
 
-            return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId });
+            return RedirectToAction("TermsAndConditions", new { applicationId = model.ApplicationId, applicationRouteId = model.ApplicationRouteId });
         }
 
         [Route("already-on-roatp")]

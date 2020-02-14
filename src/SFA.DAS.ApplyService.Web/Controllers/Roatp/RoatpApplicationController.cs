@@ -139,7 +139,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 ["OrganisationReferenceId"] = applicationDetails.UKPRN.ToString(),
                 ["OrganisationName"] = applicationDetails.UkrlpLookupDetails.ProviderName,
-                ["Apply-ProviderRoute"] = providerRoute.ToString()
+                ["ApplyProviderRoute"] = providerRoute.ToString()
             };
 
             var startApplicationJson = JsonConvert.SerializeObject(startApplicationData);
@@ -1240,16 +1240,20 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             if (!ModelState.IsValid)
             {
                 model.ErrorMessages = new List<ValidationErrorDetail>();
-                var modelErrors = ModelState.Values.SelectMany(v => v.Errors);
-                foreach (var modelError in modelErrors)
+
+                foreach (var modelStateKey in ViewData.ModelState.Keys)
                 {
-                    model.ErrorMessages.Add(new ValidationErrorDetail
+                    var value = ViewData.ModelState[modelStateKey];
+                    foreach (var error in value.Errors)
                     {
-                        Field = "ConfirmSubmitApplication",
-                        ErrorMessage = modelError.ErrorMessage
-                    });
+                        model.ErrorMessages.Add(new ValidationErrorDetail
+                        {
+                            Field = modelStateKey,
+                            ErrorMessage = error.ErrorMessage
+                        });
+                    }
                 }
-                               
+
                 return View("~/Views/Roatp/SubmitApplication.cshtml", model);
             }
 
