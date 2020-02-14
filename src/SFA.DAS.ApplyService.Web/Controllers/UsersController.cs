@@ -126,7 +126,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
             else if (user.ApplyOrganisationId is null)
             {
-                return RedirectToAction("TermsAndConditions", "RoatpApplicationPreamble");
+                return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
             }
 
             var organisation = await _organisationApiClient.GetByUser(user.Id);

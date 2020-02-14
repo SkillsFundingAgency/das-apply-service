@@ -245,7 +245,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var model = new SubmitApplicationViewModel
             {
                 ApplicationId = Guid.NewGuid(),
-                ConfirmSubmitApplication = "Y",
+                ConfirmSubmitApplication = true,
                 ErrorMessages = new List<ValidationErrorDetail>()
             };
 

@@ -1,11 +1,16 @@
 ﻿[
     {
         "outputFileName": "wwwroot/stylesheets/application.min.css",
-        "inputFiles": ["wwwroot/stylesheets/application.css"]
+        "inputFiles": [
+            "wwwroot/stylesheets/application.css"
+        ]
     },
     {
         "outputFileName": "wwwroot/javascripts/application.min.js",
-        "inputFiles": [ "wwwroot/javascripts/application.js" ],
+        "inputFiles": [
+            "wwwroot/javascripts/das-cookie-banner.js",
+            "wwwroot/javascripts/application.js"
+        ],
         "minify": {
             "renameLocals": true
         },
@@ -13,7 +18,9 @@
     },
     {
         "outputFileName": "wwwroot/javascripts/gov-uk-postcode-lookup-service.min.js",
-        "inputFiles": [ "wwwroot/javascripts/gov-uk-postcode-lookup-service.js" ],
+        "inputFiles": [
+            "wwwroot/javascripts/gov-uk-postcode-lookup-service.js"
+        ],
         "minify": {
             "renameLocals": true
         }

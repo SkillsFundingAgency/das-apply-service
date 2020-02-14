@@ -22,56 +22,14 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
 
-                <h1 class="govuk-heading-l">Application overview</h1>
-
-                <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Organisation name
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Model.OrganisationName
-                        </dd>
-                    </div>
-                    @if (!String.IsNullOrWhiteSpace(Model.TradingName))
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Trading name
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @Model.TradingName
-                            </dd>
-                        </div>
-                    }
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            UKPRN
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Model.UKPRN
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Provider route
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Model.ApplicationRouteShortText
-                        </dd>
-                    </div>
-                </dl>
-
-                <div class="govuk-panel govuk-panel--confirmation govuk-!-margin-bottom-9">
-                    <h1 class="govuk-panel__title govuk-!-font-size-27">
+                <div class="govuk-panel govuk-panel--confirmation">
+                    <h1 class="govuk-panel__title">
                         Application submitted
                     </h1>
-                    <h1 class="govuk-panel__title govuk-!-font-size-27">
-                        Your reference number
-                    </h1>
-                    <h1 class="govuk-panel__title govuk-!-font-size-27">
-                        @Model.ApplicationReference
-                    </h1>
+                    <div class="govuk-panel__body">
+                        Your reference number<br>
+                        <strong>@Model.ApplicationReference</strong>
+                    </div>
                 </div>
 
                 <p class="govuk-body">
@@ -105,7 +63,7 @@
                     You'll receive an email when there's an update with your application.
                 </p>
                 <p class="govuk-body">
-                    To make a change or withdraw your application, email <a href="mailto:roatp.SUPPORT@education.gov.uk">roatp.SUPPORT@education.gov.uk</a>.
+                    To make a change or withdraw your application, email <a href="mailto:roatp.support@education.gov.uk">roatp.support@education.gov.uk</a>.
                 </p>
                 <p class="govuk-body">
                     As a new apprenticeship training provider, your organisation may be inspected by Ofsted within the first 3 years of receiving funding from ESFA.
@@ -115,17 +73,17 @@
                 </p>
                 <ul class="govuk-list govuk-list--bullet">
                     <li>
-                        the <a href="https://www.gov.uk/government/publications/education-inspection-framework" target="_blank">Education Inspection Framework</a>
+                        the <a href="https://www.gov.uk/government/publications/education-inspection-framework" target="_blank" class="govuk-link">Education Inspection Framework</a>
                     </li>
                     <li>
-                        the <a href="https://www.gov.uk/government/publications/further-education-and-skills-inspection-handbook-eif" target="_blank">Further Education and Skills Inspection Handbook</a>
+                        the <a href="https://www.gov.uk/government/publications/further-education-and-skills-inspection-handbook-eif" target="_blank" class="govuk-link">Further Education and Skills Inspection Handbook</a>
                     </li>
                 </ul>
                 <p class="govuk-body">
                     If successful, main providers will also need to ensure that apprenticeship training continuously meets local, regional and national priorities.
                 </p>
                 <p class="govuk-body">
-                    <a href="#">What did you think of this service? (takes 30 seconds)</a>
+                    <a href="https://www.smartsurvey.co.uk/s/UDD7V/" class="govuk-link">What did you think of this service?</a> (takes 30 seconds)
                 </p>
             </div>
         </div>
