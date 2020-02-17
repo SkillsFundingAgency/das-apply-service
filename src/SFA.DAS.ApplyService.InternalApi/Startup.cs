@@ -31,6 +31,8 @@ namespace SFA.DAS.ApplyService.InternalApi
 {
     using SFA.DAS.ApplyService.Domain.Roatp;
     using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
+    using Swashbuckle.AspNetCore.Swagger;
+    using System.IO;
     using UKRLP;
     using static UKRLP.ProviderQueryPortTypeClient;
 
@@ -149,6 +151,18 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddHealthChecks();
 
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "SFA.DAS.ApplyService.InternalApi", Version = "v1" });
+
+                if (_env.IsDevelopment())
+                {
+                    var basePath = AppContext.BaseDirectory;
+                    var xmlPath = Path.Combine(basePath, "SFA.DAS.ApplyService.InternalApi.xml");
+                    c.IncludeXmlComments(xmlPath);
+                }
+            });
+
             ConfigureDependencyInjection(services);
         }
 
@@ -166,6 +180,14 @@ namespace SFA.DAS.ApplyService.InternalApi
                 app.UseHsts();
                 app.UseHttpsRedirection();
             }
+
+            app.UseSwagger()
+                    .UseSwaggerUI(c =>
+                    {
+                        c.SwaggerEndpoint("/swagger/v1/swagger.json", "SFA.DAS.ApplyService.InternalApi v1");
+                    })
+                    .UseAuthentication();
+
             app.UseRequestLocalization();
             app.UseSecurityHeaders();
 
