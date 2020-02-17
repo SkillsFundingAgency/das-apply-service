@@ -28,6 +28,7 @@
         }
 
         [Route("ukrlp-lookup")]
+        [HttpGet]
         public async Task<IActionResult> UkrlpLookup(string ukprn)
         {
             UkprnLookupResponse providerData;

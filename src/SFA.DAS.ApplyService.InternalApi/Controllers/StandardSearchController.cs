@@ -24,6 +24,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet("all-standards")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IEnumerable<StandardCollation>> GetAllStandards()
         {
             _logger.LogInformation("Get All Standards Request");

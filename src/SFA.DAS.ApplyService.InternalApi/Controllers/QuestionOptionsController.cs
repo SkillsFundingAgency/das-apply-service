@@ -19,6 +19,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet("QuestionOptions/DeliveryAreas")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<List<Option>> DeliveryAreas()
         {
             return (await _assessorServiceApiClient.GetDeliveryAreas()).Select(da => new Option(){Label = da.Area, Value = da.Area}).ToList();
