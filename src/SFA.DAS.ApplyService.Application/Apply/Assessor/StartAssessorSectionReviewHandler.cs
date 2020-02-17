@@ -24,18 +24,21 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
             var applyData = await _applyRepository.GetApplyData(request.ApplicationId);
             if (applyData == null)
             {
+                _logger.LogError($"Application {request.ApplicationId} has no Apply Data JSON");
                 return await Task.FromResult(false);
             }
 
             var sequenceUnderReview = applyData.Sequences.FirstOrDefault(x => x.SequenceNo == request.SequenceId);
             if (sequenceUnderReview == null)
             {
+                _logger.LogError($"Application {request.ApplicationId} unable to lookup sequence {request.SequenceId}");
                 return await Task.FromResult(false);
             }
 
             var sectionUnderReview = sequenceUnderReview.Sections.FirstOrDefault(x => x.SectionNo == request.SectionId);
             if (sectionUnderReview == null)
             {
+                _logger.LogError($"Application {request.ApplicationId} unable to lookup sequence {request.SequenceId}, section {request.SectionId}");
                 return await Task.FromResult(false);
             }
 
@@ -43,9 +46,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
                 || (sectionUnderReview.Status != AssessorReviewStatus.Approved && sectionUnderReview.Status != AssessorReviewStatus.Declined))
             {
                 sectionUnderReview.Status = AssessorReviewStatus.InProgress;
+                return await _applyRepository.UpdateApplyData(request.ApplicationId, applyData, request.Reviewer);
             }
-
-            return await _applyRepository.UpdateApplyData(request.ApplicationId, applyData, request.Reviewer);            
+            else
+            {
+                _logger.LogInformation($"Request to change status of application {request.ApplicationId} ignored, current status is {sectionUnderReview.Status}");
+                return await Task.FromResult(false);
+            }
+                      
         }
     }
 }
