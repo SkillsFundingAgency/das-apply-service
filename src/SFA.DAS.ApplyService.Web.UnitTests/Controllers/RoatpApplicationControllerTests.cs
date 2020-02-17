@@ -242,9 +242,16 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Confirm_submit_application_updates_application_status_and_sends_confirmation_email_if_they_have_confirmed_details_are_correct()
         {
-            var model = new SubmitApplicationViewModel
+            var application = new Apply
             {
                 ApplicationId = Guid.NewGuid(),
+                ApplicationStatus = ApplicationStatus.InProgress,
+                ApplyData = new ApplyData()
+            };
+
+            var model = new SubmitApplicationViewModel
+            {
+                ApplicationId = application.ApplicationId,
                 ConfirmSubmitApplication = true,
                 ErrorMessages = new List<ValidationErrorDetail>()
             };
@@ -258,7 +265,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                     TradingName = "Trading name"
                 }
             };
+
             _apiClient.Setup(x => x.GetOrganisationByUserId(It.IsAny<Guid>())).ReturnsAsync(organisationDetails);
+
+            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), false)).ReturnsAsync(new List<Apply> { application });
 
             var providerRouteAnswer = new Answer
             {
