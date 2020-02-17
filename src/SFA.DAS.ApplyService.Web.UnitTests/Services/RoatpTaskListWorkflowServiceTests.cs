@@ -5,6 +5,7 @@ using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Web.Configuration;
 using SFA.DAS.ApplyService.Web.Services;
+using NotRequiredCondition = SFA.DAS.ApplyService.Web.Configuration.NotRequiredCondition;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 {
