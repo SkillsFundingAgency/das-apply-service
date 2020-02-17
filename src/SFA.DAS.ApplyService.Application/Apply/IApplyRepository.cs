@@ -19,7 +19,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<bool> CanSubmitApplication(Guid applicationId);
         Task SubmitApplication(Guid applicationId, ApplyData applyData, Guid submittedBy);
 
-        Task<bool> ChangeProviderRoute(Guid applicationId, int ProviderRoute);
+        Task<bool> ChangeProviderRoute(Guid applicationId, int providerRoute);
 
 
         // NOTE: This is old stuff or things which are not migrated over yet
