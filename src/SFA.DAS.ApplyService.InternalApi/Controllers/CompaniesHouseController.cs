@@ -28,6 +28,7 @@
         }
 
         [Route("companies-house-lookup")]
+        [HttpGet]
         public async Task<IActionResult> CompanyDetails(string companyNumber)
         {
             try
