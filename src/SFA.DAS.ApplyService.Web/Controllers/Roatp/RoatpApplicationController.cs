@@ -141,7 +141,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 ["OrganisationReferenceId"] = applicationDetails.UKPRN.ToString(),
                 ["OrganisationName"] = applicationDetails.UkrlpLookupDetails.ProviderName,
-                ["Apply-ProviderRoute"] = providerRoute.ToString()
+                ["ApplyProviderRoute"] = providerRoute.ToString()
             };
 
             var startApplicationJson = JsonConvert.SerializeObject(startApplicationData);
@@ -206,15 +206,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Sequence(Guid applicationId)
-        {
-            // Break this out into a "Signpost" action.
-            var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
-            var sequenceVm = new SequenceViewModel(sequence, applicationId, null);
-            return View(sequenceVm);
-        }
-
-        [HttpGet]
         public async Task<IActionResult> SequenceSignPost(Guid applicationId)
         {
             var application = await _apiClient.GetApplication(applicationId);
@@ -239,45 +230,30 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return RedirectToAction("TaskList", new { applicationId = application.ApplicationId });
+        }
 
-            //var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
+        [HttpGet]
+        public async Task<IActionResult> Back(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
+        {
+            string previousPageId = await _pageNavigationTrackingService.GetBackNavigationPageId(applicationId, sequenceId, sectionId, pageId);
 
-            //StandardApplicationData applicationData = null;
+            if (previousPageId == null)
+            {
+                return RedirectToAction("TaskList", new { applicationId });
+            }
 
-            //if (application.ApplicationData != null)
-            //{
-            //    applicationData = new StandardApplicationData
-            //    {
-            //        StandardName = application.ApplicationData.StandardName
-            //    };
-            //}
-
-            //// Only go to search if application hasn't got a selected standard?
-            //if (sequence.SequenceId == SequenceId.Stage1)
-            //{
-            //    return RedirectToAction("Sequence", new {applicationId});
-            //}
-            //else if (sequence.SequenceId == SequenceId.Stage2 && string.IsNullOrWhiteSpace(applicationData?.StandardName))
-            //{
-            //    var org = await _apiClient.GetOrganisationByUserId(User.GetUserId());
-            //    if (org.RoEPAOApproved)
-            //    {
-            //        return RedirectToAction("Index", "Standard", new {applicationId});  
-            //    }
-
-            //    return View("~/Views/Application/Stage2Intro.cshtml", applicationId);
-            //}
-            //else if (sequence.SequenceId == SequenceId.Stage2)
-            //{
-            //    return RedirectToAction("Sequence", new {applicationId});
-            //}
-
-            //throw new BadRequestException("Section does not have a valid DisplayType");
+            return RedirectToAction("Page", new { applicationId, sequenceId, sectionId, pageId = previousPageId, redirectAction });
         }
 
         [HttpGet]
         public async Task<IActionResult> Section(Guid applicationId, int sequenceId, int sectionId)
         {
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId);
+            if (!canUpdate)
+            {
+                return RedirectToAction("TaskList", new { applicationId });
+            }
+
             var sequences = await _qnaApiClient.GetSequences(applicationId);
             var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
             var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
@@ -302,21 +278,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Back(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
+        public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, List<Question> answeredQuestions)
         {
-            string previousPageId = await _pageNavigationTrackingService.GetBackNavigationPageId(applicationId, sequenceId, sectionId, pageId);
-
-            if (previousPageId == null)
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId);
+            if (!canUpdate)
             {
                 return RedirectToAction("TaskList", new { applicationId });
             }
 
-            return RedirectToAction("Page", new { applicationId, sequenceId, sectionId, pageId = previousPageId, redirectAction });
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, List<Question> answeredQuestions)
-        {
             _pageNavigationTrackingService.AddPageToNavigationStack(pageId);
 
             var sequences = await _qnaApiClient.GetSequences(applicationId);
@@ -391,6 +360,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Skip(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId);
+            if (!canUpdate)
+            {
+                return RedirectToAction("TaskList", new { applicationId });
+            }
+
             var nextAction = await _qnaApiClient.SkipPageBySectionNo(applicationId, sequenceId, sectionId, pageId);
             var nextPageId = nextAction?.NextActionId;
 
@@ -419,11 +394,19 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveAnswers(PageViewModel vm, Guid applicationId)
         {
-            vm.ApplicationId = applicationId;
-            var sequenceId = int.Parse(vm.SequenceId);
+            vm.ApplicationId = applicationId; // why is this being assigned??? TODO: Fix in View so it's part of the ViewModel
+            var sequenceId = int.Parse(vm.SequenceId); // TODO: SequenceId should be an int, not a string
             var sectionId = vm.SectionId;
             var pageId = vm.PageId;
             var redirectAction = vm.RedirectAction;
+
+
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId);
+            if (!canUpdate)
+            {
+                return RedirectToAction("TaskList", new { applicationId });
+            }
+
             _pageNavigationTrackingService.AddPageToNavigationStack(pageId);
 
             var sequences = await _qnaApiClient.GetSequences(applicationId);
@@ -506,6 +489,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> TaskList(Guid applicationId)
         {
+            var canUpdate = await CanUpdateApplication(applicationId);
+            if (!canUpdate)
+            {
+                return RedirectToAction("Applications");
+            }
+
             var sequences = await _qnaApiClient.GetSequences(applicationId);
 
             PopulateAdditionalSequenceFields(sequences);
@@ -637,19 +626,47 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
         }
 
-        private async Task<bool> CanUpdateApplication(Guid applicationId, int sequenceId)
-        {
-            var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
-            return CanUpdateApplication(sequence, sequenceId);
-        }
-
-        private bool CanUpdateApplication(ApplicationSequence sequence, int sequenceId)
+        private async Task<bool> CanUpdateApplication(Guid applicationId, int? sequenceId = null, int? sectionId = null)
         {
             bool canUpdate = false;
 
-            if (sequence?.Status != null && (int)sequence.SequenceId == sequenceId)
+            var applyingUser = await _usersApiClient.GetUserBySignInId((await _userService.GetSignInId()).ToString());
+            var userId = applyingUser?.Id ?? Guid.Empty;
+
+            var applications = await _apiClient.GetApplications(userId, false);            
+            var application = applications?.FirstOrDefault(app => app.ApplicationId == applicationId);
+
+            var validApplicationStatuses = new string[] { ApplicationStatus.InProgress, ApplicationStatus.FeedbackAdded };
+
+            if (application != null && application.ApplyData != null && validApplicationStatuses.Contains(application.ApplicationStatus))
             {
-                canUpdate = sequence.Status == ApplicationSequenceStatus.Draft || sequence.Status == ApplicationSequenceStatus.FeedbackAdded;
+                if (sequenceId.HasValue)
+                {
+                    var sequence = application.ApplyData.Sequences?.FirstOrDefault(seq => /*!seq.NotRequired && seq.IsActive &&*/ seq.SequenceNo == sequenceId);
+
+                    if (sequence != null)
+                    {
+                        if (sectionId.HasValue)
+                        {
+                            var section = sequence.Sections.FirstOrDefault(sec => /*!sec.NotRequired && */ sec.SectionNo == sectionId);
+
+                            if (section != null)
+                            {
+                                canUpdate = true;
+                            }
+                        }
+                        else
+                        {
+                            // No need to check the section
+                            canUpdate = true;
+                        }
+                    }
+                }
+                else
+                {
+                    // No need to check the sequence
+                    canUpdate = true;
+                }
             }
 
             return canUpdate;
@@ -1056,12 +1073,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Submit(Guid applicationId, int sequenceId)
+        public async Task<IActionResult> Submit(Guid applicationId)
         {
-            var canUpdate = await CanUpdateApplication(applicationId, sequenceId);
+            var canUpdate = await CanUpdateApplication(applicationId);
             if (!canUpdate)
             {
-                return RedirectToAction("Sequence", new { applicationId });
+                return RedirectToAction("TaskList", new { applicationId });
             }
 
             var activeSequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
@@ -1218,19 +1235,30 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ConfirmSubmitApplication(SubmitApplicationViewModel model)
         {
+            var canUpdate = await CanUpdateApplication(model.ApplicationId);
+            if (!canUpdate)
+            {
+                return RedirectToAction("TaskList", new { applicationId = model.ApplicationId });
+            }
+
+
             if (!ModelState.IsValid)
             {
                 model.ErrorMessages = new List<ValidationErrorDetail>();
-                var modelErrors = ModelState.Values.SelectMany(v => v.Errors);
-                foreach (var modelError in modelErrors)
+
+                foreach (var modelStateKey in ViewData.ModelState.Keys)
                 {
-                    model.ErrorMessages.Add(new ValidationErrorDetail
+                    var value = ViewData.ModelState[modelStateKey];
+                    foreach (var error in value.Errors)
                     {
-                        Field = "ConfirmSubmitApplication",
-                        ErrorMessage = modelError.ErrorMessage
-                    });
+                        model.ErrorMessages.Add(new ValidationErrorDetail
+                        {
+                            Field = modelStateKey,
+                            ErrorMessage = error.ErrorMessage
+                        });
+                    }
                 }
-                               
+
                 return View("~/Views/Roatp/SubmitApplication.cshtml", model);
             }
 

@@ -275,3 +275,10 @@ src/Tools/PhantomJS/tools/phantomjs/ChangeLog
 
 # Developer appsettings
 *.development.json
+
+# Azurite
+__blobstorage__
+__queuestorage__
+__azurite_db_blob_*
+__azurite_db_table_*
+__azurite_db_queue_*
