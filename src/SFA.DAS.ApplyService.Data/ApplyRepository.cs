@@ -127,7 +127,28 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<bool> ChangeProviderRoute(Guid applicationId, int ProviderRoute)
+        {
+            var application = await GetApplication(applicationId);
+            var applyData = application?.ApplyData;
 
+            if (application != null && applyData?.ApplyDetails != null)
+            {
+                applyData.ApplyDetails.ProviderRoute = ProviderRoute;
+
+                using (var connection = new SqlConnection(_config.SqlConnectionString))
+                {
+                    await connection.ExecuteAsync(@"UPDATE Apply
+                                                    SET  ApplyData = @ApplyData
+                                                    WHERE  Id = @Id",
+                                                    new { application.Id, application.ApplyData });
+                }
+
+                return true;
+            }
+
+            return false;
+        }
 
 
 
