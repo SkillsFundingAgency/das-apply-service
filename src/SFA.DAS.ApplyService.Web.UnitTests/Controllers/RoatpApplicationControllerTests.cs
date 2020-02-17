@@ -241,9 +241,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             const int NotRequiredSequenceId = 4;
             const int NotRequiredSectionId = 1;
 
+            var applicationId = Guid.NewGuid();
+
             var inProgressApp = new Domain.Entities.Apply
             {
                 ApplicationStatus = ApplicationStatus.InProgress,
+                ApplicationId = applicationId,
                 ApplyData = new ApplyData
                 {
                     ApplyDetails = new ApplyDetails
@@ -271,6 +274,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             _apiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(inProgressApp);
+
+            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(new List<Apply> { inProgressApp });
 
             var organisationDetails = new Organisation 
             { 
@@ -347,7 +352,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 }
             };
 
-            var result = _controller.TaskList(Guid.NewGuid()).GetAwaiter().GetResult();
+            var result = _controller.TaskList(applicationId).GetAwaiter().GetResult();
 
             var viewResult = result as ViewResult;
             viewResult.Should().NotBeNull();
