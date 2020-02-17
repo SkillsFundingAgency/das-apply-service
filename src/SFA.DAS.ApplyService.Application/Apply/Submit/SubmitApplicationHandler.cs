@@ -37,7 +37,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
                         application.ApplyData.ApplyDetails.ReferenceNumber = await _applyRepository.GetNextRoatpApplicationReference();
                     }
 
-                    if (string.IsNullOrWhiteSpace(application.ApplyData.ApplyDetails.ProviderRoute))
+                    if (application.ApplyData.ApplyDetails.ProviderRoute > 0)
                     {
                         application.ApplyData.ApplyDetails.ProviderRoute = request.ProviderRoute;
                     }

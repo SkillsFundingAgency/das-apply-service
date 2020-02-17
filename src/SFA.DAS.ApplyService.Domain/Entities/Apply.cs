@@ -28,7 +28,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string UKPRN { get; set; }
         public string OrganisationName { get; set; }
         public string TradingName { get; set; }
-        public string ProviderRoute { get; set; } // was string - ApplicationRouteId
+        public int ProviderRoute { get; set; } // was string - ApplicationRouteId
         public DateTime? ApplicationSubmittedOn { get; set; }
         public Guid? ApplicationSubmittedBy { get; set; }
     }
