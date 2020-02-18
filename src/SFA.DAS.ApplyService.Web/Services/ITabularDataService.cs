@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using SFA.DAS.ApplyService.Domain.Apply;
+﻿using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.Web.Services
 {

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using NPOI.OpenXmlFormats.Dml.Diagram;
 using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.Web.Services
@@ -27,6 +24,9 @@ namespace SFA.DAS.ApplyService.Web.Services
                         isPresent = false;
                         break;
                     }
+
+                    if (isPresent)
+                        return isPresent;
                 }
             }
 
