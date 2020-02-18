@@ -1,7 +1,6 @@
 ﻿namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
     using Configuration;
-    using Microsoft.AspNetCore.Hosting;
     using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
     public class RoatpTokenService : IRoatpTokenService
