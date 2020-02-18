@@ -1360,9 +1360,9 @@
             };
 
             var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
-            status.Should().Be(TaskListSectionStatus.Next);
+            status.Should().Be(TaskListSectionStatus.InProgress);
             var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
-            css.Should().Be("next");
+            css.Should().Be("inprogress");
         }
 
         [Test]
@@ -1480,9 +1480,9 @@
             };
 
             var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
-            status.Should().Be(TaskListSectionStatus.Next);
+            status.Should().Be(TaskListSectionStatus.InProgress);
             var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
-            css.Should().Be("next");
+            css.Should().Be("inprogress");
         }
 
         [Test]
