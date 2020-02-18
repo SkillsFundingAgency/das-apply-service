@@ -7,19 +7,14 @@
     public class RoatpTokenService : IRoatpTokenService
     {
         private readonly IApplyConfig _configuration;
-        private readonly IHostingEnvironment _hostingEnvironment;
 
-        public RoatpTokenService(IConfigurationService configurationService, IHostingEnvironment hostingEnvironment)
+        public RoatpTokenService(IConfigurationService configurationService)
         {
             _configuration = configurationService.GetConfig().Result;
-            _hostingEnvironment = hostingEnvironment;
         }
 
         public string GetToken()
         {
-            if (_hostingEnvironment.IsDevelopment())
-                return string.Empty;
-
             var tenantId = _configuration.RoatpApiAuthentication.TenantId;
             var clientId = _configuration.RoatpApiAuthentication.ClientId;
             var appKey = _configuration.RoatpApiAuthentication.ClientSecret;
