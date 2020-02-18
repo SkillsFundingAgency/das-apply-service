@@ -174,13 +174,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                 {
                     conditionsOfAcceptance2 = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCOA2MainEmployer).GetAwaiter().GetResult();
                     //conditionsOfAcceptance3 = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCOA3MainEmployer).GetAwaiter().GetResult();
-                    if (conditionsOfAcceptance2 != null && !String.IsNullOrWhiteSpace(conditionsOfAcceptance2.Value))
-                    {
-                        if (conditionsOfAcceptance2.Value.Equals("yes", StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            return TaskListSectionStatus.Completed;
-                        }
-                    }
                 }
                 else if (ApplicationRouteId == SupportingApplicationRouteId)
                 {
@@ -190,15 +183,15 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                     return TaskListSectionStatus.NotRequired;
                 }
 
-                //if (String.IsNullOrWhiteSpace(conditionsOfAcceptance2?.Value) && String.IsNullOrWhiteSpace(conditionsOfAcceptance3?.Value))
-                //{
-                //    return TaskListSectionStatus.Next;
-                //}
+                if (string.IsNullOrWhiteSpace(conditionsOfAcceptance2?.Value) /*&& String.IsNullOrWhiteSpace(conditionsOfAcceptance3?.Value)*/)
+                {
+                    return TaskListSectionStatus.Next;
+                }
 
-                //if (conditionsOfAcceptance2?.Value == ConfirmedAnswer && conditionsOfAcceptance3?.Value == ConfirmedAnswer)
-                //{
-                //    return TaskListSectionStatus.Completed;
-                //}
+                if (conditionsOfAcceptance2?.Value == ConfirmedAnswer /*&& conditionsOfAcceptance3?.Value == ConfirmedAnswer*/)
+                {
+                    return TaskListSectionStatus.Completed;
+                }
 
                 return TaskListSectionStatus.InProgress;
             }
