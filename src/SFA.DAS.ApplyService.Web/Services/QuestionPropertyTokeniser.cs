@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 
@@ -33,7 +34,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 if (questionValue != null)
                 {
                     var tokenReplacementValue = tokenisedValue.Replace(stringToReplace, questionValue.Value);
-                    return tokenReplacementValue;
+                    return WebUtility.HtmlEncode(tokenReplacementValue);
                 }
             }
 
