@@ -39,87 +39,84 @@ else
     </form>
 </div>
 
-@if (showErrors)
-{
-    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-        <h2 class="govuk-error-summary__title" id="error-summary-title">
-            There is a problem
-        </h2>
-        <div class="govuk-error-summary__body">
-            <ul class="govuk-list govuk-error-summary__list">
-                <li><a sfa-validation-for="ApplicationRouteId"></a></li>
-            </ul>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    @if (showErrors)
+    {
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    <li><a sfa-validation-for="ApplicationRouteId"></a></li>
+                </ul>
+            </div>
+        </div>
+    }
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l">Choose your organisation's provider route</h1>
         </div>
     </div>
-}
-
-<div class="govuk-width-container">
-
-    <main class="govuk-main-wrapper " id="main-content" role="main">
-
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-l">Choose your organisation's provider route</h1>
-            </div>
-        </div>
 
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <form method="post" asp-action="@submitAction" asp-controller="RoatpApplicationPreamble">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="post" asp-action="@submitAction" asp-controller="RoatpApplicationPreamble">
 
-                    <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ApplicationRouteId" sfa-validationerror-class="govuk-error-message">
-                        @if (showErrors)
-                        {
-                            <span class="govuk-error-message">
-                                @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "ApplicationRouteId")?.ErrorMessage)
-                            </span>
-                        }
-                        <fieldset class="govuk-fieldset">
+                <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ApplicationRouteId" sfa-validationerror-class="govuk-error-message">
+                    @if (showErrors)
+                    {
+                        <span class="govuk-error-message">
+                            @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "ApplicationRouteId")?.ErrorMessage)
+                        </span>
+                    }
+                    <fieldset class="govuk-fieldset">
 
-                            <div class="govuk-radios">
+                        <div class="govuk-radios">
 
-                                @foreach (var applicationRoute in Model.ApplicationRoutes)
-                                {
-                                    <div class="govuk-radios__item">
+                            @foreach (var applicationRoute in Model.ApplicationRoutes)
+                            {
+                                <div class="govuk-radios__item">
 
-                                        <input asp-for="ApplicationRouteId" class="govuk-radios__input @isError" id="route-@applicationRoute.Id"
-                                               name="ApplicationRouteId" type="radio" value="@applicationRoute.Id"
-                                               sfa-validation-for="ApplicationRouteId" sfa-validationerror-class="form-control-error"
-                                               aria-describedby="route-@applicationRoute.Id-item-hint">
-                                        <label class="govuk-label govuk-radios__label" for="route-@applicationRoute.Id">
-                                            @applicationRoute.RouteName
-                                        </label>
-                                        <span id="route-@applicationRoute.Id-item-hint" class="govuk-hint govuk-radios__hint">
-                                            @Html.Raw(applicationRoute.Description)
-                                        </span>
-                                    </div>
-                                }
-                            </div>
-                        </fieldset>
-                    </div>
-                    <details class="govuk-details" role="group">
-                        <summary class="govuk-details__summary" role="button" aria-controls="details-content-provider-route" aria-expanded="false">
-                            <span class="govuk-details__summary-text">
-                                What is a connected company or charity?
-                            </span>
-                        </summary>
-                        <div class="govuk-details__text" id="details-content-provider-route" aria-hidden="true">
-                            <p>A connected company is part of the same group and has the same ultimate parent company as your organisation.</p>
-                            <p>A connected charity is part of the same group of charities and has a majority of the same controlling trustees as your organisation.</p>
+                                    <input asp-for="ApplicationRouteId" class="govuk-radios__input @isError" id="route-@applicationRoute.Id"
+                                            name="ApplicationRouteId" type="radio" value="@applicationRoute.Id"
+                                            sfa-validation-for="ApplicationRouteId" sfa-validationerror-class="form-control-error"
+                                            aria-describedby="route-@applicationRoute.Id-item-hint">
+                                    <label class="govuk-label govuk-radios__label" for="route-@applicationRoute.Id">
+                                        @applicationRoute.RouteName
+                                    </label>
+                                    <span id="route-@applicationRoute.Id-item-hint" class="govuk-hint govuk-radios__hint">
+                                        @Html.Raw(applicationRoute.Description)
+                                    </span>
+                                </div>
+                            }
                         </div>
-                    </details>
-                    @Html.HiddenFor(x => x.ApplicationId)
-                    @Html.HiddenFor(x => x.PageId)
-                    @Html.HiddenFor(x => x.SequenceId)
-                    @Html.HiddenFor(x => x.SectionId)
-                    <input type="submit" class="govuk-button" value="Save and continue" />
-                </form>
+                    </fieldset>
+                </div>
+                <details class="govuk-details" role="group">
+                    <summary class="govuk-details__summary" role="button" aria-controls="details-content-provider-route" aria-expanded="false">
+                        <span class="govuk-details__summary-text">
+                            What is a connected company or charity?
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text" id="details-content-provider-route" aria-hidden="true">
+                        <p>A connected company is part of the same group and has the same ultimate parent company as your organisation.</p>
+                        <p>A connected charity is part of the same group of charities and has a majority of the same controlling trustees as your organisation.</p>
+                    </div>
+                </details>
+                @Html.HiddenFor(x => x.ApplicationId)
+                @Html.HiddenFor(x => x.PageId)
+                @Html.HiddenFor(x => x.SequenceId)
+                @Html.HiddenFor(x => x.SectionId)
+                <input type="submit" class="govuk-button" value="Save and continue" />
+            </form>
 
-            </div>
         </div>
-    </main>
-    <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
-</div>
+    </div>
+</main>
+<partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
 
 

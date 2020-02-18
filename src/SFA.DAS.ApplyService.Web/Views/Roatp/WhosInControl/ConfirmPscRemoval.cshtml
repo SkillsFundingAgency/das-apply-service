@@ -14,7 +14,6 @@
 
 @{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
 
-
 <div class="grid-row">
     <form asp-controller="RoatpWhosInControlApplication" asp-action="@Model.BackAction" method="get" name="backForm">
         @Html.HiddenFor(x => x.ApplicationId)
@@ -22,86 +21,84 @@
     </form>
 </div>
 
-@if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
-{
-    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-        <h2 class="govuk-error-summary__title" id="error-summary-title">
-            There is a problem
-        </h2>
-        <div class="govuk-error-summary__body">
-            <ul class="govuk-list govuk-error-summary__list">
-                @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
-                {
-                    <li><a href="#@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
-                }
-            </ul>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
+    {
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
+                    {
+                        <li><a href="#@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <span class="govuk-caption-l">@Model.SectionTitle</span>
+            <h1 class="govuk-heading-l">@title</h1>
         </div>
     </div>
-}
-<div class="govuk-width-container">
 
-    <main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="post" asp-action="@Model.ActionName">
+                @Html.HiddenFor(x => x.ApplicationId)
+                @Html.HiddenFor(x => x.Index)
+                @Html.HiddenFor(x => x.Name)
+                @Html.HiddenFor(x => x.BackAction)
+                @Html.HiddenFor(x => x.GetHelpAction)
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
+                <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="Confirmation" sfa-validationerror-class="govuk-error-message">
+                    @if (showErrors)
+                    {
+                        <span class="govuk-error-message">
+                            @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "Confirmation")?.ErrorMessage)
+                        </span>
+                    }
+                    <fieldset class="govuk-fieldset">
 
-                <span class="govuk-caption-l">@Model.SectionTitle</span>
-                <h1 class="govuk-heading-l">@title</h1>
-            </div>
-        </div>
+                        <div class="govuk-radios">
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <form method="post" asp-action="@Model.ActionName">
-                    @Html.HiddenFor(x => x.ApplicationId)
-                    @Html.HiddenFor(x => x.Index)
-                    @Html.HiddenFor(x => x.Name)
-                    @Html.HiddenFor(x => x.BackAction)
-                    @Html.HiddenFor(x => x.GetHelpAction)
+                            <div class="govuk-radios__item">
 
-                    <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="Confirmation" sfa-validationerror-class="govuk-error-message">
-                        @if (showErrors)
-                        {
-                            <span class="govuk-error-message">
-                                @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "Confirmation")?.ErrorMessage)
-                            </span>
-                        }
-                        <fieldset class="govuk-fieldset">
-
-                            <div class="govuk-radios">
-
-                                <div class="govuk-radios__item">
-
-                                    <input asp-for="Confirmation" class="govuk-radios__input" id="Confirmation-Yes"
-                                           name="Confirmation" type="radio" value="Y"
-                                           sfa-validation-for="PartnershipType" sfa-validationerror-class="form-control-error">
-                                    <label class="govuk-label govuk-radios__label" for="Confirmation-Yes">
-                                        Yes
-                                    </label>
-
-                                </div>
-
-                                <div class="govuk-radios__item">
-
-                                    <input asp-for="Confirmation" class="govuk-radios__input" id="Confirmation-No"
-                                           name="Confirmation" type="radio" value="N"
-                                           sfa-validation-for="Confirmation" sfa-validationerror-class="form-control-error">
-                                    <label class="govuk-label govuk-radios__label" for="Confirmation-No">
-                                        No
-                                    </label>
-
-                                </div>
+                                <input asp-for="Confirmation" class="govuk-radios__input" id="Confirmation-Yes"
+                                        name="Confirmation" type="radio" value="Y"
+                                        sfa-validation-for="PartnershipType" sfa-validationerror-class="form-control-error">
+                                <label class="govuk-label govuk-radios__label" for="Confirmation-Yes">
+                                    Yes
+                                </label>
 
                             </div>
-                        </fieldset>
-                    </div>
-                    <input type="submit" class="govuk-button" value="Save and continue" />
 
-                </form>
-            </div>
+                            <div class="govuk-radios__item">
+
+                                <input asp-for="Confirmation" class="govuk-radios__input" id="Confirmation-No"
+                                        name="Confirmation" type="radio" value="N"
+                                        sfa-validation-for="Confirmation" sfa-validationerror-class="form-control-error">
+                                <label class="govuk-label govuk-radios__label" for="Confirmation-No">
+                                    No
+                                </label>
+
+                            </div>
+
+                        </div>
+                    </fieldset>
+                </div>
+                <input type="submit" class="govuk-button" value="Save and continue" />
+
+            </form>
         </div>
-    </main>
-    <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
-</div>
+    </div>
+</main>
+<partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
+
 
 

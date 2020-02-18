@@ -19,67 +19,64 @@
     </form>
 </div>
 
-<div class="govuk-width-container">
+<main class="govuk-main-wrapper " id="main-content" role="main">
 
-    <main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-
-                <span class="govuk-caption-l">@Model.SectionTitle</span>
-                <h1 class="govuk-heading-l">Confirm who's in control</h1>
-            </div>
+            <span class="govuk-caption-l">@Model.SectionTitle</span>
+            <h1 class="govuk-heading-l">Confirm who's in control</h1>
         </div>
+    </div>
 
-        <table class="govuk-table">
+    <table class="govuk-table">
 
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    @foreach (var title in Model.PeopleInControlData.HeadingTitles)
-                    {
-                        <th class="govuk-table__header" scope="col">@Html.Raw(title)</th>
-                    }
-                    <th class="govuk-table__header" scope="col"></th>
-                    <th class="govuk-table__header" scope="col"></th>
-                </tr>
-            </thead>
-            <tbody class="govuk-table_body">
-                @for (var index = 0; index < Model.PeopleInControlData.DataRows.Count; index++)
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                @foreach (var title in Model.PeopleInControlData.HeadingTitles)
                 {
-                    <tr class="govuk-table__row">
-                        @foreach (var column in Model.PeopleInControlData.DataRows[index].Columns)
-                        {
-                            <td class="govuk-table__cell">@column</td>
-                        }
-                        <td class="govuk-table__cell"><a href="@Url.Action("EditPeopleInControl", "RoatpWhosInControlApplication", new { Model.ApplicationId, index })">Change</a></td>
-                        <td class="govuk-table__cell"><a href="@Url.Action("RemovePeopleInControl", "RoatpWhosInControlApplication", new { Model.ApplicationId, index })">Remove</a></td>
-                    </tr>
+                    <th class="govuk-table__header" scope="col">@Html.Raw(title)</th>
                 }
-            </tbody>
-        </table>
-        @if (Model.PeopleInControlData.DataRows.Count < ConfirmPartnersViewModel.MaximumNumberOfPartners)
-        {
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-two-thirds">
-                    <p class="govuk-body">
-                        <a class="govuk-link" href="@Url.Action("AddPeopleInControl", "RoatpWhosInControlApplication", new { Model.ApplicationId })">Add another person</a>
-                    </p>
-                </div>
-            </div>
-        }
-
+                <th class="govuk-table__header" scope="col"></th>
+                <th class="govuk-table__header" scope="col"></th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table_body">
+            @for (var index = 0; index < Model.PeopleInControlData.DataRows.Count; index++)
+            {
+                <tr class="govuk-table__row">
+                    @foreach (var column in Model.PeopleInControlData.DataRows[index].Columns)
+                    {
+                        <td class="govuk-table__cell">@column</td>
+                    }
+                    <td class="govuk-table__cell"><a href="@Url.Action("EditPeopleInControl", "RoatpWhosInControlApplication", new { Model.ApplicationId, index })">Change</a></td>
+                    <td class="govuk-table__cell"><a href="@Url.Action("RemovePeopleInControl", "RoatpWhosInControlApplication", new { Model.ApplicationId, index })">Remove</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (Model.PeopleInControlData.DataRows.Count < ConfirmPartnersViewModel.MaximumNumberOfPartners)
+    {
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <form method="post" asp-action="CompletePeopleInControlSection">
-                    @Html.HiddenFor(x => x.ApplicationId)
-                    @Html.HiddenFor(x => x.GetHelpAction)
-
-                    <button type="submit" class="govuk-button">Confirm and continue</button>
-                </form>
+                <p class="govuk-body">
+                    <a class="govuk-link" href="@Url.Action("AddPeopleInControl", "RoatpWhosInControlApplication", new { Model.ApplicationId })">Add another person</a>
+                </p>
             </div>
         </div>
-    </main>
-    <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
-</div>
+    }
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="post" asp-action="CompletePeopleInControlSection">
+                @Html.HiddenFor(x => x.ApplicationId)
+                @Html.HiddenFor(x => x.GetHelpAction)
+
+                <button type="submit" class="govuk-button">Confirm and continue</button>
+            </form>
+        </div>
+    </div>
+</main>
+<partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
 
 

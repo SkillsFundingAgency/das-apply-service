@@ -15,29 +15,27 @@
     </form>
 </div>
 
-<div class="govuk-width-container">
 
-    <main class="govuk-main-wrapper " id="main-content" role="main">
+<main class="govuk-main-wrapper " id="main-content" role="main">
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-l">@title</h1>
-                <p class="govuk-body">
-                    If you change your UKPRN, you may be required to answer the following application questions again. This is because the information we get from UKRLP determines which application questions we ask you.
-                </p>
-                <p class="govuk-body">
-                    If you do not provide the correct UKPRN, your application may be rejected.
-                </p>
-                
-                <form method="post" asp-action="ConfirmChangeUkprn" asp-controller="RoatpApplicationPreamble">                      
-                    @Html.HiddenFor(x => x.ApplicationId)
-                    <div class="govuk-grid-row">
-                        <div class="govuk-grid-column-two-thirds">
-                            <input type="submit" class="govuk-button" value="Continue" />
-                        </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l">@title</h1>
+            <p class="govuk-body">
+                If you change your UKPRN, you may be required to answer the following application questions again. This is because the information we get from UKRLP determines which application questions we ask you.
+            </p>
+            <p class="govuk-body">
+                If you do not provide the correct UKPRN, your application may be rejected.
+            </p>
+            
+            <form method="post" asp-action="ConfirmChangeUkprn" asp-controller="RoatpApplicationPreamble">                      
+                @Html.HiddenFor(x => x.ApplicationId)
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-two-thirds">
+                        <input type="submit" class="govuk-button" value="Continue" />
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
-    </main>
-</div>
+    </div>
+</main>

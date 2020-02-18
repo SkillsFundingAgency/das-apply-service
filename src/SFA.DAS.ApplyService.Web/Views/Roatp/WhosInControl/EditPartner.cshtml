@@ -6,14 +6,16 @@
     Layout = "_Layout";
 }
 
-    @{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
+@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
 
-    <div class="grid-row">
-        <form asp-controller="RoatpWhosInControlApplication" asp-action="ConfirmPartners" method="get" name="backForm">
-            @Html.HiddenFor(x => x.ApplicationId)
-            <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
-        </form>
-    </div>
+<div class="grid-row">
+    <form asp-controller="RoatpWhosInControlApplication" asp-action="ConfirmPartners" method="get" name="backForm">
+        @Html.HiddenFor(x => x.ApplicationId)
+        <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+    </form>
+</div>
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
 
     @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
     {
@@ -32,38 +34,33 @@
         </div>
     }
 
-    <div class="govuk-width-container">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-        <main class="govuk-main-wrapper " id="main-content" role="main">
-
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-two-thirds">
-
-                    <span class="govuk-caption-l">@Model.SectionTitle</span>
-                    <h1 class="govuk-heading-l">Enter the @Model.Identifier's details</h1>
-                </div>
-            </div>
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-two-thirds">
-                    <form method="post" asp-action="UpdatePartnerDetails">
-                        @Html.HiddenFor(x => x.ApplicationId)
-                        @Html.HiddenFor(x => x.Index)
-                        @Html.HiddenFor(x => x.DateOfBirthOptional)
-                        @Html.HiddenFor(x => x.Identifier)
-                        @Html.HiddenFor(x => x.GetHelpAction)
-
-                        @{
-                            await Html.RenderPartialAsync("~/Views/Roatp/WhosInControl/AddEditPersonInControl.cshtml", Model);
-                        }
-
-                        <button type="submit" class="govuk-button">Save and continue</button>
-
-                    </form>
-                </div>
-            </div>
-
-        </main>
-        <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
+            <span class="govuk-caption-l">@Model.SectionTitle</span>
+            <h1 class="govuk-heading-l">Enter the @Model.Identifier's details</h1>
+        </div>
     </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="post" asp-action="UpdatePartnerDetails">
+                @Html.HiddenFor(x => x.ApplicationId)
+                @Html.HiddenFor(x => x.Index)
+                @Html.HiddenFor(x => x.DateOfBirthOptional)
+                @Html.HiddenFor(x => x.Identifier)
+                @Html.HiddenFor(x => x.GetHelpAction)
+
+                @{
+                    await Html.RenderPartialAsync("~/Views/Roatp/WhosInControl/AddEditPersonInControl.cshtml", Model);
+                }
+
+                <button type="submit" class="govuk-button">Save and continue</button>
+
+            </form>
+        </div>
+    </div>
+
+</main>
+<partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
 
 

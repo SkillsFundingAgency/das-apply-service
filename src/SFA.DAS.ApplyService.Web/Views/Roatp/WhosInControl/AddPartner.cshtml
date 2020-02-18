@@ -15,52 +15,46 @@
     </form>
 </div>
 
-@if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
-{
-    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-        <h2 class="govuk-error-summary__title" id="error-summary-title">
-            There is a problem
-        </h2>
-        <div class="govuk-error-summary__body">
-            <ul class="govuk-list govuk-error-summary__list">
-                @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
-                {
-                    <li><a href="#@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
-                }
-            </ul>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
+    {
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
+                    {
+                        <li><a href="#@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-l">@Model.SectionTitle</span>
+            <h1 class="govuk-heading-l">Enter the @Model.Identifier's details</h1>
         </div>
     </div>
-}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="post" asp-action="AddPartnerDetails">
+                @Html.HiddenFor(x => x.ApplicationId)
+                @Html.HiddenFor(x => x.DateOfBirthOptional)
+                @Html.HiddenFor(x => x.Identifier)
+                @Html.HiddenFor(x => x.GetHelpAction)
+                @{
+                    await Html.RenderPartialAsync("~/Views/Roatp/WhosInControl/AddEditPersonInControl.cshtml", Model);
+                }
 
-<div class="govuk-width-container">
+                <button type="submit" class="govuk-button">Save and continue</button>
 
-    <main class="govuk-main-wrapper " id="main-content" role="main">
-
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <span class="govuk-caption-l">@Model.SectionTitle</span>
-                <h1 class="govuk-heading-l">Enter the @Model.Identifier's details</h1>
-            </div>
+            </form>
         </div>
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <form method="post" asp-action="AddPartnerDetails">
-                    @Html.HiddenFor(x => x.ApplicationId)
-                    @Html.HiddenFor(x => x.DateOfBirthOptional)
-                    @Html.HiddenFor(x => x.Identifier)
-                    @Html.HiddenFor(x => x.GetHelpAction)
-                    @{
-                        await Html.RenderPartialAsync("~/Views/Roatp/WhosInControl/AddEditPersonInControl.cshtml", Model);
-                    }
+    </div>
 
-                    <button type="submit" class="govuk-button">Save and continue</button>
-
-                </form>
-            </div>
-        </div>
-
-    </main>
-    <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
-</div>
-
-
+</main>
+<partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />

@@ -11,72 +11,68 @@
 
 @{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
 
+<main class="govuk-main-wrapper " id="main-content" role="main">
 
-<div class="govuk-width-container">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-    <main class="govuk-main-wrapper " id="main-content" role="main">
-
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-
-                <span class="govuk-caption-l">@Model.SectionTitle</span>
-                <h1 class="govuk-heading-l">Confirm your organisation's management hierarchy for apprenticeships</h1>
-            </div>
+            <span class="govuk-caption-l">@Model.SectionTitle</span>
+            <h1 class="govuk-heading-l">Confirm your organisation's management hierarchy for apprenticeships</h1>
         </div>
+    </div>
 
-        <table class="govuk-table">
+    <table class="govuk-table">
 
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    @foreach (var title in Model.ManagementHierarchyData.HeadingTitles)
-                    {
-                        <th class="govuk-table__header" scope="col">@Html.Raw(title)</th>
-                    }
-                    <th class="govuk-table__header" scope="col"></th>
-                    <th class="govuk-table__header" scope="col"></th>
-                </tr>
-            </thead>
-            <tbody class="govuk-table_body">
-                @for (var index = 0; index < Model.ManagementHierarchyData.DataRows.Count; index++)
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                @foreach (var title in Model.ManagementHierarchyData.HeadingTitles)
                 {
-                    <tr class="govuk-table__row">
-                        @foreach (var column in Model.ManagementHierarchyData.DataRows[index].Columns.Take(numberOfTitles))
-                        {
-                            <td class="govuk-table__cell">@column</td>
-                        }
-                        <td class="govuk-table__cell"><a href="@Url.Action("EditManagementHierarchy", "RoatpManagementHierarchy", new { Model.ApplicationId, index })">Change</a></td>
-                        <td class="govuk-table__cell"><a href="@Url.Action("RemoveManagementHierarchy", "RoatpManagementHierarchy", new { Model.ApplicationId, index })">Remove</a></td>
-
-                    </tr>
+                    <th class="govuk-table__header" scope="col">@Html.Raw(title)</th>
                 }
-            </tbody>
-        </table>
-        @if (Model.ManagementHierarchyData.DataRows.Count < ConfirmPartnersViewModel.MaximumNumberOfPartners)
-        {
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-two-thirds">
-                    <p class="govuk-body">
-                        <a class="govuk-link" href="@Url.Action("AddManagementHierarchy", "RoatpManagementHierarchy", new { Model.ApplicationId })">Add another person</a>
-                    </p>
-                </div>
-            </div>
-        }
+                <th class="govuk-table__header" scope="col"></th>
+                <th class="govuk-table__header" scope="col"></th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table_body">
+            @for (var index = 0; index < Model.ManagementHierarchyData.DataRows.Count; index++)
+            {
+                <tr class="govuk-table__row">
+                    @foreach (var column in Model.ManagementHierarchyData.DataRows[index].Columns.Take(numberOfTitles))
+                    {
+                        <td class="govuk-table__cell">@column</td>
+                    }
+                    <td class="govuk-table__cell"><a href="@Url.Action("EditManagementHierarchy", "RoatpManagementHierarchy", new { Model.ApplicationId, index })">Change</a></td>
+                    <td class="govuk-table__cell"><a href="@Url.Action("RemoveManagementHierarchy", "RoatpManagementHierarchy", new { Model.ApplicationId, index })">Remove</a></td>
 
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (Model.ManagementHierarchyData.DataRows.Count < ConfirmPartnersViewModel.MaximumNumberOfPartners)
+    {
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <form method="post" asp-action="CompleteManagementHierarchySection">
-                    @Html.HiddenFor(x => x.ApplicationId)
-                    @Html.HiddenFor(x => x.GetHelpAction)
-
-                    <button type="submit" class="govuk-button">Continue</button>
-                    <p class="govuk-body skipbutton" id="skipbutton">
-                        <a href="@Url.Action("Tasklist", "RoatpApplication", new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = Model.PageId})">Return to this question later</a>
-                    </p>
-                </form>
+                <p class="govuk-body">
+                    <a class="govuk-link" href="@Url.Action("AddManagementHierarchy", "RoatpManagementHierarchy", new { Model.ApplicationId })">Add another person</a>
+                </p>
             </div>
         </div>
-    </main>
-    <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
-</div>
+    }
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="post" asp-action="CompleteManagementHierarchySection">
+                @Html.HiddenFor(x => x.ApplicationId)
+                @Html.HiddenFor(x => x.GetHelpAction)
+
+                <button type="submit" class="govuk-button">Continue</button>
+                <p class="govuk-body skipbutton" id="skipbutton">
+                    <a href="@Url.Action("Tasklist", "RoatpApplication", new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = Model.PageId})">Return to this question later</a>
+                </p>
+            </form>
+        </div>
+    </div>
+</main>
+<partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
 
 
