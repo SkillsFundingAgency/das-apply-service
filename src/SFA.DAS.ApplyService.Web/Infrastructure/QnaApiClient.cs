@@ -102,7 +102,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 var apiError = JsonConvert.DeserializeObject<ApiError>(json);
                 var apiErrorMessage = apiError?.Message ?? json;
 
-                _logger.LogError($"Error in QnaApiClient.GetQuestionTagData() - applicationId {applicationId} | questionTag : {questionTag} | StatusCode : {response.StatusCode} | ErrorMessage: { apiErrorMessage }");
+                _logger.LogError($"Error in QnaApiClient.GetQuestionTag() - applicationId {applicationId} | questionTag : {questionTag} | StatusCode : {response.StatusCode} | ErrorMessage: { apiErrorMessage }");
                 return null; 
             }           
         }
@@ -203,7 +203,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         {
             var answer = new Answer { QuestionId = questionId };
         
-            var questionTagData = await GetQuestionTagData(applicationId, questionTag);
+            var questionTagData = await GetQuestionTag(applicationId, questionTag);
             if(questionTagData != null)
             {
                 answer.Value = questionTagData.ToString();
