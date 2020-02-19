@@ -36,11 +36,11 @@
             <span class="govuk-caption-l">@Model.SectionTitle</span>
             @if (Model.TrusteeDatesOfBirth.Count == 1)
             {
-                <h1 class="govuk-heading-l">Enter the date of birth for trustee</h1>
+                <h1 class="govuk-heading-xl">Enter the date of birth for trustee</h1>
             }
             else
             {
-                <h1 class="govuk-heading-l">Enter the date of birth for trustees</h1>
+                <h1 class="govuk-heading-xl">Enter the date of birth for trustees</h1>
             }
 
             <form method="post" asp-action="TrusteesDobsConfirmed" novalidate enctype="multipart/form-data">
