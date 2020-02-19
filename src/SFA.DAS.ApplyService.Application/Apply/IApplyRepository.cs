@@ -19,6 +19,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<bool> CanSubmitApplication(Guid applicationId);
         Task SubmitApplication(Guid applicationId, ApplyData applyData, Guid submittedBy);
 
+        Task<Guid> SnapshotApplication(Guid applicationId, Guid snapshotApplicationId, List<ApplySequence> newSequences);
 
         Task<List<RoatpApplicationSummaryItem>> GetNewGatewayApplications();
         Task<List<RoatpApplicationSummaryItem>> GetInProgressGatewayApplications();
