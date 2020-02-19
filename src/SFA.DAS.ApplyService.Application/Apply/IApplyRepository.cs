@@ -45,6 +45,14 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         Task<bool> UpdateApplyData(Guid applicationId, ApplyData applyData, string updatedBy);
 
+        Task<List<RoatpApplicationSummaryItem>> GetNewGatewayApplications();
+        Task<List<RoatpApplicationSummaryItem>> GetInProgressGatewayApplications();
+        Task<List<RoatpApplicationSummaryItem>> GetClosedGatewayApplications();
+        Task StartGatewayReview(Guid applicationId, string reviewer);
+        Task EvaluateGateway(Guid applicationId, bool isGatewayApproved, string evaluatedBy);
+
+
+
         // NOTE: This is old stuff or things which are not migrated over yet
         Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId,  int sectionId, Guid? userId);
         Task<List<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid? userId);
