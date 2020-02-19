@@ -113,13 +113,13 @@
   }
 }
 
-@media (min-width: 48.0625em) {
+@media (min-width: 40.0625em) {
   .app-check-your-answers {
     display: table;
   }
 }
 
-@media (min-width: 48.0625em) {
+@media (min-width: 40.0625em) {
   .app-check-your-answers--short {
     width: 100%;
   }
@@ -129,7 +129,7 @@
   }
 }
 
-@media (min-width: 48.0625em) {
+@media (min-width: 40.0625em) {
   .app-check-your-answers--long {
     width: 100%;
   }
@@ -144,14 +144,14 @@
   border-bottom: 1px solid #bfc1c3;
 }
 
-@media (min-width: 48.0625em) {
+@media (min-width: 40.0625em) {
   .app-check-your-answers__contents {
     display: table-row;
     border-bottom-width: 0;
   }
 }
 
-@media (min-width: 48.0625em) {
+@media (min-width: 40.0625em) {
   .app-check-your-answers__contents:first-child
     .app-check-your-answers__question,
   .app-check-your-answers__contents:first-child .app-check-your-answers__answer,
@@ -168,7 +168,7 @@
   margin: 0;
 }
 
-@media (min-width: 48.0625em) {
+@media (min-width: 40.0625em) {
   .app-check-your-answers__question,
   .app-check-your-answers__answer,
   .app-check-your-answers__change {
@@ -194,7 +194,7 @@
   right: 0;
 }
 
-@media (min-width: 48.0625em) {
+@media (min-width: 40.0625em) {
   .app-check-your-answers__change {
     position: static;
     padding-right: 0;
@@ -974,8 +974,7 @@
 /* ROATP NAVIGATION */
 
 .roatp__navigation {
-  display: flex;
-  justify-content: space-between;
+  display: block;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -987,7 +986,8 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.14286;
-  display: inline-block;
+  display: block;
+  width: 100%;
   padding: 11px 0;
   white-space: nowrap;
 }
@@ -997,12 +997,24 @@
   padding-right: 0;
 }
 
+@media (min-width: 40.0625em) {
+  .roatp__navigation {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .roatp__navigation-item {
+    display: inline-block;
+    width: auto;
+  }
+}
+
 /* 
 .js-enabled .roatp__menu-button {
   display: block;
 }
 
-@media (min-width: 48.0625em) {
+@media (min-width: 40.0625em) {
   .js-enabled .roatp__menu-button {
     display: none;
   }
@@ -1012,7 +1024,7 @@
   display: none;
 }
 
-@media (min-width: 48.0625em) {
+@media (min-width: 40.0625em) {
   .js-enabled .roatp__navigation {
     display: block;
   }
@@ -1022,7 +1034,7 @@
   display: block;
 }
 
-@media (min-width: 48.0625em) {
+@media (min-width: 40.0625em) {
   .roatp__navigation--end {
     margin: 0;
     padding: 5px 0;
@@ -1030,7 +1042,7 @@
   }
 }
 
-@media (min-width: 48.0625em) {
+@media (min-width: 40.0625em) {
   .roatp__navigation-item {
     display: inline-block;
     margin-right: 15px;
@@ -1295,7 +1307,7 @@
   padding-right: 20px;
   padding-bottom: 10px;
 }
-@media (min-width: 48.0625em) {
+@media (min-width: 40.0625em) {
   .das-cookie-banner__message {
     margin: 0;
   }
@@ -1310,7 +1322,7 @@
     margin: 0 -10px;
   }
 }
-@media (min-width: 48.0625em) {
+@media (min-width: 40.0625em) {
   .das-cookie-banner__buttons {
     padding-bottom: 10px;
   }
@@ -1331,7 +1343,7 @@
   margin: 0;
   width: 100%;
 }
-@media (min-width: 48.0625em) {
+@media (min-width: 40.0625em) {
   .das-cookie-banner__button {
     vertical-align: baseline;
   }
@@ -1386,7 +1398,7 @@
   background: #ffbf47;
   outline: 3px solid #ffbf47;
 }
-@media (min-width: 48.0625em) {
+@media (min-width: 40.0625em) {
   .das-cookie-banner__hide-button {
     position: absolute;
     right: 5px;
