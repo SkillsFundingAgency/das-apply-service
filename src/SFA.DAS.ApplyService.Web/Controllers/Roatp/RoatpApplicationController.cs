@@ -100,7 +100,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var userId = applyUser?.Id ?? Guid.Empty;
 
             var applications = await _apiClient.GetApplications(userId, false);
-            applications = applications.Where(app => app.ApplicationStatus != ApplicationStatus.Declined).ToList();
+            applications = applications.Where(app => app.ApplicationStatus != ApplicationStatus.Rejected).ToList();
 
             if (!applications.Any())
             {              
@@ -116,7 +116,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 case ApplicationStatus.Approved:
                     return View("~/Views/Application/Approved.cshtml", application);
-                case ApplicationStatus.Declined:
+                case ApplicationStatus.Rejected:
                     return View("~/Views/Application/Rejected.cshtml", application);
                 case ApplicationStatus.FeedbackAdded:
                     return View("~/Views/Application/FeedbackIntro.cshtml", application.ApplicationId);
@@ -228,7 +228,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return View("~/Views/Application/Approved.cshtml", application);
             }
 
-            if (application.ApplicationStatus == ApplicationStatus.Declined)
+            if (application.ApplicationStatus == ApplicationStatus.Rejected)
             {
                 return View("~/Views/Application/Rejected.cshtml", application);
             }

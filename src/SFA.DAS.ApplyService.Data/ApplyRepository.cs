@@ -85,7 +85,7 @@ namespace SFA.DAS.ApplyService.Data
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 var application = await GetApplication(applicationId);
-                var invalidApplicationStatuses = new List<string> { ApplicationStatus.Approved, ApplicationStatus.Declined };
+                var invalidApplicationStatuses = new List<string> { ApplicationStatus.Approved, ApplicationStatus.Rejected };
 
                 // Application must exist and has not already been Approved or Rejected
                 if (application != null && !invalidApplicationStatuses.Contains(application.ApplicationStatus))
@@ -102,7 +102,7 @@ namespace SFA.DAS.ApplyService.Data
                                                             {
                                                                 applicationId,
                                                                 applicationStatusApproved = ApplicationStatus.Approved,
-                                                                applicationStatusApprovedRejected = ApplicationStatus.Declined
+                                                                applicationStatusApprovedRejected = ApplicationStatus.Rejected
                                                             });
 
                     canSubmit = !otherAppsInProgress.Any();
@@ -308,150 +308,6 @@ namespace SFA.DAS.ApplyService.Data
                 }
             }
         }
-
-
-
-        public async Task<List<RoatpApplicationSummaryItem>> GetNewGatewayApplications()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection
-                    .QueryAsync<RoatpApplicationSummaryItem>(
-                        @"SELECT 
-                            apply.Id AS Id,
-                            apply.ApplicationId AS ApplicationId,
-                            apply.ApplicationStatus AS ApplicationStatus,
-                            apply.GatewayReviewStatus AS GatewayReviewStatus,
-                            apply.ReviewStatus AS ReviewStatus,
-                            -- apply.FinancialReviewStatus AS FinancialReviewStatus,
-                            org.Name AS OrganisationName,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate
-	                      FROM Apply apply
-	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
-	                      WHERE apply.ApplicationStatus = @applicationStatusSubmitted AND apply.DeletedAt IS NULL
-	                        AND apply.GatewayReviewStatus = @gatewayReviewStatusNew",
-                        new
-                        {
-                            applicationStatusSubmitted = ApplicationStatus.Submitted,
-                            gatewayReviewStatusNew = GatewayReviewStatus.New
-                        })).ToList();
-            }
-        }
-
-        public async Task<List<RoatpApplicationSummaryItem>> GetInProgressGatewayApplications()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection
-                    .QueryAsync<RoatpApplicationSummaryItem>(
-                        @"SELECT 
-                            apply.Id AS Id,
-                            apply.ApplicationId AS ApplicationId,
-                            apply.ApplicationStatus AS ApplicationStatus,
-                            apply.GatewayReviewStatus AS GatewayReviewStatus,
-                            apply.ReviewStatus AS ReviewStatus,
-                            -- apply.FinancialReviewStatus AS FinancialReviewStatus,
-                            org.Name AS OrganisationName,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate
-	                      FROM Apply apply
-	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
-	                      WHERE apply.ApplicationStatus = @applicationStatusSubmitted AND apply.DeletedAt IS NULL
-	                        AND apply.GatewayReviewStatus = @gatewayReviewStatusInProgress",
-                        new
-                        {
-                            applicationStatusSubmitted = ApplicationStatus.Submitted,
-                            gatewayReviewStatusInProgress = GatewayReviewStatus.InProgress
-                        })).ToList();
-            }
-        }
-
-        public async Task<List<RoatpApplicationSummaryItem>> GetClosedGatewayApplications()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection
-                    .QueryAsync<RoatpApplicationSummaryItem>(
-                        @"SELECT 
-                            apply.Id AS Id,
-                            apply.ApplicationId AS ApplicationId,
-                            apply.ApplicationStatus AS ApplicationStatus,
-                            apply.GatewayReviewStatus AS GatewayReviewStatus,
-                            apply.ReviewStatus AS ReviewStatus,
-                            -- apply.FinancialReviewStatus AS FinancialReviewStatus,
-                            org.Name AS OrganisationName,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate
-	                      FROM Apply apply
-	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
-	                      WHERE apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
-	                        AND apply.GatewayReviewStatus IN (@gatewayReviewStatusApproved, @gatewayReviewStatusDeclined)",
-                        new
-                        {
-                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
-                            gatewayReviewStatusApproved = GatewayReviewStatus.Approved,
-                            gatewayReviewStatusDeclined = GatewayReviewStatus.Declined
-                        })).ToList();
-            }
-        }
-
-        public async Task StartGatewayReview(Guid applicationId, string reviewer)
-        {
-            var application = await GetApplication(applicationId);
-
-            if (application != null && application.GatewayReviewStatus == GatewayReviewStatus.New)
-            {
-                application.GatewayReviewStatus = GatewayReviewStatus.InProgress;
-                application.UpdatedBy = reviewer;
-                application.UpdatedAt = DateTime.UtcNow;
-
-                using (var connection = new SqlConnection(_config.SqlConnectionString))
-                {
-                    await connection.ExecuteAsync(@"UPDATE Apply
-                                                    SET  GatewayReviewStatus = @GatewayReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
-                                                    WHERE Apply.ApplicationId = @ApplicationId",
-                                                    new { application.ApplicationId, application.ApplyData, application.GatewayReviewStatus, application.UpdatedBy });
-                }
-            }
-        }
-
-        public async Task EvaluateGateway(Guid applicationId, bool isGatewayApproved, string evaluatedBy)
-        {
-            var application = await GetApplication(applicationId);
-
-            if (application != null && application.GatewayReviewStatus == GatewayReviewStatus.InProgress)
-            {
-                application.UpdatedBy = evaluatedBy;
-                application.UpdatedAt = DateTime.UtcNow;
-
-                if(isGatewayApproved)
-                {
-                    application.ApplicationStatus = ApplicationStatus.GatewayAssessed;
-                    application.GatewayReviewStatus = GatewayReviewStatus.Approved;
-                }
-                else
-                {
-                    application.ApplicationStatus = ApplicationStatus.Declined;
-                    application.GatewayReviewStatus = GatewayReviewStatus.Declined;
-                }
-
-                using (var connection = new SqlConnection(_config.SqlConnectionString))
-                {
-                    await connection.ExecuteAsync(@"UPDATE Apply
-                                                    SET  ApplicationStatus = @ApplicationStatus, GatewayReviewStatus = @GatewayReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
-                                                    WHERE Apply.ApplicationId = @ApplicationId",
-                                                    new { application.ApplicationId, application.ApplyData, application.ApplicationStatus, application.GatewayReviewStatus, application.UpdatedBy });
-                }
-            }
-        }
-
-
-
-
 
 
         // NOTE: This is old stuff or things which are not migrated over yet
@@ -781,7 +637,7 @@ namespace SFA.DAS.ApplyService.Data
                                                                                                     WHERE a.ApplyingOrganisationId = (SELECT ApplyingOrganisationId FROM Applications WHERE Applications.Id = @applicationId)
                                                                                                     AND a.Id <> @applicationId
                                                                                                     AND a.ApplicationStatus NOT IN (@approvedStatus, @rejectedStatus)",
-                                                                                            new { applicationId, approvedStatus = ApplicationStatus.Approved, rejectedStatus = ApplicationStatus.Declined });
+                                                                                            new { applicationId, approvedStatus = ApplicationStatus.Approved, rejectedStatus = ApplicationStatus.Rejected });
 
                 // For now Reject them (and add deleted information)
                 foreach (var app in inProgressRelatedApplications)
@@ -794,7 +650,7 @@ namespace SFA.DAS.ApplyService.Data
                                                         UPDATE Applications
                                                         SET  ApplicationStatus = @rejectedSequenceStatus, DeletedAt = GETUTCDATE(), DeletedBy = 'System'
                                                         WHERE  Applications.Id = @applicationId;",
-                                                    new { applicationId = app.Id, rejectedStatus = ApplicationStatus.Declined, rejectedSequenceStatus = ApplicationSequenceStatus.Rejected });
+                                                    new { applicationId = app.Id, rejectedStatus = ApplicationStatus.Rejected, rejectedSequenceStatus = ApplicationSequenceStatus.Rejected });
                 }
             }
         }

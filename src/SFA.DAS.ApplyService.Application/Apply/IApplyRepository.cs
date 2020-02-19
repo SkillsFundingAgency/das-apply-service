@@ -26,9 +26,11 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<RoatpApplicationSummaryItem>> GetClosedGatewayApplications();
         Task StartGatewayReview(Guid applicationId, string reviewer);
         Task EvaluateGateway(Guid applicationId, bool isGatewayApproved, string evaluatedBy);
+
         Task<List<RoatpApplicationSummaryItem>> GetOpenApplications();
         Task<List<RoatpApplicationSummaryItem>> GetFeedbackAddedApplications();
         Task<List<RoatpApplicationSummaryItem>> GetClosedApplications();
+
         Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications();
         Task<List<RoatpFinancialSummaryItem>> GetFeedbackAddedFinancialApplications();
         Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications();
@@ -44,12 +46,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<ApplyData> GetApplyData(Guid applicationId);
 
         Task<bool> UpdateApplyData(Guid applicationId, ApplyData applyData, string updatedBy);
-
-        Task<List<RoatpApplicationSummaryItem>> GetNewGatewayApplications();
-        Task<List<RoatpApplicationSummaryItem>> GetInProgressGatewayApplications();
-        Task<List<RoatpApplicationSummaryItem>> GetClosedGatewayApplications();
-        Task StartGatewayReview(Guid applicationId, string reviewer);
-        Task EvaluateGateway(Guid applicationId, bool isGatewayApproved, string evaluatedBy);
 
 
 
