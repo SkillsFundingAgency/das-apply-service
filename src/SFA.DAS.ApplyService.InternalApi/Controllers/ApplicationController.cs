@@ -1,26 +1,17 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.ApplyService.Application.Apply.CheckOrganisationStandardStatus;
-using SFA.DAS.ApplyService.Application.Apply.DeleteAnswer;
-using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
-using SFA.DAS.ApplyService.Application.Apply.GetOrganisationForApplication;
-using SFA.DAS.ApplyService.Application.Apply.GetPage;
-using SFA.DAS.ApplyService.Application.Apply.GetSection;
-using SFA.DAS.ApplyService.Application.Apply.GetSequence;
 using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
-using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
-using SFA.DAS.ApplyService.Domain.Apply;
-using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.InternalApi.Types;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Roatp;
+using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Application.Apply.Assessor;
+using SFA.DAS.ApplyService.Application.Apply.Snapshot;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -46,6 +37,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(request);
         }
 
+        [HttpPost("/Application/Snapshot")]
+        public async Task<ActionResult<Guid>> Snapshot([FromBody] SnapshotApplicationRequest request)
+        {
+            return await _mediator.Send(request);
+        }
+
         [HttpGet("Application/{applicationId}")]
         public async Task<ActionResult<Domain.Entities.Apply>> GetApplication(Guid applicationId)
         {
@@ -63,7 +60,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), false));
         }
-
+        
         [HttpGet("/Applications/Existing/{ukprn}")]
         public async Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatus(string ukprn)
         {
@@ -71,21 +68,44 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet("/Applications/Open")]
-        public async Task<IEnumerable<Apply>> GetOpenApplications()
+        public async Task<IEnumerable<RoatpApplicationSummaryItem>> GetOpenApplications()
         {
             return await _mediator.Send(new GetOpenApplicationsRequest());
         }
 
         [HttpGet("/Applications/Closed")]
-        public async Task<IEnumerable<Apply>> GetClosedApplications()
+        public async Task<IEnumerable<RoatpApplicationSummaryItem>> GetClosedApplications()
         {
             return await _mediator.Send(new GetClosedApplicationsRequest());
         }
 
         [HttpGet("/Applications/FeedbackAdded")]
-        public async Task<IEnumerable<Apply>> GetFeedbackAddedApplications()
+        public async Task<IEnumerable<RoatpApplicationSummaryItem>> GetFeedbackAddedApplications()
         {
             return await _mediator.Send(new GetFeedbackAddedApplicationsRequest());
         }
+
+        [HttpPost("/Application/{applicationId}/StartAssessorReview")]
+        public async Task<bool> StartAssessorReview(Guid applicationId, [FromBody] StartAssessorReviewApplicationRequest request)
+        {
+            return await _mediator.Send(new StartAssessorReviewRequest(applicationId, request.Reviewer));
+        }
+
+        [HttpPost("/Application/{applicationId}/StartAssessorSectionReview")]
+        public async Task<bool> StartAssessorSectionReview(Guid applicationId, [FromBody] StartAssessorSectionReviewRequest request)
+        {
+            return await _mediator.Send(request);
+        }
+
+        [HttpPost("/Application/{applicationId}/AssessorEvaluateSection")] 
+        public async Task<bool> AssessorEvaluateSection(Guid applicationId, [FromBody] AssessorEvaluateSectionRequest request)
+        {
+            return await _mediator.Send(request);
+        }
+    }
+
+    public class StartAssessorReviewApplicationRequest
+    {
+        public string Reviewer { get; set; }
     }
 }

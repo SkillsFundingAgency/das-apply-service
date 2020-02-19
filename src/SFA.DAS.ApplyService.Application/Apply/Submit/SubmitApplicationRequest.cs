@@ -9,7 +9,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
     {
         public Guid ApplicationId { get; set; }
         public Guid SubmittingContactId { get; set; }
-        public int ProviderRoute { get; set; }
+        public string ProviderRoute { get; set; }
 
         public ApplyData ApplyData { get; set; }
     }

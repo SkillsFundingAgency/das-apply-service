@@ -70,7 +70,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await (await _httpClient.GetAsync($"/Applications/{userId}")).Content
                 .ReadAsAsync<List<Domain.Entities.Apply>>();
         }
-
+        public async Task<IEnumerable<RoatpSequences>> GetRoatpSequences()
+        {
+            return await (await _httpClient.GetAsync($"/roatp-sequences")).Content
+               .ReadAsAsync<IEnumerable<RoatpSequences>>();
+        }
 
 
         // NOTE: This is old stuff or things which are not migrated over yet       
@@ -181,6 +185,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatus(string ukprn)
         {
             return await (await _httpClient.GetAsync($"/Applications/Existing/{ukprn}")).Content.ReadAsAsync<IEnumerable<RoatpApplicationStatus>>();
+        }
+
+        public async Task<bool> UpdateApplicationStatus(Guid applicationId, string applicationStatus)
+        {
+            var httpResponse = await _httpClient.PostAsJsonAsync($"/Application/Status", new { applicationId, applicationStatus });
+            return await httpResponse.Content.ReadAsAsync<bool>();            
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+using SFA.DAS.ApplyService.Domain.Entities;
+using System;
 
 namespace SFA.DAS.ApplyService.Domain.Apply
 {
@@ -10,9 +11,16 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public string Ukprn { get; set; }
         public string ApplicationReferenceNumber { get; set; }
         public DateTime? SubmittedDate { get; set; }
+        public DateTime? FeedbackAddedDate { get; set; }
+        public DateTime? ClosedDate { get; set; }
         public string ApplicationStatus { get; set; }
         public string GatewayReviewStatus { get; set; }
-        public string ReviewStatus { get; set; }
-        public string FinancialReviewStatus { get; set; }
+        public string AssessorReviewStatus { get; set; }
+        public string FinancialReviewStatus { get; set; }        
     }
-}
+
+    public class RoatpFinancialSummaryItem : RoatpApplicationSummaryItem
+    {
+        public FinancialReviewDetails FinancialReviewDetails { get; set; }
+    }
+ }

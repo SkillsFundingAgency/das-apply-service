@@ -178,11 +178,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private Application.Apply.Start.StartApplicationRequest BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
         {
+            var providerRoutes = _roatpApiClient.GetApplicationRoutes().GetAwaiter().GetResult();
+            var selectedProviderRoute = providerRoutes.FirstOrDefault(x => x.Id == providerRoute);
+            var providerRouteName = selectedProviderRoute?.RouteName;
+
             return new Application.Apply.Start.StartApplicationRequest
             {
                 ApplicationId = qnaApplicationId,
                 CreatingContactId = creatingContactId,
-                ProviderRoute = providerRoute,
+                ProviderRoute = providerRouteName,
                 ApplySequences = qnaSequences.Select(sequence => new ApplySequence
                 {
                     SequenceId = sequence.Id,
@@ -744,12 +748,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
             }
 
+            var isFileUploadPage = page.Questions.Any(q => "FileUpload".Equals(q.Input.Type, StringComparison.InvariantCultureIgnoreCase));
+
             bool validationPassed;
             List<KeyValuePair<string, string>> validationErrors;
             string nextAction;
             string nextActionId;
 
-            if (page.Questions.Any(q => "FileUpload".Equals(q.Input.Type, StringComparison.InvariantCultureIgnoreCase)))
+            if (isFileUploadPage)
             {
                 var uploadFileResult = await _qnaApiClient.Upload(applicationId, selectedSection.Id, pageId, HttpContext.Request.Form.Files);
                 validationPassed = uploadFileResult.ValidationPassed;
@@ -798,29 +804,31 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
-            PreserveAnswersInPage(page, answers);
+
+            if (isFileUploadPage != true)
+            {
+                page = StoreEnteredAnswers(answers, page);
+            }
+
             var invalidPage = await GetDataFedOptions(applicationId, page);
             this.TempData["InvalidPage"] = JsonConvert.SerializeObject(invalidPage);
 
             return await Page(applicationId, sequenceId, sectionId, pageId, redirectAction, page?.Questions);
         }
 
-        private void PreserveAnswersInPage(Page page, List<Answer> answers)
+        private static Page StoreEnteredAnswers(List<Answer> answers, Page page)
         {
-            // Only preserve answers if there are no FileUpload question types
-            if (page.Questions.All(q => !"FileUpload".Equals(q.Input?.Type, StringComparison.InvariantCultureIgnoreCase)))
+            if (answers != null && answers.Any())
             {
-                foreach (var question in page.Questions)
+                if (page.PageOfAnswers is null || !page.PageOfAnswers.Any())
                 {
-                    foreach (var answer in answers)
-                    {
-                        if (question.QuestionId == answer.QuestionId)
-                        {
-                            question.Value = answer.Value;
-                        }
-                    }
+                    page.PageOfAnswers = new List<PageOfAnswers> { new PageOfAnswers { Answers = new List<Answer>() } };
                 }
+
+                page.PageOfAnswers.Add(new PageOfAnswers { Answers = answers });
             }
+
+            return page;
         }
 
         private static void ApplyFormattingToAnswers(List<Answer> answers, Page page)
@@ -1009,53 +1017,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             return fileValidationPassed;
         }
-
-        [HttpPost]
-        public async Task<IActionResult> Submit(Guid applicationId, int sequenceId)
-        {
-            var canUpdate = await CanUpdateApplication(applicationId, sequenceId);
-            if (!canUpdate)
-            {
-                return RedirectToAction("Sequence", new { applicationId });
-            }
-
-            var activeSequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
-            var errors = ValidateSubmit(activeSequence);
-            if (errors.Any())
-            {
-                var sequenceVm = new SequenceViewModel(activeSequence, applicationId, errors);
-
-                if (activeSequence.Status == ApplicationSequenceStatus.FeedbackAdded)
-                {
-                    return View("~/Views/Application/Feedback.cshtml", sequenceVm);
-                }
-                else
-                {
-                    return View("~/Views/Application/Sequence.cshtml", sequenceVm);
-                }
-            }
-
-            var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
-            var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
-
-            var submitApplicationRequest = new Application.Apply.Submit.SubmitApplicationRequest
-            {
-                ApplicationId = applicationId,
-                ProviderRoute = int.Parse(providerRoute.Value),
-                SubmittingContactId = User.GetUserId()
-            };
-
-            if (await _apiClient.SubmitApplication(submitApplicationRequest))
-            {
-                return RedirectToAction("Submitted", new { applicationId });
-            }
-            else
-            {
-                // unable to submit
-                return RedirectToAction("NotSubmitted", new { applicationId });
-            }
-        }
-
+        
         private List<ValidationErrorDetail> ValidateSubmit(ApplicationSequence sequence)
         {
             var validationErrors = new List<ValidationErrorDetail>();
@@ -1197,19 +1159,34 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var providerRoute = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.ProviderRoute);
 
             var application = await _apiClient.GetApplication(model.ApplicationId);
-            foreach(var sequence in application.ApplyData.Sequences)
+
+            var roatpSequences = await _apiClient.GetRoatpSequences();
+
+            foreach (var sequence in application.ApplyData.Sequences)
             {
                 var applicationSequence = await _qnaApiClient.GetSequenceBySequenceNo(model.ApplicationId, sequence.SequenceNo);
                 var sections = await _qnaApiClient.GetSections(model.ApplicationId, applicationSequence.Id);
+                foreach(var section in sections)
+                {
+                    var applySection = sequence.Sections.FirstOrDefault(x => x.SectionNo == section.SectionId);
+                    if (applySection != null)
+                    {
+                        applySection.NotRequired = await SectionNotRequired(applicationSequence, _notRequiredOverrides, section.SectionId, roatpSequences);
+                    }
+                }
                 
                 applicationSequence.Sections = sections.ToList();
                 sequence.NotRequired = SequenceNotRequired(applicationSequence, _notRequiredOverrides);
             }
+            
+            var providerRoutes = await _roatpApiClient.GetApplicationRoutes();
+            var selectedProviderRoute = providerRoutes.FirstOrDefault(x => x.Id.ToString() == providerRoute.Value);
+            var providerRouteName = selectedProviderRoute?.RouteName;
 
             var submitApplicationRequest = new Application.Apply.Submit.SubmitApplicationRequest
             {
                 ApplicationId = model.ApplicationId,
-                ProviderRoute = int.Parse(providerRoute.Value),
+                ProviderRoute = providerRouteName,
                 SubmittingContactId = User.GetUserId(),
                 ApplyData = application.ApplyData
             };
@@ -1372,6 +1349,28 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return (sectionCount == notRequiredCount);
+        }
+
+        private async Task<bool> SectionNotRequired(ApplicationSequence sequence, List<NotRequiredOverrideConfiguration> notRequiredOverrides, 
+                                                    int sectionId, IEnumerable<RoatpSequences> roatpSequences)
+        {
+            var sequences = new List<ApplicationSequence>
+            {
+                sequence
+            };
+
+            if (RoatpTaskListWorkflowService.SectionStatus(sequences, notRequiredOverrides, sequence.SequenceId, sectionId) == TaskListSectionStatus.NotRequired)
+            {
+                return true;
+            }
+
+            var currentSequence = roatpSequences.FirstOrDefault(x => x.Id == sequence.SequenceId);
+            if (currentSequence?.ExcludeSections != null && currentSequence.ExcludeSections.Contains(sectionId.ToString()))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

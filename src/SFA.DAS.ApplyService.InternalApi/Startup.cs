@@ -29,6 +29,7 @@ using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 
 namespace SFA.DAS.ApplyService.InternalApi
 {
+    using SFA.DAS.ApplyService.Domain.Roatp;
     using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
     using UKRLP;
     using static UKRLP.ProviderQueryPortTypeClient;

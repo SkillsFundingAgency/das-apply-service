@@ -126,7 +126,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             var actualResult = RoatpTaskListWorkflowService.SectionStatus(new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = sequenceId,
                     Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = sectionId,
                         QnAData = new QnAData {Pages = new List<Page>()}} } } },
-                notRequiredOverrides, sequenceId, sectionId, applicationRouteId);
+                notRequiredOverrides, sequenceId, sectionId);
             Assert.AreEqual(expectedResult, actualResult.ToLower());
         }
 
@@ -165,7 +165,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             var actualResult = RoatpTaskListWorkflowService.SectionStatus(new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = sequenceId,
                     Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = sectionId,
                         QnAData = new QnAData {Pages = new List<Page>()}} } } },
-                notRequiredOverrides, sequenceId, sectionId, applicationRouteId);
+                notRequiredOverrides, sequenceId, sectionId);
             Assert.IsEmpty(actualResult);
         }
     }

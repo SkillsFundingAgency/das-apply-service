@@ -26,7 +26,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<Domain.Entities.Apply> GetApplication(Guid applicationId);
         Task<List<Domain.Entities.Apply>> GetApplications(Guid userId, bool createdBy);
 
-
+        Task<IEnumerable<RoatpSequences>> GetRoatpSequences();
 
 
         Task<ApplicationSequence> GetSequence(Guid applicationId, Guid userId);
@@ -52,5 +52,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<Organisation> GetOrganisationByName(string name);
         Task<GetAnswersResponse> GetAnswer(Guid applicationId, string questionIdentifer);
         Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatus(string ukprn);
+
+        Task<bool> UpdateApplicationStatus(Guid applicationId, string applicationStatus);
     }
 }

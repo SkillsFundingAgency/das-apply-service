@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Financial.Applications
 {
-    public class ClosedFinancialApplicationsRequest : IRequest<List<Domain.Entities.Apply>>
+    public class ClosedFinancialApplicationsRequest : IRequest<List<RoatpFinancialSummaryItem>>
     {
     }
 }
