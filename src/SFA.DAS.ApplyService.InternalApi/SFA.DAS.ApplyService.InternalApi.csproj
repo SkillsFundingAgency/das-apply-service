@@ -4,6 +4,11 @@
         <TargetFramework>netcoreapp2.2</TargetFramework>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <OutputPath>bin\Debug\netcoreapp2.2</OutputPath>
+      <DocumentationFile>bin\Debug\netcoreapp2.2\SFA.DAS.ApplyService.InternalApi.xml</DocumentationFile>
+    </PropertyGroup>
+
     <ItemGroup>
         <Folder Include="wwwroot\" />
     </ItemGroup>
@@ -27,6 +32,7 @@
         <PackageReference Include="Microsoft.ApplicationInsights.NLogTarget" Version="2.6.4" />
         <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.3.0" />
         <PackageReference Include="NLog.Web.AspNetCore" Version="4.5.4" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="2.5.0" />
         <PackageReference Include="System.ServiceModel.Duplex" Version="4.4.*" />
         <PackageReference Include="System.ServiceModel.Http" Version="4.4.*" />
         <PackageReference Include="System.ServiceModel.NetTcp" Version="4.4.*" />

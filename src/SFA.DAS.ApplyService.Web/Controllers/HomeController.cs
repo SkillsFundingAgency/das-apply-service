@@ -27,6 +27,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return View();
         }
         
+        public IActionResult Accessibility()
+        {
+            return View();
+        }
+
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = HttpContext.TraceIdentifier });

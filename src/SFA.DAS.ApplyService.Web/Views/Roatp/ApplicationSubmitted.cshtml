@@ -5,8 +5,15 @@
     Layout = "_Layout";
 }
 
-@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
-
+<div class="govuk-phase-banner govuk-width-container roatp__navigation">
+    <nav>
+        <ul id="navigation" class="roatp__navigation " aria-label="Top Level Navigation">
+            <li class="roatp__navigation-item roatp__navigation-signout">
+                <a class="govuk-header__link" href="@Url.Action("SignOut", "Users")">Save and sign out</a>
+            </li>
+        </ul>
+    </nav>
+</div>
 
 <div class="govuk-width-container">
 
@@ -15,110 +22,57 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
 
-                <h1 class="govuk-heading-l">Application overview</h1>
-
-                <dl class="govuk-summary-list govuk-!-margin-bottom-9">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Organisation name
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Model.OrganisationName
-                        </dd>
-                    </div>
-                    @if (!String.IsNullOrWhiteSpace(Model.TradingName))
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Trading name
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @Model.TradingName
-                            </dd>
-                        </div>
-                    }
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            UKPRN
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Model.UKPRN
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Provider route
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Model.ApplicationRouteShortText
-                        </dd>
-                    </div>
-                </dl>
-
-                <div class="govuk-panel govuk-panel--confirmation govuk-!-margin-bottom-9">
-                    <h1 class="govuk-panel__title govuk-!-font-size-27">
+                <div class="govuk-panel govuk-panel--confirmation">
+                    <h1 class="govuk-panel__title">
                         Application submitted
                     </h1>
-                    <h1 class="govuk-panel__title govuk-!-font-size-27">
-                        Your reference number
-                    </h1>
-                    <h1 class="govuk-panel__title govuk-!-font-size-27">
-                        @Model.ApplicationReference
-                    </h1>
+                    <div class="govuk-panel__body">
+                        Your reference number<br>
+                        <strong>@Model.ApplicationReference</strong>
+                    </div>
                 </div>
 
                 <p class="govuk-body">
                     We have sent you a confirmation email.
                 </p>
-                <h3 class="govuk-heading-m">What happens next</h3>
+
+                <h2 class="govuk-heading-m">What happens next</h2>
                 <p class="govuk-body">
-                    We have sent your application to the RoATP application assessment team.
-                </p>
-                <p class="govuk-body">
-                    You'll need to allow at least 12 weeks for them to process your application.
-                </p>
-                <p class="govuk-body">
-                    They will:
-                </p>
+                    We have sent your application to the following RoATP application assessment teams:
+                </p>                
                 <ul class="govuk-list govuk-list--bullet">
                     <li>
-                        check your application and the people involved in your organisation
+                        gateway team - they assess your organisation, the people involved in your organisation and criminal and compliance checks
                     </li>
                     <li>
-                        tell you if your organisation has been successful or unsuccessful
+                        financial health assessment team - they assess your organisation's financial evidence
                     </li>
                     <li>
-                        give your organisation a financial health grade
+                        assessor team - they assess the remaining application answers, policies and processes
                     </li>
                 </ul>
                 <p class="govuk-body">
-                    ESFA may also ask for further information on any application answers (they may fail your application if you do not comply).
+                    If your application answers are unclear, we may ask for further information. You must reply within 5 working days or we may withdraw your application.
                 </p>
                 <p class="govuk-body">
-                    You'll receive an email when there's an update with your application.
+                    You will need to allow at least 12 weeks for us to process your application. It may take longer because this is a private beta service. We will send you an email when there's an update with your application.
                 </p>
                 <p class="govuk-body">
-                    To make a change or withdraw your application, email <a href="mailto:roatp.SUPPORT@education.gov.uk">roatp.SUPPORT@education.gov.uk</a>.
+                    Once your application has been assessed, your organisation will receive an outcome, a financial health grade and next steps.
+                </p>
+
+                <p class="govuk-body">
+                    Find out more about how your organisation is assessed for <a href="https://www.gov.uk/government/publications/esfa-financial-health-assessment" target="_blank" class="govuk-link">financial health (opens in a new window or tab)</a>.
                 </p>
                 <p class="govuk-body">
-                    As a new apprenticeship training provider, your organisation may be inspected by Ofsted within the first 3 years of receiving funding from ESFA.
+                    If you want to know more about how the teams currently assess applications, how outcomes and financial health grades are given and next steps you can <a href="https://www.gov.uk/guidance/application-guidance-for-the-register-of-apprenticeship-training-providers-version-3-august-2019" target="_blank" class="govuk-link">read 'section 7 what happens next' (opens in a new window or tab)</a>. Some processes may differ, as the guidance is based on the current Bravo service.
                 </p>
                 <p class="govuk-body">
-                    To prepare for this, it should evaluate itself against:
+                    If you have any questions, want to make a change or withdraw your application, email <a href="mailto:roatp.support@education.gov.uk" class="govuk-link">roatp.support@education.gov.uk</a>.
                 </p>
-                <ul class="govuk-list govuk-list--bullet">
-                    <li>
-                        the <a href="https://www.gov.uk/government/publications/education-inspection-framework" target="_blank">Education Inspection Framework</a>
-                    </li>
-                    <li>
-                        the <a href="https://www.gov.uk/government/publications/further-education-and-skills-inspection-handbook-eif" target="_blank">Further Education and Skills Inspection Handbook</a>
-                    </li>
-                </ul>
+
                 <p class="govuk-body">
-                    If successful, main providers will also need to ensure that apprenticeship training continuously meets local, regional and national priorities.
-                </p>
-                <p class="govuk-body">
-                    <a href="#">What did you think of this service? (takes 30 seconds)</a>
+                    <a href="https://www.smartsurvey.co.uk/s/UDD7V/" class="govuk-link">What did you think of this service?</a> (takes 30 seconds)
                 </p>
             </div>
         </div>

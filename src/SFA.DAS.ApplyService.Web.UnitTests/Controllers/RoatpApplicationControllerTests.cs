@@ -52,6 +52,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IRoatpApiClient> _roatpApiClient;
         private Mock<ISubmitApplicationConfirmationEmailService> _submitApplicationEmailService;
         private Mock<ITabularDataRepository> _tabularDataRepository;
+        private Mock<IPagesWithSectionsFlowService> _pagesWithSectionsFlowService;
 
         [SetUp]
         public void Before_each_test()
@@ -71,6 +72,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _userService = new Mock<IUserService>();
             _qnaApiClient = new Mock<IQnaApiClient>();
             _processPageFlowService = new Mock<IProcessPageFlowService>();
+            _pagesWithSectionsFlowService = new Mock<IPagesWithSectionsFlowService>();
+
             _questionPropertyTokeniser = new Mock<IQuestionPropertyTokeniser>();
             _configuration = new Mock<IOptions<List<TaskListConfiguration>>>();
             _pageNavigationTrackingService = new Mock<IPageNavigationTrackingService>();
@@ -84,7 +87,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _controller = new RoatpApplicationController(_apiClient.Object, _logger.Object, _sessionService.Object, _configService.Object,
                                                          _userService.Object, _usersApiClient.Object, _qnaApiClient.Object, _configuration.Object,
-                                                         _processPageFlowService.Object, _questionPropertyTokeniser.Object, _pageOverrideConfiguration.Object,
+                                                         _processPageFlowService.Object, _pagesWithSectionsFlowService.Object,
+                                                         _questionPropertyTokeniser.Object, _pageOverrideConfiguration.Object,
                                                          _pageNavigationTrackingService.Object, _qnaLinks.Object, _customValidatorFactory.Object,
                                                          _notRequiredOverrides.Object, _roatpApiClient.Object,
                                                          _submitApplicationEmailService.Object, _tabularDataRepository.Object)
@@ -238,10 +242,17 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Confirm_submit_application_updates_application_status_and_sends_confirmation_email_if_they_have_confirmed_details_are_correct()
         {
-            var model = new SubmitApplicationViewModel
+            var application = new Apply
             {
                 ApplicationId = Guid.NewGuid(),
-                ConfirmSubmitApplication = "Y",
+                ApplicationStatus = ApplicationStatus.InProgress,
+                ApplyData = new ApplyData()
+            };
+
+            var model = new SubmitApplicationViewModel
+            {
+                ApplicationId = application.ApplicationId,
+                ConfirmSubmitApplication = true,
                 ErrorMessages = new List<ValidationErrorDetail>()
             };
 
@@ -254,7 +265,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                     TradingName = "Trading name"
                 }
             };
+
             _apiClient.Setup(x => x.GetOrganisationByUserId(It.IsAny<Guid>())).ReturnsAsync(organisationDetails);
+
+            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), false)).ReturnsAsync(new List<Apply> { application });
 
             var providerRouteAnswer = new Answer
             {

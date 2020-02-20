@@ -67,6 +67,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(new GetExistingApplicationStatusRequest(ukprn));
         }
 
+        [HttpPost("/Application/Status")]
+        public async Task<ActionResult<bool>> UpdateApplicationStatus([FromBody] UpdateApplicationStatusRequest request)
+        {
+            return await _mediator.Send(request);
+        }
+
         [HttpGet("/Applications/Open")]
         public async Task<IEnumerable<RoatpApplicationSummaryItem>> GetOpenApplications()
         {

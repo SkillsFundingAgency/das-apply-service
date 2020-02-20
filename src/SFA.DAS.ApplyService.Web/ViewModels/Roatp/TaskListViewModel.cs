@@ -115,17 +115,27 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             }
             var finishSequence = ApplicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.Finish);
 
-            if (!PreviousSectionCompleted(finishSequence.SequenceId, sectionId))
-            {
-                return TaskListSectionStatus.Blank;
-            }
+            // TODO: APR-1193 We are calling PreviousSectionCompleted() from FinishSequence.cshtml, then it calls this FinishSectionStatus() method, 
+            // which calls PreviousSectionCompleted() again with the code bellow. 
+            //if (!PreviousSectionCompleted(finishSequence.SequenceId, sectionId))
+            //{
+            //    return TaskListSectionStatus.Blank;
+            //}
 
             if (sectionId == RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation)
             {
                 var commercialInConfidenceAnswer = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCommercialInConfidence).GetAwaiter().GetResult();
                 if (commercialInConfidenceAnswer != null && !String.IsNullOrWhiteSpace(commercialInConfidenceAnswer.Value))
                 {
-                    return TaskListSectionStatus.Completed;
+                    // Section 9.2 handled InProgress State
+                    if(commercialInConfidenceAnswer.Value.Equals("yes", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        return TaskListSectionStatus.Completed;
+                    }
+                    else
+                    {
+                        return TaskListSectionStatus.InProgress;
+                    }                  
                 }
                 else
                 {
@@ -158,25 +168,27 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             if (sectionId == RoatpWorkflowSectionIds.Finish.TermsAndConditions)
             {
                 Answer conditionsOfAcceptance2 = null;
-                Answer conditionsOfAcceptance3 = null;
+                //Answer conditionsOfAcceptance3 = null;
 
                 if (ApplicationRouteId == MainApplicationRouteId || ApplicationRouteId == EmployerApplicationRouteId)
                 {
                     conditionsOfAcceptance2 = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCOA2MainEmployer).GetAwaiter().GetResult();
-                    conditionsOfAcceptance3 = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCOA3MainEmployer).GetAwaiter().GetResult();
+                    //conditionsOfAcceptance3 = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCOA3MainEmployer).GetAwaiter().GetResult();
                 }
                 else if (ApplicationRouteId == SupportingApplicationRouteId)
                 {
-                    conditionsOfAcceptance2 = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCOA2Supporting).GetAwaiter().GetResult();
-                    conditionsOfAcceptance3 = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCOA3Supporting).GetAwaiter().GetResult();
+                    // TODO: TODO: APR-1193 - This is the return value for 9.3 section for Supporting Provider 
+                    //conditionsOfAcceptance2 = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCOA2Supporting).GetAwaiter().GetResult();
+                    //conditionsOfAcceptance3 = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCOA3Supporting).GetAwaiter().GetResult();
+                    return TaskListSectionStatus.NotRequired;
                 }
 
-                if (String.IsNullOrWhiteSpace(conditionsOfAcceptance2?.Value) && String.IsNullOrWhiteSpace(conditionsOfAcceptance3?.Value))
+                if (string.IsNullOrWhiteSpace(conditionsOfAcceptance2?.Value) /*&& String.IsNullOrWhiteSpace(conditionsOfAcceptance3?.Value)*/)
                 {
                     return TaskListSectionStatus.Next;
                 }
 
-                if (conditionsOfAcceptance2?.Value == ConfirmedAnswer && conditionsOfAcceptance3?.Value == ConfirmedAnswer)
+                if (conditionsOfAcceptance2?.Value == ConfirmedAnswer /*&& conditionsOfAcceptance3?.Value == ConfirmedAnswer*/)
                 {
                     return TaskListSectionStatus.Completed;
                 }
@@ -238,7 +250,16 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                 {
                     return true;
                 }
-                return (FinishSectionStatus(sectionId-1) == TaskListSectionStatus.Completed);
+
+                // TODO: APR-1193 - I have added the check for the case of section 9.3 being NotRequired for Supporting Provider
+                if (ApplicationRouteId == SupportingApplicationRouteId && sectionId == 4)
+                {
+                    return (FinishSectionStatus(sectionId - 2) == TaskListSectionStatus.Completed);
+                }
+                else
+                {
+                    return (FinishSectionStatus(sectionId - 1) == TaskListSectionStatus.Completed);
+                }
             }
 
             return RoatpTaskListWorkflowService.PreviousSectionCompleted(sequence, sectionId, sequence.Sequential);

@@ -1048,9 +1048,9 @@
             };
 
             var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
-            status.Should().Be(TaskListSectionStatus.Blank);
+            status.Should().Be(TaskListSectionStatus.Next);
             var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
-            css.Should().Be("hidden");
+            css.Should().Be("next");
         }
 
         [Test]
@@ -1248,10 +1248,21 @@
                 ApplicationSequences = applicationSequences
             };
 
+
             var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
-            status.Should().Be(TaskListSectionStatus.Completed);
+            
             var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
-            css.Should().Be(TaskListSectionStatus.Completed.ToLower());
+           
+            if (answerValue.Equals("yes", StringComparison.InvariantCultureIgnoreCase))
+            {
+                status.Should().Be(TaskListSectionStatus.Completed);
+                css.Should().Be(TaskListSectionStatus.Completed.ToLower());
+            }
+            else
+            {
+                status.Should().Be(TaskListSectionStatus.InProgress);
+                css.Should().Be(TaskListSectionStatus.InProgress.Replace(" ", string.Empty).ToLower());
+            }
         }
 
         [Test]
@@ -1349,9 +1360,9 @@
             };
 
             var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
-            status.Should().Be(TaskListSectionStatus.Blank);
+            status.Should().Be(TaskListSectionStatus.Next);
             var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
-            css.Should().Be("hidden");
+            css.Should().Be("next");
         }
 
         [Test]
@@ -1589,9 +1600,9 @@
             };
 
             var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
-            status.Should().Be(TaskListSectionStatus.InProgress);
+            status.Should().Be(TaskListSectionStatus.NotRequired);
             var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
-            css.Should().Be("inprogress");
+            css.Should().Be("notrequired");
         }
 
         [Test]
@@ -1709,9 +1720,9 @@
             };
 
             var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
-            status.Should().Be(TaskListSectionStatus.InProgress);
+            status.Should().Be(TaskListSectionStatus.NotRequired);
             var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
-            css.Should().Be("inprogress");
+            css.Should().Be("notrequired");
         }
 
         [Test]

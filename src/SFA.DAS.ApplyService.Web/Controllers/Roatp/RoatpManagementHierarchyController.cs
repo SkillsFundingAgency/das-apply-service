@@ -211,8 +211,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 var name = person.Columns[0];
                 var jobRole = person.Columns[1];
 
-                var timeInRoleMonths = person.Columns[2];
-                var timeInRoleYears = person.Columns[3];
+                var timeInRoleMonths = person.Columns[3];
+                var timeInRoleYears = person.Columns[2];
                 var isPartOfOtherOrg = person.Columns[4];
                 var otherOrgName = person.Columns[5];
                 var model = new AddEditManagementHierarchyViewModel
