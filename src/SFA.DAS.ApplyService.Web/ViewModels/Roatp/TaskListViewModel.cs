@@ -168,12 +168,12 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             if (sectionId == RoatpWorkflowSectionIds.Finish.TermsAndConditions)
             {
                 Answer conditionsOfAcceptance2 = null;
-                Answer conditionsOfAcceptance3 = null;
+                //Answer conditionsOfAcceptance3 = null;
 
                 if (ApplicationRouteId == MainApplicationRouteId || ApplicationRouteId == EmployerApplicationRouteId)
                 {
                     conditionsOfAcceptance2 = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCOA2MainEmployer).GetAwaiter().GetResult();
-                    conditionsOfAcceptance3 = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCOA3MainEmployer).GetAwaiter().GetResult();
+                    //conditionsOfAcceptance3 = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCOA3MainEmployer).GetAwaiter().GetResult();
                 }
                 else if (ApplicationRouteId == SupportingApplicationRouteId)
                 {
@@ -183,12 +183,12 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                     return TaskListSectionStatus.NotRequired;
                 }
 
-                if (String.IsNullOrWhiteSpace(conditionsOfAcceptance2?.Value) && String.IsNullOrWhiteSpace(conditionsOfAcceptance3?.Value))
+                if (string.IsNullOrWhiteSpace(conditionsOfAcceptance2?.Value) /*&& String.IsNullOrWhiteSpace(conditionsOfAcceptance3?.Value)*/)
                 {
                     return TaskListSectionStatus.Next;
                 }
 
-                if (conditionsOfAcceptance2?.Value == ConfirmedAnswer && conditionsOfAcceptance3?.Value == ConfirmedAnswer)
+                if (conditionsOfAcceptance2?.Value == ConfirmedAnswer /*&& conditionsOfAcceptance3?.Value == ConfirmedAnswer*/)
                 {
                     return TaskListSectionStatus.Completed;
                 }
