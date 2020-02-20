@@ -59,10 +59,9 @@
                     <a href="@Url.Action("Tasklist", "RoatpApplication", new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = Model.PageId})">Return to this question later</a>
                 </p>
             </form>
+            <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
         </div>
     </div>
-
 </main>
-<partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
 
 

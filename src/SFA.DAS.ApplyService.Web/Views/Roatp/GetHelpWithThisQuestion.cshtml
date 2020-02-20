@@ -8,7 +8,7 @@
 
 @if (Model.GetHelpQuerySubmitted)
 {
-    <details class="govuk-details govuk-details--gethelp" id="gethelp" role="group" open="">
+    <details class="govuk-details govuk-details--get-help" id="gethelp" role="group" open="">
         <summary class="govuk-details__summary" role="button" aria-controls="details-content-064afa05-5947-4461-8d3c-4dfb28dc4e8f" aria-expanded="true">
             <span class="govuk-details__summary-text">
                 Get help with this question
@@ -26,7 +26,7 @@
 }
 else
 {
-    <details class="govuk-details govuk-details--gethelp" id="gethelp" @if (hasError) { @Html.Raw("open=''") }>
+    <details class="govuk-details govuk-details--get-help" id="gethelp" @if (hasError) { @Html.Raw("open=''") }>
         <summary class="govuk-details__summary" aria-expanded="@hasError">
             <span class="govuk-details__summary-text">
                 Get help with this question

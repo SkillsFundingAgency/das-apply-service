@@ -13,6 +13,7 @@
         <a class="govuk-back-link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Back</a>
     }
 </div>
+
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -28,15 +29,15 @@
             }
             <p class="govuk-body">These are the details we found on the Charity Commission for England and Wales.</p>
 
-            <form method="post" asp-action="TrusteesConfirmed" novalidate enctype="multipart/form-data">
+        </div>
 
-                @Html.HiddenFor(x => x.ApplicationId)
-                @Html.HiddenFor(x => x.GetHelpAction)
-
+        <form method="post" asp-action="TrusteesConfirmed" novalidate enctype="multipart/form-data">
+            @Html.HiddenFor(x => x.ApplicationId)
+            @Html.HiddenFor(x => x.GetHelpAction)
+            <div class="govuk-grid-column-one-half">
                 @{ await Html.RenderPartialAsync("~/Views/Roatp/WhosInControl/PeopleInControl.cshtml", Model.Trustees); }
-
-                <button type="submit" class="govuk-button">Confirm and continue</button>
-
+            </div>
+            <div class="govuk-grid-column-two-thirds">
                 <details class="govuk-details">
                     <summary class="govuk-details__summary">
                         <span class="govuk-details__summary-text">
@@ -50,8 +51,12 @@
                     </div>
                 </details>
 
-            </form>
+                <button type="submit" class="govuk-button">Confirm and continue</button>
+            </div>
+        </form>
+
+        <div class="govuk-grid-column-two-thirds">
+            <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
         </div>
     </div>
 </main>
-<partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />

@@ -23,8 +23,6 @@
 
                 @{ await Html.RenderPartialAsync("~/Views/Roatp/WhosInControl/PeopleInControl.cshtml", Model.CompaniesHousePscs); }
 
-                <button type="submit" class="govuk-button">Confirm and continue</button>
-
                 <details class="govuk-details">
                     <summary class="govuk-details__summary">
                         <span class="govuk-details__summary-text">
@@ -41,8 +39,10 @@
                     </div>
                 </details>
 
+                <button type="submit" class="govuk-button">Confirm and continue</button>
+
             </form>
+            <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
         </div>
     </div>
 </main>
-<partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />

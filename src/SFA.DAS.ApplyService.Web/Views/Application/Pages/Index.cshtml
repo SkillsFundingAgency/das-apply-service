@@ -49,12 +49,12 @@
 
                     if (hasSectionTitle)
                     {
-                        <span class="govuk-caption-l">@Model.SectionTitle</span>
+                        <span class="govuk-caption-xl">@Model.SectionTitle</span>
                     }
 
                     if ((hasModelTitle || hasBodyText) && Model.PageContext != null)
                     {
-                        <span class="govuk-caption-l">
+                        <span class="govuk-caption-xl">
                             @Html.Raw(Model.PageContext)
                         </span>
                     }
@@ -106,16 +106,16 @@
                                 <fieldset class="govuk-fieldset">
                                     @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio" || question.Type == "CheckboxList" || question.Type=="ComplexCheckBoxList")
                                     {
-                                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
                                         @if (Model.PageContext != null)
                                         {
-                                            <span class="govuk-caption-l">
+                                            <span class="govuk-caption-xl">
                                                 @Html.Raw(Model.PageContext)
                                             </span>
                                         }
                                         @if (hasSectionTitle)
                                         {
-                                            <span class="govuk-caption-l">@Model.SectionTitle</span>
+                                            <span class="govuk-caption-xl">@Model.SectionTitle</span>
                                         }
 
 
@@ -157,16 +157,16 @@
                                         }
                                         @if (Model.PageContext != null)
                                         {
-                                            <span class="govuk-caption-l">
+                                            <span class="govuk-caption-xl">
                                                 @Html.Raw(Model.PageContext)
                                             </span>
                                         }
                                         @if (hasSectionTitle)
                                         {
-                                            <span class="govuk-caption-l">@Model.SectionTitle</span>
+                                            <span class="govuk-caption-xl">@Model.SectionTitle</span>
                                         }
                                         <h2 class="govuk-label-wrapper">
-                                            <label class="govuk-label govuk-label--l" for="@question.QuestionId">
+                                            <label class="govuk-label govuk-label--xl" for="@question.QuestionId">
                                                 @Html.Raw(question.Label)
                                             </label>
                                         </h2>
@@ -254,6 +254,9 @@
                         @Html.Raw(Model.InfoText)
                     }
 
+                    <partial name="~/Views/Application/Pages/PeopleInControlComponent.cshtml" for="PeopleInControlDetails" />
+                    <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details" />
+
                     @if (!Model.HideCTA)
                     {
                         <button type="submit" class="govuk-button">@Model.CTAButtonText</button>
@@ -280,8 +283,6 @@
                             else
                             {
                                 first = false;
-
-
                                 <p class="govuk-body govuk-!-margin-bottom-2">
                                     <a class="govuk-link" href="@Url.Action(link.Action, link.Controller, new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pageId})">@link.Caption</a>
                                 </p>
@@ -289,13 +290,11 @@
                         }
                     }
 
-                    <partial name="~/Views/Application/Pages/PeopleInControlComponent.cshtml" for="PeopleInControlDetails" />
-                    <partial name="~/Views/Application/Pages/DetailsComponent.cshtml" for="Details" />
                 </form>
             }
 
+            <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
         </div>
     </div>
 </main>
 
-<partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
