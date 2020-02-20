@@ -15,9 +15,9 @@
 @{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
 
 
-<div class="grid-row">
+@*<div class="grid-row">
     <a href="@Url.Action("ConfirmManagementHierarchy", "RoatpManagementHierarchy", new {Model.ApplicationId})" class="govuk-back-link">Back</a>
-</div>
+</div>*@
 
 @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
 {

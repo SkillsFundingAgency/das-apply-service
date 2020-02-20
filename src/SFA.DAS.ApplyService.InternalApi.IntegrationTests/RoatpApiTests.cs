@@ -35,7 +35,7 @@
 
             var logger = new Mock<ILogger<RoatpApiClient>>();
 
-            _apiClient = new RoatpApiClient(new HttpClient(), logger.Object, _config, new RoatpTokenService(_config));
+            _apiClient = new RoatpApiClient(new HttpClient(), logger.Object, _config, new RoatpTokenService(_config, hostingEnvironment.Object));
         }
 
         [Test]

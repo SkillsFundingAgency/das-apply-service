@@ -34,7 +34,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 if (questionValue != null)
                 {
                     var tokenReplacementValue = tokenisedValue.Replace(stringToReplace, WebUtility.HtmlEncode(questionValue.Value));
-                    return tokenReplacementValue;
+                    return  tokenReplacementValue;
                 }
             }
 

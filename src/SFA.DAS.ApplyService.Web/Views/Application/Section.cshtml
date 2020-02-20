@@ -5,14 +5,14 @@
     Layout = "_Layout";
 }
 
-@if (Model == null)
+@*@if (Model == null)
 {
     <a href="@Url.Action("Applications", "Application")" class="govuk-back-link">Back to application overview</a>
 }
 else
 {
     <a href="@Url.Action("Sequence", "Application", new { applicationId = Model.ApplicationId })" class="govuk-back-link">Back to application overview</a>
-}
+}*@
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
