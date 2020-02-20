@@ -35,6 +35,7 @@
         }
 
         [Route("all-roatp-routes")]
+        [HttpGet]
         public async Task<IActionResult> GetApplicationRoutes()
         {
             var providerTypes = await _retryPolicy.ExecuteAsync(context => _apiClient.GetProviderTypes(), new Context());
@@ -45,6 +46,7 @@
         }
 
         [Route("ukprn-on-register")]
+        [HttpGet]
         public async Task<IActionResult> UkprnOnRegister(long ukprn)
         {
             var registerStatus = await _retryPolicy.ExecuteAsync(
