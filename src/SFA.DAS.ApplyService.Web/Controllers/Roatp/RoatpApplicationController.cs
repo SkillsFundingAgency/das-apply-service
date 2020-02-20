@@ -1101,7 +1101,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var submitApplicationRequest = new Application.Apply.Submit.SubmitApplicationRequest
             {
                 ApplicationId = applicationId,
-                ProviderRoute = int.Parse(providerRoute.Value),
+                ProviderRoute = providerRoute.Value,
                 SubmittingContactId = User.GetUserId()
             };
 
