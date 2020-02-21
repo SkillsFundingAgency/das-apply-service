@@ -178,11 +178,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private Application.Apply.Start.StartApplicationRequest BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
         {
+            var providerRoutes = _roatpApiClient.GetApplicationRoutes().GetAwaiter().GetResult();
+            var selectedProviderRoute = providerRoutes.FirstOrDefault(p => p.Id == providerRoute);
+
             return new Application.Apply.Start.StartApplicationRequest
             {
                 ApplicationId = qnaApplicationId,
                 CreatingContactId = creatingContactId,
                 ProviderRoute = providerRoute,
+                ProviderRouteName = selectedProviderRoute?.RouteName,
                 ApplySequences = qnaSequences.Select(sequence => new ApplySequence
                 {
                     SequenceId = sequence.Id,
@@ -1283,11 +1287,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 applicationSequence.Sections = sections.ToList();
                 sequence.NotRequired = SequenceNotRequired(applicationSequence, _notRequiredOverrides);
             }
+            var providerRoutes = _roatpApiClient.GetApplicationRoutes().GetAwaiter().GetResult();
+            var selectedProviderRoute = providerRoutes.FirstOrDefault(p => p.Id.ToString() == providerRoute.Value);
 
             var submitApplicationRequest = new Application.Apply.Submit.SubmitApplicationRequest
             {
                 ApplicationId = model.ApplicationId,
                 ProviderRoute = Convert.ToInt32(providerRoute.Value),
+                ProviderRouteName = selectedProviderRoute?.RouteName,
                 SubmittingContactId = User.GetUserId(),
                 ApplyData = application.ApplyData
             };

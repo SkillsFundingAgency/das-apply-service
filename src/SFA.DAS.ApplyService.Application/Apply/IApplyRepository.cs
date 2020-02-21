@@ -47,7 +47,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         Task<bool> UpdateApplyData(Guid applicationId, ApplyData applyData, string updatedBy);
 
-        Task<bool> ChangeProviderRoute(Guid applicationId, int providerRoute);
+        Task<bool> ChangeProviderRoute(Guid applicationId, int providerRoute, string providerRouteName);
 
 
         // NOTE: This is old stuff or things which are not migrated over yet

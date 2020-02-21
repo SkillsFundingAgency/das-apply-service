@@ -279,7 +279,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<bool> ChangeProviderRoute(Guid applicationId, int providerRoute)
+        public async Task<bool> ChangeProviderRoute(Guid applicationId, int providerRoute, string providerRouteName)
         {
             var application = await GetApplication(applicationId);
             var applyData = application?.ApplyData;
@@ -287,13 +287,14 @@ namespace SFA.DAS.ApplyService.Data
             if (application != null && applyData?.ApplyDetails != null)
             {
                 applyData.ApplyDetails.ProviderRoute = providerRoute;
+                applyData.ApplyDetails.ProviderRouteName = providerRouteName;
 
                 using (var connection = new SqlConnection(_config.SqlConnectionString))
                 {
                     await connection.ExecuteAsync(@"UPDATE Apply
-                                                    SET  ApplyData = JSON_MODIFY(ApplyData, '$.ApplyDetails.ProviderRoute', @providerRoute)
+                                                    SET  ApplyData = @applyData
                                                     WHERE  ApplicationId = @ApplicationId",
-                                                    new { application.ApplicationId, providerRoute });
+                                                    new { application.ApplicationId, applyData });
                 }
 
                 return true;

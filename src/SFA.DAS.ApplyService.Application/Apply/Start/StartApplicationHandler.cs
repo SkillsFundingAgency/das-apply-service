@@ -43,7 +43,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Start
                         UKPRN = org.OrganisationUkprn?.ToString(),
                         OrganisationName = org.Name,
                         TradingName = org.OrganisationDetails?.TradingName,
-                        ProviderRoute = request.ProviderRoute
+                        ProviderRoute = request.ProviderRoute,
+                        ProviderRouteName = request.ProviderRouteName
                     }
                 };
                 foreach (var sequence in applyData.Sequences)
