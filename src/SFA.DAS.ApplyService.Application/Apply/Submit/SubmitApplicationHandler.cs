@@ -36,11 +36,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
                     {
                         application.ApplyData.ApplyDetails.ReferenceNumber = await _applyRepository.GetNextRoatpApplicationReference();
                     }
-
-                    if (application.ApplyData.ApplyDetails.ProviderRoute > 0)
-                    {
-                        application.ApplyData.ApplyDetails.ProviderRoute = request.ProviderRoute;
-                    }
                     
                     application.ApplyData.ApplyDetails.ApplicationSubmittedOn = DateTime.UtcNow;
                     application.ApplyData.ApplyDetails.ApplicationSubmittedBy = submittingContact.Id;
