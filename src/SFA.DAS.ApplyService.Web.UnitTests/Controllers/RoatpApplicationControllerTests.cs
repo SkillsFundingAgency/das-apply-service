@@ -246,8 +246,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             {
                 ApplicationId = Guid.NewGuid(),
                 ApplicationStatus = ApplicationStatus.InProgress,
-                ApplyData = new ApplyData 
+                ApplyData = new ApplyData
                 {
+                    ApplyDetails = new ApplyDetails(),
                     Sequences = new List<ApplySequence>()
                 }
             };

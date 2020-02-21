@@ -1,4 +1,4 @@
-﻿using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Entities;
 using System;
 
 namespace SFA.DAS.ApplyService.Domain.Apply

@@ -11,6 +11,7 @@ using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Assessor;
+using SFA.DAS.ApplyService.Application.Apply.Snapshot;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -32,6 +33,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
         [HttpPost("/Application/Submit")]
         public async Task<ActionResult<bool>> Submit([FromBody] SubmitApplicationRequest request)
+        {
+            return await _mediator.Send(request);
+        }
+
+        [HttpPost("/Application/Snapshot")]
+        public async Task<ActionResult<Guid>> Snapshot([FromBody] SnapshotApplicationRequest request)
         {
             return await _mediator.Send(request);
         }
@@ -58,6 +65,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatus(string ukprn)
         {
             return await _mediator.Send(new GetExistingApplicationStatusRequest(ukprn));
+        }
+
+        [HttpPost("/Application/Status")]
+        public async Task<ActionResult<bool>> UpdateApplicationStatus([FromBody] UpdateApplicationStatusRequest request)
+        {
+            return await _mediator.Send(request);
         }
 
         [HttpGet("/Applications/Open")]

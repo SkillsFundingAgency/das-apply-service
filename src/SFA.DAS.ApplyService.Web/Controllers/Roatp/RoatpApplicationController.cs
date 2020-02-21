@@ -1065,7 +1065,53 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             return fileValidationPassed;
         }
-        
+
+        [HttpPost]
+        public async Task<IActionResult> Submit(Guid applicationId)
+        {
+            var canUpdate = await CanUpdateApplication(applicationId);
+            if (!canUpdate)
+            {
+                return RedirectToAction("TaskList", new { applicationId });
+            }
+
+            var activeSequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
+            var errors = ValidateSubmit(activeSequence);
+            if (errors.Any())
+            {
+                var sequenceVm = new SequenceViewModel(activeSequence, applicationId, errors);
+
+                if (activeSequence.Status == ApplicationSequenceStatus.FeedbackAdded)
+                {
+                    return View("~/Views/Application/Feedback.cshtml", sequenceVm);
+                }
+                else
+                {
+                    return View("~/Views/Application/Sequence.cshtml", sequenceVm);
+                }
+            }
+
+            var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
+            var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
+
+            var submitApplicationRequest = new Application.Apply.Submit.SubmitApplicationRequest
+            {
+                ApplicationId = applicationId,
+                ProviderRoute = Convert.ToInt32(providerRoute.Value),
+                SubmittingContactId = User.GetUserId()
+            };
+
+            if (await _apiClient.SubmitApplication(submitApplicationRequest))
+            {
+                return RedirectToAction("Submitted", new { applicationId });
+            }
+            else
+            {
+                // unable to submit
+                return RedirectToAction("NotSubmitted", new { applicationId });
+            }
+        }
+
         private List<ValidationErrorDetail> ValidateSubmit(ApplicationSequence sequence)
         {
             var validationErrors = new List<ValidationErrorDetail>();
