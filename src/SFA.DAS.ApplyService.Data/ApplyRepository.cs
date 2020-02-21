@@ -142,7 +142,7 @@ namespace SFA.DAS.ApplyService.Data
                                                                 FROM ApplicationSections asec
                                                                 INNER JOIN Applications a ON a.Id = asec.ApplicationId
                                                                 WHERE asec.ApplicationId = @applicationId AND asec.SectionId =@sectionId AND asec.SequenceId = @sequenceId",
-                        new {applicationId, sequenceId, sectionId}));
+                        new { applicationId, sequenceId, sectionId }));
                 }
 
                 return (await connection.QuerySingleOrDefaultAsync<ApplicationSection>(@"SELECT asec.* 
@@ -150,7 +150,7 @@ namespace SFA.DAS.ApplyService.Data
                                                                 INNER JOIN Applications a ON a.Id = asec.ApplicationId
                                                                 INNER JOIN Contacts c ON c.ApplyOrganisationID = a.ApplyingOrganisationId
                                                                 WHERE asec.ApplicationId = @applicationId AND asec.SectionId =@sectionId AND asec.SequenceId = @sequenceId AND c.Id = @userId",
-                    new {applicationId, sequenceId, sectionId, userId}));
+                    new { applicationId, sequenceId, sectionId, userId }));
             }
         }
 
@@ -191,11 +191,11 @@ namespace SFA.DAS.ApplyService.Data
                 try
                 {
 
-                        return (await connection.QueryAsync<ApplicationSection>(@"SELECT asec.* 
+                    return (await connection.QueryAsync<ApplicationSection>(@"SELECT asec.* 
                                                                 FROM ApplicationSections asec
                                                                 INNER JOIN Applications a ON a.Id = asec.ApplicationId
                                                                 WHERE asec.ApplicationId = @applicationId AND asec.NotRequired = 0",
-                            new { applicationId })).ToList();
+                        new { applicationId })).ToList();
                 }
                 catch (Exception e)
                 {
@@ -230,7 +230,7 @@ namespace SFA.DAS.ApplyService.Data
                             AND seq.SequenceId = @sequenceId AND c.Id = @userId", new { applicationId, sequenceId, userId });
                 }
 
-                if(sequence != null)
+                if (sequence != null)
                 {
                     sequence.Sections = await GetSections(applicationId, sequenceId, userId);
                 }
@@ -247,7 +247,7 @@ namespace SFA.DAS.ApplyService.Data
                             FROM ApplicationSequences seq
                             INNER JOIN Applications a ON a.Id = seq.ApplicationId
                             WHERE seq.ApplicationId = @applicationId 
-                            AND seq.IsActive = 1", new {applicationId});
+                            AND seq.IsActive = 1", new { applicationId });
 
                 if (sequence != null)
                 {
@@ -274,7 +274,7 @@ namespace SFA.DAS.ApplyService.Data
                 await connection.ExecuteAsync(
                     @"INSERT INTO Applications (Id, ApplyingOrganisationId, ApplicationStatus, CreatedAt, CreatedBy, CreatedFromWorkflowId)                                       
                                         VALUES (@applicationId, @ApplyingOrganisationId, @applicationStatus, GETUTCDATE(), @userId, @workflowId)",
-                    new {applicationId, applyingOrganisationId, userId, workflowId, applicationStatus = ApplicationStatus.InProgress});
+                    new { applicationId, applyingOrganisationId, userId, workflowId, applicationStatus = ApplicationStatus.InProgress });
 
                 return await Task.FromResult(applicationId);
             }
@@ -286,7 +286,7 @@ namespace SFA.DAS.ApplyService.Data
             {
                 return (await connection.QuerySingleAsync<Guid>(
                     @"SELECT Id FROM Workflows WHERE [Type] = @applicationType AND Status = 'Live'",
-                    new {applicationType}));
+                    new { applicationType }));
             }
         }
 
@@ -307,7 +307,7 @@ namespace SFA.DAS.ApplyService.Data
                                 FROM            WorkflowSections
                                 WHERE        (WorkflowId = @workflowId AND (DisallowedOrgTypes IS NULL OR DisallowedOrgTypes NOT LIKE @organisationType));
 
-                                SELECT * FROM ApplicationSections WHERE ApplicationId = @applicationId;", new {applicationId, workflowId, organisationType = $"%|{organisationType}|%"})).ToList();
+                                SELECT * FROM ApplicationSections WHERE ApplicationId = @applicationId;", new { applicationId, workflowId, organisationType = $"%|{organisationType}|%" })).ToList();
             }
         }
 
@@ -317,18 +317,18 @@ namespace SFA.DAS.ApplyService.Data
             {
                 foreach (var applicationSection in sections)
                 {
-                    await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata, Status = @Status, NotRequired = @NotRequired WHERE Id = @Id", applicationSection);    
+                    await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata, Status = @Status, NotRequired = @NotRequired WHERE Id = @Id", applicationSection);
                 }
             }
         }
-        
+
         public async Task UpdateSequences(List<ApplicationSequence> sequences)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 foreach (var applicationSequence in sequences)
                 {
-                    await connection.ExecuteAsync(@"UPDATE ApplicationSequences SET Status = @Status, IsActive = @IsActive, NotRequired = @NotRequired WHERE Id = @Id", applicationSequence);    
+                    await connection.ExecuteAsync(@"UPDATE ApplicationSequences SET Status = @Status, IsActive = @IsActive, NotRequired = @NotRequired WHERE Id = @Id", applicationSequence);
                 }
             }
         }
@@ -337,7 +337,7 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata, Status = @Status WHERE Id = @Id", section);       
+                await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata, Status = @Status WHERE Id = @Id", section);
             }
         }
 
@@ -357,7 +357,7 @@ namespace SFA.DAS.ApplyService.Data
                                                 FROM            Applications INNER JOIN
                                                                 Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
                                                 WHERE  (Applications.Id = @ApplicationId)",
-                    new {applicationId, sequenceId, sequenceStatus, applicationStatus});
+                    new { applicationId, sequenceId, sequenceStatus, applicationStatus });
 
 
                 if (sequenceId == 1)
@@ -411,7 +411,7 @@ namespace SFA.DAS.ApplyService.Data
                                                          Applications ON ApplicationSequences.ApplicationId = Applications.Id INNER JOIN
                                                          Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
                                                 WHERE  (ApplicationSequences.ApplicationId = @ApplicationId) AND (ApplicationSequences.SequenceId = @SequenceId);",
-                                                new {applicationId, sequenceId});
+                                                new { applicationId, sequenceId });
             }
         }
 
@@ -419,8 +419,8 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-               return (await connection.QueryAsync<ApplicationSequence>(@"SELECT * FROM ApplicationSequences WHERE ApplicationId = @applicationId",
-                    new {applicationId})).ToList();
+                return (await connection.QueryAsync<ApplicationSequence>(@"SELECT * FROM ApplicationSequences WHERE ApplicationId = @applicationId",
+                     new { applicationId })).ToList();
             }
         }
 
@@ -434,7 +434,7 @@ namespace SFA.DAS.ApplyService.Data
                                                          Applications ON ApplicationSequences.ApplicationId = Applications.Id INNER JOIN
                                                          Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
                                                 WHERE  (ApplicationSequences.ApplicationId = @ApplicationId) AND (ApplicationSequences.SequenceId = @nextSequenceId);",
-                    new {applicationId, nextSequenceId});
+                    new { applicationId, nextSequenceId });
             }
         }
 
@@ -445,7 +445,7 @@ namespace SFA.DAS.ApplyService.Data
             {
                 await connection.ExecuteAsync(@"UPDATE Apply
                                                 SET  ApplicationStatus = @status                                                
-                                                WHERE ApplicationId = @ApplicationId", new {applicationId, status});
+                                                WHERE ApplicationId = @ApplicationId", new { applicationId, status });
             }
         }
 
@@ -550,7 +550,7 @@ namespace SFA.DAS.ApplyService.Data
                             sequenceStatusResubmitted = ApplicationSequenceStatus.Resubmitted,
                             sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded,
                             sectionStatusSubmitted = ApplicationSectionStatus.Submitted,
-                            sectionStatusInProgress = ApplicationSectionStatus.InProgress   
+                            sectionStatusInProgress = ApplicationSectionStatus.InProgress
                         })).ToList();
             }
         }
@@ -806,7 +806,7 @@ namespace SFA.DAS.ApplyService.Data
                 await connection.ExecuteAsync(@"UPDATE ApplicationSections 
                                                 SET Status = 'In Progress'
                                                 WHERE ApplicationId = @applicationId AND SectionId = 3 AND SequenceId = 1",
-                    new {applicationId});
+                    new { applicationId });
             }
         }
 
@@ -817,7 +817,7 @@ namespace SFA.DAS.ApplyService.Data
                 return await connection.QuerySingleAsync<Organisation>(@"SELECT org.* FROM Organisations org 
                                                                         INNER JOIN Applications appl ON appl.ApplyingOrganisationId = org.Id
                                                                         WHERE appl.Id = @ApplicationId",
-                    new {applicationId});
+                    new { applicationId });
             }
         }
 
@@ -825,12 +825,12 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-               var applicationStatuses= await connection.QueryAsync<string>(@"select top 1 A.applicationStatus from Applications A
+                var applicationStatuses = await connection.QueryAsync<string>(@"select top 1 A.applicationStatus from Applications A
                                                                     where JSON_VALUE(ApplicationData,'$.StandardCode')= @standardId
                                                                     and ApplyingOrganisationId in 
                                                                         (select ApplyingOrganisationId from Applications where Id = @applicationId)
 ",
-                    new { applicationId, standardId });
+                     new { applicationId, standardId });
 
                 return !applicationStatuses.Any() ? string.Empty : applicationStatuses.FirstOrDefault();
             }
@@ -852,13 +852,13 @@ namespace SFA.DAS.ApplyService.Data
                             AND (sec.Status = @financialStatusGraded)",
                     new
                     {
-                        applicationStatusSubmitted = ApplicationStatus.Submitted, 
+                        applicationStatusSubmitted = ApplicationStatus.Submitted,
                         financialStatusGraded = ApplicationSectionStatus.Graded
                     })).ToList();
             }
         }
 
- 
+
 
         public async Task<int> GetNextAppReferenceSequence()
         {
@@ -894,7 +894,9 @@ namespace SFA.DAS.ApplyService.Data
                                                 VALUES (@applicationId, @applicationSectionId, @completed)",
                     new
                     {
-                        applicationId, applicationSectionId, completed
+                        applicationId,
+                        applicationSectionId,
+                        completed
                     });
 
                 return await Task.FromResult(recordsAffected > 0);
@@ -910,7 +912,8 @@ namespace SFA.DAS.ApplyService.Data
                                                             AND ApplicationSectionId = @applicationSectionId",
                     new
                     {
-                        applicationId, applicationSectionId
+                        applicationId,
+                        applicationSectionId
                     })).FirstOrDefault();
             }
         }
@@ -950,6 +953,30 @@ namespace SFA.DAS.ApplyService.Data
                 var nextInSequence = (await connection.QueryAsync<int>(@"SELECT NEXT VALUE FOR RoatpAppReferenceSequence")).FirstOrDefault();
 
                 return $"APR{nextInSequence}";
+            }
+        }
+
+        public async Task<bool> IsUkprnWhitelisted(int ukprn)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                try
+                {
+                    return await connection.QuerySingleAsync<bool>(@"SELECT
+                                                                      CASE WHEN EXISTS 
+                                                                      (
+                                                                            SELECT UKPRN FROM dbo.WhitelistedProviders WHERE UKPRN = @ukprn
+                                                                      )
+                                                                      THEN 'TRUE'
+                                                                      ELSE 'FALSE'
+                                                                  END",
+                                                                      new { ukprn });
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "There has been an error in ApplyRepository.IsUkprnWhitelisted() - this is most likely caused by WhitelistedProviders table not being created in the database.");
+                    return false;
+                }
             }
         }
     }

@@ -29,6 +29,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
     using Trustee = InternalApi.Types.CharityCommission.Trustee;
     using SFA.DAS.ApplyService.Application.Apply.Roatp;
     using SFA.DAS.ApplyService.Domain.Apply;
+    using SFA.DAS.ApplyService.Web.Validators;
 
     [TestFixture]
     public class RoatpApplicationPreambleControllerTests
@@ -43,6 +44,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IUsersApiClient> _usersApiClient;
         private Mock<IApplicationApiClient> _applicationApiClient;
         private Mock<IQnaApiClient> _qnaApiClient;
+        private Mock<IUkprnWhitelistValidator> _ukprnWhitelistValidator;
 
         private RoatpApplicationPreambleController _controller;
 
@@ -66,6 +68,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _usersApiClient = new Mock<IUsersApiClient>();
             _applicationApiClient = new Mock<IApplicationApiClient>();
             _qnaApiClient = new Mock<IQnaApiClient>();
+            _ukprnWhitelistValidator = new Mock<IUkprnWhitelistValidator>();
 
             _controller = new RoatpApplicationPreambleController(_logger.Object, _roatpApiClient.Object,
                 _ukrlpApiClient.Object,
@@ -74,7 +77,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 _organisationApiClient.Object,
                 _usersApiClient.Object,
                 _applicationApiClient.Object,
-                _qnaApiClient.Object);
+                _qnaApiClient.Object,
+                _ukprnWhitelistValidator.Object);
 
             _activeCompany = new CompaniesHouseSummary
             {

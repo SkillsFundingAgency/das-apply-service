@@ -31,4 +31,20 @@ BEGIN
 	VALUES (NEWID(), 'Live', N'RoATPApplicationSubmittedMain', N'68008288-6497-4de2-be3c-e1409538aad9', GETDATE(), 'System')
 END
 
+-- If we TRUNCATE table, we will not need to check 'NOT EXISTS' for each entry 
+TRUNCATE TABLE [WhitelistedProviders]
 
+INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10031001)
+INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10039420)
+INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10052982)
+INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10060147)
+INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10062192)
+INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10064702)
+INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10081936)
+INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10082572)
+INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10083239)
+INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10084242)
+INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10084697)
+INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10084763)
+INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10084903)
+INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10085115)

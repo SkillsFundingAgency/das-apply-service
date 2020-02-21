@@ -63,5 +63,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatusByUkprn(string ukprn);
 
         Task<string> GetNextRoatpApplicationReference();
+
+        Task<bool> IsUkprnWhitelisted(int ukprn);
     }
 }
