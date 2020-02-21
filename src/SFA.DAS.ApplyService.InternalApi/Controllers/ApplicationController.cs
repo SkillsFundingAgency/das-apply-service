@@ -71,6 +71,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<ActionResult<bool>> UpdateApplicationStatus([FromBody] UpdateApplicationStatusRequest request)
         {
             return await _mediator.Send(request);
+        }     
+
+        [HttpPost("/Application/ChangeProviderRoute")]
+        public async Task<ActionResult<bool>> ChangeProviderRoute([FromBody] ChangeProviderRouteRequest request)
+        {
+            return await _mediator.Send(request);
         }
 
         [HttpGet("/Applications/Open")]
