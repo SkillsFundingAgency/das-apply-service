@@ -11,5 +11,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Start
         public List<ApplySequence> ApplySequences { get; set; }
         public Guid CreatingContactId { get; set; }
         public int ProviderRoute { get; set; }
+        public string ProviderRouteName { get;set }
     }
 }
