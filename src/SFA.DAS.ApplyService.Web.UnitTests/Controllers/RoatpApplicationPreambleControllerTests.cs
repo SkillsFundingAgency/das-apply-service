@@ -344,6 +344,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
 
+            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(10001000)).Returns(true);
+
             var model = new SearchByUkprnViewModel
             {
                 UKPRN = "10001000"
@@ -360,6 +362,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void UKPRN_is_found_on_UKRLP()
         {
+            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(10001000)).Returns(true);
+
             var matchingResult = new UkrlpLookupResults
             {
                 Success = true,
