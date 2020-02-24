@@ -10,6 +10,7 @@ using SFA.DAS.ApplyService.Web.Validators;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -704,17 +705,19 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             }
             else
             {
-                var result = await _tabularDataRepository.AddTabularDataRecord(
-                    model.ApplicationId,
-                    whosInControlSection.Id,
-                    RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl, 
-                    RoatpYourOrganisationQuestionIdConstants.AddPeopleInControl, 
-                    RoatpWorkflowQuestionTags.AddPeopleInControl,
-                    personInControl);
+                var result = await _tabularDataRepository.UpsertTabularDataRecord(var result = await _tabularDataRepository.AddTabularDataRecord(
+                        model.ApplicationId, model.ApplicationId,
+                        whosInControlSection.Id, whosInControlSection.Id,
+                        RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl, RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl,
+                        RoatpYourOrganisationQuestionIdConstants.AddPeopleInControl, RoatpYourOrganisationQuestionIdConstants.AddPeopleInControl,
+                        RoatpWorkflowQuestionTags.AddPeopleInControl, RoatpWorkflowQuestionTags.AddPeopleInControl,
+                        personInControl);
             }
 
             return RedirectToAction("ConfirmPeopleInControl", new { model.ApplicationId });
         }
+
+
 
         [HttpGet]
         public async Task<IActionResult> ConfirmPeopleInControl(Guid applicationId)
@@ -915,7 +918,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             var pscData = await _tabularDataRepository.GetTabularDataAnswer(model.ApplicationId, questionTag);
 
-            if ((pscData == null) || (model.Index < 0 || model.Index > pscData.DataRows.Count))
+            if ((pscData == null) || (model.Index < 0 || model.Index + 1 > pscData.DataRows.Count))
             {
                 return RedirectToAction(redirectAction, new { model.ApplicationId });
             }

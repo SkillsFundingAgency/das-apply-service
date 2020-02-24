@@ -123,7 +123,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             }
             else
             {
-                var result = await _tabularDataRepository.AddTabularDataRecord(
+                var result = await _tabularDataRepository.UpsertTabularDataRecord(
                     model.ApplicationId,
                     managementHierarchySection.Id,
                     RoatpWorkflowPageIds.ManagementHierarchy.AddManagementHierarchy,
@@ -172,7 +172,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             var managementHierarchyData = await _tabularDataRepository.GetTabularDataAnswer(model.ApplicationId, questionTag);
 
-            if ((managementHierarchyData == null) || (model.Index < 0 || model.Index > managementHierarchyData.DataRows.Count))
+            if ((managementHierarchyData == null) || (model.Index < 0 || model.Index + 1 > managementHierarchyData.DataRows.Count))
             {
                 return RedirectToAction(redirectAction, new { model.ApplicationId });
             }
