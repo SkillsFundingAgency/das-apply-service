@@ -592,6 +592,11 @@
             if (section != null)
             {
                 var result = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, section.Id, RoatpWorkflowPageIds.ProviderRoute, providerRouteAnswer);
+
+                if(result.ValidationPassed)
+                {
+                    await _applicationApiClient.ChangeProviderRoute(new ChangeProviderRouteRequest { ApplicationId = model.ApplicationId, ProviderRoute = model.ApplicationRouteId });
+                }
             }
 
             return RedirectToAction("TermsAndConditions", new { applicationId = model.ApplicationId, applicationRouteId = model.ApplicationRouteId });
