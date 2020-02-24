@@ -76,6 +76,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(request);
         }
 
+        [HttpPost("/Application/ChangeProviderRoute")]
+        public async Task<ActionResult<bool>> ChangeProviderRoute([FromBody] ChangeProviderRouteRequest request)
+        {
+            return await _mediator.Send(request);
+        }
+
+
         // NOTE: This is old stuff or things which are not migrated over yet
         [HttpGet("Answer/{QuestionIdentifier}/{applicationId}")]
         [ApiExplorerSettings(IgnoreApi = true)]
