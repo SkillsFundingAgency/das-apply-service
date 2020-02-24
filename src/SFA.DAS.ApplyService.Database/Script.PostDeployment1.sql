@@ -119,7 +119,7 @@ BEGIN
 	INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10033656)
 END
 
-IF NOT EXISTS (SELECT * FROM [WhitelistedProviders]  WHERE [UKPRN] = 1001623)
+IF NOT EXISTS (SELECT * FROM [WhitelistedProviders]  WHERE [UKPRN] = 10016231)
 BEGIN
-	INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (1001623)
+	INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10016231)
 END
