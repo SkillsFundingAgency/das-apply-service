@@ -48,13 +48,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return Ok();
         }
 
-        [HttpPost("/Financial/{applicationId}/UpdateGrade")]
-        public async Task<ActionResult> UpdateGrade(Guid applicationId, [FromBody] FinancialApplicationGrade updatedGrade)
-        {
-            await _mediator.Send(new UpdateGradeRequest(applicationId, updatedGrade));
-            return Ok();
-        }
-
         [HttpPost("/Financial/{applicationId}/StartReview")]
         public async Task<ActionResult> StartReview(Guid applicationId, [FromBody] StartFinancialReviewApplicationRequest request)
         {

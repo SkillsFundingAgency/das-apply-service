@@ -41,6 +41,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
                 case FinancialApplicationSelectedGrade.Exempt:
                     return FinancialReviewStatus.Exempt;
 
+                case FinancialApplicationSelectedGrade.Clarification:
+                    return FinancialReviewStatus.Clarification;
+
                 default:
                     return FinancialReviewStatus.Declined;
             }
