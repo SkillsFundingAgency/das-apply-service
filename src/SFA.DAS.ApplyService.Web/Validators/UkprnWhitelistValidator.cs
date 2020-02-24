@@ -25,7 +25,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
             }
             else
             {
-                return false;
+                return await Task.FromResult(false);
             }
         }
     }
