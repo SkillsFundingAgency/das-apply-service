@@ -65,10 +65,8 @@
                 @Html.HiddenFor(x => x.ApplicationId)
                 @Html.HiddenFor(x => x.GetHelpAction)
 
-                <button type="submit" class="govuk-button">Continue</button>
-                <p class="govuk-body skipbutton" id="skipbutton">
-                    <a href="@Url.Action("Tasklist", "RoatpApplication", new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = Model.PageId})">Return to this question later</a>
-                </p>
+                <button type="submit" class="govuk-button govuk-!-margin-right-3">Continue</button>
+                <a class="govuk-link das-inline-button-link" href="@Url.Action("Tasklist", "RoatpApplication", new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = Model.PageId})">Return to this question later</a>
             </form>
             <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
         </div>

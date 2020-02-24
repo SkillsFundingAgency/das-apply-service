@@ -2,13 +2,19 @@
 
 .das-inline-button-link {
   display: inline-block;
-  padding: 0.526315em 0 0.263157em 0;
-  line-height: 1.25;
+  padding: 0 0 7px 0;
+  font-size: 16px;
+  font-size: 1rem;
+  line-height: 1.1875;
+  margin-bottom: 22px;
 }
 
 @media (min-width: 40.0625em) {
   .das-inline-button-link {
-    padding-left: 0.526315em;
+    padding: 10px 0 7px 0;
+    font-size: 19px;
+    font-size: 1.1875rem;
+    line-height: 1;
   }
 }
 
@@ -366,6 +372,10 @@
   color: #000;
 }
 
+.app-task-list__task-hidden {
+  display: none;
+}
+
 /* TASK LIST */
 
 /* 
@@ -534,6 +544,14 @@
 .app-task-list__task-hidden {
   display: none;
 } */
+
+/* APPLICATION OVERVIEW */
+
+@media (min-width: 40.0625em) {
+  .govuk-summary-list--min-width-550 {
+    min-width: 550px;
+  }
+}
 
 /* USER PANEL */
 
@@ -1152,11 +1170,17 @@
 
 */
 
-.skipbutton {
+/* .skipbutton {
   display: inline-block;
   margin-top: 9px;
   margin-bottom: 6px;
   margin-left: 20px;
+} */
+
+@media (min-width: 40.0625em) {
+  .roatp__navigation-item--inactive a {
+    margin-left: 20px;
+  }
 }
 
 .govuk-details--get-help {

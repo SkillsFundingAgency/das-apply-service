@@ -15,9 +15,9 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">Application overview</h1>
-            <dl class="govuk-summary-list govuk-!-margin-bottom-9">
+            <dl class="govuk-summary-list govuk-summary-list--min-width-590 govuk-!-margin-bottom-9">
                 <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
+                    <dt class="govuk-summary-list__key das-no-wrap">
                         Organisation name
                     </dt>
                     <dd class="govuk-summary-list__value">
@@ -29,7 +29,7 @@
                 @if (!String.IsNullOrWhiteSpace(Model.TradingName))
                 {
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
+                        <dt class="govuk-summary-list__key das-no-wrap">
                             Trading name
                         </dt>
                         <dd class="govuk-summary-list__value">
@@ -40,7 +40,7 @@
                     </div>
                 }
                 <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
+                    <dt class="govuk-summary-list__key das-no-wrap">
                         UKPRN
                     </dt>
                     <dd class="govuk-summary-list__value">
@@ -66,6 +66,10 @@
                     </dd>
                 </div>
             </dl>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
             <ol class="app-task-list">
                 @{
                     await Html.RenderPartialAsync("~/Views/Roatp/TaskList/YourOrganisationSequence.cshtml", Model);
