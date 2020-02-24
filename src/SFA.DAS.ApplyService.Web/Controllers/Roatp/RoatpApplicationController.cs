@@ -1275,6 +1275,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 var applicationSequence = await _qnaApiClient.GetSequenceBySequenceNo(model.ApplicationId, sequence.SequenceNo);
                 var sections = await _qnaApiClient.GetSections(model.ApplicationId, applicationSequence.Id);
+                applicationSequence.Sections = sections.ToList();
                 foreach(var section in sections)
                 {
                     var applySection = sequence.Sections.FirstOrDefault(x => x.SectionNo == section.SectionId);
