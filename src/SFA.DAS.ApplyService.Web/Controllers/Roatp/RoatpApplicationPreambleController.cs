@@ -158,7 +158,7 @@
                 {
                     validationMessage = UkprnValidationMessages.InvalidUkprn;
                 }
-                else if (!_ukprnWhitelistValidator.IsWhitelistedUkprn(ukprn))
+                else if (!await _ukprnWhitelistValidator.IsWhitelistedUkprn(ukprn))
                 {
                     validationMessage = UkprnValidationMessages.NotWhitelistedUkprn;
                 }

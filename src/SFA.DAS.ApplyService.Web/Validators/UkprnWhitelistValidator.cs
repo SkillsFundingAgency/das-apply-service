@@ -16,12 +16,12 @@ namespace SFA.DAS.ApplyService.Web.Validators
             _whitelistedProvidersApiClient = whitelistedProvidersApiClient;
         }
 
-        public bool IsWhitelistedUkprn(long longUkprnToCheck)
+        public async Task<bool> IsWhitelistedUkprn(long longUkprnToCheck)
         {
             int ukprn;
             if (int.TryParse(longUkprnToCheck.ToString(), out ukprn))
             {
-                return _whitelistedProvidersApiClient.CheckIsWhitelistedUkprn(ukprn).Result;
+                return await _whitelistedProvidersApiClient.CheckIsWhitelistedUkprn(ukprn); 
             }
             else
             {
