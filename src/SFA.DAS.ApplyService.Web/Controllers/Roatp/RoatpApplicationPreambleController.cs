@@ -158,12 +158,9 @@
                 {
                     validationMessage = UkprnValidationMessages.InvalidUkprn;
                 }
-                else
+                else if (!_ukprnWhitelistValidator.IsWhitelistedUkprn(ukprn))
                 {
-                    if (!_ukprnWhitelistValidator.IsWhitelistedUkprn(ukprn))
-                    {
-                        validationMessage = UkprnValidationMessages.NotWhitelistedUkprn;
-                    }
+                    validationMessage = UkprnValidationMessages.NotWhitelistedUkprn;
                 }
             }
 

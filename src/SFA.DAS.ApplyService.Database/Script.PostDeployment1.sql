@@ -34,17 +34,92 @@ END
 -- If we TRUNCATE table, we will not need to check 'NOT EXISTS' for each entry 
 TRUNCATE TABLE [WhitelistedProviders]
 
-INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10031001)
-INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10039420)
-INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10052982)
-INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10060147)
-INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10062192)
-INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10064702)
-INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10081936)
-INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10082572)
-INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10083239)
-INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10084242)
-INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10084697)
-INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10084763)
-INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10084903)
-INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10085115)
+IF NOT EXISTS (SELECT * FROM [WhitelistedProviders]  WHERE [UKPRN] = 10031001)
+BEGIN
+	INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10031001)
+END
+
+IF NOT EXISTS (SELECT * FROM [WhitelistedProviders]  WHERE [UKPRN] = 10039420)
+BEGIN
+	INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10039420)
+END
+
+IF NOT EXISTS (SELECT * FROM [WhitelistedProviders]  WHERE [UKPRN] = 10052982)
+BEGIN
+	INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10052982)
+END
+
+IF NOT EXISTS (SELECT * FROM [WhitelistedProviders]  WHERE [UKPRN] = 10060147)
+BEGIN
+	INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10060147)
+END
+
+IF NOT EXISTS (SELECT * FROM [WhitelistedProviders]  WHERE [UKPRN] = 10062192)
+BEGIN
+	INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10062192)
+END
+
+IF NOT EXISTS (SELECT * FROM [WhitelistedProviders]  WHERE [UKPRN] = 10064702)
+BEGIN
+	INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10064702)
+END
+
+IF NOT EXISTS (SELECT * FROM [WhitelistedProviders]  WHERE [UKPRN] = 10081936)
+BEGIN
+	INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10081936)
+END
+
+IF NOT EXISTS (SELECT * FROM [WhitelistedProviders]  WHERE [UKPRN] = 10082572)
+BEGIN
+	INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10082572)
+END
+
+IF NOT EXISTS (SELECT * FROM [WhitelistedProviders]  WHERE [UKPRN] = 10083239)
+BEGIN
+	INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10083239)
+END
+
+IF NOT EXISTS (SELECT * FROM [WhitelistedProviders]  WHERE [UKPRN] = 10084242)
+BEGIN
+	INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10084242)
+END
+
+IF NOT EXISTS (SELECT * FROM [WhitelistedProviders]  WHERE [UKPRN] = 10084697)
+BEGIN
+	INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10084697)
+END
+
+IF NOT EXISTS (SELECT * FROM [WhitelistedProviders]  WHERE [UKPRN] = 10084763)
+BEGIN
+	INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10084763)
+END
+
+IF NOT EXISTS (SELECT * FROM [WhitelistedProviders]  WHERE [UKPRN] = 10084763)
+BEGIN
+	INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10084763)
+END
+
+IF NOT EXISTS (SELECT * FROM [WhitelistedProviders]  WHERE [UKPRN] = 10084903)
+BEGIN
+	INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10084903)
+END
+
+IF NOT EXISTS (SELECT * FROM [WhitelistedProviders]  WHERE [UKPRN] = 10085115)
+BEGIN
+	INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10085115)
+END
+
+IF NOT EXISTS (SELECT * FROM [WhitelistedProviders]  WHERE [UKPRN] = 10029571)
+BEGIN
+	INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10029571)
+END
+
+IF NOT EXISTS (SELECT * FROM [WhitelistedProviders]  WHERE [UKPRN] = 10033656)
+BEGIN
+	INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (10033656)
+END
+
+IF NOT EXISTS (SELECT * FROM [WhitelistedProviders]  WHERE [UKPRN] = 1001623)
+BEGIN
+	INSERT INTO [dbo].[WhitelistedProviders] ([UKPRN]) VALUES (1001623)
+END

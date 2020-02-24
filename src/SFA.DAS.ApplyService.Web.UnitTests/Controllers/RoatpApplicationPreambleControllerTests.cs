@@ -273,6 +273,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [TestCase("1234567A")]
         public void Validation_error_is_triggered_if_UKPRN_not_in_correct_format(string ukprn)
         {
+            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(It.IsAny<long>())).Returns(true);
+
             var model = new SearchByUkprnViewModel
             {
                 UKPRN = ukprn
@@ -290,6 +292,47 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var viewModel = viewResult.Model as SearchByUkprnViewModel;
             viewModel.ErrorMessages.Count.Should().Be(1);
 
+        }
+
+        [TestCase(12345678, true)]
+        [TestCase(87654321, true)]
+        [TestCase(99999999, false)]
+        public void Validation_error_is_triggered_if_UKPRN_is_not_in_whitelisted(long ukprn, bool isUkprnWhitelisted)
+        {
+            var noResults = new UkrlpLookupResults { Success = true, Results = new List<ProviderDetails> { new ProviderDetails() } };
+
+            _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<long>())).ReturnsAsync(noResults);
+
+            _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
+
+            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(ukprn)).Returns(isUkprnWhitelisted);        
+
+            var model = new SearchByUkprnViewModel
+            {
+                UKPRN = ukprn.ToString()
+            };
+
+            var httpContext = new DefaultHttpContext();
+            var tempDataProvider = new Mock<ITempDataProvider>();
+            _controller.TempData = new TempDataDictionary(httpContext, tempDataProvider.Object);
+            var result = _controller.SearchByUkprn(model).GetAwaiter().GetResult();
+
+            if (isUkprnWhitelisted)
+            {
+                result.Should().BeOfType<RedirectToActionResult>();
+
+                var redirectResult = result as RedirectToActionResult;
+                redirectResult.ActionName.Should().Contain("ConfirmOrganisation");
+            }
+            else
+            {
+                result.Should().BeOfType<ViewResult>();
+
+                var viewResult = result as ViewResult;
+                viewResult.ViewName.Should().Contain("EnterApplicationUkprn");
+                var viewModel = viewResult.Model as SearchByUkprnViewModel;
+                viewModel.ErrorMessages.Count.Should().Be(1);
+            }
         }
 
         [Test]

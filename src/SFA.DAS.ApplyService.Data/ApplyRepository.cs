@@ -960,9 +960,7 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                try
-                {
-                    return await connection.QuerySingleAsync<bool>(@"SELECT
+                return await connection.QuerySingleAsync<bool>(@"SELECT
                                                                       CASE WHEN EXISTS 
                                                                       (
                                                                             SELECT UKPRN FROM dbo.WhitelistedProviders WHERE UKPRN = @ukprn
@@ -970,13 +968,7 @@ namespace SFA.DAS.ApplyService.Data
                                                                       THEN 'TRUE'
                                                                       ELSE 'FALSE'
                                                                   END",
-                                                                      new { ukprn });
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "There has been an error in ApplyRepository.IsUkprnWhitelisted() - this is most likely caused by WhitelistedProviders table not being created in the database.");
-                    return false;
-                }
+                                                                  new { ukprn });
             }
         }
     }

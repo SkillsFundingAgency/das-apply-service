@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.Web.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,11 +9,11 @@ namespace SFA.DAS.ApplyService.Web.Validators
 {
     public class UkprnWhitelistValidator : IUkprnWhitelistValidator
     {
-        private readonly IApplyRepository _applyRepository;
+        private readonly IWhitelistedProvidersApiClient _whitelistedProvidersApiClient;
 
-        public UkprnWhitelistValidator(IApplyRepository applyRepository)
+        public UkprnWhitelistValidator(IWhitelistedProvidersApiClient whitelistedProvidersApiClient)
         {
-            _applyRepository = applyRepository;
+            _whitelistedProvidersApiClient = whitelistedProvidersApiClient;
         }
 
         public bool IsWhitelistedUkprn(long longUkprnToCheck)
@@ -20,7 +21,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
             int ukprn;
             if (int.TryParse(longUkprnToCheck.ToString(), out ukprn))
             {
-                return _applyRepository.IsUkprnWhitelisted(ukprn).Result;
+                return _whitelistedProvidersApiClient.CheckIsWhitelistedUkprn(ukprn).Result;
             }
             else
             {
