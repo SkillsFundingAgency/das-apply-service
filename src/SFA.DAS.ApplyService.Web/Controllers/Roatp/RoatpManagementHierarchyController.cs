@@ -172,7 +172,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             var managementHierarchyData = await _tabularDataRepository.GetTabularDataAnswer(model.ApplicationId, questionTag);
 
-            if ((managementHierarchyData == null) || (model.Index < 0 || model.Index + 1 > managementHierarchyData.DataRows.Count))
+            if ((managementHierarchyData == null) || model.Index < 0 || model.Index + 1 > managementHierarchyData.DataRows.Count)
             {
                 return RedirectToAction(redirectAction, new { model.ApplicationId });
             }
