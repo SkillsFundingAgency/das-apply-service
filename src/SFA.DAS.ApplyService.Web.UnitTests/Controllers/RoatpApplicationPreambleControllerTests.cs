@@ -273,7 +273,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [TestCase("1234567A")]
         public void Validation_error_is_triggered_if_UKPRN_not_in_correct_format(string ukprn)
         {
-            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(It.IsAny<long>())).Returns(true);
+            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(It.IsAny<long>())).ReturnsAsync(true);
 
             var model = new SearchByUkprnViewModel
             {
@@ -305,7 +305,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
 
-            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(ukprn)).Returns(isUkprnWhitelisted);        
+            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(ukprn)).ReturnsAsync(isUkprnWhitelisted);        
 
             var model = new SearchByUkprnViewModel
             {
@@ -344,7 +344,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
 
-            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(10001000)).Returns(true);
+            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(10001000)).ReturnsAsync(true);
 
             var model = new SearchByUkprnViewModel
             {
@@ -362,7 +362,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void UKPRN_is_found_on_UKRLP()
         {
-            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(10001000)).Returns(true);
+            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(10001000)).ReturnsAsync(true);
 
             var matchingResult = new UkrlpLookupResults
             {
