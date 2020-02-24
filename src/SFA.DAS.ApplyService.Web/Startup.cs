@@ -199,7 +199,6 @@ namespace SFA.DAS.ApplyService.Web
             });
             services.AddTransient<IEmailTemplateClient, EmailTemplateClient>();
             services.AddTransient<ISubmitApplicationConfirmationEmailService, SubmitApplicationConfirmationEmailService>();
-            services.AddTransient<ITabularDataService, TabularDataService>();
             services.AddTransient<ITabularDataRepository, TabularDataRepository>();
             services.AddTransient<IUkprnWhitelistValidator, UkprnWhitelistValidator>();
             services.AddTransient<IApplyRepository, ApplyRepository>();

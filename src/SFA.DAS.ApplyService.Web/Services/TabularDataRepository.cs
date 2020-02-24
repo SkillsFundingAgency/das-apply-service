@@ -11,11 +11,10 @@ namespace SFA.DAS.ApplyService.Web.Services
     public class TabularDataRepository : ITabularDataRepository
     {
         private readonly IQnaApiClient _apiClient;
-        private readonly ITabularDataService _tabularDataService;
-        public TabularDataRepository(IQnaApiClient apiClient, ITabularDataService tabularDataService)
+
+        public TabularDataRepository(IQnaApiClient apiClient)
         {
             _apiClient = apiClient;
-            _tabularDataService = tabularDataService;
         }
         
         public async Task<TabularData> GetTabularDataAnswer(Guid applicationId, string questionTag)
@@ -34,10 +33,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         public async Task<bool> SaveTabularDataAnswer(Guid applicationId, Guid sectionId, string pageId, string questionId, TabularData tabularData)
         {
-
-            var tabularDataDeduplicated = _tabularDataService.DeduplicateData(tabularData);
-
-            var answerJson = JsonConvert.SerializeObject(tabularDataDeduplicated);
+            var answerJson = JsonConvert.SerializeObject(tabularData);
             var answers = new List<Answer>
             {
                 new Answer
@@ -58,13 +54,11 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         }
         
-        public async Task<bool> UpsertTabularDataRecord(Guid applicationId, Guid sectionId, string pageId, string questionId, string questionTag, TabularDataRow record)
+        public async Task<bool> AddTabularDataRecord(Guid applicationId, Guid sectionId, string pageId, string questionId, string questionTag, TabularDataRow record)
         {
             var tabularDataAnswer = await GetTabularDataAnswer(applicationId, questionTag);
-
-            if (_tabularDataService.IsRowAlreadyPresent(tabularDataAnswer, record)) return true;
-
             tabularDataAnswer.DataRows.Add(record);
+
             return await SaveTabularDataAnswer(applicationId, sectionId, pageId, questionId, tabularDataAnswer);
         }
 
