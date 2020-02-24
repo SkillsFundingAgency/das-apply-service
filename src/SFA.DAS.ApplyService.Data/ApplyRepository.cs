@@ -327,7 +327,6 @@ namespace SFA.DAS.ApplyService.Data
                                 SELECT        @applicationId AS ApplicationId, SequenceId, SectionId, QnAData, Title, LinkTitle, Status, DisplayType
                                 FROM            WorkflowSections
                                 WHERE        (WorkflowId = @workflowId AND (DisallowedOrgTypes IS NULL OR DisallowedOrgTypes NOT LIKE @organisationType));
-
                                 SELECT * FROM ApplicationSections WHERE ApplicationId = @applicationId;", new { applicationId, workflowId, organisationType = $"%|{organisationType}|%" })).ToList();
             }
         }
@@ -488,7 +487,6 @@ namespace SFA.DAS.ApplyService.Data
                     await connection.ExecuteAsync(@"UPDATE ApplicationSequences
                                                         SET  IsActive = 0, Status = @rejectedStatus
                                                         WHERE  ApplicationSequences.ApplicationId = @applicationId;
-
                                                         UPDATE Applications
                                                         SET  ApplicationStatus = @rejectedSequenceStatus, DeletedAt = GETUTCDATE(), DeletedBy = 'System'
                                                         WHERE  Applications.Id = @applicationId;",
