@@ -201,7 +201,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     //Status = "Draft",
                     //IsActive = sequence.IsActive,                    
                     //Sequential = false
-                }).ToList()
+                }).OrderBy(sequence => sequence.SequenceNo).ToList()
             };
         }
 
