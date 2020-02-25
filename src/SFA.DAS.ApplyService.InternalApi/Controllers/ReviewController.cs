@@ -1,9 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.ApplyService.Application.Apply.GetSection;
 using SFA.DAS.ApplyService.Application.Apply.Review.Applications;
 using SFA.DAS.ApplyService.Application.Apply.Review.Return;
-using SFA.DAS.ApplyService.Domain.Apply;
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -43,13 +41,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             var applications = await _mediator.Send(new ClosedApplicationsRequest());
             return Ok(applications);
-        }
-
-        [HttpGet("Review/Applications/{applicationId}")]
-        public async Task<ActionResult> ReviewApplications(Guid applicationId)
-        {
-            var activeSequence = await _mediator.Send(new GetActiveSequenceRequest(applicationId));
-            return Ok(activeSequence);
         }
 
         [HttpPost("Review/Applications/{applicationId}/Sequences/{sequenceId}/Return")]

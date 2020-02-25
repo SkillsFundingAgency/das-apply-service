@@ -27,9 +27,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
 
 
-        Task<ApplicationSequence> GetSequence(Guid applicationId, Guid userId);
         Task<IEnumerable<ApplicationSequence>> GetSequences(Guid applicationId);
-        Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid userId);
         
         Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId, int sectionId,
             string pageId, List<Answer> answers, bool saveNewAnswers);

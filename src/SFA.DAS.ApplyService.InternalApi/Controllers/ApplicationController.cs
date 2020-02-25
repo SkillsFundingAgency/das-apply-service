@@ -4,7 +4,6 @@ using SFA.DAS.ApplyService.Application.Apply.CheckOrganisationStandardStatus;
 using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Application.Apply.GetOrganisationForApplication;
-using SFA.DAS.ApplyService.Application.Apply.GetSection;
 using SFA.DAS.ApplyService.Application.Apply.GetSequence;
 using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
@@ -94,40 +93,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             return await _mediator.Send(new GetAnswersRequest(applicationId, questionIdentifier, true));
         }
-
-        [HttpGet("Application/{applicationId}/User/{userId}/Sections")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<ActionResult<ApplicationSequence>> GetActiveSequence(string applicationId, string userId)
-        {
-            return await _mediator.Send(new GetActiveSequenceRequest(Guid.Parse(applicationId)));
-        }
-
-        [HttpGet("Application/{applicationId}/User/{userId}/Sequences/{sequenceId}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<ActionResult<ApplicationSequence>> GetSequence(string applicationId, string userId, int sequenceId)
-        {
-            var uid = new Guid?();
-            var goodUserId = Guid.TryParse(userId, out var parsedUserId);
-            if (goodUserId)
-            {
-                uid = parsedUserId;
-            }
-
-            return await _mediator.Send(new GetSequenceRequest(Guid.Parse(applicationId), uid, sequenceId));
-        }
-
+        
         [HttpGet("Application/{applicationId}/Sequences")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IEnumerable<ApplicationSequence>> GetSequences(string applicationId)
         {
             return await _mediator.Send(new GetSequencesRequest(Guid.Parse(applicationId)));
-        }
-
-        [HttpGet("Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<IEnumerable<ApplicationSection>> GetSections(string applicationId, int sequenceId, string userId)
-        {
-            return await _mediator.Send(new GetSectionsRequest(Guid.Parse(applicationId), sequenceId, Guid.Parse(userId)));
         }
 
         [HttpPost("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]

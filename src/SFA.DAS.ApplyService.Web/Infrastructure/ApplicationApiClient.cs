@@ -81,23 +81,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
 
         // NOTE: This is old stuff or things which are not migrated over yet       
-        public async Task<ApplicationSequence> GetSequence(Guid applicationId, Guid userId)
-        {
-            return await (await _httpClient.GetAsync($"Application/{applicationId}/User/{userId}/Sections")).Content
-                .ReadAsAsync<ApplicationSequence>();
-        }
 
         public async Task<IEnumerable<ApplicationSequence>> GetSequences(Guid applicationId)
         {
             return await (await _httpClient.GetAsync($"Application/{applicationId}/Sequences")).Content
                 .ReadAsAsync<IEnumerable<ApplicationSequence>>();
-        }
-
-        public async Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid userId)
-        {
-            return await (await _httpClient.GetAsync(
-                    $"Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections")).Content
-                .ReadAsAsync<IEnumerable<ApplicationSection>>();
         }
 
         public async Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId,

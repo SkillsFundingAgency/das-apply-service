@@ -150,36 +150,6 @@ namespace SFA.DAS.ApplyService.Data
             return false;
         }
 
-        public async Task<List<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid? userId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                try
-                {
-                    if (userId == null)
-                    {
-                        return (await connection.QueryAsync<ApplicationSection>(@"SELECT asec.* 
-                                                                FROM ApplicationSections asec
-                                                                INNER JOIN Applications a ON a.Id = asec.ApplicationId
-                                                                WHERE asec.ApplicationId = @applicationId AND asec.SequenceId = @sequenceId AND asec.NotRequired = 0",
-                                                                    new { applicationId, sequenceId })).ToList();
-                    }
-
-                    return (await connection.QueryAsync<ApplicationSection>(@"SELECT asec.* 
-                                                                FROM ApplicationSections asec
-                                                                INNER JOIN Applications a ON a.Id = asec.ApplicationId
-                                                                INNER JOIN Contacts c ON c.ApplyOrganisationID = a.ApplyingOrganisationId
-                                                                WHERE asec.ApplicationId = @applicationId AND asec.SequenceId = @sequenceId AND c.Id = @userId AND asec.NotRequired = 0",
-                                                                    new { applicationId, sequenceId, userId })).ToList();
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(e, "There has been an error trying to map ApplicationSections - this is most likely caused by to invalid JSON in the QnAData of ApplicationSections and WorkflowSections");
-                    return null;
-                }
-            }
-        }
-
         public async Task<List<ApplicationSection>> GetSections(Guid applicationId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -200,60 +170,7 @@ namespace SFA.DAS.ApplyService.Data
                 }
             }
         }
-
-
-        public async Task<ApplicationSequence> GetSequence(Guid applicationId, int sequenceId, Guid? userId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                ApplicationSequence sequence = null;
-
-                if (userId == null)
-                {
-                    sequence = await connection.QuerySingleOrDefaultAsync<ApplicationSequence>(@"SELECT seq.* 
-                            FROM ApplicationSequences seq
-                            INNER JOIN Applications a ON a.Id = seq.ApplicationId
-                            WHERE seq.ApplicationId = @applicationId 
-                            AND seq.SequenceId = @sequenceId", new { applicationId, sequenceId });
-                }
-                else
-                {
-                    sequence = await connection.QuerySingleOrDefaultAsync<ApplicationSequence>(@"SELECT seq.* 
-                            FROM ApplicationSequences seq
-                            INNER JOIN Applications a ON a.Id = seq.ApplicationId
-                            INNER JOIN Contacts c ON c.ApplyOrganisationID = a.ApplyingOrganisationId
-                            WHERE seq.ApplicationId = @applicationId 
-                            AND seq.SequenceId = @sequenceId AND c.Id = @userId", new { applicationId, sequenceId, userId });
-                }
-
-                if(sequence != null)
-                {
-                    sequence.Sections = await GetSections(applicationId, sequenceId, userId);
-                }
-
-                return sequence;
-            }
-        }
-
-        public async Task<ApplicationSequence> GetActiveSequence(Guid applicationId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                var sequence = await connection.QueryFirstOrDefaultAsync<ApplicationSequence>(@"SELECT seq.* 
-                            FROM ApplicationSequences seq
-                            INNER JOIN Applications a ON a.Id = seq.ApplicationId
-                            WHERE seq.ApplicationId = @applicationId 
-                            AND seq.IsActive = 1", new {applicationId});
-
-                if (sequence != null)
-                {
-                    sequence.Sections = await GetSections(applicationId, (int)sequence.SequenceId, null);
-                }
-
-                return sequence;
-            }
-        }
-
+        
         public async Task<List<Asset>> GetAssets()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))

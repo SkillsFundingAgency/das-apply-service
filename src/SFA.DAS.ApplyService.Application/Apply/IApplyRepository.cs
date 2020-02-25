@@ -23,10 +23,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
 
         // NOTE: This is old stuff or things which are not migrated over yet
-        Task<List<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid? userId);
         Task<List<ApplicationSection>> GetSections(Guid applicationId);
-        Task<ApplicationSequence> GetSequence(Guid applicationId, int sequenceId, Guid? userId);
-        Task<ApplicationSequence> GetActiveSequence(Guid applicationId);
         Task<List<Asset>> GetAssets();
         Task<Guid> CreateApplication(Guid applicationId, string applicationType, Guid applyingOrganisationId, Guid userId, Guid workflowId);
         Task<Guid> GetLatestWorkflow(string applicationType);
