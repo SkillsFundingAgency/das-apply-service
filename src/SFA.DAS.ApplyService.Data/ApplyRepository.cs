@@ -149,15 +149,6 @@ namespace SFA.DAS.ApplyService.Data
 
             return false;
         }
-        
-        public async Task<List<ApplicationSequence>> GetSequences(Guid applicationId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-               return (await connection.QueryAsync<ApplicationSequence>(@"SELECT * FROM ApplicationSequences WHERE ApplicationId = @applicationId",
-                    new {applicationId})).ToList();
-            }
-        }
 
         public async Task UpdateApplicationStatus(Guid applicationId, string status)
         {

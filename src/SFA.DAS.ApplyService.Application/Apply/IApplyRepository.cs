@@ -20,10 +20,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task SubmitApplication(Guid applicationId, ApplyData applyData, Guid submittedBy);
 
         Task<bool> ChangeProviderRoute(Guid applicationId, int providerRoute);
-
-
-        // NOTE: This is old stuff or things which are not migrated over yet
-        Task<List<ApplicationSequence>> GetSequences(Guid applicationId);
+        
         Task UpdateApplicationStatus(Guid applicationId, string status);
         
         Task<string> CheckOrganisationStandardStatus(Guid applicationId, int standardId);

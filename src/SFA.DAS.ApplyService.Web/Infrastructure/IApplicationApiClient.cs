@@ -22,17 +22,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         Task<Domain.Entities.Apply> GetApplication(Guid applicationId);
         Task<List<Domain.Entities.Apply>> GetApplications(Guid userId, bool createdBy);
-
-
-
-
-        Task<IEnumerable<ApplicationSequence>> GetSequences(Guid applicationId);
-        
-        Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId, int sectionId,
-            string pageId, List<Answer> answers, bool saveNewAnswers);
-
-        Task ImportWorkflow(IFormFile file);
-        
        
         Task<string> GetApplicationStatus(Guid applicationId, int standardCode);
 

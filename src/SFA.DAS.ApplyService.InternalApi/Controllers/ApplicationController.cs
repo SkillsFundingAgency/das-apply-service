@@ -1,18 +1,16 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.ApplyService.Application.Apply.CheckOrganisationStandardStatus;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
-using SFA.DAS.ApplyService.Application.Apply.GetSequence;
 using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
-using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.Application.Apply.CheckOrganisationStandardStatus;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Roatp;
 
@@ -79,13 +77,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
         // NOTE: This is old stuff or things which are not migrated over yet
        
-        [HttpGet("Application/{applicationId}/Sequences")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<IEnumerable<ApplicationSequence>> GetSequences(string applicationId)
-        {
-            return await _mediator.Send(new GetSequencesRequest(Guid.Parse(applicationId)));
-        }
-
         [HttpPost("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<ActionResult<SetPageAnswersResponse>> Page(string applicationId, string userId, int sequenceId, int sectionId, string pageId, [FromBody] PageApplyRequest request)

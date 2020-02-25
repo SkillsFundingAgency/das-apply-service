@@ -75,40 +75,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .ReadAsAsync<List<Domain.Entities.Apply>>();
         }
 
-
-
-        // NOTE: This is old stuff or things which are not migrated over yet       
-
-        public async Task<IEnumerable<ApplicationSequence>> GetSequences(Guid applicationId)
-        {
-            return await (await _httpClient.GetAsync($"Application/{applicationId}/Sequences")).Content
-                .ReadAsAsync<IEnumerable<ApplicationSequence>>();
-        }
-
-        public async Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId,
-            int sectionId, string pageId, List<Answer> answers, bool saveNewAnswers)
-        {
-            return await (await _httpClient.PostAsJsonAsync(
-                    $"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}",
-                    new { answers, saveNewAnswers })).Content
-                .ReadAsAsync<SetPageAnswersResponse>();
-        }
-
-        public async Task ImportWorkflow(IFormFile file)
-        {
-            var formDataContent = new MultipartFormDataContent();
-
-            var fileContent = new StreamContent(file.OpenReadStream())
-                {Headers = {ContentLength = file.Length, ContentType = new MediaTypeHeaderValue(file.ContentType)}};
-            formDataContent.Add(fileContent, file.Name, file.FileName);
-
-            _logger.LogInformation($"API ImportWorkflow > Added content {file.FileName}");
-
-            await _httpClient.PostAsync($"/Import/Workflow", formDataContent);
-
-            _logger.LogInformation($"API ImportWorkflow > After post to Internal API");
-        }
-
         public async Task<string> GetApplicationStatus(Guid applicationId, int standardCode)
         {
             return await(await _httpClient.GetAsync(
