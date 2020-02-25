@@ -25,8 +25,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         // NOTE: This is old stuff or things which are not migrated over yet
         Task<List<ApplicationSequence>> GetSequences(Guid applicationId);
         Task UpdateApplicationStatus(Guid applicationId, string status);
-        Task<Organisation> GetOrganisationForApplication(Guid applicationId);
-
+        
         Task<string> CheckOrganisationStandardStatus(Guid applicationId, int standardId);
 
         Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatusByUkprn(string ukprn);

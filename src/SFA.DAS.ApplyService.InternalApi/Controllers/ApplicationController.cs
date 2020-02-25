@@ -2,7 +2,6 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.CheckOrganisationStandardStatus;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
-using SFA.DAS.ApplyService.Application.Apply.GetOrganisationForApplication;
 using SFA.DAS.ApplyService.Application.Apply.GetSequence;
 using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
@@ -94,13 +93,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             var updatedPage = await _mediator.Send(
                 new UpdatePageAnswersRequest(Guid.Parse(applicationId), Guid.Parse(userId), sequenceId, sectionId, pageId, request.Answers, request.SaveNewAnswers));
             return updatedPage;
-        }
-
-        [HttpGet("/Application/{applicationId}/Organisation")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<Organisation> GetOrganisationForApplication(Guid applicationId)
-        {
-            return await _mediator.Send(new GetOrganisationForApplicationRequest(applicationId));
         }
 
         [HttpGet("/Application/{applicationId}/standard/{standardId}/check-status")]

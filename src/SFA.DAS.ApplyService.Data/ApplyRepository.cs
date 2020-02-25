@@ -169,17 +169,6 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<Organisation> GetOrganisationForApplication(Guid applicationId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return await connection.QuerySingleAsync<Organisation>(@"SELECT org.* FROM Organisations org 
-                                                                        INNER JOIN Applications appl ON appl.ApplyingOrganisationId = org.Id
-                                                                        WHERE appl.Id = @ApplicationId",
-                    new {applicationId});
-            }
-        }
-
         public async Task<string> CheckOrganisationStandardStatus(Guid applicationId, int standardId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
