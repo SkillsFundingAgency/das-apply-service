@@ -150,14 +150,6 @@ namespace SFA.DAS.ApplyService.Data
             return false;
         }
 
-        public async Task<List<Asset>> GetAssets()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection.QueryAsync<Asset>(@"SELECT * FROM Assets")).ToList();
-            }
-        }
-
         public async Task<Guid> CreateApplication(Guid applicationId, string applicationType, Guid applyingOrganisationId, Guid userId,
             Guid workflowId)
         {

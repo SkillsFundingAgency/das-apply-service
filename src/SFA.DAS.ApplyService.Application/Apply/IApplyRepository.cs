@@ -23,7 +23,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
 
         // NOTE: This is old stuff or things which are not migrated over yet
-        Task<List<Asset>> GetAssets();
         Task<Guid> CreateApplication(Guid applicationId, string applicationType, Guid applyingOrganisationId, Guid userId, Guid workflowId);
         Task<Guid> GetLatestWorkflow(string applicationType);
         Task<List<ApplicationSection>> CopyWorkflowToApplication(Guid applicationId, Guid workflowId, string organisationType);
