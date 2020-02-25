@@ -7,7 +7,8 @@
 
     <li>
         <h2 class="app-task-list__section">
-            @Html.Raw(Convert.ToInt32(yourOrganisationSequence.SequenceId)). @Html.Raw(yourOrganisationSequence.Description)
+            <span class="app-task-list__section-number">@Html.Raw(Convert.ToInt32(yourOrganisationSequence.SequenceId)). </span>
+            @Html.Raw(yourOrganisationSequence.Description)
         </h2>
 
         <ul class="app-task-list__items">

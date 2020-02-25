@@ -15,7 +15,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">Application overview</h1>
-            <dl class="govuk-summary-list govuk-summary-list--min-width-590 govuk-!-margin-bottom-9">
+            <dl class="govuk-summary-list govuk-summary-list--min-width-550 govuk-!-margin-bottom-9">
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key das-no-wrap">
                         Organisation name
@@ -78,7 +78,8 @@
                 {
                     <li>
                         <h2 class="app-task-list__section">
-                            @Html.Raw(Convert.ToInt32(applicationSequence.SequenceId)). @Html.Raw(applicationSequence.Description)
+                            <span class="app-task-list__section-number">@Html.Raw(Convert.ToInt32(applicationSequence.SequenceId)). </span>
+                            @Html.Raw(applicationSequence.Description)
                         </h2>
                         <ul class="app-task-list__items">
                             @foreach (var section in applicationSequence.Sections.OrderBy(sec => sec.SectionId))
@@ -121,7 +122,8 @@
 
                         <li>
                             <h2 class="app-task-list__section">
-                                <span class="app-task-list__section-number">@Html.Raw(Convert.ToInt32(evaluationSequence.SequenceId)). </span>@Html.Raw(evaluationSequence.Description)
+                                <span class="app-task-list__section-number">@Html.Raw(Convert.ToInt32(evaluationSequence.SequenceId)). </span>
+                                @Html.Raw(evaluationSequence.Description)
                             </h2>
                             <ul class="app-task-list__items">
                                 @foreach (var section in evaluationSequence.Sections.OrderBy(sec => sec.SectionId))

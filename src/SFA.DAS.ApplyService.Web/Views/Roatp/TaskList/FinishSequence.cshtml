@@ -7,7 +7,8 @@
 
     <li>
         <h2 class="app-task-list__section">
-            @Html.Raw(Convert.ToInt32(applicationSequence.SequenceId)). @Html.Raw(applicationSequence.Description)
+            <span class="app-task-list__section-number">@Html.Raw(Convert.ToInt32(applicationSequence.SequenceId)). </span>
+            @Html.Raw(applicationSequence.Description)
         </h2>
         <ul class="app-task-list__items">
             @foreach (var section in applicationSequence.Sections.OrderBy(sec => sec.SectionId))
