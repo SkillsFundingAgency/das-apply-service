@@ -169,44 +169,6 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection
-                    .QueryAsync<FinancialApplicationSummaryItem>(
-                        @"SELECT 
-                            org.Name AS OrganisationName,
-                            appl.id AS ApplicationId,
-                            seq.SequenceId AS SequenceId,
-                            sec.SectionId AS SectionId,
-                            JSON_VALUE(appl.ApplicationData, '$.LatestInitSubmissionDate') As SubmittedDate,
-                            JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') As SubmissionCount,
-	                        CASE WHEN (seq.Status = @sequenceStatusFeedbackAdded) THEN @sequenceStatusFeedbackAdded
-                                 WHEN (JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') > 1 AND sec.Status = @financialStatusSubmitted) THEN @sequenceStatusResubmitted
-                                 WHEN (JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') > 1 AND JSON_VALUE(sec.QnAData, '$.RequestedFeedbackAnswered') = 'true') THEN @sequenceStatusResubmitted
-                                 ELSE sec.Status
-	                        END As CurrentStatus
-	                      FROM Applications appl
-	                      INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
-	                      INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id
-	                      INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-	                      WHERE seq.SequenceId = 1 AND sec.SectionId = 3 AND seq.IsActive = 1
-                            AND appl.ApplicationStatus = @applicationStatusSubmitted
-                            AND seq.Status = @sequenceStatusSubmitted
-                            AND sec.Status IN (@financialStatusSubmitted, @financialStatusInProgress)",
-                        new
-                        {
-                            applicationStatusSubmitted = ApplicationStatus.Submitted,
-                            sequenceStatusSubmitted = ApplicationSequenceStatus.Submitted,
-                            sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded,
-                            sequenceStatusResubmitted = ApplicationSequenceStatus.Resubmitted,
-                            financialStatusSubmitted = ApplicationSectionStatus.Submitted,
-                            financialStatusInProgress = ApplicationSectionStatus.InProgress
-                        })).ToList();
-            }
-        }
-
         public async Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
