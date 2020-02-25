@@ -149,17 +149,7 @@ namespace SFA.DAS.ApplyService.Data
 
             return false;
         }
-
-        public async Task<Guid> GetLatestWorkflow(string applicationType)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection.QuerySingleAsync<Guid>(
-                    @"SELECT Id FROM Workflows WHERE [Type] = @applicationType AND Status = 'Live'",
-                    new {applicationType}));
-            }
-        }
-
+        
         public async Task<List<ApplicationSection>> CopyWorkflowToApplication(Guid applicationId, Guid workflowId, string organisationType)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
