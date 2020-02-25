@@ -150,31 +150,6 @@ namespace SFA.DAS.ApplyService.Data
             return false;
         }
 
-
-
-        // NOTE: This is old stuff or things which are not migrated over yet
-        public async Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId, int sectionId, Guid? userId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                if (userId == null)
-                {
-                    return (await connection.QuerySingleOrDefaultAsync<ApplicationSection>(@"SELECT asec.* 
-                                                                FROM ApplicationSections asec
-                                                                INNER JOIN Applications a ON a.Id = asec.ApplicationId
-                                                                WHERE asec.ApplicationId = @applicationId AND asec.SectionId =@sectionId AND asec.SequenceId = @sequenceId",
-                        new {applicationId, sequenceId, sectionId}));
-                }
-
-                return (await connection.QuerySingleOrDefaultAsync<ApplicationSection>(@"SELECT asec.* 
-                                                                FROM ApplicationSections asec
-                                                                INNER JOIN Applications a ON a.Id = asec.ApplicationId
-                                                                INNER JOIN Contacts c ON c.ApplyOrganisationID = a.ApplyingOrganisationId
-                                                                WHERE asec.ApplicationId = @applicationId AND asec.SectionId =@sectionId AND asec.SequenceId = @sequenceId AND c.Id = @userId",
-                    new {applicationId, sequenceId, sectionId, userId}));
-            }
-        }
-
         public async Task<List<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid? userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))

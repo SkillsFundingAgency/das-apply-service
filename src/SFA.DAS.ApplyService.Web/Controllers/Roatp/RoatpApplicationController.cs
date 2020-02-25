@@ -1142,14 +1142,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return validationErrors;
         }
 
-        [HttpGet]  
-        public async Task<IActionResult> DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, string redirectAction)
-        {
-            await _apiClient.DeleteAnswer(applicationId, sequenceId, sectionId, pageId, answerId, User.GetUserId());
-            
-            return RedirectToAction("Page", new {applicationId, sequenceId, sectionId, pageId, redirectAction});
-        }
-
         [HttpGet]
         public async Task<IActionResult> Feedback(Guid applicationId)
         {

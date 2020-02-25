@@ -1,17 +1,14 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.CheckOrganisationStandardStatus;
-using SFA.DAS.ApplyService.Application.Apply.DeleteAnswer;
 using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Application.Apply.GetOrganisationForApplication;
-using SFA.DAS.ApplyService.Application.Apply.GetPage;
 using SFA.DAS.ApplyService.Application.Apply.GetSection;
 using SFA.DAS.ApplyService.Application.Apply.GetSequence;
 using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
-using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using System;
@@ -126,39 +123,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(new GetSequencesRequest(Guid.Parse(applicationId)));
         }
 
-        [HttpGet("Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections/{sectionId}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<ActionResult<ApplicationSection>> GetSection(string applicationId, string userId, int sequenceId, int sectionId)
-        {
-            var uid = new Guid?();
-            var goodUserId = Guid.TryParse(userId, out var parsedUserId);
-            if (goodUserId)
-            {
-                uid = parsedUserId;
-            }
-
-            return await _mediator.Send(new GetSectionRequest(Guid.Parse(applicationId), uid, sequenceId, sectionId));
-        }
-
         [HttpGet("Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IEnumerable<ApplicationSection>> GetSections(string applicationId, int sequenceId, string userId)
         {
             return await _mediator.Send(new GetSectionsRequest(Guid.Parse(applicationId), sequenceId, Guid.Parse(userId)));
-        }
-
-        [HttpGet("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<ActionResult<Page>> GetPage(string applicationId, string userId, int sequenceId, int sectionId, string pageId)
-        {
-            var uid = new Guid?();
-            var goodUserId = Guid.TryParse(userId, out var parsedUserId);
-            if (goodUserId)
-            {
-                uid = parsedUserId;
-            }
-
-            return await _mediator.Send(new GetPageRequest(Guid.Parse(applicationId), sequenceId, sectionId, pageId, uid));
         }
 
         [HttpPost("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
@@ -168,14 +137,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             var updatedPage = await _mediator.Send(
                 new UpdatePageAnswersRequest(Guid.Parse(applicationId), Guid.Parse(userId), sequenceId, sectionId, pageId, request.Answers, request.SaveNewAnswers));
             return updatedPage;
-        }
-
-        [HttpPost("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/DeleteAnswer/{answerId}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<IActionResult> DeleteAnswer(string applicationId, string userId, int sequenceId, int sectionId, string pageId, Guid answerId)
-        {
-            await _mediator.Send(new DeletePageAnswerRequest(Guid.Parse(applicationId), Guid.Parse(userId), sequenceId, sectionId, pageId, answerId));
-            return Ok();
         }
 
         [HttpGet("/Application/{applicationId}/Organisation")]

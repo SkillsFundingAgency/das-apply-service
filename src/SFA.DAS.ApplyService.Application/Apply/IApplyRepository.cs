@@ -23,7 +23,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
 
         // NOTE: This is old stuff or things which are not migrated over yet
-        Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId,  int sectionId, Guid? userId);
         Task<List<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid? userId);
         Task<List<ApplicationSection>> GetSections(Guid applicationId);
         Task<ApplicationSequence> GetSequence(Guid applicationId, int sequenceId, Guid? userId);

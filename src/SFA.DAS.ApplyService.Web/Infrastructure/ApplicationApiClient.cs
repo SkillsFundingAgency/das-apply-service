@@ -93,26 +93,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .ReadAsAsync<IEnumerable<ApplicationSequence>>();
         }
 
-        public async Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId, int sectionId, Guid userId)
-        {
-            return await (await _httpClient.GetAsync(
-                    $"Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections/{sectionId}")).Content
-                .ReadAsAsync<ApplicationSection>();
-        }
-
         public async Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid userId)
         {
             return await (await _httpClient.GetAsync(
                     $"Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections")).Content
                 .ReadAsAsync<IEnumerable<ApplicationSection>>();
-        }
-
-        public async Task<Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid userId)
-        {
-            return await (await _httpClient.GetAsync(
-                    $"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")
-                )
-                .Content.ReadAsAsync<Page>();
         }
 
         public async Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId,
@@ -122,14 +107,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                     $"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}",
                     new { answers, saveNewAnswers })).Content
                 .ReadAsAsync<SetPageAnswersResponse>();
-        }
-
-        public async Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId,
-            Guid userId)
-        {
-            await _httpClient.PostAsJsonAsync(
-                $"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/DeleteAnswer/{answerId}",
-                new { });
         }
 
         public async Task ImportWorkflow(IFormFile file)
