@@ -168,58 +168,6 @@ namespace SFA.DAS.ApplyService.Data
                                                 WHERE ApplicationId = @ApplicationId", new {applicationId, status});
             }
         }
-        
-        public async Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection
-                    .QueryAsync<ApplicationSummaryItem>(
-                        @"SELECT OrganisationName, ApplicationId, SequenceId,
-                            CASE WHEN SequenceId = 1 THEN 'Midpoint'
-                                 WHEN SequenceId = 2 THEN 'Standard'
-                                 ELSE 'Unknown'
-                            END As ApplicationType,
-                            StandardName,
-                            StandardCode,
-                            FeedbackAddedDate,
-                            SubmissionCount,
-                            SequenceStatus AS CurrentStatus
-                        FROM (
-	                        SELECT 
-                                org.Name AS OrganisationName,
-                                appl.id AS ApplicationId,
-                                seq.SequenceId AS SequenceId,
-                                CASE WHEN seq.SequenceId = 1 THEN NULL
-		                             ELSE JSON_VALUE(appl.ApplicationData, '$.StandardName')
-                                END As StandardName,
-                                CASE WHEN seq.SequenceId = 1 THEN NULL
-		                             ELSE JSON_VALUE(appl.ApplicationData, '$.StandardCode')
-                                END As StandardCode,
-                                CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.InitSubmissionFeedbackAddedDate')
-		                             WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardSubmissionFeedbackAddedDate')
-		                             ELSE NULL
-	                            END As FeedbackAddedDate,
-                                CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount')
-		                             WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardSubmissionsCount')
-		                             ELSE 0
-	                            END As SubmissionCount,
-                                seq.Status AS SequenceStatus
-	                        FROM Applications appl
-	                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
-	                        INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-	                        WHERE appl.ApplicationStatus = @applicationStatusFeedbackAdded
-                                AND seq.Status = @sequenceStatusFeedbackAdded
-                                AND seq.IsActive = 1
-	                        GROUP BY seq.SequenceId, seq.Status, appl.ApplyingOrganisationId, appl.id, org.Name, appl.ApplicationData 
-                        ) ab",
-                        new
-                        {
-                            applicationStatusFeedbackAdded = ApplicationStatus.FeedbackAdded,
-                            sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded
-                        })).ToList();
-            }
-        }
 
         public async Task<List<ApplicationSummaryItem>> GetClosedApplications()
         {
