@@ -47,7 +47,7 @@
                         @Model.UKPRN
                     </dd>
                     <dd class="govuk-summary-list__actions">
-                        <a class="govuk-link" href="@Url.Action("ChangeUkprn", "RoatpApplicationPreamble", new { applicationId = Model.ApplicationId })">
+                        <a class="govuk-link govuk-link--no-visited-state" href="@Url.Action("ChangeUkprn", "RoatpApplicationPreamble", new { applicationId = Model.ApplicationId })">
                             Change<span class="govuk-visually-hidden"> UKPRN</span>
                         </a>
                     </dd>
@@ -60,7 +60,7 @@
                         @Model.ApplicationRouteShortText
                     </dd>
                     <dd class="govuk-summary-list__actions">
-                        <a class="govuk-link" href="@Url.Action("ConfirmChangeRoute","RoatpApplicationPreamble", new { applicationId = Model.ApplicationId })">
+                        <a class="govuk-link govuk-link--no-visited-state" href="@Url.Action("ConfirmChangeRoute","RoatpApplicationPreamble", new { applicationId = Model.ApplicationId })">
                             Change<span class="govuk-visually-hidden"> provider route</span>
                         </a>
                     </dd>

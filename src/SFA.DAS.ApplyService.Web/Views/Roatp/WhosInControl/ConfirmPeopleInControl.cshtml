@@ -11,13 +11,10 @@
 
 @{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
 
-
-<div class="grid-row">
-    <form asp-controller="RoatpWhosInControlApplication" asp-action="AddPeopleInControl" method="get" name="backForm">
-        @Html.HiddenFor(x => x.ApplicationId)
-        <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
-    </form>
-</div>
+<form asp-controller="RoatpWhosInControlApplication" asp-action="AddPeopleInControl" method="get" name="backForm">
+    @Html.HiddenFor(x => x.ApplicationId)
+    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+</form>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
@@ -49,8 +46,8 @@
                     {
                         <td class="govuk-table__cell">@column</td>
                     }
-                    <td class="govuk-table__cell"><a href="@Url.Action("EditPeopleInControl", "RoatpWhosInControlApplication", new { Model.ApplicationId, index })">Change</a></td>
-                    <td class="govuk-table__cell"><a href="@Url.Action("RemovePeopleInControl", "RoatpWhosInControlApplication", new { Model.ApplicationId, index })">Remove</a></td>
+                    <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="@Url.Action("EditPeopleInControl", "RoatpWhosInControlApplication", new { Model.ApplicationId, index })">Change<span class="govuk-visually-hidden"> people in control</span></a></td>
+                    <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="@Url.Action("RemovePeopleInControl", "RoatpWhosInControlApplication", new { Model.ApplicationId, index })">Remove<span class="govuk-visually-hidden"> people in control</span></a></td>
                 </tr>
             }
         </tbody>

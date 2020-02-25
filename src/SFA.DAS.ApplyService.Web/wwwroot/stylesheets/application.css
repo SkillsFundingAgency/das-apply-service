@@ -1013,7 +1013,7 @@
 .roatp__navigation-item--signout {
   margin-left: auto;
   padding-right: 0;
-  padding: 0 0 12px 0;
+  padding: 12px 0;
 }
 
 @media (min-width: 40.0625em) {

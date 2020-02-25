@@ -11,25 +11,25 @@
 @{ await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml"); }
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
-    @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
-    {
-        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-            <h2 class="govuk-error-summary__title" id="error-summary-title">
-                There is a problem
-            </h2>
-            <div class="govuk-error-summary__body">
-                <ul class="govuk-list govuk-error-summary__list">
-                    @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
-                    {
-                        <li><a href="#TermsConditions">@errorMessage.ErrorMessage</a></li>
-                    }
-                </ul>
-            </div>
-        </div>
-    }
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
+            @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
+                            {
+                                <li><a href="#TermsConditions">@errorMessage.ErrorMessage</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
             <h1 class="govuk-heading-xl">Do you accept the conditions of acceptance for the RoATP?
             </h1>
         </div>

@@ -8,33 +8,31 @@
 
 @{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
 
-<div class="grid-row">
-    <form asp-controller="RoatpWhosInControlApplication" asp-action="ConfirmPeopleInControl" method="get" name="backForm">
-        @Html.HiddenFor(x => x.ApplicationId)
-        <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
-    </form>
-</div>
+<form asp-controller="RoatpWhosInControlApplication" asp-action="ConfirmPeopleInControl" method="get" name="backForm">
+    @Html.HiddenFor(x => x.ApplicationId)
+    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+</form>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
-@if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
-{
-    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-        <h2 class="govuk-error-summary__title" id="error-summary-title">
-            There is a problem
-        </h2>
-        <div class="govuk-error-summary__body">
-            <ul class="govuk-list govuk-error-summary__list">
-                @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
-                {
-                    <li><a sfa-validation-for="@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
-                }
-            </ul>
-        </div>
-    </div>
-}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
+            @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
+                            {
+                                <li><a sfa-validation-for="@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
 
             <span class="govuk-caption-l">@Model.SectionTitle</span>
             <h1 class="govuk-heading-xl">Enter the @Model.Identifier's details</h1>

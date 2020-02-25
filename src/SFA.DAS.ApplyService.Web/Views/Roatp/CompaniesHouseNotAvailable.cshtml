@@ -7,12 +7,10 @@
 
 @{ await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml"); }
 
-<div class="grid-row">
-    <form asp-controller="RoatpApplicationPreamble" asp-action="EnterApplicationUkprn" method="get" name="backForm">
-        <input type="hidden" asp-for="UKPRN" />
-        <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
-    </form>
-</div>
+<form asp-controller="RoatpApplicationPreamble" asp-action="EnterApplicationUkprn" method="get" name="backForm">
+    <input type="hidden" asp-for="UKPRN" />
+    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+</form>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
