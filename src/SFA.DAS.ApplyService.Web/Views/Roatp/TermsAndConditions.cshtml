@@ -24,7 +24,7 @@
                         <ul class="govuk-list govuk-error-summary__list">
                             @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
                             {
-                                <li><a href="#TermsConditions">@errorMessage.ErrorMessage</a></li>
+                                <li><a href="#ConditionsAccepted-Yes">@errorMessage.ErrorMessage</a></li>
                             }
                         </ul>
                     </div>
@@ -69,13 +69,13 @@
                 <li>ask you to reapply for admission to RoATP where you are already admitted. This will be determined by the rules and guidance applicable at that time and on the basis of the information contained in that reapplication
                 </li>
                 <li>make changes to any of these conditions at our discretion and at any time</li>
-</ul>
+            </ul>
             <p class="govuk-body">
                 Any such changes will apply to your admission to RoATP from the date they come into force irrespective of the date you were admitted.
             </p>
 
             <form method="post" asp-action="ConfirmTermsAndConditions" asp-controller="RoatpApplicationPreamble">
-                <div id="TermsConditions" class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ConditionsAccepted" sfa-validationerror-class="govuk-error-message">
+                <div id="TermsConditions" class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ConditionsAccepted">
                     @Html.HiddenFor(x => x.ApplicationRouteId)  
                     @Html.HiddenFor(x => x.ApplicationId)  
                     @if (showErrors)
@@ -88,34 +88,41 @@
                         </span>
                     }
                     <fieldset class="govuk-fieldset">
-
                         <div class="govuk-radios">
-
                             <div class="govuk-radios__item">
-
-                                <input asp-for="ConditionsAccepted" class="govuk-radios__input" id="ConditionsAccepted-Yes"
-                                        name="ConditionsAccepted" type="radio" value="Y"
-                                        sfa-validation-for="ConditionsAccepted" sfa-validationerror-class="form-control-error">
+                                <input 
+                                    asp-for="ConditionsAccepted"
+                                    class="govuk-radios__input"
+                                    id="ConditionsAccepted-Yes"
+                                    name="ConditionsAccepted"
+                                    type="radio"
+                                    value="Y"
+                                    sfa-validation-for="ConditionsAccepted"
+                                    sfa-validationerror-class="form-control-error"
+                                >
                                 <label class="govuk-label govuk-radios__label" for="ConditionsAccepted-Yes">
                                     Yes
                                 </label>
-
                             </div>
-
                             <div class="govuk-radios__item">
-
-                                <input asp-for="ConditionsAccepted" class="govuk-radios__input" id="ConditionsAccepted-No"
-                                        name="ConditionsAccepted" type="radio" value="N"
-                                        sfa-validation-for="ConditionsAccepted" sfa-validationerror-class="form-control-error">
+                                <input 
+                                    asp-for="ConditionsAccepted"
+                                    class="govuk-radios__input"
+                                    id="ConditionsAccepted-No"
+                                    name="ConditionsAccepted"
+                                    type="radio"
+                                    value="N"
+                                    sfa-validation-for="ConditionsAccepted"
+                                    sfa-validationerror-class="form-control-error"
+                                >
                                 <label class="govuk-label govuk-radios__label" for="ConditionsAccepted-No">
                                     No
                                 </label>
-
                             </div>
-
                         </div>
                     </fieldset>
                 </div>
+
                 <input type="submit" class="govuk-button" value="Save and continue" />
 
             </form>

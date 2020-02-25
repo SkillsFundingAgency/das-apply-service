@@ -48,7 +48,7 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="post" asp-action="ChangeProviderRoute" asp-controller="RoatpApplicationPreamble">
 
-                <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ChangeApplicationRoute" sfa-validationerror-class="govuk-error-message">
+                <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ChangeApplicationRoute">
                     @if (showErrors)
                     {
                         <span class="govuk-error-message">

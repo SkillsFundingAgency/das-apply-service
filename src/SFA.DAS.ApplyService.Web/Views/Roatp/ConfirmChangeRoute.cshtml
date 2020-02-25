@@ -46,7 +46,7 @@ else
         <div class="govuk-grid-column-two-thirds">
             <form method="post" asp-action="SubmitConfirmChangeRoute" asp-controller="RoatpApplicationPreamble">
 
-                <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ConfirmChangeRoute" sfa-validationerror-class="govuk-error-message">
+                <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ConfirmChangeRoute">
                     @if (showErrors)
                     {
                         <span class="govuk-error-message">

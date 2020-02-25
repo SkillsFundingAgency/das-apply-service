@@ -44,7 +44,7 @@
                 @Html.HiddenFor(x => x.ApplicationId)
                 @Html.HiddenFor(x => x.GetHelpAction)
 
-                <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="OrganisationType" sfa-validationerror-class="govuk-error-message">
+                <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="OrganisationType">
                     @if (showErrors)
                     {
                         <span class="govuk-error-message">

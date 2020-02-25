@@ -60,7 +60,7 @@
             <form method="post" asp-action="ConfirmSubmitApplication" asp-controller="RoatpApplication">
                 @Html.HiddenFor(x => x.ApplicationId)
                 @Html.HiddenFor(x => x.OrganisationName)
-                <div class="govuk-form-group @(hasConfirmSubmitApplicationError ? "govuk-form-group--error" : "")" sfa-validation-for="ConfirmSubmitApplication" sfa-validationerror-class="govuk-error-message">
+                <div class="govuk-form-group @(hasConfirmSubmitApplicationError ? "govuk-form-group--error" : "")" sfa-validation-for="ConfirmSubmitApplication">
                     @if (hasConfirmSubmitApplicationError)
                     {
                         <span class="govuk-error-message">
@@ -76,7 +76,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="govuk-form-group @(hasConfirmFurtherInfoSubmitApplicationError ? "govuk-form-group--error" : "")" sfa-validation-for="ConfirmFurtherInfoSubmitApplication" sfa-validationerror-class="govuk-error-message">
+                <div class="govuk-form-group @(hasConfirmFurtherInfoSubmitApplicationError ? "govuk-form-group--error" : "")" sfa-validation-for="ConfirmFurtherInfoSubmitApplication">
                     @if (hasConfirmFurtherInfoSubmitApplicationError)
                     {
                         <span class="govuk-error-message">

@@ -26,7 +26,9 @@
                     </div>
                 </div>
             }
+
             <h1 class="govuk-heading-xl">Is this your first time using the apprenticeship service (AS) sign in?</h1>
+
         </div>
     </div>
 
@@ -35,7 +37,7 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="post" asp-action="ConfirmExistingAccount">
 
-                <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="FirstTimeSignin" sfa-validationerror-class="govuk-error-message">
+                <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="FirstTimeSignin">
                     @if (showErrors)
                     {
                         <span class="govuk-error-message">

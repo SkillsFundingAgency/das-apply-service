@@ -46,7 +46,7 @@ else
         <div class="govuk-grid-column-two-thirds">
             <form method="post" asp-action="SubmitLevyStatus" asp-controller="RoatpApplicationPreamble">
 
-                <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="LevyPayingEmployer" sfa-validationerror-class="govuk-error-message">
+                <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="LevyPayingEmployer">
                     @if (showErrors)
                     {
                         <span class="govuk-error-message">
