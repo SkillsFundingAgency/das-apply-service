@@ -34,14 +34,15 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications();
         Task<List<RoatpFinancialSummaryItem>> GetFeedbackAddedFinancialApplications();
         Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications();
+        Task<bool> StartFinancialReview(Guid applicationId, string reviewer);
+        Task<bool> RecordFinancialGrade(Guid applicationId, FinancialReviewDetails financialReviewDetails, string financialReviewStatus);
+
 
         Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatusByUkprn(string ukprn);
 
         Task<string> GetNextRoatpApplicationReference();
 
-        Task<bool> RecordFinancialGrade(Guid applicationId, FinancialReviewDetails financialReviewDetails, string financialReviewStatus);
-        Task<bool> StartAssessorReview(Guid applicationId, string reviewer);
-        Task<bool> StartFinancialReview(Guid applicationId, string reviewer);
+        Task<bool> StartAssessorReview(Guid applicationId, string reviewer);  
         
         Task<ApplyData> GetApplyData(Guid applicationId);
 

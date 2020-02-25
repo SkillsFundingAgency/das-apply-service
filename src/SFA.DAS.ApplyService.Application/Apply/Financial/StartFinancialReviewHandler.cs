@@ -19,9 +19,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
         public async Task<bool> Handle(StartFinancialReviewRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Starting financial review for application {request.ApplicationId}");
-            await _applyRepository.StartFinancialReview(request.ApplicationId, request.Reviewer);   
-                        
-            return await Task.FromResult(true);
+            return await _applyRepository.StartFinancialReview(request.ApplicationId, request.Reviewer);
         }
     }
 }
