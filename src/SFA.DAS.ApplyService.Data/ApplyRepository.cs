@@ -150,131 +150,6 @@ namespace SFA.DAS.ApplyService.Data
             return false;
         }
         
-        public async Task<List<ApplicationSection>> CopyWorkflowToApplication(Guid applicationId, Guid workflowId, string organisationType)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection.QueryAsync<ApplicationSection>(@"
-                                INSERT INTO ApplicationSequences
-                                    (ApplicationId, SequenceId, Status, IsActive, Description)
-                                SELECT        @applicationId AS ApplicationId, SequenceId, Status, IsActive, Description
-                                FROM            WorkflowSequences
-                                WHERE        (WorkflowId = @workflowId);
-                    
-                                INSERT INTO ApplicationSections
-                                    (ApplicationId, SequenceId, SectionId, QnAData, Title, LinkTitle, Status, DisplayType)
-                                SELECT        @applicationId AS ApplicationId, SequenceId, SectionId, QnAData, Title, LinkTitle, Status, DisplayType
-                                FROM            WorkflowSections
-                                WHERE        (WorkflowId = @workflowId AND (DisallowedOrgTypes IS NULL OR DisallowedOrgTypes NOT LIKE @organisationType));
-
-                                SELECT * FROM ApplicationSections WHERE ApplicationId = @applicationId;", new {applicationId, workflowId, organisationType = $"%|{organisationType}|%"})).ToList();
-            }
-        }
-
-        public async Task UpdateSections(List<ApplicationSection> sections)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                foreach (var applicationSection in sections)
-                {
-                    await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata, Status = @Status, NotRequired = @NotRequired WHERE Id = @Id", applicationSection);    
-                }
-            }
-        }
-        
-        public async Task UpdateSequences(List<ApplicationSequence> sequences)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                foreach (var applicationSequence in sequences)
-                {
-                    await connection.ExecuteAsync(@"UPDATE ApplicationSequences SET Status = @Status, IsActive = @IsActive, NotRequired = @NotRequired WHERE Id = @Id", applicationSequence);    
-                }
-            }
-        }
-
-        public async Task SaveSection(ApplicationSection section, Guid? userId = null)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(@"UPDATE ApplicationSections SET QnAData = @qnadata, Status = @Status WHERE Id = @Id", section);       
-            }
-        }
-
-        public async Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string sequenceStatus, string applicationStatus)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(@"UPDATE ApplicationSequences
-                                                SET    Status = @sequenceStatus
-                                                FROM   ApplicationSequences INNER JOIN
-                                                         Applications ON ApplicationSequences.ApplicationId = Applications.Id INNER JOIN
-                                                         Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
-                                                WHERE  (ApplicationSequences.ApplicationId = @ApplicationId) AND (ApplicationSequences.SequenceId = @SequenceId);
-                            
-                                                UPDATE       Applications
-                                                SET                ApplicationStatus = @applicationStatus
-                                                FROM            Applications INNER JOIN
-                                                                Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
-                                                WHERE  (Applications.Id = @ApplicationId)",
-                    new {applicationId, sequenceId, sequenceStatus, applicationStatus});
-
-
-                if (sequenceId == 1)
-                {
-                    switch (sequenceStatus)
-                    {
-                        case ApplicationSequenceStatus.FeedbackAdded:
-                            await connection.ExecuteAsync(@"UPDATE Applications
-                                                                SET ApplicationData = JSON_MODIFY(ApplicationData, '$.InitSubmissionFeedbackAddedDate', CONVERT(varchar(30), GETUTCDATE(), 126))
-                                                                WHERE  (Applications.Id = @ApplicationId);",
-                            new { applicationId });
-                            break;
-                        case ApplicationSequenceStatus.Rejected:
-                        case ApplicationSequenceStatus.Approved:
-                            await connection.ExecuteAsync(@"UPDATE Applications
-                                                    SET ApplicationData = JSON_MODIFY(ApplicationData, '$.InitSubmissionClosedDate', CONVERT(varchar(30), GETUTCDATE(), 126))
-                                                    WHERE  (Applications.Id = @ApplicationId);",
-                            new { applicationId });
-                            break;
-                    }
-                }
-                else if (sequenceId == 2)
-                {
-                    switch (sequenceStatus)
-                    {
-                        case ApplicationSequenceStatus.FeedbackAdded:
-                            await connection.ExecuteAsync(@"UPDATE Applications
-                                                                SET ApplicationData = JSON_MODIFY(ApplicationData, '$.StandardSubmissionFeedbackAddedDate', CONVERT(varchar(30), GETUTCDATE(), 126))
-                                                                WHERE  (Applications.Id = @ApplicationId);",
-                            new { applicationId });
-                            break;
-                        case ApplicationSequenceStatus.Rejected:
-                        case ApplicationSequenceStatus.Approved:
-                            await connection.ExecuteAsync(@"UPDATE Applications
-                                                    SET ApplicationData = JSON_MODIFY(ApplicationData, '$.StandardSubmissionClosedDate', CONVERT(varchar(30), GETUTCDATE(), 126))
-                                                    WHERE  (Applications.Id = @ApplicationId);",
-                            new { applicationId });
-                            break;
-                    }
-                }
-            }
-        }
-
-        public async Task CloseSequence(Guid applicationId, int sequenceId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(@"UPDATE ApplicationSequences
-                                                SET    IsActive = 0
-                                                FROM   ApplicationSequences INNER JOIN
-                                                         Applications ON ApplicationSequences.ApplicationId = Applications.Id INNER JOIN
-                                                         Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
-                                                WHERE  (ApplicationSequences.ApplicationId = @ApplicationId) AND (ApplicationSequences.SequenceId = @SequenceId);",
-                                                new {applicationId, sequenceId});
-            }
-        }
-
         public async Task<List<ApplicationSequence>> GetSequences(Guid applicationId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -284,21 +159,6 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task OpenSequence(Guid applicationId, int nextSequenceId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(@"UPDATE ApplicationSequences
-                                                SET    IsActive = 1
-                                                FROM   ApplicationSequences INNER JOIN
-                                                         Applications ON ApplicationSequences.ApplicationId = Applications.Id INNER JOIN
-                                                         Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
-                                                WHERE  (ApplicationSequences.ApplicationId = @ApplicationId) AND (ApplicationSequences.SequenceId = @nextSequenceId);",
-                    new {applicationId, nextSequenceId});
-            }
-        }
-
-
         public async Task UpdateApplicationStatus(Guid applicationId, string status)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -306,33 +166,6 @@ namespace SFA.DAS.ApplyService.Data
                 await connection.ExecuteAsync(@"UPDATE Apply
                                                 SET  ApplicationStatus = @status                                                
                                                 WHERE ApplicationId = @ApplicationId", new {applicationId, status});
-            }
-        }
-
-        public async Task DeleteRelatedApplications(Guid applicationId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                var inProgressRelatedApplications = await connection.QueryAsync<Domain.Entities.Application>(@"SELECT a.* FROM Applications a
-                                                                                                    INNER JOIN Contacts ON a.ApplyingOrganisationId = Contacts.ApplyOrganisationID
-                                                                                                    WHERE a.ApplyingOrganisationId = (SELECT ApplyingOrganisationId FROM Applications WHERE Applications.Id = @applicationId)
-                                                                                                    AND a.Id <> @applicationId
-                                                                                                    AND a.ApplicationStatus NOT IN (@approvedStatus, @rejectedStatus)",
-                                                                                            new { applicationId, approvedStatus = ApplicationStatus.Approved, rejectedStatus = ApplicationStatus.Rejected });
-
-                // For now Reject them (and add deleted information)
-                foreach (var app in inProgressRelatedApplications)
-                {
-                    _logger.LogInformation($"Deleting application {app.Id} due to Application {applicationId} being submitted and the Creating Org not being on the Register.");
-                    await connection.ExecuteAsync(@"UPDATE ApplicationSequences
-                                                        SET  IsActive = 0, Status = @rejectedStatus
-                                                        WHERE  ApplicationSequences.ApplicationId = @applicationId;
-
-                                                        UPDATE Applications
-                                                        SET  ApplicationStatus = @rejectedSequenceStatus, DeletedAt = GETUTCDATE(), DeletedBy = 'System'
-                                                        WHERE  Applications.Id = @applicationId;",
-                                                    new { applicationId = app.Id, rejectedStatus = ApplicationStatus.Rejected, rejectedSequenceStatus = ApplicationSequenceStatus.Rejected });
-                }
             }
         }
 
@@ -635,41 +468,6 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-
-        //
-        //        public async Task UpdateFinancialGrade(Guid applicationId, FinancialApplicationGrade updatedGrade)
-        //        {
-        //            using (var connection = new SqlConnection(_config.SqlConnectionString))
-        //            {
-        //                await connection.ExecuteAsync(@"UPDATE Applications
-        //                                                SET    ApplicationData = @serialisedData
-        //                                                WHERE  Applications.Id = @applicationId",
-        //                    new {applicationId, updatedGrade});
-        //            }
-        //        }
-
-        public async Task StartApplicationReview(Guid applicationId, int sectionId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(@"UPDATE ApplicationSections 
-                                                SET Status = 'In Progress'
-                                                WHERE ApplicationId = @applicationId AND SectionId = @sectionId  AND SequenceId = 1",
-                    new { applicationId, sectionId });
-            }
-        }
-
-        public async Task StartFinancialReview(Guid applicationId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(@"UPDATE ApplicationSections 
-                                                SET Status = 'In Progress'
-                                                WHERE ApplicationId = @applicationId AND SectionId = 3 AND SequenceId = 1",
-                    new {applicationId});
-            }
-        }
-
         public async Task<Organisation> GetOrganisationForApplication(Guid applicationId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -693,99 +491,6 @@ namespace SFA.DAS.ApplyService.Data
                     new { applicationId, standardId });
 
                 return !applicationStatuses.Any() ? string.Empty : applicationStatuses.FirstOrDefault();
-            }
-        }
-
-        public async Task<List<dynamic>> GetPreviousFinancialApplications()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection.QueryAsync(@"SELECT org.Name, sec.Status, appl.Id, 
-                                                JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.GradedBy') AS GradedBy, 
-	                                            JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.GradedDateTime') AS GradedDateTime,
-                                                JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.SelectedGrade') AS Grade
-                                FROM Applications appl
-                            INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-                            INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id
-                            WHERE appl.ApplicationStatus = @applicationStatusSubmitted
-                            AND sec.SectionId = 3 
-                            AND (sec.Status = @financialStatusGraded)",
-                    new
-                    {
-                        applicationStatusSubmitted = ApplicationStatus.Submitted, 
-                        financialStatusGraded = ApplicationSectionStatus.Graded
-                    })).ToList();
-            }
-        }
-
- 
-
-        public async Task<int> GetNextAppReferenceSequence()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection.QueryAsync<int>(@"SELECT NEXT VALUE FOR AppRefSequence")).FirstOrDefault();
-
-            }
-        }
-
-        public async Task<string> GetWorkflowReferenceFormat(Guid requestApplicationId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection.QueryAsync<string>(@"SELECT wf.ReferenceFormat
-                                FROM Applications app inner join Workflows wf ON wf.Id = app.CreatedFromWorkflowId
-                                AND app.id = @requestApplicationId",
-                    new
-                    {
-                        requestApplicationId
-                    })).FirstOrDefault();
-            }
-        }
-
-        public async Task<bool> MarkSectionAsCompleted(Guid applicationId, Guid applicationSectionId)
-        {
-            var completed = true;
-
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                var recordsAffected = await connection.ExecuteAsync(@"INSERT INTO ApplicationWorkflow 
-                                                (ApplicationId, ApplicationSectionId, Completed)
-                                                VALUES (@applicationId, @applicationSectionId, @completed)",
-                    new
-                    {
-                        applicationId, applicationSectionId, completed
-                    });
-
-                return await Task.FromResult(recordsAffected > 0);
-            }
-        }
-
-        public async Task<bool> IsSectionCompleted(Guid applicationId, Guid applicationSectionId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection.QueryAsync<bool>(@"SELECT Completed FROM ApplicationWorkflow 
-                                                            WHERE ApplicationId = @applicationId 
-                                                            AND ApplicationSectionId = @applicationSectionId",
-                    new
-                    {
-                        applicationId, applicationSectionId
-                    })).FirstOrDefault();
-            }
-        }
-
-        public async Task RemoveSectionCompleted(Guid applicationId, Guid applicationSectionId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(@"DELETE FROM ApplicationWorkflow 
-                                                Where ApplicationId = @ApplicationId and ApplicationSectionId = @ApplicationSectionId",
-                    new
-                    {
-                        applicationId,
-                        applicationSectionId
-                    });
             }
         }
 
