@@ -1,6 +1,5 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.ApplyService.Application.Apply.Review.Applications;
 using SFA.DAS.ApplyService.Application.Apply.Review.Return;
 using System;
 using System.Threading.Tasks;
@@ -20,13 +19,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public ReviewController(IMediator mediator)
         {
             _mediator = mediator;
-        }
-
-        [HttpGet("Review/ClosedApplications")]
-        public async Task<ActionResult> ClosedApplications()
-        {
-            var applications = await _mediator.Send(new ClosedApplicationsRequest());
-            return Ok(applications);
         }
 
         [HttpPost("Review/Applications/{applicationId}/Sequences/{sequenceId}/Return")]

@@ -169,56 +169,6 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<ApplicationSummaryItem>> GetClosedApplications()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection
-                    .QueryAsync<ApplicationSummaryItem>(
-                        @"SELECT OrganisationName, ApplicationId, SequenceId,
-                            CASE WHEN SequenceId = 1 THEN 'Midpoint'
-                                 WHEN SequenceId = 2 THEN 'Standard'
-                                 ELSE 'Unknown'
-                            END As ApplicationType,
-                            StandardName,
-                            StandardCode,
-                            ClosedDate,
-                            SubmissionCount,
-                            SequenceStatus As CurrentStatus
-                        FROM (
-	                        SELECT 
-                                org.Name AS OrganisationName,
-                                appl.id AS ApplicationId,
-                                seq.SequenceId AS SequenceId,
-                            CASE WHEN seq.SequenceId = 1 THEN NULL
-		                            ELSE JSON_VALUE(appl.ApplicationData, '$.StandardName')
-                            END As StandardName,
-                            CASE WHEN seq.SequenceId = 1 THEN NULL
-		                            ELSE JSON_VALUE(appl.ApplicationData, '$.StandardCode')
-                            END As StandardCode,
-                            CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.InitSubmissionClosedDate')
-		                         WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardSubmissionClosedDate')
-		                         ELSE NULL
-	                        END As ClosedDate,
-                            CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount')
-		                         WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardSubmissionsCount')
-		                         ELSE 0
-	                        END As SubmissionCount,
-                                seq.Status As SequenceStatus
-	                        FROM Applications appl
-	                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
-	                        INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-	                        WHERE seq.Status IN (@sequenceStatusApproved, @sequenceStatusRejected) AND seq.NotRequired = 0 AND appl.DeletedAt IS NULL
-	                        GROUP BY seq.SequenceId, seq.Status, appl.ApplyingOrganisationId, appl.id, org.Name, appl.ApplicationData 
-                        ) ab",
-                        new
-                        {
-                            sequenceStatusApproved = ApplicationSequenceStatus.Approved,
-                            sequenceStatusRejected = ApplicationSequenceStatus.Rejected
-                        })).ToList();
-            }
-        }
-
         public async Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
