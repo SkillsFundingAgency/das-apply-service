@@ -177,6 +177,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         {
             return await (await _httpClient.GetAsync($"organisations/ukprn/{ukprn}")).Content.ReadAsAsync<Organisation>();
         }
+
         public async Task<Organisation> GetOrganisationByName(string name)
         {
             return await (await _httpClient.GetAsync($"organisations/name/{WebUtility.UrlEncode(name)}")).Content.ReadAsAsync<Organisation>();
