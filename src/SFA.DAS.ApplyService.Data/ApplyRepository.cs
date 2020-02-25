@@ -150,20 +150,6 @@ namespace SFA.DAS.ApplyService.Data
             return false;
         }
 
-        public async Task<Guid> CreateApplication(Guid applicationId, string applicationType, Guid applyingOrganisationId, Guid userId,
-            Guid workflowId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(
-                    @"INSERT INTO Applications (Id, ApplyingOrganisationId, ApplicationStatus, CreatedAt, CreatedBy, CreatedFromWorkflowId)                                       
-                                        VALUES (@applicationId, @ApplyingOrganisationId, @applicationStatus, GETUTCDATE(), @userId, @workflowId)",
-                    new {applicationId, applyingOrganisationId, userId, workflowId, applicationStatus = ApplicationStatus.InProgress});
-
-                return await Task.FromResult(applicationId);
-            }
-        }
-
         public async Task<Guid> GetLatestWorkflow(string applicationType)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
