@@ -1,7 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.CheckOrganisationStandardStatus;
-using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Application.Apply.GetOrganisationForApplication;
 using SFA.DAS.ApplyService.Application.Apply.GetSequence;
@@ -80,20 +79,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
 
         // NOTE: This is old stuff or things which are not migrated over yet
-        [HttpGet("Answer/{QuestionIdentifier}/{applicationId}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<ActionResult<GetAnswersResponse>> GetAnswer(Guid applicationId, string questionIdentifier)
-        {
-            return await _mediator.Send(new GetAnswersRequest(applicationId, questionIdentifier, false));
-        }
-
-        [HttpGet("JsonAnswer/{QuestionIdentifier}/{applicationId}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<ActionResult<GetAnswersResponse>> GetJsonAnswer(Guid applicationId, string questionIdentifier)
-        {
-            return await _mediator.Send(new GetAnswersRequest(applicationId, questionIdentifier, true));
-        }
-        
+       
         [HttpGet("Application/{applicationId}/Sequences")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IEnumerable<ApplicationSequence>> GetSequences(string applicationId)
