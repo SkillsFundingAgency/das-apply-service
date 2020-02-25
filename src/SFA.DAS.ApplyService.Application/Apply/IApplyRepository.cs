@@ -23,7 +23,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
 
         // NOTE: This is old stuff or things which are not migrated over yet
-        Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
         Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();        
         Task<List<ApplicationSequence>> GetSequences(Guid applicationId);
         Task UpdateApplicationStatus(Guid applicationId, string status);

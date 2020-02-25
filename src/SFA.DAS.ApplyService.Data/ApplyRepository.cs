@@ -169,44 +169,6 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection
-                    .QueryAsync<FinancialApplicationSummaryItem>(
-                        @"SELECT 
-                            org.Name AS OrganisationName,
-                            appl.id AS ApplicationId,
-                            seq.SequenceId AS SequenceId,
-                            sec.SectionId AS SectionId,
-                            JSON_QUERY(sec.QnAData, '$.FinancialApplicationGrade') AS Grade,
-                            ISNULL(JSON_VALUE(appl.ApplicationData, '$.InitSubmissionFeedbackAddedDate'),
-								   JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.GradedDateTime')) As FeedbackAddedDate,
-                            JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') As SubmissionCount,
-	                        seq.Status As CurrentStatus
-	                      FROM Applications appl
-	                      INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
-	                      INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id
-	                      INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-	                      WHERE seq.SequenceId = 1 AND sec.SectionId = 3 AND seq.IsActive = 1
-                            AND (
-                                    seq.Status = @sequenceStatusFeedbackAdded
-                                    OR ( 
-                                            sec.Status IN (@financialStatusGraded, @financialStatusEvaluated)
-                                            AND JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.SelectedGrade') = @selectedGradeInadequate
-                                        )
-                                )",
-                        new
-                        {
-                            sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded,
-                            financialStatusGraded = ApplicationSectionStatus.Graded,
-                            financialStatusEvaluated = ApplicationSectionStatus.Evaluated,
-                            selectedGradeInadequate = FinancialApplicationSelectedGrade.Inadequate
-                        })).ToList();
-            }
-        }
-
         public async Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))

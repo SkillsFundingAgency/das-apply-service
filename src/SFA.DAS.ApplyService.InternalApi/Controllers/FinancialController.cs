@@ -19,13 +19,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("/Financial/FeedbackAddedApplications")]
-        public async Task<ActionResult> FeedbackAddedApplications()
-        {
-            var applications = await _mediator.Send(new FeedbackAddedFinancialApplicationsRequest());
-            return Ok(applications);
-        }
-
         [HttpGet("/Financial/ClosedApplications")]
         public async Task<ActionResult> ClosedApplications()
         {
