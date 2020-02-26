@@ -29,7 +29,7 @@ else
     await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml");
 }
 
-
+@*
 <form asp-controller="@backController" asp-action="@backAction" method="get" name="backForm">
     @if (Model.ApplicationId != null && Model.ApplicationId != Guid.Empty)
     {
@@ -37,6 +37,7 @@ else
     }
     <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
 </form>
+*@
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 

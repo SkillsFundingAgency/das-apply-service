@@ -15,11 +15,12 @@
 
 @{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
 
-
+@*
 <form asp-controller="RoatpApplication" asp-action="TaskList" method="get" name="backForm">
     @Html.HiddenFor(x => x.ApplicationId)
     <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
 </form>
+*@
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
@@ -47,7 +48,7 @@
             <p class="govuk-body">
                 If any information provided in your application is:
             </p>
-            <ul class='govuk-list govuk-list--bullet'>
+            <ul class="govuk-list govuk-list--bullet">
                 <li>unclear - we may ask for further information</li>
                 <li>not suitable, true and accurate - we may fail your application</li>
             </ul>

@@ -6,7 +6,7 @@
     Layout = "_Layout";
 
     bool showErrors = TempData["ShowErrors"] as bool? ?? false;
-    int numberOfTitles = Model.ManagementHierarchyData.HeadingTitles.Count;
+    int numberOfTitles = 2;
 }
 
 @{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
@@ -37,7 +37,7 @@
             @for (var index = 0; index < Model.ManagementHierarchyData.DataRows.Count; index++)
             {
                 <tr class="govuk-table__row">
-                    @foreach (var column in Model.ManagementHierarchyData.DataRows[index].Columns.Take(numberOfTitles))
+                    @foreach (var title in Model.ManagementHierarchyData.HeadingTitles.Take(numberOfTitles))
                     {
                         <td class="govuk-table__cell">@column</td>
                     }

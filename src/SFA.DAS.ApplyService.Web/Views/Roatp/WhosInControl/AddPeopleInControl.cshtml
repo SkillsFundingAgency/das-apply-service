@@ -8,11 +8,12 @@
 
 @{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
 
-
+@*
 <form asp-controller="RoatpApplication" asp-action="TaskList" method="get" name="backForm">
     @Html.HiddenFor(x => x.ApplicationId)
     <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
 </form>
+*@
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
@@ -66,7 +67,7 @@
                     await Html.RenderPartialAsync("~/Views/Roatp/WhosInControl/AddEditPersonInControl.cshtml", Model);
                 }
 
-                <button type="submit" class="govuk-button">Save and continue</button>
+                <button type="submit" class="govuk-button">Confirm and continue</button>
 
             </form>
             <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
