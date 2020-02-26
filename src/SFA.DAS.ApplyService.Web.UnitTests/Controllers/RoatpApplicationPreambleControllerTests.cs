@@ -29,6 +29,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
     using Trustee = InternalApi.Types.CharityCommission.Trustee;
     using SFA.DAS.ApplyService.Application.Apply.Roatp;
     using SFA.DAS.ApplyService.Domain.Apply;
+    using SFA.DAS.ApplyService.Web.Validators;
 
     [TestFixture]
     public class RoatpApplicationPreambleControllerTests
@@ -43,6 +44,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IUsersApiClient> _usersApiClient;
         private Mock<IApplicationApiClient> _applicationApiClient;
         private Mock<IQnaApiClient> _qnaApiClient;
+        private Mock<IUkprnWhitelistValidator> _ukprnWhitelistValidator;
 
         private RoatpApplicationPreambleController _controller;
 
@@ -66,6 +68,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _usersApiClient = new Mock<IUsersApiClient>();
             _applicationApiClient = new Mock<IApplicationApiClient>();
             _qnaApiClient = new Mock<IQnaApiClient>();
+            _ukprnWhitelistValidator = new Mock<IUkprnWhitelistValidator>();
 
             _controller = new RoatpApplicationPreambleController(_logger.Object, _roatpApiClient.Object,
                 _ukrlpApiClient.Object,
@@ -74,7 +77,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 _organisationApiClient.Object,
                 _usersApiClient.Object,
                 _applicationApiClient.Object,
-                _qnaApiClient.Object);
+                _qnaApiClient.Object,
+                _ukprnWhitelistValidator.Object);
 
             _activeCompany = new CompaniesHouseSummary
             {
@@ -269,6 +273,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [TestCase("1234567A")]
         public void Validation_error_is_triggered_if_UKPRN_not_in_correct_format(string ukprn)
         {
+            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(It.IsAny<long>())).ReturnsAsync(true);
+
             var model = new SearchByUkprnViewModel
             {
                 UKPRN = ukprn
@@ -288,6 +294,47 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
         }
 
+        [TestCase(12345678, true)]
+        [TestCase(87654321, true)]
+        [TestCase(99999999, false)]
+        public void Validation_error_is_triggered_if_UKPRN_is_not_in_whitelisted(long ukprn, bool isUkprnWhitelisted)
+        {
+            var noResults = new UkrlpLookupResults { Success = true, Results = new List<ProviderDetails> { new ProviderDetails() } };
+
+            _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<long>())).ReturnsAsync(noResults);
+
+            _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
+
+            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(ukprn)).ReturnsAsync(isUkprnWhitelisted);        
+
+            var model = new SearchByUkprnViewModel
+            {
+                UKPRN = ukprn.ToString()
+            };
+
+            var httpContext = new DefaultHttpContext();
+            var tempDataProvider = new Mock<ITempDataProvider>();
+            _controller.TempData = new TempDataDictionary(httpContext, tempDataProvider.Object);
+            var result = _controller.SearchByUkprn(model).GetAwaiter().GetResult();
+
+            if (isUkprnWhitelisted)
+            {
+                result.Should().BeOfType<RedirectToActionResult>();
+
+                var redirectResult = result as RedirectToActionResult;
+                redirectResult.ActionName.Should().Contain("ConfirmOrganisation");
+            }
+            else
+            {
+                result.Should().BeOfType<ViewResult>();
+
+                var viewResult = result as ViewResult;
+                viewResult.ViewName.Should().Contain("EnterApplicationUkprn");
+                var viewModel = viewResult.Model as SearchByUkprnViewModel;
+                viewModel.ErrorMessages.Count.Should().Be(1);
+            }
+        }
+
         [Test]
         public void UKPRN_is_not_found_on_UKRLP()
         {
@@ -296,6 +343,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _ukrlpApiClient.Setup(x => x.GetTrainingProviderByUkprn(It.IsAny<long>())).ReturnsAsync(noResults);
 
             _sessionService.Setup(x => x.Set(It.IsAny<string>(), It.IsAny<ApplicationDetails>()));
+
+            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(10001000)).ReturnsAsync(true);
 
             var model = new SearchByUkprnViewModel
             {
@@ -313,6 +362,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void UKPRN_is_found_on_UKRLP()
         {
+            _ukprnWhitelistValidator.Setup(x => x.IsWhitelistedUkprn(10001000)).ReturnsAsync(true);
+
             var matchingResult = new UkrlpLookupResults
             {
                 Success = true,
