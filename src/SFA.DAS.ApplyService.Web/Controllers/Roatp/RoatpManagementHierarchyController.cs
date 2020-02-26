@@ -107,7 +107,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 managementHierarchyData = new TabularData
                 {
-                    HeadingTitles = new List<string> { "Name", "Job role"},
+                    HeadingTitles = new List<string> { "Name", "Job role","Years in role","Months in role","Part of another organisation","Organisation details"},
                     DataRows = new List<TabularDataRow>
                     {
                         managementHierarchyPerson
