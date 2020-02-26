@@ -865,6 +865,7 @@
 
   .roatp__navigation-item--signout {
     padding: 0;
+    margin-left: auto;
   }
 }
 
