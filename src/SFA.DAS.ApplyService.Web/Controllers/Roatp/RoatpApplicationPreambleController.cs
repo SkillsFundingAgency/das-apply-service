@@ -35,7 +35,8 @@
         private readonly IUsersApiClient _usersApiClient;
         private readonly IApplicationApiClient _applicationApiClient;
         private readonly IQnaApiClient _qnaApiClient;
-        
+        private readonly IUkprnWhitelistValidator _ukprnWhitelistValidator;
+
         private const string GetHelpSubmittedForPageFormatString = "Roatp_GetHelpSubmitted_{0}";
 
         private string[] StatusOnlyCompanyNumberPrefixes = new[] { "IP", "SP", "IC", "SI", "NP", "NV", "RC", "SR", "NR", "NO" };
@@ -49,7 +50,8 @@
                                                   IOrganisationApiClient organisationApiClient,
                                                   IUsersApiClient usersApiClient,
                                                   IApplicationApiClient applicationApiClient,
-                                                  IQnaApiClient qnaApiClient)
+                                                  IQnaApiClient qnaApiClient,
+                                                  IUkprnWhitelistValidator ukprnWhitelistValidator)
             :base(sessionService)
         {
             _logger = logger;
@@ -62,6 +64,7 @@
             _usersApiClient = usersApiClient;
             _applicationApiClient = applicationApiClient;
             _qnaApiClient = qnaApiClient;
+            _ukprnWhitelistValidator = ukprnWhitelistValidator;
         }
 
         [Route("terms-conditions-making-application")]
@@ -154,6 +157,10 @@
                 if (!isValidUkprn)
                 {
                     validationMessage = UkprnValidationMessages.InvalidUkprn;
+                }
+                else if (!await _ukprnWhitelistValidator.IsWhitelistedUkprn(ukprn))
+                {
+                    validationMessage = UkprnValidationMessages.NotWhitelistedUkprn;
                 }
             }
 

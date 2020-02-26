@@ -3,7 +3,7 @@
 @{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
 
 
-<div class="grid-row">
+@*<div class="grid-row">
     @if (Model.VerifiedCompaniesHouse)
     {
         <a class="govuk-back-link" href="@Url.Action("ConfirmDirectorsPscs", "RoatpWhosInControlApplication", new { Model.ApplicationId })">Back</a>
@@ -12,7 +12,7 @@
     {
         <a class="govuk-back-link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Back</a>
     }
-</div>
+</div>*@
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">

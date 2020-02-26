@@ -50,6 +50,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         Task<bool> ChangeProviderRoute(Guid applicationId, int providerRoute, string providerRouteName);
 
+        Task<bool> IsUkprnWhitelisted(int ukprn);
 
         // NOTE: This is old stuff or things which are not migrated over yet
         Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId,  int sectionId, Guid? userId);
