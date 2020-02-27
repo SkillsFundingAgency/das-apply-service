@@ -25,7 +25,7 @@
 
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
-                @foreach (var title in Model.ManagementHierarchyData.HeadingTitles)
+                @foreach (var title in Model.ManagementHierarchyData.HeadingTitles.Take(numberOfTitles))
                 {
                     <th class="govuk-table__header" scope="col">@Html.Raw(title)</th>
                 }
@@ -37,9 +37,9 @@
             @for (var index = 0; index < Model.ManagementHierarchyData.DataRows.Count; index++)
             {
                 <tr class="govuk-table__row">
-                    @foreach (var title in Model.ManagementHierarchyData.HeadingTitles.Take(numberOfTitles))
+                    @foreach (var column in Model.ManagementHierarchyData.DataRows[index].Columns.Take(numberOfTitles))
                     {
-                        <td class="govuk-table__cell">@title</td>
+                        <td class="govuk-table__cell">@column</td>
                     }
                     <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="@Url.Action("EditManagementHierarchy", "RoatpManagementHierarchy", new { Model.ApplicationId, index })">Change<span class="govuk-visually-hidden"> management hierarchy</span></a></td>
                     <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="@Url.Action("RemoveManagementHierarchy", "RoatpManagementHierarchy", new { Model.ApplicationId, index })">Remove<span class="govuk-visually-hidden"> management hierarchy</span></a></td>
