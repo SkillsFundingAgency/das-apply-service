@@ -251,13 +251,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("TaskList", new { applicationId });
             }
 
-            // TODO: CleanUp
-            //var sequences = await _qnaApiClient.GetSequences(applicationId);
-            //var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
-            //var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
-            //var selectedSection = sections.Single(x => x.SectionId == sectionId);
-
-            //var section = await _qnaApiClient.GetSection(applicationId, selectedSection.Id);
             var section = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
 
             if (sequenceId == RoatpWorkflowSequenceIds.YourOrganisation && sectionId == RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails)
@@ -267,8 +260,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (section?.DisplayType == SectionDisplayType.PagesWithSections)
             {
-                // TODO: CleanUp
-                var applicationSection = _pagesWithSectionsFlowService.ProcessPagesInSectionsForStatusText(section); // (selectedSection);
+                var applicationSection = _pagesWithSectionsFlowService.ProcessPagesInSectionsForStatusText(section); 
                 return View("~/Views/Application/PagesWithSections.cshtml", applicationSection);
             }
 
@@ -288,18 +280,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             _pageNavigationTrackingService.AddPageToNavigationStack(pageId);
 
-            // TODO: CleanUp
-            //var sequences = await _qnaApiClient.GetSequences(applicationId);
-            //var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
-            //var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
-            //var selectedSection = sections.Single(x => x.SectionId == sectionId);
-
             var selectedSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
 
             var sectionTitle = selectedSection.LinkTitle;
-
-            // TODO: CleanUp
-            //var sequence = await _qnaApiClient.GetSequence(applicationId, selectedSequence.Id);
 
             PageViewModel viewModel = null;
             var returnUrl = Request.Headers["Referer"].ToString();
@@ -414,16 +397,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             _pageNavigationTrackingService.AddPageToNavigationStack(pageId);
 
-            // TODO: CleanUp
-            //var sequences = await _qnaApiClient.GetSequences(applicationId);
-            //var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
-            //var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
-            //var selectedSection = sections.Single(x => x.SectionId == sectionId);
-
             var selectedSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
-
-            // TODO: CleanUp
-            //var sequence = await _qnaApiClient.GetSequence(applicationId, selectedSequence.Id);
 
             PageViewModel viewModel = null;
             var returnUrl = Request.Headers["Referer"].ToString();
@@ -477,8 +451,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                         return RedirectToAction("Page", new
                         {
-                            applicationId,               // TODO: CleanUp
-                            sequenceId = vm.SequenceId, //selectedSequence.SequenceId,
+                            applicationId,               
+                            sequenceId = vm.SequenceId, 
                             sectionId = selectedSection.SectionId,
                             pageId = nextActionResult.NextActionId,
                             redirectAction
@@ -718,12 +692,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         
         private async Task<IActionResult> SaveAnswersGiven(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, string __formAction)
         {
-            // TODO: CleanUp
-            //var sequences = await _qnaApiClient.GetSequences(applicationId);
-            //var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
-            //var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
-            //var selectedSection = sections.Single(x => x.SectionId == sectionId);
-
             var selectedSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
 
             var page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
@@ -803,8 +771,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             if (validationPassed)
             {
                 if (__formAction == "Add" && page.AllowMultipleAnswers)
-                {                                                                                 // TODO: CleanUp
-                    return RedirectToAction("Page", new {applicationId, sequenceId = sequenceId, // selectedSequence.SequenceId,
+                {                                                                                 
+                    return RedirectToAction("Page", new {applicationId, sequenceId = sequenceId, 
                         sectionId = selectedSection.SectionId, pageId = nextActionId, redirectAction});
                 }
 
@@ -814,7 +782,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
 
                 if ("ReturnToSection".Equals(nextAction, StringComparison.InvariantCultureIgnoreCase) && (page.DisplayType==SectionDisplayType.PagesWithSections || page.DisplayType =="OtherPagesInPagesWithSections"))
-                {                                       // TODO: CleanUp selectedSequence.SequenceId
+                {                                       
                     return await Section(applicationId, sequenceId, selectedSection.SectionId);
                 }
 
@@ -822,8 +790,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 {
                     return await TaskList(applicationId);
                 }
-                                                                                 // TODO: CleanUp
-                return RedirectToAction("Page", new {applicationId, sequenceId, // sequenceId = selectedSequence.SequenceId,
+                                                                                 
+                return RedirectToAction("Page", new {applicationId, sequenceId, 
                     sectionId = selectedSection.SectionId, pageId = nextActionId, redirectAction});                                   
             }
 

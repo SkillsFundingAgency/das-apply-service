@@ -112,14 +112,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 }
             };
 
-            // TODO: CleanUp
-            //var applicationSequences = await _qnaApiClient.GetSequences(applicationId);
-            //var yourOrganisationSequence =
-            //    applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
-            //var yourOrganisationSections = await _qnaApiClient.GetSections(applicationId, yourOrganisationSequence.Id);
-            //var whosInControlSection =
-            //    yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
-
             var whosInControlSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
             var updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, answers);
@@ -179,13 +171,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     Value = "Y"
                 }
             };
-            // TODO: CleanUp
-            //var applicationSequences = await _qnaApiClient.GetSequences(applicationId);
-            //var yourOrganisationSequence =
-            //    applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
-            //var yourOrganisationSections = await _qnaApiClient.GetSections(applicationId, yourOrganisationSequence.Id);
-            //var yourOrganisationSection =
-            //    yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
             var yourOrganisationSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
@@ -238,13 +223,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 return View("~/Views/Roatp/WhosInControl/ConfirmTrusteesDob.cshtml", model);
             }
-            // TODO: CleanUp
-            //var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
-            //var yourOrganisationSequence =
-            //    applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
-            //var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
-            //var whosInControlSection =
-            //    yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
             var whosInControlSection = await _qnaApiClient.GetSectionBySectionNo(model.ApplicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
@@ -299,13 +277,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 }
                 return View("~/Views/Roatp/WhosInControl/SoleTraderOrPartnership.cshtml", model);
             }
-            // TODO: CleanUp
-            //var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
-            //var yourOrganisationSequence =
-            //    applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
-            //var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
-            //var whosInControlSection =
-            //    yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+
             var whosInControlSection = await _qnaApiClient.GetSectionBySectionNo(model.ApplicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
             var organisationTypeAnswer = new List<Answer>
@@ -374,13 +346,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 }
                 return View("~/Views/Roatp/WhosInControl/PartnershipType.cshtml", model);
             }
-            // TODO: CleanUp
-            //var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
-            //var yourOrganisationSequence =
-            //    applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
-            //var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
-            //var whosInControlSection =
-            //    yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
             var whosInControlSection = await _qnaApiClient.GetSectionBySectionNo(model.ApplicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
@@ -447,13 +412,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 model.ErrorMessages = errorMessages;
                 return View("~/Views/Roatp/WhosInControl/AddPartner.cshtml", model);
             }
-            // TODO: CleanUp
-            //var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
-            //var yourOrganisationSequence =
-            //    applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
-            //var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
-            //var whosInControlSection =
-            //    yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+
             var whosInControlSection = await _qnaApiClient.GetSectionBySectionNo(model.ApplicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
             var partnerTableData = await _tabularDataRepository.GetTabularDataAnswer(model.ApplicationId, RoatpWorkflowQuestionTags.AddPartners);
@@ -577,13 +536,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 {
                     partner.Columns.Add(string.Empty);
                 }
-                // TODO: CleanUp
-                //var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
-                //var yourOrganisationSequence =
-                //    applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
-                //var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
-                //var whosInControlSection =
-                //    yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+
                 var whosInControlSection = await _qnaApiClient.GetSectionBySectionNo(model.ApplicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
                 var result = await _tabularDataRepository.EditTabularDataRecord(
@@ -635,13 +588,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 model.ErrorMessages = errorMessages;
                 return View("~/Views/Roatp/WhosInControl/AddSoleTradeDob.cshtml", model);
             }
-            // TODO: CleanUp
-            //var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
-            //var yourOrganisationSequence =
-            //    applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
-            //var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
-            //var whosInControlSection =
-            //    yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+
             var whosInControlSection = await _qnaApiClient.GetSectionBySectionNo(model.ApplicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
             var answerValue = $"{model.SoleTraderDobMonth},{model.SoleTraderDobYear}";
@@ -678,13 +625,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 model.ErrorMessages = errorMessages;
                 return View("~/Views/Roatp/WhosInControl/AddPeopleInControl.cshtml", model);
             }
-            // TODO: CleanUp
-            //var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
-            //var yourOrganisationSequence =
-            //    applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
-            //var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
-            //var whosInControlSection =
-            //    yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+
             var whosInControlSection = await _qnaApiClient.GetSectionBySectionNo(model.ApplicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
             var personInControlData = await _tabularDataRepository.GetTabularDataAnswer(model.ApplicationId, RoatpWorkflowQuestionTags.AddPeopleInControl);
@@ -802,13 +743,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                         DateOfBirthFormatter.FormatDateOfBirth(model.PersonInControlDobMonth, model.PersonInControlDobYear)
                     }
                 };
-                // TODO: CleanUp
-                //var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
-                //var yourOrganisationSequence =
-                //    applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
-                //var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
-                //var whosInControlSection =
-                //    yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+
                 var whosInControlSection = await _qnaApiClient.GetSectionBySectionNo(model.ApplicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
                 var result = await _tabularDataRepository.EditTabularDataRecord(
@@ -883,16 +818,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             // tech debt - this will be reworked by the changes to the QnA config JSON and method
             // for determining that application section completed is derived (APR-1008)
-            // It act as redirector
-
-            // TODO: CleanUp 
-            //var applicationSequences = await _qnaApiClient.GetSequences(applicationId);
-            //var yourOrganisationSequence =
-            //    applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
-            //var yourOrganisationSections = await _qnaApiClient.GetSections(applicationId, yourOrganisationSequence.Id);
-            //var whosInControlSection =
-            //    yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
-
+            // It only act as redirector
             return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
         }
 
@@ -941,13 +867,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             }
 
             pscData.DataRows.RemoveAt(model.Index);
-            // TODO: CleanUp
-            //var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
-            //var yourOrganisationSequence =
-            //    applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
-            //var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
-            //var whosInControlSection =
-            //    yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
+
             var whosInControlSection = await _qnaApiClient.GetSectionBySectionNo(model.ApplicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
 
             var result = await _tabularDataRepository.SaveTabularDataAnswer(
