@@ -39,7 +39,7 @@
                 <tr class="govuk-table__row">
                     @foreach (var title in Model.ManagementHierarchyData.HeadingTitles.Take(numberOfTitles))
                     {
-                        <td class="govuk-table__cell">@column</td>
+                        <td class="govuk-table__cell">@title</td>
                     }
                     <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="@Url.Action("EditManagementHierarchy", "RoatpManagementHierarchy", new { Model.ApplicationId, index })">Change<span class="govuk-visually-hidden"> management hierarchy</span></a></td>
                     <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="@Url.Action("RemoveManagementHierarchy", "RoatpManagementHierarchy", new { Model.ApplicationId, index })">Remove<span class="govuk-visually-hidden"> management hierarchy</span></a></td>
