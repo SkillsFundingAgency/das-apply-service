@@ -6,11 +6,11 @@
     Layout = "_Layout";
 }
 
-@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
+<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
 
 @*
 <form asp-controller="RoatpApplication" asp-action="TaskList" method="get" name="backForm">
-    @Html.HiddenFor(x => x.ApplicationId)
+    <input type="hidden" asp-for="ApplicationId" />
     <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
 </form>
 *@
@@ -45,17 +45,14 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <form method="post" asp-action="AddManagementHierarchyDetails">
-                @Html.HiddenFor(x => x.ApplicationId)
-                @*@Html.HiddenFor(x => x.DateOfBirthOptional)*@
-                @Html.HiddenFor(x => x.Identifier)
-                @Html.HiddenFor(x => x.GetHelpAction)
-                @{
-                    await Html.RenderPartialAsync("~/Views/Roatp/ManagementHierarchy/AddEditManagementHierarchy.cshtml", Model);
-                }
+                <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="Identifier" />
+                <input type="hidden" asp-for="GetHelpAction" />
 
+                <partial name="~/Views/Roatp/ManagementHierarchy/AddEditManagementHierarchy.cshtml" for="@Model" />
                 <button type="submit" class="govuk-button  govuk-!-margin-right-3">Confirm and continue</button>
-                <a class="govuk-link das-inline-button-link govuk-link--no-visited-state" href="@Url.Action("Tasklist", "RoatpApplication", new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = Model.PageId})">Return to this question later</a>
 
+                <a class="govuk-link das-inline-button-link govuk-link--no-visited-state" asp-action="Tasklist" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId">Return to this question later</a>
             </form>
             <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
         </div>

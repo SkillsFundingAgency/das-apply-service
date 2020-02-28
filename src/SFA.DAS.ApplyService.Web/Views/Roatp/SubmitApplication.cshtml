@@ -13,11 +13,11 @@
     var isError = showErrors ? "govuk-input--error" : "";
 }
 
-@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
+<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
 
 @*
 <form asp-controller="RoatpApplication" asp-action="TaskList" method="get" name="backForm">
-    @Html.HiddenFor(x => x.ApplicationId)
+    <input type="hidden" asp-for="ApplicationId" />
     <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
 </form>
 *@
@@ -53,14 +53,14 @@
                 <li>not suitable, true and accurate - we may fail your application</li>
             </ul>
             <p class="govuk-body">
-                You can check your answers and file uploads using the <a href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">application overview</a>, then going into each section.
+                You can check your answers and file uploads using the <a asp-action="TaskList" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">application overview</a>, then going into each section.
             </p>
             <p class="govuk-body">
                 You will not be able to view them once you submit your application.
             </p>
             <form method="post" asp-action="ConfirmSubmitApplication" asp-controller="RoatpApplication">
-                @Html.HiddenFor(x => x.ApplicationId)
-                @Html.HiddenFor(x => x.OrganisationName)
+                <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="OrganisationName" />
                 <div class="govuk-form-group @(hasConfirmSubmitApplicationError ? "govuk-form-group--error" : "")" sfa-validation-for="ConfirmSubmitApplication">
                     @if (hasConfirmSubmitApplicationError)
                     {
@@ -70,7 +70,7 @@
                     }
                     <div class="govuk-checkboxes govuk-!-margin-bottom-5">
                         <div class="govuk-checkboxes__item">
-                            @Html.CheckBoxFor(x => x.ConfirmSubmitApplication, new { @class = "govuk-checkboxes__input" })
+                            <input class="govuk-checkboxes__input" type="checkbox" asp-for="ConfirmSubmitApplication" />
                             <label class="govuk-label govuk-checkboxes__label" for="ConfirmSubmitApplication">
                                 I confirm that all the answers and file uploads in this application are true and accurate to the best of my knowledge.
                             </label>
@@ -86,7 +86,7 @@
                     }
                     <div class="govuk-checkboxes govuk-!-margin-bottom-5">
                         <div class="govuk-checkboxes__item">
-                            @Html.CheckBoxFor(x => x.ConfirmFurtherInfoSubmitApplication, new { @class = "govuk-checkboxes__input" })
+                            <input class="govuk-checkboxes__input" type="checkbox" asp-for="ConfirmFurtherInfoSubmitApplication" />
                             <label class="govuk-label govuk-checkboxes__label" for="ConfirmFurtherInfoSubmitApplication">
                                 I agree to give further information on any application answers within 5 working days when requested by ESFA.
                             </label>

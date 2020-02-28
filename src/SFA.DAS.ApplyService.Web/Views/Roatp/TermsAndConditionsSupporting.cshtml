@@ -8,7 +8,7 @@
     bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
 }
 
-@{ await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml"); }
+<partial name="~/Views/Roatp/PreambleHeader.cshtml" />
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
@@ -73,8 +73,8 @@
 
             <form method="post" asp-action="ConfirmTermsAndConditions" asp-controller="RoatpApplicationPreamble">
                 <div id="TermsConditions" class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ConditionsAccepted">
-                    @Html.HiddenFor(x => x.ApplicationRouteId)  
-                    @Html.HiddenFor(x => x.ApplicationId)  
+                    <input type="hidden" asp-for="ApplicationRouteId" />
+                    <input type="hidden" asp-for="ApplicationId" />
                     @if (showErrors)
                     {
                         <span class="govuk-error-message">
@@ -91,8 +91,8 @@
                             <div class="govuk-radios__item">
 
                                 <input asp-for="ConditionsAccepted" class="govuk-radios__input" id="ConditionsAccepted-Yes"
-                                        name="ConditionsAccepted" type="radio" value="Y"
-                                        sfa-validation-for="ConditionsAccepted" sfa-validationerror-class="form-control-error">
+                                       name="ConditionsAccepted" type="radio" value="Y"
+                                       sfa-validation-for="ConditionsAccepted" sfa-validationerror-class="form-control-error">
                                 <label class="govuk-label govuk-radios__label" for="ConditionsAccepted-Yes">
                                     Yes
                                 </label>
@@ -102,8 +102,8 @@
                             <div class="govuk-radios__item">
 
                                 <input asp-for="ConditionsAccepted" class="govuk-radios__input" id="ConditionsAccepted-No"
-                                        name="ConditionsAccepted" type="radio" value="N"
-                                        sfa-validation-for="ConditionsAccepted" sfa-validationerror-class="form-control-error">
+                                       name="ConditionsAccepted" type="radio" value="N"
+                                       sfa-validation-for="ConditionsAccepted" sfa-validationerror-class="form-control-error">
                                 <label class="govuk-label govuk-radios__label" for="ConditionsAccepted-No">
                                     No
                                 </label>

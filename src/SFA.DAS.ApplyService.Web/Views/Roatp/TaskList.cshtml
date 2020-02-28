@@ -7,9 +7,7 @@
 
 }
 
-@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
-
-
+<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -26,7 +24,7 @@
                     <dd class="govuk-summary-list__actions">
                     </dd>
                 </div>
-                @if (!String.IsNullOrWhiteSpace(Model.TradingName))
+                @if (!string.IsNullOrWhiteSpace(Model.TradingName))
                 {
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key das-no-wrap">
@@ -47,7 +45,7 @@
                         @Model.UKPRN
                     </dd>
                     <dd class="govuk-summary-list__actions">
-                        <a class="govuk-link govuk-link--no-visited-state" href="@Url.Action("ChangeUkprn", "RoatpApplicationPreamble", new { applicationId = Model.ApplicationId })">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-action="ChangeUkprn" asp-controller="RoatpApplicationPreamble" asp-route-applicationId="@Model.ApplicationId">
                             Change<span class="govuk-visually-hidden"> UKPRN</span>
                         </a>
                     </dd>
@@ -60,7 +58,7 @@
                         @Model.ApplicationRouteShortText
                     </dd>
                     <dd class="govuk-summary-list__actions">
-                        <a class="govuk-link govuk-link--no-visited-state" href="@Url.Action("ConfirmChangeRoute","RoatpApplicationPreamble", new { applicationId = Model.ApplicationId })">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-action="ConfirmChangeRoute" asp-controller="RoatpApplicationPreamble" asp-route-applicationId="@Model.ApplicationId">
                             Change<span class="govuk-visually-hidden"> provider route</span>
                         </a>
                     </dd>
@@ -71,9 +69,8 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <ol class="app-task-list">
-                @{
-                    await Html.RenderPartialAsync("~/Views/Roatp/TaskList/YourOrganisationSequence.cshtml", Model);
-                }
+                <partial name="~/Views/Roatp/TaskList/YourOrganisationSequence.cshtml" for="@Model" />
+
                 @foreach (var applicationSequence in Model.ApplicationSequences.Where(sequence => !sequence.Sequential && sequence.SequenceId < RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining).OrderBy(seq => seq.SequenceId))
                 {
                     <li>
@@ -89,7 +86,7 @@
                                 {
                                     <li class="app-task-list__item">
                                         <span class="app-task-list__task-name">
-                                            <a class="govuk-link" href="@Url.Action("Section", "RoatpApplication", new {section.ApplicationId, section.SequenceId, section.SectionId})">
+                                            <a class="govuk-link" asp-action="Section" asp-controller="RoatpApplication" asp-route-applicationId="@(section.ApplicationId)" asp-route-sequenceId="@(section.SequenceId)" asp-route-sectionId="@(section.SectionId)">
                                                 @Html.Raw(section.Title)
                                             </a>
                                         </span>
@@ -115,54 +112,51 @@
                     </li>
                 }
                 @{
-                    await Html.RenderPartialAsync("~/Views/Roatp/TaskList/DeliveringAppTrainingSequence.cshtml", Model);
-
-
+                    <partial name="~/Views/Roatp/TaskList/DeliveringAppTrainingSequence.cshtml" for="@Model" />
                     var evaluationSequence = Model.ApplicationSequences.First(sequence => sequence.SequenceId == RoatpWorkflowSequenceIds.EvaluatingApprenticeshipTraining);
 
-                        <li>
-                            <h2 class="app-task-list__section">
-                                <span class="app-task-list__section-number">@Html.Raw(evaluationSequence.SequenceId). </span>
-                                @Html.Raw(evaluationSequence.Description)
-                            </h2>
-                            <ul class="app-task-list__items">
-                                @foreach (var section in evaluationSequence.Sections.OrderBy(sec => sec.SectionId))
+                    <li>
+                        <h2 class="app-task-list__section">
+                            <span class="app-task-list__section-number">@Html.Raw(evaluationSequence.SequenceId). </span>
+                            @Html.Raw(evaluationSequence.Description)
+                        </h2>
+                        <ul class="app-task-list__items">
+                            @foreach (var section in evaluationSequence.Sections.OrderBy(sec => sec.SectionId))
+                            {
+
+                                var sequenceSection = section.SequenceId + "_" + section.SectionId;
+
+                                @if (!Model.IntroductionPageNextSectionUnavailable(section.SequenceId, section.SectionId) && Model.SectionStatus(section.SequenceId, section.SectionId).ToLower() != "not required")
                                 {
-
-                                    var sequenceSection = section.SequenceId + "_" + section.SectionId;
-
-                                    @if (!Model.IntroductionPageNextSectionUnavailable(section.SequenceId, section.SectionId) && Model.SectionStatus(section.SequenceId, section.SectionId).ToLower() != "not required")
-                                    {
-                                        <li class="app-task-list__item">
-                                            <span class="app-task-list__task-name">
-                                                <a class="govuk-link" href="@Url.Action("Section", "RoatpApplication", new {section.ApplicationId, section.SequenceId, section.SectionId})">
-                                                    @Html.Raw(section.Title)
-                                                </a>
-                                            </span>
-                                            <strong class="govuk-tag app-task-list__task-@Model.CssClass(section.SequenceId, section.SectionId)" id="status_@sequenceSection"> @Model.SectionStatus(section.SequenceId, section.SectionId)</strong>
-                                        </li>
-                                    }
-                                    else
-                                    {
-                                        <li class="app-task-list__item">
-                                            <span class="app-task-list__task-name">
+                                    <li class="app-task-list__item">
+                                        <span class="app-task-list__task-name">
+                                            <a class="govuk-link" asp-action="Section" asp-controller="RoatpApplication" asp-route-applicationId="@(section.ApplicationId)" asp-route-sequenceId="@(section.SequenceId)" asp-route-sectionId="@(section.SectionId)">
                                                 @Html.Raw(section.Title)
-                                            </span>
-                                            @if (Model.SectionStatus(section.SequenceId, section.SectionId).ToLower() == "not required")
-                                            {
-                                                <strong class="govuk-tag app-task-list__task-@Model.CssClass(section.SequenceId, section.SectionId)" id="status_@sequenceSection"> @Model.SectionStatus(section.SequenceId, section.SectionId)</strong>
-
-                                            }
-                                        </li>
-
-                                    }
+                                            </a>
+                                        </span>
+                                        <strong class="govuk-tag app-task-list__task-@Model.CssClass(section.SequenceId, section.SectionId)" id="status_@sequenceSection"> @Model.SectionStatus(section.SequenceId, section.SectionId)</strong>
+                                    </li>
                                 }
-                            </ul>
-                        </li>
-                    
-                    await Html.RenderPartialAsync("~/Views/Roatp/TaskList/FinishSequence.cshtml", Model);
-                }
+                                else
+                                {
+                                    <li class="app-task-list__item">
+                                        <span class="app-task-list__task-name">
+                                            @Html.Raw(section.Title)
+                                        </span>
+                                        @if (Model.SectionStatus(section.SequenceId, section.SectionId).ToLower() == "not required")
+                                        {
+                                            <strong class="govuk-tag app-task-list__task-@Model.CssClass(section.SequenceId, section.SectionId)" id="status_@sequenceSection"> @Model.SectionStatus(section.SequenceId, section.SectionId)</strong>
 
+                                        }
+                                    </li>
+
+                                }
+                            }
+                        </ul>
+                    </li>
+
+                    <partial name="~/Views/Roatp/TaskList/FinishSequence.cshtml" for="@Model" />
+                }
             </ol>
         </div>
     </div>

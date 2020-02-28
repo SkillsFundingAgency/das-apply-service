@@ -9,16 +9,16 @@
 
 @if (Model.ApplicationId != null && Model.ApplicationId != Guid.Empty)
 {
-    await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml");
+    <partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
 }
 else
 {
-    await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml");
+    <partial name="~/Views/Roatp/PreambleHeader.cshtml" />
 }
 
 @*
 <form asp-controller="RoatpApplicationPreamble" asp-action="ConfirmLevyStatus" method="get" name="backForm">
-    @Html.HiddenFor(x => x.LevyPayingEmployer)
+    <input type="hidden" asp-for="LevyPayingEmployer" />
     <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
 </form>
 *@
@@ -49,6 +49,10 @@ else
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <form method="post" asp-action="ConfirmNonLevyContinue" asp-controller="RoatpApplicationPreamble">
+                <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="SequenceId" />
+                <input type="hidden" asp-for="SectionId" />
+                <input type="hidden" asp-for="PageId" />
 
                 <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="ContinueWithApplication">
                     @if (showErrors)
@@ -90,10 +94,6 @@ else
                         </div>
                     </fieldset>
                 </div>
-                @Html.HiddenFor(x => x.ApplicationId)
-                @Html.HiddenFor(x => x.PageId)
-                @Html.HiddenFor(x => x.SequenceId)
-                @Html.HiddenFor(x => x.SectionId)
                 <input type="submit" class="govuk-button" value="Save and continue" />
             </form>
             <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />

@@ -37,9 +37,15 @@ else
                 <p class="govuk-body">Do not include any personal or financial information.</p>
                
                 <form method="post" asp-controller="GetHelp" asp-action="Index">
+                    <input type="hidden" asp-for="ApplicationId" />
+                    <input type="hidden" asp-for="SequenceId" />
+                    <input type="hidden" asp-for="SectionId" />
+                    <input type="hidden" asp-for="PageId" />
+                    <input type="hidden" asp-for="Title" />
+                    <input type="hidden" id="controller" name="controller" value="@controllerName" />
+                    <input type="hidden" id="action" name="action" value="@actionName" />
+
                     <div class="govuk-character-count" data-module="character-count" data-maxlength="250">
-
-
                         <div class="govuk-form-group">
                             <label class="govuk-label" for="gethelp">
                                 What do you need help with?
@@ -53,14 +59,6 @@ else
                             }
 
                             <textarea class="govuk-textarea js-character-count " id="gethelp" name="gethelp" rows="5" aria-describedby="gethelp-info">@Html.Raw(Model.GetHelpQuestion)</textarea>
-
-                            <input type="hidden" id="controller" name="controller" value="@controllerName" />
-                            <input type="hidden" id="action" name="action" value="@actionName" />
-                            @Html.HiddenFor(x => Model.Title)
-                            @Html.HiddenFor(x => Model.ApplicationId)
-                            @Html.HiddenFor(x => Model.SequenceId)
-                            @Html.HiddenFor(x => Model.SectionId)
-                            @Html.HiddenFor(x => Model.PageId)
                         </div>
 
                         <span id="gethelp-info" class="govuk-hint govuk-character-count__message" aria-live="polite">

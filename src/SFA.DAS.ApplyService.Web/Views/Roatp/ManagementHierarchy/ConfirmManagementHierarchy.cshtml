@@ -9,7 +9,7 @@
     int numberOfTitles = 2;
 }
 
-@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
+<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
@@ -41,9 +41,12 @@
                     {
                         <td class="govuk-table__cell">@column</td>
                     }
-                    <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="@Url.Action("EditManagementHierarchy", "RoatpManagementHierarchy", new { Model.ApplicationId, index })">Change<span class="govuk-visually-hidden"> management hierarchy</span></a></td>
-                    <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="@Url.Action("RemoveManagementHierarchy", "RoatpManagementHierarchy", new { Model.ApplicationId, index })">Remove<span class="govuk-visually-hidden"> management hierarchy</span></a></td>
-
+                    <td class="govuk-table__cell">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-action="EditManagementHierarchy" asp-controller="RoatpManagementHierarchy" asp-route-applicationId="@Model.ApplicationId" asp-route-index="@index">Change<span class="govuk-visually-hidden"> management hierarchy</span></a>
+                    </td>
+                    <td class="govuk-table__cell">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-action="RemoveManagementHierarchy" asp-controller="RoatpManagementHierarchy" asp-route-applicationId="@Model.ApplicationId" asp-route-index="@index">Remove<span class="govuk-visually-hidden"> management hierarchy</span></a>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -53,7 +56,7 @@
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <p class="govuk-body">
-                    <a class="govuk-link" href="@Url.Action("AddManagementHierarchy", "RoatpManagementHierarchy", new { Model.ApplicationId })">Add another person</a>
+                    <a class="govuk-link" asp-action="AddManagementHierarchy" asp-controller="RoatpManagementHierarchy" asp-route-applicationId="@Model.ApplicationId">Add another person</a>
                 </p>
             </div>
         </div>
@@ -62,11 +65,11 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <form method="post" asp-action="CompleteManagementHierarchySection">
-                @Html.HiddenFor(x => x.ApplicationId)
-                @Html.HiddenFor(x => x.GetHelpAction)
+                <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="GetHelpAction" />
 
                 <button type="submit" class="govuk-button govuk-!-margin-right-3">Continue</button>
-                <a class="govuk-link das-inline-button-link govuk-link--no-visited-state" href="@Url.Action("Tasklist", "RoatpApplication", new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = Model.PageId})">Return to this question later</a>
+                <a class="govuk-link das-inline-button-link govuk-link--no-visited-state" asp-action="Tasklist" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId">Return to this question later</a>
             </form>
             <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
         </div>
