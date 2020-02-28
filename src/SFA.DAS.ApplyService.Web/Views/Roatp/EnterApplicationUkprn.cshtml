@@ -7,7 +7,7 @@
     bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
 }
 
-@{ await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml"); }
+<partial name="~/Views/Roatp/PreambleHeader.cshtml" />
 
 @*
 <form asp-controller="RoatpApplicationPreamble" asp-action="TermsAndConditions" method="get" name="backForm">
@@ -43,6 +43,10 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <form method="post" asp-action="SearchByUkprn" asp-controller="RoatpApplicationPreamble">
+                <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="SequenceId" />
+                <input type="hidden" asp-for="SectionId" />
+                <input type="hidden" asp-for="PageId" />
 
                 <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="UKPRN" sfa-validationerror-class="form-group-error">
                     @if (showErrors)
@@ -69,9 +73,6 @@
                         <p>After you’ve registered and received a UKPRN, sign back in to continue with this application.</p>
                     </div>
                 </details>
-                @Html.HiddenFor(x => x.PageId)
-                @Html.HiddenFor(x => x.SequenceId)
-                @Html.HiddenFor(x => x.SectionId)
                 <input type="submit" class="govuk-button" value="Save and continue" />
             </form>
             <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />

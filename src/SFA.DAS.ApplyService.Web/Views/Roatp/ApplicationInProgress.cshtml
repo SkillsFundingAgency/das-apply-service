@@ -6,7 +6,7 @@
     Layout = "_Layout";
 }
 
-@{ await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml"); }
+<partial name="~/Views/Roatp/PreambleHeader.cshtml" />
 
 @*
 <form asp-controller="RoatpApplicationPreamble" asp-action="EnterApplicationUkprn" method="get" name="backForm">
@@ -20,7 +20,7 @@
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">@title</h1>
             <p class="govuk-body">
-                To continue with the application, <a href="@Url.Action("Index","Home")">sign in</a> using the account details that were used to start the application.
+                To continue with the application, <a asp-action="Index" asp-controller="Home">sign in</a> using the account details that were used to start the application.
             </p>
             <p class="govuk-body">
                 If you think this is wrong, email <br />
