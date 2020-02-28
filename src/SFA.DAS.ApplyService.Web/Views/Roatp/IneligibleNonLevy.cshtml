@@ -18,7 +18,7 @@ else
 
 @*
 <form asp-controller="RoatpApplicationPreamble" asp-action="ConfirmLevyStatus" method="get" name="backForm">
-    @Html.HiddenFor(x => x.LevyPayingEmployer)
+    <input type="hidden" asp-for="LevyPayingEmployer" />
     <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
 </form>
 *@
