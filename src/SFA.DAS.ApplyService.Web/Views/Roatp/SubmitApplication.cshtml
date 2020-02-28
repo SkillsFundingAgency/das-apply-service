@@ -53,7 +53,7 @@
                 <li>not suitable, true and accurate - we may fail your application</li>
             </ul>
             <p class="govuk-body">
-                You can check your answers and file uploads using the <a href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">application overview</a>, then going into each section.
+                You can check your answers and file uploads using the <a asp-action="TaskList" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">application overview</a>, then going into each section.
             </p>
             <p class="govuk-body">
                 You will not be able to view them once you submit your application.
