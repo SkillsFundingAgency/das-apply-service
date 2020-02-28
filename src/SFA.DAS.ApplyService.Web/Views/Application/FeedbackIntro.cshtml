@@ -15,7 +15,7 @@
 
             <p class="govuk-body">Read the comments on the answers that need more information.</p>
 
-            <a href="@Url.Action("Feedback", "Application", new {applicationId = Model})" class="govuk-button">
+            <a asp-action="Feedback" asp-controller="Application" asp-route-applicationId="@Model" class="govuk-button">
                 Go to feedback
             </a>
         </div>

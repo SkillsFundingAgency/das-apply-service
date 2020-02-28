@@ -55,8 +55,8 @@
                                     @foreach (var pg in pagesWithNewFeedback.OrderBy(p => p.PageId))
                                     {
                                         <li class="app-task-list__item">
-                                            <a aria-describedby="feedback-completed" class="app-task-list__task-name"
-                                               href="@Url.Action("Page", "Application", new { applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = applicationSection.SectionId, pageId = pg.PageId, redirectAction = "Feedback" })">@pg.LinkTitle</a>
+                                            <a aria-describedby="feedback-completed" class="app-task-list__task-name" asp-action="Page" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId"
+                                               asp-route-sectionId="@applicationSection.SectionId" asp-route-pageId="@pg.PageId" asp-route-redirectAction="Feedback">@pg.LinkTitle</a>
                                             @if (pg.AllFeedbackIsCompleted)
                                             {
                                                 <strong class="govuk-tag app-task-list__task-completed" id="feedback-completed">Completed</strong>
@@ -78,8 +78,8 @@
             {
                 <div>
                     <form asp-action="Submit" asp-controller="Application">
-                        <input type="hidden" id="applicationId" name="Id" value="@Model.ApplicationId" />
-                        <input type="hidden" id="sequenceId" name="sequenceNo" value="@Model.SequenceId" />
+                        <input type="hidden" asp-for="ApplicationId" />
+                        <input type="hidden" asp-for="SequenceId" />
                         <div class="govuk-form-group">
                             <button type="submit" class="govuk-button">
                                 Submit application
@@ -90,6 +90,4 @@
             }
         </div>
     </div>
-
-
 </main>
