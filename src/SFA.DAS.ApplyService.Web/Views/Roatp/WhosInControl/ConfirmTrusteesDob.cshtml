@@ -5,13 +5,10 @@
     var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
 }
 
-@{ 
-    await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); 
-}
+<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
 
-@*
-<a class="govuk-back-link" href="@Url.Action("ConfirmTrusteesNoDob", "RoatpWhosInControlApplication", new { Model.ApplicationId })">Back</a>
-*@
+
+@*<a class="govuk-back-link" asp-action="ConfirmTrusteesNoDob" asp-controller="RoatpWhosInControlApplication" asp-route-applicationId="@Model.ApplicationId">Back</a>*@
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -44,9 +41,8 @@
             }
 
             <form method="post" asp-action="TrusteesDobsConfirmed" novalidate enctype="multipart/form-data">
-
-                @Html.HiddenFor(x => x.ApplicationId)
-                @Html.HiddenFor(x => x.GetHelpAction)
+                <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="GetHelpAction" />
 
                 @foreach (var trustee in Model.TrusteeDatesOfBirth)
                 {

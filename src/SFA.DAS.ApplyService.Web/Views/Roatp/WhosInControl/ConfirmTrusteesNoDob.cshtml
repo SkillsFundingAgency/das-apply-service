@@ -1,17 +1,16 @@
 ﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ConfirmTrusteesViewModel
 
-@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
+<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
 
-@*
-@if (Model.VerifiedCompaniesHouse)
+@*@if (Model.VerifiedCompaniesHouse)
 {
-    <a class="govuk-back-link" href="@Url.Action("ConfirmDirectorsPscs", "RoatpWhosInControlApplication", new { Model.ApplicationId })">Back</a>
+    <a class="govuk-back-link" asp-action="ConfirmDirectorsPscs" asp-controller="RoatpWhosInControlApplication" asp-route-ApplicationId="@Model.ApplicationId">Back</a>
 }
 else
 {
-    <a class="govuk-back-link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Back</a>
-}
-*@
+    <a class="govuk-back-link" asp-action="TaskList" asp-controller="RoatpApplication" asp-route-ApplicationId="@Model.ApplicationId">Back</a>
+}*@
+
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -31,10 +30,11 @@ else
         </div>
 
         <form method="post" asp-action="TrusteesConfirmed" novalidate enctype="multipart/form-data">
-            @Html.HiddenFor(x => x.ApplicationId)
-            @Html.HiddenFor(x => x.GetHelpAction)
+            <input type="hidden" asp-for="ApplicationId" />
+            <input type="hidden" asp-for="GetHelpAction" />
+
             <div class="govuk-grid-column-one-half">
-                @{ await Html.RenderPartialAsync("~/Views/Roatp/WhosInControl/PeopleInControl.cshtml", Model.Trustees); }
+                <partial name="~/Views/Roatp/WhosInControl/PeopleInControl.cshtml" for="Trustees" />
             </div>
             <div class="govuk-grid-column-two-thirds">
                 <details class="govuk-details">

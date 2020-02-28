@@ -11,11 +11,9 @@
 
 }
 
-@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
+<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
 
-@*
-<a class="govuk-back-link" href="@Url.Action("SoleTraderOrPartnership", "RoatpWhosInControlApplication", new { Model.ApplicationId })">Back</a>
-*@
+<a class="govuk-back-link" asp-action="SoleTraderOrPartnership" asp-controller="RoatpWhosInControlApplication" asp-route-applicationId="@Model.ApplicationId">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -42,10 +40,9 @@
             <h1 class="govuk-heading-xl">What is @(Model.SoleTraderName)'s date of birth?</h1>
 
             <form method="post" asp-action="SoleTradeDobConfirmed" novalidate enctype="multipart/form-data">
-
-                @Html.HiddenFor(x => x.ApplicationId)
-                @Html.HiddenFor(x => x.SoleTraderName)
-                @Html.HiddenFor(x => x.GetHelpAction)
+                <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="SoleTraderName" />
+                <input type="hidden" asp-for="GetHelpAction" />
 
                 <span class="govuk-hint" id="dob-hint">
                     For example, 3 1980
@@ -89,9 +86,7 @@
                     </div>
                 </div>
 
-
                 <button type="submit" class="govuk-button">Save and continue</button>
-
             </form>
             <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
         </div>
