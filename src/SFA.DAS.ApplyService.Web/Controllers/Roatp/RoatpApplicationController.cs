@@ -20,8 +20,6 @@ using SFA.DAS.ApplyService.Web.ViewModels;
 namespace SFA.DAS.ApplyService.Web.Controllers
 {
     using Configuration;
-    using global::AutoMapper;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Options;
     using MoreLinq;
     using SFA.DAS.ApplyService.EmailService;
@@ -178,7 +176,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return RedirectToAction("Applications", new { applicationType });
         }
 
-        private Application.Apply.Start.StartApplicationRequest BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
+        private static Application.Apply.Start.StartApplicationRequest BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
         {
             return new Application.Apply.Start.StartApplicationRequest
             {
@@ -200,8 +198,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     //IsActive = sequence.IsActive,
                     //NotRequired = sequence.NotRequired,
                     //Sequential = false
-                }).ToList(),
-                NotRequiredSectionOverrides = Mapper.Map<List<NotRequiredSectionOverride>>(_notRequiredOverrides)
+                }).ToList()
             };
         }
 
@@ -519,9 +516,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
 
-            var application = await _apiClient.GetApplication(applicationId);
-            var notRequiredOverrides = Mapper.Map<List<NotRequiredOverrideConfiguration>>(application.ApplyData?.NotRequiredSectionOverrides);
-            var populatedNotRequiredOverrides = await PopulateNotRequiredOverridesWithApplicationData(applicationId, notRequiredOverrides);
+            var populatedNotRequiredOverrides = await PopulateNotRequiredOverridesWithApplicationData(applicationId, _notRequiredOverrides);
 
             var yourOrganisationSequence =
                 sequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
@@ -1070,97 +1065,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return fileValidationPassed;
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Submit(Guid applicationId)
-        {
-            var canUpdate = await CanUpdateApplication(applicationId);
-            if (!canUpdate)
-            {
-                return RedirectToAction("TaskList", new { applicationId });
-            }
-
-            var activeSequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
-            var errors = ValidateSubmit(activeSequence);
-            if (errors.Any())
-            {
-                var sequenceVm = new SequenceViewModel(activeSequence, applicationId, errors);
-
-                if (activeSequence.Status == ApplicationSequenceStatus.FeedbackAdded)
-                {
-                    return View("~/Views/Application/Feedback.cshtml", sequenceVm);
-                }
-                else
-                {
-                    return View("~/Views/Application/Sequence.cshtml", sequenceVm);
-                }
-            }
-
-            var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
-            var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
-
-            var submitApplicationRequest = new Application.Apply.Submit.SubmitApplicationRequest
-            {
-                ApplicationId = applicationId,
-                ProviderRoute = int.Parse(providerRoute.Value),
-                SubmittingContactId = User.GetUserId()
-            };
-
-            if (await _apiClient.SubmitApplication(submitApplicationRequest))
-            {
-                return RedirectToAction("Submitted", new { applicationId });
-            }
-            else
-            {
-                // unable to submit
-                return RedirectToAction("NotSubmitted", new { applicationId });
-            }
-        }
-
-        private List<ValidationErrorDetail> ValidateSubmit(ApplicationSequence sequence)
-        {
-            var validationErrors = new List<ValidationErrorDetail>();
-
-            if (sequence?.Sections is null)
-            {
-                var validationError = new ValidationErrorDetail(string.Empty, $"Cannot submit empty sequence");
-                validationErrors.Add(validationError);
-            }
-            else if (sequence.Sections.Where(sec => sec.PagesComplete != sec.PagesActive).Any())
-            {
-                foreach (var sectionQuestionsNotYetCompleted in sequence.Sections.Where(sec => sec.PagesComplete != sec.PagesActive))
-                {
-                    var validationError = new ValidationErrorDetail(sectionQuestionsNotYetCompleted.Id.ToString(), $"You need to complete the '{sectionQuestionsNotYetCompleted.LinkTitle}' section");
-                    validationErrors.Add(validationError);
-                }
-            }
-            else if(sequence.Sections.Where(sec => sec.QnAData.RequestedFeedbackAnswered is false || sec.QnAData.Pages.Any(p => !p.AllFeedbackIsCompleted)).Any())
-            {
-                foreach (var sectionFeedbackNotYetCompleted in sequence.Sections.Where(sec => sec.QnAData.RequestedFeedbackAnswered is false || sec.QnAData.Pages.Any(p => !p.AllFeedbackIsCompleted)))
-                {
-                    var validationError = new ValidationErrorDetail(sectionFeedbackNotYetCompleted.Id.ToString(), $"You need to complete the '{sectionFeedbackNotYetCompleted.LinkTitle}' section");
-                    validationErrors.Add(validationError);
-                }
-            }
-
-            return validationErrors;
-        }
-
-        [HttpGet]  
-        public async Task<IActionResult> DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, string redirectAction)
-        {
-            await _apiClient.DeleteAnswer(applicationId, sequenceId, sectionId, pageId, answerId, User.GetUserId());
-            
-            return RedirectToAction("Page", new {applicationId, sequenceId, sectionId, pageId, redirectAction});
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Feedback(Guid applicationId)
-        {
-            var sequence = await _apiClient.GetSequence(applicationId, User.GetUserId());
-            var sequenceVm = new SequenceViewModel(sequence, applicationId, null);
-            return View("~/Views/Application/Feedback.cshtml", sequenceVm);
         }
 
         public async Task<IActionResult> Submitted(Guid applicationId)

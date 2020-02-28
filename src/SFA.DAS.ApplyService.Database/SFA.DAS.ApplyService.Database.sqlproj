@@ -69,6 +69,7 @@
     <Build Include="Sequences\RoatpAppReferenceSequence.sql" />
     <Build Include="Tables\Apply.sql" />
     <Build Include="Tables\ApplySnapshots.sql" />
+    <Build Include="Tables\WhitelistedProviders.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />

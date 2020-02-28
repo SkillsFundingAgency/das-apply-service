@@ -16,7 +16,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     {
         public List<ApplySequence> Sequences { get; set; }
         public ApplyDetails ApplyDetails { get; set; }
-        public List<NotRequiredSectionOverride> NotRequiredSectionOverrides { get; set; }
     }
 
     public class ApplyDetails
@@ -56,19 +55,5 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         //public string EvaluatedBy { get; set; }
         //public bool NotRequired { get; set; }
         //public bool? RequestedFeedbackAnswered { get; set; }
-    }
-
-    public class NotRequiredSectionOverride
-    {
-        public int SequenceId { get; set; }
-        public int SectionId { get; set; }
-        public List<NotRequiredCondition> Conditions { get; set; }
-    }
-
-    public class NotRequiredCondition
-    {
-        public string ConditionalCheckField { get; set; }
-        public string MustEqual { get; set; }
-        public string Value { get; set; }
     }
 }
