@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
+﻿using Microsoft.AspNetCore.Hosting;
+
+namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
     using Configuration;
     using Microsoft.AspNetCore.Hosting;
@@ -11,6 +13,7 @@
 
         public RoatpTokenService(IConfigurationService configurationService, IHostingEnvironment hostingEnvironment)
         {
+            _hostingEnvironment = hostingEnvironment;
             _configuration = configurationService.GetConfig().Result;
             _hostingEnvironment = hostingEnvironment;
         }

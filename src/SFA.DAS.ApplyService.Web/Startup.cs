@@ -24,18 +24,19 @@ using SFA.DAS.ApplyService.Web;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 using SFA.DAS.ApplyService.Web.Infrastructure.Services;
-using SFA.DAS.ApplyService.Web.Validators;
 using StructureMap;
 using StackExchange.Redis;
 
 namespace SFA.DAS.ApplyService.Web
 {
     using Controllers;
+    using SFA.DAS.ApplyService.Application.Apply;
     using SFA.DAS.ApplyService.Application.Email;
     using SFA.DAS.ApplyService.EmailService;
     using SFA.DAS.ApplyService.Web.Configuration;
     using SFA.DAS.ApplyService.Web.Infrastructure.Validations;
     using SFA.DAS.ApplyService.Web.Services;
+    using SFA.DAS.ApplyService.Web.Validators;
     using SFA.DAS.Http;
     using SFA.DAS.Http.TokenGenerators;
     using SFA.DAS.Notifications.Api.Client;
@@ -90,7 +91,7 @@ namespace SFA.DAS.ApplyService.Web
             {
                 services.AddDataProtection()
                     .PersistKeysToFileSystem(new DirectoryInfo(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "keys")))
-                    .SetApplicationName("AssessorApply");
+                    .SetApplicationName("Apply");
 
                 services.AddDistributedMemoryCache();
             }
@@ -102,8 +103,8 @@ namespace SFA.DAS.ApplyService.Web
                         $"{_configService.SessionRedisConnectionString},DefaultDatabase=1");
 
                     services.AddDataProtection()
-                        .PersistKeysToStackExchangeRedis(redis, "AssessorApply-DataProtectionKeys")
-                        .SetApplicationName("AssessorApply");
+                        .PersistKeysToStackExchangeRedis(redis, "Apply-DataProtectionKeys")
+                        .SetApplicationName("Apply");
                     services.AddDistributedRedisCache(options =>
                     {
                         options.Configuration = $"{_configService.SessionRedisConnectionString},DefaultDatabase=0";
@@ -122,7 +123,7 @@ namespace SFA.DAS.ApplyService.Web
                 opt.IdleTimeout = TimeSpan.FromHours(1);
                 opt.Cookie = new CookieBuilder()
                 {
-                    Name = ".Assessors.Session",
+                    Name = ".Apply.Session",
                     HttpOnly = true
                 };
             });
@@ -197,7 +198,10 @@ namespace SFA.DAS.ApplyService.Web
             });
             services.AddTransient<IEmailTemplateClient, EmailTemplateClient>();
             services.AddTransient<ISubmitApplicationConfirmationEmailService, SubmitApplicationConfirmationEmailService>();
+            services.AddTransient<ITabularDataService, TabularDataService>();
             services.AddTransient<ITabularDataRepository, TabularDataRepository>();
+            services.AddTransient<IWhitelistedProvidersApiClient, WhitelistedProvidersApiClient>();
+            services.AddTransient<IUkprnWhitelistValidator, UkprnWhitelistValidator>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)

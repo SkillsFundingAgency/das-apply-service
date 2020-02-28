@@ -16,12 +16,12 @@ else
     await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml");
 }
 
-<div class="grid-row">
+@*<div class="grid-row">
     <form asp-controller="RoatpApplicationPreamble" asp-action="ConfirmLevyStatus" method="get" name="backForm">
         @Html.HiddenFor(x => x.LevyPayingEmployer)
         <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
     </form>
-</div>
+</div>*@
 
 @if (!ViewData.ModelState.IsValid)
 {

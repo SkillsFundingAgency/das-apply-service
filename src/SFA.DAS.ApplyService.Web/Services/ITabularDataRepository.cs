@@ -8,7 +8,7 @@ namespace SFA.DAS.ApplyService.Web.Services
     {
         Task<TabularData> GetTabularDataAnswer(Guid applicationId, string questionTag);
         Task<bool> SaveTabularDataAnswer(Guid applicationId, Guid sectionId, string pageId, string questionId, TabularData tabularData);
-        Task<bool> AddTabularDataRecord(Guid applicationId, Guid sectionId, string pageId, string questionId, string questionTag, TabularDataRow record);
+        Task<bool> UpsertTabularDataRecord(Guid applicationId, Guid sectionId, string pageId, string questionId, string questionTag, TabularDataRow record);
         Task<bool> EditTabularDataRecord(Guid applicationId, Guid sectionId, string pageId, string questionId, string questionTag, TabularDataRow record, int index);
     }
 }

@@ -8,9 +8,9 @@
 @{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
 
 
-<div class="grid-row">
+@*<div class="grid-row">
     <a class="govuk-back-link" href="@Url.Action("ConfirmTrusteesNoDob", "RoatpWhosInControlApplication", new { Model.ApplicationId })">Back</a>
-</div>
+</div>*@
 
 @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
 {

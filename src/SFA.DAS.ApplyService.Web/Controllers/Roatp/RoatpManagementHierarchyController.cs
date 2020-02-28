@@ -107,7 +107,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 managementHierarchyData = new TabularData
                 {
-                    HeadingTitles = new List<string> { "Name", "Job role"},
+                    HeadingTitles = new List<string> { "Name", "Job role","Years in role","Months in role","Part of another organisation","Organisation details"},
                     DataRows = new List<TabularDataRow>
                     {
                         managementHierarchyPerson
@@ -123,7 +123,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             }
             else
             {
-                var result = await _tabularDataRepository.AddTabularDataRecord(
+                var result = await _tabularDataRepository.UpsertTabularDataRecord(
                     model.ApplicationId,
                     managementHierarchySection.Id,
                     RoatpWorkflowPageIds.ManagementHierarchy.AddManagementHierarchy,
@@ -172,7 +172,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             var managementHierarchyData = await _tabularDataRepository.GetTabularDataAnswer(model.ApplicationId, questionTag);
 
-            if ((managementHierarchyData == null) || (model.Index < 0 || model.Index > managementHierarchyData.DataRows.Count))
+            if ((managementHierarchyData == null) || model.Index < 0 || model.Index + 1 > managementHierarchyData.DataRows.Count)
             {
                 return RedirectToAction(redirectAction, new { model.ApplicationId });
             }

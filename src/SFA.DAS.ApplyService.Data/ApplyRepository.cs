@@ -40,10 +40,10 @@ namespace SFA.DAS.ApplyService.Data
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return await connection.QuerySingleAsync<Guid>(
-                    @"INSERT INTO Apply (ApplicationId, OrganisationId, ApplicationStatus, ApplyData, AssessorReviewStatus, CreatedBy, CreatedAt)
+                    @"INSERT INTO Apply (ApplicationId, OrganisationId, ApplicationStatus, ApplyData, CreatedBy, CreatedAt)
                                         OUTPUT INSERTED.[ApplicationId] 
-                                        VALUES (@applicationId, @organisationId, @applicationStatus, @applyData, @reviewStatus, @createdBy, GETUTCDATE())",
-                    new { applicationId, organisationId, applicationStatus = "In Progress", applyData, reviewStatus = "Draft", createdBy });
+                                        VALUES (@applicationId, @organisationId, @applicationStatus, @applyData, @createdBy, GETUTCDATE())",
+                    new { applicationId, organisationId, applicationStatus = ApplicationStatus.InProgress, applyData, createdBy });
             }
         }
 
@@ -127,7 +127,28 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<bool> ChangeProviderRoute(Guid applicationId, int providerRoute)
+        {
+            var application = await GetApplication(applicationId);
+            var applyData = application?.ApplyData;
 
+            if (application != null && applyData?.ApplyDetails != null)
+            {
+                applyData.ApplyDetails.ProviderRoute = providerRoute;
+
+                using (var connection = new SqlConnection(_config.SqlConnectionString))
+                {
+                    await connection.ExecuteAsync(@"UPDATE Apply
+                                                    SET  ApplyData = JSON_MODIFY(ApplyData, '$.ApplyDetails.ProviderRoute', @providerRoute)
+                                                    WHERE  ApplicationId = @ApplicationId",
+                                                    new { application.ApplicationId, providerRoute });
+                }
+
+                return true;
+            }
+
+            return false;
+        }
 
 
 
@@ -950,6 +971,22 @@ namespace SFA.DAS.ApplyService.Data
                 var nextInSequence = (await connection.QueryAsync<int>(@"SELECT NEXT VALUE FOR RoatpAppReferenceSequence")).FirstOrDefault();
 
                 return $"APR{nextInSequence}";
+            }
+        }
+
+        public async Task<bool> IsUkprnWhitelisted(int ukprn)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return await connection.QuerySingleAsync<bool>(@"SELECT
+                                                                      CASE WHEN EXISTS 
+                                                                      (
+                                                                            SELECT UKPRN FROM dbo.WhitelistedProviders WHERE UKPRN = @ukprn
+                                                                      )
+                                                                      THEN 'TRUE'
+                                                                      ELSE 'FALSE'
+                                                                  END",
+                                                                  new { ukprn });
             }
         }
     }
