@@ -6,10 +6,10 @@
     var hasSectionTitle = !string.IsNullOrEmpty(Model.SectionTitle);
 }
 
-@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
+<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
 
 @*
-<a class="govuk-back-link" href="@Url.Action("Back", "RoatpApplication", new { Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = Model.PageId, redirectAction = "TaskList" })">Back</a>
+<a class="govuk-back-link" asp-action="Back" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId" asp-route-redirectAction="TaskList">Back</a>
 *@
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
@@ -60,7 +60,7 @@
                         </span>
                     }
 
-                    @if (Model.DisplayType == "PagesWithSections" || Model.DisplayType=="OtherPagesInPagesWithSections")
+                    @if (Model.DisplayType == "PagesWithSections" || Model.DisplayType == "OtherPagesInPagesWithSections")
                     {
                         <h1 class="govuk-heading-xl">
                             @Html.Raw(Model.BodyText)
@@ -96,8 +96,8 @@
                 @* no action is specified for the form, post back to the get url to preserve the page hierarchy parameters *@
                 <form method="post" novalidate enctype="multipart/form-data" asp-action="SaveAnswers" asp-route-applicationId="@Model.ApplicationId"
                       asp-route-sectionId="@Model.SectionId" asp-route-sequenceId="@Model.SequenceId" asp-route-pageId="@Model.PageId">
-                    <input type="hidden" id="ApplicationId" name="ApplicationId" value="@Model.ApplicationId" />
-                    <input type="hidden" id="RedirectAction" name="RedirectAction" value="@Model.RedirectAction" />
+                    <input type="hidden" asp-for="ApplicationId" />
+                    <input type="hidden" asp-for="RedirectAction" />
 
                     @if (Model.Questions.Count() == 1)
                     {
@@ -105,7 +105,7 @@
                         {
                             <div class="govuk-form-group @(!ViewData.ModelState.IsValid ? "govuk-form-group--error" : "")">
                                 <fieldset class="govuk-fieldset">
-                                    @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio" || question.Type == "CheckboxList" || question.Type=="ComplexCheckBoxList")
+                                    @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio" || question.Type == "CheckboxList" || question.Type == "ComplexCheckBoxList")
                                     {
                                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
                                             @if (Model.PageContext != null)
@@ -125,7 +125,7 @@
                                                 <h1 class="govuk-heading-xl">
                                                     @Html.Raw(Model.BodyText)
                                                 </h1>
-                                            
+
                                             }
                                             else
                                             {
@@ -198,7 +198,7 @@
                                         var questionType = question.Type.Replace("DataFed_", "");
                                     }
 
-                                    @(await Html.PartialAsync($"~/Views/QuestionPartials/_{questionType}.cshtml", question))
+                                    <partial name="@($"~/Views/QuestionPartials/_{question.Type}.cshtml")" for="@question" />
 
                                 </fieldset>
                             </div>
@@ -240,7 +240,7 @@
                                     question.ErrorMessages = Model.ErrorMessages;
                                 }
 
-                                @(await Html.PartialAsync($"~/Views/QuestionPartials/_{question.Type}.cshtml", question))
+                                <partial name="@($"~/Views/QuestionPartials/_{question.Type}.cshtml")" for="@question" />
                             </div>
                         }
                     }
@@ -254,7 +254,7 @@
                             <script src="@Url.Content("~/javascripts/gov-uk-postcode-lookup-service.min.js")"></script>
                         }
                     }
-                    
+
                     @if (Model.InfoText != null)
                     {
                         @Html.Raw(Model.InfoText)
@@ -282,15 +282,15 @@
 
                             if (first && Model.SectionId != 1)
                             {
-                                
-                                <a class="govuk-link das-inline-button-link govuk-link--no-visited-state" href="@Url.Action(link.Action, link.Controller, new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pageId})">@link.Caption</a>
-                                
+
+                                <a class="govuk-link das-inline-button-link govuk-link--no-visited-state" asp-action="@link.Action" asp-controller="@link.Controller" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@pageId">@link.Caption</a>
+
                             }
                             else
                             {
                                 first = false;
                                 <p class="govuk-body">
-                                    <a class="govuk-link" href="@Url.Action(link.Action, link.Controller, new {Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pageId})">@link.Caption</a>
+                                    <a class="govuk-link" asp-action="@link.Action" asp-controller="@link.Controller" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@pageId">@link.Caption</a>
                                 </p>
                             }
                         }

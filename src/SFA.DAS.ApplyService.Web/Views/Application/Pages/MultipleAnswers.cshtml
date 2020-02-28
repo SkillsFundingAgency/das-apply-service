@@ -8,15 +8,15 @@
 <noscript>
     @if (!string.IsNullOrWhiteSpace(Model.ReturnUrl))
     {
-        <a href="@Model.ReturnUrl" class="govuk-back-link">Back to previous page</a>
+        <a class="govuk-back-link" href="@Model.ReturnUrl">Back to previous page</a>
     }
     else if (Model.RedirectAction == "Feedback")
     {
-        <a href="@Url.Action("Feedback", "Application", new { Model.ApplicationId })" class="govuk-back-link">Back to summary</a>
+        <a class="govuk-back-link" asp-action="Feedback" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId">Back to summary</a>
     }
     else
     {
-        <a href="@Url.Action("Section", "Application", new { Model.ApplicationId, Model.SequenceId, Model.SectionId })" class="govuk-back-link">Back to summary</a>
+        <a class="govuk-back-link" asp-action="Section" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId">Back to summary</a>
     }
 </noscript>
 <script>
@@ -108,11 +108,11 @@
 
                         <form asp-action="DeleteAnswer" asp-controller="Application">
                             <input type="hidden" id="AnswerId" name="AnswerId" value="@answerPage.Id" />
-                            <input type="hidden" id="ApplicationId" name="ApplicationId" value="@Model.ApplicationId" />
-                            <input type="hidden" id="SectionId" name="SectionId" value="@Model.SectionId" />
-                            <input type="hidden" id="SequenceId" name="SequenceId" value="@Model.SequenceId" />
-                            <input type="hidden" id="PageId" name="PageId" value="@Model.PageId" />
-                            <input type="hidden" id="RedirectAction" name="RedirectAction" value="@Model.RedirectAction" />
+                            <input type="hidden" asp-for="ApplicationId" />
+                            <input type="hidden" asp-for="SectionId" />
+                            <input type="hidden" asp-for="SequenceId" />
+                            <input type="hidden" asp-for="PageId" />
+                            <input type="hidden" asp-for="RedirectAction" />
                             <div class="govuk-!-margin-top-4">
                                 <button class="govuk-button govuk-button--looks-like-link" type="submit">Delete</button>
                             </div>
@@ -128,7 +128,7 @@
         <div class="govuk-grid-column-two-thirds">
             @* no action is specified for the form, post back to the get url to preserve the page hierarchy parameters *@
             <form method="post" novalidate enctype="multipart/form-data">
-                <input type="hidden" id="RedirectAction" name="RedirectAction" value="@Model.RedirectAction" />
+                <input type="hidden" asp-for="RedirectAction" />
 
                 @if (Model.Questions.Count() == 1)
                 {
@@ -168,7 +168,7 @@
                                     @Html.Raw(question.Hint)
                                 </span>
 
-                                @await Html.PartialAsync($"~/Views/QuestionPartials/_{question.Type}.cshtml", question)
+                                <partial name="@($"~/Views/QuestionPartials/_{question.Type}.cshtml")" for="@question" />
                             </fieldset>
                         </div>
                     }
@@ -199,7 +199,7 @@
                                 </span>
                             }
 
-                            @await Html.PartialAsync($"~/Views/QuestionPartials/_{question.Type}.cshtml", question)
+                            <partial name="@($"~/Views/QuestionPartials/_{question.Type}.cshtml")" for="@question" />
                         </div>
                     }
                 }
@@ -216,11 +216,11 @@
             <p class="govuk-body">
                 @if (Model.RedirectAction == "Feedback")
                 {
-                    <a class="govuk-link" href="@Url.Action("Feedback", "Application", new {Model.ApplicationId})">Return to summary</a>
+                    <a class="govuk-link" asp-action="Feedback" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId">Return to summary</a>
                 }
                 else
                 {
-                    <a class="govuk-link" href="@Url.Action("Section", "Application", new {Model.ApplicationId, Model.SequenceId, Model.SectionId})">Return to summary</a>
+                    <a class="govuk-link" asp-action="Section" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId">Return to summary</a>
                 }
             </p>
         </div>
