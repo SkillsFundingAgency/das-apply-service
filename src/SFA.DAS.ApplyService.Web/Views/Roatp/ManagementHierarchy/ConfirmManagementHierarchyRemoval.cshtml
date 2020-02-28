@@ -12,11 +12,9 @@
     var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
 }
 
-@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
+<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
 
-@*
-<a href="@Url.Action("ConfirmManagementHierarchy", "RoatpManagementHierarchy", new {Model.ApplicationId})" class="govuk-back-link">Back</a>
-*@
+@*<a class="govuk-back-link" asp-action="ConfirmManagementHierarchy" asp-controller="RoatpManagementHierarchy" asp-route-applicationId="@Model.ApplicationId">Back</a>*@
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
@@ -47,11 +45,11 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <form method="post" asp-action="@Model.ActionName">
-                @Html.HiddenFor(x => x.ApplicationId)
-                @Html.HiddenFor(x => x.Index)
-                @Html.HiddenFor(x => x.Name)
-                @Html.HiddenFor(x => x.BackAction)
-                @Html.HiddenFor(x => x.GetHelpAction)
+                <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="Index" />
+                <input type="hidden" asp-for="Name" />
+                <input type="hidden" asp-for="BackAction" />
+                <input type="hidden" asp-for="GetHelpAction" />
 
                 <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="Confirmation">
                     @if (showErrors)
@@ -67,8 +65,8 @@
                             <div class="govuk-radios__item">
 
                                 <input asp-for="Confirmation" class="govuk-radios__input" id="Confirmation-Yes"
-                                        name="Confirmation" type="radio" value="Y"
-                                        sfa-validation-for="PartnershipType" sfa-validationerror-class="form-control-error">
+                                       name="Confirmation" type="radio" value="Y"
+                                       sfa-validation-for="PartnershipType" sfa-validationerror-class="form-control-error">
                                 <label class="govuk-label govuk-radios__label" for="Confirmation-Yes">
                                     Yes
                                 </label>
@@ -78,8 +76,8 @@
                             <div class="govuk-radios__item">
 
                                 <input asp-for="Confirmation" class="govuk-radios__input" id="Confirmation-No"
-                                        name="Confirmation" type="radio" value="N"
-                                        sfa-validation-for="Confirmation" sfa-validationerror-class="form-control-error">
+                                       name="Confirmation" type="radio" value="N"
+                                       sfa-validation-for="Confirmation" sfa-validationerror-class="form-control-error">
                                 <label class="govuk-label govuk-radios__label" for="Confirmation-No">
                                     No
                                 </label>
@@ -90,7 +88,7 @@
                     </fieldset>
                 </div>
                 <input type="submit" class="govuk-button govuk-!-margin-right-3" value="Confirm and continue" />
-                <a class="govuk-link das-inline-button-link govuk-link--no-visited-state" href="@Url.Action("ConfirmManagementHierarchy", "RoatpManagementHierarchy", new {Model.ApplicationId})">Return to this question later</a>
+                <a class="govuk-link das-inline-button-link govuk-link--no-visited-state" asp-action="ConfirmManagementHierarchy" asp-controller="RoatpManagementHierarchy" asp-route-applicationId="@Model.ApplicationId">Return to this question later</a>
             </form>
             <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
         </div>
