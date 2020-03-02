@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Domain.Apply;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,9 +15,12 @@ namespace SFA.DAS.ApplyService.Web.Services
         {
             var answers = new List<Answer>();
 
+            // These are special in that they drive other things and thus should not be deemed as an answer
+            var exludedInputs = new List<string> { "redirectAction", "postcodeSearch", "checkAll" };
+
             Dictionary<string, JObject> answerValues = new Dictionary<string, JObject>();
 
-            foreach (var formVariable in httpContext.Request.Form.Where(f => !f.Key.StartsWith("__")))
+            foreach (var formVariable in httpContext.Request.Form.Where(f => !f.Key.StartsWith("__") && !exludedInputs.Contains(f.Key, StringComparer.InvariantCultureIgnoreCase)))
             {
                 var answerKey = formVariable.Key.Split("_Key_");
                 if (!answerValues.ContainsKey(answerKey[0]))
