@@ -16,7 +16,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             var answers = new List<Answer>();
 
             // These are special in that they drive other things and thus should not be deemed as an answer
-            var exludedInputs = new List<string> { "redirectAction", "postcodeSearch", "checkAll" };
+            var exludedInputs = new List<string> { "ApplicationId", "redirectAction", "postcodeSearch", "checkAll" };
 
             Dictionary<string, JObject> answerValues = new Dictionary<string, JObject>();
 
