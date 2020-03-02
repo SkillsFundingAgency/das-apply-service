@@ -24,18 +24,19 @@ using SFA.DAS.ApplyService.Web;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 using SFA.DAS.ApplyService.Web.Infrastructure.Services;
-using SFA.DAS.ApplyService.Web.Validators;
 using StructureMap;
 using StackExchange.Redis;
 
 namespace SFA.DAS.ApplyService.Web
 {
     using Controllers;
+    using SFA.DAS.ApplyService.Application.Apply;
     using SFA.DAS.ApplyService.Application.Email;
     using SFA.DAS.ApplyService.EmailService;
     using SFA.DAS.ApplyService.Web.Configuration;
     using SFA.DAS.ApplyService.Web.Infrastructure.Validations;
     using SFA.DAS.ApplyService.Web.Services;
+    using SFA.DAS.ApplyService.Web.Validators;
     using SFA.DAS.Http;
     using SFA.DAS.Http.TokenGenerators;
     using SFA.DAS.Notifications.Api.Client;
@@ -199,6 +200,8 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<ISubmitApplicationConfirmationEmailService, SubmitApplicationConfirmationEmailService>();
             services.AddTransient<ITabularDataService, TabularDataService>();
             services.AddTransient<ITabularDataRepository, TabularDataRepository>();
+            services.AddTransient<IWhitelistedProvidersApiClient, WhitelistedProvidersApiClient>();
+            services.AddTransient<IUkprnWhitelistValidator, UkprnWhitelistValidator>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)

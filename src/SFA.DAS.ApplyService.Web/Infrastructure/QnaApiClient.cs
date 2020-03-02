@@ -54,7 +54,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             _environmentName = configurationService.GetEnvironmentName();
         }
 
-
         public async Task<StartQnaApplicationResponse> StartApplication(string userReference, string workflowType, string applicationData)
         {
             var startApplicationRequest = new StartQnaApplicationRequest
@@ -82,7 +81,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
         }
 
-
         public async Task<object> GetApplicationData(Guid applicationId)
         {
             var response = await _httpClient.GetAsync($"Applications/{applicationId}/applicationData");
@@ -90,6 +88,24 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await response.Content.ReadAsAsync<object>();
         }
 
+        public async Task<string> GetQuestionTag(Guid applicationId, string questionTag)
+        {
+            var response = await _httpClient.GetAsync($"Applications/{applicationId}/applicationData/{questionTag}");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadAsAsync<string>();
+            }
+            else
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var apiError = JsonConvert.DeserializeObject<ApiError>(json);
+                var apiErrorMessage = apiError?.Message ?? json;
+
+                _logger.LogError($"Error in QnaApiClient.GetQuestionTag() - applicationId {applicationId} | questionTag : {questionTag} | StatusCode : {response.StatusCode} | ErrorMessage: { apiErrorMessage }");
+                return null; 
+            }           
+        }
 
         public async Task<IEnumerable<ApplicationSequence>> GetSequences(Guid applicationId)
         {
@@ -186,21 +202,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag, string questionId = null)
         {
             var answer = new Answer { QuestionId = questionId };
-
-            var applicationDataJson = await GetApplicationData(applicationId);
-
-            if (applicationDataJson != null)
+        
+            var questionTagData = await GetQuestionTag(applicationId, questionTag);
+            if(questionTagData != null)
             {
-                var applicationData = JObject.Parse(applicationDataJson.ToString());
-
-                if (applicationData != null)
-                {
-                    var answerData = applicationData[questionTag];
-                    if (answerData != null)
-                    {
-                        answer.Value = answerData.Value<string>();
-                    }
-                }
+                answer.Value = questionTagData.ToString();
             }
 
             return answer;
