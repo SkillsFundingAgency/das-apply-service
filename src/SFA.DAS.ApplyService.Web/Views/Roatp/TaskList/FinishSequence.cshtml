@@ -27,7 +27,7 @@
                     @if (Model.ApplicationSequencesCompleted() && Model.PreviousSectionCompleted(applicationSequence.SequenceId, section.SectionId))
                     {
                         <li class="app-task-list__item">
-                            <a class="app-task-list__task_name" asp-action="Section" asp-controller="RoatpApplication" asp-route-applicationId="@(section.ApplicationId)" asp-route-sequenceId="@(section.SequenceId)" asp-route-sectionId="@(section.SectionId)">
+                            <a class="app-task-list__task-name" asp-action="Section" asp-controller="RoatpApplication" asp-route-applicationId="@(section.ApplicationId)" asp-route-sequenceId="@(section.SequenceId)" asp-route-sectionId="@(section.SectionId)">
                                 @Html.Raw(section.Title)
                             </a>
                             <strong class="govuk-tag app-task-list__task-@Model.FinishCss(section.SectionId)" id="completed"> @Model.FinishSectionStatus(section.SectionId)</strong>
@@ -45,7 +45,7 @@
             @if (Model.ApplicationSequencesCompleted() && Model.PreviousSectionCompleted(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.SubmitApplication)) 
             {
                 <li class="app-task-list__item">
-                    <a class="app-task-list__task_name" asp-action="SubmitApplication" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">
+                    <a class="app-task-list__task-name" asp-action="SubmitApplication" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">
                         Submit application
                     </a>
                     @{
