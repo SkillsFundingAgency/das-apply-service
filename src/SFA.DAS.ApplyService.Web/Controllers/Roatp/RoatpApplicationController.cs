@@ -251,12 +251,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("TaskList", new { applicationId });
             }
 
-            var sequences = await _qnaApiClient.GetSequences(applicationId);
-            var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
-            var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
-            var selectedSection = sections.Single(x => x.SectionId == sectionId);
-
-            var section = await _qnaApiClient.GetSection(applicationId, selectedSection.Id);
+            var section = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
 
             if (sequenceId == RoatpWorkflowSequenceIds.YourOrganisation && sectionId == RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails)
             {
@@ -265,7 +260,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (section?.DisplayType == SectionDisplayType.PagesWithSections)
             {
-                var applicationSection = _pagesWithSectionsFlowService.ProcessPagesInSectionsForStatusText(selectedSection);
+                var applicationSection = _pagesWithSectionsFlowService.ProcessPagesInSectionsForStatusText(section); 
                 return View("~/Views/Application/PagesWithSections.cshtml", applicationSection);
             }
 
@@ -285,14 +280,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             _pageNavigationTrackingService.AddPageToNavigationStack(pageId);
 
-            var sequences = await _qnaApiClient.GetSequences(applicationId);
-            var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
-            var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
-            var selectedSection = sections.Single(x => x.SectionId == sectionId);
+            var selectedSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
+
             var sectionTitle = selectedSection.LinkTitle;
 
-            var sequence = await _qnaApiClient.GetSequence(applicationId, selectedSequence.Id);
-            
             PageViewModel viewModel = null;
             var returnUrl = Request.Headers["Referer"].ToString();
 
@@ -406,12 +397,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             _pageNavigationTrackingService.AddPageToNavigationStack(pageId);
 
-            var sequences = await _qnaApiClient.GetSequences(applicationId);
-            var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
-            var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
-            var selectedSection = sections.Single(x => x.SectionId == sectionId);
-
-            var sequence = await _qnaApiClient.GetSequence(applicationId, selectedSequence.Id);
+            var selectedSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
 
             PageViewModel viewModel = null;
             var returnUrl = Request.Headers["Referer"].ToString();
@@ -465,8 +451,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                         return RedirectToAction("Page", new
                         {
-                            applicationId,
-                            sequenceId = selectedSequence.SequenceId,
+                            applicationId,               
+                            sequenceId = vm.SequenceId, 
                             sectionId = selectedSection.SectionId,
                             pageId = nextActionResult.NextActionId,
                             redirectAction
@@ -717,10 +703,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         
         private async Task<IActionResult> SaveAnswersGiven(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, string __formAction)
         {
-            var sequences = await _qnaApiClient.GetSequences(applicationId);
-            var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
-            var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
-            var selectedSection = sections.Single(x => x.SectionId == sectionId);
+            var selectedSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
 
             var page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
 
@@ -799,8 +782,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             if (validationPassed)
             {
                 if (__formAction == "Add" && page.AllowMultipleAnswers)
-                {
-                    return RedirectToAction("Page", new {applicationId, sequenceId = selectedSequence.SequenceId,
+                {                                                                                 
+                    return RedirectToAction("Page", new {applicationId, sequenceId = sequenceId, 
                         sectionId = selectedSection.SectionId, pageId = nextActionId, redirectAction});
                 }
 
@@ -810,16 +793,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
 
                 if ("ReturnToSection".Equals(nextAction, StringComparison.InvariantCultureIgnoreCase) && (page.DisplayType==SectionDisplayType.PagesWithSections || page.DisplayType =="OtherPagesInPagesWithSections"))
-                {
-                    return await Section(applicationId, selectedSequence.SequenceId,selectedSection.SectionId);
+                {                                       
+                    return await Section(applicationId, sequenceId, selectedSection.SectionId);
                 }
 
                 if (string.IsNullOrEmpty(nextActionId) || !"NextPage".Equals(nextAction, StringComparison.InvariantCultureIgnoreCase))
                 {
                     return await TaskList(applicationId);
                 }
-        
-                return RedirectToAction("Page", new {applicationId, sequenceId = selectedSequence.SequenceId,
+                                                                                 
+                return RedirectToAction("Page", new {applicationId, sequenceId, 
                     sectionId = selectedSection.SectionId, pageId = nextActionId, redirectAction});                                   
             }
 
