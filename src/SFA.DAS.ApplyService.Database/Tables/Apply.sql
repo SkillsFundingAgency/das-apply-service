@@ -15,7 +15,7 @@
     [UpdatedBy] NVARCHAR(256) NULL, 
     [DeletedAt] DATETIME2 NULL, 
     [DeletedBy] NVARCHAR(256) NULL,
-    [UKPRN] AS JSON_VALUE(ApplyData, '$.ApplyDetails.UKPRN')
+    [UKPRN] AS JSON_VALUE(ApplyData, '$.ApplyDetails.UKPRN') PERSISTED
 )
 GO
 CREATE INDEX [IX_Apply_ApplicationId] ON [Apply] ([ApplicationId])
