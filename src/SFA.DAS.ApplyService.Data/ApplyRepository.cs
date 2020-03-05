@@ -151,7 +151,7 @@ namespace SFA.DAS.ApplyService.Data
                 {
                     return await connection.QuerySingleAsync<Guid>(
                         @"INSERT INTO ApplySnapshots (ApplicationId, SnapshotApplicationId, SnapshotDate, OrganisationId, ApplicationStatus, ApplyData, GatewayReviewStatus, AssessorReviewStatus, FinancialReviewStatus, FinancialGrade)
-                          OUTPUT INSERTED.[NewApplicationId] 
+                          OUTPUT INSERTED.[SnapshotApplicationId] 
                           VALUES (@ApplicationId, @snapshotApplicationId, GETUTCDATE(), @OrganisationId, @ApplicationStatus, @newApplyData, @GatewayReviewStatus, @AssessorReviewStatus, @FinancialReviewStatus, @FinancialGrade)",
                         new
                         {
