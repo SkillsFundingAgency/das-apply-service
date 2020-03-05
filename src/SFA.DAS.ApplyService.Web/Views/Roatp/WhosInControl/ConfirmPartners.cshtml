@@ -48,10 +48,10 @@
                     {
                         <td class="govuk-table__cell">@column</td>
                     }
-                    <td class="govuk-table__cell">
+                    <td class="govuk-table__cell govuk-table__cell--numeric">
                         <a class="govuk-link govuk-link--no-visited-state" asp-action="EditPartner" asp-controller="RoatpWhosInControlApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-index="@index">Change<span class="govuk-visually-hidden"> partner</span></a>
                     </td>
-                    <td class="govuk-table__cell">
+                    <td class="govuk-table__cell govuk-table__cell--numeric">
                         <a class="govuk-link govuk-link--no-visited-state" asp-action="RemovePartner" asp-controller="RoatpWhosInControlApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-index="@index">Remove<span class="govuk-visually-hidden"> partner</span></a>
                     </td>
                 </tr>
