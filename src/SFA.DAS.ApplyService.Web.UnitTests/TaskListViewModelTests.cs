@@ -20,7 +20,8 @@
         private ApplicationSequence _yourApplicationSequence;
         private ApplicationSection _orgDetailsSection1;
         private ApplicationSection _orgDetailsSection2;
-        private Mock<IQnaApiClient> _qnaApiClient;
+        private Mock<IRoatpTaskListWorkflowService> _taskListWorkflowService;
+        private Mock<IRoatpOrganisationVerificationService> _organisationVerificationService;
 
         private const string MainProviderRoute = "1";
         private const string EmployerProviderRoute = "2";
@@ -53,7 +54,8 @@
             _yourApplicationSequence.Sections.Add(_orgDetailsSection1);
             _yourApplicationSequence.Sections.Add(_orgDetailsSection2);
             _applicationSequences.Add(_yourApplicationSequence);
-            _qnaApiClient = new Mock<IQnaApiClient>();
+            _taskListWorkflowService = new Mock<IRoatpTaskListWorkflowService>();
+            _organisationVerificationService = new Mock<IRoatpOrganisationVerificationService>();
         }
 
         [Test]
@@ -99,9 +101,8 @@
                 }
             };
 
-            var model = new TaskListViewModel(_qnaApiClient.Object)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
             {
-                ApplicationId = _applicationId,
                 ApplicationSequences = _applicationSequences,
                 UKPRN = "10001234",
                 OrganisationName = "Org Name"
@@ -167,9 +168,8 @@
                 }
             };
 
-            var model = new TaskListViewModel(_qnaApiClient.Object)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
             {
-                ApplicationId = _applicationId,
                 ApplicationSequences = _applicationSequences,
                 UKPRN = "10001234",
                 OrganisationName = "Org Name"
@@ -246,9 +246,8 @@
                 }
             };
 
-            var model = new TaskListViewModel(_qnaApiClient.Object)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
             {
-                ApplicationId = _applicationId,
                 ApplicationSequences = _applicationSequences,
                 UKPRN = "10001234",
                 OrganisationName = "Org Name"
@@ -360,9 +359,8 @@
             };
             _yourApplicationSequence.Sections.Add(orgDetailsSection3);
 
-            var model = new TaskListViewModel(_qnaApiClient.Object)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
             {
-                ApplicationId = _applicationId,
                 ApplicationSequences = _applicationSequences,
                 UKPRN = "10001234",
                 OrganisationName = "Org Name"
@@ -500,9 +498,8 @@
             criminalComplianceSequence.Sections.Add(criminalIndividualChecksSection);
             _applicationSequences.Add(criminalComplianceSequence);
 
-            var model = new TaskListViewModel(_qnaApiClient.Object)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
             {
-                ApplicationId = _applicationId,
                 ApplicationSequences = _applicationSequences,
                 UKPRN = "10001234",
                 OrganisationName = "Org Name"
@@ -521,13 +518,13 @@
         {
             var model = GetTaskListViewModelWithSectionsUpToWhosInControlCompleted();
 
-            model.VerifiedCompaniesHouse = true;
-            model.VerifiedCharityCommission = false;
-            model.CompaniesHouseDataConfirmed = false;
-            model.CharityCommissionDataConfirmed = false;
-            model.WhosInControlConfirmed = false;
+            //model.VerifiedCompaniesHouse = true;
+            //model.VerifiedCharityCommission = false;
+            //model.CompaniesHouseDataConfirmed = false;
+            //model.CharityCommissionDataConfirmed = false;
+            //model.WhosInControlConfirmed = false;
 
-            model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.Next);
+            model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl).Should().Be(TaskListSectionStatus.Next);
         }
 
         [Test]
@@ -535,13 +532,13 @@
         {
             var model = GetTaskListViewModelWithSectionsUpToWhosInControlCompleted();
 
-            model.VerifiedCompaniesHouse = false;
-            model.VerifiedCharityCommission = true;
-            model.CompaniesHouseDataConfirmed = false;
-            model.CharityCommissionDataConfirmed = false;
-            model.WhosInControlConfirmed = false;
+            //model.VerifiedCompaniesHouse = false;
+            //model.VerifiedCharityCommission = true;
+            //model.CompaniesHouseDataConfirmed = false;
+            //model.CharityCommissionDataConfirmed = false;
+            //model.WhosInControlConfirmed = false;
             
-            model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.Next);
+            model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl).Should().Be(TaskListSectionStatus.Next);
         }
         
         [Test]
@@ -549,13 +546,13 @@
         {
             var model = GetTaskListViewModelWithSectionsUpToWhosInControlCompleted();
             
-            model.VerifiedCompaniesHouse = true;
-            model.VerifiedCharityCommission = false;
-            model.CompaniesHouseDataConfirmed = true;
-            model.CharityCommissionDataConfirmed = false;
-            model.WhosInControlConfirmed = false;
+            //model.VerifiedCompaniesHouse = true;
+            //model.VerifiedCharityCommission = false;
+            //model.CompaniesHouseDataConfirmed = true;
+            //model.CharityCommissionDataConfirmed = false;
+            //model.WhosInControlConfirmed = false;
             
-            model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.Completed);
+            model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl).Should().Be(TaskListSectionStatus.Completed);
         }
 
         [Test]
@@ -563,13 +560,13 @@
         {
             var model = GetTaskListViewModelWithSectionsUpToWhosInControlCompleted();
 
-            model.VerifiedCompaniesHouse = true;
-            model.VerifiedCharityCommission = true;
-            model.CompaniesHouseDataConfirmed = true;
-            model.CharityCommissionDataConfirmed = false;
-            model.WhosInControlConfirmed = false;
+            //model.VerifiedCompaniesHouse = true;
+            //model.VerifiedCharityCommission = true;
+            //model.CompaniesHouseDataConfirmed = true;
+            //model.CharityCommissionDataConfirmed = false;
+            //model.WhosInControlConfirmed = false;
             
-            model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.InProgress);
+            model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl).Should().Be(TaskListSectionStatus.InProgress);
         }
 
         [Test]
@@ -577,13 +574,13 @@
         {
             var model = GetTaskListViewModelWithSectionsUpToWhosInControlCompleted();
 
-            model.VerifiedCompaniesHouse = true;
-            model.VerifiedCharityCommission = true;
-            model.CompaniesHouseDataConfirmed = false;
-            model.CharityCommissionDataConfirmed = true;
-            model.WhosInControlConfirmed = false;
+            //model.VerifiedCompaniesHouse = true;
+            //model.VerifiedCharityCommission = true;
+            //model.CompaniesHouseDataConfirmed = false;
+            //model.CharityCommissionDataConfirmed = true;
+            //model.WhosInControlConfirmed = false;
             
-            model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.InProgress);
+            model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl).Should().Be(TaskListSectionStatus.InProgress);
         }
 
         [Test]
@@ -591,13 +588,13 @@
         {
             var model = GetTaskListViewModelWithSectionsUpToWhosInControlCompleted();
 
-            model.VerifiedCompaniesHouse = true;
-            model.VerifiedCharityCommission = true;
-            model.CompaniesHouseDataConfirmed = true;
-            model.CharityCommissionDataConfirmed = true;
-            model.WhosInControlConfirmed = false;
+            //model.VerifiedCompaniesHouse = true;
+            //model.VerifiedCharityCommission = true;
+            //model.CompaniesHouseDataConfirmed = true;
+            //model.CharityCommissionDataConfirmed = true;
+            //model.WhosInControlConfirmed = false;
             
-            model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.Completed);
+            model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl).Should().Be(TaskListSectionStatus.Completed);
         }
 
         [Test]
@@ -605,13 +602,13 @@
         {
             var model = GetTaskListViewModelWithSectionsUpToWhosInControlCompleted();
 
-            model.VerifiedCompaniesHouse = false;
-            model.VerifiedCharityCommission = false;
-            model.CompaniesHouseDataConfirmed = false;
-            model.CharityCommissionDataConfirmed = false;
-            model.WhosInControlConfirmed = false;
+            //model.VerifiedCompaniesHouse = false;
+            //model.VerifiedCharityCommission = false;
+            //model.CompaniesHouseDataConfirmed = false;
+            //model.CharityCommissionDataConfirmed = false;
+            //model.WhosInControlConfirmed = false;
             
-            model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.Next);
+            model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl).Should().Be(TaskListSectionStatus.Next);
         }
 
         [Test]
@@ -619,13 +616,13 @@
         {
             var model = GetTaskListViewModelWithSectionsUpToWhosInControlCompleted();
 
-            model.VerifiedCompaniesHouse = false;
-            model.VerifiedCharityCommission = false;
-            model.CompaniesHouseDataConfirmed = false;
-            model.CharityCommissionDataConfirmed = false;
-            model.WhosInControlConfirmed = true;
+            //model.VerifiedCompaniesHouse = false;
+            //model.VerifiedCharityCommission = false;
+            //model.CompaniesHouseDataConfirmed = false;
+            //model.CharityCommissionDataConfirmed = false;
+            //model.WhosInControlConfirmed = true;
             
-            model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.Completed);
+            model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl).Should().Be(TaskListSectionStatus.Completed);
         }
 
         [Test]
@@ -695,14 +692,14 @@
                 }
             };
 
-            var model = new TaskListViewModel(_qnaApiClient.Object)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
             {
                 ApplicationSequences = applicationSequences
             };
 
-            var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
+            var status = model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
             status.Should().Be(TaskListSectionStatus.Blank);
-            var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
+            var css = model.CssClass(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
             css.Should().Be("hidden");
         }
 
@@ -774,18 +771,18 @@
                 }
             };
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
 
-            var model = new TaskListViewModel(_qnaApiClient.Object)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
             {
                 ApplicationSequences = applicationSequences
             };
 
-            var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
+            var status = model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
             status.Should().Be(TaskListSectionStatus.Next);
-            var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
+            var css = model.CssClass(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
             css.Should().Be(TaskListSectionStatus.Next.ToLower());
         }
 
@@ -857,18 +854,18 @@
                 }
             };
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
             
-            var model = new TaskListViewModel(_qnaApiClient.Object)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
             {
                 ApplicationSequences = applicationSequences
             };
 
-            var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
+            var status = model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
             status.Should().Be(TaskListSectionStatus.InProgress);
-            var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
+            var css = model.CssClass(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
             css.Should().Be("inprogress");
         }
 
@@ -940,18 +937,18 @@
                 }
             };
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
 
-            var model = new TaskListViewModel(_qnaApiClient.Object)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
             {
                 ApplicationSequences = applicationSequences
             };
 
-            var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
+            var status = model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
             status.Should().Be(TaskListSectionStatus.InProgress);
-            var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
+            var css = model.CssClass(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks);
             css.Should().Be("inprogress");
         }
 
@@ -1038,18 +1035,18 @@
                     }
                 }
             };
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
 
-            var model = new TaskListViewModel(_qnaApiClient.Object)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
             {
                 ApplicationSequences = applicationSequences
             };
 
-            var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
+            var status = model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
             status.Should().Be(TaskListSectionStatus.Next);
-            var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
+            var css = model.CssClass(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
             css.Should().Be("next");
         }
 
@@ -1136,20 +1133,20 @@
                     }
                 }
             };
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
 
-            var model = new TaskListViewModel(_qnaApiClient.Object)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
             {
                 ApplicationSequences = applicationSequences
             };
 
-            var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
+            var status = model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
             status.Should().Be(TaskListSectionStatus.Next);
-            var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
+            var css = model.CssClass(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
             css.Should().Be(TaskListSectionStatus.Next.ToLower());
         }
 
@@ -1237,21 +1234,20 @@
                     }
                 }
             };
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = answerValue });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = answerValue });
 
-            var model = new TaskListViewModel(_qnaApiClient.Object)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
             {
                 ApplicationSequences = applicationSequences
             };
-
-
-            var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
             
-            var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
+            var status = model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
+            
+            var css = model.CssClass(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
            
             if (answerValue.Equals("yes", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -1348,20 +1344,20 @@
                     }
                 }
             };
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
 
-            var model = new TaskListViewModel(_qnaApiClient.Object)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
             {
                 ApplicationSequences = applicationSequences
             };
 
-            var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
+            var status = model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.TermsAndConditions);
             status.Should().Be(TaskListSectionStatus.Next);
-            var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
+            var css = model.CssClass(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.TermsAndConditions);
             css.Should().Be("next");
         }
 
@@ -1464,24 +1460,24 @@
                     }
                 }
             };
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2MainEmployer, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3MainEmployer, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2MainEmployer, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3MainEmployer, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
 
-            var model = new TaskListViewModel(_qnaApiClient.Object)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
             {
                 ApplicationSequences = applicationSequences,
                 ApplicationRouteId = MainProviderRoute
             };
 
-            var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
+            var status = model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.TermsAndConditions);
             status.Should().Be(TaskListSectionStatus.Next);
-            var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
+            var css = model.CssClass(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.TermsAndConditions);
             css.Should().Be("next");
         }
 
@@ -1584,24 +1580,24 @@
                     }
                 }
             };
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2Supporting, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3Supporting, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2Supporting, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3Supporting, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
 
-            var model = new TaskListViewModel(_qnaApiClient.Object)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
             {
                 ApplicationSequences = applicationSequences,
                 ApplicationRouteId = SupportingProviderRoute
             };
 
-            var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
+            var status = model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.TermsAndConditions);
             status.Should().Be(TaskListSectionStatus.NotRequired);
-            var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
+            var css = model.CssClass(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.TermsAndConditions);
             css.Should().Be("notrequired");
         }
 
@@ -1704,24 +1700,24 @@
                     }
                 }
             };
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2Supporting, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3Supporting, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2Supporting, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3Supporting, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
 
-            var model = new TaskListViewModel(_qnaApiClient.Object)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
             {
                 ApplicationSequences = applicationSequences,
                 ApplicationRouteId = SupportingProviderRoute
             };
 
-            var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
+            var status = model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.TermsAndConditions);
             status.Should().Be(TaskListSectionStatus.NotRequired);
-            var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
+            var css = model.CssClass(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.TermsAndConditions);
             css.Should().Be("notrequired");
         }
 
@@ -1824,24 +1820,24 @@
                     }
                 }
             };
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2MainEmployer, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3MainEmployer, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2MainEmployer, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3MainEmployer, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
 
-            var model = new TaskListViewModel(_qnaApiClient.Object)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
             {
                 ApplicationSequences = applicationSequences,
                 ApplicationRouteId = EmployerProviderRoute
             };
 
-            var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
+            var status = model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.TermsAndConditions);
             status.Should().Be(TaskListSectionStatus.Completed);
-            var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.TermsAndConditions);
+            var css = model.CssClass(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.TermsAndConditions);
             css.Should().Be(TaskListSectionStatus.Completed.ToLower());
         }
 
@@ -1944,30 +1940,30 @@
                     }
                 }
             };
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
 
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2Supporting, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
-            _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3Supporting, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2Supporting, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
+            //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3Supporting, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
 
-            var model = new TaskListViewModel(_qnaApiClient.Object)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
             {
                 ApplicationSequences = applicationSequences,
                 ApplicationRouteId = SupportingProviderRoute
             };
 
-            var status = model.FinishSectionStatus(RoatpWorkflowSectionIds.Finish.SubmitApplication);
+            var status = model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.SubmitApplication);
             status.Should().Be(TaskListSectionStatus.Next);
-            var css = model.FinishCss(RoatpWorkflowSectionIds.Finish.SubmitApplication);
+            var css = model.CssClass(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.SubmitApplication);
             css.Should().Be(TaskListSectionStatus.Next.ToLower());
         }
 
         private TaskListViewModel GetTaskListViewModelWithSectionsUpToWhosInControlCompleted()
         {
-            var model = new TaskListViewModel(_qnaApiClient.Object);
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId);
 
             var applicationSequences = new List<ApplicationSequence>();
 

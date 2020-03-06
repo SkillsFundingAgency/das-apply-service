@@ -29,7 +29,7 @@
                             <a class="app-task-list__task_name" href="@Url.Action("Section", "RoatpApplication", new { section.ApplicationId, section.SequenceId, section.SectionId })">
                                 @Html.Raw(section.Title)
                             </a>
-                            <strong class="govuk-tag app-task-list__task-@Model.FinishCss(section.SectionId)" id="completed"> @Model.FinishSectionStatus(section.SectionId)</strong>
+                            <strong class="govuk-tag app-task-list__task-@Model.CssClass(RoatpWorkflowSequenceIds.Finish, section.SectionId)" id="completed"> @Model.SectionStatus(RoatpWorkflowSequenceIds.Finish, section.SectionId)</strong>
                         </li>
                     }
                     else

@@ -53,6 +53,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<ISubmitApplicationConfirmationEmailService> _submitApplicationEmailService;
         private Mock<ITabularDataRepository> _tabularDataRepository;
         private Mock<IPagesWithSectionsFlowService> _pagesWithSectionsFlowService;
+        private Mock<IRoatpTaskListWorkflowService> _roatpTaskListWorkflowService;
+        private Mock<IRoatpOrganisationVerificationService> _roatpOrganisationVerificationService;
 
         [SetUp]
         public void Before_each_test()
@@ -84,14 +86,17 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _roatpApiClient = new Mock<IRoatpApiClient>();
             _submitApplicationEmailService = new Mock<ISubmitApplicationConfirmationEmailService>();
             _tabularDataRepository = new Mock<ITabularDataRepository>();
+            _roatpTaskListWorkflowService = new Mock<IRoatpTaskListWorkflowService>();
+            _roatpOrganisationVerificationService = new Mock<IRoatpOrganisationVerificationService>();
 
             _controller = new RoatpApplicationController(_apiClient.Object, _logger.Object, _sessionService.Object, _configService.Object,
-                                                         _userService.Object, _usersApiClient.Object, _qnaApiClient.Object, _configuration.Object,
+                                                         _userService.Object, _usersApiClient.Object, _qnaApiClient.Object, 
                                                          _processPageFlowService.Object, _pagesWithSectionsFlowService.Object,
                                                          _questionPropertyTokeniser.Object, _pageOverrideConfiguration.Object,
                                                          _pageNavigationTrackingService.Object, _qnaLinks.Object, _customValidatorFactory.Object,
-                                                         _notRequiredOverrides.Object, _roatpApiClient.Object,
-                                                         _submitApplicationEmailService.Object, _tabularDataRepository.Object)
+                                                         _roatpApiClient.Object,
+                                                         _submitApplicationEmailService.Object, _tabularDataRepository.Object,
+                                                         _roatpTaskListWorkflowService.Object, _roatpOrganisationVerificationService.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
