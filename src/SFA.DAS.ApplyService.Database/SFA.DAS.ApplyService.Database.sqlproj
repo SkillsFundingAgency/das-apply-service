@@ -70,6 +70,7 @@
     <Build Include="Tables\Apply.sql" />
     <Build Include="Tables\ApplySnapshots.sql" />
     <Build Include="Tables\WhitelistedProviders.sql" />
+    <Build Include="Tables\GatewayAnswer.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
@@ -79,5 +80,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SFA.DAS.ApplyService.Database.publish.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="SFA.DAS.ApplyService.Database.refactorlog" />
   </ItemGroup>
 </Project>

@@ -183,12 +183,12 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                     return TaskListSectionStatus.NotRequired;
                 }
 
-                if (string.IsNullOrWhiteSpace(conditionsOfAcceptance2?.Value) /*&& String.IsNullOrWhiteSpace(conditionsOfAcceptance3?.Value)*/)
+                if (string.IsNullOrWhiteSpace(conditionsOfAcceptance2?.Value) /*&& String.IsNullOrWhiteSpace(conditionsOfAcceptance3?.Status)*/)
                 {
                     return TaskListSectionStatus.Next;
                 }
 
-                if (conditionsOfAcceptance2?.Value == ConfirmedAnswer /*&& conditionsOfAcceptance3?.Value == ConfirmedAnswer*/)
+                if (conditionsOfAcceptance2?.Value == ConfirmedAnswer /*&& conditionsOfAcceptance3?.Status == ConfirmedAnswer*/)
                 {
                     return TaskListSectionStatus.Completed;
                 }

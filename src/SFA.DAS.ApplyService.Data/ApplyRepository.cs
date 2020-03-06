@@ -26,11 +26,11 @@ namespace SFA.DAS.ApplyService.Data
             _config = configurationService.GetConfig().Result;
 
             SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
-
             SqlMapper.AddTypeHandler(typeof(OrganisationDetails), new OrganisationDetailsHandler());
             SqlMapper.AddTypeHandler(typeof(QnAData), new QnADataHandler());
             SqlMapper.AddTypeHandler(typeof(ApplicationData), new ApplicationDataHandler());
             SqlMapper.AddTypeHandler(typeof(FinancialApplicationGrade), new FinancialApplicationGradeDataHandler());
+            SqlMapper.AddTypeHandler(typeof(GatewayPageData), new GatewayPageDataHandler());
         }
 
 
@@ -80,6 +80,55 @@ namespace SFA.DAS.ApplyService.Data
                                                     INNER JOIN Apply a ON a.OrganisationId = c.ApplyOrganisationID
                                                     WHERE c.Id = @userId", new { userId })).ToList();
             }
+        }
+
+        public async Task<List<GatewayPageAnswer>> GetGatewayPageAnswers(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<Domain.Entities.GatewayPageAnswer>(@"SELECT * from GatewayAnswer
+                                                    WHERE applicationId = @applicationId", new { applicationId })).ToList();
+            }
+        }
+
+        public async Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId)
+        {
+
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QuerySingleOrDefaultAsync<GatewayPageAnswer>(@"SELECT * from GatewayAnswer
+                                                    WHERE applicationId = @applicationId and pageid = @pageId",
+                    new {applicationId, pageId}));
+            }
+        }
+
+        public async Task<bool> SubmitGatewayPageAnswer(Guid applicationId, string pageId, string value, string submittedBy,
+            GatewayPageData gatewayPageData)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var currentGatewayPage = await GetGatewayPageAnswer(applicationId,pageId);
+
+                var isPagePresent = currentGatewayPage != null;
+                if (isPagePresent)
+                {
+                    await connection.ExecuteAsync(@"UPDATE GatewayAnswer
+                                                SET  Status = @value, GatewayPageData = @gatewayPageData, UpdatedBy = @submittedBy, UpdatedAt = GETUTCDATE() 
+                                                WHERE  ApplicationId = @applicationId and pageId = @pageId",
+                            new {applicationId, pageId, gatewayPageData, value, submittedBy});
+                    
+                }
+                else
+                {
+                    await connection.ExecuteAsync(@"INSERT INTO GatewayAnswer ([ApplicationId],[PageId],[Status],[GatewayPageData],[CreatedAt],[CreatedBy])
+                                                    values (@applicationId, @pageId,@value,@gatewayPageData,GetUTCDATE(),@submittedBy)",
+                        new { applicationId, pageId, gatewayPageData, value, submittedBy });
+
+                }
+
+            }
+
+            return true;
         }
 
         public async Task<bool> CanSubmitApplication(Guid applicationId)
