@@ -16,7 +16,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<Domain.Entities.Apply>> GetUserApplications(Guid userId);
         Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid userId);
 
-        Task<List<Domain.Entities.GatewayPageAnswer>> GetGatewayPageAnswers(Guid applicationId);
+        Task<List<Domain.Entities.GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId);
 
         Task<Domain.Entities.GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId);
 

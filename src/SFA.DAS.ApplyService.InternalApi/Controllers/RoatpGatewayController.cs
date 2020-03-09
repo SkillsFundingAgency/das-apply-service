@@ -38,16 +38,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
          [HttpGet]
          public async Task<ActionResult<GatewayPageAnswer>> GetGatewayPage(Guid applicationId, string pageId)
          {
-             var res = await _applyRepository.GetGatewayPageAnswer(applicationId, pageId);
-             return res;
+             return await _applyRepository.GetGatewayPageAnswer(applicationId, pageId);
          }
 
          [Route("Gateway/Pages")]
          [HttpGet]
-         public async Task<ActionResult<List<GatewayPageAnswer>>> GetGatewayPages(Guid applicationId)
+         public async Task<ActionResult<List<GatewayPageAnswerSummary>>> GetGatewayPages(Guid applicationId)
         {
-             var res = await _applyRepository.GetGatewayPageAnswers(applicationId);
-             return res;
-         }
+            return await _applyRepository.GetGatewayPageAnswers(applicationId);
+        }
     }
 }

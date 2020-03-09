@@ -78,11 +78,11 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<GatewayPageAnswer>> GetGatewayPageAnswers(Guid applicationId)
+        public async Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                return (await connection.QueryAsync<Domain.Entities.GatewayPageAnswer>(@"SELECT * from GatewayAnswer
+                return (await connection.QueryAsync<Domain.Entities.GatewayPageAnswerSummary>(@"SELECT applicationId,pageid,status from GatewayAnswer
                                                     WHERE applicationId = @applicationId", new { applicationId })).ToList();
             }
         }
@@ -113,6 +113,7 @@ namespace SFA.DAS.ApplyService.Data
                                                                     WHERE  ApplicationId = @applicationId and pageId = @pageId",
                             new {applicationId, pageId, gatewayPageData, value, submittedBy});
             }
+
         }
 
         public async Task<bool> CanSubmitApplication(Guid applicationId)

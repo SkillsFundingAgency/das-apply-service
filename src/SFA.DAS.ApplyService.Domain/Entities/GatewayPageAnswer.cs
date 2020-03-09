@@ -18,6 +18,4 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public DateTime? UpdatedAt { get; set; }
         public List<TabularData> Tables { get; set; }
     }
-
-   
 }
