@@ -33,7 +33,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             await _applyRepository.SubmitGatewayPageAnswer(request.ApplicationId, request.PageId, request.Status, request.UserName, request.GatewayPageData);
         }
 
-
          [Route("Gateway/Page")]
          [HttpGet]
          public async Task<ActionResult<GatewayPageAnswer>> GetGatewayPage(Guid applicationId, string pageId)

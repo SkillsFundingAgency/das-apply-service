@@ -105,15 +105,13 @@ namespace SFA.DAS.ApplyService.Data
             {
                 await connection.ExecuteAsync(@"IF NOT EXISTS (select * from GatewayAnswer where applicationId = @applicationId and pageId = @pageId)
 	                                                        INSERT INTO GatewayAnswer ([ApplicationId],[PageId],[Status],[GatewayPageData],[CreatedAt],[CreatedBy])
-														                                                        values (@applicationId, @pageId,@value,@gatewayPageData,GetUTCDATE(),@submittedBy)
-
+														         values (@applicationId, @pageId,@value,@gatewayPageData,GetUTCDATE(),@submittedBy)
                                                         ELSE
 	                                                        UPDATE GatewayAnswer
                                                                     SET  Status = @value, GatewayPageData = @gatewayPageData, UpdatedBy = @submittedBy, UpdatedAt = GETUTCDATE() 
                                                                     WHERE  ApplicationId = @applicationId and pageId = @pageId",
                             new {applicationId, pageId, gatewayPageData, value, submittedBy});
             }
-
         }
 
         public async Task<bool> CanSubmitApplication(Guid applicationId)
