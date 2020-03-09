@@ -21,3 +21,7 @@ GO
 ALTER TABLE [dbo].GatewayAnswer ADD  DEFAULT (getdate()) FOR [CreatedAt]
 GO
 
+CREATE UNIQUE INDEX GatewayAnswer_pk
+    ON GatewayAnswer (ApplicationId, PageId)INCLUDE (Status);
+GO
+

@@ -16,7 +16,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
             set { JsonValue = value; }
         }
 
-        [JsonProperty(PropertyName = "Status")]
+        [JsonProperty(PropertyName = "Value")]
         public dynamic JsonValue { get; set; }
 
         public bool HasValue(Regex inputEntered)
