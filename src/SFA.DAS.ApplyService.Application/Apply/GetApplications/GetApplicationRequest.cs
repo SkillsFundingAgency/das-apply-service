@@ -1,5 +1,6 @@
 using System;
 using MediatR;
+using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.Application.Apply.GetApplications
 {

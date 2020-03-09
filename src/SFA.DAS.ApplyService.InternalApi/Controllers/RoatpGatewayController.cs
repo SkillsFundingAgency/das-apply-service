@@ -28,9 +28,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
         [Route("Gateway/Page/Submit")]
         [HttpPost()]
-         public async Task<ActionResult<bool>> GatewayPageSubmit([FromBody] UpsertGatewayPageAnswerRequest request)
+         public async Task GatewayPageSubmit([FromBody] UpsertGatewayPageAnswerRequest request)
         {
-            return await _applyRepository.SubmitGatewayPageAnswer(request.ApplicationId, request.PageId, request.Status, request.UserName, request.GatewayPageData);
+            await _applyRepository.SubmitGatewayPageAnswer(request.ApplicationId, request.PageId, request.Status, request.UserName, request.GatewayPageData);
         }
 
 

@@ -9,7 +9,10 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public Guid OrganisationId { get; set; }
         public string ApplicationStatus { get; set; }
         public string AssessorReviewStatus { get; set; }
+        public string GatewayReviewStatus { get; set; }
+        public string FinancialReviewStatus { get; set; }
         public ApplyData ApplyData { get; set; }
+        public FinancialReviewDetails FinancialGrade { get; set; }
     }
 
     public class ApplyData
@@ -26,6 +29,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string OrganisationName { get; set; }
         public string TradingName { get; set; }
         public int ProviderRoute { get; set; } // was string - ApplicationRouteId
+        public string ProviderRouteName { get; set; }
         public DateTime? ApplicationSubmittedOn { get; set; }
         public Guid? ApplicationSubmittedBy { get; set; }
     }
@@ -35,9 +39,9 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public Guid SequenceId { get; set; }
         public int SequenceNo { get; set; }
         public List<ApplySection> Sections { get; set; }
-        //public string Status { get; set; }
-        //public bool IsActive { get; set; }
-        //public bool NotRequired { get; set; }
+        public string Status { get; set; }
+        public bool IsActive { get; set; }
+        public bool NotRequired { get; set; }
         //public bool Sequential { get; set; }
         //public string Description { get; set; }
         //public DateTime? ApprovedDate { get; set; }
@@ -48,12 +52,89 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     {
         public Guid SectionId { get; set; }
         public int SectionNo { get; set; }
-        //public string Status { get; set; }
+        public string Status { get; set; }
         //public DateTime? ReviewStartDate { get; set; }
         //public string ReviewedBy { get; set; }
         //public DateTime? EvaluatedDate { get; set; }
         //public string EvaluatedBy { get; set; }
-        //public bool NotRequired { get; set; }
+        public bool NotRequired { get; set; }
         //public bool? RequestedFeedbackAnswered { get; set; }
+    }
+
+    public class FinancialReviewDetails
+    {
+        public string SelectedGrade { get; set; }
+        public DateTime? FinancialDueDate { get; set; }
+        public string GradedBy { get; set; }
+        public DateTime? GradedDateTime { get; set; }
+        public string Comments { get; set; }
+        public List<FinancialEvidence> FinancialEvidences { get; set; }
+    }
+
+    public class FinancialEvidence
+    {
+        public string Filename { get; set; }
+    }
+  
+    public class ApplicationStatus	
+    {
+        public const string New = "New";
+        public const string InProgress = "In Progress";	
+        public const string Submitted = "Submitted";
+        public const string Resubmitted = "Resubmitted";
+        public const string GatewayAssessed = "GatewayAssessed";	
+        public const string FeedbackAdded = "FeedbackAdded";	
+        public const string Rejected = "Rejected";	
+        public const string Approved = "Approved";	
+        public const string Cancelled = "Cancelled";
+    }
+
+    public static class ApplicationReviewStatus
+    {
+        public const string Draft = "Draft";
+        public const string New = "New";
+        public const string InProgress = "In Progress";
+        public const string HasFeedback = "Has Feedback";
+        public const string Approved = "Approved";
+        public const string Declined = "Declined";
+    }
+
+    public static class GatewayReviewStatus
+    {
+        public const string Draft = "Draft";
+        public const string New = "New";
+        public const string InProgress = "In Progress";
+        public const string Approved = "Approved";
+        public const string Declined = "Declined";
+    }
+
+    public static class AssessorReviewStatus
+    {
+        public const string Draft = "Draft";
+        public const string New = "New";
+        public const string InProgress = "In Progress";
+        public const string HasFeedback = "Has Feedback";
+        public const string Approved = "Approved";
+        public const string Declined = "Declined";
+        public const string NotRequired = "Not Required";
+    }
+
+    public static class FinancialReviewStatus
+    {
+        public const string Draft = "Draft";
+        public const string New = "New";
+        public const string InProgress = "In Progress";
+
+        public const string Approved = "Approved";
+        public const string Declined = "Declined";
+        public const string Clarification = "Clarification";
+        public const string Exempt = "Exempt";
+    }
+
+    public static class SequenceReviewStatus
+    {
+        public const string New = "";
+        public const string InProgress = "In Progress";
+        public const string Evaluated = "Evaluated";
     }
 }

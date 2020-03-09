@@ -176,13 +176,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return RedirectToAction("Applications", new { applicationType });
         }
 
-        private static Application.Apply.Start.StartApplicationRequest BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
+        private Application.Apply.Start.StartApplicationRequest BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
         {
+            var providerRoutes = _roatpApiClient.GetApplicationRoutes().GetAwaiter().GetResult();
+            var selectedProviderRoute = providerRoutes.FirstOrDefault(p => p.Id == providerRoute);
+
             return new Application.Apply.Start.StartApplicationRequest
             {
                 ApplicationId = qnaApplicationId,
                 CreatingContactId = creatingContactId,
                 ProviderRoute = providerRoute,
+                ProviderRouteName = selectedProviderRoute?.RouteName,
                 ApplySequences = qnaSequences.Select(sequence => new ApplySequence
                 {
                     SequenceId = sequence.Id,
@@ -195,10 +199,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         //RequestedFeedbackAnswered = false
                     }).OrderBy(section => section.SectionNo).ToList(),
                     //Status = "Draft",
-                    //IsActive = sequence.IsActive,
-                    //NotRequired = sequence.NotRequired,
+                    //IsActive = sequence.IsActive,                    
                     //Sequential = false
-                }).ToList()
+                }).OrderBy(sequence => sequence.SequenceNo).ToList()
             };
         }
 
@@ -892,10 +895,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             List<Answer> answers = new List<Answer>();
 
             // These are special in that they drive other things and thus should not be deemed as an answer
-            var exludedInputs = new List<string> { "postcodeSearch", "checkAll" };
+            var excludedInputs = new List<string> { "postcodeSearch", "checkAll", "ApplicationId", "RedirectAction" };
 
             // Add answers from the Form post
-            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__") && !exludedInputs.Contains(f.Key, StringComparer.InvariantCultureIgnoreCase)))
+            foreach (var keyValuePair in HttpContext.Request.Form.Where(f => !f.Key.StartsWith("__") && !excludedInputs.Contains(f.Key, StringComparer.InvariantCultureIgnoreCase)))
             {
                 answers.Add(new Answer() { QuestionId = keyValuePair.Key, Value = keyValuePair.Value });
             }
@@ -1098,7 +1101,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var submitApplicationRequest = new Application.Apply.Submit.SubmitApplicationRequest
             {
                 ApplicationId = applicationId,
-                ProviderRoute = int.Parse(providerRoute.Value),
+                ProviderRoute = Convert.ToInt32(providerRoute.Value),
                 SubmittingContactId = User.GetUserId()
             };
 
@@ -1264,11 +1267,37 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
             var providerRoute = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.ProviderRoute);
 
+            var application = await _apiClient.GetApplication(model.ApplicationId);
+
+            var roatpSequences = await _apiClient.GetRoatpSequences();
+
+            foreach (var sequence in application.ApplyData.Sequences)
+            {
+                var applicationSequence = await _qnaApiClient.GetSequenceBySequenceNo(model.ApplicationId, sequence.SequenceNo);
+                var sections = await _qnaApiClient.GetSections(model.ApplicationId, applicationSequence.Id);
+                applicationSequence.Sections = sections.ToList();
+                foreach(var section in sections)
+                {
+                    var applySection = sequence.Sections.FirstOrDefault(x => x.SectionNo == section.SectionId);
+                    if (applySection != null)
+                    {
+                        applySection.NotRequired = await SectionNotRequired(applicationSequence, _notRequiredOverrides, section.SectionId, roatpSequences);
+                    }
+                }
+                
+                applicationSequence.Sections = sections.ToList();
+                sequence.NotRequired = SequenceNotRequired(applicationSequence, _notRequiredOverrides);
+            }
+            var providerRoutes = _roatpApiClient.GetApplicationRoutes().GetAwaiter().GetResult();
+            var selectedProviderRoute = providerRoutes.FirstOrDefault(p => p.Id.ToString() == providerRoute.Value);
+
             var submitApplicationRequest = new Application.Apply.Submit.SubmitApplicationRequest
             {
                 ApplicationId = model.ApplicationId,
-                ProviderRoute = int.Parse(providerRoute.Value),
-                SubmittingContactId = User.GetUserId()
+                ProviderRoute = Convert.ToInt32(providerRoute.Value),
+                ProviderRouteName = selectedProviderRoute?.RouteName,
+                SubmittingContactId = User.GetUserId(),
+                ApplyData = application.ApplyData
             };
 
             var submitResult = await _apiClient.SubmitApplication(submitApplicationRequest);
@@ -1414,6 +1443,48 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return result;
+        }
+
+        private static bool SequenceNotRequired(ApplicationSequence sequence, List<NotRequiredOverrideConfiguration> notRequiredOverrides)
+        {
+            var sectionCount = sequence.Sections.Count;
+            var notRequiredCount = 0;
+            var sequences = new List<ApplicationSequence>
+            {
+                sequence
+            };
+
+            foreach(var section in sequence.Sections)
+            {
+                if (RoatpTaskListWorkflowService.SectionStatus(sequences, notRequiredOverrides, sequence.SequenceId, section.SectionId) == TaskListSectionStatus.NotRequired) 
+                {
+                    notRequiredCount++;
+                }
+            }
+
+            return (sectionCount == notRequiredCount);
+        }
+
+        private async Task<bool> SectionNotRequired(ApplicationSequence sequence, List<NotRequiredOverrideConfiguration> notRequiredOverrides, 
+                                                    int sectionId, IEnumerable<RoatpSequences> roatpSequences)
+        {
+            var sequences = new List<ApplicationSequence>
+            {
+                sequence
+            };
+
+            if (RoatpTaskListWorkflowService.SectionStatus(sequences, notRequiredOverrides, sequence.SequenceId, sectionId) == TaskListSectionStatus.NotRequired)
+            {
+                return true;
+            }
+
+            var currentSequence = roatpSequences.FirstOrDefault(x => x.Id == sequence.SequenceId);
+            if (currentSequence?.ExcludeSections != null && currentSequence.ExcludeSections.Contains(sectionId.ToString()))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

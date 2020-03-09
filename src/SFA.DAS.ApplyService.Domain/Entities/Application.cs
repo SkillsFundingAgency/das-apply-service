@@ -25,16 +25,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string UserEmail { get; set; }
     }
     
-    public class ApplicationStatus
-    {
-        public const string InProgress = "In Progress";
-        public const string Submitted = "Submitted";
-        public const string FeedbackAdded = "FeedbackAdded";
-        public const string Rejected = "Rejected";
-        public const string Approved = "Approved";
-        public const string Cancelled = "Cancelled";
-    }
-
     public class ApplicationData
     {
         public string ReferenceNumber { get; set; }
