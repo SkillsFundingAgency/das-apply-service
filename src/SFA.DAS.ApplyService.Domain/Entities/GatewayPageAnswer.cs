@@ -11,7 +11,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public Guid ApplicationId { get; set; }
         public string PageId { get; set; }
         public string Status { get; set; }
-        public GatewayPageData GatewayPageData { get; set; }
+        public string GatewayPageData { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? CreatedAt{ get; set; }
         public string UpdatedBy { get; set; }
@@ -19,8 +19,5 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public List<TabularData> Tables { get; set; }
     }
 
-    public class GatewayPageData
-    {
-        public Dictionary<string, string> FieldValues { get; set; }
-    }
+   
 }

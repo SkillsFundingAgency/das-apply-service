@@ -21,7 +21,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<Domain.Entities.GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId);
 
         Task<bool> SubmitGatewayPageAnswer(Guid applicationId, string pageId, string value, string userid,
-            GatewayPageData gatewayPageData);
+            string gatewayPageData);
         Task<bool> CanSubmitApplication(Guid applicationId);
         Task SubmitApplication(Guid applicationId, ApplyData applyData, Guid submittedBy);
 

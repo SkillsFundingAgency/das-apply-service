@@ -30,7 +30,6 @@ namespace SFA.DAS.ApplyService.Data
             SqlMapper.AddTypeHandler(typeof(QnAData), new QnADataHandler());
             SqlMapper.AddTypeHandler(typeof(ApplicationData), new ApplicationDataHandler());
             SqlMapper.AddTypeHandler(typeof(FinancialApplicationGrade), new FinancialApplicationGradeDataHandler());
-            SqlMapper.AddTypeHandler(typeof(GatewayPageData), new GatewayPageDataHandler());
         }
 
 
@@ -103,7 +102,7 @@ namespace SFA.DAS.ApplyService.Data
         }
 
         public async Task<bool> SubmitGatewayPageAnswer(Guid applicationId, string pageId, string value, string submittedBy,
-            GatewayPageData gatewayPageData)
+            string gatewayPageData)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
