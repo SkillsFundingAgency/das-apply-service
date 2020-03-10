@@ -101,7 +101,7 @@
                 }
             };
 
-            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, new Domain.Roatp.OrganisationVerificationStatus(), _applicationId)
             {
                 ApplicationSequences = _applicationSequences,
                 UKPRN = "10001234",
@@ -168,7 +168,7 @@
                 }
             };
 
-            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, new Domain.Roatp.OrganisationVerificationStatus(), _applicationId)
             {
                 ApplicationSequences = _applicationSequences,
                 UKPRN = "10001234",
@@ -246,7 +246,7 @@
                 }
             };
 
-            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, new Domain.Roatp.OrganisationVerificationStatus(), _applicationId)
             {
                 ApplicationSequences = _applicationSequences,
                 UKPRN = "10001234",
@@ -359,7 +359,7 @@
             };
             _yourApplicationSequence.Sections.Add(orgDetailsSection3);
 
-            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, new Domain.Roatp.OrganisationVerificationStatus(), _applicationId)
             {
                 ApplicationSequences = _applicationSequences,
                 UKPRN = "10001234",
@@ -498,7 +498,7 @@
             criminalComplianceSequence.Sections.Add(criminalIndividualChecksSection);
             _applicationSequences.Add(criminalComplianceSequence);
 
-            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, new Domain.Roatp.OrganisationVerificationStatus(), _applicationId)
             {
                 ApplicationSequences = _applicationSequences,
                 UKPRN = "10001234",
@@ -692,7 +692,7 @@
                 }
             };
 
-            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, new Domain.Roatp.OrganisationVerificationStatus(), _applicationId)
             {
                 ApplicationSequences = applicationSequences
             };
@@ -775,7 +775,7 @@
             //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
             //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
 
-            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, new Domain.Roatp.OrganisationVerificationStatus(), _applicationId)
             {
                 ApplicationSequences = applicationSequences
             };
@@ -858,7 +858,7 @@
             //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
             //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
             
-            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, new Domain.Roatp.OrganisationVerificationStatus(), _applicationId)
             {
                 ApplicationSequences = applicationSequences
             };
@@ -941,7 +941,7 @@
             //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
             //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
 
-            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, new Domain.Roatp.OrganisationVerificationStatus(), _applicationId)
             {
                 ApplicationSequences = applicationSequences
             };
@@ -1039,7 +1039,7 @@
             //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
             //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
 
-            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, new Domain.Roatp.OrganisationVerificationStatus(), _applicationId)
             {
                 ApplicationSequences = applicationSequences
             };
@@ -1139,7 +1139,7 @@
 
             //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
 
-            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, new Domain.Roatp.OrganisationVerificationStatus(), _applicationId)
             {
                 ApplicationSequences = applicationSequences
             };
@@ -1240,7 +1240,7 @@
 
             //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = answerValue });
 
-            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, new Domain.Roatp.OrganisationVerificationStatus(), _applicationId)
             {
                 ApplicationSequences = applicationSequences
             };
@@ -1350,7 +1350,7 @@
 
             //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCommercialInConfidence, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
 
-            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, new Domain.Roatp.OrganisationVerificationStatus(), _applicationId)
             {
                 ApplicationSequences = applicationSequences
             };
@@ -1469,7 +1469,7 @@
             //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2MainEmployer, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
             //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3MainEmployer, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
 
-            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, new Domain.Roatp.OrganisationVerificationStatus(), _applicationId)
             {
                 ApplicationSequences = applicationSequences,
                 ApplicationRouteId = MainProviderRoute
@@ -1589,7 +1589,7 @@
             //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2Supporting, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
             //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3Supporting, It.IsAny<string>())).ReturnsAsync(new Answer { Value = null });
 
-            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, new Domain.Roatp.OrganisationVerificationStatus(), _applicationId)
             {
                 ApplicationSequences = applicationSequences,
                 ApplicationRouteId = SupportingProviderRoute
@@ -1709,7 +1709,7 @@
             //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2Supporting, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
             //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3Supporting, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "No" });
 
-            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, new Domain.Roatp.OrganisationVerificationStatus(), _applicationId)
             {
                 ApplicationSequences = applicationSequences,
                 ApplicationRouteId = SupportingProviderRoute
@@ -1829,7 +1829,7 @@
             //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2MainEmployer, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
             //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3MainEmployer, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
 
-            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, new Domain.Roatp.OrganisationVerificationStatus(), _applicationId)
             {
                 ApplicationSequences = applicationSequences,
                 ApplicationRouteId = EmployerProviderRoute
@@ -1949,7 +1949,7 @@
             //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA2Supporting, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
             //_qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.FinishCOA3Supporting, It.IsAny<string>())).ReturnsAsync(new Answer { Value = "Yes" });
 
-            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId)
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, new Domain.Roatp.OrganisationVerificationStatus(), _applicationId)
             {
                 ApplicationSequences = applicationSequences,
                 ApplicationRouteId = SupportingProviderRoute
@@ -1963,7 +1963,7 @@
 
         private TaskListViewModel GetTaskListViewModelWithSectionsUpToWhosInControlCompleted()
         {
-            var model = new TaskListViewModel(_taskListWorkflowService.Object, _organisationVerificationService.Object, _applicationId);
+            var model = new TaskListViewModel(_taskListWorkflowService.Object, new Domain.Roatp.OrganisationVerificationStatus(), _applicationId);
 
             var applicationSequences = new List<ApplicationSequence>();
 

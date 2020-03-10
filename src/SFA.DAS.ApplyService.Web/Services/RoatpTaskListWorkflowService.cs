@@ -7,6 +7,7 @@ using MoreLinq;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Web.Configuration;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
@@ -31,18 +32,18 @@ namespace SFA.DAS.ApplyService.Web.Services
             _configuration = configuration.Value;
         }
 
-        public string SectionStatus(Guid applicationId, int sequenceId, int sectionId, List<ApplicationSequence> applicationSequences)
+        public string SectionStatus(Guid applicationId, int sequenceId, int sectionId, List<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
         {        
             
             if (sequenceId == RoatpWorkflowSequenceIds.YourOrganisation
                 && sectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl)
             {
-                return WhosInControlSectionStatus(applicationId, applicationSequences);
+                return WhosInControlSectionStatus(applicationId, applicationSequences, organisationVerificationStatus);
             }
 
             if (sequenceId == RoatpWorkflowSequenceIds.Finish)
             {
-                return FinishSectionStatus(applicationId, sectionId, applicationSequences);
+                return FinishSectionStatus(applicationId, sectionId, applicationSequences, organisationVerificationStatus);
             }
 
             var sequence = applicationSequences?.FirstOrDefault(x => (int)x.SequenceId == sequenceId);
@@ -64,7 +65,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 return TaskListSectionStatus.NotRequired;
             }
 
-            if (!PreviousSectionCompleted(applicationId, sequence.SequenceId, sectionId, applicationSequences))
+            if (!PreviousSectionCompleted(applicationId, sequence.SequenceId, sectionId, applicationSequences, organisationVerificationStatus))
             {
                 return string.Empty;
             }
@@ -76,7 +77,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             return sectionText;
         }
 
-        public bool PreviousSectionCompleted(Guid applicationId, int sequenceId, int sectionId, List<ApplicationSequence> applicationSequences)
+        public bool PreviousSectionCompleted(Guid applicationId, int sequenceId, int sectionId, List<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
         {
             var sequence = applicationSequences.FirstOrDefault(x => x.SequenceId == sequenceId);
 
@@ -90,32 +91,32 @@ namespace SFA.DAS.ApplyService.Web.Services
                         }
                     case RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails:
                         {
-                            return (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed, applicationSequences)
+                            return (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed, applicationSequences, organisationVerificationStatus)
                                     == TaskListSectionStatus.Completed);
                         }
                     case RoatpWorkflowSectionIds.YourOrganisation.WhosInControl:
                         {
-                            return (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed, applicationSequences)
+                            return (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed, applicationSequences, organisationVerificationStatus)
                                     == TaskListSectionStatus.Completed)
-                                    && (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails, applicationSequences)
+                                    && (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails, applicationSequences, organisationVerificationStatus)
                                     == TaskListSectionStatus.Completed);
                         }
                     case RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation:
                         {
-                            return (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed, applicationSequences)
+                            return (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed, applicationSequences, organisationVerificationStatus)
                                     == TaskListSectionStatus.Completed)
-                                    && (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails, applicationSequences)
+                                    && (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails, applicationSequences, organisationVerificationStatus)
                                     == TaskListSectionStatus.Completed)
-                                    && (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, applicationSequences) == TaskListSectionStatus.Completed);
+                                    && (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, applicationSequences, organisationVerificationStatus) == TaskListSectionStatus.Completed);
                         }
                     case RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations:
                         {
-                            return (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed, applicationSequences)
+                            return (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed, applicationSequences, organisationVerificationStatus)
                                     == TaskListSectionStatus.Completed)
-                                    && (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails, applicationSequences)
+                                    && (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails, applicationSequences, organisationVerificationStatus)
                                     == TaskListSectionStatus.Completed)
-                                    && (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, applicationSequences) == TaskListSectionStatus.Completed)
-                                    && (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation, applicationSequences)
+                                    && (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, applicationSequences, organisationVerificationStatus) == TaskListSectionStatus.Completed)
+                                    && (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation, applicationSequences, organisationVerificationStatus)
                                     == TaskListSectionStatus.Completed);
                         }
                 }
@@ -127,7 +128,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 {
                     return true;
                 }
-                var previousSectionStatus = SectionStatus(applicationId, sequenceId, sectionId - 1, applicationSequences); 
+                var previousSectionStatus = SectionStatus(applicationId, sequenceId, sectionId - 1, applicationSequences, organisationVerificationStatus); 
                 
                 return (previousSectionStatus == TaskListSectionStatus.Completed ||  previousSectionStatus == TaskListSectionStatus.NotRequired);
             }
@@ -238,15 +239,13 @@ namespace SFA.DAS.ApplyService.Web.Services
         }
 
 
-        private string WhosInControlSectionStatus(Guid applicationId, List<ApplicationSequence> applicationSequences)
+        private string WhosInControlSectionStatus(Guid applicationId, List<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
         {
             
-                if (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails, applicationSequences) == TaskListSectionStatus.Blank)
+                if (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails, applicationSequences, organisationVerificationStatus) == TaskListSectionStatus.Blank)
                 {
                     return TaskListSectionStatus.Blank;
                 }
-
-                var organisationVerificationStatus = _organisationVerificationService.GetOrganisationVerificationStatus(applicationId).GetAwaiter().GetResult();
 
                 if (organisationVerificationStatus.VerifiedCompaniesHouse
                     && organisationVerificationStatus.VerifiedCharityCommission)
@@ -292,9 +291,9 @@ namespace SFA.DAS.ApplyService.Web.Services
             
         }
         
-        private string FinishSectionStatus(Guid applicationId, int sectionId, List<ApplicationSequence> applicationSequences)
+        private string FinishSectionStatus(Guid applicationId, int sectionId, List<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
         {
-            if (!ApplicationSequencesCompleted(applicationId, applicationSequences))
+            if (!ApplicationSequencesCompleted(applicationId, applicationSequences, organisationVerificationStatus))
             {
                 return TaskListSectionStatus.Blank;
             }
@@ -384,14 +383,14 @@ namespace SFA.DAS.ApplyService.Web.Services
             return TaskListSectionStatus.Next;
         }
 
-        public bool ApplicationSequencesCompleted(Guid applicationId, List<ApplicationSequence> applicationSequences)
+        public bool ApplicationSequencesCompleted(Guid applicationId, List<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
         {
             var nonFinishSequences = applicationSequences.Where(seq => seq.SequenceId != RoatpWorkflowSequenceIds.Finish);
             foreach (var sequence in nonFinishSequences)
             {
                 foreach (var section in sequence.Sections)
                 {
-                    var sectionStatus = SectionStatus(applicationId, sequence.SequenceId, section.SectionId, applicationSequences);
+                    var sectionStatus = SectionStatus(applicationId, sequence.SequenceId, section.SectionId, applicationSequences, organisationVerificationStatus);
                     if (sectionStatus != TaskListSectionStatus.NotRequired && sectionStatus != TaskListSectionStatus.Completed)
                     {
                         return false;

@@ -6,6 +6,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
     using System.Linq;
     using Domain.Entities;
     using SFA.DAS.ApplyService.Application.Apply.Roatp;
+    using SFA.DAS.ApplyService.Domain.Roatp;
     using SFA.DAS.ApplyService.Web.Configuration;
     using SFA.DAS.ApplyService.Web.Services;
 
@@ -21,37 +22,39 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string EmployerApplicationRouteId => "2";
 
         public List<ApplicationSequence> ApplicationSequences { get; set; }
+
+        public OrganisationVerificationStatus OrganisationVerificationStatus { get; set; }
         
-        public TaskListViewModel(IRoatpTaskListWorkflowService taskListWorkflowService, 
-                                 IRoatpOrganisationVerificationService organisationVerificationService,
+        public TaskListViewModel(IRoatpTaskListWorkflowService taskListWorkflowService,
+                                 OrganisationVerificationStatus organisationVerificationStatus,
                                  Guid applicationId)
         {
             _taskListWorkflowService = taskListWorkflowService;
-            _organisationVerificationService = organisationVerificationService;
+            OrganisationVerificationStatus = organisationVerificationStatus;
             ApplicationId = applicationId;
             ApplicationSequences = _taskListWorkflowService.GetApplicationSequences(ApplicationId);
         }
 
         public string CssClass(int sequenceId, int sectionId)
         {
-            var status = _taskListWorkflowService.SectionStatus(ApplicationId, sequenceId, sectionId, ApplicationSequences);
+            var status = _taskListWorkflowService.SectionStatus(ApplicationId, sequenceId, sectionId, ApplicationSequences, OrganisationVerificationStatus);
 
             return ConvertTaskListSectionStatusToCssClass(status);
         }
 
         public string SectionStatus(int sequenceId, int sectionId)
         {
-            return _taskListWorkflowService.SectionStatus(ApplicationId, sequenceId, sectionId, ApplicationSequences);
+            return _taskListWorkflowService.SectionStatus(ApplicationId, sequenceId, sectionId, ApplicationSequences, OrganisationVerificationStatus);
         }
 
         public bool PreviousSectionCompleted(int sequenceId, int sectionId)
         {                      
-            return _taskListWorkflowService.PreviousSectionCompleted(ApplicationId, sequenceId, sectionId, ApplicationSequences);
+            return _taskListWorkflowService.PreviousSectionCompleted(ApplicationId, sequenceId, sectionId, ApplicationSequences, OrganisationVerificationStatus);
         }
 
         public bool ApplicationSequencesCompleted()
         {
-            return _taskListWorkflowService.ApplicationSequencesCompleted(ApplicationId, ApplicationSequences);
+            return _taskListWorkflowService.ApplicationSequencesCompleted(ApplicationId, ApplicationSequences, OrganisationVerificationStatus);
         }
 
         public bool IntroductionPageNextSectionUnavailable(int sequenceId, int sectionId)
@@ -64,7 +67,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
                 foreach(var section in yourOrganisationSequence.Sections)
                 {
-                    var sectionStatus = _taskListWorkflowService.SectionStatus(ApplicationId, RoatpWorkflowSequenceIds.YourOrganisation, section.SectionId, ApplicationSequences);
+                    var sectionStatus = _taskListWorkflowService.SectionStatus(ApplicationId, RoatpWorkflowSequenceIds.YourOrganisation, section.SectionId, ApplicationSequences, OrganisationVerificationStatus);
                     if (sectionStatus != TaskListSectionStatus.Completed)
                     {
                         return true;
@@ -98,21 +101,20 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             get
             {
                 var whosInControlStartPageId = RoatpWorkflowPageIds.WhosInControl.SoleTraderPartnership;
-                var organisationVerificationStatus = _organisationVerificationService.GetOrganisationVerificationStatus(ApplicationId).GetAwaiter().GetResult();
-                if (organisationVerificationStatus.VerifiedCompaniesHouse)
+                if (OrganisationVerificationStatus.VerifiedCompaniesHouse)
                 {
                     whosInControlStartPageId = RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage;
-                    if (organisationVerificationStatus.CompaniesHouseManualEntry)
+                    if (OrganisationVerificationStatus.CompaniesHouseManualEntry)
                     {
                         whosInControlStartPageId = RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl;
                     }
                 }
                 else
                 {
-                    if (organisationVerificationStatus.VerifiedCharityCommission)
+                    if (OrganisationVerificationStatus.VerifiedCharityCommission)
                     {
                         whosInControlStartPageId = RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage;
-                        if (organisationVerificationStatus.CharityCommissionManualEntry)
+                        if (OrganisationVerificationStatus.CharityCommissionManualEntry)
                         {
                             whosInControlStartPageId = RoatpWorkflowPageIds.WhosInControl.CharityCommissionNoTrustees;
                         }

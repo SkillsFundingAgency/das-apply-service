@@ -489,7 +489,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
             var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
 
-            var model = new TaskListViewModel(_roatpTaskListWorkflowService, _organisationVerificationService, applicationId)
+            var organisationVerificationStatus = await _organisationVerificationService.GetOrganisationVerificationStatus(applicationId);
+
+            var model = new TaskListViewModel(_roatpTaskListWorkflowService, organisationVerificationStatus, applicationId)
             {
                 UKPRN = organisationDetails.OrganisationUkprn?.ToString(),
                 OrganisationName = organisationDetails.Name,
