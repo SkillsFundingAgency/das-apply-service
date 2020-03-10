@@ -1018,7 +1018,7 @@
                         },
                         new ApplicationSection
                         {
-                            SectionId = RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation,
+                            SectionId = RoatpWorkflowSectionIds.Finish.QualityStatement,
                             QnAData = new QnAData
                             {
                                 Pages = new List<Page>
@@ -1044,9 +1044,9 @@
                 ApplicationSequences = applicationSequences
             };
 
-            var status = model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
+            var status = model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.QualityStatement);
             status.Should().Be(TaskListSectionStatus.Next);
-            var css = model.CssClass(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
+            var css = model.CssClass(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.QualityStatement);
             css.Should().Be("next");
         }
 
@@ -1116,7 +1116,7 @@
                         },
                         new ApplicationSection
                         {
-                            SectionId = RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation,
+                            SectionId = RoatpWorkflowSectionIds.Finish.QualityStatement,
                             QnAData = new QnAData
                             {
                                 Pages = new List<Page>
@@ -1144,9 +1144,9 @@
                 ApplicationSequences = applicationSequences
             };
 
-            var status = model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
+            var status = model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.QualityStatement);
             status.Should().Be(TaskListSectionStatus.Next);
-            var css = model.CssClass(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
+            var css = model.CssClass(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.QualityStatement);
             css.Should().Be(TaskListSectionStatus.Next.ToLower());
         }
 
@@ -1217,7 +1217,7 @@
                         },
                         new ApplicationSection
                         {
-                            SectionId = RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation,
+                            SectionId = RoatpWorkflowSectionIds.Finish.QualityStatement,
                             QnAData = new QnAData
                             {
                                 Pages = new List<Page>
@@ -1245,9 +1245,9 @@
                 ApplicationSequences = applicationSequences
             };
             
-            var status = model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
+            var status = model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.QualityStatement);
             
-            var css = model.CssClass(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation);
+            var css = model.CssClass(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.QualityStatement);
            
             if (answerValue.Equals("yes", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -1327,7 +1327,7 @@
                         },
                         new ApplicationSection
                         {
-                            SectionId = RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation,
+                            SectionId = RoatpWorkflowSectionIds.Finish.QualityStatement,
                             QnAData = new QnAData
                             {
                                 Pages = new List<Page>
@@ -1427,7 +1427,7 @@
                         },
                         new ApplicationSection
                         {
-                            SectionId = RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation,
+                            SectionId = RoatpWorkflowSectionIds.Finish.QualityStatement,
                             QnAData = new QnAData
                             {
                                 Pages = new List<Page>
@@ -1547,7 +1547,7 @@
                         },
                         new ApplicationSection
                         {
-                            SectionId = RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation,
+                            SectionId = RoatpWorkflowSectionIds.Finish.QualityStatement,
                             QnAData = new QnAData
                             {
                                 Pages = new List<Page>
@@ -1667,7 +1667,7 @@
                         },
                         new ApplicationSection
                         {
-                            SectionId = RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation,
+                            SectionId = RoatpWorkflowSectionIds.Finish.QualityStatement,
                             QnAData = new QnAData
                             {
                                 Pages = new List<Page>
@@ -1787,7 +1787,7 @@
                         },
                         new ApplicationSection
                         {
-                            SectionId = RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation,
+                            SectionId = RoatpWorkflowSectionIds.Finish.QualityStatement,
                             QnAData = new QnAData
                             {
                                 Pages = new List<Page>
@@ -1907,7 +1907,7 @@
                         },
                         new ApplicationSection
                         {
-                            SectionId = RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation,
+                            SectionId = RoatpWorkflowSectionIds.Finish.QualityStatement,
                             QnAData = new QnAData
                             {
                                 Pages = new List<Page>

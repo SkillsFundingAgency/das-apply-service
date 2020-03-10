@@ -299,84 +299,43 @@ namespace SFA.DAS.ApplyService.Web.Services
             }
             var finishSequence = applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.Finish);
 
-            // TODO: APR-1193 We are calling PreviousSectionCompleted() from FinishSequence.cshtml, then it calls this FinishSectionStatus() method, 
-            // which calls PreviousSectionCompleted() again with the code bellow. 
-            //if (!PreviousSectionCompleted(finishSequence.SequenceId, sectionId))
-            //{
-            //    return TaskListSectionStatus.Blank;
-            //}
+            var notRequiredOverrides = _notRequiredOverridesService.GetNotRequiredOverrides(applicationId);
 
-            if (sectionId == RoatpWorkflowSectionIds.Finish.CommercialInConfidenceInformation)
+            if (notRequiredOverrides != null && notRequiredOverrides.Any(condition =>
+                                                            condition.AllConditionsMet &&
+                                                            sectionId == condition.SectionId &&
+                                                            finishSequence.SequenceId == condition.SequenceId))
             {
-                var commercialInConfidenceAnswer = _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.FinishCommercialInConfidence).GetAwaiter().GetResult();
-                if (commercialInConfidenceAnswer != null && !String.IsNullOrWhiteSpace(commercialInConfidenceAnswer.Value))
-                {
-                    // Section 9.2 handled InProgress State
-                    if (commercialInConfidenceAnswer.Value.Equals("yes", StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        return TaskListSectionStatus.Completed;
-                    }
-                    else
-                    {
-                        return TaskListSectionStatus.InProgress;
-                    }
-                }
-                else
-                {
-                    return TaskListSectionStatus.Next;
-                }
+                return TaskListSectionStatus.NotRequired;
             }
+                     
 
-            if (sectionId == RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks)
+            var finishSection = _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpWorkflowSequenceIds.Finish, sectionId).GetAwaiter().GetResult();
+
+            var sectionPages = finishSection.QnAData.Pages.Count();
+            var completedCount = 0;
+            var pagesWithAnswers = 0;
+            foreach(var page in finishSection.QnAData.Pages)
             {
-                var permissionPersonalDetails = _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.FinishPermissionPersonalDetails).GetAwaiter().GetResult();
-                var accuratePersonalDetails = _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.FinishAccuratePersonalDetails).GetAwaiter().GetResult();
-                var permissionSubmitApplication = _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.FinishPermissionSubmitApplication).GetAwaiter().GetResult();
-
-                if (String.IsNullOrWhiteSpace(permissionPersonalDetails.Value)
-                    && String.IsNullOrWhiteSpace(accuratePersonalDetails.Value)
-                    && String.IsNullOrWhiteSpace(permissionSubmitApplication.Value))
+                if (page.PageOfAnswers != null && page.PageOfAnswers.Any())
                 {
-                    return TaskListSectionStatus.Next;
-                }
-
-                if (permissionPersonalDetails.Value == ConfirmedAnswer
-                    && accuratePersonalDetails.Value == ConfirmedAnswer
-                    && permissionSubmitApplication.Value == ConfirmedAnswer)
-                {
-                    return TaskListSectionStatus.Completed;
-                }
-                return TaskListSectionStatus.InProgress;
+                    pagesWithAnswers++;
+                    var pageofAnswers = page.PageOfAnswers.FirstOrDefault();
+                    foreach(var answer in pageofAnswers.Answers)
+                    {
+                        if (answer.Value == ConfirmedAnswer)
+                        {
+                            completedCount++;
+                        }
+                    }
+                }                
             }
-
-            if (sectionId == RoatpWorkflowSectionIds.Finish.TermsAndConditions)
+            if (completedCount == sectionPages)
             {
-                Answer conditionsOfAcceptance2 = null;
-                //Answer conditionsOfAcceptance3 = null;
-
-                //if (ApplicationRouteId == MainApplicationRouteId || ApplicationRouteId == EmployerApplicationRouteId)
-                //{
-                //    conditionsOfAcceptance2 = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCOA2MainEmployer).GetAwaiter().GetResult();
-                //    //conditionsOfAcceptance3 = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCOA3MainEmployer).GetAwaiter().GetResult();
-                //}
-                //else if (ApplicationRouteId == SupportingApplicationRouteId)
-                //{
-                //    // TODO: TODO: APR-1193 - This is the return value for 9.3 section for Supporting Provider 
-                //    //conditionsOfAcceptance2 = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCOA2Supporting).GetAwaiter().GetResult();
-                //    //conditionsOfAcceptance3 = _qnaApiClient.GetAnswerByTag(ApplicationId, RoatpWorkflowQuestionTags.FinishCOA3Supporting).GetAwaiter().GetResult();
-                //    return TaskListSectionStatus.NotRequired;
-                //}
-
-                if (string.IsNullOrWhiteSpace(conditionsOfAcceptance2?.Value) /*&& String.IsNullOrWhiteSpace(conditionsOfAcceptance3?.Value)*/)
-                {
-                    return TaskListSectionStatus.Next;
-                }
-
-                if (conditionsOfAcceptance2?.Value == ConfirmedAnswer /*&& conditionsOfAcceptance3?.Value == ConfirmedAnswer*/)
-                {
-                    return TaskListSectionStatus.Completed;
-                }
-
+                return TaskListSectionStatus.Completed;
+            }
+            if (completedCount < sectionPages && pagesWithAnswers > 0)
+            {
                 return TaskListSectionStatus.InProgress;
             }
 
