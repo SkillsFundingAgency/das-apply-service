@@ -33,6 +33,24 @@ namespace SFA.DAS.ApplyService.Web.Services
             _logger = logger;
         }
 
+        public string SectionQuestionsStatus(Guid applicationId, int sequenceId, int sectionId, IEnumerable<ApplicationSequence> applicationSequences)
+        {
+            var sequence = applicationSequences?.FirstOrDefault(x => (int)x.SequenceId == sequenceId);
+
+            var section = sequence?.Sections?.FirstOrDefault(x => x.SectionId == sectionId);
+
+            if (section == null)
+            {
+                return string.Empty;
+            }
+
+            var questionsCompleted = SectionCompletedQuestionsCount(section);
+
+            var sectionText = GetSectionText(questionsCompleted, section, sequence.Sequential);
+
+            return sectionText;
+        }
+
         public string SectionStatus(Guid applicationId, int sequenceId, int sectionId, 
                                     IEnumerable<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
         {            
@@ -82,7 +100,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 var complete = true;
                 for(var index = 1; index < sectionId; index++)
                 {
-                    if (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, index, applicationSequences, organisationVerificationStatus) != TaskListSectionStatus.Completed)
+                    if (SectionQuestionsStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, index, applicationSequences) != TaskListSectionStatus.Completed)
                     {
                         complete = false;
                         break;
@@ -261,7 +279,7 @@ namespace SFA.DAS.ApplyService.Web.Services
         private string WhosInControlSectionStatus(Guid applicationId, IEnumerable<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
         {
             
-                if (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails, applicationSequences, organisationVerificationStatus) == TaskListSectionStatus.Blank)
+                if (SectionQuestionsStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails, applicationSequences) == TaskListSectionStatus.Blank)
                 {
                     return TaskListSectionStatus.Blank;
                 }

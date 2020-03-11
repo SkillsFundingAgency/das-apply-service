@@ -13,7 +13,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
     public class TaskListViewModel : ApplicationSummaryViewModel
     {
         private readonly IRoatpTaskListWorkflowService _taskListWorkflowService;
-        private readonly IRoatpOrganisationVerificationService _organisationVerificationService;
 
         public List<NotRequiredOverrideConfiguration> NotRequiredOverrides { get; set; }
     
@@ -67,6 +66,11 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             return _taskListWorkflowService.PreviousSectionCompleted(ApplicationId, sequenceId, sectionId, ApplicationSequences, OrganisationVerificationStatus);
         }
         
+        public string SectionQuestionsStatus(int sequenceId, int sectionId)
+        {
+            return _taskListWorkflowService.SectionQuestionsStatus(ApplicationId, sequenceId, sectionId, ApplicationSequences);
+        }
+
         public bool IntroductionPageNextSectionUnavailable(int sequenceId, int sectionId)
         {
             // Disable the other sequences if YourOrganisation sequence isn't complete
@@ -81,7 +85,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                 var SecondCriminialIntroductionSectionId = 3;
                 if (sectionId > SecondCriminialIntroductionSectionId)
                 {
-                    var statusOfSecondIntroductionPage = SectionStatus(sequenceId, SecondCriminialIntroductionSectionId);
+                    var statusOfSecondIntroductionPage = SectionQuestionsStatus(sequenceId, SecondCriminialIntroductionSectionId);
                     if (statusOfSecondIntroductionPage != TaskListSectionStatus.Completed)
                     {
                         return true;
@@ -89,7 +93,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                 }
             }
 
-            var statusOfIntroductionPage = SectionStatus(sequenceId,IntroductionSectionId);
+            var statusOfIntroductionPage = SectionQuestionsStatus(sequenceId,IntroductionSectionId);
             if (sequenceId > Sequence1Id && sectionId != IntroductionSectionId && statusOfIntroductionPage != TaskListSectionStatus.Completed)
                 return true;
 
