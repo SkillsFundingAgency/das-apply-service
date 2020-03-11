@@ -21,10 +21,13 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public int Sequence1Id => 1;
         public string EmployerApplicationRouteId => "2";
 
-        public List<ApplicationSequence> ApplicationSequences { get; set; }
+        public IEnumerable<ApplicationSequence> ApplicationSequences { get; set; }
 
         public OrganisationVerificationStatus OrganisationVerificationStatus { get; set; }
         
+        public bool YourOrganisationSequenceCompleted { get; set; }
+        public bool ApplicationSequencesCompleted { get; set; }
+
         public TaskListViewModel(IRoatpTaskListWorkflowService taskListWorkflowService,
                                  OrganisationVerificationStatus organisationVerificationStatus,
                                  Guid applicationId)
@@ -47,32 +50,29 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             return _taskListWorkflowService.SectionStatus(ApplicationId, sequenceId, sectionId, ApplicationSequences, OrganisationVerificationStatus);
         }
 
+        public string FinishSectionStatus(int sectionId)
+        {
+            return _taskListWorkflowService.FinishSectionStatus(ApplicationId, sectionId, ApplicationSequences, ApplicationSequencesCompleted);
+        }
+
+        public string FinishCss(int sectionId)
+        {
+            var status = _taskListWorkflowService.FinishSectionStatus(ApplicationId, sectionId, ApplicationSequences, ApplicationSequencesCompleted);
+
+            return ConvertTaskListSectionStatusToCssClass(status);
+        }
+
         public bool PreviousSectionCompleted(int sequenceId, int sectionId)
         {                      
             return _taskListWorkflowService.PreviousSectionCompleted(ApplicationId, sequenceId, sectionId, ApplicationSequences, OrganisationVerificationStatus);
         }
-
-        public bool ApplicationSequencesCompleted()
-        {
-            return _taskListWorkflowService.ApplicationSequencesCompleted(ApplicationId, ApplicationSequences, OrganisationVerificationStatus);
-        }
-
+        
         public bool IntroductionPageNextSectionUnavailable(int sequenceId, int sectionId)
         {
-            // This block disables the other sequences if YourOrganisation sequence isn't complete
-            // TECH DEBT: This is processor intensive, see if it could be done a better way
+            // Disable the other sequences if YourOrganisation sequence isn't complete
             if (sequenceId != RoatpWorkflowSequenceIds.YourOrganisation)
             {
-                var yourOrganisationSequence = ApplicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
-
-                foreach(var section in yourOrganisationSequence.Sections)
-                {
-                    var sectionStatus = _taskListWorkflowService.SectionStatus(ApplicationId, RoatpWorkflowSequenceIds.YourOrganisation, section.SectionId, ApplicationSequences, OrganisationVerificationStatus);
-                    if (sectionStatus != TaskListSectionStatus.Completed)
-                    {
-                        return true;
-                    }
-                }
+                return !YourOrganisationSequenceCompleted;
             }
 
             // CriminalComplianceChecks has two intro pages...

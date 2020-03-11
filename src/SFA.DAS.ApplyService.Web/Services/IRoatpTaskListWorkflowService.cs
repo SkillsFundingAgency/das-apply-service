@@ -7,9 +7,9 @@ namespace SFA.DAS.ApplyService.Web.Services
 {
     public interface IRoatpTaskListWorkflowService
     {
-        string SectionStatus(Guid applicationId, int sequenceId, int sectionId, List<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus);
-        bool PreviousSectionCompleted(Guid applicationId, int sequenceId, int sectionId, List<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus);
-        bool ApplicationSequencesCompleted(Guid applicationId, List<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus);
-        List<ApplicationSequence> GetApplicationSequences(Guid applicationId);
+        string SectionStatus(Guid applicationId, int sequenceId, int sectionId, IEnumerable<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus);
+        string FinishSectionStatus(Guid applicationId, int sectionId, IEnumerable<ApplicationSequence> applicationSequences, bool applicationSequencesCompleted);
+        bool PreviousSectionCompleted(Guid applicationId, int sequenceId, int sectionId, IEnumerable<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus);
+        IEnumerable<ApplicationSequence> GetApplicationSequences(Guid applicationId);
     }
 }

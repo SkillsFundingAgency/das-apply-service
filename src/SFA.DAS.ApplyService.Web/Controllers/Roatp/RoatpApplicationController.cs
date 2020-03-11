@@ -485,21 +485,68 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             var sequences = await _qnaApiClient.GetSequences(applicationId);
-            
+            foreach (var sequence in sequences)
+            {
+                var sections = _qnaApiClient.GetSections(applicationId, sequence.Id).GetAwaiter().GetResult();
+                sequence.Sections = sections.ToList();
+            }
+
             var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
             var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
 
             var organisationVerificationStatus = await _organisationVerificationService.GetOrganisationVerificationStatus(applicationId);
+
+            var yourOrganisationSequence = sequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
+
+            bool yourOrganisationSequenceCompleted = CheckYourOrganisationSequenceComplete(applicationId, sequences, organisationVerificationStatus, yourOrganisationSequence);
+            bool applicationSequencesCompleted = ApplicationSequencesCompleted(applicationId, sequences, organisationVerificationStatus);
 
             var model = new TaskListViewModel(_roatpTaskListWorkflowService, organisationVerificationStatus, applicationId)
             {
                 UKPRN = organisationDetails.OrganisationUkprn?.ToString(),
                 OrganisationName = organisationDetails.Name,
                 TradingName = organisationDetails.OrganisationDetails?.TradingName,
-                ApplicationRouteId = providerRoute.Value
+                ApplicationRouteId = providerRoute.Value,
+                YourOrganisationSequenceCompleted = yourOrganisationSequenceCompleted,
+                ApplicationSequencesCompleted = applicationSequencesCompleted
             };
 
             return View("~/Views/Roatp/TaskList.cshtml", model);
+        }
+
+        private bool CheckYourOrganisationSequenceComplete(Guid applicationId, IEnumerable<ApplicationSequence> sequences, OrganisationVerificationStatus organisationVerificationStatus, ApplicationSequence yourOrganisationSequence)
+        {
+            var yourOrganisationSequenceComplete = true;
+            foreach (var section in yourOrganisationSequence.Sections)
+            {
+                var sectionStatus = _roatpTaskListWorkflowService.SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation,
+                                                                                section.SectionId, sequences.ToList(), organisationVerificationStatus);
+                if (sectionStatus != TaskListSectionStatus.Completed)
+                {
+                    yourOrganisationSequenceComplete = false;
+                    break;
+                }
+            }
+
+            return yourOrganisationSequenceComplete;
+        }
+
+        private bool ApplicationSequencesCompleted(Guid applicationId, IEnumerable<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
+        {
+            var nonFinishSequences = applicationSequences.Where(seq => seq.SequenceId != RoatpWorkflowSequenceIds.Finish).ToList();
+            foreach (var sequence in nonFinishSequences)
+            {
+                foreach (var section in sequence.Sections)
+                {
+                    var sectionStatus = _roatpTaskListWorkflowService.SectionStatus(applicationId, sequence.SequenceId, section.SectionId, applicationSequences, organisationVerificationStatus);
+                    if (sectionStatus != TaskListSectionStatus.NotRequired && sectionStatus != TaskListSectionStatus.Completed)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         private async Task RemoveIrrelevantQuestions(Guid applicationId, ApplicationSection section)
