@@ -19,6 +19,7 @@ using StartQnaApplicationResponse = SFA.DAS.ApplyService.Application.Apply.Start
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
+    using SFA.DAS.ApplyService.Application.Apply.Roatp;
     using SFA.DAS.ApplyService.Domain.Roatp;
 
     public class ApplicationApiClient : IApplicationApiClient
@@ -52,6 +53,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return submitApplicationResponse;
         }
 
+        public async Task<bool> ChangeProviderRoute(ChangeProviderRouteRequest changeProviderRouteRequest)
+        {
+            var httpResponse = await _httpClient.PostAsJsonAsync("/Application/ChangeProviderRoute", changeProviderRouteRequest);
+            var changeProviderRouteResponse = await httpResponse.Content.ReadAsAsync<bool>();
+            return changeProviderRouteResponse;
+        }
 
         public async Task<Domain.Entities.Apply> GetApplication(Guid applicationId)
         {
@@ -70,7 +77,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await (await _httpClient.GetAsync($"/Applications/{userId}")).Content
                 .ReadAsAsync<List<Domain.Entities.Apply>>();
         }
-
+        public async Task<IEnumerable<RoatpSequences>> GetRoatpSequences()
+        {
+            return await (await _httpClient.GetAsync($"/roatp-sequences")).Content
+               .ReadAsAsync<IEnumerable<RoatpSequences>>();
+        }
 
 
         // NOTE: This is old stuff or things which are not migrated over yet       
@@ -170,6 +181,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         {
             return await (await _httpClient.GetAsync($"organisations/ukprn/{ukprn}")).Content.ReadAsAsync<Organisation>();
         }
+
         public async Task<Organisation> GetOrganisationByName(string name)
         {
             return await (await _httpClient.GetAsync($"organisations/name/{WebUtility.UrlEncode(name)}")).Content.ReadAsAsync<Organisation>();

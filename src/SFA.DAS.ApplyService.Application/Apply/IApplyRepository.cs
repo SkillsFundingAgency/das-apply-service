@@ -19,6 +19,38 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<bool> CanSubmitApplication(Guid applicationId);
         Task SubmitApplication(Guid applicationId, ApplyData applyData, Guid submittedBy);
 
+        Task<Guid> SnapshotApplication(Guid applicationId, Guid snapshotApplicationId, List<ApplySequence> newSequences);
+
+        Task<List<RoatpApplicationSummaryItem>> GetNewGatewayApplications();
+        Task<List<RoatpApplicationSummaryItem>> GetInProgressGatewayApplications();
+        Task<List<RoatpApplicationSummaryItem>> GetClosedGatewayApplications();
+        Task StartGatewayReview(Guid applicationId, string reviewer);
+        Task EvaluateGateway(Guid applicationId, bool isGatewayApproved, string evaluatedBy);
+
+        Task<List<RoatpApplicationSummaryItem>> GetOpenApplications();
+        Task<List<RoatpApplicationSummaryItem>> GetFeedbackAddedApplications();
+        Task<List<RoatpApplicationSummaryItem>> GetClosedApplications();
+
+        Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications();
+        Task<List<RoatpFinancialSummaryItem>> GetFeedbackAddedFinancialApplications();
+        Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications();
+        Task<bool> StartFinancialReview(Guid applicationId, string reviewer);
+        Task<bool> RecordFinancialGrade(Guid applicationId, FinancialReviewDetails financialReviewDetails, string financialReviewStatus);
+
+
+        Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatusByUkprn(string ukprn);
+
+        Task<string> GetNextRoatpApplicationReference();
+
+        Task<bool> StartAssessorReview(Guid applicationId, string reviewer);  
+        
+        Task<ApplyData> GetApplyData(Guid applicationId);
+
+        Task<bool> UpdateApplyData(Guid applicationId, ApplyData applyData, string updatedBy);
+
+        Task<bool> ChangeProviderRoute(Guid applicationId, int providerRoute, string providerRouteName);
+
+        Task<bool> IsUkprnWhitelisted(int ukprn);
 
         // NOTE: This is old stuff or things which are not migrated over yet
         Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId,  int sectionId, Guid? userId);
@@ -33,12 +65,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task UpdateSections(List<ApplicationSection> sections);
         Task UpdateSequences(List<ApplicationSequence> sequences);
         Task SaveSection(ApplicationSection section, Guid? userId = null);
-        Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceId);
-        Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications();
-        Task<List<ApplicationSummaryItem>> GetClosedApplications();
-        Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
-        Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
-        Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();        
+             
         Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string sequenceStatus, string applicationStatus);
         Task CloseSequence(Guid applicationId, int sequenceId);
         Task<List<ApplicationSequence>> GetSequences(Guid applicationId);
@@ -47,7 +74,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task DeleteRelatedApplications(Guid applicationId);
 
         Task StartApplicationReview(Guid applicationId, int sectionId);
-        Task StartFinancialReview(Guid applicationId);
         Task<Organisation> GetOrganisationForApplication(Guid applicationId);
 
         Task<string> CheckOrganisationStandardStatus(Guid applicationId, int standardId);
@@ -59,9 +85,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<bool> IsSectionCompleted(Guid applicationId, Guid applicationSectionId);
 
         Task RemoveSectionCompleted(Guid applicationId, Guid applicationSectionId);
-        
-        Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatusByUkprn(string ukprn);
-
-        Task<string> GetNextRoatpApplicationReference();
+       
     }
 }

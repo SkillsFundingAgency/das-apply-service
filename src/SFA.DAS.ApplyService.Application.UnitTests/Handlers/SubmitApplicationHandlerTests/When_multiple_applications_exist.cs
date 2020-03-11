@@ -3,6 +3,7 @@ using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Domain.Entities;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.SubmitApplicationHandlerTests
@@ -32,7 +33,15 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.SubmitApplicationH
         [Test]
         public void Then_allow_submission_if_user_is_the_one_whom_already_submitted()
         {
-            var request = new SubmitApplicationRequest { ApplicationId = sameAppGuid, SubmittingContactId = sameAppGuid };
+            var request = new SubmitApplicationRequest 
+            { 
+                ApplicationId = sameAppGuid, SubmittingContactId = sameAppGuid,
+                ApplyData = new ApplyData
+                {
+                    ApplyDetails = new ApplyDetails(),
+                    Sequences = new List<ApplySequence>()
+                }
+            };
 
             Handler.Handle(request, new CancellationToken()).Wait();
 

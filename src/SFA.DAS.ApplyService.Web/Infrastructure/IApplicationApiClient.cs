@@ -16,17 +16,19 @@ using StartQnaApplicationResponse = SFA.DAS.ApplyService.Application.Apply.Start
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
+    using SFA.DAS.ApplyService.Application.Apply.Roatp;
     using SFA.DAS.ApplyService.Domain.Roatp;
 
     public interface IApplicationApiClient
     {
         Task<Guid> StartApplication(StartApplicationRequest startApplicationRequest);
         Task<bool> SubmitApplication(SubmitApplicationRequest submitApplicationRequest);
+        Task<bool> ChangeProviderRoute(ChangeProviderRouteRequest changeProviderRouteRequest);
 
         Task<Domain.Entities.Apply> GetApplication(Guid applicationId);
         Task<List<Domain.Entities.Apply>> GetApplications(Guid userId, bool createdBy);
 
-
+        Task<IEnumerable<RoatpSequences>> GetRoatpSequences();
 
 
         Task<ApplicationSequence> GetSequence(Guid applicationId, Guid userId);

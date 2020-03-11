@@ -246,7 +246,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             {
                 ApplicationId = Guid.NewGuid(),
                 ApplicationStatus = ApplicationStatus.InProgress,
-                ApplyData = new ApplyData()
+                ApplyData = new ApplyData
+                {
+                    ApplyDetails = new ApplyDetails(),
+                    Sequences = new List<ApplySequence>()
+                }
             };
 
             var model = new SubmitApplicationViewModel
@@ -276,6 +280,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 Value = ApplicationRoute.MainProviderApplicationRoute.ToString()
             };
             _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.ProviderRoute, It.IsAny<string>())).ReturnsAsync(providerRouteAnswer);
+
+            _apiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(application);
 
             _apiClient.Setup(x => x.SubmitApplication(It.IsAny<Application.Apply.Submit.SubmitApplicationRequest>())).ReturnsAsync(true);
 
