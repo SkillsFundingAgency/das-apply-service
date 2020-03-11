@@ -379,23 +379,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHousePscs, It.IsAny<string>())).ReturnsAsync(pscsAnswer);
 
-            var sequences = new List<ApplicationSequence>();
-            sequences.Add(new ApplicationSequence
-            {
-                SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
-                Id = Guid.NewGuid()
-            });
-
-            _qnaClient.Setup(x => x.GetSequences(It.IsAny<Guid>())).ReturnsAsync(sequences);
-
-            var sections = new List<ApplicationSection>();
-            sections.Add(new ApplicationSection
+            var section = new ApplicationSection
             {
                 SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
                 Id = Guid.NewGuid()
-            });
+            };
 
-            _qnaClient.Setup(x => x.GetSections(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(sections);
+            _qnaClient.Setup(x => x.GetSectionBySectionNo(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl)).ReturnsAsync(section);
 
             var updateResult = new SetPageAnswersResponse
             {
@@ -443,23 +433,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _qnaClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CompaniesHousePscs, It.IsAny<string>())).ReturnsAsync(pscsAnswer);
 
-            var sequences = new List<ApplicationSequence>();
-            sequences.Add(new ApplicationSequence
-            {
-                SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
-                Id = Guid.NewGuid()
-            });
-
-            _qnaClient.Setup(x => x.GetSequences(It.IsAny<Guid>())).ReturnsAsync(sequences);
-
-            var sections = new List<ApplicationSection>();
-            sections.Add(new ApplicationSection
+            var section = new ApplicationSection
             {
                 SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
                 Id = Guid.NewGuid()
-            });
+            };
 
-            _qnaClient.Setup(x => x.GetSections(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(sections);
+            _qnaClient.Setup(x => x.GetSectionBySectionNo(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl)).ReturnsAsync(section);
 
             var updateResult = new SetPageAnswersResponse
             {
@@ -833,23 +813,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.CharityCommissionTrustees)).ReturnsAsync(trustees);
 
-            var sequences = new List<ApplicationSequence>();
-            sequences.Add(new ApplicationSequence
-            {
-                SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
-                Id = Guid.NewGuid()
-            });
-
-            _qnaClient.Setup(x => x.GetSequences(It.IsAny<Guid>())).ReturnsAsync(sequences);
-
-            var sections = new List<ApplicationSection>();
-            sections.Add(new ApplicationSection
+            var section = new ApplicationSection
             {
                 SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
                 Id = Guid.NewGuid()
-            });
+            };
 
-            _qnaClient.Setup(x => x.GetSections(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(sections);
+            _qnaClient.Setup(x => x.GetSectionBySectionNo(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl)).ReturnsAsync(section);
 
             var updateResult = new SetPageAnswersResponse
             {
@@ -875,23 +845,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [TestCase(SoleTraderOrPartnershipViewModel.OrganisationTypeSoleTrader, "AddSoleTradeDob")]
         public void Confirm_sole_trader_or_partnership_redirects_to_partnership_type_or_add_sole_trader_dob(string organisationType, string expectedActionName)
         {
-            var sequences = new List<ApplicationSequence>();
-            sequences.Add(new ApplicationSequence
-            {
-                SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
-                Id = Guid.NewGuid()
-            });
-
-            _qnaClient.Setup(x => x.GetSequences(It.IsAny<Guid>())).ReturnsAsync(sequences);
-
-            var sections = new List<ApplicationSection>();
-            sections.Add(new ApplicationSection
+            var section = new ApplicationSection
             {
                 SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
                 Id = Guid.NewGuid()
-            });
+            };
 
-            _qnaClient.Setup(x => x.GetSections(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(sections);
+            _qnaClient.Setup(x => x.GetSectionBySectionNo(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl)).ReturnsAsync(section);
 
             var updateResult = new SetPageAnswersResponse
             {
@@ -991,23 +951,12 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         [Test]
         public void Confirm_sole_trade_redirects_to_task_list_for_valid_values()
         {
-            var sequences = new List<ApplicationSequence>();
-            sequences.Add(new ApplicationSequence
-            {
-                SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
-                Id = Guid.NewGuid()
-            });
-
-            _qnaClient.Setup(x => x.GetSequences(It.IsAny<Guid>())).ReturnsAsync(sequences);
-
-            var sections = new List<ApplicationSection>();
-            sections.Add(new ApplicationSection
-            {
+            var section = new ApplicationSection {
                 SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
                 Id = Guid.NewGuid()
-            });
+            };
 
-            _qnaClient.Setup(x => x.GetSections(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(sections);
+            _qnaClient.Setup(x => x.GetSectionBySectionNo(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl)).ReturnsAsync(section);
 
             var updateResult = new SetPageAnswersResponse
             {
@@ -1675,27 +1624,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPartners)).ReturnsAsync(partnerData);
 
-            var sequences = new List<ApplicationSequence>
+            var section = new ApplicationSection
             {
-                new ApplicationSequence
-                {
-                    SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
-                    Id = Guid.NewGuid()
-                }
+                SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
+                Id = Guid.NewGuid()
             };
 
-            _qnaClient.Setup(x => x.GetSequences(It.IsAny<Guid>())).ReturnsAsync(sequences);
-
-            var sections = new List<ApplicationSection>
-            {
-                new ApplicationSection
-                {
-                    SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
-                    Id = Guid.NewGuid()
-                }
-            };
-
-            _qnaClient.Setup(x => x.GetSections(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(sections);
+            _qnaClient.Setup(x => x.GetSectionBySectionNo(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl)).ReturnsAsync(section);
 
             _tabularDataRepository.Setup(x => x.SaveTabularDataAnswer(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TabularData>())).ReturnsAsync(true).Verifiable();
 
@@ -1736,27 +1671,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _tabularDataRepository.Setup(x => x.GetTabularDataAnswer(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.AddPeopleInControl)).ReturnsAsync(pscsData);
 
-            var sequences = new List<ApplicationSequence>
+            var section = new ApplicationSection
             {
-                new ApplicationSequence
-                {
-                    SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
-                    Id = Guid.NewGuid()
-                }
+                SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
+                Id = Guid.NewGuid()
             };
 
-            _qnaClient.Setup(x => x.GetSequences(It.IsAny<Guid>())).ReturnsAsync(sequences);
-
-            var sections = new List<ApplicationSection>
-            {
-                new ApplicationSection
-                {
-                    SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
-                    Id = Guid.NewGuid()
-                }
-            };
-
-            _qnaClient.Setup(x => x.GetSections(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(sections);
+            _qnaClient.Setup(x => x.GetSectionBySectionNo(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl)).ReturnsAsync(section);
 
             _tabularDataRepository.Setup(x => x.SaveTabularDataAnswer(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TabularData>())).ReturnsAsync(true).Verifiable();
 

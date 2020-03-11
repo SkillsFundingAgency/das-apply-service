@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.ApplyService.Application.Apply;
-using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
 using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Application.Email;
 using SFA.DAS.ApplyService.Application.Organisations;
@@ -33,8 +32,6 @@ namespace SFA.DAS.ApplyService.InternalApi
     using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
     using Swashbuckle.AspNetCore.Swagger;
     using System.IO;
-    using UKRLP;
-    using static UKRLP.ProviderQueryPortTypeClient;
 
     public class Startup
     {
@@ -220,8 +217,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IApplyRepository,ApplyRepository>();
             services.AddTransient<IOrganisationRepository,OrganisationRepository>();
             services.AddTransient<IDfeSignInService,DfeSignInService>();
-            services.AddTransient<IGetAnswersService, GetAnswersService>();
-
+            
             services.AddTransient<IEmailService, EmailService.EmailService>();
             services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();
 
