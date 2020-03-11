@@ -31,8 +31,7 @@ BEGIN
 	VALUES (NEWID(), 'Live', N'RoATPApplicationSubmittedMain', N'68008288-6497-4de2-be3c-e1409538aad9', GETDATE(), 'System')
 END
 
--- repopulate White listed Providers
-DELETE FROM [WhitelistedProviders]
+-- Whitelisted Providers
 
 IF NOT EXISTS (SELECT * FROM WhitelistedProviders  WHERE [UKPRN] = 10031001)
 BEGIN
