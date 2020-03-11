@@ -35,15 +35,13 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         public string SectionStatus(Guid applicationId, int sequenceId, int sectionId, 
                                     IEnumerable<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
-        {
-            //_logger.LogDebug($"Getting section status for application {applicationId} sequence {sequenceId} section {sectionId}");
-            
+        {            
             var notRequiredOverrides = _notRequiredOverridesService.GetNotRequiredOverrides(applicationId);
 
-            if (notRequiredOverrides != null && notRequiredOverrides.Any(condition =>
-                                                            condition.AllConditionsMet &&
-                                                            sectionId == condition.SectionId &&
-                                                            sequenceId == condition.SequenceId))
+            if (notRequiredOverrides.Any(condition =>
+                                                        sequenceId == condition.SequenceId &&
+                                                        sectionId == condition.SectionId &&
+                                                        condition.AllConditionsMet))
             {
                 return TaskListSectionStatus.NotRequired;
             }

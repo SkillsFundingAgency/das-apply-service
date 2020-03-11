@@ -485,6 +485,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             var sequences = await _qnaApiClient.GetSequences(applicationId);
+            var excludedSequenceIds = new int[] { RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSequenceIds.ConditionsOfAcceptance };
+            sequences = sequences.Where(x => !excludedSequenceIds.Contains(x.SequenceId));
             foreach (var sequence in sequences)
             {
                 var sections = _qnaApiClient.GetSections(applicationId, sequence.Id).GetAwaiter().GetResult();
