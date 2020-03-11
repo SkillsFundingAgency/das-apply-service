@@ -52,24 +52,31 @@ CookieBanner.prototype.showCookieBanner = function() {
   this.module.cookieBanner.style.display = "block";
   Object.keys(cookiePolicy).forEach(function(cookieName) {
     window.GOVUK.cookie(cookieName, cookiePolicy[cookieName].toString(), {
-      days: 365
+      days: 365,
+      sameSite: "None"
     });
   });
 };
 
 CookieBanner.prototype.hideCookieBanner = function() {
   this.module.cookieBanner.style.display = "none";
-  window.GOVUK.cookie(this.settings.seenCookieName, true, { days: 365 });
+  window.GOVUK.cookie(this.settings.seenCookieName, true, {
+    days: 365,
+    sameSite: "None"
+  });
 };
 
 CookieBanner.prototype.acceptAllCookies = function() {
   this.module.cookieBannerInnerWrap.style.display = "none";
   this.module.cookieBannerConfirmationMessage.style.display = "block";
 
-  window.GOVUK.cookie(this.settings.seenCookieName, true, { days: 365 });
+  window.GOVUK.cookie(this.settings.seenCookieName, true, {
+    days: 365,
+    sameSite: "None"
+  });
 
   Object.keys(this.settings.cookiePolicy).forEach(function(cookieName) {
-    window.GOVUK.cookie(cookieName, true, { days: 365 });
+    window.GOVUK.cookie(cookieName, true, { days: 365, sameSite: "None" });
   });
 };
 

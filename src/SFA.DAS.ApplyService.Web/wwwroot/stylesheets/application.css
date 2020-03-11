@@ -1058,9 +1058,9 @@
 }
 
 /* New cookie banner */
-/* 
+
 .das-cookie-banner {
-  font-family: "GDS Transport", Arial, sans-serif;
+  font-family: "nta", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 14px;
@@ -1074,11 +1074,13 @@
   background: #f3f2f1;
   display: none;
 }
+
 @media print {
   .das-cookie-banner {
     font-family: sans-serif;
   }
 }
+
 @media (min-width: 40.0625em) {
   .das-cookie-banner {
     font-size: 16px;
@@ -1086,20 +1088,24 @@
     line-height: 1.25;
   }
 }
+
 @media print {
   .das-cookie-banner {
     font-size: 14pt;
     line-height: 1.2;
   }
 }
+
 @media (min-width: 40.0625em) {
   .das-cookie-banner {
     padding: 20px 0;
   }
 }
+
 .das-cookie-banner__header {
   margin-top: 0;
 }
+
 .das-cookie-banner__message {
   display: inline-block;
   margin-top: 0;
@@ -1107,30 +1113,36 @@
   padding-right: 20px;
   padding-bottom: 10px;
 }
+
 @media (min-width: 48.0625em) {
   .das-cookie-banner__message {
     margin: 0;
   }
 }
+
 .das-cookie-banner__buttons:after {
   content: "";
   display: block;
   clear: both;
 }
+
 @media (min-width: 20em) {
   .das-cookie-banner__buttons {
     margin: 0 -10px;
   }
 }
+
 @media (min-width: 48.0625em) {
   .das-cookie-banner__buttons {
     padding-bottom: 10px;
   }
 }
+
 .das-cookie-banner__button-wrap {
   margin-top: 10px;
   vertical-align: top;
 }
+
 @media (min-width: 20em) {
   .das-cookie-banner__button-wrap {
     width: 50%;
@@ -1139,25 +1151,30 @@
     box-sizing: border-box;
   }
 }
+
 .das-cookie-banner__button {
   margin: 0;
   width: 100%;
 }
+
 @media (min-width: 48.0625em) {
   .das-cookie-banner__button {
     vertical-align: baseline;
   }
 }
+
 .das-cookie-banner__confirmation {
   position: relative;
   padding: 5px;
   display: none;
 }
+
 .das-cookie-banner__confirmation-message {
   margin: 0;
 }
+
 .das-cookie-banner__hide-button {
-  font-family: "GDS Transport", Arial, sans-serif;
+  font-family: "nta", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 16px;
@@ -1172,11 +1189,13 @@
   margin-top: 10px;
   cursor: pointer;
 }
+
 @media print {
   .das-cookie-banner__hide-button {
     font-family: sans-serif;
   }
 }
+
 @media (min-width: 40.0625em) {
   .das-cookie-banner__hide-button {
     font-size: 19px;
@@ -1184,20 +1203,24 @@
     line-height: 1.31579;
   }
 }
+
 @media print {
   .das-cookie-banner__hide-button {
     font-size: 14pt;
     line-height: 1.15;
   }
 }
+
 .das-cookie-banner__hide-button:hover {
   color: #005ea5;
 }
+
 .das-cookie-banner__hide-button:focus {
   color: #0b0c0c;
   background: #ffbf47;
   outline: 3px solid #ffbf47;
 }
+
 @media (min-width: 48.0625em) {
   .das-cookie-banner__hide-button {
     position: absolute;
@@ -1205,4 +1228,156 @@
     top: 5px;
     margin: 0;
   }
-} */
+}
+
+/* Notices */
+
+.das-notice {
+  color: #0b0c0c;
+  padding: 15px;
+  margin-bottom: 30px;
+  clear: both;
+  border: 5px solid #1d70b8;
+}
+
+@media print {
+  .das-notice {
+    color: #000000;
+  }
+}
+
+@media (min-width: 40.0625em) {
+  .das-notice {
+    padding: 20px;
+  }
+}
+
+@media (min-width: 40.0625em) {
+  .das-notice {
+    margin-bottom: 50px;
+  }
+}
+
+.das-notice .govuk-govspeak p:last-child {
+  margin-bottom: 0;
+}
+
+.das-notice .govuk-body:last-child {
+  margin-bottom: 0;
+}
+
+.das-notice__title {
+  font-family: "nta", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.1111111111;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+@media print {
+  .das-notice__title {
+    font-family: sans-serif;
+  }
+}
+
+@media (min-width: 40.0625em) {
+  .das-notice__title {
+    font-size: 24px;
+    line-height: 1.25;
+  }
+}
+
+@media print {
+  .das-notice__title {
+    font-size: 18pt;
+    line-height: 1.15;
+  }
+}
+
+@media (min-width: 40.0625em) {
+  .das-notice__title {
+    margin-bottom: 20px;
+  }
+}
+
+.das-notice__title:last-child {
+  margin-bottom: 0;
+}
+
+.das-notice__description {
+  font-family: "nta", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.25;
+  margin: 0;
+}
+
+@media print {
+  .das-notice__description {
+    font-family: sans-serif;
+  }
+}
+
+@media (min-width: 40.0625em) {
+  .das-notice__description {
+    font-size: 19px;
+    line-height: 1.3157894737;
+  }
+}
+
+@media print {
+  .das-notice__description {
+    font-size: 14pt;
+    line-height: 1.15;
+  }
+}
+
+/* Cookie settings display */
+
+.cookie-settings__form-wrapper {
+  display: none;
+}
+
+.js-enabled .cookie-settings__form-wrapper {
+  display: block;
+}
+
+.js-enabled .cookie-settings__no-js {
+  display: none;
+}
+
+.cookie-settings__confirmation {
+  font-family: "nta", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.25;
+  display: none;
+  margin-top: 15px;
+}
+
+@media print {
+  .cookie-settings__confirmation {
+    font-family: sans-serif;
+  }
+}
+
+@media (min-width: 40.0625em) {
+  .cookie-settings__confirmation {
+    font-size: 19px;
+    line-height: 1.3157894737;
+  }
+}
+
+@media print {
+  .cookie-settings__confirmation {
+    font-size: 14pt;
+    line-height: 1.15;
+  }
+}

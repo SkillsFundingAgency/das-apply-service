@@ -7,14 +7,10 @@
 <html lang="en" class="govuk-template ">
 <head>
 
-    <!-- REMOVE GOOGLE ANALYTICS FOR PRIVATE BETA -->
-
-    <!-- <environment exclude="Development">
+    <environment exclude="Development">
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-120145707-1" ></script>
         <script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'UA-120145707-1');</script>
-    </environment> -->
-
-    <!-- /REMOVE GOOGLE ANALYTICS FOR PRIVATE BETA -->
+    </environment>
 
     <meta charset="utf-8"/>
     <title>@ViewBag.Title</title>
@@ -55,22 +51,16 @@
     document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
 </script>
 
-<!-- REMOVE GOOGLE ANALYTICS FOR PRIVATE BETA -->
-
-<!-- <environment exclude="Development">
+<environment exclude="Development">
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-MKHR6KG');</script>
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MKHR6KG" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-</environment> -->
-
-<!-- /REMOVE GOOGLE ANALYTICS FOR PRIVATE BETA -->
+</environment>
 
 <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
 @{ var config = await Config.GetConfig(); }
 
 
-<!-- REMOVE NEW COOKIE BANNER FOR PRIVATE BETA -->
-
-<!-- <div data-module="cookie-banner" role="region" aria-label="cookie banner">
+<div data-module="cookie-banner" role="region" aria-label="cookie banner">
    <div class="das-cookie-banner">
       <div class="das-cookie-banner__wrapper govuk-width-container">
          <div class="govuk-grid-row">
@@ -95,13 +85,11 @@
          <button class="das-cookie-banner__hide-button" data-hide-cookie-banner="true">Hide</button>
       </div>
    </div>
-</div> -->
-
-<!-- /REMOVE NEW COOKIE BANNER FOR PRIVATE BETA -->
-
-<div class="das-cookie-banner js-cookie-banner">
-    <p class="govuk-width-container">GOV.UK uses cookies to make the site simpler. We won't use non-essential cookies without your permission. <a class="govuk-link" asp-controller="Home" asp-action="Cookies">Find out more about cookies</a></p>
 </div>
+
+<!-- <div class="das-cookie-banner js-cookie-banner">
+    <p class="govuk-width-container">GOV.UK uses cookies to make the site simpler. We won't use non-essential cookies without your permission. <a class="govuk-link" asp-controller="Home" asp-action="Cookies">Find out more about cookies</a></p>
+</div> -->
 
 <header class="govuk-header " role="banner" data-module="header">
     <div class="govuk-header__container govuk-width-container govuk-header__container--das-epao">
@@ -186,10 +174,10 @@
 
 <script src="/javascripts/govuk-frontend-2.5.1.min.js"></script>
 <environment include="Development">
-    <!-- <script src="/javascripts/cookie-banner/_cookies.js"></script>
+    <script src="/javascripts/cookie-banner/_cookies.js"></script>
     <script src="/javascripts/cookie-banner/_cookieBanner.js"></script>
-    <script src="/javascripts/cookie-banner/_cookieSettings.js"></script> -->
-    <script src="/javascripts/cookie-banner/das-cookie-banner.js"></script>
+    <script src="/javascripts/cookie-banner/_cookieSettings.js"></script>
+    <!-- <script src="/javascripts/cookie-banner/das-cookie-banner.js"></script> -->
     <script src="/javascripts/application.js"></script>
 </environment>
 <environment exclude="Development">

@@ -31,6 +31,9 @@
       date.setTime(date.getTime() + options.days * 24 * 60 * 60 * 1000);
       cookieString = cookieString + "; expires=" + date.toGMTString();
     }
+    if (options.sameSite) {
+      cookieString = cookieString + "; SameSite=" + options.sameSite;
+    }
     if (document.location.protocol === "https:") {
       cookieString = cookieString + "; Secure";
     }

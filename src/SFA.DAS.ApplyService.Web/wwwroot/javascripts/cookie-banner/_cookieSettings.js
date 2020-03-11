@@ -59,11 +59,14 @@ CookieSettings.prototype.formSubmitted = function(event) {
     if (input.checked) {
       var name = input.name.replace("cookies-", "");
       var value = input.value === "on";
-      window.GOVUK.setCookie(name, value, { days: 365 });
+      window.GOVUK.setCookie(name, value, { days: 365, sameSite: "None" });
     }
   }
 
-  window.GOVUK.setCookie(this.settings.seenCookieName, true, { days: 365 });
+  window.GOVUK.setCookie(this.settings.seenCookieName, true, {
+    days: 365,
+    sameSite: "None"
+  });
 
   if (button.length > 0) {
     button[0].removeAttribute("disabled");

@@ -8,7 +8,9 @@
     {
         "outputFileName": "wwwroot/javascripts/application.min.js",
         "inputFiles": [
-            "wwwroot/javascripts/cookie-banner/das-cookie-banner.js",
+            "wwwroot/javascripts/cookie-banner/_cookies.js",
+            "wwwroot/javascripts/cookie-banner/_cookieBanner.js",
+            "wwwroot/javascripts/cookie-banner/_cookieSettings.js",
             "wwwroot/javascripts/application.js"
         ],
         "minify": {
