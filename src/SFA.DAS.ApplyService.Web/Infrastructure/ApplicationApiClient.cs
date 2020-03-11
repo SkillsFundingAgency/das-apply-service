@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply;
-using SFA.DAS.ApplyService.Application.Apply.GetAnswers;
 using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
@@ -186,10 +185,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         {
             return await (await _httpClient.GetAsync($"organisations/name/{WebUtility.UrlEncode(name)}")).Content.ReadAsAsync<Organisation>();
         }
-        public async Task<GetAnswersResponse> GetAnswer(Guid applicationId, string questionIdentifier)
-        {
-            return await (await _httpClient.GetAsync($"Answer/{WebUtility.UrlEncode(questionIdentifier)}/{applicationId}")).Content.ReadAsAsync<GetAnswersResponse>();
-        }
+
         public async Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatus(string ukprn)
         {
             return await (await _httpClient.GetAsync($"/Applications/Existing/{ukprn}")).Content.ReadAsAsync<IEnumerable<RoatpApplicationStatus>>();
