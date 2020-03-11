@@ -27,6 +27,7 @@ CookieBanner.prototype.setupCookieMessage = function() {
   this.module.hideLink = this.module.querySelector(
     "button[data-hide-cookie-banner]"
   );
+
   this.module.acceptCookiesButton = this.module.querySelector(
     "button[data-accept-cookies]"
   );
@@ -79,5 +80,3 @@ CookieBanner.prototype.acceptAllCookies = function() {
     window.GOVUK.cookie(cookieName, true, { days: 365, sameSite: "None" });
   });
 };
-
-// export default CookieBanner;

@@ -127,5 +127,3 @@ function htmlToElement(html) {
   template.innerHTML = html;
   return template.content.firstChild;
 }
-
-// export default CookieSettings;
