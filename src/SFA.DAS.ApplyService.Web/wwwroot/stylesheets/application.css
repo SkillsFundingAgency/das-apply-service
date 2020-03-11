@@ -997,67 +997,7 @@
   border-top-color: inherit;
 }
 
-.js-enabled .das-cookie-banner {
-  display: none;
-}
-
-/* Old cookie banner */
-
-.das-cookie-banner {
-  font-family: "nta", Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-weight: 400;
-  font-size: 14px;
-  font-size: 0.875rem;
-  line-height: 1.14286;
-  color: #0b0c0c;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  width: 100%;
-  padding-top: 15px;
-  padding-bottom: 15px;
-  background-color: #d5e8f3;
-}
-
-@media print {
-  .das-cookie-banner {
-    font-family: sans-serif;
-  }
-}
-
-@media (min-width: 40.0625em) {
-  .das-cookie-banner {
-    font-size: 16px;
-    font-size: 1rem;
-    line-height: 1.25;
-  }
-}
-
-@media print {
-  .das-cookie-banner {
-    font-size: 14pt;
-    line-height: 1.2;
-  }
-}
-
-@media print {
-  .das-cookie-banner {
-    color: #000;
-  }
-}
-
-.das-cookie-banner {
-  display: none;
-}
-
-@media print {
-  .das-cookie-banner {
-    display: none !important;
-  }
-}
-
-/* New cookie banner */
+/* Cookie banner */
 
 .das-cookie-banner {
   font-family: "nta", Arial, sans-serif;
