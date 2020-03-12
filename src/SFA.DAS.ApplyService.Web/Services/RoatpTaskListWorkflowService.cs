@@ -289,7 +289,7 @@ namespace SFA.DAS.ApplyService.Web.Services
         private string WhosInControlSectionStatus(Guid applicationId, IEnumerable<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
         {
             
-                if (SectionQuestionsStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails, applicationSequences) == TaskListSectionStatus.Blank)
+                if (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails, applicationSequences, organisationVerificationStatus) == TaskListSectionStatus.Blank)
                 {
                     return TaskListSectionStatus.Blank;
                 }
