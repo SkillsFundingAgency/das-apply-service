@@ -53,13 +53,8 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         public string SectionStatus(Guid applicationId, int sequenceId, int sectionId, 
                                     IEnumerable<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
-        {            
-            var notRequiredOverrides = _notRequiredOverridesService.GetNotRequiredOverrides(applicationId);
-
-            if (notRequiredOverrides.Any(condition =>
-                                                        sequenceId == condition.SequenceId &&
-                                                        sectionId == condition.SectionId &&
-                                                        condition.AllConditionsMet))
+        {
+            if (SectionNotRequired(applicationId, sequenceId, sectionId))
             {
                 return TaskListSectionStatus.NotRequired;
             }
@@ -214,7 +209,22 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             return filteredSequences.ToList();
         }
-        
+
+        public bool SectionNotRequired(Guid applicationId, int sequenceId, int sectionId)
+        {
+            var notRequiredOverrides = _notRequiredOverridesService.GetNotRequiredOverrides(applicationId);
+
+            if (notRequiredOverrides.Any(condition =>
+                                                        sequenceId == condition.SequenceId &&
+                                                        sectionId == condition.SectionId &&
+                                                        condition.AllConditionsMet))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         private void PopulateAdditionalSequenceFields(IEnumerable<ApplicationSequence> sequences)
         {
             foreach (var sequence in sequences)

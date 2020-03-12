@@ -71,6 +71,11 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             return _taskListWorkflowService.SectionQuestionsStatus(ApplicationId, sequenceId, sectionId, ApplicationSequences);
         }
 
+        public bool SectionNotRequired(int sequenceId, int sectionId)
+        {
+            return _taskListWorkflowService.SectionNotRequired(ApplicationId, sequenceId, sectionId);
+        }
+
         public bool IntroductionPageNextSectionUnavailable(int sequenceId, int sectionId)
         {
             // Disable the other sequences if YourOrganisation sequence isn't complete

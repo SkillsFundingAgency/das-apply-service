@@ -12,5 +12,7 @@ namespace SFA.DAS.ApplyService.Web.Services
         bool PreviousSectionCompleted(Guid applicationId, int sequenceId, int sectionId, IEnumerable<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus);
         IEnumerable<ApplicationSequence> GetApplicationSequences(Guid applicationId);
         string SectionQuestionsStatus(Guid applicationId, int sequenceId, int sectionId, IEnumerable<ApplicationSequence> applicationSequences);
+
+        bool SectionNotRequired(Guid applicationId, int sequenceId, int sectionId);
     }
 }
