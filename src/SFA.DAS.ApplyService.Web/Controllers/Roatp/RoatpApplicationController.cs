@@ -484,14 +484,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("Applications");
             }
 
-            var sequences = await _qnaApiClient.GetSequences(applicationId);
-            var excludedSequenceIds = new int[] { RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSequenceIds.ConditionsOfAcceptance };
-            sequences = sequences.Where(x => !excludedSequenceIds.Contains(x.SequenceId));
-            foreach (var sequence in sequences)
-            {
-                var sections = _qnaApiClient.GetSections(applicationId, sequence.Id).GetAwaiter().GetResult();
-                sequence.Sections = sections.ToList();
-            }
+            var sequences = _roatpTaskListWorkflowService.GetApplicationSequences(applicationId);
 
             var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
             var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);

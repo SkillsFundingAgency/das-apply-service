@@ -152,17 +152,9 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                     {
                         return "hidden";                        
                     }
-                case TaskListSectionStatus.InProgress:
-                    {
-                        return "inprogress";
-                    }
-                case TaskListSectionStatus.NotRequired:
-                    {
-                        return "notrequired";
-                    }
                 default:
                     {
-                        return sectionStatus.ToLower();
+                        return sectionStatus.Replace(" ", "").ToLower();
                     }
             }
         }
