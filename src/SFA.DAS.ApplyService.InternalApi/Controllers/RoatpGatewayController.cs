@@ -30,7 +30,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [Route("Gateway/Page/Submit")]
-        [HttpPost()]
+        [HttpPost]
          public async Task GatewayPageSubmit([FromBody] UpsertGatewayPageAnswerRequest request)
         {
             _logger.LogInformation($"RoatpGatewayController-GatewayPageSubmit - ApplicationId '{request.ApplicationId}' - PageId '{request.PageId}' - Status '{request.Status}' - UserName '{request.UserName}' - PageData '{request.GatewayPageData}'");
