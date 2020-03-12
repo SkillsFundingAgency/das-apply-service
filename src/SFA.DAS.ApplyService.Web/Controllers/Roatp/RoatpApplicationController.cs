@@ -43,7 +43,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IPageNavigationTrackingService _pageNavigationTrackingService;
         private readonly List<QnaPageOverrideConfiguration> _pageOverrideConfiguration;
         private readonly List<QnaLinksConfiguration> _qnaLinks;
-        //private readonly List<NotRequiredOverrideConfiguration> _notRequiredOverrides;
         private readonly ICustomValidatorFactory _customValidatorFactory;
         private readonly IRoatpApiClient _roatpApiClient;
         private readonly ISubmitApplicationConfirmationEmailService _submitApplicationEmailService;
@@ -58,12 +57,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public RoatpApplicationController(IApplicationApiClient apiClient, ILogger<RoatpApplicationController> logger,
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
-            IQnaApiClient qnaApiClient,// IOptions<List<TaskListConfiguration>> configuration, 
+            IQnaApiClient qnaApiClient, 
             IProcessPageFlowService processPageFlowService,
             IPagesWithSectionsFlowService pagesWithSectionsFlowService,
-        IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
+            IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
             IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks, 
-            ICustomValidatorFactory customValidatorFactory, // IOptions<List<NotRequiredOverrideConfiguration>> notRequiredOverrides, 
+            ICustomValidatorFactory customValidatorFactory,  
             IRoatpApiClient roatpApiClient, ISubmitApplicationConfirmationEmailService submitApplicationEmailService,
             ITabularDataRepository tabularDataRepository, IRoatpTaskListWorkflowService roatpTaskListWorkflowService,
             IRoatpOrganisationVerificationService organisationVerificationService)
@@ -78,13 +77,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _qnaApiClient = qnaApiClient;
             _processPageFlowService = processPageFlowService;
             _pagesWithSectionsFlowService = pagesWithSectionsFlowService;
-            //_configuration = configuration.Value;
             _questionPropertyTokeniser = questionPropertyTokeniser;
             _pageNavigationTrackingService = pageNavigationTrackingService;
             _qnaLinks = qnaLinks.Value;
             _pageOverrideConfiguration = pageOverrideConfiguration.Value;
             _customValidatorFactory = customValidatorFactory;
-            //_notRequiredOverrides = notRequiredOverrides.Value;
             _roatpApiClient = roatpApiClient;
             _submitApplicationEmailService = submitApplicationEmailService;
             _tabularDataRepository = tabularDataRepository;

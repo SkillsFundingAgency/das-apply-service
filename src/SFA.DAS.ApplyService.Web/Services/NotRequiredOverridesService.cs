@@ -12,8 +12,11 @@ namespace SFA.DAS.ApplyService.Web.Services
         private List<NotRequiredOverrideConfiguration> _configuration;
         private readonly IQnaApiClient _qnaApiClient;
 
-        // TODO: implement repo interface that takes overrides from applydata if present
-
+        // TODO: for story APR-1152, implement link to repo interface that:
+        // 1. tries to fetch the config from the API repository
+        // 2. if present, use as source of truth
+        // 3. if not present, retrieve from appsettings.json, and store to repository via API
+        
         public NotRequiredOverridesService(IOptions<List<NotRequiredOverrideConfiguration>> notRequiredOverrides, IQnaApiClient qnaApiClient)
         {
             _configuration = notRequiredOverrides.Value;
