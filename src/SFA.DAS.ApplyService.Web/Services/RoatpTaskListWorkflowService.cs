@@ -95,7 +95,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 var complete = true;
                 for(var index = 1; index < sectionId; index++)
                 {
-                    if (SectionQuestionsStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, index, applicationSequences) != TaskListSectionStatus.Completed)
+                    if (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, index, applicationSequences, organisationVerificationStatus) != TaskListSectionStatus.Completed)
                     {
                         complete = false;
                         break;
