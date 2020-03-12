@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Gateway;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -16,21 +17,32 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     public class RoatpGatewayController: Controller
     {
         private readonly IApplyRepository _applyRepository;
+        private readonly ILogger<RoatpGatewayController> _logger;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="applyRepository"></param>
-        public RoatpGatewayController(IApplyRepository applyRepository)
+        public RoatpGatewayController(IApplyRepository applyRepository, ILogger<RoatpGatewayController> logger)
         {
             _applyRepository = applyRepository;
+            _logger = logger;
         }
 
         [Route("Gateway/Page/Submit")]
-        [HttpPost()]
+        [HttpPost]
          public async Task GatewayPageSubmit([FromBody] UpsertGatewayPageAnswerRequest request)
         {
-            await _applyRepository.SubmitGatewayPageAnswer(request.ApplicationId, request.PageId, request.Status, request.UserName, request.GatewayPageData);
+            _logger.LogInformation($"RoatpGatewayController-GatewayPageSubmit - ApplicationId '{request.ApplicationId}' - PageId '{request.PageId}' - Status '{request.Status}' - UserName '{request.UserName}' - PageData '{request.GatewayPageData}'");
+            try
+            {
+                await _applyRepository.SubmitGatewayPageAnswer(request.ApplicationId, request.PageId, request.Status, request.UserName, request.GatewayPageData);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "RoatpGatewayController-GatewayPageSubmit - Error: '" + ex.Message + "'");
+            }
+            
         }
 
          [Route("Gateway/Page")]

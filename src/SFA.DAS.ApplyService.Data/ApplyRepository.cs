@@ -103,6 +103,9 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
+                _logger.LogInformation($"ApplyRepository-SubmitGatewayPageAnswer - ApplicationId '{applicationId}' - PageId '{pageId}' - Status '{value}' - UserName '{submittedBy}' - PageData '{gatewayPageData}'");
+                try
+                {
                 await connection.ExecuteAsync(@"IF NOT EXISTS (select * from GatewayAnswer where applicationId = @applicationId and pageId = @pageId)
 	                                                        INSERT INTO GatewayAnswer ([ApplicationId],[PageId],[Status],[GatewayPageData],[CreatedAt],[CreatedBy])
 														         values (@applicationId, @pageId,@value,@gatewayPageData,GetUTCDATE(),@submittedBy)
@@ -111,6 +114,11 @@ namespace SFA.DAS.ApplyService.Data
                                                                     SET  Status = @value, GatewayPageData = @gatewayPageData, UpdatedBy = @submittedBy, UpdatedAt = GETUTCDATE() 
                                                                     WHERE  ApplicationId = @applicationId and pageId = @pageId",
                             new {applicationId, pageId, gatewayPageData, value, submittedBy});
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogError(ex, "ApplyRepository - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
+                }
             }
         }
 
