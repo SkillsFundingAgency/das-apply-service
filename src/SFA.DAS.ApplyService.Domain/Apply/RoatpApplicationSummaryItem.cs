@@ -7,7 +7,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
     {
         public Guid Id { get; set; }
         public Guid ApplicationId { get; set; }
-        public string ApplicationRoute { get; set; } // Add this into queries
+        public string ApplicationRoute { get; set; }
         public string OrganisationName { get; set; }
         public string Ukprn { get; set; }
         public string ApplicationReferenceNumber { get; set; }
