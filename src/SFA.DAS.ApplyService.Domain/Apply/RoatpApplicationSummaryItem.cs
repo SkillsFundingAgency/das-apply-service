@@ -7,6 +7,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
     {
         public Guid Id { get; set; }
         public Guid ApplicationId { get; set; }
+        public string ApplicationRoute { get; set; } // Add this into queries
         public string OrganisationName { get; set; }
         public string Ukprn { get; set; }
         public string ApplicationReferenceNumber { get; set; }
@@ -16,7 +17,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
         public string ApplicationStatus { get; set; }
         public string GatewayReviewStatus { get; set; }
         public string AssessorReviewStatus { get; set; }
-        public string FinancialReviewStatus { get; set; }        
+        public string FinancialReviewStatus { get; set; }
     }
 
     public class RoatpFinancialSummaryItem : RoatpApplicationSummaryItem
