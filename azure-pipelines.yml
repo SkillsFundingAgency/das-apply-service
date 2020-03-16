@@ -51,7 +51,7 @@ jobs:
       arguments: '--configuration $(buildConfiguration) --no-build'
 
   - template: azure-pipelines-templates/dependency-check.yml@das-platform-building-blocks
-  
+
   - task: DotNetCoreCLI@2
     displayName: 'Publish Website'
     inputs:
@@ -93,7 +93,6 @@ jobs:
       platform: '$(buildPlatform)'
       configuration: '$(buildConfiguration)'
       msbuildArgs: '/p:PackageLocation="$(build.artifactstagingdirectory)/publish"'
-  - template: azure-pipelines-templates/dependency-check.yml@das-platform-building-blocks
   - task: CopyFiles@2
     displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
     inputs:
