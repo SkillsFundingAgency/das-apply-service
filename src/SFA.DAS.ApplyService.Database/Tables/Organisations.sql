@@ -22,5 +22,6 @@ CREATE TABLE [dbo].[Organisations](
 GO
 
 CREATE UNIQUE INDEX [IXU_Organisations] ON [Organisations] ([Name])
-
-
+GO
+CREATE INDEX [IX_Organisations_OrganisationUKPRN] ON [Organisations] ([OrganisationUKPRN])
+GO
