@@ -10,6 +10,14 @@ variables:
   buildConfiguration: 'release'
   buildPlatform: 'anycpu'
 
+resources:
+  repositories:
+  - repository: das-platform-building-blocks
+    type: github
+    name: SkillsFundingAgency/das-platform-building-blocks
+    ref: refs/heads/master
+    endpoint: "GitHub (SFA)"
+
 jobs:
 - job: 'CodeBuild'
   pool:
@@ -42,6 +50,8 @@ jobs:
       projects: '**/*.UnitTests.csproj'
       arguments: '--configuration $(buildConfiguration) --no-build'
 
+  - template: azure-pipelines-templates/dependency-check.yml@das-platform-building-blocks
+  
   - task: DotNetCoreCLI@2
     displayName: 'Publish Website'
     inputs:
@@ -83,6 +93,7 @@ jobs:
       platform: '$(buildPlatform)'
       configuration: '$(buildConfiguration)'
       msbuildArgs: '/p:PackageLocation="$(build.artifactstagingdirectory)/publish"'
+  - template: azure-pipelines-templates/dependency-check.yml@das-platform-building-blocks
   - task: CopyFiles@2
     displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
     inputs:
