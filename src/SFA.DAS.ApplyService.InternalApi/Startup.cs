@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
@@ -237,7 +238,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IQnaTokenService, QnaTokenService>();
             services.AddTransient<IRoatpTokenService, RoatpTokenService>();
 
-    
+
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
         }
     }
