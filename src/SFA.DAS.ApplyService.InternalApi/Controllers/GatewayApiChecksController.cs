@@ -11,9 +11,11 @@ using SFA.DAS.ApplyService.Domain.Ukrlp;
 using System.Linq;
 using SFA.DAS.ApplyService.Domain.CompaniesHouse;
 using SFA.DAS.ApplyService.Domain.CharityCommission;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
+    [Authorize]
     public class GatewayApiChecksController : Controller
     {
         private readonly IApplyRepository _applyRepository;
