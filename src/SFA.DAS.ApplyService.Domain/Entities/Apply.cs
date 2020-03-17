@@ -1,4 +1,7 @@
-﻿using System;
+﻿using SFA.DAS.ApplyService.Domain.CharityCommission;
+using SFA.DAS.ApplyService.Domain.CompaniesHouse;
+using SFA.DAS.ApplyService.Domain.Ukrlp;
+using System;
 using System.Collections.Generic;
 
 namespace SFA.DAS.ApplyService.Domain.Entities
@@ -19,6 +22,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     {
         public List<ApplySequence> Sequences { get; set; }
         public ApplyDetails ApplyDetails { get; set; }
+        public ApplyGatewayDetails GatewayReviewDetails { get; set; }
     }
 
     public class ApplyDetails
@@ -35,15 +39,13 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     }
 
 
-    //MNFCMFC
     // This is an application-level storage of external details for processing gateway reviews
     public class ApplyGatewayDetails
     {
-        public string UkrlpLegalName { get; set; }
-        public string CompaniesHouseLegalName { get; set; }
-        public string CharityCommissionLegalName { get; set; }
-        public DateTime GatewayDetailsGatheredOn { get; set; }
-        public string GatewayDetailsGatheredBy { get; set; }
+        public ProviderDetails UkrlpDetails { get; set; }
+        public CompaniesHouseSummary CompaniesHouseDetails { get; set; }
+        public CharityCommissionSummary CharityCommissionDetails { get; set; }
+        public DateTime? SourcesCheckedOn { get; set; }
     }
 
     public class ApplySequence
