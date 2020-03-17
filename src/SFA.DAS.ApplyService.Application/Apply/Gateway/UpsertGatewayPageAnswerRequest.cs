@@ -11,15 +11,15 @@ namespace SFA.DAS.ApplyService.Application.Apply.Gateway
         public Guid ApplicationId { get; }
         public string PageId { get; }
         public string Status { get; }
-        public string GatewayPageData { get; }
+        public string Comments { get; }
         public string UserName { get; }
 
-        public UpsertGatewayPageAnswerRequest(Guid applicationId, string pageId, string status, string gatewayPageData, string username)
+        public UpsertGatewayPageAnswerRequest(Guid applicationId, string pageId, string status, string comments, string username)
         {
             ApplicationId = applicationId;
             PageId = pageId;
             Status = status;
-            GatewayPageData = gatewayPageData;
+            Comments = comments;
             UserName = username;
         }
     }

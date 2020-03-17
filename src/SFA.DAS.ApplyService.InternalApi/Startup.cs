@@ -26,6 +26,15 @@ using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
+using SFA.DAS.ApplyService.Web.Infrastructure;
+using CharityCommissionApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.CharityCommissionApiClient;
+using CompaniesHouseApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.CompaniesHouseApiClient;
+using IQnaTokenService = SFA.DAS.ApplyService.InternalApi.Infrastructure.IQnaTokenService;
+using IRoatpApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.IRoatpApiClient;
+using QnaTokenService = SFA.DAS.ApplyService.InternalApi.Infrastructure.QnaTokenService;
+using RoatpApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.RoatpApiClient;
+using SecurityHeadersExtensions = SFA.DAS.ApplyService.InternalApi.Infrastructure.SecurityHeadersExtensions;
+using ServiceCollectionExtensions = SFA.DAS.ApplyService.InternalApi.Infrastructure.ServiceCollectionExtensions;
 
 namespace SFA.DAS.ApplyService.InternalApi
 {
@@ -193,7 +202,7 @@ namespace SFA.DAS.ApplyService.InternalApi
                     .UseAuthentication();
 
             app.UseRequestLocalization();
-            app.UseSecurityHeaders();
+            SecurityHeadersExtensions.UseSecurityHeaders(app);
 
             app.UseAuthentication();
             app.UseHealthChecks("/health");
@@ -207,7 +216,7 @@ namespace SFA.DAS.ApplyService.InternalApi
         
         private void ConfigureDependencyInjection(IServiceCollection services)
         {
-            services.RegisterAllTypes<IValidator>(new[] { typeof(IValidator).Assembly });
+            ServiceCollectionExtensions.RegisterAllTypes<IValidator>(services, new[] { typeof(IValidator).Assembly });
             
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
                 
@@ -237,6 +246,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IInternalQnaApiClient, InternalQnaApiClient>();
             services.AddTransient<IQnaTokenService, QnaTokenService>();
             services.AddTransient<IRoatpTokenService, RoatpTokenService>();
+           // services.AddTransient<ICompaniesHouseApiClient, CompaniesHouseApiClient>();
 
 
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);

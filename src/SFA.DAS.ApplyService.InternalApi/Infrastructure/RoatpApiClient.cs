@@ -59,14 +59,6 @@
             return apiResponse;
         }
 
-        public async Task<IEnumerable<ProviderDetails>> GetUkrlpProviderDetails(string ukprn)
-        {
-            var res =
-                await Get<UkprnLookupResponse>($"{_baseAddress}/api/v1/ukrlp/lookup/{ukprn}");
-
-            return res.Results;
-        }
-
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =

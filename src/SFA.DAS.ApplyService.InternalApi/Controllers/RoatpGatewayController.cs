@@ -11,6 +11,10 @@ using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Gateway;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
+using SFA.DAS.ApplyService.Web.Infrastructure;
+using CharityCommissionApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.CharityCommissionApiClient;
+using CompaniesHouseApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.CompaniesHouseApiClient;
+using IRoatpApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.IRoatpApiClient;
 
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
@@ -24,34 +28,57 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         private readonly IApplyRepository _applyRepository;
         private readonly IInternalQnaApiClient _qnaApiClient;
         private readonly IRoatpApiClient _roatpApiClient;
+        private readonly CompaniesHouseApiClient _companiesHouseApiClient;
+
+        private readonly CharityCommissionApiClient _charityCommissionApiClient;
         private readonly ILogger<RoatpGatewayController> _logger;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="applyRepository"></param>
-        public RoatpGatewayController(IApplyRepository applyRepository, ILogger<RoatpGatewayController> logger, IInternalQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient) 
+        public RoatpGatewayController(IApplyRepository applyRepository, ILogger<RoatpGatewayController> logger, IInternalQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient, CompaniesHouseApiClient companiesHouseApiClient, CharityCommissionApiClient charityCommissionApiApiClient) 
         {
             _applyRepository = applyRepository;
             _logger = logger;
             _qnaApiClient = qnaApiClient;
             _roatpApiClient = roatpApiClient;
+            _companiesHouseApiClient = companiesHouseApiClient;
+            _charityCommissionApiClient = charityCommissionApiApiClient;
         }
 
         [Route("Gateway/Page/Submit")]
         [HttpPost]
          public async Task GatewayPageSubmit([FromBody] UpsertGatewayPageAnswerRequest request)
         {
-            _logger.LogInformation($"RoatpGatewayController-GatewayPageSubmit - ApplicationId '{request.ApplicationId}' - PageId '{request.PageId}' - Status '{request.Status}' - UserName '{request.UserName}' - PageData '{request.GatewayPageData}'");
-            try
+            await _applyRepository.SubmitGatewayPageDetail(request.ApplicationId, request.PageId, request.UserName, "Status",
+                    request.Status);
+
+            var optionPassText = string.Empty;
+            var optionFailText = string.Empty;
+            var optionInProgressText = string.Empty;
+
+            switch (request.Status)
             {
-                await _applyRepository.SubmitGatewayPageAnswer(request.ApplicationId, request.PageId, request.Status, request.UserName, request.GatewayPageData);
+                case "Pass":
+                    optionPassText = request.Comments;
+                    break;
+                case "Fail":
+                    optionFailText = request.Comments;
+                    break;
+                case "In progress":
+                    optionInProgressText = request.Comments;
+                    break;
             }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, "RoatpGatewayController-GatewayPageSubmit - Error: '" + ex.Message + "'");
-            }
-            
+
+            await _applyRepository.SubmitGatewayPageDetail(request.ApplicationId, request.PageId, request.UserName, "OptionPassText",
+                optionPassText);
+
+            await _applyRepository.SubmitGatewayPageDetail(request.ApplicationId, request.PageId, request.UserName, "OptionFailText",
+                optionFailText);
+
+            await _applyRepository.SubmitGatewayPageDetail(request.ApplicationId, request.PageId, request.UserName, "OptionInProgressText",
+                optionInProgressText);
         }
 
          [Route("Gateway/Page")]
@@ -86,8 +113,17 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                  fieldValue = applicationDetails?.ApplyData?.ApplyDetails?.ApplicationSubmittedOn.ToString();
              }
 
-             // will come from Apply.ApplyGatewayDetails.GatewayDetailsGatheredOn
-             if (fieldName == "SourcesCheckedOn")
+
+             if (fieldName == "GatewayReviewStatus")
+             {
+                 // get it from apply data
+                 //MFCMFC Not sure we want to store this.... should be get it fresh each time???
+                 var applicationDetails = await _applyRepository.GetApplication(applicationId);
+                 fieldValue = applicationDetails.GatewayReviewStatus;
+             }
+
+            // will come from Apply.ApplyGatewayDetails.GatewayDetailsGatheredOn
+            if (fieldName == "SourcesCheckedOn")
              {
                  fieldValue = DateTime.Now.ToString();
              }
@@ -110,20 +146,40 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             }
 
             //    // CompaniesHouseLegalName
+            if (fieldName == "CompaniesHouseName")
+            {
+                var companyNumber = await _qnaApiClient.GetQuestionTag(applicationId, "UKRLPVerificationCompanyNumber");
+                if (!string.IsNullOrEmpty(companyNumber))
+                {
+                    var companyDetails = await _companiesHouseApiClient.GetCompany(companyNumber);
 
-                //    // CharityCommissionLegalName
+                    if (companyDetails != null && !string.IsNullOrEmpty(companyDetails?.Response?.CompanyName))
+                       fieldValue = companyDetails.Response.CompanyName;
+                }
+            }
+            //    // CharityCommissionLegalName
+            if (fieldName == "CharityCommissionName")
+            {
+                var charityNumber = await _qnaApiClient.GetQuestionTag(applicationId, "UKRLPVerificationCharityRegNumber");
+                if (!string.IsNullOrEmpty(charityNumber) && int.TryParse(charityNumber, out var charityNumberNumeric))
+                {
+                    var charityDetails = await _charityCommissionApiClient.GetCharity(charityNumberNumeric);
 
-                if (!string.IsNullOrEmpty(fieldValue))
+                    if (!string.IsNullOrEmpty(charityDetails?.Name))
+                        fieldValue = charityDetails.Name;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(fieldValue))
                 await _applyRepository.SubmitGatewayPageDetail(applicationId, pageId, userName, fieldName,
                     fieldValue);
-        
-
+            
             return fieldValue;
                 
          }
 
 
-        [Route("Gate way/Pages")]
+        [Route("Gateway/Pages")]
          [HttpGet]
          public async Task<ActionResult<List<GatewayPageAnswerSummary>>> GetGatewayPages(Guid applicationId)
         {

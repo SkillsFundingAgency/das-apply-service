@@ -108,29 +108,29 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string value, string submittedBy,
-            string gatewayPageData)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                _logger.LogInformation($"ApplyRepository-SubmitGatewayPageAnswer - ApplicationId '{applicationId}' - PageId '{pageId}' - Status '{value}' - UserName '{submittedBy}' - PageData '{gatewayPageData}'");
-                try
-                {
-                await connection.ExecuteAsync(@"IF NOT EXISTS (select * from GatewayAnswer where applicationId = @applicationId and pageId = @pageId)
-	                                                        INSERT INTO GatewayAnswer ([ApplicationId],[PageId],[Status],[GatewayPageData],[CreatedAt],[CreatedBy])
-														         values (@applicationId, @pageId,@value,@gatewayPageData,GetUTCDATE(),@submittedBy)
-                                                        ELSE
-	                                                        UPDATE GatewayAnswer
-                                                                    SET  Status = @value, GatewayPageData = @gatewayPageData, UpdatedBy = @submittedBy, UpdatedAt = GETUTCDATE() 
-                                                                    WHERE  ApplicationId = @applicationId and pageId = @pageId",
-                            new {applicationId, pageId, gatewayPageData, value, submittedBy});
-                }
-                catch(Exception ex)
-                {
-                    _logger.LogError(ex, "ApplyRepository - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
-                }
-            }
-        }
+        //public async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string value, string submittedBy,
+        //    string comments)
+        //{
+        //    using (var connection = new SqlConnection(_config.SqlConnectionString))
+        //    {
+        //        _logger.LogInformation($"ApplyRepository-SubmitGatewayPageAnswer - ApplicationId '{applicationId}' - PageId '{pageId}' - Status '{value}' - UserName '{submittedBy}' - PageData '{gatewayPageData}'");
+        //        try
+        //        {
+        //        await connection.ExecuteAsync(@"IF NOT EXISTS (select * from GatewayAnswer where applicationId = @applicationId and pageId = @pageId)
+	       //                                                 INSERT INTO GatewayAnswer ([ApplicationId],[PageId],[Status],[Comments],[CreatedAt],[CreatedBy])
+								//						         values (@applicationId, @pageId,@value,@gatewayPageData,GetUTCDATE(),@submittedBy)
+        //                                                ELSE
+	       //                                                 UPDATE GatewayAnswer
+        //                                                            SET  Status = @value, Comments = @gatewayPageData, UpdatedBy = @submittedBy, UpdatedAt = GETUTCDATE() 
+        //                                                            WHERE  ApplicationId = @applicationId and pageId = @pageId",
+        //                    new {applicationId, pageId, gatewayPageData, value, submittedBy});
+        //        }
+        //        catch(Exception ex)
+        //        {
+        //            _logger.LogError(ex, "ApplyRepository - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
+        //        }
+        //    }
+        //}
 
         //MFCMFC
         public async Task SubmitGatewayPageDetail(Guid applicationId, string pageId, string userName, string fieldName, string value)
@@ -138,16 +138,33 @@ namespace SFA.DAS.ApplyService.Data
 
             var insertedValue = "{\"" + fieldName + "\":\"" + value + "\"}";
 
-        using (var connection = new SqlConnection(_config.SqlConnectionString))
-        {
-            await connection.ExecuteAsync(@"IF NOT EXISTS (select * from GatewayAnswer where applicationId = @applicationId and pageId = @pageId)
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                if (fieldName != "Status")
+                {
+                    await connection.ExecuteAsync(
+                        @"IF NOT EXISTS (select * from GatewayAnswer where applicationId = @applicationId and pageId = @pageId)
 	                                                        INSERT INTO GatewayAnswer ([ApplicationId],[PageId],[Status],[GatewayPageData],[CreatedAt],[CreatedBy])
 														         values (@applicationId, @pageId,null,@insertedValue,GetUTCDATE(),@userName)
                                                         ELSE
 	                                                        UPDATE GatewayAnswer
                                                                     SET  GatewayPageData =JSON_MODIFY(isnull(GatewayPageData,'{}'),'$.' + @fieldName +'','' +@value +''), UpdatedBy = @userName, UpdatedAt = GETUTCDATE() 
                                                                     WHERE  ApplicationId = @applicationId and pageId = @pageId",
-                        new { applicationId, pageId, fieldName, value, insertedValue, userName });
+                        new {applicationId, pageId, fieldName, value, insertedValue, userName});
+                }
+                else
+                {
+                    await connection.ExecuteAsync(
+                        @"IF NOT EXISTS (select * from GatewayAnswer where applicationId = @applicationId and pageId = @pageId)
+	                                                        INSERT INTO GatewayAnswer ([ApplicationId],[PageId],[Status],[GatewayPageData],[CreatedAt],[CreatedBy])
+														         values (@applicationId, @pageId,@value,null,GetUTCDATE(),@userName)
+                                                        ELSE
+                                                         UPDATE GatewayAnswer
+                                                                    SET  Status = @value, UpdatedBy = @userName, UpdatedAt = GETUTCDATE() 
+                                                                    WHERE  ApplicationId = @applicationId and pageId = @pageId",
+                        new {applicationId, pageId, value, userName});
+                }
+            
         }
         }
 
