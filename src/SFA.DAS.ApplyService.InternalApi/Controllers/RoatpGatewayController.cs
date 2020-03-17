@@ -23,19 +23,19 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     {
         private readonly IApplyRepository _applyRepository;
         private readonly IInternalQnaApiClient _qnaApiClient;
-        //private readonly IRoatpApiClient _roatpApiClient;
+        private readonly IRoatpApiClient _roatpApiClient;
         private readonly ILogger<RoatpGatewayController> _logger;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="applyRepository"></param>
-        public RoatpGatewayController(IApplyRepository applyRepository, ILogger<RoatpGatewayController> logger, IInternalQnaApiClient qnaApiClient) //, IQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient)
+        public RoatpGatewayController(IApplyRepository applyRepository, ILogger<RoatpGatewayController> logger, IInternalQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient) 
         {
             _applyRepository = applyRepository;
             _logger = logger;
             _qnaApiClient = qnaApiClient;
-            //_roatpApiClient = roatpApiClient;
+            _roatpApiClient = roatpApiClient;
         }
 
         [Route("Gateway/Page/Submit")]
@@ -97,23 +97,23 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                  fieldValue = await _qnaApiClient.GetQuestionTag(applicationId, "UKPRN");
              }
 
-             //// UkrlpLegalName
-             //if (fieldName == "UkrlpLegalName")
-             //{
-             //    var ukprn = await GetGatewayPageItemValue(applicationId, pageId, userName, "UKPRN");
-             //    var ukrlpData = await _roatpApiClient.GetUkrlpProviderDetails(ukprn.Result.ToString());
-             //    if (ukrlpData.Any())
-             //    {
-             //        var ukrlpDetail = ukrlpData.First();
-             //        fieldValue = ukrlpDetail.ProviderName;
-             //    }
+            // UkrlpLegalName
+            if (fieldName == "UkrlpLegalName")
+            {
+                var ukprn = await GetGatewayPageItemValue(applicationId, pageId, userName, "UKPRN");
+                var ukrlpData = await _roatpApiClient.GetUkrlpDetails(ukprn.Value);
+                if (ukrlpData!=null && ukrlpData.Results.Any())
+                {
+                    var ukrlpDetail = ukrlpData.Results.First();
+                    fieldValue = ukrlpDetail.ProviderName;
+                }
+            }
 
+            //    // CompaniesHouseLegalName
 
-             //    // CompaniesHouseLegalName
+                //    // CharityCommissionLegalName
 
-             //    // CharityCommissionLegalName
-         
-         if (!string.IsNullOrEmpty(fieldValue))
+                if (!string.IsNullOrEmpty(fieldValue))
                 await _applyRepository.SubmitGatewayPageDetail(applicationId, pageId, userName, fieldName,
                     fieldValue);
         
