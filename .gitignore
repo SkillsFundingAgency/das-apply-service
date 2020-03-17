@@ -282,3 +282,8 @@ __queuestorage__
 __azurite_db_blob_*
 __azurite_db_table_*
 __azurite_db_queue_*
+
+#SonarCloud
+.sonarqube/
+SonarQube.Analysis.xml
+**/*.slconfig
