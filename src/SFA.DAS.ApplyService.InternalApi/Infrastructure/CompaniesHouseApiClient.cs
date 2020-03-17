@@ -26,6 +26,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
         private readonly ILogger<CompaniesHouseApiClient> _logger;
         private readonly IApplyConfig _config;
 
+        public CompaniesHouseApiClient()
+        {
+
+        }
+
         public CompaniesHouseApiClient(HttpClient client, ILogger<CompaniesHouseApiClient> logger, IConfigurationService configurationService)
         {
             _client = client;
@@ -33,7 +38,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             _config = configurationService.GetConfig().Result;
         }
 
-        public async Task<ApiResponse<Company>> GetCompany(string companyNumber)
+        public async virtual Task<ApiResponse<Company>> GetCompany(string companyNumber)
         {
             var company = await GetCompanyDetails(companyNumber);
 

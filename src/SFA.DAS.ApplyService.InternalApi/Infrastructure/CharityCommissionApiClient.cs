@@ -19,6 +19,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
         private readonly ILogger<CharityCommissionApiClient> _logger;
         private readonly IApplyConfig _config;
 
+        public CharityCommissionApiClient()
+        {
+
+        }
+         
+
         public CharityCommissionApiClient(ISearchCharitiesV1SoapClient client, ILogger<CharityCommissionApiClient> logger, IConfigurationService configurationService)
         {
             _client = client;
@@ -26,7 +32,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             _config = configurationService.GetConfig().Result;
         }
 
-        public async Task<Types.CharityCommission.Charity> GetCharity(int charityNumber)
+        public async virtual Task<Types.CharityCommission.Charity> GetCharity(int charityNumber)
         {
             try
             {
