@@ -1,5 +1,6 @@
 ﻿using SFA.DAS.ApplyService.Domain.CharityCommission;
 using SFA.DAS.ApplyService.Domain.CompaniesHouse;
+using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Domain.Ukrlp;
 using System;
 using System.Collections.Generic;
@@ -45,6 +46,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public ProviderDetails UkrlpDetails { get; set; }
         public CompaniesHouseSummary CompaniesHouseDetails { get; set; }
         public CharityCommissionSummary CharityCommissionDetails { get; set; }
+        public OrganisationRegisterStatus RoatpRegisterDetails { get; set; }
         public DateTime? SourcesCheckedOn { get; set; }
     }
 
