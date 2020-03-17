@@ -122,6 +122,12 @@ namespace SFA.DAS.ApplyService.InternalApi
             })
             .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
+            services.AddHttpClient<RoatpApiClient>("InternalQnaApiClient", config =>
+                {
+                    config.BaseAddress = new Uri(_applyConfig.QnaApiAuthentication.ApiBaseAddress);          // "http://localhost:5554"
+                    config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                })
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5));
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 options.DefaultRequestCulture = new RequestCulture("en-GB");
@@ -227,6 +233,8 @@ namespace SFA.DAS.ApplyService.InternalApi
             // End of SOAP Services
 
             services.AddTransient<IRoatpApiClient, RoatpApiClient>();
+            services.AddTransient<IInternalQnaApiClient, InternalQnaApiClient>();
+            services.AddTransient<IQnaTokenService, QnaTokenService>();
             services.AddTransient<IRoatpTokenService, RoatpTokenService>();
 
     

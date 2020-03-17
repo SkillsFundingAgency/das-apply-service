@@ -98,6 +98,16 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<string> GetGatewayPageAnswerValue(Guid applicationId, string pageId, string fieldName)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QuerySingleOrDefaultAsync<string>($@"SELECT JSON_VALUE(GatewayPageData,'$.{fieldName}') from GatewayAnswer
+                                                    WHERE applicationId = @applicationId and pageid = @pageId",
+                    new { applicationId, pageId, fieldName }));
+            }
+        }
+
         public async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string value, string submittedBy,
             string gatewayPageData)
         {
@@ -120,6 +130,25 @@ namespace SFA.DAS.ApplyService.Data
                     _logger.LogError(ex, "ApplyRepository - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
                 }
             }
+        }
+
+        //MFCMFC
+        public async Task SubmitGatewayPageDetail(Guid applicationId, string pageId, string userName, string fieldName, string value)
+        {
+
+            var insertedValue = "{\"" + fieldName + "\":\"" + value + "\"}";
+
+        using (var connection = new SqlConnection(_config.SqlConnectionString))
+        {
+            await connection.ExecuteAsync(@"IF NOT EXISTS (select * from GatewayAnswer where applicationId = @applicationId and pageId = @pageId)
+	                                                        INSERT INTO GatewayAnswer ([ApplicationId],[PageId],[Status],[GatewayPageData],[CreatedAt],[CreatedBy])
+														         values (@applicationId, @pageId,null,@insertedValue,GetUTCDATE(),@userName)
+                                                        ELSE
+	                                                        UPDATE GatewayAnswer
+                                                                    SET  GatewayPageData =JSON_MODIFY(isnull(GatewayPageData,'{}'),'$.' + @fieldName +'','' +@value +''), UpdatedBy = @userName, UpdatedAt = GETUTCDATE() 
+                                                                    WHERE  ApplicationId = @applicationId and pageId = @pageId",
+                        new { applicationId, pageId, fieldName, value, insertedValue, userName });
+        }
         }
 
         public async Task<bool> CanSubmitApplication(Guid applicationId)

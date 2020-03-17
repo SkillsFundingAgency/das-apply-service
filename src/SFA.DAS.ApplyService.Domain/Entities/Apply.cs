@@ -34,6 +34,18 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public Guid? ApplicationSubmittedBy { get; set; }
     }
 
+
+    //MNFCMFC
+    // This is an application-level storage of external details for processing gateway reviews
+    public class ApplyGatewayDetails
+    {
+        public string UkrlpLegalName { get; set; }
+        public string CompaniesHouseLegalName { get; set; }
+        public string CharityCommissionLegalName { get; set; }
+        public DateTime GatewayDetailsGatheredOn { get; set; }
+        public string GatewayDetailsGatheredBy { get; set; }
+    }
+
     public class ApplySequence
     {
         public Guid SequenceId { get; set; }
