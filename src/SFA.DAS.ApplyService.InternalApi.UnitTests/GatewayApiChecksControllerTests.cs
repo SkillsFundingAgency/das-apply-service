@@ -15,6 +15,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.InternalApi.Types.CompaniesHouse;
 using SFA.DAS.ApplyService.InternalApi.Types;
+using SFA.DAS.ApplyService.InternalApi.Services;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
@@ -27,6 +28,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private Mock<CharityCommissionApiClient> _charityCommissionApiClient;
         private Mock<IRoatpApiClient> _roatpApiClient;
         private Mock<IInternalQnaApiClient> _qnaApiClient;
+        private IGatewayApiChecksService _gatewayApiChecksService;
 
         private GatewayApiChecksController _controller;
 
@@ -54,9 +56,10 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _charityCommissionApiClient = new Mock<CharityCommissionApiClient>();
             _roatpApiClient = new Mock<IRoatpApiClient>();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
+            _gatewayApiChecksService = new GatewayApiChecksService(_companiesHouseApiClient.Object, _charityCommissionApiClient.Object,
+                                                                   _roatpApiClient.Object, _qnaApiClient.Object);
 
-            _controller = new GatewayApiChecksController(_applyRepository.Object, _logger.Object, _companiesHouseApiClient.Object,
-                                                         _charityCommissionApiClient.Object, _roatpApiClient.Object, _qnaApiClient.Object);
+            _controller = new GatewayApiChecksController(_applyRepository.Object, _logger.Object, _gatewayApiChecksService);
         }
 
         [Test]
