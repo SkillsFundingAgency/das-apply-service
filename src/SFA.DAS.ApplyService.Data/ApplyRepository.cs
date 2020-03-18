@@ -1159,7 +1159,7 @@ namespace SFA.DAS.ApplyService.Data
                 var applicationStatuses = await connection.QueryAsync<RoatpApplicationStatus>(
                     @"select a.Id AS ApplicationId, a.ApplicationStatus AS Status
                       from dbo.Apply a
-                      where JSON_VALUE(ApplyData, '$.ApplyDetails.UKPRN') = @ukprn",
+                      where UKPRN = @ukprn",
                  new { ukprn });
 
                 return await Task.FromResult(applicationStatuses);
