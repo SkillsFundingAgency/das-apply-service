@@ -108,31 +108,16 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        //public async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string value, string submittedBy,
-        //    string comments)
-        //{
-        //    using (var connection = new SqlConnection(_config.SqlConnectionString))
-        //    {
-        //        _logger.LogInformation($"ApplyRepository-SubmitGatewayPageAnswer - ApplicationId '{applicationId}' - PageId '{pageId}' - Status '{value}' - UserName '{submittedBy}' - PageData '{gatewayPageData}'");
-        //        try
-        //        {
-        //        await connection.ExecuteAsync(@"IF NOT EXISTS (select * from GatewayAnswer where applicationId = @applicationId and pageId = @pageId)
-	       //                                                 INSERT INTO GatewayAnswer ([ApplicationId],[PageId],[Status],[Comments],[CreatedAt],[CreatedBy])
-								//						         values (@applicationId, @pageId,@value,@gatewayPageData,GetUTCDATE(),@submittedBy)
-        //                                                ELSE
-	       //                                                 UPDATE GatewayAnswer
-        //                                                            SET  Status = @value, Comments = @gatewayPageData, UpdatedBy = @submittedBy, UpdatedAt = GETUTCDATE() 
-        //                                                            WHERE  ApplicationId = @applicationId and pageId = @pageId",
-        //                    new {applicationId, pageId, gatewayPageData, value, submittedBy});
-        //        }
-        //        catch(Exception ex)
-        //        {
-        //            _logger.LogError(ex, "ApplyRepository - SubmitGatewayPageAnswer - Error: '" + ex.Message + "'");
-        //        }
-        //    }
-        //}
+        public async Task<string> GetGatewayPageStatus(Guid applicationId, string pageId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QuerySingleOrDefaultAsync<string>(@"SELECT Status from GatewayAnswer WHERE applicationId = @applicationId and pageid = @pageId",
+                    new { applicationId, pageId }));
+            }
+        }
 
-        //MFCMFC
+
         public async Task SubmitGatewayPageDetail(Guid applicationId, string pageId, string userName, string fieldName, string value)
         {
 

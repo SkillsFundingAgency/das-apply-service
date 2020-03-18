@@ -1,21 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Gateway;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
-using SFA.DAS.ApplyService.Web.Infrastructure;
-using CharityCommissionApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.CharityCommissionApiClient;
-using CompaniesHouseApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.CompaniesHouseApiClient;
-using IRoatpApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.IRoatpApiClient;
-
+using SFA.DAS.ApplyService.InternalApi.Services;
+using SFA.DAS.ApplyService.InternalApi.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -27,24 +21,19 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     {
         private readonly IApplyRepository _applyRepository;
         private readonly IInternalQnaApiClient _qnaApiClient;
-        private readonly IRoatpApiClient _roatpApiClient;
-        private readonly CompaniesHouseApiClient _companiesHouseApiClient;
-
-        private readonly CharityCommissionApiClient _charityCommissionApiClient;
+        private readonly IGatewayApiChecksService _gatewayApiChecksService;
         private readonly ILogger<RoatpGatewayController> _logger;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="applyRepository"></param>
-        public RoatpGatewayController(IApplyRepository applyRepository, ILogger<RoatpGatewayController> logger, IInternalQnaApiClient qnaApiClient, IRoatpApiClient roatpApiClient, CompaniesHouseApiClient companiesHouseApiClient, CharityCommissionApiClient charityCommissionApiApiClient) 
+        public RoatpGatewayController(IApplyRepository applyRepository, ILogger<RoatpGatewayController> logger, IInternalQnaApiClient qnaApiClient, IGatewayApiChecksService gatewayApiChecksService) 
         {
             _applyRepository = applyRepository;
             _logger = logger;
             _qnaApiClient = qnaApiClient;
-            _roatpApiClient = roatpApiClient;
-            _companiesHouseApiClient = companiesHouseApiClient;
-            _charityCommissionApiClient = charityCommissionApiApiClient;
+            _gatewayApiChecksService = gatewayApiChecksService;
         }
 
         [Route("Gateway/Page/Submit")]
@@ -94,88 +83,64 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
          public async Task<ActionResult<string>> GetGatewayPageItemValue(Guid applicationId, string pageId,
              string userName, string fieldName)
          {
+             if (fieldName == RoatpGatewayFields.Status)
+             {
+                 return await _applyRepository.GetGatewayPageStatus(applicationId, pageId);
+             }
+
              var fieldValue = await _applyRepository.GetGatewayPageAnswerValue(applicationId, pageId, fieldName);
 
              if (!string.IsNullOrEmpty(fieldValue))
                  return fieldValue;
 
-             if (fieldName == "OrganisationName")
-             {
-                 // get it from apply data
-                 var applicationDetails = await _applyRepository.GetApplication(applicationId);
-                 fieldValue = applicationDetails.ApplyData.ApplyDetails.OrganisationName;
-             }
+             var applicationDetails = await _applyRepository.GetApplication(applicationId);
 
-             if (fieldName == "ApplicationSubmittedOn")
-             {
-                 // get it from apply data
-                 var applicationDetails = await _applyRepository.GetApplication(applicationId);
-                 fieldValue = applicationDetails?.ApplyData?.ApplyDetails?.ApplicationSubmittedOn.ToString();
-             }
-
-
-             if (fieldName == "GatewayReviewStatus")
-             {
-                 // get it from apply data
-                 //MFCMFC Not sure we want to store this.... should be get it fresh each time???
-                 var applicationDetails = await _applyRepository.GetApplication(applicationId);
-                 fieldValue = applicationDetails.GatewayReviewStatus;
-             }
-
-            // will come from Apply.ApplyGatewayDetails.GatewayDetailsGatheredOn
-            if (fieldName == "SourcesCheckedOn")
-             {
-                 fieldValue = DateTime.Now.ToString();
-             }
-
-             if (fieldName == "UKPRN")
-             {
-                 fieldValue = await _qnaApiClient.GetQuestionTag(applicationId, "UKPRN");
-             }
-
-            // UkrlpLegalName
-            if (fieldName == "UkrlpLegalName")
+            if (applicationDetails?.ApplyData == null)
             {
-                var ukprn = await GetGatewayPageItemValue(applicationId, pageId, userName, "UKPRN");
-                var ukrlpData = await _roatpApiClient.GetUkrlpDetails(ukprn.Value);
-                if (ukrlpData!=null && ukrlpData.Results.Any())
-                {
-                    var ukrlpDetail = ukrlpData.Results.First();
-                    fieldValue = ukrlpDetail.ProviderName;
-                }
+                // this should never happen - so shutter page if it does
+                return string.Empty;
             }
 
-            //    // CompaniesHouseLegalName
-            if (fieldName == "CompaniesHouseName")
+            if (applicationDetails.ApplyData?.GatewayReviewDetails == null)
             {
-                var companyNumber = await _qnaApiClient.GetQuestionTag(applicationId, "UKRLPVerificationCompanyNumber");
-                if (!string.IsNullOrEmpty(companyNumber))
-                {
-                    var companyDetails = await _companiesHouseApiClient.GetCompany(companyNumber);
-
-                    if (companyDetails != null && !string.IsNullOrEmpty(companyDetails?.Response?.CompanyName))
-                       fieldValue = companyDetails.Response.CompanyName;
-                }
-            }
-            //    // CharityCommissionLegalName
-            if (fieldName == "CharityCommissionName")
-            {
-                var charityNumber = await _qnaApiClient.GetQuestionTag(applicationId, "UKRLPVerificationCharityRegNumber");
-                if (!string.IsNullOrEmpty(charityNumber) && int.TryParse(charityNumber, out var charityNumberNumeric))
-                {
-                    var charityDetails = await _charityCommissionApiClient.GetCharity(charityNumberNumeric);
-
-                    if (!string.IsNullOrEmpty(charityDetails?.Name))
-                        fieldValue = charityDetails.Name;
-                }
+                var applyDetails = await _gatewayApiChecksService.GetExternalApiCheckDetails(applicationId, userName);
+                applicationDetails.ApplyData.GatewayReviewDetails = applyDetails;
             }
 
-            if (!string.IsNullOrEmpty(fieldValue))
+             switch (fieldName)
+             {
+                 case RoatpGatewayFields.OrganisationName:
+                     fieldValue = applicationDetails.ApplyData.ApplyDetails.OrganisationName;
+                     break;
+                 case RoatpGatewayFields.ApplicationSubmittedOn:
+                     fieldValue = applicationDetails?.ApplyData?.ApplyDetails?.ApplicationSubmittedOn.ToString();
+                     break;
+                case RoatpGatewayFields.GatewayReviewStatus:
+                    // This will need to be fresh each time
+                    fieldValue = applicationDetails.GatewayReviewStatus;
+                    return fieldValue;
+                case RoatpGatewayFields.SourcesCheckedOn:
+                     fieldValue = applicationDetails?.ApplyData?.GatewayReviewDetails?.SourcesCheckedOn?.ToString();
+                     break;
+                 case RoatpGatewayFields.UKPRN:
+                     fieldValue = applicationDetails.ApplyData.ApplyDetails.UKPRN;
+                     break;
+                 case RoatpGatewayFields.UkrlpLegalName:
+                     fieldValue = applicationDetails.ApplyData?.GatewayReviewDetails?.UkrlpDetails?.ProviderName;
+                     break;
+                case RoatpGatewayFields.CompaniesHouseName:
+                     fieldValue = applicationDetails.ApplyData?.GatewayReviewDetails?.CompaniesHouseDetails?.CompanyName;
+                     break;
+                 case RoatpGatewayFields.CharityCommissionName:
+                     fieldValue = applicationDetails.ApplyData?.GatewayReviewDetails?.CharityCommissionDetails?.CharityName;
+                     break;
+             }
+
+             if (!string.IsNullOrEmpty(fieldValue))
                 await _applyRepository.SubmitGatewayPageDetail(applicationId, pageId, userName, fieldName,
                     fieldValue);
-            
-            return fieldValue;
-                
+
+             return fieldValue;
          }
 
 

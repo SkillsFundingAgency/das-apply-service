@@ -20,8 +20,9 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId);
 
         Task<string> GetGatewayPageAnswerValue(Guid applicationId, string pageId, string fieldName);
-        //Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string value, string userid,
-        //    string gatewayPageData);
+
+        Task<string> GetGatewayPageStatus(Guid applicationId, string pageId);
+
 
         Task SubmitGatewayPageDetail(Guid applicationId, string pageId, string userName, string fieldName, string value);
         Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string userName, string value);
