@@ -40,6 +40,7 @@ namespace SFA.DAS.ApplyService.InternalApi
 {
     using SFA.DAS.ApplyService.Domain.Roatp;
     using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
+    using SFA.DAS.ApplyService.InternalApi.Services;
     using Swashbuckle.AspNetCore.Swagger;
     using System.IO;
 
@@ -246,8 +247,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IInternalQnaApiClient, InternalQnaApiClient>();
             services.AddTransient<IQnaTokenService, QnaTokenService>();
             services.AddTransient<IRoatpTokenService, RoatpTokenService>();
-           // services.AddTransient<ICompaniesHouseApiClient, CompaniesHouseApiClient>();
-
+            services.AddTransient<IGatewayApiChecksService, GatewayApiChecksService>();
 
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
         }
