@@ -16,14 +16,13 @@
         //private readonly HttpClient _client;
         private readonly ILogger<RoatpApiClient> _logger;
         private readonly IRoatpTokenService _tokenService;
-        private string _baseAddress;
+        private readonly string _baseAddress;
         private static readonly HttpClient _client = new HttpClient();
 
         public RoatpApiClient(ILogger<RoatpApiClient> logger, IConfigurationService configurationService, IRoatpTokenService tokenService)
         {
             _logger = logger;
             _baseAddress = configurationService.GetConfig().Result.RoatpApiAuthentication.ApiBaseAddress;
-           // _client = client;
             _tokenService = tokenService;
             if (_client.BaseAddress == null)
             {

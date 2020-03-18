@@ -7,13 +7,13 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
-using SFA.DAS.ApplyService.Web.Infrastructure;
+using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
     public class InternalQnaApiClient:IInternalQnaApiClient
     {
-        private readonly ILogger<QnaApiClient> _logger;
+        private readonly ILogger<InternalQnaApiClient> _logger;
         private readonly IQnaTokenService _tokenService;
         private static readonly HttpClient _httpClient = new HttpClient();
         private readonly string _environmentName;
@@ -24,7 +24,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             NullValueHandling = NullValueHandling.Ignore
         };
 
-        public InternalQnaApiClient(IConfigurationService configurationService, ILogger<QnaApiClient> logger, IQnaTokenService tokenService)
+        public InternalQnaApiClient(IConfigurationService configurationService, ILogger<InternalQnaApiClient> logger, IQnaTokenService tokenService)
         {
             _logger = logger;
             _tokenService = tokenService;

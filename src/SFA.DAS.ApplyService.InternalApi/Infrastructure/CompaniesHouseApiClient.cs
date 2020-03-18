@@ -11,7 +11,6 @@ using System.Text;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.InternalApi.Types.CompaniesHouse;
 using SFA.DAS.ApplyService.InternalApi.Types;
-using SFA.DAS.ApplyService.Web.Infrastructure;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
