@@ -28,3 +28,10 @@ ALTER TABLE [dbo].[Contacts] CHECK CONSTRAINT [FK_Contacts_Organisations]
 GO
 
 CREATE UNIQUE INDEX [IXU_Contacts] ON [Contacts] ([Email])
+GO
+CREATE INDEX [IX_Contacts_UKPRN] ON [Contacts] ([ApplyOrganisationId])
+GO
+CREATE INDEX [IX_Contacts_SignInId] ON [Contacts] ([SignInId])
+GO
+CREATE INDEX [IX_Contacts_SignInType] ON [Contacts] ([SignInType])
+GO
