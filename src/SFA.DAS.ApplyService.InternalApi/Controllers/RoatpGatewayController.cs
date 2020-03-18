@@ -78,9 +78,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
          }
 
 
-         [Route("Gateway/Page/HeaderDetails")]
+         [Route("Gateway/Page/CommonDetails")]
          [HttpGet]
-         public async Task<ActionResult<GatewayCommonDetails>> GetGatewayPageHeader(Guid applicationId, string pageId,
+         public async Task<ActionResult<GatewayCommonDetails>> GetGatewayCommonDetails(Guid applicationId, string pageId,
              string userName)
          {
              var ukprn = await GetGatewayPageItemValue(applicationId, pageId, userName, GatewayFields.UKPRN);

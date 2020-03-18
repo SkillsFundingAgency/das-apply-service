@@ -14,6 +14,6 @@
         public const string OptionPassText = "OptionPassText";
         public const string OptionFailText = "OptionFailText";
         public const string OptionInProgressText = "OptionInProgressText";
-        public const string TypeOfCompany = "TypeOfCompany";
+        public const string TypeOfOrganisation = "TypeOfOrganisation";
     }
 }
