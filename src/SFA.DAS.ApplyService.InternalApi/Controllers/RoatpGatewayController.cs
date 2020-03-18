@@ -70,7 +70,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 optionInProgressText);
         }
 
-         [Route("Gateway/Page")]
+         [Route("Gateway/Page/{applicationId}/{pageId}")]
          [HttpGet]
          public async Task<ActionResult<GatewayPageAnswer>> GetGatewayPage(Guid applicationId, string pageId)
          {
@@ -78,7 +78,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
          }
 
 
-         [Route("Gateway/Page/CommonDetails")]
+         [Route("Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}")]
          [HttpGet]
          public async Task<ActionResult<GatewayCommonDetails>> GetGatewayCommonDetails(Guid applicationId, string pageId,
              string userName)
@@ -107,7 +107,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return details;
          }
 
-         [Route("Gateway/Page/Value")]
+         [Route("Gateway/Page/Value/{applicationId}/{pageId}/{userName}/{fieldName}")]
          [HttpGet]
          public async Task<ActionResult<string>> GetGatewayPageItemValue(Guid applicationId, string pageId,
              string userName, string fieldName)
