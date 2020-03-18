@@ -51,9 +51,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost]
          public async Task GatewayPageSubmit([FromBody] UpsertGatewayPageAnswerRequest request)
         {
-            await _applyRepository.SubmitGatewayPageDetail(request.ApplicationId, request.PageId, request.UserName, "Status",
-                    request.Status);
-
             var optionPassText = string.Empty;
             var optionFailText = string.Empty;
             var optionInProgressText = string.Empty;
@@ -70,6 +67,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                     optionInProgressText = request.Comments;
                     break;
             }
+
+            await _applyRepository.SubmitGatewayPageAnswer(request.ApplicationId, request.PageId, request.UserName,
+                request.Status);
 
             await _applyRepository.SubmitGatewayPageDetail(request.ApplicationId, request.PageId, request.UserName, "OptionPassText",
                 optionPassText);

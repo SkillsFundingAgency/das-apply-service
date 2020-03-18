@@ -140,8 +140,7 @@ namespace SFA.DAS.ApplyService.Data
 
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                if (fieldName != "Status")
-                {
+
                     await connection.ExecuteAsync(
                         @"IF NOT EXISTS (select * from GatewayAnswer where applicationId = @applicationId and pageId = @pageId)
 	                                                        INSERT INTO GatewayAnswer ([ApplicationId],[PageId],[Status],[GatewayPageData],[CreatedAt],[CreatedBy])
@@ -151,9 +150,14 @@ namespace SFA.DAS.ApplyService.Data
                                                                     SET  GatewayPageData =JSON_MODIFY(isnull(GatewayPageData,'{}'),'$.' + @fieldName +'','' +@value +''), UpdatedBy = @userName, UpdatedAt = GETUTCDATE() 
                                                                     WHERE  ApplicationId = @applicationId and pageId = @pageId",
                         new {applicationId, pageId, fieldName, value, insertedValue, userName});
-                }
-                else
-                {
+            }
+        }
+
+        public async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string userName, string value)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+
                     await connection.ExecuteAsync(
                         @"IF NOT EXISTS (select * from GatewayAnswer where applicationId = @applicationId and pageId = @pageId)
 	                                                        INSERT INTO GatewayAnswer ([ApplicationId],[PageId],[Status],[GatewayPageData],[CreatedAt],[CreatedBy])
@@ -162,10 +166,9 @@ namespace SFA.DAS.ApplyService.Data
                                                          UPDATE GatewayAnswer
                                                                     SET  Status = @value, UpdatedBy = @userName, UpdatedAt = GETUTCDATE() 
                                                                     WHERE  ApplicationId = @applicationId and pageId = @pageId",
-                        new {applicationId, pageId, value, userName});
-                }
-            
-        }
+                        new { applicationId, pageId, value, userName });
+                
+            }
         }
 
         public async Task<bool> CanSubmitApplication(Guid applicationId)
