@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.ApplyService.InternalApi.Types
 {
-    public static class RoatpGatewayFields
+    public static class GatewayFields
     {
         public const string Status = "Status";
         public const string OrganisationName = "OrganisationName";
@@ -11,5 +11,9 @@
         public const string UkrlpLegalName = "UkrlpLegalName";
         public const string CompaniesHouseName = "CompaniesHouseName";
         public const string CharityCommissionName = "CharityCommissionName";
+        public const string OptionPassText = "OptionPassText";
+        public const string OptionFailText = "OptionFailText";
+        public const string OptionInProgressText = "OptionInProgressText";
+
     }
 }

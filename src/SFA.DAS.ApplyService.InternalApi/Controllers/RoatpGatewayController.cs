@@ -83,7 +83,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
          public async Task<ActionResult<string>> GetGatewayPageItemValue(Guid applicationId, string pageId,
              string userName, string fieldName)
          {
-             if (fieldName == RoatpGatewayFields.Status)
+             if (fieldName == GatewayFields.Status)
              {
                  return await _applyRepository.GetGatewayPageStatus(applicationId, pageId);
              }
@@ -109,29 +109,29 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
              switch (fieldName)
              {
-                 case RoatpGatewayFields.OrganisationName:
+                 case GatewayFields.OrganisationName:
                      fieldValue = applicationDetails.ApplyData.ApplyDetails.OrganisationName;
                      break;
-                 case RoatpGatewayFields.ApplicationSubmittedOn:
+                 case GatewayFields.ApplicationSubmittedOn:
                      fieldValue = applicationDetails?.ApplyData?.ApplyDetails?.ApplicationSubmittedOn.ToString();
                      break;
-                case RoatpGatewayFields.GatewayReviewStatus:
+                case GatewayFields.GatewayReviewStatus:
                     // This will need to be fresh each time
                     fieldValue = applicationDetails.GatewayReviewStatus;
                     return fieldValue;
-                case RoatpGatewayFields.SourcesCheckedOn:
+                case GatewayFields.SourcesCheckedOn:
                      fieldValue = applicationDetails?.ApplyData?.GatewayReviewDetails?.SourcesCheckedOn?.ToString();
                      break;
-                 case RoatpGatewayFields.UKPRN:
+                 case GatewayFields.UKPRN:
                      fieldValue = applicationDetails.ApplyData.ApplyDetails.UKPRN;
                      break;
-                 case RoatpGatewayFields.UkrlpLegalName:
+                 case GatewayFields.UkrlpLegalName:
                      fieldValue = applicationDetails.ApplyData?.GatewayReviewDetails?.UkrlpDetails?.ProviderName;
                      break;
-                case RoatpGatewayFields.CompaniesHouseName:
+                case GatewayFields.CompaniesHouseName:
                      fieldValue = applicationDetails.ApplyData?.GatewayReviewDetails?.CompaniesHouseDetails?.CompanyName;
                      break;
-                 case RoatpGatewayFields.CharityCommissionName:
+                 case GatewayFields.CharityCommissionName:
                      fieldValue = applicationDetails.ApplyData?.GatewayReviewDetails?.CharityCommissionDetails?.CharityName;
                      break;
              }
