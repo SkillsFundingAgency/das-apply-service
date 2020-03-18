@@ -78,6 +78,35 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
          }
 
 
+         [Route("Gateway/Page/HeaderDetails")]
+         [HttpGet]
+         public async Task<ActionResult<GatewayCommonDetails>> GetGatewayPageHeader(Guid applicationId, string pageId,
+             string userName)
+         {
+             var ukprn = await GetGatewayPageItemValue(applicationId, pageId, userName, GatewayFields.UKPRN);
+            var organisationName = await GetGatewayPageItemValue(applicationId, pageId, userName, GatewayFields.OrganisationName);
+            var checkedOn = await GetGatewayPageItemValue(applicationId, pageId, userName, GatewayFields.SourcesCheckedOn);
+            var submittedOn = await GetGatewayPageItemValue(applicationId, pageId, userName, GatewayFields.ApplicationSubmittedOn);
+            var status = await GetGatewayPageItemValue(applicationId, pageId, userName, GatewayFields.Status);
+            var passText = await GetGatewayPageItemValue(applicationId, pageId, userName, GatewayFields.OptionPassText);
+            var failText = await GetGatewayPageItemValue(applicationId, pageId, userName, GatewayFields.OptionFailText);
+            var inProgressText = await GetGatewayPageItemValue(applicationId, pageId, userName, GatewayFields.OptionInProgressText);
+
+            var details = new GatewayCommonDetails
+            {
+                Ukprn = ukprn?.Value,
+                ApplicationSubmittedOn = submittedOn?.Value,
+                CheckedOn = checkedOn?.Value,
+                LegalName = organisationName?.Value,
+                Status = status?.Value,
+                OptionPassText = passText?.Value,
+                OptionInProgressText = inProgressText?.Value,
+                OptionFailText =  failText?.Value
+            };
+
+            return details;
+         }
+
          [Route("Gateway/Page/Value")]
          [HttpGet]
          public async Task<ActionResult<string>> GetGatewayPageItemValue(Guid applicationId, string pageId,
