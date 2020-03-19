@@ -44,5 +44,75 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             return await _applyRepository.GetApplyData(applicationId);
         }        
+
+        [HttpGet]
+        [Route("Gateway/UkrlpData/{applicationId}")]
+        public async Task<IActionResult> GetUkrlpData(Guid applicationId)
+        {
+            var applyData = await GetApplyData(applicationId);
+
+            if (applyData?.GatewayReviewDetails?.UkrlpDetails == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(applyData.GatewayReviewDetails.UkrlpDetails);
+        }
+
+        [HttpGet]
+        [Route("Gateway/CompaniesHouseData/{applicationId}")]
+        public async Task<IActionResult> GetCompaniesHouseData(Guid applicationId)
+        {
+            var applyData = await GetApplyData(applicationId);
+
+            if (applyData?.GatewayReviewDetails?.CompaniesHouseDetails == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(applyData.GatewayReviewDetails.CompaniesHouseDetails);
+        }
+
+        [HttpGet]
+        [Route("Gateway/CharityCommissionData/{applicationId}")]
+        public async Task<IActionResult> GetCharityCommissionData(Guid applicationId)
+        {
+            var applyData = await GetApplyData(applicationId);
+
+            if (applyData?.GatewayReviewDetails?.CharityCommissionDetails == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(applyData.GatewayReviewDetails.CharityCommissionDetails);
+        }
+
+        [HttpGet]
+        [Route("Gateway/RoatpRegisterData/{applicationId}")]
+        public async Task<IActionResult> GetRoatpRegisterData(Guid applicationId)
+        {
+            var applyData = await GetApplyData(applicationId);
+
+            if (applyData?.GatewayReviewDetails?.RoatpRegisterDetails == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(applyData.GatewayReviewDetails.RoatpRegisterDetails);
+        }
+
+        [HttpGet]
+        [Route("Gateway/SourcesCheckedOn/{applicationId}")]
+        public async Task<IActionResult> GetSourcesCheckedOnDate(Guid applicationId)
+        {
+            var applyData = await GetApplyData(applicationId);
+
+            if (applyData?.GatewayReviewDetails == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(applyData.GatewayReviewDetails.SourcesCheckedOn);
+        }
     }
 }
