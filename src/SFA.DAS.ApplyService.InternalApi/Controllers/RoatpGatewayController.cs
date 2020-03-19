@@ -58,16 +58,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             }
 
             await _applyRepository.SubmitGatewayPageAnswer(request.ApplicationId, request.PageId, request.UserName,
-                request.Status);
+                request.Status, request.Comments);
 
-            await _applyRepository.SubmitGatewayPageDetail(request.ApplicationId, request.PageId, request.UserName, "OptionPassText",
-                optionPassText);
-
-            await _applyRepository.SubmitGatewayPageDetail(request.ApplicationId, request.PageId, request.UserName, "OptionFailText",
-                optionFailText);
-
-            await _applyRepository.SubmitGatewayPageDetail(request.ApplicationId, request.PageId, request.UserName, "OptionInProgressText",
-                optionInProgressText);
         }
 
          [Route("Gateway/Page/{applicationId}/{pageId}")]
@@ -83,93 +75,29 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
          public async Task<ActionResult<GatewayCommonDetails>> GetGatewayCommonDetails(Guid applicationId, string pageId,
              string userName)
          {
-             var ukprn = await GetGatewayPageItemValue(applicationId, pageId, userName, GatewayFields.UKPRN);
-            var organisationName = await GetGatewayPageItemValue(applicationId, pageId, userName, GatewayFields.OrganisationName);
-            var checkedOn = await GetGatewayPageItemValue(applicationId, pageId, userName, GatewayFields.SourcesCheckedOn);
-            var submittedOn = await GetGatewayPageItemValue(applicationId, pageId, userName, GatewayFields.ApplicationSubmittedOn);
-            var status = await GetGatewayPageItemValue(applicationId, pageId, userName, GatewayFields.Status);
-            var passText = await GetGatewayPageItemValue(applicationId, pageId, userName, GatewayFields.OptionPassText);
-            var failText = await GetGatewayPageItemValue(applicationId, pageId, userName, GatewayFields.OptionFailText);
-            var inProgressText = await GetGatewayPageItemValue(applicationId, pageId, userName, GatewayFields.OptionInProgressText);
+             var applicationDetails = await _applyRepository.GetApplication(applicationId);
+            var ukprn = applicationDetails.ApplyData.ApplyDetails.UKPRN;
+            var organisationName = applicationDetails.ApplyData.ApplyDetails.OrganisationName;
+            var checkedOn = applicationDetails?.ApplyData?.GatewayReviewDetails?.SourcesCheckedOn;
+            var submittedOn = applicationDetails?.ApplyData?.ApplyDetails?.ApplicationSubmittedOn;
+            var status = await _applyRepository.GetGatewayPageStatus(applicationId, pageId);
+            var comments = await _applyRepository.GetGatewayPageComments(applicationId, pageId);
+            var gatewayReviewStatus = applicationDetails.GatewayReviewStatus;
 
             var details = new GatewayCommonDetails
             {
-                Ukprn = ukprn?.Value,
-                ApplicationSubmittedOn = submittedOn?.Value,
-                CheckedOn = checkedOn?.Value,
-                LegalName = organisationName?.Value,
-                Status = status?.Value,
-                OptionPassText = passText?.Value,
-                OptionInProgressText = inProgressText?.Value,
-                OptionFailText =  failText?.Value
+                Ukprn = ukprn,
+                ApplicationSubmittedOn = submittedOn,
+                CheckedOn = checkedOn,
+                LegalName = organisationName,
+                Status = status,
+                GatewayReviewStatus = gatewayReviewStatus,
+                OptionPassText = status == GatewayAnswerStatus.Pass ? comments: null,
+                OptionInProgressText = status == GatewayAnswerStatus.InProgress ? comments:null,
+                OptionFailText =  status == GatewayAnswerStatus.Fail ? comments : null
             };
 
             return details;
-         }
-
-         [Route("Gateway/Page/Value/{applicationId}/{pageId}/{userName}/{fieldName}")]
-         [HttpGet]
-         public async Task<ActionResult<string>> GetGatewayPageItemValue(Guid applicationId, string pageId,
-             string userName, string fieldName)
-         {
-             if (fieldName == GatewayFields.Status)
-             {
-                 return await _applyRepository.GetGatewayPageStatus(applicationId, pageId);
-             }
-
-             var fieldValue = await _applyRepository.GetGatewayPageAnswerValue(applicationId, pageId, fieldName);
-
-             if (!string.IsNullOrEmpty(fieldValue))
-                 return fieldValue;
-
-             var applicationDetails = await _applyRepository.GetApplication(applicationId);
-
-            if (applicationDetails?.ApplyData == null)
-            {
-                // this should never happen - so shutter page if it does
-                return string.Empty;
-            }
-
-            if (applicationDetails.ApplyData?.GatewayReviewDetails == null)
-            {
-                var applyDetails = await _gatewayApiChecksService.GetExternalApiCheckDetails(applicationId, userName);
-                applicationDetails.ApplyData.GatewayReviewDetails = applyDetails;
-            }
-
-             switch (fieldName)
-             {
-                 case GatewayFields.OrganisationName:
-                     fieldValue = applicationDetails.ApplyData.ApplyDetails.OrganisationName;
-                     break;
-                 case GatewayFields.ApplicationSubmittedOn:
-                     fieldValue = applicationDetails?.ApplyData?.ApplyDetails?.ApplicationSubmittedOn.ToString();
-                     break;
-                case GatewayFields.GatewayReviewStatus:
-                    // This will need to be fresh each time
-                    fieldValue = applicationDetails.GatewayReviewStatus;
-                    return fieldValue;
-                case GatewayFields.SourcesCheckedOn:
-                     fieldValue = applicationDetails?.ApplyData?.GatewayReviewDetails?.SourcesCheckedOn?.ToString();
-                     break;
-                 case GatewayFields.UKPRN:
-                     fieldValue = applicationDetails.ApplyData.ApplyDetails.UKPRN;
-                     break;
-                 case GatewayFields.UkrlpLegalName:
-                     fieldValue = applicationDetails.ApplyData?.GatewayReviewDetails?.UkrlpDetails?.ProviderName;
-                     break;
-                case GatewayFields.CompaniesHouseName:
-                     fieldValue = applicationDetails.ApplyData?.GatewayReviewDetails?.CompaniesHouseDetails?.CompanyName;
-                     break;
-                 case GatewayFields.CharityCommissionName:
-                     fieldValue = applicationDetails.ApplyData?.GatewayReviewDetails?.CharityCommissionDetails?.CharityName;
-                     break;
-             }
-
-             if (!string.IsNullOrEmpty(fieldValue))
-                await _applyRepository.SubmitGatewayPageDetail(applicationId, pageId, userName, fieldName,
-                    fieldValue);
-
-             return fieldValue;
          }
 
 

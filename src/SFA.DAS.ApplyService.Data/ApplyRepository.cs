@@ -117,41 +117,29 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-
-        public async Task SubmitGatewayPageDetail(Guid applicationId, string pageId, string userName, string fieldName, string value)
+        public async Task<string> GetGatewayPageComments(Guid applicationId, string pageId)
         {
-
-            var insertedValue = "{\"" + fieldName + "\":\"" + value + "\"}";
-
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-
-                    await connection.ExecuteAsync(
-                        @"IF NOT EXISTS (select * from GatewayAnswer where applicationId = @applicationId and pageId = @pageId)
-	                                                        INSERT INTO GatewayAnswer ([ApplicationId],[PageId],[Status],[GatewayPageData],[CreatedAt],[CreatedBy])
-														         values (@applicationId, @pageId,null,@insertedValue,GetUTCDATE(),@userName)
-                                                        ELSE
-	                                                        UPDATE GatewayAnswer
-                                                                    SET  GatewayPageData =JSON_MODIFY(isnull(GatewayPageData,'{}'),'$.' + @fieldName +'','' +@value +''), UpdatedBy = @userName, UpdatedAt = GETUTCDATE() 
-                                                                    WHERE  ApplicationId = @applicationId and pageId = @pageId",
-                        new {applicationId, pageId, fieldName, value, insertedValue, userName});
+                return (await connection.QuerySingleOrDefaultAsync<string>(@"SELECT Comments from GatewayAnswer WHERE applicationId = @applicationId and pageid = @pageId",
+                    new { applicationId, pageId }));
             }
         }
 
-        public async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string userName, string value)
+        public async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string userName, string status, string comments)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
 
                     await connection.ExecuteAsync(
                         @"IF NOT EXISTS (select * from GatewayAnswer where applicationId = @applicationId and pageId = @pageId)
-	                                                        INSERT INTO GatewayAnswer ([ApplicationId],[PageId],[Status],[GatewayPageData],[CreatedAt],[CreatedBy])
-														         values (@applicationId, @pageId,@value,null,GetUTCDATE(),@userName)
+	                                                        INSERT INTO GatewayAnswer ([ApplicationId],[PageId],[Status],[comments],[CreatedAt],[CreatedBy])
+														         values (@applicationId, @pageId,@status,@comments,GetUTCDATE(),@userName)
                                                         ELSE
                                                          UPDATE GatewayAnswer
-                                                                    SET  Status = @value, UpdatedBy = @userName, UpdatedAt = GETUTCDATE() 
+                                                                    SET  Status = @status, Comments =@comments, UpdatedBy = @userName, UpdatedAt = GETUTCDATE() 
                                                                     WHERE  ApplicationId = @applicationId and pageId = @pageId",
-                        new { applicationId, pageId, value, userName });
+                        new { applicationId, pageId, status, comments, userName });
                 
             }
         }

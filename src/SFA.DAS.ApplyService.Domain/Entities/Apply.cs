@@ -115,6 +115,13 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Declined = "Declined";
     }
 
+    public class GatewayAnswerStatus
+    {
+        public const string Pass = "Pass";
+        public const string Fail = "Fail";
+        public const string InProgress = "In progress";
+    }
+
     public static class GatewayReviewStatus
     {
         public const string Draft = "Draft";
