@@ -19,8 +19,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId);
         Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId);
 
-        Task<string> GetGatewayPageAnswerValue(Guid applicationId, string pageId, string fieldName);
-
         Task<string> GetGatewayPageStatus(Guid applicationId, string pageId);
         Task<string> GetGatewayPageComments(Guid applicationId, string pageId);
 

@@ -40,43 +40,33 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost]
          public async Task GatewayPageSubmit([FromBody] UpsertGatewayPageAnswerRequest request)
         {
-            var optionPassText = string.Empty;
-            var optionFailText = string.Empty;
-            var optionInProgressText = string.Empty;
-
-            switch (request.Status)
-            {
-                case "Pass":
-                    optionPassText = request.Comments;
-                    break;
-                case "Fail":
-                    optionFailText = request.Comments;
-                    break;
-                case "In progress":
-                    optionInProgressText = request.Comments;
-                    break;
-            }
-
             await _applyRepository.SubmitGatewayPageAnswer(request.ApplicationId, request.PageId, request.UserName,
                 request.Status, request.Comments);
 
         }
 
-         [Route("Gateway/Page/{applicationId}/{pageId}")]
-         [HttpGet]
-         public async Task<ActionResult<GatewayPageAnswer>> GetGatewayPage(Guid applicationId, string pageId)
-         {
-             return await _applyRepository.GetGatewayPageAnswer(applicationId, pageId);
-         }
+         //MFCMFC THIS NEEDS TO GO WHEN ALL TIDY UP IS DONE
+        [Route("Gateway/Page/{applicationId}/{pageId}")]
+        [HttpGet]
+        public async Task<ActionResult<GatewayPageAnswer>> GetGatewayPage(Guid applicationId, string pageId)
+        {
+            return await _applyRepository.GetGatewayPageAnswer(applicationId, pageId);
+        }
 
 
-         [Route("Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}")]
+        [Route("Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}")]
          [HttpGet]
          public async Task<ActionResult<GatewayCommonDetails>> GetGatewayCommonDetails(Guid applicationId, string pageId,
              string userName)
          {
              var applicationDetails = await _applyRepository.GetApplication(applicationId);
-            var ukprn = applicationDetails.ApplyData.ApplyDetails.UKPRN;
+             if (applicationDetails?.ApplyData?.GatewayReviewDetails == null)
+             {
+                var applyGatewayDetails = await _gatewayApiChecksService.GetExternalApiCheckDetails(applicationId, userName);
+                applicationDetails.ApplyData.GatewayReviewDetails = applyGatewayDetails;
+             }
+
+             var ukprn = applicationDetails.ApplyData.ApplyDetails.UKPRN;
             var organisationName = applicationDetails.ApplyData.ApplyDetails.OrganisationName;
             var checkedOn = applicationDetails?.ApplyData?.GatewayReviewDetails?.SourcesCheckedOn;
             var submittedOn = applicationDetails?.ApplyData?.ApplyDetails?.ApplicationSubmittedOn;

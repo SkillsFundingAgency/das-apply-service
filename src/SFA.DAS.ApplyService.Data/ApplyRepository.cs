@@ -98,16 +98,6 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<string> GetGatewayPageAnswerValue(Guid applicationId, string pageId, string fieldName)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection.QuerySingleOrDefaultAsync<string>($@"SELECT JSON_VALUE(GatewayPageData,'$.{fieldName}') from GatewayAnswer
-                                                    WHERE applicationId = @applicationId and pageid = @pageId",
-                    new { applicationId, pageId, fieldName }));
-            }
-        }
-
         public async Task<string> GetGatewayPageStatus(Guid applicationId, string pageId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
