@@ -45,16 +45,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
         }
 
-         //MFCMFC THIS NEEDS TO GO WHEN ALL TIDY UP IS DONE
-        [Route("Gateway/Page/{applicationId}/{pageId}")]
-        [HttpGet]
-        public async Task<ActionResult<GatewayPageAnswer>> GetGatewayPage(Guid applicationId, string pageId)
-        {
-            return await _applyRepository.GetGatewayPageAnswer(applicationId, pageId);
-        }
-
-
-        [Route("Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}")]
+         [Route("Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}")]
          [HttpGet]
          public async Task<ActionResult<GatewayCommonDetails>> GetGatewayCommonDetails(Guid applicationId, string pageId,
              string userName)
