@@ -249,7 +249,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var charityDetails = new Types.CharityCommission.Charity
             {
                 Name = "My charity",
-                CharityNumber = "12345678"
+                CharityNumber = "12345678",
+                Status = "Active",
+                Type = "type of company"
             };
 
             _companiesHouseApiClient.Setup(x => x.GetCompany(It.IsAny<string>())).Verifiable();
@@ -265,6 +267,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             externalApiData.CharityCommissionDetails.Should().NotBeNull();
             externalApiData.CharityCommissionDetails.CharityName.Should().Be(charityDetails.Name);
             externalApiData.CharityCommissionDetails.CharityNumber.Should().Be(charityDetails.CharityNumber);
+            externalApiData.CharityCommissionDetails.Status.Should().Be(charityDetails.Status);
+            externalApiData.CharityCommissionDetails.Type.Should().Be(charityDetails.Type);
+
             externalApiData.CompaniesHouseDetails.Should().BeNull();
             externalApiData.RoatpRegisterDetails.UkprnOnRegister.Should().BeFalse();
             externalApiData.UkrlpDetails.ProviderName.Should().Be(ukrlpDetails.Results[0].ProviderName);
