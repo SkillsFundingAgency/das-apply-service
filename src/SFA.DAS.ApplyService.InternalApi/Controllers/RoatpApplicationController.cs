@@ -61,6 +61,7 @@
         }
 
         [Route("roatp-sequences")]
+        [HttpGet]
         public async Task<IActionResult> RoatpSequences()
         {
             return Ok(_roatpSequences);
