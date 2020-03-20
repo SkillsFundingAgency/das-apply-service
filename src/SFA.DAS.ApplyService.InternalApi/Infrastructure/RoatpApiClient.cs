@@ -13,21 +13,17 @@
 
     public class RoatpApiClient : IRoatpApiClient
     {
-        //private readonly HttpClient _client;
+        private readonly HttpClient _client;
         private readonly ILogger<RoatpApiClient> _logger;
         private readonly IRoatpTokenService _tokenService;
-        private readonly string _baseAddress;
-        private static readonly HttpClient _client = new HttpClient();
+        private string _baseAddress;
 
-        public RoatpApiClient(ILogger<RoatpApiClient> logger, IConfigurationService configurationService, IRoatpTokenService tokenService)
+        public RoatpApiClient(HttpClient client, ILogger<RoatpApiClient> logger, IConfigurationService configurationService, IRoatpTokenService tokenService)
         {
             _logger = logger;
             _baseAddress = configurationService.GetConfig().Result.RoatpApiAuthentication.ApiBaseAddress;
+            _client = client;
             _tokenService = tokenService;
-            if (_client.BaseAddress == null)
-            {
-                _client.BaseAddress = new Uri(configurationService.GetConfig().Result.RoatpApiAuthentication.ApiBaseAddress);
-            }
         }
 
         public async Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(string ukprn)
