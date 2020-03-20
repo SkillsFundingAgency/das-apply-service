@@ -20,7 +20,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     public class RoatpGatewayController: Controller
     {
         private readonly IApplyRepository _applyRepository;
-        private readonly IInternalQnaApiClient _qnaApiClient;
         private readonly IGatewayApiChecksService _gatewayApiChecksService;
         private readonly ILogger<RoatpGatewayController> _logger;
 
@@ -28,11 +27,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         /// 
         /// </summary>
         /// <param name="applyRepository"></param>
-        public RoatpGatewayController(IApplyRepository applyRepository, ILogger<RoatpGatewayController> logger, IInternalQnaApiClient qnaApiClient, IGatewayApiChecksService gatewayApiChecksService) 
+        public RoatpGatewayController(IApplyRepository applyRepository, ILogger<RoatpGatewayController> logger,  IGatewayApiChecksService gatewayApiChecksService) 
         {
             _applyRepository = applyRepository;
             _logger = logger;
-            _qnaApiClient = qnaApiClient;
             _gatewayApiChecksService = gatewayApiChecksService;
         }
 
