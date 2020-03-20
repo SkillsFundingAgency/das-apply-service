@@ -85,6 +85,8 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<bool> IsSectionCompleted(Guid applicationId, Guid applicationSectionId);
 
         Task RemoveSectionCompleted(Guid applicationId, Guid applicationSectionId);
-       
+
+        Task<bool> CompleteAssessorReview(Guid applicationId, string reviewer);
+
     }
 }
