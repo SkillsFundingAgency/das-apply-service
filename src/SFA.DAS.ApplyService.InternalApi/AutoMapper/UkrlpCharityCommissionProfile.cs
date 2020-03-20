@@ -16,6 +16,8 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
                .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
                .ForMember(dest => dest.Type, opt => opt.MapFrom(source => source.Type))
                .ForMember(dest => dest.Trustees, opt => opt.MapFrom(source => source.Trustees))
+               .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
+               .ForMember(dest => dest.Type, opt => opt.MapFrom(source => source.Type))
                .ForMember(dest => dest.TrusteeManualEntryRequired, opt => opt.MapFrom(source => source.TrusteeManualEntryRequired))
                .ForAllOtherMembers(opt => opt.Ignore());
         }

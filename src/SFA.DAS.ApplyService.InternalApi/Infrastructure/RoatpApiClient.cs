@@ -13,24 +13,24 @@
 
     public class RoatpApiClient : IRoatpApiClient
     {
-        //private readonly HttpClient _client;
+        private readonly HttpClient _client;
         private readonly ILogger<RoatpApiClient> _logger;
         private readonly IRoatpTokenService _tokenService;
-        private readonly string _baseAddress;
-        private static readonly HttpClient _client = new HttpClient();
+        private string _baseAddress;
 
-        public RoatpApiClient(ILogger<RoatpApiClient> logger, IConfigurationService configurationService, IRoatpTokenService tokenService)
+        public RoatpApiClient()
+        {
+
+        }
+        public RoatpApiClient(HttpClient client, ILogger<RoatpApiClient> logger, IConfigurationService configurationService, IRoatpTokenService tokenService)
         {
             _logger = logger;
             _baseAddress = configurationService.GetConfig().Result.RoatpApiAuthentication.ApiBaseAddress;
+            _client = client;
             _tokenService = tokenService;
-            if (_client.BaseAddress == null)
-            {
-                _client.BaseAddress = new Uri(configurationService.GetConfig().Result.RoatpApiAuthentication.ApiBaseAddress);
-            }
         }
 
-        public async Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(string ukprn)
+        public async virtual Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(string ukprn)
         {
             _logger.LogInformation($"Looking up RoATP status for UKPRN {ukprn}");
 
@@ -49,7 +49,7 @@
             return apiResponse;
         }
 
-        public async Task<UkprnLookupResponse> GetUkrlpDetails(string ukprn)
+        public async virtual Task<UkprnLookupResponse> GetUkrlpDetails(string ukprn)
         {
             _logger.LogInformation($"Retrieving UKRLP details for {ukprn}");
 

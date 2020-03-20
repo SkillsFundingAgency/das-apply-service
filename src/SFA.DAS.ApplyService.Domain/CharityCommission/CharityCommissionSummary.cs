@@ -11,6 +11,8 @@
         public string Type { get; set; }
         public DateTime? IncorporatedOn { get; set; }
         public List<Trustee> Trustees { get; set; }
+        public string Status { get; set; }
+        public string Type { get; set; }
         public bool TrusteeManualEntryRequired { get; set; }
     }
 
