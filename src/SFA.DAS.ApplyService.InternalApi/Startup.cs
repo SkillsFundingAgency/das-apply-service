@@ -132,7 +132,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             })
             .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
-            services.AddHttpClient<RoatpApiClient>("InternalQnaApiClient", config =>
+            services.AddHttpClient<InternalQnaApiClient>("InternalQnaApiClient", config =>
                 {
                     config.BaseAddress = new Uri(_applyConfig.QnaApiAuthentication.ApiBaseAddress);          // "http://localhost:5554"
                     config.DefaultRequestHeaders.Add("Accept", "Application/json");
