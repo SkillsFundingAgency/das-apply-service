@@ -60,6 +60,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string AddPeopleInControl = "YO-130";
     }
 
+    public class RoatpCriminalComplianceChecksQuestionIdConstants
+    {
+        public static string CompositionCreditors = "CC-20";
+    }
+
     public class RoatpDeliveringApprenticeshipTrainingQuestionIdConstants
     {
         public static string ManagementHierarchy = "DAT-720";
@@ -159,6 +164,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public class ExperienceAndAccreditations
         { 
             public static string StartPage = "235";
+        }
+
+        public class CriminalComplianceChecks
+        {
+            public static string CompositionCreditors = "3100";
         }
 
         public class Finish
