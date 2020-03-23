@@ -14,7 +14,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         private readonly IInternalQnaApiClient _qnaApiClient;
 
         /// <summary>
-        /// Returns trading name for an application
+        /// Returns various details from QnA relating to OrganisationChecks
+        /// eg TradingName, Website from ukrlp, website entered by user
         /// </summary>
         /// <param name="qnaApiClient"></param>
         public GatewayOrganisationChecksController(IInternalQnaApiClient qnaApiClient)
