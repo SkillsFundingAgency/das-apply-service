@@ -22,13 +22,29 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             _qnaApiClient = qnaApiClient;
         }
 
-
         [HttpGet("/Gateway/{applicationId}/TradingName")]
         public async Task<string> GetTradingName(Guid applicationId)
         {
-            var tradingNameAndWebsitePage = await _qnaApiClient.GetPageBySectionNo(applicationId, 0, 1, RoatpWorkflowPageIds.Preamble);
-            var tradingName= tradingNameAndWebsitePage?.PageOfAnswers?.SelectMany(a => a.Answers)?.FirstOrDefault(a => a.QuestionId == RoatpPreambleQuestionIdConstants.UkrlpTradingName)?.Value;
-            return tradingName;
+            var tradingNamePage = await _qnaApiClient.GetPageBySectionNo(applicationId, RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble);
+            return tradingNamePage?.PageOfAnswers?.SelectMany(a => a.Answers)?.FirstOrDefault(a => a.QuestionId == RoatpPreambleQuestionIdConstants.UkrlpTradingName)?.Value;
+        }
+
+        // MFCMFC need to clear out the magic numbers
+        [HttpGet("/Gateway/{applicationId}/WebsiteAddressSourcedFromUkrlp")]
+        public async Task<string> GetWebsiteAddressFromUkrlp(Guid applicationId)
+        {
+            var websiteNamePage = await _qnaApiClient.GetPageBySectionNo(applicationId, RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble);
+            return websiteNamePage?.PageOfAnswers?.SelectMany(a => a.Answers)?.FirstOrDefault(a => a.QuestionId == RoatpPreambleQuestionIdConstants.UkrlpWebsite)?.Value;
+        }
+
+        [HttpGet("/Gateway/{applicationId}/WebsiteAddressManuallyEntered")]
+        public async Task<string> GetWebsiteAddressManuallyEntered(Guid applicationId)
+        {
+            var websiteNamePage = await _qnaApiClient.GetPageBySectionNo(applicationId, 
+                RoatpWorkflowSequenceIds.YourOrganisation, 
+                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed, 
+                RoatpWorkflowPageIds.WebsiteManuallyEntered);
+            return websiteNamePage?.PageOfAnswers?.SelectMany(a => a.Answers)?.FirstOrDefault(a => a.QuestionId == RoatpYourOrganisationQuestionIdConstants.WebsiteManuallyEntered)?.Value;
         }
     }
 }
