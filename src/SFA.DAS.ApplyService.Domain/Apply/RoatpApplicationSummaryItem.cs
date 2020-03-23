@@ -22,6 +22,8 @@ namespace SFA.DAS.ApplyService.Domain.Apply
 
     public class RoatpFinancialSummaryItem : RoatpApplicationSummaryItem
     {
+        public string DeclaredInApplication { get; set; }
+
         public FinancialReviewDetails FinancialReviewDetails { get; set; }
     }
  }
