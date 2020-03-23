@@ -1,8 +1,9 @@
 ﻿CREATE TABLE [dbo].[GatewayAnswer](
 	[Id] [uniqueidentifier] NOT NULL,
 	[ApplicationId] [uniqueidentifier] NOT NULL,
-	[PageId] [nvarchar](20) NOT NULL,
+	[PageId] [nvarchar](50) NOT NULL,
 	[Status] [nvarchar](20) NULL,
+	Comments NVARCHAR(MAX) NULL,
 	[GatewayPageData] nvarchar(max) NULL,
 	[CreatedAt] DATETIME2 NOT NULL, 
     [CreatedBy] NVARCHAR(256) NOT NULL, 
