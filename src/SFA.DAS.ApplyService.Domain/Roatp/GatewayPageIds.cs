@@ -19,5 +19,6 @@ namespace SFA.DAS.ApplyService.Domain.Roatp
         public const string SubcontractorDeclaration = "SubcontractorDeclaration";
 
         public const string CCOrganisationCompositionCreditors = "CompositionWithCreditors";
+        public const string CCOrganisationFailedToRepayFunds = "PayBack";
     }
 }

@@ -19,6 +19,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                             QuestionId = RoatpCriminalComplianceChecksQuestionIdConstants.CompositionCreditors
                         };
                     }
+                case GatewayPageIds.CCOrganisationFailedToRepayFunds:
+                    {
+                        return new QnaQuestionDetails
+                        {
+                            PageId = RoatpWorkflowPageIds.CriminalComplianceChecks.OrganisationFailedToRepayFunds,
+                            QuestionId = RoatpCriminalComplianceChecksQuestionIdConstants.OrganisationFailedToRepayFunds
+                        };
+                    }
                 default:
                     return null;
             }

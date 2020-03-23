@@ -63,6 +63,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
     public class RoatpCriminalComplianceChecksQuestionIdConstants
     {
         public static string CompositionCreditors = "CC-20";
+        public static string OrganisationFailedToRepayFunds = "CC-21";
     }
 
     public class RoatpDeliveringApprenticeshipTrainingQuestionIdConstants
@@ -169,6 +170,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public class CriminalComplianceChecks
         {
             public static string CompositionCreditors = "3100";
+            public static string OrganisationFailedToRepayFunds = "3110";
         }
 
         public class Finish
