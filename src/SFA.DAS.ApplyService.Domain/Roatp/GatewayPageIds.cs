@@ -20,5 +20,6 @@ namespace SFA.DAS.ApplyService.Domain.Roatp
 
         public const string CCOrganisationCompositionCreditors = "CompositionWithCreditors";
         public const string CCOrganisationFailedToRepayFunds = "PayBack";
+        public const string CCOrganisationContractTermination = "ContractTerm";
     }
 }
