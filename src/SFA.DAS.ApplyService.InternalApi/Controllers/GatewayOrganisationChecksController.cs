@@ -29,7 +29,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return tradingNamePage?.PageOfAnswers?.SelectMany(a => a.Answers)?.FirstOrDefault(a => a.QuestionId == RoatpPreambleQuestionIdConstants.UkrlpTradingName)?.Value;
         }
 
-        // MFCMFC need to clear out the magic numbers
         [HttpGet("/Gateway/{applicationId}/WebsiteAddressSourcedFromUkrlp")]
         public async Task<string> GetWebsiteAddressFromUkrlp(Guid applicationId)
         {
