@@ -26,7 +26,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private Mock<ILogger<GatewayApiChecksController>> _logger;
         private Mock<CompaniesHouseApiClient> _companiesHouseApiClient;
         private Mock<CharityCommissionApiClient> _charityCommissionApiClient;
-        private Mock<IRoatpApiClient> _roatpApiClient;
+        private Mock<RoatpApiClient> _roatpApiClient;
         private Mock<IInternalQnaApiClient> _qnaApiClient;
         private IGatewayApiChecksService _gatewayApiChecksService;
 
@@ -54,7 +54,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _logger = new Mock<ILogger<GatewayApiChecksController>>();
             _companiesHouseApiClient = new Mock<CompaniesHouseApiClient>();
             _charityCommissionApiClient = new Mock<CharityCommissionApiClient>();
-            _roatpApiClient = new Mock<IRoatpApiClient>();
+            _roatpApiClient = new Mock<RoatpApiClient>();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
             _gatewayApiChecksService = new GatewayApiChecksService(_companiesHouseApiClient.Object, _charityCommissionApiClient.Object,
                                                                    _roatpApiClient.Object, _qnaApiClient.Object);
@@ -249,7 +249,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var charityDetails = new Types.CharityCommission.Charity
             {
                 Name = "My charity",
-                CharityNumber = "12345678"
+                CharityNumber = "12345678",
+                Status = "Active",
+                Type = "type of company"
             };
 
             _companiesHouseApiClient.Setup(x => x.GetCompany(It.IsAny<string>())).Verifiable();
@@ -265,6 +267,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             externalApiData.CharityCommissionDetails.Should().NotBeNull();
             externalApiData.CharityCommissionDetails.CharityName.Should().Be(charityDetails.Name);
             externalApiData.CharityCommissionDetails.CharityNumber.Should().Be(charityDetails.CharityNumber);
+            externalApiData.CharityCommissionDetails.Status.Should().Be(charityDetails.Status);
+            externalApiData.CharityCommissionDetails.Type.Should().Be(charityDetails.Type);
+
             externalApiData.CompaniesHouseDetails.Should().BeNull();
             externalApiData.RoatpRegisterDetails.UkprnOnRegister.Should().BeFalse();
             externalApiData.UkrlpDetails.ProviderName.Should().Be(ukrlpDetails.Results[0].ProviderName);

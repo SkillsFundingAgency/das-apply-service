@@ -50,7 +50,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
          {
              var applicationDetails = await _applyRepository.GetApplication(applicationId);
 
-             //MFCMFC All this will go once overview in Admin does all this building process
+             //MFCMFC All this will go once overview in Admin does all the lifting on it
              if (applicationDetails?.ApplyData?.GatewayReviewDetails == null)
              {
                  var applyData = await _applyRepository.GetApplyData(applicationId);
