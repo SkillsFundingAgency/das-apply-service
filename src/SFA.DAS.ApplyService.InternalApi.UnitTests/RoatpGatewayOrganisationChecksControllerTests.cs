@@ -68,5 +68,42 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             Assert.AreEqual(expectedContactAddress.Town, responseContactAddress.Town);
             Assert.AreEqual(expectedContactAddress.PostCode, responseContactAddress.PostCode);
         }
+
+        [Test]
+        public void OrganisationChecks_answer_is_returned()
+        {
+            var applicationId = Guid.NewGuid();
+
+            var expectedAnswer = new Answer
+            {
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.IcoNumber,
+                Value = "TIG8ZZTQ"
+            };
+
+            var returnedPage = new Page
+            {
+                PageOfAnswers = new List<PageOfAnswers> 
+                                    { new PageOfAnswers 
+                                            { Answers = new List<Answer> 
+                                                            {
+                                                                new Answer 
+                                                                    { 
+                                                                        QuestionId = RoatpYourOrganisationQuestionIdConstants.IcoNumber, 
+                                                                        Value = "TIG8ZZTQ"
+                                                                    }
+                                    }       }               }
+            };
+
+            _qnaApiClient.Setup(x => x.GetPageBySectionNo(applicationId, 
+                                                            RoatpWorkflowSequenceIds.YourOrganisation, 
+                                                            RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails, 
+                                                            RoatpWorkflowPageIds.YourOrganisationIcoNumber)).ReturnsAsync(returnedPage);
+
+            var responseGetIcoNumber = _controller.GetIcoNumber(applicationId).GetAwaiter().GetResult().Result;
+            var response = responseGetIcoNumber as OkObjectResult;
+            var responseIcoNumberAnswer = response.Value as Answer;
+
+            Assert.AreEqual(expectedAnswer.Value, responseIcoNumberAnswer.Value);
+        }
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
+using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Ukrlp;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 
@@ -38,6 +39,20 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 Address4 = PreamblePage?.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpPreambleQuestionIdConstants.UkrlpLegalAddressLine4).FirstOrDefault().Value,
                 Town = PreamblePage?.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpPreambleQuestionIdConstants.UkrlpLegalAddressTown).FirstOrDefault().Value,
                 PostCode = PreamblePage?.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpPreambleQuestionIdConstants.UkrlpLegalAddressPostcode).FirstOrDefault().Value
+            });
+        }
+
+        [HttpGet("Gateway/Page/IcoNumber/{applicationId}")]
+        public async Task<ActionResult<Answer>> GetIcoNumber(Guid applicationId)
+        {
+            _logger.LogInformation($"RoatpGatewayOrganisationChecksController-GetIcoNumber - applicationId '{applicationId}'");
+
+            var page = await _qnaApiClient.GetPageBySectionNo(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails, RoatpWorkflowPageIds.YourOrganisationIcoNumber);
+
+            return Ok(new Answer
+            {
+                QuestionId = RoatpYourOrganisationQuestionIdConstants.IcoNumber,
+                Value = page?.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpYourOrganisationQuestionIdConstants.IcoNumber).FirstOrDefault().Value
             });
         }
     }
