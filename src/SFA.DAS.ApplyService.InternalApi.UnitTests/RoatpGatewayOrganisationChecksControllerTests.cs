@@ -33,6 +33,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public void OrganisationChecks_proper_address_is_returned()
         {
             var applicationId = Guid.NewGuid();
+            var preambleSequenceNo = 0;
+            var preambleFirstSectionNo = 1;
 
             var expectedContactAddress = new ContactAddress
             {
@@ -53,7 +55,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                                         new Answer { QuestionId = RoatpPreambleQuestionIdConstants.UkrlpLegalAddressPostcode, Value = "CV1 2WT" }
             } } } };
 
-            _qnaApiClient.Setup(x => x.GetPageBySectionNo(applicationId, 0, 1, RoatpWorkflowPageIds.Preamble)).ReturnsAsync(returnedPage);
+            _qnaApiClient.Setup(x => x.GetPageBySectionNo(applicationId, preambleSequenceNo, preambleFirstSectionNo, RoatpWorkflowPageIds.Preamble)).ReturnsAsync(returnedPage);
 
             var responseGetOrganisationAddress = _controller.GetOrganisationAddress(applicationId).GetAwaiter().GetResult().Result;
             var response = responseGetOrganisationAddress as OkObjectResult;
