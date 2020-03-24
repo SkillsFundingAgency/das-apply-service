@@ -45,7 +45,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("Gateway/Page/IcoNumber/{applicationId}")]
         public async Task<ActionResult<Answer>> GetIcoNumber(Guid applicationId)
         {
-            _logger.LogInformation($"RoatpGatewayOrganisationChecksController-GetIcoNumber - applicationId '{applicationId}'");
+            _logger.LogInformation($"RoatpGatewayOrganisationChecksController-GetIcoNumber - applicationId - '{applicationId}'");
 
             var page = await _qnaApiClient.GetPageBySectionNo(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails, RoatpWorkflowPageIds.YourOrganisationIcoNumber);
 
