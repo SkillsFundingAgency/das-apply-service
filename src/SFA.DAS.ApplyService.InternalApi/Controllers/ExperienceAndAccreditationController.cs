@@ -9,7 +9,7 @@ using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
     [Authorize]
-    public class GatewayExperienceAndAccreditationController : Controller
+    public class ExperienceAndAccreditationController : Controller
     {
         private readonly IInternalQnaApiClient _qnaApiClient;
 
@@ -17,7 +17,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         /// Returns trading name for an application
         /// </summary>
         /// <param name="qnaApiClient"></param>
-        public GatewayExperienceAndAccreditationController(IInternalQnaApiClient qnaApiClient)
+        public ExperienceAndAccreditationController(IInternalQnaApiClient qnaApiClient)
         {
             _qnaApiClient = qnaApiClient;
         }
