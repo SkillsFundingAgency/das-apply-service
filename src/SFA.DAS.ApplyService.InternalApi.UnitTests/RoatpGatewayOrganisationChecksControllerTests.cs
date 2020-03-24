@@ -32,6 +32,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         [Test]
         public void OrganisationChecks_proper_address_is_returned()
         {
+            var applicationId = Guid.NewGuid();
+
             var expectedContactAddress = new ContactAddress
             {
                 Address1 = "First Address",
@@ -51,9 +53,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                                         new Answer { QuestionId = RoatpPreambleQuestionIdConstants.UkrlpLegalAddressPostcode, Value = "CV1 2WT" }
             } } } };
 
-            _qnaApiClient.Setup(x => x.GetPageBySectionNo(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>(), RoatpWorkflowPageIds.Preamble)).ReturnsAsync(returnedPage);
+            _qnaApiClient.Setup(x => x.GetPageBySectionNo(applicationId, 0, 1, RoatpWorkflowPageIds.Preamble)).ReturnsAsync(returnedPage);
 
-            var responseGetOrganisationAddress = _controller.GetOrganisationAddress(It.IsAny<Guid>()).GetAwaiter().GetResult().Result;
+            var responseGetOrganisationAddress = _controller.GetOrganisationAddress(applicationId).GetAwaiter().GetResult().Result;
             var response = responseGetOrganisationAddress as OkObjectResult;
             var responseContactAddress = response.Value as ContactAddress;
 
