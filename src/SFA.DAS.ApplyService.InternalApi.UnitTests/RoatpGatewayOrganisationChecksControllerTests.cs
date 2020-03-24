@@ -70,7 +70,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         }
 
         [Test]
-        public void OrganisationChecks_answer_is_returned()
+        public void OrganisationChecks_ico_number_is_returned()
         {
             var applicationId = Guid.NewGuid();
 
