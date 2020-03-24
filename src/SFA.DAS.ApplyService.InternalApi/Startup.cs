@@ -156,6 +156,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddOptions();
 
             services.Configure<List<RoatpSequences>>(_configuration.GetSection("RoatpSequences"));
+            services.Configure<List<CriminalComplianceGatewayConfig>>(_configuration.GetSection("CriminalComplianceGatewayConfig"));
 
             mvcBuilder.SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());

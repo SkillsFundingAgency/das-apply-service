@@ -1,57 +1,32 @@
-﻿using SFA.DAS.ApplyService.Application.Apply.Roatp;
+﻿using Microsoft.Extensions.Options;
+using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
 
 namespace SFA.DAS.ApplyService.InternalApi.Services
 {
     public class CriminalComplianceChecksQuestionLookupService : ICriminalComplianceChecksQuestionLookupService
     {
-        private Dictionary<string, QnaQuestionDetails> _criminalComplianceChecksQuestions;
+        private List<CriminalComplianceGatewayConfig> _criminalComplianceQuestions;
 
-        public CriminalComplianceChecksQuestionLookupService()
+        public CriminalComplianceChecksQuestionLookupService(IOptions<List<CriminalComplianceGatewayConfig>> Configuration)
         {
-            // TODO: move this into config
-            _criminalComplianceChecksQuestions = new Dictionary<string, QnaQuestionDetails>
-            {
-                {
-                    GatewayPageIds.CCOrganisationCompositionCreditors,
-                    new QnaQuestionDetails
-                    {
-                        PageId = RoatpWorkflowPageIds.CriminalComplianceChecks.CompositionCreditors,
-                        QuestionId = RoatpCriminalComplianceChecksQuestionIdConstants.CompositionCreditors
-                    }
-                },
-                {
-                    GatewayPageIds.CCOrganisationFailedToRepayFunds,
-                    new QnaQuestionDetails
-                    {
-                        PageId = RoatpWorkflowPageIds.CriminalComplianceChecks.OrganisationFailedToRepayFunds,
-                        QuestionId = RoatpCriminalComplianceChecksQuestionIdConstants.OrganisationFailedToRepayFunds
-                    }
-                },
-                {
-                    GatewayPageIds.CCOrganisationContractTermination,
-                    new QnaQuestionDetails
-                    {
-                        PageId = RoatpWorkflowPageIds.CriminalComplianceChecks.OrganisationContractTermination,
-                        QuestionId = RoatpCriminalComplianceChecksQuestionIdConstants.OrganisationContractTermination
-                    }
-                }
-            };
+            _criminalComplianceQuestions = Configuration.Value;            
         }
 
         public QnaQuestionDetails GetQuestionDetailsForGatewayPageId(string gatewayPageId)
         {
-            try
-            {
-                return _criminalComplianceChecksQuestions[gatewayPageId];
-            }
-            catch (KeyNotFoundException)
+            var questionConfig = _criminalComplianceQuestions.FirstOrDefault(q => q.GatewayPageId == gatewayPageId);
+            if (questionConfig == null)
             {
                 return null;
             }
+
+            return new QnaQuestionDetails { PageId = questionConfig.QnaPageId, QuestionId = questionConfig.QnaQuestionId };
         }
     }
 }
