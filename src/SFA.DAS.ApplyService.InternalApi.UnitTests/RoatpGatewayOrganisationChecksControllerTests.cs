@@ -73,12 +73,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public void OrganisationChecks_ico_number_is_returned()
         {
             var applicationId = Guid.NewGuid();
-
-            var expectedAnswer = new Answer
-            {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.IcoNumber,
-                Value = "TIG8ZZTQ"
-            };
+            var expectedIcoNumber = "TIG8ZZTQ";
 
             var returnedPage = new Page
             {
@@ -101,9 +96,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             var responseGetIcoNumber = _controller.GetIcoNumber(applicationId).GetAwaiter().GetResult().Result;
             var response = responseGetIcoNumber as OkObjectResult;
-            var responseIcoNumberAnswer = response.Value as Answer;
+            var responseIcoNumber = response.Value as string;
 
-            Assert.AreEqual(expectedAnswer.Value, responseIcoNumberAnswer.Value);
+            Assert.AreEqual(expectedIcoNumber, responseIcoNumber);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
 
-        [HttpGet("Gateway/Page/OrganisationAddress/{applicationId}")]
+        [HttpGet("Gateway/{applicationId}/OrganisationAddress")]
         public async Task<ActionResult<ContactAddress>> GetOrganisationAddress(Guid applicationId)
         {
             _logger.LogInformation($"Getting Company Address from QnA API for application '{applicationId}'");
@@ -42,18 +42,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             });
         }
 
-        [HttpGet("Gateway/Page/IcoNumber/{applicationId}")]
-        public async Task<ActionResult<Answer>> GetIcoNumber(Guid applicationId)
+        [HttpGet("Gateway/{applicationId}/IcoNumber")]
+        public async Task<ActionResult<string>> GetIcoNumber(Guid applicationId)
         {
             _logger.LogInformation($"RoatpGatewayOrganisationChecksController-GetIcoNumber - applicationId - '{applicationId}'");
-
             var page = await _qnaApiClient.GetPageBySectionNo(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails, RoatpWorkflowPageIds.YourOrganisationIcoNumber);
-
-            return Ok(new Answer
-            {
-                QuestionId = RoatpYourOrganisationQuestionIdConstants.IcoNumber,
-                Value = page?.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpYourOrganisationQuestionIdConstants.IcoNumber).FirstOrDefault().Value
-            });
+            return Ok(page?.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpYourOrganisationQuestionIdConstants.IcoNumber).FirstOrDefault().Value);
         }
     }
 }
