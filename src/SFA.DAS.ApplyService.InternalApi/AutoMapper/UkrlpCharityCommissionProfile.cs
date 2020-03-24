@@ -13,7 +13,11 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
                .ForMember(dest => dest.CharityName, opt => opt.MapFrom(source => source.Name))
                .ForMember(dest => dest.CharityNumber, opt => opt.MapFrom(source => source.CharityNumber))
                .ForMember(dest => dest.IncorporatedOn, opt => opt.MapFrom(source => source.IncorporatedOn))
+               .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
+               .ForMember(dest => dest.Type, opt => opt.MapFrom(source => source.Type))
                .ForMember(dest => dest.Trustees, opt => opt.MapFrom(source => source.Trustees))
+               .ForMember(dest => dest.Status, opt => opt.MapFrom(source => source.Status))
+               .ForMember(dest => dest.Type, opt => opt.MapFrom(source => source.Type))
                .ForMember(dest => dest.TrusteeManualEntryRequired, opt => opt.MapFrom(source => source.TrusteeManualEntryRequired))
                .ForAllOtherMembers(opt => opt.Ignore());
         }
