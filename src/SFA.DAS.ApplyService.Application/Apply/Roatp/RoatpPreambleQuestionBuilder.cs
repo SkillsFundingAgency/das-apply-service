@@ -43,11 +43,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string RoatpProviderRoute = "PRE-94";
         public static string LevyPayingEmployer = "PRE-95";
         public static string ApplyProviderRoute = "YO-1";
+       
         public static string COAStage1Application = "COA-1";                  
     }
 
     public class RoatpYourOrganisationQuestionIdConstants
     {
+        public static string WebsiteManuallyEntered = "YO-41";
         public static string IcoNumber = "YO-30";
         public static string CompaniesHouseDirectors = "YO-70";
         public static string CompaniesHousePSCs = "YO-71";
@@ -59,6 +61,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string AddPartners = "YO-110";
         public static string AddSoleTradeDob = "YO-120";
         public static string AddPeopleInControl = "YO-130";
+        public static string OfficeForStudents = "YO-235";
+        public static string InitialTeacherTraining = "YO-240";
     }
 
     public class RoatpDeliveringApprenticeshipTrainingQuestionIdConstants
@@ -131,6 +135,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string YourOrganisationIntroductionSupporting = "12";
         public static string YourOrganisationParentCompanyCheck = "20";
         public static string YourOrganisationParentCompanyDetails = "21";
+        public static string WebsiteManuallyEntered = "40";
         public static string YourOrganisationIcoNumber = "30";
         public static string ConditionsOfAcceptance = "999999";
 
@@ -160,7 +165,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
         public class ExperienceAndAccreditations
         { 
-            public static string StartPage = "235";
+            public static string OfficeForStudents = "235";
+            public static string InitialTeacherTraining = "240";
         }
 
         public class Finish
