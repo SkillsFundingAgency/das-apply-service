@@ -84,7 +84,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                                                                 new Answer 
                                                                     { 
                                                                         QuestionId = RoatpYourOrganisationQuestionIdConstants.IcoNumber, 
-                                                                        Value = "TIG8ZZTQ"
+                                                                        Value = expectedIcoNumber
                                                                     }
                                     }       }               }
             };
