@@ -18,11 +18,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public void Before_each_test()
         {
             _configuration = new Mock<IOptions<List<CriminalComplianceGatewayConfig>>>();
-        }
 
-        [Test]
-        public void Lookup_service_retrieves_page_id_and_question_id_from_config_by_gateway_page_id()
-        {
             var config = new List<CriminalComplianceGatewayConfig>
             {
                 new CriminalComplianceGatewayConfig
@@ -40,7 +36,11 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             };
 
             _configuration.Setup(x => x.Value).Returns(config);
+        }
 
+        [Test]
+        public void Lookup_service_retrieves_page_id_and_question_id_from_config_by_gateway_page_id()
+        {
             _lookupService = new CriminalComplianceChecksQuestionLookupService(_configuration.Object);
             var questionDetails = _lookupService.GetQuestionDetailsForGatewayPageId("GatewayPage1");
 
@@ -51,24 +51,6 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         [Test]
         public void Lookup_service_returns_null_if_gateway_page_id_not_found_in_config()
         {
-            var config = new List<CriminalComplianceGatewayConfig>
-            {
-                new CriminalComplianceGatewayConfig
-                {
-                    GatewayPageId = "GatewayPage1",
-                    QnaPageId = "1000",
-                    QnaQuestionId = "CC-1"
-                },
-                new CriminalComplianceGatewayConfig
-                {
-                    GatewayPageId = "GatewayPage2",
-                    QnaPageId = "2000",
-                    QnaQuestionId = "CC-2"
-                }
-            };
-
-            _configuration.Setup(x => x.Value).Returns(config);
-
             _lookupService = new CriminalComplianceChecksQuestionLookupService(_configuration.Object);
             var questionDetails = _lookupService.GetQuestionDetailsForGatewayPageId("GatewayPage3");
 
