@@ -384,7 +384,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<RoatpFinancialSummaryItem>> GetFeedbackAddedFinancialApplications()
+        public async Task<List<RoatpFinancialSummaryItem>> GetClarificationFinancialApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
@@ -476,6 +476,21 @@ namespace SFA.DAS.ApplyService.Data
                            financialStatusExempt = FinancialReviewStatus.Exempt
                        })).ToList();
             }
+        }
+
+        public async Task<RoaptFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts()
+        {
+            // Note: For now it is easier to run all three queries. It may make sense to do something similar to that done with EPAO
+            var openApplications = await GetOpenFinancialApplications();
+            var clairificationApplications = await GetClarificationFinancialApplications();
+            var closedApplications = await GetClosedFinancialApplications();
+
+            return new RoaptFinancialApplicationsStatusCounts
+            {
+                ApplicationsOpen = openApplications.Count,
+                ApplicationsWithClairification = clairificationApplications.Count,
+                ApplicationsClosed = closedApplications.Count
+            };
         }
 
         public async Task<bool> StartFinancialReview(Guid applicationId, string reviewer)

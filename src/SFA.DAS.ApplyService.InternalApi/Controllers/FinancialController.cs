@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.Financial;
 using SFA.DAS.ApplyService.Application.Apply.Financial.Applications;
-using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
@@ -27,10 +26,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return Ok(applications);
         }
 
-        [HttpGet("/Financial/FeedbackAddedApplications")]
-        public async Task<ActionResult> FeedbackAddedApplications()
+        [HttpGet("/Financial/ClarificationApplications")]
+        public async Task<ActionResult> ClarificationApplications()
         {
-            var applications = await _mediator.Send(new FeedbackAddedFinancialApplicationsRequest());
+            var applications = await _mediator.Send(new ClarificationFinancialApplicationsRequest());
             return Ok(applications);
         }
 
@@ -39,6 +38,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             var applications = await _mediator.Send(new ClosedFinancialApplicationsRequest());
             return Ok(applications);
+        }
+
+        [HttpGet("/Financial/StatusCounts")]
+        public async Task<ActionResult> StatusCounts()
+        {
+            var statusCounts = await _mediator.Send(new FinancialApplicationsStatusCountsRequest());
+            return Ok(statusCounts);
         }
 
         [HttpPost("/Financial/{applicationId}/Grade")]
