@@ -19,6 +19,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private Mock<IInternalQnaApiClient> _qnaApiClient;
         private Mock<ICriminalComplianceChecksQuestionLookupService> _lookupService;
         private RoatpGatewayCriminalComplianceChecksController _controller;
+        private string _gatewayPageId;
+        private Page _qnaPageWithQuestion;
 
         [SetUp]
         public void Before_each_test()
@@ -26,12 +28,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
             _lookupService = new Mock<ICriminalComplianceChecksQuestionLookupService>();
             _controller = new RoatpGatewayCriminalComplianceChecksController(_qnaApiClient.Object, _lookupService.Object);
-        }
 
-        [Test]
-        public void Get_question_details_retrieves_question_details_and_answer()
-        {
-            var gatewayPageId = "Page1";
+            _gatewayPageId = "Page1";
 
             var pageDetails = new QnaQuestionDetails
             {
@@ -39,9 +37,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 QuestionId = "CC-22"
             };
 
-            _lookupService.Setup(x => x.GetQuestionDetailsForGatewayPageId(gatewayPageId)).Returns(pageDetails);
+            _lookupService.Setup(x => x.GetQuestionDetailsForGatewayPageId(_gatewayPageId)).Returns(pageDetails);
 
-            var qnaPageWithQuestion = new Page
+            _qnaPageWithQuestion = new Page
             {
                 PageId = "1000",
                 Questions = new List<Question>
@@ -96,18 +94,22 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             _qnaApiClient.Setup(x => x.GetPageBySectionNo(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.CriminalComplianceChecks,
                                                           RoatpWorkflowSectionIds.CriminalComplianceChecks.ChecksOnYourOrganisation, pageDetails.PageId))
-                                .ReturnsAsync(qnaPageWithQuestion);
+                                .ReturnsAsync(_qnaPageWithQuestion);
+        }
 
-            var result = _controller.GetCriminalComplianceQuestionDetails(Guid.NewGuid(), gatewayPageId).GetAwaiter().GetResult();
+        [Test]
+        public void Get_question_details_retrieves_question_details_and_answer()
+        {
+            var result = _controller.GetCriminalComplianceQuestionDetails(Guid.NewGuid(), _gatewayPageId).GetAwaiter().GetResult();
 
             var objectResult = result as OkObjectResult;
             objectResult.Should().NotBeNull();
             var criminalComplianceDetails = objectResult.Value as CriminalComplianceCheckDetails;
             criminalComplianceDetails.Should().NotBeNull();
-            criminalComplianceDetails.PageId.Should().Be(qnaPageWithQuestion.PageId);
-            criminalComplianceDetails.QuestionText.Should().Be(qnaPageWithQuestion.Questions[0].Label);
-            criminalComplianceDetails.QuestionId.Should().Be(qnaPageWithQuestion.Questions[0].QuestionId);
-            criminalComplianceDetails.Answer.Should().Be(qnaPageWithQuestion.PageOfAnswers[0].Answers[0].Value);
+            criminalComplianceDetails.PageId.Should().Be(_qnaPageWithQuestion.PageId);
+            criminalComplianceDetails.QuestionText.Should().Be(_qnaPageWithQuestion.Questions[0].Label);
+            criminalComplianceDetails.QuestionId.Should().Be(_qnaPageWithQuestion.Questions[0].QuestionId);
+            criminalComplianceDetails.Answer.Should().Be(_qnaPageWithQuestion.PageOfAnswers[0].Answers[0].Value);
             criminalComplianceDetails.FurtherQuestionId.Should().BeNull();
             criminalComplianceDetails.FurtherAnswer.Should().BeNull();
         }
@@ -115,90 +117,21 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         [Test]
         public void Get_question_details_retrieves_question_details_and_answer_with_further_question()
         {
-            var gatewayPageId = "Page2";
+            _qnaPageWithQuestion.PageOfAnswers[0].Answers[0].Value = "Yes";
+            _qnaPageWithQuestion.PageOfAnswers[0].Answers.Add(new Answer { QuestionId = "CC-22.1", Value = "Lorem ipsum" });
 
-            var pageDetails = new QnaQuestionDetails
-            {
-                PageId = "1000",
-                QuestionId = "CC-22"
-            };
-
-            _lookupService.Setup(x => x.GetQuestionDetailsForGatewayPageId(gatewayPageId)).Returns(pageDetails);
-
-            var qnaPageWithQuestion = new Page
-            {
-                PageId = "1000",
-                Questions = new List<Question>
-                {
-                    new Question
-                    {
-                        QuestionId = "CC-22",
-                        Label = "lorem ipsum",
-                        Input = new Input
-                        {
-                            Type = "Radio",
-                            Options = new List<Option>
-                            {
-                                new Option
-                                {
-                                    Value = "Yes",
-                                    FurtherQuestions = new List<Question>
-                                    {
-                                        new Question
-                                        {
-                                            QuestionId = "CC-22.1",
-                                            Input = new Input
-                                            {
-                                                Type = "Text"
-                                            }
-                                        }
-                                    }
-                                },
-                                new Option
-                                {
-                                    Value = "No"
-                                }
-                            }
-                        }
-                    }
-                },
-                PageOfAnswers = new List<PageOfAnswers>
-                {
-                    new PageOfAnswers
-                    {
-                        Answers = new List<Answer>
-                        {
-                            new Answer
-                            {
-                                QuestionId = "CC-22",
-                                Value =  "Yes"
-                            },
-                            new Answer
-                            {
-                                QuestionId = "CC-22.1",
-                                Value = "Lorem ipsum"
-                            }
-                        }
-                    }
-                }
-            };
-
-            _qnaApiClient.Setup(x => x.GetPageBySectionNo(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.CriminalComplianceChecks,
-                                                          RoatpWorkflowSectionIds.CriminalComplianceChecks.ChecksOnYourOrganisation, pageDetails.PageId))
-                                .ReturnsAsync(qnaPageWithQuestion);
-
-            var result = _controller.GetCriminalComplianceQuestionDetails(Guid.NewGuid(), gatewayPageId).GetAwaiter().GetResult();
+            var result = _controller.GetCriminalComplianceQuestionDetails(Guid.NewGuid(), _gatewayPageId).GetAwaiter().GetResult();
 
             var objectResult = result as OkObjectResult;
             objectResult.Should().NotBeNull();
             var criminalComplianceDetails = objectResult.Value as CriminalComplianceCheckDetails;
             criminalComplianceDetails.Should().NotBeNull();
-            criminalComplianceDetails.PageId.Should().Be(qnaPageWithQuestion.PageId);
-            criminalComplianceDetails.QuestionText.Should().Be(qnaPageWithQuestion.Questions[0].Label);
-            criminalComplianceDetails.QuestionId.Should().Be(qnaPageWithQuestion.Questions[0].QuestionId);
-            criminalComplianceDetails.Answer.Should().Be(qnaPageWithQuestion.PageOfAnswers[0].Answers[0].Value);
-            criminalComplianceDetails.FurtherQuestionId.Should().Be(qnaPageWithQuestion.PageOfAnswers[0].Answers[1].QuestionId);
-            criminalComplianceDetails.FurtherAnswer.Should().Be(qnaPageWithQuestion.PageOfAnswers[0].Answers[1].Value);
+            criminalComplianceDetails.PageId.Should().Be(_qnaPageWithQuestion.PageId);
+            criminalComplianceDetails.QuestionText.Should().Be(_qnaPageWithQuestion.Questions[0].Label);
+            criminalComplianceDetails.QuestionId.Should().Be(_qnaPageWithQuestion.Questions[0].QuestionId);
+            criminalComplianceDetails.Answer.Should().Be(_qnaPageWithQuestion.PageOfAnswers[0].Answers[0].Value);
+            criminalComplianceDetails.FurtherQuestionId.Should().Be(_qnaPageWithQuestion.PageOfAnswers[0].Answers[1].QuestionId);
+            criminalComplianceDetails.FurtherAnswer.Should().Be(_qnaPageWithQuestion.PageOfAnswers[0].Answers[1].Value);
         }
     }
 }
