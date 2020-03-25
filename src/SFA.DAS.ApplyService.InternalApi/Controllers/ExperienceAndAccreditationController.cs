@@ -65,5 +65,15 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 ContractFileName = contactFileNameTask.Result
             };
         }
+
+        [HttpGet("/Accreditation/{applicationId}/SubcontractDeclaration/ContractFile")]
+        public async Task<FileStreamResult> GetSubcontractorDeclarationContractFile(Guid applicationId)
+        {
+            return await _qnaApiClient.GetDownloadFile(applicationId,
+                RoatpWorkflowSequenceIds.YourOrganisation,
+                RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.SubcontractorDeclaration,
+                RoatpYourOrganisationQuestionIdConstants.ContractFileName);
+        }
     }
 }
