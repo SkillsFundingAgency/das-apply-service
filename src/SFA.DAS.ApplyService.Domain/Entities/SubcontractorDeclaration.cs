@@ -5,7 +5,5 @@
         public bool HasDeliveredTrainingAsSubcontractor { get; set; }
 
         public string ContractFileName { get; set; }
-
-        public byte[] ContractFile { get; set; }
     }
 }

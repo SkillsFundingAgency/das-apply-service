@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
+using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
@@ -37,6 +38,32 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
                 RoatpWorkflowPageIds.ExperienceAndAccreditations.InitialTeacherTraining,
                 RoatpYourOrganisationQuestionIdConstants.InitialTeacherTraining);
+        }
+
+        [HttpGet("/Accreditation/{applicationId}/SubcontractDeclaration")]
+        public async Task<SubcontractorDeclaration> GetSubcontractorDeclaration(Guid applicationId)
+        {
+            var hasDeliveredTrainingAsSubcontractorTask = _qnaApiClient.GetAnswerValue(applicationId,
+                RoatpWorkflowSequenceIds.YourOrganisation,
+                RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.SubcontractorDeclaration,
+                RoatpYourOrganisationQuestionIdConstants.HasDeliveredTrainingAsSubcontractor
+            );
+
+            var contactFileNameTask = _qnaApiClient.GetAnswerValue(applicationId,
+                RoatpWorkflowSequenceIds.YourOrganisation,
+                RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.SubcontractorDeclaration,
+                RoatpYourOrganisationQuestionIdConstants.ContractFileName
+            );
+
+            await Task.WhenAll(hasDeliveredTrainingAsSubcontractorTask, contactFileNameTask);
+
+            return new SubcontractorDeclaration
+            {
+                HasDeliveredTrainingAsSubcontractor = hasDeliveredTrainingAsSubcontractorTask.Result.ToUpper() == "YES",
+                ContractFileName = contactFileNameTask.Result
+            };
         }
     }
 }

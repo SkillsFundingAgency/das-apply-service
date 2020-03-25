@@ -3,6 +3,8 @@ using Moq;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using System;
+using SFA.DAS.ApplyService.Application.Apply.Roatp;
+using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
@@ -73,6 +75,32 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             Assert.AreEqual(null, actualResult);
             _qnaApiClient.Verify(x => x.GetAnswerValue(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+        }
+
+        [Test]
+        public void get_gateway_declaration_returns_expected_declaration_answers()
+        {
+            var expectedHasDeliveredTrainingAsSubcontractor = true;
+            var expectedContractFileName = "filename";
+
+            _qnaApiClient
+                .Setup(x => x.GetAnswerValue(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.SubcontractorDeclaration,
+                    RoatpYourOrganisationQuestionIdConstants.HasDeliveredTrainingAsSubcontractor))
+                .ReturnsAsync("Yes");
+
+            _qnaApiClient
+                .Setup(x => x.GetAnswerValue(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.SubcontractorDeclaration,
+                    RoatpYourOrganisationQuestionIdConstants.ContractFileName))
+                .ReturnsAsync(expectedContractFileName);
+
+            var actualResult = _controller.GetSubcontractorDeclaration(new Guid()).Result;
+
+            Assert.AreEqual(expectedHasDeliveredTrainingAsSubcontractor, actualResult.HasDeliveredTrainingAsSubcontractor);
+            Assert.AreEqual(expectedContractFileName, actualResult.ContractFileName);
         }
     }
 }
