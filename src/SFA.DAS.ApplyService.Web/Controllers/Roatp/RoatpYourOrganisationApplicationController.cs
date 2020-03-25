@@ -47,7 +47,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     applicationId = applicationId,
                     sequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
                     sectionId = RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
-                    pageId = RoatpWorkflowPageIds.ExperienceAndAccreditations.StartPage,
+                    pageId = RoatpWorkflowPageIds.ExperienceAndAccreditations.OfficeForStudents,
                     redirectAction = "TaskList"
                 });
         }
