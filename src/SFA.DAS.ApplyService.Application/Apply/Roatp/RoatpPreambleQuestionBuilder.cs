@@ -164,7 +164,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public class ExperienceAndAccreditations
         { 
             public static string OfficeForStudents = "235";
-            public static string InititalTeacherTraining = "240";
+            public static string InitialTeacherTraining = "240";
         }
 
         public class Finish

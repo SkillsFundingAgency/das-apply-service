@@ -21,25 +21,31 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("/Gateway/{applicationId}/TradingName")]
         public async Task<string> GetTradingName(Guid applicationId)
         {
-            var tradingNamePage = await _qnaApiClient.GetPageBySectionNo(applicationId, RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble);
-            return tradingNamePage?.PageOfAnswers?.SelectMany(a => a.Answers)?.FirstOrDefault(a => a.QuestionId == RoatpPreambleQuestionIdConstants.UkrlpTradingName)?.Value;
+            return await _qnaApiClient.GetAnswerValue(applicationId, 
+                RoatpWorkflowSequenceIds.Preamble, 
+                RoatpWorkflowSectionIds.Preamble, 
+                RoatpWorkflowPageIds.Preamble, 
+                RoatpPreambleQuestionIdConstants.UkrlpTradingName);
         }
 
         [HttpGet("/Gateway/{applicationId}/WebsiteAddressSourcedFromUkrlp")]
         public async Task<string> GetWebsiteAddressFromUkrlp(Guid applicationId)
         {
-            var websiteNamePage = await _qnaApiClient.GetPageBySectionNo(applicationId, RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble);
-            return websiteNamePage?.PageOfAnswers?.SelectMany(a => a.Answers)?.FirstOrDefault(a => a.QuestionId == RoatpPreambleQuestionIdConstants.UkrlpWebsite)?.Value;
+            return await _qnaApiClient.GetAnswerValue(applicationId, 
+                RoatpWorkflowSequenceIds.Preamble, 
+                RoatpWorkflowSectionIds.Preamble, 
+                RoatpWorkflowPageIds.Preamble, 
+                RoatpPreambleQuestionIdConstants.UkrlpWebsite);
         }
 
         [HttpGet("/Gateway/{applicationId}/WebsiteAddressManuallyEntered")]
         public async Task<string> GetWebsiteAddressManuallyEntered(Guid applicationId)
         {
-            var websiteNamePage = await _qnaApiClient.GetPageBySectionNo(applicationId, 
-                RoatpWorkflowSequenceIds.YourOrganisation, 
-                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed, 
-                RoatpWorkflowPageIds.WebsiteManuallyEntered);
-            return websiteNamePage?.PageOfAnswers?.SelectMany(a => a.Answers)?.FirstOrDefault(a => a.QuestionId == RoatpYourOrganisationQuestionIdConstants.WebsiteManuallyEntered)?.Value;
+            return await _qnaApiClient.GetAnswerValue(applicationId,
+                RoatpWorkflowSequenceIds.YourOrganisation,
+                RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed,
+                RoatpWorkflowPageIds.WebsiteManuallyEntered,
+                RoatpYourOrganisationQuestionIdConstants.WebsiteManuallyEntered);
         }
     }
 }

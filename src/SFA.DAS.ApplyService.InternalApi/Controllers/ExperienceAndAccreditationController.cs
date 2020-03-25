@@ -13,37 +13,30 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     {
         private readonly IInternalQnaApiClient _qnaApiClient;
 
-        /// <summary>
-        /// Returns trading name for an application
-        /// </summary>
-        /// <param name="qnaApiClient"></param>
         public ExperienceAndAccreditationController(IInternalQnaApiClient qnaApiClient)
         {
             _qnaApiClient = qnaApiClient;
         }
 
-        [HttpGet("/Gateway/{applicationId}/OfficeForStudent")]
+        [HttpGet("/Accreditation/{applicationId}/OfficeForStudents")]
         public async Task<string> GetOfficeForStudents(Guid applicationId)
         {
-            var websiteNamePage = await _qnaApiClient.GetPageBySectionNo(applicationId, 
-                RoatpWorkflowSequenceIds.YourOrganisation, 
-                RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations, 
-                RoatpWorkflowPageIds.ExperienceAndAccreditations.OfficeForStudents);
-
-            return websiteNamePage?.PageOfAnswers?.SelectMany(a => a.Answers)?
-                .FirstOrDefault(a => a.QuestionId == RoatpYourOrganisationQuestionIdConstants.OfficeForStudents)?.Value;
-        }
-
-        [HttpGet("/Gateway/{applicationId}/InitialTeacherTraining")]
-        public async Task<string> GetInitialTeacherTraining(Guid applicationId)
-        {
-            var websiteNamePage = await _qnaApiClient.GetPageBySectionNo(applicationId,
+            return await _qnaApiClient.GetAnswerValue(applicationId,
                 RoatpWorkflowSequenceIds.YourOrganisation,
                 RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
-                RoatpWorkflowPageIds.ExperienceAndAccreditations.InititalTeacherTraining);
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.OfficeForStudents,
+                RoatpYourOrganisationQuestionIdConstants.OfficeForStudents
+                );
+        }
 
-            return websiteNamePage?.PageOfAnswers?.SelectMany(a => a.Answers)?
-                .FirstOrDefault(a => a.QuestionId == RoatpYourOrganisationQuestionIdConstants.InitialTeacherTraining)?.Value;
+        [HttpGet("/Accreditation/{applicationId}/InitialTeacherTraining")]
+        public async Task<string> GetInitialTeacherTraining(Guid applicationId)
+        {
+            return await _qnaApiClient.GetAnswerValue(applicationId,
+                RoatpWorkflowSequenceIds.YourOrganisation,
+                RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.InitialTeacherTraining,
+                RoatpYourOrganisationQuestionIdConstants.InitialTeacherTraining);
         }
     }
 }
