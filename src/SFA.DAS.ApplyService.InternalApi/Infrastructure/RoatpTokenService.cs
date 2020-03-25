@@ -20,8 +20,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
         public string GetToken()
         {
-            if (_hostingEnvironment.IsDevelopment())
-                return string.Empty;
+            //if (_hostingEnvironment.IsDevelopment())
+            //    return string.Empty;
 
             var tenantId = _configuration.RoatpApiAuthentication.TenantId;
             var clientId = _configuration.RoatpApiAuthentication.ClientId;

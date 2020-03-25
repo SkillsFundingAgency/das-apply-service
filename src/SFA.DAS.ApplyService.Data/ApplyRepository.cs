@@ -478,17 +478,17 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<RoaptFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts()
+        public async Task<RoatpFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts()
         {
             // Note: For now it is easier to run all three queries. It may make sense to do something similar to that done with EPAO
             var openApplications = await GetOpenFinancialApplications();
-            var clairificationApplications = await GetClarificationFinancialApplications();
+            var clarificationApplications = await GetClarificationFinancialApplications();
             var closedApplications = await GetClosedFinancialApplications();
 
-            return new RoaptFinancialApplicationsStatusCounts
+            return new RoatpFinancialApplicationsStatusCounts
             {
                 ApplicationsOpen = openApplications.Count,
-                ApplicationsWithClairification = clairificationApplications.Count,
+                ApplicationsWithClarification = clarificationApplications.Count,
                 ApplicationsClosed = closedApplications.Count
             };
         }

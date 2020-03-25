@@ -34,7 +34,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications();
         Task<List<RoatpFinancialSummaryItem>> GetClarificationFinancialApplications();
         Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications();
-        Task<RoaptFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts();
+        Task<RoatpFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts();
         Task<bool> StartFinancialReview(Guid applicationId, string reviewer);
         Task<bool> RecordFinancialGrade(Guid applicationId, FinancialReviewDetails financialReviewDetails, string financialReviewStatus);
 

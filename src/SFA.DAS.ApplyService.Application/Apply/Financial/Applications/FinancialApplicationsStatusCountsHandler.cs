@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Financial.Applications
 {
-    public class FinancialApplicationsStatusCountsHandler : IRequestHandler<FinancialApplicationsStatusCountsRequest, RoaptFinancialApplicationsStatusCounts>
+    public class FinancialApplicationsStatusCountsHandler : IRequestHandler<FinancialApplicationsStatusCountsRequest, RoatpFinancialApplicationsStatusCounts>
     {
         private readonly IApplyRepository _repository;
 
@@ -14,7 +14,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial.Applications
             _repository = repository;
         }
 
-        public async Task<RoaptFinancialApplicationsStatusCounts> Handle(FinancialApplicationsStatusCountsRequest request, CancellationToken cancellationToken)
+        public async Task<RoatpFinancialApplicationsStatusCounts> Handle(FinancialApplicationsStatusCountsRequest request, CancellationToken cancellationToken)
         {
             return await _repository.GetFinancialApplicationsStatusCounts();
         }
