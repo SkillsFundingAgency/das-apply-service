@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
@@ -13,6 +14,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
     public class GatewayOrganisationChecksControllerTests
     {
         private Mock<IInternalQnaApiClient> _qnaApiClient;
+        private Mock<ILogger<GatewayOrganisationChecksController>> _logger;
         private GatewayOrganisationChecksController _controller;
 
         private const string ValueOfQuestion = "swordfish";
@@ -22,7 +24,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public void Before_each_test()
         {
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
-            _controller = new GatewayOrganisationChecksController(_qnaApiClient.Object);
+            _logger = new Mock<ILogger<GatewayOrganisationChecksController>>();
+            _controller = new GatewayOrganisationChecksController(_qnaApiClient.Object, _logger.Object);
         }
 
         [Test]
@@ -116,6 +119,22 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var actualResult = _controller.GetWebsiteAddressManuallyEntered(_applicationId).Result;
 
             Assert.IsNull(actualResult);
+        }
+
+
+        [Test]
+        public void get_organisation_website_address_returns_expected_value_when_present()
+        {
+            _qnaApiClient
+               .Setup(x => x.GetAnswerValue(_applicationId,
+                   RoatpWorkflowSequenceIds.Preamble,
+                   RoatpWorkflowSectionIds.Preamble,
+                   RoatpWorkflowPageIds.Preamble,
+                   RoatpPreambleQuestionIdConstants.UkrlpWebsite)).ReturnsAsync(ValueOfQuestion);
+
+            var actualResult = _controller.GetOrganisationWebsiteAddress(_applicationId).Result;
+
+            Assert.AreEqual(ValueOfQuestion, actualResult);
         }
     }
 }
