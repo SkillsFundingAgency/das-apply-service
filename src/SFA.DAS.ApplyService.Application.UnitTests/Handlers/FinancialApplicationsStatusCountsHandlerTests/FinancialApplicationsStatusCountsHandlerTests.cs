@@ -19,6 +19,10 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.FinancialApplicati
         private Mock<IApplyRepository> _applyRepository;
         private FinancialApplicationsStatusCountsHandler _handler;
 
+        private List<RoatpFinancialSummaryItem> _openApplications;
+        private List<RoatpFinancialSummaryItem> _clarificationApplications;
+        private List<RoatpFinancialSummaryItem> _closedApplications;
+
         [SetUp]
         public void Setup()
         {
@@ -27,22 +31,22 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.FinancialApplicati
             var clarificationFinancialApplication = new RoatpFinancialSummaryItem { ApplicationStatus = ApplicationStatus.GatewayAssessed, FinancialReviewStatus = FinancialReviewStatus.Clarification, SubmittedDate = DateTime.Now, FeedbackAddedDate = DateTime.Now };
             var closedFinancialApplication = new RoatpFinancialSummaryItem { ApplicationStatus = ApplicationStatus.GatewayAssessed, FinancialReviewStatus = FinancialReviewStatus.Approved, SubmittedDate = DateTime.Now, ClosedDate = DateTime.Now };
 
-            var openApplications = new List<RoatpFinancialSummaryItem> { openFinancialApplication, openExemptFinancialApplication };
-            var clarificationApplications = new List<RoatpFinancialSummaryItem> { clarificationFinancialApplication };
-            var closedApplications = new List<RoatpFinancialSummaryItem> { closedFinancialApplication };
+            _openApplications = new List<RoatpFinancialSummaryItem> { openFinancialApplication, openExemptFinancialApplication };
+            _clarificationApplications = new List<RoatpFinancialSummaryItem> { clarificationFinancialApplication };
+            _closedApplications = new List<RoatpFinancialSummaryItem> { closedFinancialApplication };
 
             _applyRepository = new Mock<IApplyRepository>();
 
             // Note: These 3 methods have been added for reference as the concrete version of GetFinancialApplicationsStatusCounts currently calls into these to get their counts.
-            _applyRepository.Setup(r => r.GetOpenFinancialApplications()).ReturnsAsync(openApplications);
-            _applyRepository.Setup(r => r.GetClarificationFinancialApplications()).ReturnsAsync(clarificationApplications);
-            _applyRepository.Setup(r => r.GetClosedFinancialApplications()).ReturnsAsync(closedApplications);
+            _applyRepository.Setup(r => r.GetOpenFinancialApplications()).ReturnsAsync(_openApplications);
+            _applyRepository.Setup(r => r.GetClarificationFinancialApplications()).ReturnsAsync(_clarificationApplications);
+            _applyRepository.Setup(r => r.GetClosedFinancialApplications()).ReturnsAsync(_closedApplications);
 
             _applyRepository.Setup(r => r.GetFinancialApplicationsStatusCounts()).ReturnsAsync(new RoatpFinancialApplicationsStatusCounts
             {
-                ApplicationsOpen = openApplications.Count,
-                ApplicationsWithClarification = clarificationApplications.Count,
-                ApplicationsClosed = closedApplications.Count
+                ApplicationsOpen = _openApplications.Count,
+                ApplicationsWithClarification = _clarificationApplications.Count,
+                ApplicationsClosed = _closedApplications.Count
             });
 
             _handler = new FinancialApplicationsStatusCountsHandler(_applyRepository.Object);
@@ -51,9 +55,9 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.FinancialApplicati
         [Test]
         public async Task StatusCounts_should_be_as_expected()
         {
-            int expectedOpenCount = 2;
-            int expectedClarificationCount = 1;
-            int expectedClosedCount = 1;
+            int expectedOpenCount = _openApplications.Count;
+            int expectedClarificationCount = _clarificationApplications.Count;
+            int expectedClosedCount = _closedApplications.Count;
 
             var request = new FinancialApplicationsStatusCountsRequest();
             var result = await _handler.Handle(request, new CancellationToken());
