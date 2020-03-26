@@ -18,7 +18,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private ExperienceAndAccreditationController _controller;
 
         private const string ValueOfQuestion = "swordfish";
-
+        private readonly Guid _applicationId = new Guid("742d2fc4-69bd-47b6-b93f-c059d59db0c0");
         [SetUp]
         public void Before_each_test()
         {
@@ -30,25 +30,41 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public void get_office_for_students_returns_expected_value_when_present()
         {
             _qnaApiClient
-                .Setup(x => x.GetAnswerValue(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(),
-                    It.IsAny<string>())).ReturnsAsync(ValueOfQuestion);
-            var actualResult = _controller.GetOfficeForStudents(new Guid()).Result;
+                .Setup(x => x.GetAnswerValue(_applicationId, 
+                    RoatpWorkflowSequenceIds.YourOrganisation, 
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations, 
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.OfficeForStudents,
+                    RoatpYourOrganisationQuestionIdConstants.OfficeForStudents)).ReturnsAsync(ValueOfQuestion);
+            var actualResult = _controller.GetOfficeForStudents(_applicationId).Result;
 
             Assert.AreEqual(ValueOfQuestion,actualResult);
-            _qnaApiClient.Verify(x=>x.GetAnswerValue(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()),Times.Once);
+            _qnaApiClient.Verify(x=>x.GetAnswerValue(_applicationId, 
+                RoatpWorkflowSequenceIds.YourOrganisation, 
+                RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations, 
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.OfficeForStudents,
+                RoatpYourOrganisationQuestionIdConstants.OfficeForStudents),
+                Times.Once);
         }
 
         [Test]
         public void get_office_for_students_returns_no_value_when_not_present()
         {
             _qnaApiClient
-                .Setup(x => x.GetAnswerValue(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(),
-                    It.IsAny<string>())).ReturnsAsync((string)null);
+                .Setup(x => x.GetAnswerValue(_applicationId,
+                    RoatpWorkflowSequenceIds.YourOrganisation, 
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations, 
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.OfficeForStudents,
+                    RoatpYourOrganisationQuestionIdConstants.OfficeForStudents)).ReturnsAsync((string)null);
 
-            var actualResult = _controller.GetOfficeForStudents(new Guid()).Result;
+            var actualResult = _controller.GetOfficeForStudents(_applicationId).Result;
 
             Assert.AreEqual(null, actualResult);
-            _qnaApiClient.Verify(x => x.GetAnswerValue(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            _qnaApiClient.Verify(x => x.GetAnswerValue(_applicationId, 
+                RoatpWorkflowSequenceIds.YourOrganisation, 
+                RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations, 
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.OfficeForStudents,
+                RoatpYourOrganisationQuestionIdConstants.OfficeForStudents),
+                Times.Once);
         }
 
 
@@ -56,27 +72,43 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public void get_initial_teacher_training_returns_expected_value_when_present()
         {
             _qnaApiClient
-                .Setup(x => x.GetAnswerValue(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(),
-                    It.IsAny<string>())).ReturnsAsync(ValueOfQuestion);
+                .Setup(x => x.GetAnswerValue(_applicationId,
+                    RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.InitialTeacherTraining,
+                    RoatpYourOrganisationQuestionIdConstants.InitialTeacherTraining)).ReturnsAsync(ValueOfQuestion);
 
 
-            var actualResult = _controller.GetInitialTeacherTraining(new Guid()).Result;
+            var actualResult = _controller.GetInitialTeacherTraining(_applicationId).Result;
 
             Assert.AreEqual(ValueOfQuestion, actualResult);
-            _qnaApiClient.Verify(x => x.GetAnswerValue(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            _qnaApiClient.Verify(x => x.GetAnswerValue(_applicationId,
+                    RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.InitialTeacherTraining,
+                    RoatpYourOrganisationQuestionIdConstants.InitialTeacherTraining), 
+                Times.Once);
         }
 
         [Test]
         public void get_initial_teacher_training_returns_no_value_when_not_present()
         {
             _qnaApiClient
-                .Setup(x => x.GetAnswerValue(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(),
-                    It.IsAny<string>())).ReturnsAsync((string)null);
+                .Setup(x => x.GetAnswerValue(_applicationId,
+                    RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.InitialTeacherTraining,
+                    RoatpYourOrganisationQuestionIdConstants.InitialTeacherTraining)).ReturnsAsync((string)null);
 
-            var actualResult = _controller.GetInitialTeacherTraining(new Guid()).Result;
+            var actualResult = _controller.GetInitialTeacherTraining(_applicationId).Result;
 
             Assert.AreEqual(null, actualResult);
-            _qnaApiClient.Verify(x => x.GetAnswerValue(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            _qnaApiClient.Verify(x => x.GetAnswerValue(_applicationId,
+                    RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.InitialTeacherTraining,
+                    RoatpYourOrganisationQuestionIdConstants.InitialTeacherTraining),
+                Times.Once);
         }
 
         [Test]
