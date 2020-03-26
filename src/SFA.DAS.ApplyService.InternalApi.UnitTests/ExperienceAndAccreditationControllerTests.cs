@@ -95,7 +95,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _qnaApiClient
                 .Setup(x => x.GetAnswerValue(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.YourOrganisation,
                     RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
-                    RoatpWorkflowPageIds.ExperienceAndAccreditations.SubcontractorDeclaration,
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.SubcontractorContractFile,
                     RoatpYourOrganisationQuestionIdConstants.ContractFileName))
                 .ReturnsAsync(expectedContractFileName);
 
@@ -113,7 +113,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             _qnaApiClient.Setup(x => x.GetDownloadFile(applicationId, RoatpWorkflowSequenceIds.YourOrganisation,
                 RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
-                RoatpWorkflowPageIds.ExperienceAndAccreditations.SubcontractorDeclaration,
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.SubcontractorContractFile,
                 RoatpYourOrganisationQuestionIdConstants.ContractFileName)).ReturnsAsync(expectedFileStream);
 
             var result = _controller.GetSubcontractorDeclarationContractFile(applicationId).Result;

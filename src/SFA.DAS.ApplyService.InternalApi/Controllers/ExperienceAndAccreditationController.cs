@@ -53,7 +53,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             var contactFileNameTask = _qnaApiClient.GetAnswerValue(applicationId,
                 RoatpWorkflowSequenceIds.YourOrganisation,
                 RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
-                RoatpWorkflowPageIds.ExperienceAndAccreditations.SubcontractorDeclaration,
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.SubcontractorContractFile,
                 RoatpYourOrganisationQuestionIdConstants.ContractFileName
             );
 
@@ -72,7 +72,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _qnaApiClient.GetDownloadFile(applicationId,
                 RoatpWorkflowSequenceIds.YourOrganisation,
                 RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
-                RoatpWorkflowPageIds.ExperienceAndAccreditations.SubcontractorDeclaration,
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.SubcontractorContractFile,
                 RoatpYourOrganisationQuestionIdConstants.ContractFileName);
         }
     }

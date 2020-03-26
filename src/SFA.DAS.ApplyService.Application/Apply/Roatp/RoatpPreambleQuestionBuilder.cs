@@ -168,6 +168,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static string OfficeForStudents = "235";
             public static string InitialTeacherTraining = "240";
             public static string SubcontractorDeclaration = "350";
+            public static string SubcontractorContractFile = "360";
         }
 
         public class Finish

@@ -94,7 +94,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
         public async Task<FileStreamResult> GetDownloadFile(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}/questions/{questionId}");
+            var response = await _httpClient.GetAsync($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}/questions/{questionId}/download");
 
             var fileStream = await response.Content.ReadAsStreamAsync();
             var result = new FileStreamResult(fileStream, response.Content.Headers.ContentType.MediaType);

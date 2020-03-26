@@ -61,7 +61,7 @@
         private async Task<T> Get<T>(string uri)
         {
             _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken(_baseAddress));
 
             using (var response = await _client.GetAsync(new Uri(uri, UriKind.Absolute)))
             {
