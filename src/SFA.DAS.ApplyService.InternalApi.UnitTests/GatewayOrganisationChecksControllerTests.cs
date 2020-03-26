@@ -136,5 +136,20 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             Assert.AreEqual(ValueOfQuestion, actualResult);
         }
+
+        [Test]
+        public void get_organisation_website_address_returns_no_value_when_not_present()
+        {
+            _qnaApiClient
+               .Setup(x => x.GetAnswerValue(_applicationId,
+                   RoatpWorkflowSequenceIds.Preamble,
+                   RoatpWorkflowSectionIds.Preamble,
+                   RoatpWorkflowPageIds.Preamble,
+                   RoatpPreambleQuestionIdConstants.UkrlpWebsite)).ReturnsAsync((string)null);
+
+            var actualResult = _controller.GetOrganisationWebsiteAddress(_applicationId).Result;
+
+            Assert.AreEqual(string.Empty, actualResult);
+        }
     }
 }
