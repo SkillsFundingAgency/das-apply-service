@@ -37,11 +37,6 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Financial.Financia
 
             _applyRepository = new Mock<IApplyRepository>();
 
-            // Note: These 3 methods have been added for reference as the concrete version of GetFinancialApplicationsStatusCounts currently calls into these to get their counts.
-            _applyRepository.Setup(r => r.GetOpenFinancialApplications()).ReturnsAsync(_openApplications);
-            _applyRepository.Setup(r => r.GetClarificationFinancialApplications()).ReturnsAsync(_clarificationApplications);
-            _applyRepository.Setup(r => r.GetClosedFinancialApplications()).ReturnsAsync(_closedApplications);
-
             _applyRepository.Setup(r => r.GetFinancialApplicationsStatusCounts()).ReturnsAsync(new RoatpFinancialApplicationsStatusCounts
             {
                 ApplicationsOpen = _openApplications.Count,
