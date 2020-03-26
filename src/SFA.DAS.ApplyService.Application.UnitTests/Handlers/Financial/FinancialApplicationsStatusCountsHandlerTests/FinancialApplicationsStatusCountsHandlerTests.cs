@@ -11,7 +11,7 @@ using SFA.DAS.ApplyService.Application.Apply.Financial.Applications;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 
-namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.FinancialApplicationsStatusCountsHandlerTests
+namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Financial.FinancialApplicationsStatusCountsHandlerTests
 {
     [TestFixture]
     public class FinancialApplicationsStatusCountsHandlerTests
