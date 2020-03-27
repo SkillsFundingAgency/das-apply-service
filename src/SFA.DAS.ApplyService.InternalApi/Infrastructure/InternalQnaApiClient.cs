@@ -12,7 +12,7 @@ using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
-    public class InternalQnaApiClient:IInternalQnaApiClient
+    public class InternalQnaApiClient : IInternalQnaApiClient
     {
         private readonly ILogger<InternalQnaApiClient> _logger;
         private readonly IQnaTokenService _tokenService;
