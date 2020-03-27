@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
+using SFA.DAS.ApplyService.InternalApi.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -18,49 +19,42 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             _qnaApiClient = qnaApiClient;
         }
 
-
         [HttpGet]
         [Route("TypeOfOrganisation/{applicationId}")]
         public async Task<IActionResult> GetTypeOfOrganisation(Guid applicationId)
         {
 
-            const string companyAndCharity = "Company and charity";
-            const string company = "Company";
-            const string charity = "Charity";
-            const string statutoryInstrument = "Statutory instrument";
-
-            var companyVerification = await
+            var TRUE = "TRUE";
+                 var companyVerification = await
                 _qnaApiClient.GetQuestionTag(applicationId, RoatpWorkflowQuestionTags.UkrlpVerificationCompany);
-
 
             var charityVerification = await
                 _qnaApiClient.GetQuestionTag(applicationId, RoatpWorkflowQuestionTags.UkrlpVerificationCharity);
 
 
-            if (companyVerification == "TRUE" && charityVerification == "TRUE")
+            if (companyVerification == TRUE && charityVerification == TRUE)
             {
-                return Ok(companyAndCharity);
+                return Ok(GatewayOrganisationTypes.CompanyAndCharity);
             }
 
 
-            if (companyVerification == "TRUE")
+            if (companyVerification == TRUE)
             {
-                return Ok(company);
+                return Ok(GatewayOrganisationTypes.Company);
             }
 
-            if (charityVerification == "TRUE")
+            if (charityVerification == TRUE)
             {
-                return Ok(charity);
+                return Ok(GatewayOrganisationTypes.Charity);
             }
 
-           
             var soleTraderPartnership = await
                 _qnaApiClient.GetQuestionTag(applicationId, RoatpWorkflowQuestionTags.SoleTraderOrPartnership);
 
             if (!string.IsNullOrEmpty(soleTraderPartnership))
                 return Ok(soleTraderPartnership);
 
-            return Ok(statutoryInstrument);
+            return Ok(GatewayOrganisationTypes.StatutoryInstitute);
 
            
         }

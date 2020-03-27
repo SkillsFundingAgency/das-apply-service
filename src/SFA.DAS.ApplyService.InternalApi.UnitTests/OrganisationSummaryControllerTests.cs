@@ -6,6 +6,7 @@ using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
+using SFA.DAS.ApplyService.InternalApi.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
@@ -29,7 +30,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         {
             var result = (OkObjectResult)_controller.GetTypeOfOrganisation(_applicationId).Result;
             result.Should().BeOfType<OkObjectResult>();
-            Assert.AreEqual("Statutory instrument", ((OkObjectResult)result).Value);
+            Assert.AreEqual(GatewayOrganisationTypes.StatutoryInstitute, ((OkObjectResult)result).Value);
         }
 
         [Test]
@@ -39,7 +40,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             var result = (OkObjectResult)_controller.GetTypeOfOrganisation(_applicationId).Result;
             result.Should().BeOfType<OkObjectResult>();
-            Assert.AreEqual("Company", ((OkObjectResult)result).Value);
+            Assert.AreEqual(GatewayOrganisationTypes.Company, ((OkObjectResult)result).Value);
         }
 
         [Test]
@@ -49,7 +50,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             var result = (OkObjectResult)_controller.GetTypeOfOrganisation(_applicationId).Result;
             result.Should().BeOfType<OkObjectResult>();
-            Assert.AreEqual("Charity", ((OkObjectResult)result).Value);
+            Assert.AreEqual(GatewayOrganisationTypes.Charity, ((OkObjectResult)result).Value);
         }
 
         [Test]
@@ -60,7 +61,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             var result = (OkObjectResult)_controller.GetTypeOfOrganisation(_applicationId).Result;
             result.Should().BeOfType<OkObjectResult>();
-            Assert.AreEqual("Company and charity", ((OkObjectResult)result).Value);
+            Assert.AreEqual(GatewayOrganisationTypes.CompanyAndCharity, ((OkObjectResult)result).Value);
         }
 
 
