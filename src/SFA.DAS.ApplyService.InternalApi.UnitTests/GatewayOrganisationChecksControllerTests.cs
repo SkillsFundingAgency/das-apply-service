@@ -121,44 +121,60 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             Assert.IsNull(actualResult);
         }
 
-        [TestCase(1, "www.UkrlpWebsite.co.uk", "www.ApplyWebsite.co.uk")]
-        [TestCase(2, "www.UkrlpWebsite.co.uk", null)]
-        [TestCase(3, null, "www.ApplyWebsite.co.uk")]
-        [TestCase(4, null, null)]
-        public void get_organisation_website_address_returns_expected_value_when_present(int testCase, string ukrlpWebsite, string applyWebsite)
+        public void SetupQnAClient(string ukrplWebsite, string applyWebsite)
         {
             _qnaApiClient
                .Setup(x => x.GetAnswerValue(_applicationId,
                                            RoatpWorkflowSequenceIds.Preamble,
                                            RoatpWorkflowSectionIds.Preamble,
                                            RoatpWorkflowPageIds.Preamble,
-                                           RoatpPreambleQuestionIdConstants.UkrlpWebsite)).ReturnsAsync(ukrlpWebsite);
-
+                                           RoatpPreambleQuestionIdConstants.UkrlpWebsite)).ReturnsAsync(ukrplWebsite);
             _qnaApiClient
                .Setup(x => x.GetAnswerValue(_applicationId,
                                            RoatpWorkflowSequenceIds.YourOrganisation,
                                            RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed,
                                            RoatpWorkflowPageIds.WebsiteManuallyEntered,
-                                           RoatpYourOrganisationQuestionIdConstants.WebsiteManuallyEntered)).ReturnsAsync(applyWebsite);    
-
-
-            var actualResult = _controller.GetOrganisationWebsiteAddress(_applicationId).Result;
-
-            switch (testCase)
-            {
-                case 1: // Technically impossible, prevented by the logic in Apply
-                case 2: // When we have WebsiteAddressSourcedFromUkrlp
-                    Assert.AreEqual(ukrlpWebsite, actualResult);
-                    break;
-                case 3: // When we have WebsiteAddressManuallyEntered
-                    Assert.AreEqual(applyWebsite, actualResult);
-                    break;
-                case 4: // No website returned
-                    Assert.AreEqual(string.Empty, actualResult);
-                    break;
-                default:
-                    break;
-            }
+                                           RoatpYourOrganisationQuestionIdConstants.WebsiteManuallyEntered)).ReturnsAsync(applyWebsite);
         }
+
+        [Test]
+        public void Get_organisation_website_address_both_sources_returning()
+        {
+            var ukrlpWebsite = "www.UkrlpWebsite.co.uk";
+            var applyWebsite = "www.ApplyWebsite.co.uk";
+            SetupQnAClient(ukrlpWebsite, applyWebsite);
+            var actualResult = _controller.GetOrganisationWebsiteAddress(_applicationId).Result;
+            Assert.AreEqual(ukrlpWebsite, actualResult);
+        }
+
+        [Test]
+        public void Get_organisation_website_from_WebsiteAddressSourcedFromUkrlp()
+        {
+            var ukrlpWebsite = "www.UkrlpWebsite.co.uk";
+            var applyWebsite = string.Empty;
+            SetupQnAClient(ukrlpWebsite, applyWebsite);
+            var actualResult = _controller.GetOrganisationWebsiteAddress(_applicationId).Result;
+            Assert.AreEqual(ukrlpWebsite, actualResult);
+        }
+
+        [Test]
+        public void Get_organisation_website_address_from_WebsiteAddressManuallyEntered()
+        {
+            var ukrlpWebsite = string.Empty;
+            var applyWebsite = "www.ApplyWebsite.co.uk";
+            SetupQnAClient(ukrlpWebsite, applyWebsite);
+            var actualResult = _controller.GetOrganisationWebsiteAddress(_applicationId).Result;
+            Assert.AreEqual(applyWebsite, actualResult);
+        }
+        [Test]
+        public void Get_organisation_website_address_NoWbsiteReturned()
+        {
+            var ukrlpWebsite = string.Empty; 
+            var applyWebsite = string.Empty; 
+            SetupQnAClient(ukrlpWebsite, applyWebsite);
+            var actualResult = _controller.GetOrganisationWebsiteAddress(_applicationId).Result;
+            Assert.AreEqual(string.Empty, actualResult);
+        }
+
     }
 }
