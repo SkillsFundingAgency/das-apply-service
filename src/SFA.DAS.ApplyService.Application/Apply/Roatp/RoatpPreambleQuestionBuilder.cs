@@ -64,6 +64,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string InitialTeacherTraining = "YO-240";
     }
 
+    public class RoatpCriminalComplianceChecksQuestionIdConstants
+    {
+        public static string CompositionCreditors = "CC-20";
+        public static string OrganisationFailedToRepayFunds = "CC-21";
+        public static string OrganisationContractTermination = "CC-22";
+    }
+
     public class RoatpDeliveringApprenticeshipTrainingQuestionIdConstants
     {
         public static string ManagementHierarchy = "DAT-720";
@@ -165,6 +172,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         { 
             public static string OfficeForStudents = "235";
             public static string InitialTeacherTraining = "240";
+        }
+
+        public class CriminalComplianceChecks
+        {
+            public static string CompositionCreditors = "3100";
+            public static string OrganisationFailedToRepayFunds = "3110";
+            public static string OrganisationContractTermination = "3120";
         }
 
         public class Finish
