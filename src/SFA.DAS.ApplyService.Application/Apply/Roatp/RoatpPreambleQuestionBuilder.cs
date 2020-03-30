@@ -62,6 +62,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string AddPeopleInControl = "YO-130";
         public static string OfficeForStudents = "YO-235";
         public static string InitialTeacherTraining = "YO-240";
+        public static string IsPostGradTrainingOnlyApprenticeship = "YO-250";
     }
 
     public class RoatpCriminalComplianceChecksQuestionIdConstants
@@ -172,6 +173,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         { 
             public static string OfficeForStudents = "235";
             public static string InitialTeacherTraining = "240";
+            public static string IsPostGradTrainingOnlyApprenticeship = "240";
         }
 
         public class CriminalComplianceChecks

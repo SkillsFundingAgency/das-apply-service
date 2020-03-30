@@ -73,39 +73,20 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                     RoatpWorkflowSequenceIds.YourOrganisation,
                     RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
                     RoatpWorkflowPageIds.ExperienceAndAccreditations.InitialTeacherTraining,
-                    RoatpYourOrganisationQuestionIdConstants.InitialTeacherTraining)).ReturnsAsync(ValueOfQuestion);
+                    RoatpYourOrganisationQuestionIdConstants.InitialTeacherTraining)).ReturnsAsync("Yes");
 
-
-            var actualResult = _controller.GetInitialTeacherTraining(_applicationId).Result;
-
-            Assert.AreEqual(ValueOfQuestion, actualResult);
-            _qnaApiClient.Verify(x => x.GetAnswerValue(_applicationId,
-                    RoatpWorkflowSequenceIds.YourOrganisation,
-                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
-                    RoatpWorkflowPageIds.ExperienceAndAccreditations.InitialTeacherTraining,
-                    RoatpYourOrganisationQuestionIdConstants.InitialTeacherTraining), 
-                Times.Once);
-        }
-
-        [Test]
-        public void get_initial_teacher_training_returns_no_value_when_not_present()
-        {
             _qnaApiClient
                 .Setup(x => x.GetAnswerValue(_applicationId,
                     RoatpWorkflowSequenceIds.YourOrganisation,
                     RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
-                    RoatpWorkflowPageIds.ExperienceAndAccreditations.InitialTeacherTraining,
-                    RoatpYourOrganisationQuestionIdConstants.InitialTeacherTraining)).ReturnsAsync((string)null);
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.IsPostGradTrainingOnlyApprenticeship,
+                    RoatpYourOrganisationQuestionIdConstants.IsPostGradTrainingOnlyApprenticeship)).ReturnsAsync("No");
+
 
             var actualResult = _controller.GetInitialTeacherTraining(_applicationId).Result;
 
-            Assert.AreEqual(null, actualResult);
-            _qnaApiClient.Verify(x => x.GetAnswerValue(_applicationId,
-                    RoatpWorkflowSequenceIds.YourOrganisation,
-                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
-                    RoatpWorkflowPageIds.ExperienceAndAccreditations.InitialTeacherTraining,
-                    RoatpYourOrganisationQuestionIdConstants.InitialTeacherTraining),
-                Times.Once);
+            Assert.IsTrue(actualResult.DoesOrganisationOfferInitialTeacherTraining);
+            Assert.IsFalse(actualResult.IsPostGradOnlyApprenticeship);
         }
-    }
+   }
 }

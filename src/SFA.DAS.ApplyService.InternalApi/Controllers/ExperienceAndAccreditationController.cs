@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
+using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
@@ -30,13 +31,27 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet("/Accreditation/{applicationId}/InitialTeacherTraining")]
-        public async Task<string> GetInitialTeacherTraining(Guid applicationId)
+        public async Task<InitialTeacherTraining> GetInitialTeacherTraining(Guid applicationId)
         {
-            return await _qnaApiClient.GetAnswerValue(applicationId,
+            var initialTeacherTrainingTask = _qnaApiClient.GetAnswerValue(applicationId,
                 RoatpWorkflowSequenceIds.YourOrganisation,
                 RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
                 RoatpWorkflowPageIds.ExperienceAndAccreditations.InitialTeacherTraining,
                 RoatpYourOrganisationQuestionIdConstants.InitialTeacherTraining);
+
+            var isPostGradTrainingOnlyApprenticeshipTask = _qnaApiClient.GetAnswerValue(applicationId,
+                RoatpWorkflowSequenceIds.YourOrganisation,
+                RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.IsPostGradTrainingOnlyApprenticeship,
+                RoatpYourOrganisationQuestionIdConstants.IsPostGradTrainingOnlyApprenticeship);
+
+            await Task.WhenAll(initialTeacherTrainingTask, isPostGradTrainingOnlyApprenticeshipTask);
+
+            return new InitialTeacherTraining
+            {
+                DoesOrganisationOfferInitialTeacherTraining = initialTeacherTrainingTask.Result.ToUpper() == "YES",
+                IsPostGradOnlyApprenticeship = isPostGradTrainingOnlyApprenticeshipTask.Result.ToUpper() == "YES"
+            };
         }
     }
 }
