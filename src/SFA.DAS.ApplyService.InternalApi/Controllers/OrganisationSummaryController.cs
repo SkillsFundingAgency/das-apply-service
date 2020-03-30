@@ -71,7 +71,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet]
-        [Route(("Pscs/{applicationId}"))]
+        [Route(("PscData/{applicationId}"))]
         public async Task<IActionResult> GetPscs(Guid applicationId)
         {
             var pscs =
@@ -113,7 +113,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
 
         [HttpGet]
-        [Route(("soleTraderDob/{applicationId}"))]
+        [Route(("SoleTraderDob/{applicationId}"))]
         public async Task<IActionResult> GetSoleTraderDob(Guid applicationId)
         {
             var soleTraderDob =
