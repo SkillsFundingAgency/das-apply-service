@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -56,11 +57,37 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                 return null;
             }
         }
+
         public async Task<Page> GetPageBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId)
         {
             var response = await _httpClient.GetAsync($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}");
-
             return await response.Content.ReadAsAsync<Page>();
+        }
+
+        public async Task<string> GetAnswerValue(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId)
+        {
+            var pageContainingQuestion = await GetPageBySectionNo(applicationId, sequenceNo, sectionNo, pageId);
+
+            if (pageContainingQuestion?.Questions != null)
+            {
+                foreach (var question in pageContainingQuestion.Questions)
+                {
+                    if (question.QuestionId == questionId && pageContainingQuestion.PageOfAnswers != null)
+                    {
+                        foreach (var pageOfAnswers in pageContainingQuestion.PageOfAnswers)
+                        {
+                            var pageAnswer = pageOfAnswers.Answers.FirstOrDefault(x => x.QuestionId == questionId);
+
+                            if (pageAnswer != null)
+                            {
+                                return pageAnswer.Value;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }

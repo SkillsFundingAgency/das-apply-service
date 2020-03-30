@@ -1,7 +1,5 @@
 ﻿using SFA.DAS.ApplyService.Domain.Apply;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
@@ -10,5 +8,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
     {
         Task<string> GetQuestionTag(Guid applicationId, string questionTag);
         Task<Page> GetPageBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId);
+        Task<string> GetAnswerValue(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId);
     }
 }
