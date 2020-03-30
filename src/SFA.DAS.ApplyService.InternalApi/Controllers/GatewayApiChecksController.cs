@@ -40,11 +40,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return Ok(applyData.GatewayReviewDetails);
         }             
 
-        private async Task<ApplyData> GetApplyData(Guid applicationId)
-        {
-            return await _applyRepository.GetApplyData(applicationId);
-        }        
-
         [HttpGet]
         [Route("Gateway/UkrlpData/{applicationId}")]
         public async Task<IActionResult> GetUkrlpData(Guid applicationId)
@@ -114,5 +109,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             return Ok(applyData.GatewayReviewDetails.SourcesCheckedOn);
         }
+
+
+        private async Task<ApplyData> GetApplyData(Guid applicationId)
+        {
+            return await _applyRepository.GetApplyData(applicationId);
+        }
+
     }
 }
