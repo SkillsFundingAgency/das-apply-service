@@ -26,7 +26,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                 return null;
             }
 
-            return new QnaQuestionDetails { PageId = questionConfig.QnaPageId, QuestionId = questionConfig.QnaQuestionId };
+            return new QnaQuestionDetails 
+            { 
+                SectionId = questionConfig.SectionId,
+                PageId = questionConfig.QnaPageId, 
+                QuestionId = questionConfig.QnaQuestionId 
+            };
         }
     }
 }

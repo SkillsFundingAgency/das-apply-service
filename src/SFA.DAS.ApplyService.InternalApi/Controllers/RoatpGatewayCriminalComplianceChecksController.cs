@@ -30,7 +30,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             var qnaPageDetails = _lookupService.GetQuestionDetailsForGatewayPageId(gatewayPageId);
 
             var qnaPage = await _qnaApiClient.GetPageBySectionNo(applicationId, RoatpWorkflowSequenceIds.CriminalComplianceChecks,
-                                                                 RoatpWorkflowSectionIds.CriminalComplianceChecks.ChecksOnYourOrganisation,
+                                                                 qnaPageDetails.SectionId,
                                                                  qnaPageDetails.PageId);
 
             var complianceChecksQuestion = qnaPage.Questions.FirstOrDefault(x => x.QuestionId == qnaPageDetails.QuestionId);
