@@ -107,5 +107,69 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                     RoatpYourOrganisationQuestionIdConstants.InitialTeacherTraining),
                 Times.Once);
         }
+
+        [Test]
+        public void get_ofsted_details_returns_expected_value()
+        {
+            _qnaApiClient
+                .Setup(x => x.GetAnswerValue(_applicationId,
+                    RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.HasHadFullInspection,
+                    RoatpYourOrganisationQuestionIdConstants.HasHadFullInspection)).ReturnsAsync("Yes");
+
+            _qnaApiClient
+                .Setup(x => x.GetAnswerValue(_applicationId,
+                    RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.ReceivedFullInspectionGradeForApprenticeships,
+                    RoatpYourOrganisationQuestionIdConstants.ReceivedFullInspectionGradeForApprenticeships)).ReturnsAsync("No");
+
+            var expectedOverallGrade = "Average";
+            _qnaApiClient
+                .Setup(x => x.GetAnswerValue(_applicationId,
+                    RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.FullInspectionOverallEffectivenessGrade,
+                    RoatpYourOrganisationQuestionIdConstants.FullInspectionOverallEffectivenessGrade)).ReturnsAsync(expectedOverallGrade);
+
+            _qnaApiClient
+                .Setup(x => x.GetAnswerValue(_applicationId,
+                    RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.HasHadMonitoringVisit,
+                    RoatpYourOrganisationQuestionIdConstants.HasHadMonitoringVisit)).ReturnsAsync("Yes");
+
+            _qnaApiClient
+                .Setup(x => x.GetAnswerValue(_applicationId,
+                    RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.MasMaintainedFundingSinceInspection,
+                    RoatpYourOrganisationQuestionIdConstants.MasMaintainedFundingSinceInspection)).ReturnsAsync("No");
+
+            _qnaApiClient
+                .Setup(x => x.GetAnswerValue(_applicationId,
+                    RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.HasHadShortInspectionWithinLast3Years,
+                    RoatpYourOrganisationQuestionIdConstants.HasHadShortInspectionWithinLast3Years)).ReturnsAsync("Yes");
+
+            _qnaApiClient
+                .Setup(x => x.GetAnswerValue(_applicationId,
+                    RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.HasMaintainedFullGradeInShortInspection,
+                    RoatpYourOrganisationQuestionIdConstants.HasMaintainedFullGradeInShortInspection)).ReturnsAsync("No");
+
+            var actualResult = _controller.GetOfstedDetails(_applicationId).Result;
+
+            Assert.IsTrue(actualResult.HasHadFullInspection);
+            Assert.IsFalse(actualResult.ReceivedFullInspectionGradeForApprenticeships);
+            Assert.AreEqual(expectedOverallGrade, actualResult.FullInspectionOverallEffectivenessGrade);
+            Assert.IsTrue(actualResult.HasHadMonitoringVisit);
+            Assert.IsFalse(actualResult.MasMaintainedFundingSinceInspection);
+            Assert.IsTrue(actualResult.HasHadShortInspectionWithinLast3Years);
+            Assert.IsFalse(actualResult.HasMaintainedFullGradeInShortInspection);
+        }
     }
 }

@@ -62,6 +62,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string AddPeopleInControl = "YO-130";
         public static string OfficeForStudents = "YO-235";
         public static string InitialTeacherTraining = "YO-240";
+        public static string HasHadFullInspection = "YO-260";
+        public static string ReceivedFullInspectionGradeForApprenticeships = "YO-270";
+        public static string FullInspectionOverallEffectivenessGrade = "YO-280";
+        public static string HasHadMonitoringVisit = "YO-290";
+        public static string MasMaintainedFundingSinceInspection = "YO-320";
+        public static string HasHadShortInspectionWithinLast3Years = "YO-330";
+        public static string HasMaintainedFullGradeInShortInspection = "YO-340";
+
     }
 
     public class RoatpCriminalComplianceChecksQuestionIdConstants
@@ -172,6 +180,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         { 
             public static string OfficeForStudents = "235";
             public static string InitialTeacherTraining = "240";
+            public static string HasHadFullInspection = "260";
+            public static string ReceivedFullInspectionGradeForApprenticeships = "270";
+            public static string FullInspectionOverallEffectivenessGrade = "280";
+            public static string HasHadMonitoringVisit = "290";
+            public static string MasMaintainedFundingSinceInspection = "320";
+            public static string HasHadShortInspectionWithinLast3Years = "330";
+            public static string HasMaintainedFullGradeInShortInspection = "340";
         }
 
         public class CriminalComplianceChecks
