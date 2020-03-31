@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NLog.Web.LayoutRenderers;
+using NPOI.SS.Util;
+using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
+using SFA.DAS.ApplyService.Application.Services;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Types;
 
@@ -16,13 +21,19 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     public class OrganisationSummaryController : Controller
     {
         private readonly IInternalQnaApiClient _qnaApiClient;
+        private readonly IApplyRepository _applyRepository;
 
-        public OrganisationSummaryController(IInternalQnaApiClient qnaApiClient)
+        public OrganisationSummaryController(IInternalQnaApiClient qnaApiClient, IApplyRepository applyRepository)
         {
             _qnaApiClient = qnaApiClient;
+            _applyRepository = applyRepository;
         }
 
-        [HttpGet]
+
+
+       
+
+    [HttpGet]
         [Route("TypeOfOrganisation/{applicationId}")]
         public async Task<IActionResult> GetTypeOfOrganisation(Guid applicationId)
         {
@@ -64,11 +75,63 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [Route(("DirectorData/{applicationId}"))]
         public async Task<IActionResult> GetDirectorData(Guid applicationId)
         {
-            var directorData =
+            var peopleInControl = new List<PersonInControl>();
+
+            var directorsData =
                 await _qnaApiClient.GetTabularDataByTag(applicationId, RoatpWorkflowQuestionTags.CompaniesHouseDirectors);
 
-            return Ok(directorData);
+            if (directorsData?.DataRows == null || !directorsData.DataRows.Any()) return Ok(peopleInControl);
+
+            foreach (var director in directorsData.DataRows.Where(x => x.Columns.Any()).OrderBy(x => x.Columns[0]))
+            {
+                var directorName = director.Columns[0];
+                var directorDob = string.Empty;
+                if (director.Columns.Any() && director.Columns.Count >= 2)
+                {
+                    directorDob = director.Columns[1];
+                }
+                    
+                peopleInControl.Add(new PersonInControl {Name = directorName, DateOfBirth = directorDob});
+            }
+
+            return Ok(peopleInControl);
         }
+
+
+        [HttpGet]
+        [Route(("Apply/DirectorData/{applicationId}"))]
+        public async Task<IActionResult> GetDirectorDataFromApply(Guid applicationId)
+        {
+            var peopleInControl = new List<PersonInControl>();
+
+            var applyData = await _applyRepository.GetApplyData(applicationId);
+
+            if (applyData?.GatewayReviewDetails?.CompaniesHouseDetails == null)
+            {
+                return Ok(peopleInControl);
+            }
+
+            var companyData = applyData.GatewayReviewDetails.CompaniesHouseDetails;
+            if (companyData?.Directors == null || !companyData.Directors.Any())
+                return Ok(peopleInControl);
+
+            foreach (var director in companyData.Directors.OrderBy(x => x.Name))
+            {
+                var directorName = director?.Name.ToUpper();
+                var directorDob = string.Empty;
+
+                if (director.DateOfBirth!=null)
+                {
+                    directorDob = $"{director.DateOfBirth:MMM yyyy}";
+                }
+                peopleInControl.Add(new PersonInControl { Name = directorName, DateOfBirth = directorDob });
+            }
+
+            return Ok(peopleInControl);
+        }
+
+
+
 
         [HttpGet]
         [Route(("PscData/{applicationId}"))]
@@ -119,7 +182,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             var soleTraderDob =
                 await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.SoleTradeDob);
 
-            return soleTraderDob?.Value == null ? null : Ok(soleTraderDob.Value);
+            var dateToProcess = string.IsNullOrEmpty(soleTraderDob?.Value) ? null : soleTraderDob.Value;
+
+            var result = string.Empty;
+            if (dateToProcess != null)
+                result = DateOfBirthFormatter.GetMonthYearDescription(dateToProcess);
+
+
+            return Ok(result);
         }
     }
+
+
 }

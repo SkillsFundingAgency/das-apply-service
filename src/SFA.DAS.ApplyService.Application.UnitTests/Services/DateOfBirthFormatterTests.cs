@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.Web.Services;
+using SFA.DAS.ApplyService.Application.Services;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 {
@@ -64,6 +64,17 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
         {
             var formattedDob = DateOfBirthFormatter.FormatDateOfBirth(month, year);
 
+            formattedDob.Should().Be(expectedValue);
+        }
+
+        [TestCase("1,1980", "Jan 1980")]
+        [TestCase("2,1981", "Feb 1981")]
+        [TestCase("1981", "")]
+        [TestCase("1", "")]
+        [TestCase("13,1980", "")]
+        public void Format_monthNumber_comma_year_converted_to_mmm_yyyy(string monthYearDescription, string expectedValue)
+        {
+            var formattedDob = DateOfBirthFormatter.GetMonthYearDescription(monthYearDescription);
             formattedDob.Should().Be(expectedValue);
         }
     }
