@@ -27,7 +27,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("/Gateway/{applicationId}/CriminalCompliance/{gatewayPageId}")]
         public async Task<IActionResult> GetCriminalComplianceQuestionDetails(Guid applicationId, string gatewayPageId)
         {
-            var qnaPageDetails = _lookupService.GetQuestionDetailsForGatewayPageId(gatewayPageId);
+            var qnaPageDetails = _lookupService.GetQuestionDetailsForGatewayPageId(applicationId, gatewayPageId);
 
             var qnaPage = await _qnaApiClient.GetPageBySectionNo(applicationId, RoatpWorkflowSequenceIds.CriminalComplianceChecks,
                                                                  qnaPageDetails.SectionId,

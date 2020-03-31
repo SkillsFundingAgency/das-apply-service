@@ -40,7 +40,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 SectionId = 3
             };
 
-            _lookupService.Setup(x => x.GetQuestionDetailsForGatewayPageId(_gatewayPageId)).Returns(pageDetails);
+            _lookupService.Setup(x => x.GetQuestionDetailsForGatewayPageId(_applicationId, _gatewayPageId)).Returns(pageDetails);
 
             _qnaPageWithQuestion = new Page
             {
