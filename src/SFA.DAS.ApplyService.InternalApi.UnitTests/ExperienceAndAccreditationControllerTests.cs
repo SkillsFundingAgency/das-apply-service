@@ -169,8 +169,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                     RoatpWorkflowSequenceIds.YourOrganisation,
                     RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
                     It.Is<PageAndQuestion[]>(y =>
-                        y.First().PageId == RoatpWorkflowPageIds.ExperienceAndAccreditations.FullInspectionApprenticeshipGrade1 && y.First().QuestionId ==RoatpYourOrganisationQuestionIdConstants.FullInspectionApprenticeshipGrade1
-                        && y.Last().PageId == RoatpWorkflowPageIds.ExperienceAndAccreditations.FullInspectionApprenticeshipGrade2 && y.Last().QuestionId == RoatpYourOrganisationQuestionIdConstants.FullInspectionApprenticeshipGrade2)))
+                        y.First().PageId == RoatpWorkflowPageIds.ExperienceAndAccreditations.FullInspectionApprenticeshipGradeNonOfsFunded && y.First().QuestionId ==RoatpYourOrganisationQuestionIdConstants.FullInspectionApprenticeshipGradeOfsFunded
+                        && y.Last().PageId == RoatpWorkflowPageIds.ExperienceAndAccreditations.FullInspectionApprenticeshipGradeOfsFunded && y.Last().QuestionId == RoatpYourOrganisationQuestionIdConstants.FullInspectionApprenticeshipGradeNonOfsFunded)))
                 .ReturnsAsync(expectedApprenticeshipGrade);
 
             _qnaApiClient
