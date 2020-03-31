@@ -3,7 +3,9 @@ using Moq;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using System;
+using System.Linq;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
+using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
@@ -161,6 +163,25 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                     RoatpWorkflowPageIds.ExperienceAndAccreditations.HasMaintainedFullGradeInShortInspection,
                     RoatpYourOrganisationQuestionIdConstants.HasMaintainedFullGradeInShortInspection)).ReturnsAsync("No");
 
+            var expectedApprenticeshipGrade = "Good";
+            _qnaApiClient
+                .Setup(x => x.GetAnswerValueFromActiveQuestion(_applicationId,
+                    RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                    It.Is<PageAndQuestion[]>(y =>
+                        y.First().PageId == RoatpWorkflowPageIds.ExperienceAndAccreditations.FullInspectionApprenticeshipGrade1 && y.First().QuestionId ==RoatpYourOrganisationQuestionIdConstants.FullInspectionApprenticeshipGrade1
+                        && y.Last().PageId == RoatpWorkflowPageIds.ExperienceAndAccreditations.FullInspectionApprenticeshipGrade2 && y.Last().QuestionId == RoatpYourOrganisationQuestionIdConstants.FullInspectionApprenticeshipGrade2)))
+                .ReturnsAsync(expectedApprenticeshipGrade);
+
+            _qnaApiClient
+                .Setup(x => x.GetAnswerValueFromActiveQuestion(_applicationId,
+                    RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                    It.Is<PageAndQuestion[]>(y =>
+                        y.First().PageId == RoatpWorkflowPageIds.ExperienceAndAccreditations.GradeWithinLast3Years1 && y.First().QuestionId == RoatpYourOrganisationQuestionIdConstants.GradeWithinLast3Years1
+                        && y.Last().PageId == RoatpWorkflowPageIds.ExperienceAndAccreditations.GradeWithinLast3Years2 && y.Last().QuestionId == RoatpYourOrganisationQuestionIdConstants.GradeWithinLast3Years2)))
+                .ReturnsAsync("Yes");
+
             var actualResult = _controller.GetOfstedDetails(_applicationId).Result;
 
             Assert.IsTrue(actualResult.HasHadFullInspection);
@@ -170,6 +191,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             Assert.IsFalse(actualResult.MasMaintainedFundingSinceInspection);
             Assert.IsTrue(actualResult.HasHadShortInspectionWithinLast3Years);
             Assert.IsFalse(actualResult.HasMaintainedFullGradeInShortInspection);
+            Assert.AreEqual(expectedApprenticeshipGrade, actualResult.FullInspectionApprenticeshipGrade);
+            Assert.IsTrue(actualResult.GradeWithinTheLast3Years);
         }
     }
 }

@@ -84,10 +84,22 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 RoatpWorkflowPageIds.ExperienceAndAccreditations.HasMaintainedFullGradeInShortInspection,
                 RoatpYourOrganisationQuestionIdConstants.HasMaintainedFullGradeInShortInspection);
 
+            var fullInspectionApprenticeshipGradeTask = _qnaApiClient.GetAnswerValueFromActiveQuestion(applicationId,
+                RoatpWorkflowSequenceIds.YourOrganisation,
+                RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                new PageAndQuestion(RoatpWorkflowPageIds.ExperienceAndAccreditations.FullInspectionApprenticeshipGrade1, RoatpYourOrganisationQuestionIdConstants.FullInspectionApprenticeshipGrade1),
+                new PageAndQuestion(RoatpWorkflowPageIds.ExperienceAndAccreditations.FullInspectionApprenticeshipGrade2, RoatpYourOrganisationQuestionIdConstants.FullInspectionApprenticeshipGrade2));
+
+            var gradeWithinLast3YearsTask = _qnaApiClient.GetAnswerValueFromActiveQuestion(applicationId,
+                RoatpWorkflowSequenceIds.YourOrganisation,
+                RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                new PageAndQuestion(RoatpWorkflowPageIds.ExperienceAndAccreditations.GradeWithinLast3Years1, RoatpYourOrganisationQuestionIdConstants.GradeWithinLast3Years1),
+                new PageAndQuestion(RoatpWorkflowPageIds.ExperienceAndAccreditations.GradeWithinLast3Years2, RoatpYourOrganisationQuestionIdConstants.GradeWithinLast3Years2));
+
             await Task.WhenAll(hasHadFullInspectionTask, receivedFullInspectionGradeForApprenticeshipsTask,
                 fullInspectionOverallEffectivenessGradeTask, hasMaintainedFundingSinceInspectionTask,
                 hasHadShortInspectionWithinLast3YearsTask, hasMaintainedFullGradeInShortInspectionTask,
-                hasHadMonitoringVisitTask);
+                hasHadMonitoringVisitTask, fullInspectionApprenticeshipGradeTask, gradeWithinLast3YearsTask);
 
             return new OfstedDetails
             {
@@ -97,7 +109,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 MasMaintainedFundingSinceInspection = hasMaintainedFundingSinceInspectionTask.Result.ToUpper() == "YES",
                 HasHadShortInspectionWithinLast3Years = hasHadShortInspectionWithinLast3YearsTask.Result.ToUpper() == "YES",
                 HasMaintainedFullGradeInShortInspection = hasMaintainedFullGradeInShortInspectionTask.Result.ToUpper() == "YES",
-                HasHadMonitoringVisit = hasHadMonitoringVisitTask.Result.ToUpper() == "YES"
+                HasHadMonitoringVisit = hasHadMonitoringVisitTask.Result.ToUpper() == "YES",
+                FullInspectionApprenticeshipGrade = fullInspectionApprenticeshipGradeTask.Result,
+                GradeWithinTheLast3Years = gradeWithinLast3YearsTask.Result.ToUpper() == "YES"
             };
         }
     }
