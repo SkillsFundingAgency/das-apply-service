@@ -95,7 +95,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                         Name = "Mr A Director"
                     }
                 },
-                PersonsWithSignficantControl = new List<PersonSignificantControlInformation>
+                PersonsWithSignificantControl = new List<PersonSignificantControlInformation>
                 {
                     new PersonSignificantControlInformation
                     {
@@ -819,7 +819,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 Status = "active",
                 CompanyNumber = "12345678",
                 Directors = new List<DirectorInformation>(),
-                PersonsWithSignficantControl = new List<PersonSignificantControlInformation>(),
+                PersonsWithSignificantControl = new List<PersonSignificantControlInformation>(),
                 IncorporationDate = new DateTime(2012, 1, 10),
                 CompanyType = "ltd"
             };
@@ -890,7 +890,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                         ResignedDate = new DateTime(2018, 03, 03)
                     }
                 },
-                PersonsWithSignficantControl = new List<PersonSignificantControlInformation>
+                PersonsWithSignificantControl = new List<PersonSignificantControlInformation>
                 {
                     new PersonSignificantControlInformation
                     {
