@@ -4,12 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NLog.Web.LayoutRenderers;
-using NPOI.SS.Util;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Services;
-using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Types;
@@ -29,12 +26,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             _applyRepository = applyRepository;
         } 
 
-    [HttpGet]
+        [HttpGet]
         [Route("TypeOfOrganisation/{applicationId}")]
         public async Task<IActionResult> GetTypeOfOrganisation(Guid applicationId)
         {
 
-            var TRUE = "TRUE";
+            const string TRUE = "TRUE";
                  var companyVerification = await
                 _qnaApiClient.GetQuestionTag(applicationId, RoatpWorkflowQuestionTags.UkrlpVerificationCompany);
 
@@ -46,7 +43,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             {
                 return Ok(GatewayOrganisationTypes.CompanyAndCharity);
             }
-
 
             if (companyVerification == TRUE)
             {
@@ -74,7 +70,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             var peopleInControl = new List<PersonInControl>();
 
             var directorsData =
-                await _qnaApiClient.GetTabularDataByTag(applicationId, RoatpWorkflowQuestionTags.CompaniesHouseDirectors);
+                await _qnaApiClient.GetTabularDataByTag(applicationId,
+                    RoatpWorkflowQuestionTags.CompaniesHouseDirectors);
 
             if (directorsData?.DataRows == null || !directorsData.DataRows.Any()) return Ok(peopleInControl);
 
@@ -86,13 +83,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 {
                     directorDob = director.Columns[1];
                 }
-                    
+
                 peopleInControl.Add(new PersonInControl {Name = directorName, DateOfBirth = directorDob});
             }
-
+            
             return Ok(peopleInControl);
         }
-
 
         [HttpGet]
         [Route(("DirectorData/CompaniesHouse/{applicationId}"))]
@@ -125,8 +121,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             return Ok(peopleInControl);
         }
-
-
 
         [HttpGet]
         [Route(("PscData/Submitted/{applicationId}"))]
@@ -280,66 +274,5 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             return Ok(peopleInControl);
         }
-
-        [HttpGet]
-        [Route(("PscData/{applicationId}"))]
-        public async Task<IActionResult> GetPscs(Guid applicationId)
-        {
-            var pscs =
-                await _qnaApiClient.GetTabularDataByTag(applicationId, RoatpWorkflowQuestionTags.CompaniesHousePscs);
-
-            return Ok(pscs);
-        }
-
-        [HttpGet]
-        [Route(("TrusteeData/{applicationId}"))]
-        public async Task<IActionResult> GetTrustees(Guid applicationId)
-        {
-            var trustees =
-                await _qnaApiClient.GetTabularDataByTag(applicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
-
-            return Ok(trustees);
-        }
-
-
-        [HttpGet]
-        [Route(("PeopleInControlData/{applicationId}"))]
-        public async Task<IActionResult> GetPeopleInControl(Guid applicationId)
-        {
-            var peopleInControl =
-                await _qnaApiClient.GetTabularDataByTag(applicationId, RoatpWorkflowQuestionTags.AddPeopleInControl);
-
-            return Ok(peopleInControl);
-        }
-
-
-        [HttpGet]
-        [Route(("PartnersData/{applicationId}"))]
-        public async Task<IActionResult> GetPartners(Guid applicationId)
-        {
-            var directorData =
-                await _qnaApiClient.GetTabularDataByTag(applicationId, RoatpWorkflowQuestionTags.AddPartners);
-            return Ok(directorData);
-        }
-
-
-        [HttpGet]
-        [Route(("SoleTraderDob/{applicationId}"))]
-        public async Task<IActionResult> GetSoleTraderDob(Guid applicationId)
-        {
-            var soleTraderDob =
-                await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.SoleTradeDob);
-
-            var dateToProcess = string.IsNullOrEmpty(soleTraderDob?.Value) ? null : soleTraderDob.Value;
-
-            var result = string.Empty;
-            if (dateToProcess != null)
-                result = DateOfBirthFormatter.GetMonthYearDescription(dateToProcess);
-
-
-            return Ok(result);
-        }
     }
-
-
 }
