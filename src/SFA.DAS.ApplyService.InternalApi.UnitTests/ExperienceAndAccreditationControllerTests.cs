@@ -178,8 +178,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                     RoatpWorkflowSequenceIds.YourOrganisation,
                     RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
                     It.Is<PageAndQuestion[]>(y =>
-                        y.First().PageId == RoatpWorkflowPageIds.ExperienceAndAccreditations.GradeWithinLast3Years1 && y.First().QuestionId == RoatpYourOrganisationQuestionIdConstants.GradeWithinLast3Years1
-                        && y.Last().PageId == RoatpWorkflowPageIds.ExperienceAndAccreditations.GradeWithinLast3Years2 && y.Last().QuestionId == RoatpYourOrganisationQuestionIdConstants.GradeWithinLast3Years2)))
+                        y.First().PageId == RoatpWorkflowPageIds.ExperienceAndAccreditations.GradeWithinLast3YearsOfsFunded && y.First().QuestionId == RoatpYourOrganisationQuestionIdConstants.GradeWithinLast3YearsOfsFunded
+                        && y.Last().PageId == RoatpWorkflowPageIds.ExperienceAndAccreditations.GradeWithinLast3YearsNonOfsFunded && y.Last().QuestionId == RoatpYourOrganisationQuestionIdConstants.GradeWithinLast3YearsNonOfsFunded)))
                 .ReturnsAsync("Yes");
 
             var actualResult = _controller.GetOfstedDetails(_applicationId).Result;

@@ -71,8 +71,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string HasMaintainedFullGradeInShortInspection = "YO-340";
         public static string FullInspectionApprenticeshipGradeOfsFunded = "YO-300";
         public static string FullInspectionApprenticeshipGradeNonOfsFunded = "YO-301";
-        public static string GradeWithinLast3Years1 = "YO-310";
-        public static string GradeWithinLast3Years2 = "YO-311";
+        public static string GradeWithinLast3YearsOfsFunded = "YO-310";
+        public static string GradeWithinLast3YearsNonOfsFunded = "YO-311";
 
     }
 
@@ -193,8 +193,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static string HasMaintainedFullGradeInShortInspection = "340";
             public static string FullInspectionApprenticeshipGradeNonOfsFunded = "300";
             public static string FullInspectionApprenticeshipGradeOfsFunded = "301";
-            public static string GradeWithinLast3Years1 = "310";
-            public static string GradeWithinLast3Years2 = "311";
+            public static string GradeWithinLast3YearsOfsFunded = "310";
+            public static string GradeWithinLast3YearsNonOfsFunded = "311";
         }
 
         public class CriminalComplianceChecks
