@@ -103,15 +103,15 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             return new OfstedDetails
             {
-                HasHadFullInspection = hasHadFullInspectionTask.Result.ToUpper() == "YES",
-                ReceivedFullInspectionGradeForApprenticeships = receivedFullInspectionGradeForApprenticeshipsTask.Result.ToUpper() == "YES",
+                HasHadFullInspection = hasHadFullInspectionTask.Result?.ToUpper() == "YES",
+                ReceivedFullInspectionGradeForApprenticeships = receivedFullInspectionGradeForApprenticeshipsTask.Result?.ToUpper() == "YES",
                 FullInspectionOverallEffectivenessGrade = fullInspectionOverallEffectivenessGradeTask.Result,
-                HasMaintainedFundingSinceInspection = hasMaintainedFundingSinceInspectionTask.Result.ToUpper() == "YES",
-                HasHadShortInspectionWithinLast3Years = hasHadShortInspectionWithinLast3YearsTask.Result.ToUpper() == "YES",
-                HasMaintainedFullGradeInShortInspection = hasMaintainedFullGradeInShortInspectionTask.Result.ToUpper() == "YES",
-                HasHadMonitoringVisit = hasHadMonitoringVisitTask.Result.ToUpper() == "YES",
+                HasMaintainedFundingSinceInspection = hasMaintainedFundingSinceInspectionTask.Result?.ToUpper() == "YES",
+                HasHadShortInspectionWithinLast3Years = hasHadShortInspectionWithinLast3YearsTask.Result?.ToUpper() == "YES",
+                HasMaintainedFullGradeInShortInspection = hasMaintainedFullGradeInShortInspectionTask.Result?.ToUpper() == "YES",
+                HasHadMonitoringVisit = hasHadMonitoringVisitTask.Result?.ToUpper() == "YES",
                 FullInspectionApprenticeshipGrade = fullInspectionApprenticeshipGradeTask.Result,
-                GradeWithinTheLast3Years = gradeWithinLast3YearsTask.Result.ToUpper() == "YES"
+                GradeWithinTheLast3Years = gradeWithinLast3YearsTask.Result?.ToUpper() == "YES"
             };
         }
     }
