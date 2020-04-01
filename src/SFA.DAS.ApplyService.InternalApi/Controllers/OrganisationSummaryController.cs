@@ -281,10 +281,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             {
                 _logger.LogDebug($"Retrieving from [soleTraderDob] for submitted who's in control for application {applicationId}");
                 var soleTraderDob = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.SoleTradeDob);
-                var legalName = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpLegalName);
-
+          
                 if (!string.IsNullOrEmpty(soleTraderDob?.Value))
                 {
+                    var legalName = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpLegalName);
                     var formattedDob = DateOfBirthFormatter.GetMonthYearDescription(soleTraderDob.Value);
                     peopleInControl.Add(new PersonInControl { Name = legalName?.Value, DateOfBirth = formattedDob });
                 }

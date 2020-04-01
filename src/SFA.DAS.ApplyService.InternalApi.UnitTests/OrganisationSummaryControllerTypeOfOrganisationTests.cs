@@ -12,7 +12,7 @@ using SFA.DAS.ApplyService.InternalApi.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
-    public class OrganisationSummaryControllerTests
+    public class OrganisationSummaryControllerTypeOfOrganisationTests
     {
         private Mock<IInternalQnaApiClient> _qnaApiClient;
         private Mock<IApplyRepository> _applyRepository;
