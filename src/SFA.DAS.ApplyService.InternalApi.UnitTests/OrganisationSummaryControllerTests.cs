@@ -1,6 +1,7 @@
 ﻿using System;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
@@ -15,6 +16,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
     {
         private Mock<IInternalQnaApiClient> _qnaApiClient;
         private Mock<IApplyRepository> _applyRepository;
+        private Mock<ILogger<OrganisationSummaryController>> _logger;
+
         private OrganisationSummaryController _controller;
 
         private readonly Guid _applicationId = new Guid("742d2fc4-69bd-47b6-b93f-c059d59db0c0");
@@ -24,7 +27,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         {
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
             _applyRepository = new Mock<IApplyRepository>();
-            _controller = new OrganisationSummaryController(_qnaApiClient.Object,_applyRepository.Object);
+            _logger = new Mock<ILogger<OrganisationSummaryController>>();
+            _controller = new OrganisationSummaryController(_qnaApiClient.Object,_applyRepository.Object, _logger.Object);
             _qnaApiClient.Setup(x => x.GetQuestionTag(_applicationId, It.IsAny<string>())).ReturnsAsync((string)null);
         }
 
