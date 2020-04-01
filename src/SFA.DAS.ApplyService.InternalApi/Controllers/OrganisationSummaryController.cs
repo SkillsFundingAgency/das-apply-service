@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Services;
@@ -19,18 +20,20 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     {
         private readonly IInternalQnaApiClient _qnaApiClient;
         private readonly IApplyRepository _applyRepository;
+        private readonly ILogger<OrganisationSummaryController> _logger;
 
-        public OrganisationSummaryController(IInternalQnaApiClient qnaApiClient, IApplyRepository applyRepository)
+        public OrganisationSummaryController(IInternalQnaApiClient qnaApiClient, IApplyRepository applyRepository, ILogger<OrganisationSummaryController> logger)
         {
             _qnaApiClient = qnaApiClient;
             _applyRepository = applyRepository;
+            _logger = logger;
         } 
 
         [HttpGet]
         [Route("TypeOfOrganisation/{applicationId}")]
         public async Task<IActionResult> GetTypeOfOrganisation(Guid applicationId)
         {
-
+            _logger.LogInformation($"Retrieving type of organisation for application {applicationId}");
             const string TRUE = "TRUE";
                  var companyVerification = await
                 _qnaApiClient.GetQuestionTag(applicationId, RoatpWorkflowQuestionTags.UkrlpVerificationCompany);
@@ -67,6 +70,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [Route(("DirectorData/Submitted/{applicationId}"))]
         public async Task<IActionResult> GetDirectorsFromSubmitted(Guid applicationId)
         {
+            _logger.LogInformation($"Retrieving submitted company directors for application {applicationId}");
             var peopleInControl = new List<PersonInControl>();
 
             var directorsData =
@@ -94,6 +98,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [Route(("DirectorData/CompaniesHouse/{applicationId}"))]
         public async Task<IActionResult> GetDirectorsFromCompaniesHouse(Guid applicationId)
         {
+            _logger.LogInformation($"Retrieving Apply Data - companies house - company directors for application {applicationId}");
             var peopleInControl = new List<PersonInControl>();
 
             var applyData = await _applyRepository.GetApplyData(applicationId);
@@ -126,6 +131,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [Route(("PscData/Submitted/{applicationId}"))]
         public async Task<IActionResult> GetPscsFromSubmitted(Guid applicationId)
         {
+            _logger.LogInformation($"Retrieving submitted Pscs for application {applicationId}");
             var peopleInControl = new List<PersonInControl>();
 
             var pics =
@@ -153,6 +159,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [Route(("PscData/CompaniesHouse/{applicationId}"))]
         public async Task<IActionResult> GetPscsFromCompaniesHouse(Guid applicationId)
         {
+            _logger.LogInformation($"Retrieving Apply Data - companies house - Pscs for application {applicationId}");
             var peopleInControl = new List<PersonInControl>();
 
             var applyData = await _applyRepository.GetApplyData(applicationId);
@@ -184,6 +191,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [Route(("TrusteeData/Submitted/{applicationId}"))]
         public async Task<IActionResult> GetTrusteesFromSubmitted(Guid applicationId)
         {
+            _logger.LogInformation($"Retrieving submitted trustees for application {applicationId}");
             var peopleInControl = new List<PersonInControl>();
 
             var pics =
@@ -211,6 +219,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [Route(("TrusteeData/CharityCommission/{applicationId}"))]
         public async Task<IActionResult> GetTrusteesFromCharityCommission(Guid applicationId)
         {
+            _logger.LogInformation($"Retrieving Apply Data - charity commission - trustees for application {applicationId}");
             var peopleInControl = new List<PersonInControl>();
 
             var applyData = await _applyRepository.GetApplyData(applicationId);
@@ -237,14 +246,23 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [Route(("WhosInControlData/Submitted/{applicationId}"))]
         public async Task<IActionResult> GetWhosInControlFromSubmitted(Guid applicationId)
         {
+            _logger.LogInformation($"Retrieving submitted who's in control for application {applicationId}");
             var peopleInControl = new List<PersonInControl>();
 
+            _logger.LogDebug($"Retrieving from [AddPeopleInControl] for submitted who's in control for application {applicationId}");
             var pics =
-                await _qnaApiClient.GetTabularDataByTag(applicationId, RoatpWorkflowQuestionTags.AddPeopleInControl) ??
-                await _qnaApiClient.GetTabularDataByTag(applicationId, RoatpWorkflowQuestionTags.AddPartners);
+                await _qnaApiClient.GetTabularDataByTag(applicationId, RoatpWorkflowQuestionTags.AddPeopleInControl);
+
+            if (pics == null)
+            {
+                _logger.LogDebug($"Retrieving from [AddPartners] for submitted who's in control for application {applicationId}");
+                pics = await _qnaApiClient.GetTabularDataByTag(applicationId, RoatpWorkflowQuestionTags.AddPartners);
+            }
+
 
             if (pics != null)
             {
+                _logger.LogDebug($"Constructing list of who's in control from retrieved details for application {applicationId}");
                 if (pics?.DataRows == null || !pics.DataRows.Any()) return Ok(peopleInControl);
 
                 foreach (var pic in pics.DataRows.Where(x => x.Columns.Any()).OrderBy(x => x.Columns[0]))
@@ -258,10 +276,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
                     peopleInControl.Add(new PersonInControl { Name = picName, DateOfBirth = picDob });
                 }
-
             }
             else
             {
+                _logger.LogDebug($"Retrieving from [soleTraderDob] for submitted who's in control for application {applicationId}");
                 var soleTraderDob = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.SoleTradeDob);
                 var legalName = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpLegalName);
 
