@@ -146,8 +146,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 .Setup(x => x.GetAnswerValue(_applicationId,
                     RoatpWorkflowSequenceIds.YourOrganisation,
                     RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
-                    RoatpWorkflowPageIds.ExperienceAndAccreditations.MasMaintainedFundingSinceInspection,
-                    RoatpYourOrganisationQuestionIdConstants.MasMaintainedFundingSinceInspection)).ReturnsAsync("No");
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.HasMaintainedFundingSinceInspection,
+                    RoatpYourOrganisationQuestionIdConstants.HasMaintainedFundingSinceInspection)).ReturnsAsync("No");
 
             _qnaApiClient
                 .Setup(x => x.GetAnswerValue(_applicationId,
@@ -188,7 +188,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             Assert.IsFalse(actualResult.ReceivedFullInspectionGradeForApprenticeships);
             Assert.AreEqual(expectedOverallGrade, actualResult.FullInspectionOverallEffectivenessGrade);
             Assert.IsTrue(actualResult.HasHadMonitoringVisit);
-            Assert.IsFalse(actualResult.MasMaintainedFundingSinceInspection);
+            Assert.IsFalse(actualResult.HasMaintainedFundingSinceInspection);
             Assert.IsTrue(actualResult.HasHadShortInspectionWithinLast3Years);
             Assert.IsFalse(actualResult.HasMaintainedFullGradeInShortInspection);
             Assert.AreEqual(expectedApprenticeshipGrade, actualResult.FullInspectionApprenticeshipGrade);

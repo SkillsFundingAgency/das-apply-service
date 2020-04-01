@@ -6,7 +6,7 @@
         public bool ReceivedFullInspectionGradeForApprenticeships { get; set; }
         public string FullInspectionOverallEffectivenessGrade { get; set; }
         public bool HasHadMonitoringVisit { get; set; }
-        public bool MasMaintainedFundingSinceInspection { get; set; }
+        public bool HasMaintainedFundingSinceInspection { get; set; }
         public bool HasHadShortInspectionWithinLast3Years { get; set; }
         public bool HasMaintainedFullGradeInShortInspection { get; set; }
         public string FullInspectionApprenticeshipGrade { get; set; }

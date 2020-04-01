@@ -66,7 +66,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string ReceivedFullInspectionGradeForApprenticeships = "YO-270";
         public static string FullInspectionOverallEffectivenessGrade = "YO-280";
         public static string HasHadMonitoringVisit = "YO-290";
-        public static string MasMaintainedFundingSinceInspection = "YO-320";
+        public static string HasMaintainedFundingSinceInspection = "YO-320";
         public static string HasHadShortInspectionWithinLast3Years = "YO-330";
         public static string HasMaintainedFullGradeInShortInspection = "YO-340";
         public static string FullInspectionApprenticeshipGradeOfsFunded = "YO-300";
@@ -188,7 +188,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static string ReceivedFullInspectionGradeForApprenticeships = "270";
             public static string FullInspectionOverallEffectivenessGrade = "280";
             public static string HasHadMonitoringVisit = "290";
-            public static string MasMaintainedFundingSinceInspection = "320";
+            public static string HasMaintainedFundingSinceInspection = "320";
             public static string HasHadShortInspectionWithinLast3Years = "330";
             public static string HasMaintainedFullGradeInShortInspection = "340";
             public static string FullInspectionApprenticeshipGradeNonOfsFunded = "300";

@@ -69,8 +69,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             var hasMaintainedFundingSinceInspectionTask = _qnaApiClient.GetAnswerValue(applicationId,
                 RoatpWorkflowSequenceIds.YourOrganisation,
                 RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
-                RoatpWorkflowPageIds.ExperienceAndAccreditations.MasMaintainedFundingSinceInspection,
-                RoatpYourOrganisationQuestionIdConstants.MasMaintainedFundingSinceInspection);
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.HasMaintainedFundingSinceInspection,
+                RoatpYourOrganisationQuestionIdConstants.HasMaintainedFundingSinceInspection);
 
             var hasHadShortInspectionWithinLast3YearsTask = _qnaApiClient.GetAnswerValue(applicationId,
                 RoatpWorkflowSequenceIds.YourOrganisation,
@@ -106,7 +106,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 HasHadFullInspection = hasHadFullInspectionTask.Result.ToUpper() == "YES",
                 ReceivedFullInspectionGradeForApprenticeships = receivedFullInspectionGradeForApprenticeshipsTask.Result.ToUpper() == "YES",
                 FullInspectionOverallEffectivenessGrade = fullInspectionOverallEffectivenessGradeTask.Result,
-                MasMaintainedFundingSinceInspection = hasMaintainedFundingSinceInspectionTask.Result.ToUpper() == "YES",
+                HasMaintainedFundingSinceInspection = hasMaintainedFundingSinceInspectionTask.Result.ToUpper() == "YES",
                 HasHadShortInspectionWithinLast3Years = hasHadShortInspectionWithinLast3YearsTask.Result.ToUpper() == "YES",
                 HasMaintainedFullGradeInShortInspection = hasMaintainedFullGradeInShortInspectionTask.Result.ToUpper() == "YES",
                 HasHadMonitoringVisit = hasHadMonitoringVisitTask.Result.ToUpper() == "YES",
