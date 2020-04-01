@@ -27,11 +27,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             _qnaApiClient = qnaApiClient;
             _applyRepository = applyRepository;
-        }
-
-
-
-       
+        } 
 
     [HttpGet]
         [Route("TypeOfOrganisation/{applicationId}")]
@@ -72,8 +68,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet]
-        [Route(("DirectorData/{applicationId}"))]
-        public async Task<IActionResult> GetDirectorData(Guid applicationId)
+        [Route(("DirectorData/Submitted/{applicationId}"))]
+        public async Task<IActionResult> GetDirectorsFromSubmitted(Guid applicationId)
         {
             var peopleInControl = new List<PersonInControl>();
 
@@ -99,8 +95,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
 
         [HttpGet]
-        [Route(("Apply/DirectorData/{applicationId}"))]
-        public async Task<IActionResult> GetDirectorDataFromApply(Guid applicationId)
+        [Route(("DirectorData/CompaniesHouse/{applicationId}"))]
+        public async Task<IActionResult> GetDirectorsFromCompaniesHouse(Guid applicationId)
         {
             var peopleInControl = new List<PersonInControl>();
 
@@ -117,7 +113,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             foreach (var director in companyData.Directors.OrderBy(x => x.Name))
             {
-                var directorName = director?.Name.ToUpper();
+                var directorName = director?.Name;
                 var directorDob = string.Empty;
 
                 if (director.DateOfBirth!=null)
@@ -132,6 +128,158 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
 
 
+        [HttpGet]
+        [Route(("PscData/Submitted/{applicationId}"))]
+        public async Task<IActionResult> GetPscsFromSubmitted(Guid applicationId)
+        {
+            var peopleInControl = new List<PersonInControl>();
+
+            var pics =
+                await _qnaApiClient.GetTabularDataByTag(applicationId, RoatpWorkflowQuestionTags.CompaniesHousePscs);
+
+            if (pics?.DataRows == null || !pics.DataRows.Any()) return Ok(peopleInControl);
+
+            foreach (var pic in pics.DataRows.Where(x => x.Columns.Any()).OrderBy(x => x.Columns[0]))
+            {
+                var picName = pic.Columns[0];
+                var picDob = string.Empty;
+                if (pic.Columns.Any() && pic.Columns.Count >= 2)
+                {
+                    picDob = pic.Columns[1];
+                }
+
+                peopleInControl.Add(new PersonInControl { Name = picName, DateOfBirth = picDob });
+            }
+
+            return Ok(peopleInControl);
+        }
+
+
+        [HttpGet]
+        [Route(("PscData/CompaniesHouse/{applicationId}"))]
+        public async Task<IActionResult> GetPscsFromCompaniesHouse(Guid applicationId)
+        {
+            var peopleInControl = new List<PersonInControl>();
+
+            var applyData = await _applyRepository.GetApplyData(applicationId);
+
+            if (applyData?.GatewayReviewDetails?.CompaniesHouseDetails == null)
+            {
+                return Ok(peopleInControl);
+            }
+
+            var companyData = applyData.GatewayReviewDetails.CompaniesHouseDetails;
+            if (companyData?.PersonsWithSignificantControl == null || !companyData.PersonsWithSignificantControl.Any())
+                return Ok(peopleInControl);
+
+            foreach (var pic in companyData.PersonsWithSignificantControl.OrderBy(x => x.Name))
+            {
+                var picName = pic?.Name;
+                var picDob = string.Empty;
+
+                if (pic.DateOfBirth != null)
+                {
+                    picDob = $"{pic.DateOfBirth:MMM yyyy}";
+                }
+                peopleInControl.Add(new PersonInControl { Name = picName, DateOfBirth = picDob });
+            }
+
+            return Ok(peopleInControl);
+        }
+        [HttpGet]
+        [Route(("TrusteeData/Submitted/{applicationId}"))]
+        public async Task<IActionResult> GetTrusteesFromSubmitted(Guid applicationId)
+        {
+            var peopleInControl = new List<PersonInControl>();
+
+            var pics =
+                await _qnaApiClient.GetTabularDataByTag(applicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
+
+            if (pics?.DataRows == null || !pics.DataRows.Any()) return Ok(peopleInControl);
+
+            foreach (var pic in pics.DataRows.Where(x => x.Columns.Any()).OrderBy(x => x.Columns[0]))
+            {
+                var picName = pic.Columns[0];
+                var picDob = string.Empty;
+                if (pic.Columns.Any() && pic.Columns.Count >= 2)
+                {
+                    picDob = pic.Columns[1];
+                }
+
+                peopleInControl.Add(new PersonInControl { Name = picName, DateOfBirth = picDob });
+            }
+
+            return Ok(peopleInControl);
+        }
+
+
+        [HttpGet]
+        [Route(("TrusteeData/CharityCommission/{applicationId}"))]
+        public async Task<IActionResult> GetTrusteesFromCharityCommission(Guid applicationId)
+        {
+            var peopleInControl = new List<PersonInControl>();
+
+            var applyData = await _applyRepository.GetApplyData(applicationId);
+
+            if (applyData?.GatewayReviewDetails?.CharityCommissionDetails == null)
+            {
+                return Ok(peopleInControl);
+            }
+
+            var charityCommissionData = applyData.GatewayReviewDetails.CharityCommissionDetails;
+            if (charityCommissionData?.Trustees == null || !charityCommissionData.Trustees.Any())
+                return Ok(peopleInControl);
+
+            foreach (var pic in charityCommissionData.Trustees.OrderBy(x => x.Name))
+            {
+                var picName = pic?.Name;
+                peopleInControl.Add(new PersonInControl { Name = picName, DateOfBirth = null });
+            }
+
+            return Ok(peopleInControl);
+        }
+
+        [HttpGet]
+        [Route(("WhosInControlData/Submitted/{applicationId}"))]
+        public async Task<IActionResult> GetWhosInControlFromSubmitted(Guid applicationId)
+        {
+            var peopleInControl = new List<PersonInControl>();
+
+            var pics =
+                await _qnaApiClient.GetTabularDataByTag(applicationId, RoatpWorkflowQuestionTags.AddPeopleInControl) ??
+                await _qnaApiClient.GetTabularDataByTag(applicationId, RoatpWorkflowQuestionTags.AddPartners);
+
+            if (pics != null)
+            {
+                if (pics?.DataRows == null || !pics.DataRows.Any()) return Ok(peopleInControl);
+
+                foreach (var pic in pics.DataRows.Where(x => x.Columns.Any()).OrderBy(x => x.Columns[0]))
+                {
+                    var picName = pic.Columns[0];
+                    var picDob = string.Empty;
+                    if (pic.Columns.Any() && pic.Columns.Count >= 2)
+                    {
+                        picDob = pic.Columns[1];
+                    }
+
+                    peopleInControl.Add(new PersonInControl { Name = picName, DateOfBirth = picDob });
+                }
+
+            }
+            else
+            {
+                var soleTraderDob = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.SoleTradeDob);
+                var legalName = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpLegalName);
+
+                if (!string.IsNullOrEmpty(soleTraderDob?.Value))
+                {
+                    var formattedDob = DateOfBirthFormatter.GetMonthYearDescription(soleTraderDob.Value);
+                    peopleInControl.Add(new PersonInControl { Name = legalName?.Value, DateOfBirth = formattedDob });
+                }
+            }
+
+            return Ok(peopleInControl);
+        }
 
         [HttpGet]
         [Route(("PscData/{applicationId}"))]
