@@ -53,5 +53,41 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 IsPostGradOnlyApprenticeship = isPostGradTrainingOnlyApprenticeshipTask.Result.ToUpper() == "YES"
             };
         }
+
+        [HttpGet("/Accreditation/{applicationId}/SubcontractDeclaration")]
+        public async Task<SubcontractorDeclaration> GetSubcontractorDeclaration(Guid applicationId)
+        {
+            var hasDeliveredTrainingAsSubcontractorTask = _qnaApiClient.GetAnswerValue(applicationId,
+                RoatpWorkflowSequenceIds.YourOrganisation,
+                RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.SubcontractorDeclaration,
+                RoatpYourOrganisationQuestionIdConstants.HasDeliveredTrainingAsSubcontractor
+            );
+
+            var contactFileNameTask = _qnaApiClient.GetAnswerValue(applicationId,
+                RoatpWorkflowSequenceIds.YourOrganisation,
+                RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.SubcontractorContractFile,
+                RoatpYourOrganisationQuestionIdConstants.ContractFileName
+            );
+
+            await Task.WhenAll(hasDeliveredTrainingAsSubcontractorTask, contactFileNameTask);
+
+            return new SubcontractorDeclaration
+            {
+                HasDeliveredTrainingAsSubcontractor = hasDeliveredTrainingAsSubcontractorTask.Result.ToUpper() == "YES",
+                ContractFileName = contactFileNameTask.Result
+            };
+        }
+
+        [HttpGet("/Accreditation/{applicationId}/SubcontractDeclaration/ContractFile")]
+        public async Task<FileStreamResult> GetSubcontractorDeclarationContractFile(Guid applicationId)
+        {
+            return await _qnaApiClient.GetDownloadFile(applicationId,
+                RoatpWorkflowSequenceIds.YourOrganisation,
+                RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                RoatpWorkflowPageIds.ExperienceAndAccreditations.SubcontractorContractFile,
+                RoatpYourOrganisationQuestionIdConstants.ContractFileName);
+        }
     }
 }

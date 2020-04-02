@@ -2,6 +2,6 @@
 {
     public interface IRoatpTokenService
     {
-        string GetToken();
+        string GetToken(string url);
     }
 }
