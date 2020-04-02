@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.InternalApi.Types;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {    
@@ -295,7 +296,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 return RedirectToAction("SoleTraderOrPartnership", new { applicationId = model.ApplicationId });
             }
-            else if (model.OrganisationType == SoleTraderOrPartnershipViewModel.OrganisationTypePartnership)
+            else if (model.OrganisationType == GatewayOrganisationTypes.Partnership)
             {
                 var partnersData = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.AddPartners);
 
