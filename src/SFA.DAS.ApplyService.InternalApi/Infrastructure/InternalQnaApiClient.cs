@@ -76,11 +76,37 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                     {
                         foreach (var pageOfAnswers in pageContainingQuestion.PageOfAnswers)
                         {
-                            var pageAnswer = pageOfAnswers.Answers.FirstOrDefault(x => x.QuestionId == questionId);
-
-                            if (pageAnswer != null)
+                            foreach(var answer in pageOfAnswers.Answers)
                             {
-                                return pageAnswer.Value;
+                                if(answer.QuestionId == questionId)
+                                {
+                                    return answer.Value;
+                                }
+                            }
+                        }
+                    }
+                    else // In case question/answer is buried in FurtherQuestions
+                    {
+                        if(question?.Input?.Options != null)
+                        {
+                            foreach(var option in question?.Input?.Options)
+                            {
+                                foreach(var furtherQuestion in option?.FurtherQuestions ?? Enumerable.Empty<Question>())
+                                {
+                                    if(furtherQuestion.QuestionId == questionId && pageContainingQuestion.PageOfAnswers != null)
+                                    {
+                                        foreach (var pageOfAnswers in pageContainingQuestion.PageOfAnswers)
+                                        {
+                                            foreach (var answer in pageOfAnswers.Answers)
+                                            {
+                                                if (answer.QuestionId == questionId)
+                                                {
+                                                    return answer.Value;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
