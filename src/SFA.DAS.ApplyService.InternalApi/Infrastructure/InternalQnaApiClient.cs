@@ -76,12 +76,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                     {
                         foreach (var pageOfAnswers in pageContainingQuestion.PageOfAnswers)
                         {
-                            foreach(var answer in pageOfAnswers.Answers)
+                            var pageAnswer = pageOfAnswers.Answers.FirstOrDefault(x => x.QuestionId == questionId);
+                            if(pageAnswer != null)
                             {
-                                if(answer.QuestionId == questionId)
-                                {
-                                    return answer.Value;
-                                }
+                                return pageAnswer.Value;
                             }
                         }
                     }
@@ -97,12 +95,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                                     {
                                         foreach (var pageOfAnswers in pageContainingQuestion.PageOfAnswers)
                                         {
-                                            foreach (var answer in pageOfAnswers.Answers)
+                                            var pageAnswer = pageOfAnswers.Answers.FirstOrDefault(x => x.QuestionId == questionId);
+                                            if (pageAnswer != null)
                                             {
-                                                if (answer.QuestionId == questionId)
-                                                {
-                                                    return answer.Value;
-                                                }
+                                                return pageAnswer.Value;
                                             }
                                         }
                                     }
