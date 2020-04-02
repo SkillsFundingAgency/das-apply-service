@@ -296,7 +296,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 return RedirectToAction("SoleTraderOrPartnership", new { applicationId = model.ApplicationId });
             }
-            else if (model.OrganisationType == GatewayOrganisationTypes.Partnership)
+            else if (model.OrganisationType == RoatpOrganisationTypes.Partnership)
             {
                 var partnersData = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.AddPartners);
 

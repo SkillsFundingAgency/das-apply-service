@@ -842,8 +842,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _applicationClient.VerifyAll();
         }
 
-        [TestCase(GatewayOrganisationTypes.Partnership, "PartnershipType")]
-        [TestCase(GatewayOrganisationTypes.SoleTrader, "AddSoleTradeDob")]
+        [TestCase(RoatpOrganisationTypes.Partnership, "PartnershipType")]
+        [TestCase(RoatpOrganisationTypes.SoleTrader, "AddSoleTradeDob")]
         public void Confirm_sole_trader_or_partnership_redirects_to_partnership_type_or_add_sole_trader_dob(string organisationType, string expectedActionName)
         {
             var section = new ApplicationSection
