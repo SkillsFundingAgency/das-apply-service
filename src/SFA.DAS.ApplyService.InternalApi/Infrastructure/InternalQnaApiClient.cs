@@ -85,7 +85,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                     }
                     else // In case question/answer is buried in FurtherQuestions
                     {
-                        return GetAnswerFromFurtherQuestions(question, pageContainingQuestion, questionId);
+                        var furtherQuestionAnswer = GetAnswerFromFurtherQuestions(question, pageContainingQuestion, questionId);
+                        if(furtherQuestionAnswer != null)
+                        {
+                            return furtherQuestionAnswer;
+                        }
                     }
                 }
             }
