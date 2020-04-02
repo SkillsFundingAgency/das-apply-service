@@ -9,7 +9,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types
         public static string Company = "Company";
         public static string CompanyAndCharity = "Company and charity";
         public static string Charity = "Charity";
-        public static string SoleTrader = "Sole Trader";
+        public static string SoleTrader = "Sole trader";
         public static string Partnership = "Partnership";
         public static string StatutoryInstitute = "Statutory institute";
     }
