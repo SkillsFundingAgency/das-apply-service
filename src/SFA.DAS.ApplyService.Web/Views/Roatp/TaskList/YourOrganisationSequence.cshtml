@@ -58,7 +58,16 @@
                 @if (Model.PreviousSectionCompleted(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation))
                 {
                     <span class="app-task-list__task-name">
-                        <a class="govuk-link" asp-action="Page" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@RoatpWorkflowSequenceIds.YourOrganisation" asp-route-sectionId="@RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation" asp-route-pageId="@Model.DescribeOrganisationStartPageId" asp-route-redirectAction="TaskList">
+                        <a
+                            class="govuk-link"
+                            asp-action="Page"
+                            asp-controller="RoatpApplication"
+                            asp-route-applicationId="@Model.ApplicationId"
+                            asp-route-sequenceId="@RoatpWorkflowSequenceIds.YourOrganisation"
+                            asp-route-sectionId="@RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation"
+                            asp-route-pageId="@Model.DescribeOrganisationStartPageId"
+                            asp-route-redirectAction="TaskList"
+                        >
                             Describe your organisation
                         </a>
                     </span>
@@ -91,4 +100,4 @@
 
         </ul>
     </li>
-    }
+}
