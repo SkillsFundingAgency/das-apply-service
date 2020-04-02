@@ -85,23 +85,30 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                     }
                     else // In case question/answer is buried in FurtherQuestions
                     {
-                        if(question?.Input?.Options != null)
+                        return GetAnswerFromFurtherQuestions(question, pageContainingQuestion, questionId);
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private string GetAnswerFromFurtherQuestions(Question question, Page pageContainingQuestion, string questionId)
+        {
+            if (question?.Input?.Options != null)
+            {
+                foreach (var option in question?.Input?.Options)
+                {
+                    foreach (var furtherQuestion in option?.FurtherQuestions ?? Enumerable.Empty<Question>())
+                    {
+                        if (furtherQuestion.QuestionId == questionId && pageContainingQuestion.PageOfAnswers != null)
                         {
-                            foreach(var option in question?.Input?.Options)
+                            foreach (var pageOfAnswers in pageContainingQuestion.PageOfAnswers)
                             {
-                                foreach(var furtherQuestion in option?.FurtherQuestions ?? Enumerable.Empty<Question>())
+                                var pageAnswer = pageOfAnswers.Answers.FirstOrDefault(x => x.QuestionId == questionId);
+                                if (pageAnswer != null)
                                 {
-                                    if(furtherQuestion.QuestionId == questionId && pageContainingQuestion.PageOfAnswers != null)
-                                    {
-                                        foreach (var pageOfAnswers in pageContainingQuestion.PageOfAnswers)
-                                        {
-                                            var pageAnswer = pageOfAnswers.Answers.FirstOrDefault(x => x.QuestionId == questionId);
-                                            if (pageAnswer != null)
-                                            {
-                                                return pageAnswer.Value;
-                                            }
-                                        }
-                                    }
+                                    return pageAnswer.Value;
                                 }
                             }
                         }
