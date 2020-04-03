@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SFA.DAS.ApplyService.InternalApi.Types
 {
-    public class GatewayOrganisationTypes
+    public class GatewayOrganisationTypes 
     {
         public static string Company = "Company";
         public static string CompanyAndCharity = "Company and charity";
