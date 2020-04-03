@@ -61,8 +61,15 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 _qnaApiClient.GetQuestionTag(applicationId, RoatpWorkflowQuestionTags.SoleTraderOrPartnership);
 
             if (!string.IsNullOrEmpty(soleTraderPartnership))
-                return Ok(soleTraderPartnership);
-
+            {
+                switch (soleTraderPartnership.ToLower())
+                {
+                    case "sole trader":
+                        return Ok(GatewayOrganisationTypes.SoleTrader);
+                    case "partnership":
+                        return Ok(GatewayOrganisationTypes.Partnership);
+                }
+            }
             return Ok(GatewayOrganisationTypes.StatutoryInstitute);
         }
 
