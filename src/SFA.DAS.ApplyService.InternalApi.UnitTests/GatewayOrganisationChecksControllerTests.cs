@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
@@ -13,6 +14,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
     public class GatewayOrganisationChecksControllerTests
     {
         private Mock<IInternalQnaApiClient> _qnaApiClient;
+        private Mock<ILogger<GatewayOrganisationChecksController>> _logger;
         private GatewayOrganisationChecksController _controller;
 
         private const string ValueOfQuestion = "swordfish";
@@ -22,7 +24,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public void Before_each_test()
         {
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
-            _controller = new GatewayOrganisationChecksController(_qnaApiClient.Object);
+            _logger = new Mock<ILogger<GatewayOrganisationChecksController>>();
+            _controller = new GatewayOrganisationChecksController(_qnaApiClient.Object, _logger.Object);
         }
 
         [Test]
@@ -117,5 +120,61 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             Assert.IsNull(actualResult);
         }
+
+        public void SetupQnAClient(string ukrplWebsite, string applyWebsite)
+        {
+            _qnaApiClient
+               .Setup(x => x.GetAnswerValue(_applicationId,
+                                           RoatpWorkflowSequenceIds.Preamble,
+                                           RoatpWorkflowSectionIds.Preamble,
+                                           RoatpWorkflowPageIds.Preamble,
+                                           RoatpPreambleQuestionIdConstants.UkrlpWebsite)).ReturnsAsync(ukrplWebsite);
+            _qnaApiClient
+               .Setup(x => x.GetAnswerValue(_applicationId,
+                                           RoatpWorkflowSequenceIds.YourOrganisation,
+                                           RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails,
+                                           RoatpWorkflowPageIds.WebsiteManuallyEntered,
+                                           RoatpYourOrganisationQuestionIdConstants.WebsiteManuallyEntered)).ReturnsAsync(applyWebsite);
+        }
+
+        [Test]
+        public void Get_organisation_website_address_both_sources_returning()
+        {
+            var ukrlpWebsite = "www.UkrlpWebsite.co.uk";
+            var applyWebsite = "www.ApplyWebsite.co.uk";
+            SetupQnAClient(ukrlpWebsite, applyWebsite);
+            var actualResult = _controller.GetOrganisationWebsiteAddress(_applicationId).Result;
+            Assert.AreEqual(ukrlpWebsite, actualResult);
+        }
+
+        [Test]
+        public void Get_organisation_website_from_WebsiteAddressSourcedFromUkrlp()
+        {
+            var ukrlpWebsite = "www.UkrlpWebsite.co.uk";
+            var applyWebsite = string.Empty;
+            SetupQnAClient(ukrlpWebsite, applyWebsite);
+            var actualResult = _controller.GetOrganisationWebsiteAddress(_applicationId).Result;
+            Assert.AreEqual(ukrlpWebsite, actualResult);
+        }
+
+        [Test]
+        public void Get_organisation_website_address_from_WebsiteAddressManuallyEntered()
+        {
+            var ukrlpWebsite = string.Empty;
+            var applyWebsite = "www.ApplyWebsite.co.uk";
+            SetupQnAClient(ukrlpWebsite, applyWebsite);
+            var actualResult = _controller.GetOrganisationWebsiteAddress(_applicationId).Result;
+            Assert.AreEqual(applyWebsite, actualResult);
+        }
+        [Test]
+        public void Get_organisation_website_address_NoWbsiteReturned()
+        {
+            var ukrlpWebsite = string.Empty; 
+            var applyWebsite = string.Empty; 
+            SetupQnAClient(ukrlpWebsite, applyWebsite);
+            var actualResult = _controller.GetOrganisationWebsiteAddress(_applicationId).Result;
+            Assert.AreEqual(string.Empty, actualResult);
+        }
+
     }
 }
