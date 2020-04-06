@@ -13,92 +13,92 @@
     var isError = showErrors ? "govuk-input--error" : "";
 }
 
-@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
+<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
 
-@*<div class="grid-row">
-    <form asp-controller="RoatpApplication" asp-action="TaskList" method="get" name="backForm">
-        @Html.HiddenFor(x => x.ApplicationId)
-        <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
-    </form>
-</div>*@
-@if (showErrors)
-{
-    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-        <h2 class="govuk-error-summary__title" id="error-summary-title">
-            There is a problem
-        </h2>
-        <div class="govuk-error-summary__body">
-            <ul class="govuk-list govuk-error-summary__list">
-                <li><a sfa-validation-for="ConfirmSubmitApplication"></a></li>
-                <li><a sfa-validation-for="ConfirmFurtherInfoSubmitApplication"></a></li>
+@*
+<form asp-controller="RoatpApplication" asp-action="TaskList" method="get" name="backForm">
+    <input type="hidden" asp-for="ApplicationId" />
+    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+</form>
+*@
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @if (showErrors)
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            <li><a sfa-validation-for="ConfirmSubmitApplication"></a></li>
+                            <li><a sfa-validation-for="ConfirmFurtherInfoSubmitApplication"></a></li>
+                        </ul>
+                    </div>
+                </div>
+            }
+            <span class="govuk-caption-l">Submit application</span>
+            <h1 class="govuk-heading-xl">@title</h1>
+            <p class="govuk-body">
+                Before you submit your application, you must check that all of your answers and file uploads are correct.
+            </p>
+            <p class="govuk-body">
+                If any information provided in your application is:
+            </p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>unclear - we may ask for further information</li>
+                <li>not suitable, true and accurate - we may fail your application</li>
             </ul>
+            <p class="govuk-body">
+                You can check your answers and file uploads using the <a asp-action="TaskList" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">application overview</a>, then going into each section.
+            </p>
+            <p class="govuk-body">
+                You will not be able to view them once you submit your application.
+            </p>
+            <form method="post" asp-action="ConfirmSubmitApplication" asp-controller="RoatpApplication">
+                <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="OrganisationName" />
+                <div class="govuk-form-group @(hasConfirmSubmitApplicationError ? "govuk-form-group--error" : "")" sfa-validation-for="ConfirmSubmitApplication">
+                    @if (hasConfirmSubmitApplicationError)
+                    {
+                        <span class="govuk-error-message">
+                            @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "ConfirmSubmitApplication")?.ErrorMessage)
+                        </span>
+                    }
+                    <div class="govuk-checkboxes govuk-!-margin-bottom-5">
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" type="checkbox" asp-for="ConfirmSubmitApplication" />
+                            <label class="govuk-label govuk-checkboxes__label" for="ConfirmSubmitApplication">
+                                I confirm that all the answers and file uploads in this application are true and accurate to the best of my knowledge.
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="govuk-form-group @(hasConfirmFurtherInfoSubmitApplicationError ? "govuk-form-group--error" : "")" sfa-validation-for="ConfirmFurtherInfoSubmitApplication">
+                    @if (hasConfirmFurtherInfoSubmitApplicationError)
+                    {
+                        <span class="govuk-error-message">
+                            @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "ConfirmFurtherInfoSubmitApplication")?.ErrorMessage)
+                        </span>
+                    }
+                    <div class="govuk-checkboxes govuk-!-margin-bottom-5">
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" type="checkbox" asp-for="ConfirmFurtherInfoSubmitApplication" />
+                            <label class="govuk-label govuk-checkboxes__label" for="ConfirmFurtherInfoSubmitApplication">
+                                I agree to give further information on any application answers within 5 working days when requested by ESFA.
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-two-thirds">
+                        <input type="submit" class="govuk-button" value="Submit application" />
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
-}
-<div class="govuk-width-container">
-    <main class="govuk-main-wrapper " id="main-content" role="main">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <span class="govuk-caption-l">Submit application</span>
-                <h1 class="govuk-heading-l">@title</h1>
-                <p class="govuk-body">
-                    Before you submit your application, you must check that all of your answers and file uploads are correct.
-                </p>
-                <p class="govuk-body">
-                    If any information provided in your application is:
-                </p>
-                <ul class='govuk-list govuk-list--bullet'>
-                    <li>unclear - we may ask for further information</li>
-                    <li>not suitable, true and accurate - we may fail your application</li>
-                </ul>
-                <p class="govuk-body">
-                    You can check your answers and file uploads using the <a href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">application overview</a>, then going into each section.
-                </p>
-                <p class="govuk-body">
-                    You will not be able to view them once you submit your application.
-                </p>
-                <form method="post" asp-action="ConfirmSubmitApplication" asp-controller="RoatpApplication">
-                    @Html.HiddenFor(x => x.ApplicationId)
-                    @Html.HiddenFor(x => x.OrganisationName)
-                    <div class="govuk-form-group @(hasConfirmSubmitApplicationError ? "govuk-form-group--error" : "")" sfa-validation-for="ConfirmSubmitApplication" sfa-validationerror-class="govuk-error-message">
-                        @if (hasConfirmSubmitApplicationError)
-                        {
-                            <span class="govuk-error-message">
-                                @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "ConfirmSubmitApplication")?.ErrorMessage)
-                            </span>
-                        }
-                        <div class="govuk-checkboxes govuk-!-margin-bottom-5">
-                            <div class="govuk-checkboxes__item">
-                                @Html.CheckBoxFor(x => x.ConfirmSubmitApplication, new { @class = "govuk-checkboxes__input" })
-                                <label class="govuk-label govuk-checkboxes__label" for="ConfirmSubmitApplication">
-                                    I confirm that all the answers and file uploads in this application are true and accurate to the best of my knowledge.
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="govuk-form-group @(hasConfirmFurtherInfoSubmitApplicationError ? "govuk-form-group--error" : "")" sfa-validation-for="ConfirmFurtherInfoSubmitApplication" sfa-validationerror-class="govuk-error-message">
-                        @if (hasConfirmFurtherInfoSubmitApplicationError)
-                        {
-                            <span class="govuk-error-message">
-                                @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "ConfirmFurtherInfoSubmitApplication")?.ErrorMessage)
-                            </span>
-                        }
-                        <div class="govuk-checkboxes govuk-!-margin-bottom-5">
-                            <div class="govuk-checkboxes__item">
-                                @Html.CheckBoxFor(x => x.ConfirmFurtherInfoSubmitApplication, new { @class = "govuk-checkboxes__input" })
-                                <label class="govuk-label govuk-checkboxes__label" for="ConfirmFurtherInfoSubmitApplication">
-                                    I agree to give further information on any application answers within 5 working days when requested by ESFA.
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="govuk-grid-row">
-                        <div class="govuk-grid-column-two-thirds">
-                            <input type="submit" class="govuk-button" value="Submit application" />
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </main>
-</div>
+</main>

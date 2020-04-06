@@ -73,7 +73,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
             else
             {
-                var apiError = JsonConvert.DeserializeObject<ApiError>(json);
+                var apiError = GetApiErrorFromJson(json);
                 var apiErrorMessage = apiError?.Message ?? json;
 
                 _logger.LogError($"Error Starting Application in QnA. UserReference : {userReference} | WorkflowType : {workflowType} | ApplicationData : {applicationData} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}");
@@ -99,7 +99,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             else
             {
                 var json = await response.Content.ReadAsStringAsync();
-                var apiError = JsonConvert.DeserializeObject<ApiError>(json);
+                var apiError = GetApiErrorFromJson(json);
                 var apiErrorMessage = apiError?.Message ?? json;
 
                 _logger.LogError($"Error in QnaApiClient.GetQuestionTag() - applicationId {applicationId} | questionTag : {questionTag} | StatusCode : {response.StatusCode} | ErrorMessage: { apiErrorMessage }");
@@ -225,7 +225,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
             else
             {
-                var apiError = JsonConvert.DeserializeObject<ApiError>(json);
+                var apiError = GetApiErrorFromJson(json);
                 var apiErrorMessage = apiError?.Message ?? json;
 
                 _logger.LogError($"Error Updating Page Answers into QnA. Application: {applicationId} | SectionId: {sectionId} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}");
@@ -256,7 +256,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
             else
             {
-                var apiError = JsonConvert.DeserializeObject<ApiError>(json);
+                var apiError = GetApiErrorFromJson(json);
                 var apiErrorMessage = apiError?.Message ?? json;
                 var errorMessage =
                     $"Error Resetting Page Answers into QnA. Application: {applicationId} | SectionId: {sectionId} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}";
@@ -328,7 +328,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
             else
             {
-                var apiError = JsonConvert.DeserializeObject<ApiError>(json);
+                var apiError = GetApiErrorFromJson(json);
                 var apiErrorMessage = apiError?.Message ?? json;
 
                 _logger.LogError($"Error Uploading files into QnA. Application: {applicationId} | SectionId: {sectionId} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}");
@@ -442,6 +442,18 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
                 throw new HttpRequestException();
+            }
+        }
+
+        private static ApiError GetApiErrorFromJson(string json)
+        {
+            try
+            {
+              return JsonConvert.DeserializeObject<ApiError>(json);
+            }
+            catch(JsonException)
+            {
+                return null;
             }
         }
     }
