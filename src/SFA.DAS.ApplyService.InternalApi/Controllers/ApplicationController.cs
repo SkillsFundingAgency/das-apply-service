@@ -3,16 +3,15 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
-using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
-using SFA.DAS.ApplyService.InternalApi.Types;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using SFA.DAS.ApplyService.Application.Apply;
-using SFA.DAS.ApplyService.Application.Apply.CheckOrganisationStandardStatus;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Roatp;
+using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Application.Apply.Assessor;
+using SFA.DAS.ApplyService.Application.Apply.Snapshot;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -34,6 +33,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
         [HttpPost("/Application/Submit")]
         public async Task<ActionResult<bool>> Submit([FromBody] SubmitApplicationRequest request)
+        {
+            return await _mediator.Send(request);
+        }
+
+        [HttpPost("/Application/Snapshot")]
+        public async Task<ActionResult<Guid>> Snapshot([FromBody] SnapshotApplicationRequest request)
         {
             return await _mediator.Send(request);
         }
@@ -66,7 +71,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<ActionResult<bool>> UpdateApplicationStatus([FromBody] UpdateApplicationStatusRequest request)
         {
             return await _mediator.Send(request);
-        }
+        }     
 
         [HttpPost("/Application/ChangeProviderRoute")]
         public async Task<ActionResult<bool>> ChangeProviderRoute([FromBody] ChangeProviderRouteRequest request)
@@ -74,24 +79,45 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(request);
         }
 
-
-        // NOTE: This is old stuff or things which are not migrated over yet
-       
-        [HttpPost("Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<ActionResult<SetPageAnswersResponse>> Page(string applicationId, string userId, int sequenceId, int sectionId, string pageId, [FromBody] PageApplyRequest request)
+        [HttpGet("/Applications/Open")]
+        public async Task<IEnumerable<RoatpApplicationSummaryItem>> GetOpenApplications()
         {
-            var updatedPage = await _mediator.Send(
-                new UpdatePageAnswersRequest(Guid.Parse(applicationId), Guid.Parse(userId), sequenceId, sectionId, pageId, request.Answers, request.SaveNewAnswers));
-            return updatedPage;
+            return await _mediator.Send(new GetOpenApplicationsRequest());
         }
 
-        [HttpGet("/Application/{applicationId}/standard/{standardId}/check-status")]
-        [ApiExplorerSettings(IgnoreApi = true)]
-        public async Task<String> GetApplicationStatusForStandard(Guid applicationId, int standardId)
+        [HttpGet("/Applications/Closed")]
+        public async Task<IEnumerable<RoatpApplicationSummaryItem>> GetClosedApplications()
         {
-            return await _mediator.Send(new CheckOrganisationStandardStatusRequest(applicationId, standardId));
+            return await _mediator.Send(new GetClosedApplicationsRequest());
         }
 
+        [HttpGet("/Applications/FeedbackAdded")]
+        public async Task<IEnumerable<RoatpApplicationSummaryItem>> GetFeedbackAddedApplications()
+        {
+            return await _mediator.Send(new GetFeedbackAddedApplicationsRequest());
+        }
+
+        [HttpPost("/Application/{applicationId}/StartAssessorReview")]
+        public async Task<bool> StartAssessorReview(Guid applicationId, [FromBody] StartAssessorReviewApplicationRequest request)
+        {
+            return await _mediator.Send(new StartAssessorReviewRequest(applicationId, request.Reviewer));
+        }
+
+        [HttpPost("/Application/{applicationId}/StartAssessorSectionReview")]
+        public async Task<bool> StartAssessorSectionReview(Guid applicationId, [FromBody] StartAssessorSectionReviewRequest request)
+        {
+            return await _mediator.Send(request);
+        }
+
+        [HttpPost("/Application/{applicationId}/AssessorEvaluateSection")] 
+        public async Task<bool> AssessorEvaluateSection(Guid applicationId, [FromBody] AssessorEvaluateSectionRequest request)
+        {
+            return await _mediator.Send(request);
+        }
+    }
+
+    public class StartAssessorReviewApplicationRequest
+    {
+        public string Reviewer { get; set; }
     }
 }

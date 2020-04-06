@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
@@ -25,9 +26,20 @@ using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
+using CharityCommissionApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.CharityCommissionApiClient;
+using CompaniesHouseApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.CompaniesHouseApiClient;
+using IQnaTokenService = SFA.DAS.ApplyService.InternalApi.Infrastructure.IQnaTokenService;
+using IRoatpApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.IRoatpApiClient;
+using QnaTokenService = SFA.DAS.ApplyService.InternalApi.Infrastructure.QnaTokenService;
+using RoatpApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.RoatpApiClient;
+using SecurityHeadersExtensions = SFA.DAS.ApplyService.InternalApi.Infrastructure.SecurityHeadersExtensions;
+using ServiceCollectionExtensions = SFA.DAS.ApplyService.InternalApi.Infrastructure.ServiceCollectionExtensions;
 
 namespace SFA.DAS.ApplyService.InternalApi
 {
+    using SFA.DAS.ApplyService.Domain.Roatp;
+    using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
+    using SFA.DAS.ApplyService.InternalApi.Services;
     using Swashbuckle.AspNetCore.Swagger;
     using System.IO;
 
@@ -120,6 +132,12 @@ namespace SFA.DAS.ApplyService.InternalApi
             })
             .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
+            services.AddHttpClient<InternalQnaApiClient>("InternalQnaApiClient", config =>
+                {
+                    config.BaseAddress = new Uri(_applyConfig.QnaApiAuthentication.ApiBaseAddress);          // "http://localhost:5554"
+                    config.DefaultRequestHeaders.Add("Accept", "Application/json");
+                })
+                .SetHandlerLifetime(TimeSpan.FromMinutes(5));
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 options.DefaultRequestCulture = new RequestCulture("en-GB");
@@ -134,6 +152,12 @@ namespace SFA.DAS.ApplyService.InternalApi
                 mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
             else
                 mvcBuilder = services.AddMvc();
+
+            services.AddOptions();
+
+            services.Configure<List<RoatpSequences>>(_configuration.GetSection("RoatpSequences"));
+            services.Configure<List<CriminalComplianceGatewayConfig>>(_configuration.GetSection("CriminalComplianceGatewayConfig"));
+            services.Configure<List<CriminalComplianceGatewayOverrideConfig>>(_configuration.GetSection("SoleTraderCriminalComplianceGatewayOverrides"));
 
             mvcBuilder.SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
@@ -180,7 +204,7 @@ namespace SFA.DAS.ApplyService.InternalApi
                     .UseAuthentication();
 
             app.UseRequestLocalization();
-            app.UseSecurityHeaders();
+            SecurityHeadersExtensions.UseSecurityHeaders(app);
 
             app.UseAuthentication();
             app.UseHealthChecks("/health");
@@ -194,7 +218,7 @@ namespace SFA.DAS.ApplyService.InternalApi
         
         private void ConfigureDependencyInjection(IServiceCollection services)
         {
-            services.RegisterAllTypes<IValidator>(new[] { typeof(IValidator).Assembly });
+            ServiceCollectionExtensions.RegisterAllTypes<IValidator>(services, new[] { typeof(IValidator).Assembly });
             
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
                 
@@ -221,9 +245,12 @@ namespace SFA.DAS.ApplyService.InternalApi
             // End of SOAP Services
 
             services.AddTransient<IRoatpApiClient, RoatpApiClient>();
+            services.AddTransient<IInternalQnaApiClient, InternalQnaApiClient>();
+            services.AddTransient<IQnaTokenService, QnaTokenService>();
             services.AddTransient<IRoatpTokenService, RoatpTokenService>();
+            services.AddTransient<IGatewayApiChecksService, GatewayApiChecksService>();
+            services.AddTransient<ICriminalComplianceChecksQuestionLookupService, CriminalComplianceChecksQuestionLookupService>();
 
-    
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
         }
     }
