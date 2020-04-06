@@ -20,7 +20,6 @@
 }
 
 <div class="govuk-form-group @(showNameError ? "govuk-form-group--error" : "")" sfa-validation-for="FullName" sfa-validationerror-class="form-group-error">
-
     <label for="FullName" class="govuk-label">Full name</label>
     @if (showErrors)
     {
@@ -31,27 +30,24 @@
             }
         </span>
     }
-    <input id="FullName" name="FullName" type="text" class="govuk-input @nameError" asp-for="FullName"
-           sfa-validation-for="PersonName" sfa-validationerror-class="form-control-error" />
+    <input type="text" class="govuk-input @nameError" asp-for="FullName" sfa-validation-for="PersonName" sfa-validationerror-class="form-control-error" />
 </div>
-<div class="govuk-form-group @(showJobRoleError ? "govuk-form-group--error" : "")" sfa-validation-for="JobRole" sfa-validationerror-class="form-group-error">
 
+<div class="govuk-form-group @(showJobRoleError ? "govuk-form-group--error" : "")" sfa-validation-for="JobRole" sfa-validationerror-class="form-group-error">
     <label for="JobRole" class="govuk-label">Job role</label>
     @if (showErrors)
     {
-    <span class="govuk-error-message">
-        @foreach(var jobRoleErrorMessage in errorMessages.Where(x => x.Field == "JobRole"))
+        <span class="govuk-error-message">
+            @foreach(var jobRoleErrorMessage in errorMessages.Where(x => x.Field == "JobRole"))
             {
-        @Html.Raw(jobRoleErrorMessage.ErrorMessage)  <br />
+                @Html.Raw(jobRoleErrorMessage.ErrorMessage)  <br />
             }
-    </span>
+        </span>
     }
-    <input id="JobRole" name="JobRole" type="text" class="govuk-input @jobRoleError" asp-for="JobRole"
-           sfa-validation-for="PersonJobRole" sfa-validationerror-class="form-control-error" />
+    <input type="text" class="govuk-input @jobRoleError" asp-for="JobRole" sfa-validation-for="PersonJobRole" sfa-validationerror-class="form-control-error" />
 </div>
 
 <div class="govuk-form-group @((showTimeInRoleError) ? "govuk-form-group--error" : "")" sfa-validation-for="TimeInRoleMonths" sfa-validationerror-class="form-group-error">
-
     <p class="govuk-label">Time in role</p>
     <span class="govuk-hint" id="dob-hint">
         For example, 3 02
@@ -141,4 +137,3 @@
         </div>
     </div>
 </div>
-
