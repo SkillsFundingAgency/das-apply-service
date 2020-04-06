@@ -7,11 +7,11 @@
 
 @*@if (Model == null)
 {
-    <a href="@Url.Action("Applications", "Application")" class="govuk-back-link">Back to application overview</a>
+    <a asp-action="Applications" asp-controller="Application" class="govuk-back-link">Back to application overview</a>
 }
 else
 {
-    <a href="@Url.Action("Sequence", "Application", new { applicationId = Model.ApplicationId })" class="govuk-back-link">Back to application overview</a>
+    <a asp-action="Sequence" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" class="govuk-back-link">Back to application overview</a>
 }*@
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -29,10 +29,20 @@ else
                             @foreach (var pg in Model.QnAData.Pages.Where(p => p.Active && !p.NotRequired))
                             {
                                 <li class="app-task-list__item">
-                                    <a class="govuk-link app-task-list__task-name" 
-                                       href="@Url.Action("Page", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pg.PageId, redirectAction="Section"})">
-                                        @pg.LinkTitle
-                                    </a>
+                                    <span class="app-task-list__task-name">
+                                        <a
+                                            class="govuk-link"
+                                            asp-action="Page"
+                                            asp-controller="Application"
+                                            asp-route-applicationId="@Model.ApplicationId"
+                                            asp-route-sequenceId="@Model.SequenceId"
+                                            asp-route-sectionId="@Model.SectionId"
+                                            asp-route-pageId="@pg.PageId"
+                                            asp-route-redirectAction="Section"
+                                        >
+                                           @pg.LinkTitle
+                                        </a>
+                                    </span>
                                     @if (pg.Complete)
                                     {
                                         <strong class="govuk-tag app-task-list__task-completed" id="completed">Completed</strong>
@@ -42,7 +52,7 @@ else
                         </ul>
                     </li>
                 </ul>
-                <a href="@Url.Action("Sequence", "Application", new {applicationId = Model.ApplicationId})" class="govuk-button">Return to application overview</a>
+                <a asp-action="Sequence" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" class="govuk-button">Return to application overview</a>
             }
         </div>
     </div>

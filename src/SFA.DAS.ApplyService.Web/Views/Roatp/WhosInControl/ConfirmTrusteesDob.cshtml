@@ -5,48 +5,44 @@
     var isError = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0 ? "govuk-input--error" : "";
 }
 
-@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
+<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
 
 
-@*<div class="grid-row">
-    <a class="govuk-back-link" href="@Url.Action("ConfirmTrusteesNoDob", "RoatpWhosInControlApplication", new { Model.ApplicationId })">Back</a>
-</div>*@
-
-@if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
-{
-    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-        <h2 class="govuk-error-summary__title" id="error-summary-title">
-            There is a problem
-        </h2>
-        <div class="govuk-error-summary__body">
-            <ul class="govuk-list govuk-error-summary__list">
-                @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
-                {
-                    <li><a sfa-validation-for="@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
-                }
-            </ul>
-        </div>
-    </div>
-}
+@*<a class="govuk-back-link" asp-action="ConfirmTrusteesNoDob" asp-controller="RoatpWhosInControlApplication" asp-route-applicationId="@Model.ApplicationId">Back</a>*@
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
+            @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
+                            {
+                                <li><a href="#@(Model.TrusteeDatesOfBirth.First().Id + "_Month")" sfa-validation-for="@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
 
             <span class="govuk-caption-l">@Model.SectionTitle</span>
             @if (Model.TrusteeDatesOfBirth.Count == 1)
             {
-                <h1 class="govuk-heading-l">Enter the date of birth for trustee</h1>
+                <h1 class="govuk-heading-xl">Enter the date of birth for trustee</h1>
             }
             else
             {
-                <h1 class="govuk-heading-l">Enter the date of birth for trustees</h1>
+                <h1 class="govuk-heading-xl">Enter the date of birth for trustees</h1>
             }
 
             <form method="post" asp-action="TrusteesDobsConfirmed" novalidate enctype="multipart/form-data">
-
-                @Html.HiddenFor(x => x.ApplicationId)
-                @Html.HiddenFor(x => x.GetHelpAction)
+                <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="GetHelpAction" />
 
                 @foreach (var trustee in Model.TrusteeDatesOfBirth)
                 {
@@ -86,7 +82,7 @@
                 <button type="submit" class="govuk-button">Save and continue</button>
 
             </form>
+            <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
         </div>
     </div>
 </main>
-<partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />

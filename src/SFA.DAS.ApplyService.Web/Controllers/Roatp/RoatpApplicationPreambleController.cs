@@ -176,7 +176,7 @@
             
             var ukrlpLookupResults = await _ukrlpApiClient.GetTrainingProviderByUkprn(ukprn);
 
-            if (!ukrlpLookupResults.Success)
+            if (ukrlpLookupResults?.Results is null || !ukrlpLookupResults.Success)
             {
                 return RedirectToAction("UkrlpNotAvailable", "RoatpShutterPages");
             }
