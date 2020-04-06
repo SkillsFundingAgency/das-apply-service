@@ -79,10 +79,43 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                         foreach (var pageOfAnswers in pageContainingQuestion.PageOfAnswers)
                         {
                             var pageAnswer = pageOfAnswers.Answers.FirstOrDefault(x => x.QuestionId == questionId);
-
-                            if (pageAnswer != null)
+                            if(pageAnswer != null)
                             {
                                 return pageAnswer.Value;
+                            }
+                        }
+                    }
+                    else // In case question/answer is buried in FurtherQuestions
+                    {
+                        var furtherQuestionAnswer = GetAnswerFromFurtherQuestions(question, pageContainingQuestion, questionId);
+                        if(furtherQuestionAnswer != null)
+                        {
+                            return furtherQuestionAnswer;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private string GetAnswerFromFurtherQuestions(Question question, Page pageContainingQuestion, string questionId)
+        {
+            if (question?.Input?.Options != null)
+            {
+                foreach (var option in question?.Input?.Options)
+                {
+                    foreach (var furtherQuestion in option?.FurtherQuestions ?? Enumerable.Empty<Question>())
+                    {
+                        if (furtherQuestion.QuestionId == questionId && pageContainingQuestion.PageOfAnswers != null)
+                        {
+                            foreach (var pageOfAnswers in pageContainingQuestion.PageOfAnswers)
+                            {
+                                var pageAnswer = pageOfAnswers.Answers.FirstOrDefault(x => x.QuestionId == questionId);
+                                if (pageAnswer != null)
+                                {
+                                    return pageAnswer.Value;
+                                }
                             }
                         }
                     }

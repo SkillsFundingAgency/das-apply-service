@@ -19,12 +19,14 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private Mock<IInternalQnaApiClient> _qnaApiClient;
         private Mock<ICriminalComplianceChecksQuestionLookupService> _lookupService;
         private RoatpGatewayCriminalComplianceChecksController _controller;
+        private Guid _applicationId;
         private string _gatewayPageId;
         private Page _qnaPageWithQuestion;
 
         [SetUp]
         public void Before_each_test()
         {
+            _applicationId = Guid.NewGuid();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
             _lookupService = new Mock<ICriminalComplianceChecksQuestionLookupService>();
             _controller = new RoatpGatewayCriminalComplianceChecksController(_qnaApiClient.Object, _lookupService.Object);
@@ -34,10 +36,11 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var pageDetails = new QnaQuestionDetails
             {
                 PageId = "1000",
-                QuestionId = "CC-22"
+                QuestionId = "CC-22",
+                SectionId = 3
             };
 
-            _lookupService.Setup(x => x.GetQuestionDetailsForGatewayPageId(_gatewayPageId)).Returns(pageDetails);
+            _lookupService.Setup(x => x.GetQuestionDetailsForGatewayPageId(_applicationId, _gatewayPageId)).Returns(pageDetails);
 
             _qnaPageWithQuestion = new Page
             {
@@ -92,15 +95,15 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 }
             };
 
-            _qnaApiClient.Setup(x => x.GetPageBySectionNo(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.CriminalComplianceChecks,
-                                                          RoatpWorkflowSectionIds.CriminalComplianceChecks.ChecksOnYourOrganisation, pageDetails.PageId))
+            _qnaApiClient.Setup(x => x.GetPageBySectionNo(_applicationId, RoatpWorkflowSequenceIds.CriminalComplianceChecks,
+                                                          pageDetails.SectionId, pageDetails.PageId))
                                 .ReturnsAsync(_qnaPageWithQuestion);
         }
 
         [Test]
         public void Get_question_details_retrieves_question_details_and_answer()
         {
-            var result = _controller.GetCriminalComplianceQuestionDetails(Guid.NewGuid(), _gatewayPageId).GetAwaiter().GetResult();
+            var result = _controller.GetCriminalComplianceQuestionDetails(_applicationId, _gatewayPageId).GetAwaiter().GetResult();
 
             var objectResult = result as OkObjectResult;
             objectResult.Should().NotBeNull();
@@ -120,7 +123,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _qnaPageWithQuestion.PageOfAnswers[0].Answers[0].Value = "Yes";
             _qnaPageWithQuestion.PageOfAnswers[0].Answers.Add(new Answer { QuestionId = "CC-22.1", Value = "Lorem ipsum" });
 
-            var result = _controller.GetCriminalComplianceQuestionDetails(Guid.NewGuid(), _gatewayPageId).GetAwaiter().GetResult();
+            var result = _controller.GetCriminalComplianceQuestionDetails(_applicationId, _gatewayPageId).GetAwaiter().GetResult();
 
             var objectResult = result as OkObjectResult;
             objectResult.Should().NotBeNull();
