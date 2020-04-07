@@ -11,41 +11,38 @@
 
 }
 
-@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
+<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
 
-@*<div class="grid-row">
-    <a class="govuk-back-link" href="@Url.Action("SoleTraderOrPartnership", "RoatpWhosInControlApplication", new { Model.ApplicationId })">Back</a>
-</div>*@
-
-@if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
-{
-    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-        <h2 class="govuk-error-summary__title" id="error-summary-title">
-            There is a problem
-        </h2>
-        <div class="govuk-error-summary__body">
-            <ul class="govuk-list govuk-error-summary__list">
-                @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
-                {
-                    <li><a href="#@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
-                }
-            </ul>
-        </div>
-    </div>
-}
+<a class="govuk-back-link" asp-action="SoleTraderOrPartnership" asp-controller="RoatpWhosInControlApplication" asp-route-applicationId="@Model.ApplicationId">Back</a>
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
+            @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
+                            {
+                                <li><a href="#@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+
             <span class="govuk-caption-l">@Model.SectionTitle</span>
-            <h1 class="govuk-heading-l">What is @(Model.SoleTraderName)'s date of birth?</h1>
+            <h1 class="govuk-heading-xl">What is @(Model.SoleTraderName)'s date of birth?</h1>
 
             <form method="post" asp-action="SoleTradeDobConfirmed" novalidate enctype="multipart/form-data">
-
-                @Html.HiddenFor(x => x.ApplicationId)
-                @Html.HiddenFor(x => x.SoleTraderName)
-                @Html.HiddenFor(x => x.GetHelpAction)
+                <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="SoleTraderName" />
+                <input type="hidden" asp-for="GetHelpAction" />
 
                 <span class="govuk-hint" id="dob-hint">
                     For example, 3 1980
@@ -89,11 +86,9 @@
                     </div>
                 </div>
 
-
                 <button type="submit" class="govuk-button">Save and continue</button>
-
             </form>
+            <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
         </div>
     </div>
 </main>
-<partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
