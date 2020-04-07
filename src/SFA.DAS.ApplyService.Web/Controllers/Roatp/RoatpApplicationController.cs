@@ -650,7 +650,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                             if (section != null)
                             {
-                                if (!string.IsNullOrEmpty(pageId))
+                                if (!string.IsNullOrWhiteSpace(pageId))
                                 {
                                     var page = await _qnaApiClient.GetPage(applicationId, section.SectionId, pageId);
                                     if (page != null && page.Active)
@@ -660,6 +660,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                                 }
                                 else
                                 {
+                                    // No need to check the section
                                     canUpdate = true;
                                 }
                             }
