@@ -1,6 +1,6 @@
 // Application javascript
 window.GOVUKFrontend.initAll();
-window.DASFrontend.addCookieMessage();
+window.DASFrontend.cookies.init();
 
 (function(global) {
   "use strict";
@@ -86,21 +86,6 @@ window.DASFrontend.addCookieMessage();
       document.addEventListener("change", GOVUK.checkAll.handleClick);
     }
   };
-
-  // REMOVE NEW COOKIE BANNER FOR PRIVATE BETA
-
-  // var $cookieBanner = document.querySelector('[data-module="cookie-banner"]');
-  // if ($cookieBanner != null) {
-  //   new CookieBanner($cookieBanner);
-  // }
-
-  // var $cookieSettings = document.querySelector(
-  //   '[data-module="cookie-settings"]'
-  // );
-  // if ($cookieSettings != null) {
-  //   var $cookieSettingsOptions = $cookieSettings.dataset.options;
-  //   new CookieSettings($cookieSettings, $cookieSettingsOptions);
-  // }
 
   global.GOVUK = GOVUK;
 })(window);

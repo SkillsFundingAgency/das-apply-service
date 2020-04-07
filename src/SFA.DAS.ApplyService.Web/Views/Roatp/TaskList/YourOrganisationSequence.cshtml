@@ -7,67 +7,97 @@
 
     <li>
         <h2 class="app-task-list__section">
-            @Html.Raw(Convert.ToInt32(yourOrganisationSequence.SequenceId)). @Html.Raw(yourOrganisationSequence.Description)
+            <span class="app-task-list__section-number">@Html.Raw(yourOrganisationSequence.SequenceId). </span>
+            @Html.Raw(yourOrganisationSequence.Description)
         </h2>
 
         <ul class="app-task-list__items">
             <li class="app-task-list__item">
-                <a class="app-task-list__task_name" href="@Url.Action("WhatYouWillNeed", "RoatpYourOrganisationApplication", new { applicationId = Model.ApplicationId })">Introduction and what you'll need</a>
+                <span class="app-task-list__task-name">
+                    <a class="govuk-link" asp-action="WhatYouWillNeed" asp-controller="RoatpYourOrganisationApplication" asp-route-applicationId="@Model.ApplicationId">
+                        Introduction and what you'll need
+                    </a>
+                </span>
                 <strong class="govuk-tag app-task-list__task-@Model.CssClass(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed)">@Model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed)</strong>
             </li>
             <li class="app-task-list__item">
                 @if (Model.PreviousSectionCompleted(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails))
                 {
-                    <a class="app-task-list__task_name" href="@Url.Action("Section", "RoatpApplication", new { Model.ApplicationId, sequenceId = RoatpWorkflowSequenceIds.YourOrganisation, sectionId = RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails })">
-                        Organisation information
-                        <strong class="govuk-tag app-task-list__task-@Model.CssClass(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails)">@Model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails)</strong>
-                    </a>
+                    <span class="app-task-list__task-name">
+                        <a class="govuk-link" asp-action="Section" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@RoatpWorkflowSequenceIds.YourOrganisation" asp-route-sectionId="@RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails">
+                            Organisation information
+                        </a>
+                    </span>
+                    <strong class="govuk-tag app-task-list__task-@Model.CssClass(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails)">@Model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails)</strong>
                 }
                 else
                 {
-                    @Html.Raw("Organisation information")
+                    <span class="app-task-list__task-name">
+                        @Html.Raw("Organisation information")
+                    </span>
                 }
             </li>
             <li class="app-task-list__item">
                 @if (Model.PreviousSectionCompleted(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl))
                 {
-                    <a class="app-task-list__task_name" href="@Url.Action("StartPage", "RoatpWhosInControlApplication", new { Model.ApplicationId })">
-                        Tell us who's in control
-                        <strong class="govuk-tag app-task-list__task-@Model.CssClass(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl)">@Model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl)</strong>
-                    </a>
+                    <span class="app-task-list__task-name">
+                        <a class="govuk-link" asp-action="StartPage" asp-controller="RoatpWhosInControlApplication" asp-route-applicationId="@Model.ApplicationId">
+                            Tell us who's in control
+                        </a>
+                    </span>
+                    <strong class="govuk-tag app-task-list__task-@Model.CssClass(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl)">@Model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl)</strong>
                 }
                 else
                 {
-                    @Html.Raw("Tell us who's in control")
+                    <span class="app-task-list__task-name">
+                        @Html.Raw("Tell us who's in control")
+                    </span>
                 }
             </li>
             <li class="app-task-list__item">
                 @if (Model.PreviousSectionCompleted(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation))
                 {
-                    <a class="app-task-list__task_name" href="@Url.Action("Page", "RoatpApplication", new { Model.ApplicationId, sequenceId = RoatpWorkflowSequenceIds.YourOrganisation, sectionId = RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation, pageId = Model.DescribeOrganisationStartPageId, redirectAction = "TaskList" })">
-                        Describe your organisation
-                        <strong class="govuk-tag app-task-list__task-@Model.CssClass(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation)">@Model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation)</strong>
-                    </a>
+                    <span class="app-task-list__task-name">
+                        <a
+                            class="govuk-link"
+                            asp-action="Page"
+                            asp-controller="RoatpApplication"
+                            asp-route-applicationId="@Model.ApplicationId"
+                            asp-route-sequenceId="@RoatpWorkflowSequenceIds.YourOrganisation"
+                            asp-route-sectionId="@RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation"
+                            asp-route-pageId="@Model.DescribeOrganisationStartPageId"
+                            asp-route-redirectAction="TaskList"
+                        >
+                            Describe your organisation
+                        </a>
+                    </span>
+                    <strong class="govuk-tag app-task-list__task-@Model.CssClass(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation)">@Model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation)</strong>
                 }
                 else
                 {
-                    @Html.Raw("Describe your organisation")
+                    <span class="app-task-list__task-name">
+                        @Html.Raw("Describe your organisation")
+                    </span>
                 }
             </li>
             <li class="app-task-list__item">
                 @if (Model.PreviousSectionCompleted(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations))
                 {
-                    <a class="app-task-list__task_name" href="@Url.Action("ExperienceAccreditation", "RoatpYourOrganisationApplication", new { applicationId = Model.ApplicationId })">
-                        Experience and accreditation
-                        <strong class="govuk-tag app-task-list__task-@Model.CssClass(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations)">@Model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations)</strong>
-                    </a>
+                    <span class="app-task-list__task-name">
+                        <a class="govuk-link" asp-action="ExperienceAccreditation" asp-controller="RoatpYourOrganisationApplication" asp-route-applicationId="@Model.ApplicationId">
+                            Experience and accreditation
+                        </a>
+                    </span>
+                    <strong class="govuk-tag app-task-list__task-@Model.CssClass(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations)">@Model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations)</strong>
                 }
                 else
                 {
-                    @Html.Raw("Experience and accreditation")
+                    <span class="app-task-list__task-name">
+                        @Html.Raw("Experience and accreditation")
+                    </span>
                 }
             </li>
 
         </ul>
     </li>
-    }
+}

@@ -176,7 +176,7 @@
             
             var ukrlpLookupResults = await _ukrlpApiClient.GetTrainingProviderByUkprn(ukprn);
 
-            if (!ukrlpLookupResults.Success)
+            if (ukrlpLookupResults?.Results is null || !ukrlpLookupResults.Success)
             {
                 return RedirectToAction("UkrlpNotAvailable", "RoatpShutterPages");
             }
@@ -593,9 +593,17 @@
             {
                 var result = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, section.Id, RoatpWorkflowPageIds.ProviderRoute, providerRouteAnswer);
 
+                var providerRoutes = await _roatpApiClient.GetApplicationRoutes();
+                var selectedProviderRoute = providerRoutes.FirstOrDefault(x => x.Id == model.ApplicationRouteId);
+
                 if(result.ValidationPassed)
                 {
-                    await _applicationApiClient.ChangeProviderRoute(new ChangeProviderRouteRequest { ApplicationId = model.ApplicationId, ProviderRoute = model.ApplicationRouteId });
+                    await _applicationApiClient.ChangeProviderRoute(new ChangeProviderRouteRequest 
+                    {
+                        ApplicationId = model.ApplicationId, 
+                        ProviderRoute = model.ApplicationRouteId,
+                        ProviderRouteName =selectedProviderRoute?.RouteName
+                    });
                 }
             }
 

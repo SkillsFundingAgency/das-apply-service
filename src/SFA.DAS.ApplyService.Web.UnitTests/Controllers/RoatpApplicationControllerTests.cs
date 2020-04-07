@@ -55,6 +55,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IPagesWithSectionsFlowService> _pagesWithSectionsFlowService;
         private Mock<IRoatpTaskListWorkflowService> _roatpTaskListWorkflowService;
         private Mock<IRoatpOrganisationVerificationService> _roatpOrganisationVerificationService;
+        private Mock<INotRequiredOverridesService> _notRequiredOverridesService;
+        private Mock<IRoatpTaskListWorkflowService> _taskListWorkflowService;
 
         [SetUp]
         public void Before_each_test()
@@ -88,6 +90,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _tabularDataRepository = new Mock<ITabularDataRepository>();
             _roatpTaskListWorkflowService = new Mock<IRoatpTaskListWorkflowService>();
             _roatpOrganisationVerificationService = new Mock<IRoatpOrganisationVerificationService>();
+            _notRequiredOverridesService = new Mock<INotRequiredOverridesService>();
+            _taskListWorkflowService = new Mock<IRoatpTaskListWorkflowService>();
 
             _controller = new RoatpApplicationController(_apiClient.Object, _logger.Object, _sessionService.Object, _configService.Object,
                                                          _userService.Object, _usersApiClient.Object, _qnaApiClient.Object, 
@@ -96,7 +100,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                                                          _pageNavigationTrackingService.Object, _qnaLinks.Object, _customValidatorFactory.Object,
                                                          _roatpApiClient.Object,
                                                          _submitApplicationEmailService.Object, _tabularDataRepository.Object,
-                                                         _roatpTaskListWorkflowService.Object, _roatpOrganisationVerificationService.Object)
+                                                         _roatpTaskListWorkflowService.Object, _roatpOrganisationVerificationService.Object,
+                                                         _notRequiredOverridesService.Object, _taskListWorkflowService.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
@@ -251,7 +256,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             {
                 ApplicationId = Guid.NewGuid(),
                 ApplicationStatus = ApplicationStatus.InProgress,
-                ApplyData = new ApplyData()
+                ApplyData = new ApplyData
+                {
+                    ApplyDetails = new ApplyDetails(),
+                    Sequences = new List<ApplySequence>()
+                }
             };
 
             var model = new SubmitApplicationViewModel
@@ -281,6 +290,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 Value = ApplicationRoute.MainProviderApplicationRoute.ToString()
             };
             _qnaApiClient.Setup(x => x.GetAnswerByTag(It.IsAny<Guid>(), RoatpWorkflowQuestionTags.ProviderRoute, It.IsAny<string>())).ReturnsAsync(providerRouteAnswer);
+
+            _apiClient.Setup(x => x.GetApplication(It.IsAny<Guid>())).ReturnsAsync(application);
 
             _apiClient.Setup(x => x.SubmitApplication(It.IsAny<Application.Apply.Submit.SubmitApplicationRequest>())).ReturnsAsync(true);
 
