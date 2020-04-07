@@ -4,8 +4,6 @@ trigger:
     include:
       - "*"
 
-pr: none
-
 variables:
   - group: "ESFA - SonarCloud"
   - name: sonarCloudProjectKey
