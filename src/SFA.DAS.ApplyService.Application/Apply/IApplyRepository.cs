@@ -16,6 +16,14 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<Domain.Entities.Apply>> GetUserApplications(Guid userId);
         Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid userId);
 
+        Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId);
+        Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId);
+
+        Task<string> GetGatewayPageStatus(Guid applicationId, string pageId);
+        Task<string> GetGatewayPageComments(Guid applicationId, string pageId);
+
+        Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string userName, string status, string comments);
+
         Task<bool> CanSubmitApplication(Guid applicationId);
         Task SubmitApplication(Guid applicationId, ApplyData applyData, Guid submittedBy);
 

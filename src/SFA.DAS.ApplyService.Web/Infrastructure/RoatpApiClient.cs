@@ -1,3 +1,5 @@
+using SFA.DAS.ApplyService.Domain.Ukrlp;
+
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     using System;
@@ -38,5 +40,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 .ReadAsAsync<OrganisationRegisterStatus>();
         }
 
+        
+        public async Task<IEnumerable<ProviderDetails>> GetUkrlpProviderDetails(string ukprn)
+        {
+            return await (await _httpClient.GetAsync($"//api/v1/ukrlp/lookup/{ukprn}")).Content
+                .ReadAsAsync<IEnumerable<ProviderDetails>>();
+        }
     }
 }

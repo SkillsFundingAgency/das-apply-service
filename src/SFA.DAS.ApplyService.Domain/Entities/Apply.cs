@@ -1,4 +1,8 @@
-﻿using System;
+﻿using SFA.DAS.ApplyService.Domain.CharityCommission;
+using SFA.DAS.ApplyService.Domain.CompaniesHouse;
+using SFA.DAS.ApplyService.Domain.Roatp;
+using SFA.DAS.ApplyService.Domain.Ukrlp;
+using System;
 using System.Collections.Generic;
 
 namespace SFA.DAS.ApplyService.Domain.Entities
@@ -19,6 +23,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     {
         public List<ApplySequence> Sequences { get; set; }
         public ApplyDetails ApplyDetails { get; set; }
+        public ApplyGatewayDetails GatewayReviewDetails { get; set; }
     }
 
     public class ApplyDetails
@@ -32,6 +37,17 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string ProviderRouteName { get; set; }
         public DateTime? ApplicationSubmittedOn { get; set; }
         public Guid? ApplicationSubmittedBy { get; set; }
+    }
+
+
+    // This is an application-level storage of external details for processing gateway reviews
+    public class ApplyGatewayDetails
+    {
+        public ProviderDetails UkrlpDetails { get; set; }
+        public CompaniesHouseSummary CompaniesHouseDetails { get; set; }
+        public CharityCommissionSummary CharityCommissionDetails { get; set; }
+        public OrganisationRegisterStatus RoatpRegisterDetails { get; set; }
+        public DateTime? SourcesCheckedOn { get; set; }
     }
 
     public class ApplySequence
@@ -97,6 +113,13 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string HasFeedback = "Has Feedback";
         public const string Approved = "Approved";
         public const string Declined = "Declined";
+    }
+
+    public class GatewayAnswerStatus
+    {
+        public const string Pass = "Pass";
+        public const string Fail = "Fail";
+        public const string InProgress = "In progress";
     }
 
     public static class GatewayReviewStatus

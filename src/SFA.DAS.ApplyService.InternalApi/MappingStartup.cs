@@ -44,6 +44,9 @@ namespace SFA.DAS.ApplyService.InternalApi
 
                 cfg.AddProfile<RoatpProfile>();
 
+
+                cfg.AddProfile<UkrlpCharityCommissionProfile>();
+                cfg.AddProfile<UkrlpCompaniesHouseProfile>();
             });
 
             Mapper.AssertConfigurationIsValid();
