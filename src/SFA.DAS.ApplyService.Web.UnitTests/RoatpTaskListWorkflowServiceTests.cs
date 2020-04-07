@@ -43,7 +43,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 {
                     Id = 2,
                     Sequential = false,
-                    Title = "Financial evidenc"
+                    Title = "Financial evidence"
                 }
                 ,new TaskListConfiguration
                 {
