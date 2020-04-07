@@ -660,7 +660,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                                 }
                                 else
                                 {
-                                    // No need to check the section
+                                    // No need to check the page
                                     canUpdate = true;
                                 }
                             }
