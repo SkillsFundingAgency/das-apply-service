@@ -18,6 +18,10 @@
         private readonly IRoatpTokenService _tokenService;
         private string _baseAddress;
 
+        public RoatpApiClient()
+        {
+
+        }
         public RoatpApiClient(HttpClient client, ILogger<RoatpApiClient> logger, IConfigurationService configurationService, IRoatpTokenService tokenService)
         {
             _logger = logger;
@@ -26,7 +30,7 @@
             _tokenService = tokenService;
         }
 
-        public async Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(string ukprn)
+        public async virtual Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(string ukprn)
         {
             _logger.LogInformation($"Looking up RoATP status for UKPRN {ukprn}");
 
@@ -45,7 +49,7 @@
             return apiResponse;
         }
 
-        public async Task<UkprnLookupResponse> GetUkrlpDetails(string ukprn)
+        public async virtual Task<UkprnLookupResponse> GetUkrlpDetails(string ukprn)
         {
             _logger.LogInformation($"Retrieving UKRLP details for {ukprn}");
 
