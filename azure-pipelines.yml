@@ -15,6 +15,14 @@ variables:
   - name: buildPlatform
     value: 'anycpu'
 
+resources:
+  repositories:
+  - repository: das-platform-building-blocks
+    type: github
+    name: SkillsFundingAgency/das-platform-building-blocks
+    ref: refs/heads/master
+    endpoint: "GitHub (SFA)"
+
 jobs:
 - job: 'CodeBuild'
   pool:
@@ -67,14 +75,7 @@ jobs:
     inputs:
       pollingTimeoutSec: '300'
 
-  - task: esfadevops.DependencyCheck.custom-dependency-check.DependencyCheck@0
-    displayName: 'Dependency Check'
-    inputs:
-      workspaceId: '$(LogAnalyticsWorkspaceId)'
-      sharedKey: '$(LogAnalyticsWorkspaceKey)'
-      enableSelfHostedDatabase: true
-      databaseEndpoint: '$(DependencyCheckDatabaseEndpoint)'
-      excludedScanPathPatterns: '**/.sonarqube/**'
+  - template: azure-pipelines-templates/dependency-check.yml@das-platform-building-blocks
 
   - task: DotNetCoreCLI@2
     displayName: 'Publish Website'
