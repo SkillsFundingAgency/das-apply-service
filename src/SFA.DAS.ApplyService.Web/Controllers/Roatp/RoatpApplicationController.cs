@@ -261,11 +261,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var section = await _qnaApiClient.GetSection(applicationId, selectedSection.Id);
 
-            if (sequenceId == RoatpWorkflowSequenceIds.YourOrganisation && sectionId == RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails)
-            {
-                await RemoveIrrelevantQuestions(applicationId, section);
-            }
-
             if (section?.DisplayType == SectionDisplayType.PagesWithSections)
             {
                 var applicationSection = _pagesWithSectionsFlowService.ProcessPagesInSectionsForStatusText(selectedSection);
@@ -371,12 +366,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             // Note that SkipPage could have updated the section within QnA, so you must get the latest version!
             var section = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
-
-            if (sequenceId == RoatpWorkflowSequenceIds.YourOrganisation &&
-                sectionId == RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails)
-            {
-                await RemoveIrrelevantQuestions(applicationId, section);
-            }
 
             if (nextPageId == null || section.QnAData.Pages.FirstOrDefault(x => x.PageId == nextPageId) == null)
                 return await TaskList(applicationId);
@@ -587,28 +576,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return notRequiredOverrides;
-        }
-
-        private async Task RemoveIrrelevantQuestions(Guid applicationId, ApplicationSection section)
-        {
-            const int DefaultSectionId = 1;
-            var sequences = await _qnaApiClient.GetSequences(applicationId);
-            var preambleSequence = sequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.Preamble);
-            var preambleSections = await _qnaApiClient.GetSections(applicationId, preambleSequence.Id);
-            var preambleSection = preambleSections.FirstOrDefault(x => x.SectionId == DefaultSectionId);
-            var isCompanyAnswer = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany);
-            if (isCompanyAnswer?.Value == null || isCompanyAnswer.Value.ToUpper() != "TRUE")
-            {
-                if (section != null)
-                {
-                    var parentCompanyPages = section.QnAData.Pages.Where(x => x.PageId == RoatpWorkflowPageIds.YourOrganisationParentCompanyCheck
-                                                                                              || x.PageId == RoatpWorkflowPageIds.YourOrganisationParentCompanyDetails).ToList();
-                    foreach (var page in parentCompanyPages)
-                    {
-                        section.QnAData.Pages.Remove(page);
-                    }
-                }
-            }
         }
         
         private void PopulateAdditionalSequenceFields(IEnumerable<ApplicationSequence> sequences)
