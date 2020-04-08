@@ -1,33 +1,36 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.InternalApi.Models.ProviderRegister;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
-    public class ProviderRegisterApiClient
+    public class ProviderRegisterApiClient : ApiClientBase<ProviderRegisterApiClient>
     {
-        private readonly HttpClient _client;
-        private readonly ILogger<ProviderRegisterApiClient> _logger;
+        private readonly IApplyConfig _config;
 
-        public ProviderRegisterApiClient(HttpClient client, ILogger<ProviderRegisterApiClient> logger)
+        public ProviderRegisterApiClient(ILogger<ProviderRegisterApiClient> logger, IConfigurationService configurationService) : base(logger)
         {
-            _client = client;
-            _logger = logger;
+            _config = configurationService.GetConfig().Result;
+
+            if (_httpClient.BaseAddress == null)
+            {
+                _httpClient.BaseAddress = new Uri(_config.ProviderRegisterApiAuthentication.ApiBaseAddress);
+            }
         }
 
         public async Task<IEnumerable<Types.OrganisationSearchResult>> SearchOrgansiationByName(string name, bool exactMatch)
         {
             _logger.LogInformation($"Searching Provider Register. Name: {name}");
-            var apiResponse = await Get<IEnumerable<Provider>>($"/providers/search?keywords={name}");
+            var apiResponse = await Get<List<Provider>>($"/providers/search?keywords={name}");
 
             if (exactMatch)
             {
-                apiResponse = apiResponse?.Where(r => r.ProviderName.Equals(name, StringComparison.InvariantCultureIgnoreCase)).AsEnumerable();
+                apiResponse = apiResponse?.Where(r => r.ProviderName.Equals(name, StringComparison.InvariantCultureIgnoreCase)).ToList();
             }
 
             return Mapper.Map<IEnumerable<Provider>, IEnumerable<Types.OrganisationSearchResult>>(apiResponse);
@@ -40,19 +43,5 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
             return Mapper.Map<Provider, Types.OrganisationSearchResult>(apiResponse);
         }
-
-        private async Task<T> Get<T>(string uri)
-        {
-            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
-            {
-                if (response.IsSuccessStatusCode)
-                {
-                    return await response.Content.ReadAsAsync<T>();
-                }
-
-                return default(T);
-            }
-        }
-
     }
 }

@@ -97,27 +97,6 @@ namespace SFA.DAS.ApplyService.InternalApi
             
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
 
-            services.AddHttpClient<AssessorServiceApiClient>("AssessorServiceApiClient", config =>
-            {
-                config.BaseAddress = new Uri(_applyConfig.AssessorServiceApiAuthentication.ApiBaseAddress); //  "http://localhost:59022"
-                config.DefaultRequestHeaders.Add("Accept", "Application/json");
-            })
-            .SetHandlerLifetime(TimeSpan.FromMinutes(5));
-
-            services.AddHttpClient<ProviderRegisterApiClient>("ProviderRegisterApiClient", config =>
-            {
-                config.BaseAddress = new Uri(_applyConfig.ProviderRegisterApiAuthentication.ApiBaseAddress); //  "https://findapprenticeshiptraining-api.sfa.bis.gov.uk"
-                config.DefaultRequestHeaders.Add("Accept", "Application/json");
-            })
-            .SetHandlerLifetime(TimeSpan.FromMinutes(5));
-
-            services.AddHttpClient<ReferenceDataApiClient>("ReferenceDataApiClient", config =>
-            {
-                config.BaseAddress = new Uri(_applyConfig.ReferenceDataApiAuthentication.ApiBaseAddress); //  "https://at-refdata.apprenticeships.sfa.bis.gov.uk/api"
-                config.DefaultRequestHeaders.Add("Accept", "Application/json");
-            })
-            .SetHandlerLifetime(TimeSpan.FromMinutes(5));
-
             services.AddHttpClient<CompaniesHouseApiClient>("CompaniesHouseApiClient", config =>
             {
                 config.BaseAddress = new Uri(_applyConfig.CompaniesHouseApiAuthentication.ApiBaseAddress); //  "https://api.companieshouse.gov.uk"
@@ -125,19 +104,6 @@ namespace SFA.DAS.ApplyService.InternalApi
             })
             .SetHandlerLifetime(TimeSpan.FromMinutes(5));
 
-            services.AddHttpClient<RoatpApiClient>("RoatpApiClient", config =>
-            {
-                config.BaseAddress = new Uri(_applyConfig.RoatpApiAuthentication.ApiBaseAddress);          // "https://providers-api.apprenticeships.education.gov.uk"
-                config.DefaultRequestHeaders.Add("Accept", "Application/json");
-            })
-            .SetHandlerLifetime(TimeSpan.FromMinutes(5));
-
-            services.AddHttpClient<InternalQnaApiClient>("InternalQnaApiClient", config =>
-                {
-                    config.BaseAddress = new Uri(_applyConfig.QnaApiAuthentication.ApiBaseAddress);          // "http://localhost:5554"
-                    config.DefaultRequestHeaders.Add("Accept", "Application/json");
-                })
-                .SetHandlerLifetime(TimeSpan.FromMinutes(5));
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 options.DefaultRequestCulture = new RequestCulture("en-GB");
@@ -231,18 +197,22 @@ namespace SFA.DAS.ApplyService.InternalApi
 
             services.AddTransient<IValidatorFactory, ValidatorFactory>();
             
-            services.AddTransient<IContactRepository,ContactRepository>();
-            services.AddTransient<IApplyRepository,ApplyRepository>();
-            services.AddTransient<IOrganisationRepository,OrganisationRepository>();
-            services.AddTransient<IDfeSignInService,DfeSignInService>();
+            services.AddTransient<IContactRepository, ContactRepository>();
+            services.AddTransient<IApplyRepository, ApplyRepository>();
+            services.AddTransient<IOrganisationRepository, OrganisationRepository>();
+            services.AddTransient<IDfeSignInService, DfeSignInService>();
             
             services.AddTransient<IEmailService, EmailService.EmailService>();
             services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();
 
             // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
-            services.AddTransient<CharityCommissionService.ISearchCharitiesV1SoapClient,CharityCommissionService.SearchCharitiesV1SoapClient>();
-            services.AddTransient<CharityCommissionApiClient,CharityCommissionApiClient>();
+            services.AddTransient<CharityCommissionService.ISearchCharitiesV1SoapClient, CharityCommissionService.SearchCharitiesV1SoapClient>();
+            services.AddTransient<CharityCommissionApiClient, CharityCommissionApiClient>();
             // End of SOAP Services
+
+            services.AddTransient<AssessorServiceApiClient, AssessorServiceApiClient>();
+            services.AddTransient<ProviderRegisterApiClient, ProviderRegisterApiClient>();
+            services.AddTransient<ReferenceDataApiClient, ReferenceDataApiClient>();
 
             services.AddTransient<IRoatpApiClient, RoatpApiClient>();
             services.AddTransient<IInternalQnaApiClient, InternalQnaApiClient>();
