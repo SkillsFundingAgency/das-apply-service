@@ -689,6 +689,49 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         }
 
         [Test]
+        public void Whos_in_control_section_status_shows_as_complete_if_companies_house_verified_and_not_confirmed_and_manual_entry_confirmed()
+        {
+            var organisationVerificationStatus = new OrganisationVerificationStatus
+            {
+                VerifiedCompaniesHouse = true,
+                VerifiedCharityCommission = false,
+                CompaniesHouseDataConfirmed = false,
+                CompaniesHouseManualEntry = true,
+                CharityCommissionDataConfirmed = false,
+                WhosInControlConfirmed = false
+            };
+
+            var applicationSequences = GenerateSectionsCompletedUpToWhosInControl();
+
+            var status = _service.SectionStatus(Guid.NewGuid(), RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
+                                   applicationSequences, organisationVerificationStatus);
+
+            status.Should().Be(TaskListSectionStatus.Completed);
+        }
+
+        [Test]
+        public void Whos_in_control_section_status_shows_as_completed_if_companies_house_and_charity_commission_verified_and_neither_confirmed_but_manual_entry_confirmed()
+        {
+            var organisationVerificationStatus = new OrganisationVerificationStatus
+            {
+                VerifiedCompaniesHouse = true,
+                VerifiedCharityCommission = true,
+                CompaniesHouseDataConfirmed = false,
+                CompaniesHouseManualEntry = true,
+                CharityCommissionDataConfirmed = false,
+                CharityCommissionManualEntry = true,
+                WhosInControlConfirmed = false
+            };
+
+            var applicationSequences = GenerateSectionsCompletedUpToWhosInControl();
+
+            var status = _service.SectionStatus(Guid.NewGuid(), RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
+                                   applicationSequences, organisationVerificationStatus);
+
+            status.Should().Be(TaskListSectionStatus.Completed);
+        }
+        
+        [Test]
         public void Finish_application_checks_shows_blank_if_not_all_sequences_completed()
         {
             var applicationSequences = new List<ApplicationSequence>();

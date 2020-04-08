@@ -294,18 +294,23 @@ namespace SFA.DAS.ApplyService.Web.Services
                     return TaskListSectionStatus.Blank;
                 }
 
+                var companiesHouseVerified = organisationVerificationStatus.CompaniesHouseDataConfirmed 
+                                         || organisationVerificationStatus.CompaniesHouseManualEntry;
+                var charityCommissionVerified = organisationVerificationStatus.CharityCommissionDataConfirmed 
+                                              || organisationVerificationStatus.CharityCommissionManualEntry;
+
                 if (organisationVerificationStatus.VerifiedCompaniesHouse
                     && organisationVerificationStatus.VerifiedCharityCommission)
                 {
-                    if ((organisationVerificationStatus.CompaniesHouseDataConfirmed 
-                        && !organisationVerificationStatus.CharityCommissionDataConfirmed)
-                        || (!organisationVerificationStatus.CompaniesHouseDataConfirmed
-                        && organisationVerificationStatus.CharityCommissionDataConfirmed))
+                    if ((companiesHouseVerified
+                        && !charityCommissionVerified)
+                        || (!companiesHouseVerified
+                        && charityCommissionVerified))
                     {
                         return TaskListSectionStatus.InProgress;
                     }
-                    if (organisationVerificationStatus.CompaniesHouseDataConfirmed
-                        && organisationVerificationStatus.CharityCommissionDataConfirmed)
+                    if (companiesHouseVerified
+                        && charityCommissionVerified)
                     {
                         return TaskListSectionStatus.Completed;
                     }
@@ -314,7 +319,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 if (organisationVerificationStatus.VerifiedCompaniesHouse
                     && !organisationVerificationStatus.VerifiedCharityCommission)
                 {
-                    if (organisationVerificationStatus.CompaniesHouseDataConfirmed)
+                    if (companiesHouseVerified)
                     {
                         return TaskListSectionStatus.Completed;
                     }
@@ -323,7 +328,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 if (!organisationVerificationStatus.VerifiedCompaniesHouse
                     && organisationVerificationStatus.VerifiedCharityCommission)
                 {
-                    if (organisationVerificationStatus.CharityCommissionDataConfirmed)
+                    if (charityCommissionVerified)
                     {
                         return TaskListSectionStatus.Completed;
                     }
