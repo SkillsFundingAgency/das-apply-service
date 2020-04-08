@@ -15,6 +15,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public ApiClientBase(ILogger<CB> logger)
         {
             _logger = logger;
+
+            if (!_httpClient.DefaultRequestHeaders.Contains("Accept"))
+            {
+                _httpClient.DefaultRequestHeaders.Add("Accept", "Application/json");
+            }
         }
 
         /// <summary>
