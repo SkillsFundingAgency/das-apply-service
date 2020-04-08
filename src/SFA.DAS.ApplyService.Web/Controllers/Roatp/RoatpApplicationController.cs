@@ -114,6 +114,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             
             switch (application.ApplicationStatus)
             {
+                case ApplicationStatus.Cancelled:
+                    return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
                 case ApplicationStatus.Approved:
                     return View("~/Views/Application/Approved.cshtml", application);
                 case ApplicationStatus.Rejected:
