@@ -37,11 +37,11 @@ else
                 <p class="govuk-body">Do not include any personal or financial information.</p>
                
                 <form method="post" asp-controller="GetHelp" asp-action="Index">
-                    <input type="hidden" asp-for="ApplicationId" />
-                    <input type="hidden" asp-for="SequenceId" />
-                    <input type="hidden" asp-for="SectionId" />
-                    <input type="hidden" asp-for="PageId" />
-                    <input type="hidden" asp-for="Title" />
+                    <input type="hidden" asp-for="ApplicationId" id="@($"help_ApplicationId")" />
+                    <input type="hidden" asp-for="SequenceId" id="@($"help_SequenceId")" />
+                    <input type="hidden" asp-for="SectionId" id="@($"help_SectionId")" />
+                    <input type="hidden" asp-for="PageId" id="@($"help_PageId")" />
+                    <input type="hidden" asp-for="Title" id="@($"help_Title")" />
                     <input type="hidden" id="controller" name="controller" value="@controllerName" />
                     <input type="hidden" id="action" name="action" value="@actionName" />
 
