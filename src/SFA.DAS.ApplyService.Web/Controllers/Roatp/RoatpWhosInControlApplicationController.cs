@@ -236,7 +236,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 new Answer
                 {
                     QuestionId = RoatpYourOrganisationQuestionIdConstants.CharityCommissionDetailsConfirmed,
-                    Value = "TRUE"
+                    Value = "Y"
                 }
             };
 

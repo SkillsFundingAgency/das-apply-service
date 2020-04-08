@@ -1,10 +1,7 @@
 ﻿using SFA.DAS.ApplyService.Application.Apply.Roatp;
-using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
-using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -61,7 +58,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 CompaniesHouseManualEntry = (companiesHouseManualEntry != null && companiesHouseManualEntry.Value == "TRUE"),
                 CharityCommissionManualEntry = (charityCommissionManualEntry != null && charityCommissionManualEntry.Value == "TRUE"),
                 CompaniesHouseDataConfirmed = (companiesHouseDataConfirmed != null && companiesHouseDataConfirmed.Value == "Y"),
-                CharityCommissionDataConfirmed = (charityCommissionDataConfirmed != null && charityCommissionDataConfirmed.Value == "TRUE"),
+                CharityCommissionDataConfirmed = (charityCommissionDataConfirmed != null && charityCommissionDataConfirmed.Value == "Y"),
                 WhosInControlConfirmed = whosInControlConfirmed
             };
 
