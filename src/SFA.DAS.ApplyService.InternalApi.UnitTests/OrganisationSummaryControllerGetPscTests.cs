@@ -57,8 +57,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
         public void get_list_of_pscs_submitted(string name1, string dateOfBirth1, string name2, string dateOfBirth2)
         {
-            var expectedPersonInControl2 = new PersonInControl { Name = name1, DateOfBirth = dateOfBirth1 };
-            var expectedPersonInControl1 = new PersonInControl { Name = name2, DateOfBirth = dateOfBirth2 };
+            var expectedPersonInControl2 = new PersonInControl { Name = name1, MonthYearOfBirth = dateOfBirth1 };
+            var expectedPersonInControl1 = new PersonInControl { Name = name2, MonthYearOfBirth = dateOfBirth2 };
 
             var consumedTabularData = new TabularData
             {
@@ -81,9 +81,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var peopleInControl = (List<PersonInControl>)result.Value;
             Assert.AreEqual(2, peopleInControl.Count);
             Assert.AreEqual(peopleInControl[0].Name, expectedPersonInControl1.Name);
-            Assert.AreEqual(peopleInControl[0].DateOfBirth, expectedPersonInControl1.DateOfBirth);
+            Assert.AreEqual(peopleInControl[0].MonthYearOfBirth, expectedPersonInControl1.MonthYearOfBirth);
             Assert.AreEqual(peopleInControl[1].Name, expectedPersonInControl2.Name);
-            Assert.AreEqual(peopleInControl[1].DateOfBirth, expectedPersonInControl2.DateOfBirth);
+            Assert.AreEqual(peopleInControl[1].MonthYearOfBirth, expectedPersonInControl2.MonthYearOfBirth);
         }
 
         [Test]
@@ -104,8 +104,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
         public void get_list_of_pscs_from_apply(string name1, DateTime? dateOfBirth1, string name2, DateTime? dateOfBirth2)
         {
-            var expectedPersonInControl2 = new PersonInControl { Name = name1, DateOfBirth = $"{dateOfBirth1:MMM yyyy}" };
-            var expectedPersonInControl1 = new PersonInControl { Name = name2, DateOfBirth = $"{dateOfBirth2:MMM yyyy}" };
+            var expectedPersonInControl2 = new PersonInControl { Name = name1, MonthYearOfBirth = $"{dateOfBirth1:MMM yyyy}" };
+            var expectedPersonInControl1 = new PersonInControl { Name = name2, MonthYearOfBirth = $"{dateOfBirth2:MMM yyyy}" };
 
             var consumedApplyData = new ApplyData
             {
@@ -133,9 +133,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var peopleInControl = (List<PersonInControl>)result.Value;
             Assert.AreEqual(2, peopleInControl.Count);
             Assert.AreEqual(peopleInControl[0].Name, expectedPersonInControl1.Name);
-            Assert.AreEqual(peopleInControl[0].DateOfBirth, expectedPersonInControl1.DateOfBirth);
+            Assert.AreEqual(peopleInControl[0].MonthYearOfBirth, expectedPersonInControl1.MonthYearOfBirth);
             Assert.AreEqual(peopleInControl[1].Name, expectedPersonInControl2.Name);
-            Assert.AreEqual(peopleInControl[1].DateOfBirth, expectedPersonInControl2.DateOfBirth);
+            Assert.AreEqual(peopleInControl[1].MonthYearOfBirth, expectedPersonInControl2.MonthYearOfBirth);
         }
 
     }

@@ -35,7 +35,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             _logger.LogInformation($"Retrieving type of organisation for application {applicationId}");
             const string TRUE = "TRUE";
-                 var companyVerification = await
+
+            var companyVerification = await
                 _qnaApiClient.GetQuestionTag(applicationId, RoatpWorkflowQuestionTags.UkrlpVerificationCompany);
 
             var charityVerification = await
@@ -44,17 +45,17 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             if (companyVerification == TRUE && charityVerification == TRUE)
             {
-                return Ok(GatewayOrganisationTypes.CompanyAndCharity);
+                return Ok(RoatpOrganisationTypes.CompanyAndCharity);
             }
 
             if (companyVerification == TRUE)
             {
-                return Ok(GatewayOrganisationTypes.Company);
+                return Ok(RoatpOrganisationTypes.Company);
             }
 
             if (charityVerification == TRUE)
             {
-                return Ok(GatewayOrganisationTypes.Charity);
+                return Ok(RoatpOrganisationTypes.Charity);
             }
 
             var soleTraderPartnership = await
@@ -65,12 +66,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 switch (soleTraderPartnership.ToLower())
                 {
                     case "sole trader":
-                        return Ok(GatewayOrganisationTypes.SoleTrader);
+                        return Ok(RoatpOrganisationTypes.SoleTrader);
                     case "partnership":
-                        return Ok(GatewayOrganisationTypes.Partnership);
+                        return Ok(RoatpOrganisationTypes.Partnership);
                 }
             }
-            return Ok(GatewayOrganisationTypes.StatutoryInstitute);
+            return Ok(RoatpOrganisationTypes.StatutoryInstitute);
         }
 
         [HttpGet]
@@ -95,7 +96,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                     directorDob = director.Columns[1];
                 }
 
-                peopleInControl.Add(new PersonInControl {Name = directorName, DateOfBirth = directorDob});
+                peopleInControl.Add(new PersonInControl {Name = directorName, MonthYearOfBirth = directorDob});
             }
             
             return Ok(peopleInControl);
@@ -128,7 +129,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 {
                     directorDob = $"{director.DateOfBirth:MMM yyyy}";
                 }
-                peopleInControl.Add(new PersonInControl { Name = directorName, DateOfBirth = directorDob });
+                peopleInControl.Add(new PersonInControl { Name = directorName, MonthYearOfBirth = directorDob });
             }
 
             return Ok(peopleInControl);
@@ -155,7 +156,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                     picDob = pic.Columns[1];
                 }
 
-                peopleInControl.Add(new PersonInControl { Name = picName, DateOfBirth = picDob });
+                peopleInControl.Add(new PersonInControl { Name = picName, MonthYearOfBirth = picDob });
             }
 
             return Ok(peopleInControl);
@@ -189,7 +190,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 {
                     picDob = $"{pic.DateOfBirth:MMM yyyy}";
                 }
-                peopleInControl.Add(new PersonInControl { Name = picName, DateOfBirth = picDob });
+                peopleInControl.Add(new PersonInControl { Name = picName, MonthYearOfBirth = picDob });
             }
 
             return Ok(peopleInControl);
@@ -215,7 +216,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                     picDob = pic.Columns[1];
                 }
 
-                peopleInControl.Add(new PersonInControl { Name = picName, DateOfBirth = picDob });
+                peopleInControl.Add(new PersonInControl { Name = picName, MonthYearOfBirth = picDob });
             }
 
             return Ok(peopleInControl);
@@ -243,7 +244,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             foreach (var pic in charityCommissionData.Trustees.OrderBy(x => x.Name))
             {
                 var picName = pic?.Name;
-                peopleInControl.Add(new PersonInControl { Name = picName, DateOfBirth = null });
+                peopleInControl.Add(new PersonInControl { Name = picName, MonthYearOfBirth = null });
             }
 
             return Ok(peopleInControl);
@@ -281,7 +282,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                         picDob = pic.Columns[1];
                     }
 
-                    peopleInControl.Add(new PersonInControl { Name = picName, DateOfBirth = picDob });
+                    AddPersonToPeopleInControl(peopleInControl, picName, picDob);
                 }
             }
             else
@@ -293,11 +294,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 {
                     var legalName = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpLegalName);
                     var formattedDob = DateOfBirthFormatter.GetMonthYearDescription(soleTraderDob.Value);
-                    peopleInControl.Add(new PersonInControl { Name = legalName?.Value, DateOfBirth = formattedDob });
+                    AddPersonToPeopleInControl(peopleInControl,legalName?.Value,formattedDob);
                 }
             }
 
             return Ok(peopleInControl);
+        }
+
+        private static void AddPersonToPeopleInControl(ICollection<PersonInControl> peopleInControl, string picName, string picDob)
+        {
+            peopleInControl.Add(new PersonInControl {Name = picName, MonthYearOfBirth = picDob});
         }
     }
 }

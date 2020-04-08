@@ -37,7 +37,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         {
             var result = (OkObjectResult)_controller.GetTypeOfOrganisation(_applicationId).Result;
             result.Should().BeOfType<OkObjectResult>();
-            Assert.AreEqual(GatewayOrganisationTypes.StatutoryInstitute, ((OkObjectResult)result).Value);
+            Assert.AreEqual(RoatpOrganisationTypes.StatutoryInstitute, ((OkObjectResult)result).Value);
         }
 
         [Test]
@@ -47,7 +47,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             var result = (OkObjectResult)_controller.GetTypeOfOrganisation(_applicationId).Result;
             result.Should().BeOfType<OkObjectResult>();
-            Assert.AreEqual(GatewayOrganisationTypes.Company, ((OkObjectResult)result).Value);
+            Assert.AreEqual(RoatpOrganisationTypes.Company, ((OkObjectResult)result).Value);
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             var result = (OkObjectResult)_controller.GetTypeOfOrganisation(_applicationId).Result;
             result.Should().BeOfType<OkObjectResult>();
-            Assert.AreEqual(GatewayOrganisationTypes.Charity, ((OkObjectResult)result).Value);
+            Assert.AreEqual(RoatpOrganisationTypes.Charity, ((OkObjectResult)result).Value);
         }
 
         [Test]
@@ -68,7 +68,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             var result = (OkObjectResult)_controller.GetTypeOfOrganisation(_applicationId).Result;
             result.Should().BeOfType<OkObjectResult>();
-            Assert.AreEqual(GatewayOrganisationTypes.CompanyAndCharity, ((OkObjectResult)result).Value);
+            Assert.AreEqual(RoatpOrganisationTypes.CompanyAndCharity, ((OkObjectResult)result).Value);
         }
 
 

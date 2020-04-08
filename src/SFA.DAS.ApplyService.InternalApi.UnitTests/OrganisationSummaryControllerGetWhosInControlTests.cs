@@ -53,8 +53,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
         public void get_list_of_whos_in_control_submitted_when_AddPeopleInControl_tag_filled(string name1, string dateOfBirth1, string name2, string dateOfBirth2)
         {
-            var expectedPersonInControl2 = new PersonInControl { Name = name1, DateOfBirth = dateOfBirth1 };
-            var expectedPersonInControl1 = new PersonInControl { Name = name2, DateOfBirth = dateOfBirth2 };
+            var expectedPersonInControl2 = new PersonInControl { Name = name1, MonthYearOfBirth = dateOfBirth1 };
+            var expectedPersonInControl1 = new PersonInControl { Name = name2, MonthYearOfBirth = dateOfBirth2 };
 
             var consumedTabularData = new TabularData
             {
@@ -89,9 +89,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var peopleInControl = (List<PersonInControl>)result.Value;
             Assert.AreEqual(2, peopleInControl.Count);
             Assert.AreEqual(peopleInControl[0].Name, expectedPersonInControl1.Name);
-            Assert.AreEqual(peopleInControl[0].DateOfBirth, expectedPersonInControl1.DateOfBirth);
+            Assert.AreEqual(peopleInControl[0].MonthYearOfBirth, expectedPersonInControl1.MonthYearOfBirth);
             Assert.AreEqual(peopleInControl[1].Name, expectedPersonInControl2.Name);
-            Assert.AreEqual(peopleInControl[1].DateOfBirth, expectedPersonInControl2.DateOfBirth);
+            Assert.AreEqual(peopleInControl[1].MonthYearOfBirth, expectedPersonInControl2.MonthYearOfBirth);
 
             _qnaApiClient.Verify(x => x.GetTabularDataByTag(_applicationId, RoatpWorkflowQuestionTags.AddPeopleInControl), Times.Once);
             _qnaApiClient.Verify(x=>x.GetTabularDataByTag(It.IsAny<Guid>(),RoatpWorkflowQuestionTags.AddPartners), Times.Never);
@@ -105,8 +105,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
         public void get_list_of_whos_in_control_submitted_when_AddPartners_tag_filled(string name1, string dateOfBirth1, string name2, string dateOfBirth2)
         {
-            var expectedPersonInControl2 = new PersonInControl { Name = name1, DateOfBirth = dateOfBirth1 };
-            var expectedPersonInControl1 = new PersonInControl { Name = name2, DateOfBirth = dateOfBirth2 };
+            var expectedPersonInControl2 = new PersonInControl { Name = name1, MonthYearOfBirth = dateOfBirth1 };
+            var expectedPersonInControl1 = new PersonInControl { Name = name2, MonthYearOfBirth = dateOfBirth2 };
 
             var consumedTabularData = new TabularData
             {
@@ -141,9 +141,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var peopleInControl = (List<PersonInControl>)result.Value;
             Assert.AreEqual(2, peopleInControl.Count);
             Assert.AreEqual(peopleInControl[0].Name, expectedPersonInControl1.Name);
-            Assert.AreEqual(peopleInControl[0].DateOfBirth, expectedPersonInControl1.DateOfBirth);
+            Assert.AreEqual(peopleInControl[0].MonthYearOfBirth, expectedPersonInControl1.MonthYearOfBirth);
             Assert.AreEqual(peopleInControl[1].Name, expectedPersonInControl2.Name);
-            Assert.AreEqual(peopleInControl[1].DateOfBirth, expectedPersonInControl2.DateOfBirth);
+            Assert.AreEqual(peopleInControl[1].MonthYearOfBirth, expectedPersonInControl2.MonthYearOfBirth);
 
             _qnaApiClient.Verify(x => x.GetTabularDataByTag(_applicationId, RoatpWorkflowQuestionTags.AddPeopleInControl), Times.Once);
             _qnaApiClient.Verify(x => x.GetTabularDataByTag(_applicationId, RoatpWorkflowQuestionTags.AddPartners), Times.Once);
@@ -158,7 +158,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public void get_list_of_whos_in_control_submitted_when_SoleTradeDob_tag_filled(string legalName,
             string soleTraderDob, string formattedDob)
         {
-            var expectedPersonInControl1 = new PersonInControl {Name = legalName, DateOfBirth = soleTraderDob};
+            var expectedPersonInControl1 = new PersonInControl {Name = legalName, MonthYearOfBirth = soleTraderDob};
 
             _qnaApiClient
                 .Setup(x => x.GetTabularDataByTag(_applicationId, RoatpWorkflowQuestionTags.AddPeopleInControl))
@@ -184,7 +184,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var peopleInControl = (List<PersonInControl>) result.Value;
             Assert.AreEqual(1, peopleInControl.Count);
             Assert.AreEqual(peopleInControl[0].Name, expectedPersonInControl1.Name);
-            Assert.AreEqual(peopleInControl[0].DateOfBirth, formattedDob);
+            Assert.AreEqual(peopleInControl[0].MonthYearOfBirth, formattedDob);
 
             _qnaApiClient.Verify(
                 x => x.GetTabularDataByTag(_applicationId, RoatpWorkflowQuestionTags.AddPeopleInControl), Times.Once);
