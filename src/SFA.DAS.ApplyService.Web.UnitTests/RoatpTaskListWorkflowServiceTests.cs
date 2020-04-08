@@ -102,7 +102,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         public void Get_SectionStatus_Empty_When_Null_Sequences_Used()
         {
             var expectedResult = string.Empty;
-            var actualResult = _service.SectionStatus(_applicationId, 0, 0, null, null);
+            var sequenceId = 0;
+            var sectionId = 0;
+            List<ApplicationSequence> applicationSequences = null;
+            var organisationVerificationStatus = new OrganisationVerificationStatus();
+            var actualResult = _service.SectionStatus(_applicationId, sequenceId, sectionId, applicationSequences, organisationVerificationStatus);
             Assert.AreEqual(expectedResult, actualResult);
         }
 
@@ -110,7 +114,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         public void Get_SectionStatus_Empty_When_Empty_Sequences_Used()
         {
             var expectedResult = string.Empty;
-            var actualResult = _service.SectionStatus(_applicationId, 0, 0, new List<ApplicationSequence>(), null);
+            var sequenceId = 0;
+            var sectionId = 0;
+            var applicationSequences = new List<ApplicationSequence>();
+            var organisationVerificationStatus = new OrganisationVerificationStatus();
+            var actualResult = _service.SectionStatus(_applicationId, sequenceId, sectionId, applicationSequences, organisationVerificationStatus);
             Assert.AreEqual(expectedResult, actualResult);
         }
 
@@ -119,7 +127,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         public void Get_SectionStatus_Empty_When_Empty_Sections_Used()
         {
             var expectedResult = string.Empty;
-            var actualResult = _service.SectionStatus(_applicationId, 1, 0, new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = 1 } }, null);
+            var sequenceId = 1;
+            var sectionId = 0;
+            var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = 1 } };
+            var organisationVerificationStatus = new OrganisationVerificationStatus();
+            var actualResult = _service.SectionStatus(_applicationId, sequenceId, sectionId, applicationSequences, organisationVerificationStatus);
             Assert.AreEqual(expectedResult, actualResult);
         }
 
@@ -127,7 +139,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         public void Get_SectionStatus_Empty_When_Unmatched_Sections_Used()
         {
             var expectedResult = string.Empty;
-            var actualResult = _service.SectionStatus(_applicationId, 1, 3, new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = 1, Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = 2 } } } }, null);
+            var sequenceId = 1;
+            var sectionId = 3;
+            var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = 1, Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = 2 } } } };
+            var organisationVerificationStatus = new OrganisationVerificationStatus(); 
+            var actualResult = _service.SectionStatus(_applicationId, sequenceId, sectionId, applicationSequences, organisationVerificationStatus);
             Assert.AreEqual(expectedResult, actualResult);
         }
 
@@ -135,12 +151,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         [Test]
         public void Get_SectionStatus_Empty_When_Matched_Sections_Used_But_No_Other_Setup()
         {
+            var sequenceId = 1;
             var sectionId = 2;
             var expectedResult = string.Empty;
-            var actualResult = _service.SectionStatus(_applicationId, 1, sectionId, new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = 1,
+            var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = 1,
                 Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = sectionId,
-                                                                                    QnAData = new QnAData {Pages = new List<Page>()}} } } },
-                null);
+                                                                                    QnAData = new QnAData {Pages = new List<Page>()}} } } };
+            var organisationVerificationStatus = new OrganisationVerificationStatus();
+            var actualResult = _service.SectionStatus(_applicationId, sequenceId, sectionId, applicationSequences, organisationVerificationStatus);
             Assert.AreEqual(expectedResult, actualResult);
         }
 
@@ -171,11 +189,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             };
             _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverrides(_applicationId)).Returns(notRequiredOverrides);
 
-
-            var actualResult = _service.SectionStatus(_applicationId, sequenceId, sectionId, new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = sequenceId,
+            var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = sequenceId,
                     Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = sectionId,
-                        QnAData = new QnAData {Pages = new List<Page>()}} } } },
-                null);
+                        QnAData = new QnAData {Pages = new List<Page>()}} } } };
+            var organisationVerificationStatus = new OrganisationVerificationStatus();
+
+            var actualResult = _service.SectionStatus(_applicationId, sequenceId, sectionId, applicationSequences, organisationVerificationStatus);
+
             Assert.AreEqual(expectedResult, actualResult.ToLower());
         }
 
@@ -212,10 +232,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             };
             _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverrides(_applicationId)).Returns(notRequiredOverrides);
 
-            var actualResult = _service.SectionStatus(_applicationId, sequenceId, sectionId, new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = sequenceId,
+            var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = sequenceId,
                     Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = sectionId,
-                        QnAData = new QnAData {Pages = new List<Page>()}} } } },
-                null);
+                        QnAData = new QnAData {Pages = new List<Page>()}} } } };
+            var organisationVerificationStatus = new OrganisationVerificationStatus();
+
+            var actualResult = _service.SectionStatus(_applicationId, sequenceId, sectionId, applicationSequences, organisationVerificationStatus);
+
             Assert.AreEqual(expectedResult, actualResult.ToLower());
         }
 
@@ -252,16 +275,21 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             };
             _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverrides(_applicationId)).Returns(notRequiredOverrides);
 
-            var actualResult = _service.SectionStatus(_applicationId, sequenceId, sectionId, new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = sequenceId,
+            var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = sequenceId,
                     Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = sectionId,
-                        QnAData = new QnAData {Pages = new List<Page>()}} } } },
-                null);
+                        QnAData = new QnAData {Pages = new List<Page>()}} } } };
+            var organisationVerificationStatus = new OrganisationVerificationStatus();
+
+            var actualResult = _service.SectionStatus(_applicationId, sequenceId, sectionId, applicationSequences, organisationVerificationStatus);
             Assert.IsEmpty(actualResult);
         }
 
         [Test]
         public void Section_status_is_Next_for_first_your_organisation_section_if_not_complete()
         {
+            var sequenceId = 1;
+            var sectionId = 1;
+
             var applicationSequences = new List<ApplicationSequence>
             {
                 new ApplicationSequence
@@ -298,7 +326,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 }
             };
 
-            var status = _service.SectionStatus(Guid.NewGuid(), 1, 1, applicationSequences, new OrganisationVerificationStatus());
+            var status = _service.SectionStatus(Guid.NewGuid(), sequenceId, sectionId, applicationSequences, new OrganisationVerificationStatus());
 
             status.Should().Be(TaskListSectionStatus.Next);
         }
@@ -380,8 +408,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 }
             };
 
-            var firstSectionStatus = _service.SectionStatus(Guid.NewGuid(), 1, 1, applicationSequences, new OrganisationVerificationStatus());
-            var secondSectionStatus = _service.SectionStatus(Guid.NewGuid(), 1, 2, applicationSequences, new OrganisationVerificationStatus());
+            var firstSectionStatus = _service.SectionStatus(Guid.NewGuid(), sequenceId: 1, sectionId: 1, applicationSequences, new OrganisationVerificationStatus());
+            var secondSectionStatus = _service.SectionStatus(Guid.NewGuid(), sequenceId: 1, sectionId: 2, applicationSequences, new OrganisationVerificationStatus());
 
             firstSectionStatus.Should().Be(TaskListSectionStatus.Completed);
             secondSectionStatus.Should().Be(TaskListSectionStatus.Next);
@@ -478,8 +506,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 }
             };
 
-            var firstSectionStatus = _service.SectionStatus(Guid.NewGuid(), 1, 1, applicationSequences, new OrganisationVerificationStatus());
-            var secondSectionStatus = _service.SectionStatus(Guid.NewGuid(), 1, 2, applicationSequences, new OrganisationVerificationStatus());
+            var firstSectionStatus = _service.SectionStatus(Guid.NewGuid(), sequenceId: 1, sectionId: 1, applicationSequences, new OrganisationVerificationStatus());
+            var secondSectionStatus = _service.SectionStatus(Guid.NewGuid(), sequenceId: 1, sectionId: 2, applicationSequences, new OrganisationVerificationStatus());
 
             firstSectionStatus.Should().Be(TaskListSectionStatus.Completed);
             secondSectionStatus.Should().Be(TaskListSectionStatus.Completed);
@@ -572,9 +600,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 }
             };
 
-            var firstSectionStatus = _service.SectionStatus(Guid.NewGuid(), 1, 1, applicationSequences, new OrganisationVerificationStatus());
-            var secondSectionStatus = _service.SectionStatus(Guid.NewGuid(), 1, 2, applicationSequences, new OrganisationVerificationStatus());
-            var thirdSectionStatus = _service.SectionStatus(Guid.NewGuid(), 1, 3, applicationSequences, new OrganisationVerificationStatus());
+            var firstSectionStatus = _service.SectionStatus(Guid.NewGuid(), sequenceId: 1, sectionId: 1, applicationSequences, new OrganisationVerificationStatus());
+            var secondSectionStatus = _service.SectionStatus(Guid.NewGuid(), sequenceId: 1, sectionId: 2, applicationSequences, new OrganisationVerificationStatus()); ;
+            var thirdSectionStatus = _service.SectionStatus(Guid.NewGuid(), sequenceId: 1, sectionId: 3, applicationSequences, new OrganisationVerificationStatus());
 
             firstSectionStatus.Should().Be(TaskListSectionStatus.Next);
             secondSectionStatus.Should().Be(TaskListSectionStatus.Blank);
@@ -682,9 +710,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 }
             };
 
-            var firstSectionStatus = _service.SectionStatus(Guid.NewGuid(), 2, 1, applicationSequences, new OrganisationVerificationStatus());
-            var secondSectionStatus = _service.SectionStatus(Guid.NewGuid(), 2, 2, applicationSequences, new OrganisationVerificationStatus());
-            var thirdSectionStatus = _service.SectionStatus(Guid.NewGuid(), 2, 3, applicationSequences, new OrganisationVerificationStatus());
+            var firstSectionStatus = _service.SectionStatus(Guid.NewGuid(), sequenceId: 2, sectionId: 1, applicationSequences, new OrganisationVerificationStatus());
+            var secondSectionStatus = _service.SectionStatus(Guid.NewGuid(), sequenceId: 2, sectionId: 2, applicationSequences, new OrganisationVerificationStatus());
+            var thirdSectionStatus = _service.SectionStatus(Guid.NewGuid(), sequenceId: 2, sectionId: 3, applicationSequences, new OrganisationVerificationStatus());
 
             firstSectionStatus.Should().Be(TaskListSectionStatus.Completed);
             secondSectionStatus.Should().Be(TaskListSectionStatus.Blank);
