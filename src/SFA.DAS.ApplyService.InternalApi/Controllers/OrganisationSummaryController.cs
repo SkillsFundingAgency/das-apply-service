@@ -75,6 +75,28 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet]
+        [Route("CompanyNumber/{applicationId}")]
+        public async Task<IActionResult> GetCompanyNumber(Guid applicationId)
+        {
+            _logger.LogInformation($"Retrieving company number for application {applicationId}");
+            var companyNumber = await
+                _qnaApiClient.GetQuestionTag(applicationId, RoatpWorkflowQuestionTags.UKRLPVerificationCompanyNumber);
+
+            return Ok(companyNumber);
+        }
+
+        [HttpGet]
+        [Route("CharityNumber/{applicationId}")]
+        public async Task<IActionResult> GetCharityNumber(Guid applicationId)
+        {
+            _logger.LogInformation($"Retrieving charity number for application {applicationId}");
+            var charityNumber = await
+                _qnaApiClient.GetQuestionTag(applicationId, RoatpWorkflowQuestionTags.UKRLPVerificationCharityRegNumber);
+
+            return Ok(charityNumber);
+        }
+
+        [HttpGet]
         [Route(("DirectorData/Submitted/{applicationId}"))]
         public async Task<IActionResult> GetDirectorsFromSubmitted(Guid applicationId)
         {
