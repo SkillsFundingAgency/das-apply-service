@@ -27,7 +27,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private Mock<ILogger<GatewayApiChecksController>> _logger;
         private Mock<CompaniesHouseApiClient> _companiesHouseApiClient;
         private Mock<CharityCommissionApiClient> _charityCommissionApiClient;
-        private Mock<RoatpApiClient> _roatpApiClient;
+        private Mock<IRoatpApiClient> _roatpApiClient;
         private Mock<IInternalQnaApiClient> _qnaApiClient;
         private IGatewayApiChecksService _gatewayApiChecksService;
 
@@ -61,7 +61,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _logger = new Mock<ILogger<GatewayApiChecksController>>();
             _companiesHouseApiClient = new Mock<CompaniesHouseApiClient>();
             _charityCommissionApiClient = new Mock<CharityCommissionApiClient>();
-            _roatpApiClient = new Mock<RoatpApiClient>(Mock.Of<ILogger<RoatpApiClient>>(), configurationService.Object, roatpTokenService.Object);
+            _roatpApiClient = new Mock<IRoatpApiClient>();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
             _gatewayApiChecksService = new GatewayApiChecksService(_companiesHouseApiClient.Object, _charityCommissionApiClient.Object,
                                                                    _roatpApiClient.Object, _qnaApiClient.Object);
