@@ -58,26 +58,20 @@ ViewBag.Title = "Register of apprenticeship training providers service";
             <p class="govuk-body">
                 Being on the RoATP does not mean your organisation is recommended by ESFA. It cannot use ESFA as a 'kite-mark' or an award and will not have an identification number for the RoATP.
             </p>
-        </div>
-    </div>
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">        
-            <div class="govuk-!-margin-top-2 govuk-!-margin-bottom-8">
-                <a asp-action="ExistingAccount" asp-controller="Users" role="button" draggable="false" class="govuk-button govuk-!-margin-bottom-2">
-                    Apply now
-                </a>
-            </div>
-        </div>
-    </div>
-    
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
+            <a asp-action="ExistingAccount" asp-controller="Users" role="button" draggable="false" class="govuk-button govuk-!-margin-top-2 govuk-!-margin-bottom-8 govuk-button--start" data-module="govuk-button">
+                Apply now
+                <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
+                    <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+                </svg>
+            </a>
 
             <h2 class="govuk-heading-m">What you'll need</h2>
+
             <p class="govuk-body">
                 Make sure your organisation has:
             </p>
+
             <ul class="govuk-list govuk-list--bullet">
                 <li>an apprenticeship service (AS) account (if you do not have one, you can create one when you apply)</li>
                 <li>a <a href="https://www.ukrlp.co.uk/" target="_blank" class="govuk-link">UK provider reference number (opens in new window or tab)</a></li>
