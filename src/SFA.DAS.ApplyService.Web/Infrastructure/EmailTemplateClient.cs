@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.EmailService;
+using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {

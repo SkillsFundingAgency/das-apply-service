@@ -8,6 +8,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     using SFA.DAS.ApplyService.Configuration;
     using SFA.DAS.ApplyService.Domain.Roatp;
     using SFA.DAS.ApplyService.Domain.Ukrlp;
+    using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 
     public class RoatpApiClient : ApiClientBase<RoatpApiClient>, IRoatpApiClient
     {

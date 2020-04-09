@@ -9,6 +9,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     using SFA.DAS.ApplyService.Configuration;
     using SFA.DAS.ApplyService.InternalApi.Types;
     using SFA.DAS.ApplyService.InternalApi.Types.CharityCommission;
+    using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 
     public class CharityCommissionApiClient : ApiClientBase<CharityCommissionApiClient>, ICharityCommissionApiClient
     {

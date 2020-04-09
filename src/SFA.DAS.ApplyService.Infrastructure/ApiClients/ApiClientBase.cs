@@ -4,21 +4,30 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Infrastructure.Firewall;
+using System.Text;
 
-namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
+namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
 {
-    public abstract class ApiClientBase<CB>
+    /// <summary>
+    /// Base class containing common functionality that all ApiClients should use.
+    /// Includes functionality to write an error log entry for any unsuccessful API calls.
+    /// Please read documentation on all methods.
+    /// </summary>
+    /// <typeparam name="AC">The inherited ApiClient.</typeparam>
+    public abstract class ApiClientBase<AC>
     {
+        protected const string _contentType = "application/json";
         protected static readonly HttpClient _httpClient = new HttpClient();
-        protected readonly ILogger<CB> _logger;
+        protected readonly ILogger<AC> _logger;
 
-        public ApiClientBase(ILogger<CB> logger)
+        public ApiClientBase(ILogger<AC> logger)
         {
             _logger = logger;
 
             if (!_httpClient.DefaultRequestHeaders.Contains("Accept"))
             {
-                _httpClient.DefaultRequestHeaders.Add("Accept", "Application/json");
+                _httpClient.DefaultRequestHeaders.Add("Accept", _contentType);
             }
         }
 
@@ -104,7 +113,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             try
             {
                 using (var response = await _httpClient.PostAsync(new Uri(uri, UriKind.Relative),
-                    new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+                    new StringContent(serializeObject, Encoding.UTF8, _contentType)))
                 {
                     await LogErrorIfUnsuccessfulResponse(response);
                     return response.StatusCode;
@@ -132,7 +141,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             try
             {
                 using (var response = await _httpClient.PostAsync(new Uri(uri, UriKind.Relative),
-                    new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+                    new StringContent(serializeObject, Encoding.UTF8, _contentType)))
                 {
                     await LogErrorIfUnsuccessfulResponse(response);
                     return await response.Content.ReadAsAsync<U>();
@@ -158,7 +167,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             try
             {
                 using (var response = await _httpClient.PutAsync(new Uri(uri, UriKind.Relative),
-                    new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+                    new StringContent(serializeObject, Encoding.UTF8, _contentType)))
                 {
                     await LogErrorIfUnsuccessfulResponse(response);
                     return response.StatusCode;
@@ -186,7 +195,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             try
             {
                 using (var response = await _httpClient.PutAsync(new Uri(uri, UriKind.Relative),
-                    new StringContent(serializeObject, System.Text.Encoding.UTF8, "application/json")))
+                    new StringContent(serializeObject, Encoding.UTF8, _contentType)))
                 {
                     await LogErrorIfUnsuccessfulResponse(response);
                     return await response.Content.ReadAsAsync<U>();

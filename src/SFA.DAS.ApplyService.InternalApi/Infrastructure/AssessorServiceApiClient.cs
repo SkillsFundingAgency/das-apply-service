@@ -1,16 +1,14 @@
 using AutoMapper;
-using MediatR;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Clients.ActiveDirectory;
-using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.InternalApi.Models.AssessorService;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 

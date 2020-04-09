@@ -7,6 +7,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.InternalApi.Types;
+using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {

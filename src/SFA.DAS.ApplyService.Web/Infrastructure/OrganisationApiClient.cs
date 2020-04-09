@@ -1,10 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Configuration;
-using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.InternalApi.Types;
 using System;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Infrastructure.ApiClients;
+using SFA.DAS.ApplyService.InternalApi.Types;
 using FHADetails = SFA.DAS.ApplyService.InternalApi.Types.FHADetails;
 using OrganisationDetails = SFA.DAS.ApplyService.InternalApi.Types.OrganisationDetails;
 

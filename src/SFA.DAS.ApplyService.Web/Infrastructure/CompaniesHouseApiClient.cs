@@ -11,6 +11,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     using SFA.DAS.ApplyService.Configuration;
     using SFA.DAS.ApplyService.Domain.CompaniesHouse;
     using SFA.DAS.ApplyService.InternalApi.Types.CompaniesHouse;
+    using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 
     public class CompaniesHouseApiClient : ApiClientBase<CompaniesHouseApiClient>, ICompaniesHouseApiClient
     {

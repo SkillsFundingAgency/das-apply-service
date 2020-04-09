@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.InternalApi.Models.ProviderRegister;
 using System;
 using System.Collections.Generic;
