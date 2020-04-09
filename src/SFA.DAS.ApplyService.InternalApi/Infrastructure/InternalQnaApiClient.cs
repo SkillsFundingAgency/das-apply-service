@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.Infrastructure.Firewall;
@@ -14,14 +13,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
     public class InternalQnaApiClient : ApiClientBase<InternalQnaApiClient>, IInternalQnaApiClient
     {
-        public InternalQnaApiClient(ILogger<InternalQnaApiClient> logger, IConfigurationService configurationService, IQnaTokenService tokenService) : base(logger)
+        public InternalQnaApiClient(HttpClient httpClient, ILogger<InternalQnaApiClient> logger, IQnaTokenService tokenService) : base(httpClient, logger)
         {
-            var _config = configurationService.GetConfig().Result;
-
-            if (_httpClient.BaseAddress == null)
-            {
-                _httpClient.BaseAddress = new Uri(_config.QnaApiAuthentication.ApiBaseAddress);
-            }
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken());
         }
 

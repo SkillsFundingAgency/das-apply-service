@@ -1,11 +1,9 @@
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.InternalApi.Types;
@@ -28,12 +26,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
     public class UsersApiClient : ApiClientBase<UsersApiClient>, IUsersApiClient
     {
-        public UsersApiClient(ILogger<UsersApiClient> logger, IConfigurationService configurationService, ITokenService tokenService) : base(logger)
+        public UsersApiClient(HttpClient httpClient, ILogger<UsersApiClient> logger, ITokenService tokenService) : base(httpClient, logger)
         {
-            if (_httpClient.BaseAddress == null)
-            {
-                _httpClient.BaseAddress = new Uri(configurationService.GetConfig().Result.InternalApi.Uri);
-            }
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken());
         }
 

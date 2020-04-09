@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Configuration;
@@ -16,14 +17,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
     {
         private readonly IApplyConfig _config;
 
-        public ReferenceDataApiClient(ILogger<ReferenceDataApiClient> logger, IConfigurationService configurationService) : base(logger)
+        public ReferenceDataApiClient(HttpClient httpClient, ILogger<ReferenceDataApiClient> logger, IConfigurationService configurationService) : base(httpClient, logger)
         {
-            _config = configurationService.GetConfig().Result;
-
-            if (_httpClient.BaseAddress == null)
-            {
-                _httpClient.BaseAddress = new Uri(_config.ReferenceDataApiAuthentication.ApiBaseAddress);
-            }
+            _config = configurationService.GetConfig().GetAwaiter().GetResult();
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GetToken());
         }
 

@@ -17,17 +17,20 @@ namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
     /// <typeparam name="AC">The inherited ApiClient.</typeparam>
     public abstract class ApiClientBase<AC>
     {
+        private const string _acceptHeaderName = "Accept";
         protected const string _contentType = "application/json";
-        protected static readonly HttpClient _httpClient = new HttpClient();
+        
+        protected readonly HttpClient _httpClient;
         protected readonly ILogger<AC> _logger;
 
-        public ApiClientBase(ILogger<AC> logger)
+        public ApiClientBase(HttpClient httpClient, ILogger<AC> logger)
         {
+            _httpClient = httpClient;
             _logger = logger;
 
-            if (!_httpClient.DefaultRequestHeaders.Contains("Accept"))
+            if (!_httpClient.DefaultRequestHeaders.Contains(_acceptHeaderName))
             {
-                _httpClient.DefaultRequestHeaders.Add("Accept", _contentType);
+                _httpClient.DefaultRequestHeaders.Add(_acceptHeaderName, _contentType);
             }
         }
 

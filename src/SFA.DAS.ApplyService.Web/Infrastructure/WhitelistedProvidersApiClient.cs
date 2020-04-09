@@ -1,20 +1,15 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     public class WhitelistedProvidersApiClient : ApiClientBase<WhitelistedProvidersApiClient>, IWhitelistedProvidersApiClient
     {
-        public WhitelistedProvidersApiClient(ILogger<WhitelistedProvidersApiClient> logger, IConfigurationService configurationService, ITokenService tokenService) : base(logger)
+        public WhitelistedProvidersApiClient(HttpClient httpClient, ILogger<WhitelistedProvidersApiClient> logger, ITokenService tokenService) : base(httpClient, logger)
         {
-            if (_httpClient.BaseAddress == null)
-            {
-                _httpClient.BaseAddress = new Uri(configurationService.GetConfig().Result.InternalApi.Uri);
-            }
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken());
         }
 

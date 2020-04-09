@@ -1,11 +1,10 @@
 ﻿namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
     using Microsoft.Extensions.Logging;
-    using System;
     using System.Collections.Generic;
+    using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
-    using SFA.DAS.ApplyService.Configuration;
     using SFA.DAS.ApplyService.Domain.Roatp;
     using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
     using SFA.DAS.ApplyService.InternalApi.Models.Ukrlp;
@@ -13,14 +12,8 @@
 
     public class RoatpApiClient : ApiClientBase<RoatpApiClient>, IRoatpApiClient
     {
-        public RoatpApiClient(ILogger<RoatpApiClient> logger, IConfigurationService configurationService, IRoatpTokenService tokenService) : base(logger)
+        public RoatpApiClient(HttpClient httpClient, ILogger<RoatpApiClient> logger, IRoatpTokenService tokenService) : base(httpClient, logger)
         {
-            var _config = configurationService.GetConfig().Result;
-
-            if (_httpClient.BaseAddress == null)
-            {
-                _httpClient.BaseAddress = new Uri(_config.RoatpApiAuthentication.ApiBaseAddress);
-            }
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken());
         }
 

@@ -97,12 +97,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
 
-            services.AddHttpClient<CompaniesHouseApiClient>("CompaniesHouseApiClient", config =>
-            {
-                config.BaseAddress = new Uri(_applyConfig.CompaniesHouseApiAuthentication.ApiBaseAddress); //  "https://api.companieshouse.gov.uk"
-                config.DefaultRequestHeaders.Add("Accept", "Application/json");
-            })
-            .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+            ConfigHttpClients(services);
 
             services.Configure<RequestLocalizationOptions>(options =>
             {
@@ -111,8 +106,7 @@ namespace SFA.DAS.ApplyService.InternalApi
                 options.SupportedUICultures = new List<CultureInfo> { new CultureInfo("en-GB") };
                 options.RequestCultureProviders.Clear();
             });
-            
-            
+
             IMvcBuilder mvcBuilder;
             if (_env.IsDevelopment())
                 mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
@@ -181,7 +175,56 @@ namespace SFA.DAS.ApplyService.InternalApi
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
-        
+
+        private void ConfigHttpClients(IServiceCollection services)
+        {
+            var acceptHeaderName = "Accept";
+            var acceptHeaderValue = "application/json";
+            var handlerLifeTime = TimeSpan.FromMinutes(5);
+
+            services.AddHttpClient<AssessorServiceApiClient, AssessorServiceApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_applyConfig.AssessorServiceApiAuthentication.ApiBaseAddress);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<ProviderRegisterApiClient, ProviderRegisterApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_applyConfig.ProviderRegisterApiAuthentication.ApiBaseAddress);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<ReferenceDataApiClient, ReferenceDataApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_applyConfig.ReferenceDataApiAuthentication.ApiBaseAddress);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<CompaniesHouseApiClient, CompaniesHouseApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_applyConfig.CompaniesHouseApiAuthentication.ApiBaseAddress);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_applyConfig.RoatpApiAuthentication.ApiBaseAddress);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<IInternalQnaApiClient, InternalQnaApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_applyConfig.QnaApiAuthentication.ApiBaseAddress);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+        }
+
         private void ConfigureDependencyInjection(IServiceCollection services)
         {
             ServiceCollectionExtensions.RegisterAllTypes<IValidator>(services, new[] { typeof(IValidator).Assembly });
@@ -210,12 +253,6 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<CharityCommissionApiClient, CharityCommissionApiClient>();
             // End of SOAP Services
 
-            services.AddTransient<AssessorServiceApiClient, AssessorServiceApiClient>();
-            services.AddTransient<ProviderRegisterApiClient, ProviderRegisterApiClient>();
-            services.AddTransient<ReferenceDataApiClient, ReferenceDataApiClient>();
-
-            services.AddTransient<IRoatpApiClient, RoatpApiClient>();
-            services.AddTransient<IInternalQnaApiClient, InternalQnaApiClient>();
             services.AddTransient<IQnaTokenService, QnaTokenService>();
             services.AddTransient<IRoatpTokenService, RoatpTokenService>();
             services.AddTransient<IGatewayApiChecksService, GatewayApiChecksService>();

@@ -1,24 +1,18 @@
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     using Microsoft.Extensions.Logging;
-    using System;
     using System.Net;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
-    using SFA.DAS.ApplyService.Configuration;
     using SFA.DAS.ApplyService.InternalApi.Types;
     using SFA.DAS.ApplyService.InternalApi.Types.CharityCommission;
     using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 
     public class CharityCommissionApiClient : ApiClientBase<CharityCommissionApiClient>, ICharityCommissionApiClient
     {
-        public CharityCommissionApiClient(ILogger<CharityCommissionApiClient> logger, IConfigurationService configurationService, ITokenService tokenService) : base(logger)
+        public CharityCommissionApiClient(HttpClient httpClient, ILogger<CharityCommissionApiClient> logger, ITokenService tokenService) : base(httpClient, logger)
         {
-            if (_httpClient.BaseAddress == null)
-            {
-                _httpClient.BaseAddress = new Uri(configurationService.GetConfig().Result.InternalApi.Uri);
-            }
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken());
         }
 

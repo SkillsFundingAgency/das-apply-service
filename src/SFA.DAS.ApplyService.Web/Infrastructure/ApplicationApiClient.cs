@@ -10,7 +10,6 @@ using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
@@ -21,12 +20,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     public class ApplicationApiClient : ApiClientBase<ApplicationApiClient>, IApplicationApiClient
     {
-        public ApplicationApiClient(ILogger<ApplicationApiClient> logger, IConfigurationService configurationService, ITokenService tokenService) : base(logger)
+        public ApplicationApiClient(HttpClient httpClient, ILogger<ApplicationApiClient> logger, ITokenService tokenService) : base(httpClient, logger)
         {
-            if (_httpClient.BaseAddress == null)
-            {
-                _httpClient.BaseAddress = new Uri(configurationService.GetConfig().Result.InternalApi.Uri);
-            }
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken());
         }
 

@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.InternalApi.Types;
@@ -13,12 +13,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     public class OrganisationApiClient : ApiClientBase<OrganisationApiClient>, IOrganisationApiClient
     {
-        public OrganisationApiClient(ILogger<OrganisationApiClient> logger, IConfigurationService configurationService, ITokenService tokenService) : base(logger)
+        public OrganisationApiClient(HttpClient httpClient, ILogger<OrganisationApiClient> logger, ITokenService tokenService) : base(httpClient, logger)
         {
-            if (_httpClient.BaseAddress == null)
-            {
-                _httpClient.BaseAddress = new Uri(configurationService.GetConfig().Result.InternalApi.Uri);
-            }
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken());
         }
 

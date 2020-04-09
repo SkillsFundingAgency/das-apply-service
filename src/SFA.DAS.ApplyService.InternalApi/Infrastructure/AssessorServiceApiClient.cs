@@ -9,6 +9,7 @@ using SFA.DAS.ApplyService.InternalApi.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
@@ -19,15 +20,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
         private readonly IApplyConfig _config;
         private readonly IHostingEnvironment _hostingEnvironment;
 
-        public AssessorServiceApiClient(ILogger<AssessorServiceApiClient> logger, IConfigurationService configurationService, IHostingEnvironment hostingEnvironment) : base(logger)
+        public AssessorServiceApiClient(HttpClient httpClient, ILogger<AssessorServiceApiClient> logger, IConfigurationService configurationService, IHostingEnvironment hostingEnvironment) : base(httpClient, logger)
         {
-            _config = configurationService.GetConfig().Result;
+            _config = configurationService.GetConfig().GetAwaiter().GetResult();
             _hostingEnvironment = hostingEnvironment;
-
-            if (_httpClient.BaseAddress == null)
-            {
-                _httpClient.BaseAddress = new Uri(_config.AssessorServiceApiAuthentication.ApiBaseAddress);
-            }
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GetToken());
         }
 
