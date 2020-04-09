@@ -217,12 +217,13 @@ namespace SFA.DAS.ApplyService.Infrastructure.ApiClients
             {
                 var httpMethod = response.RequestMessage.Method.ToString();
                 var statusCode = (int)response.StatusCode;
+                var reasonPhrase = response.ReasonPhrase;
                 var requestUri = response.RequestMessage.RequestUri;
 
                 var responseContent = await response.Content.ReadAsStringAsync();
                 var message = TryParseJson<ApiError>(responseContent, out var apiError) ? apiError?.Message : responseContent;
 
-                _logger.LogError($"HTTP {statusCode} || {httpMethod}: {requestUri} || Message: {message}");
+                _logger.LogError($"HTTP {statusCode} {reasonPhrase} || {httpMethod}: {requestUri} || Message: {message}");
             }
         }
 
