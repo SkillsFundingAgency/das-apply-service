@@ -55,8 +55,21 @@
                                     @foreach (var pg in pagesWithNewFeedback.OrderBy(p => p.PageId))
                                     {
                                         <li class="app-task-list__item">
-                                            <a aria-describedby="feedback-completed" class="app-task-list__task-name" asp-action="Page" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId"
-                                               asp-route-sectionId="@applicationSection.SectionId" asp-route-pageId="@pg.PageId" asp-route-redirectAction="Feedback">@pg.LinkTitle</a>
+                                            <span class="app-task-list__task-name">
+                                                <a
+                                                    aria-describedby="feedback-completed"
+                                                    class="govuk-link"
+                                                    asp-action="Page"
+                                                    asp-controller="Application"
+                                                    asp-route-applicationId="@Model.ApplicationId"
+                                                    asp-route-sequenceId="@Model.SequenceId"
+                                                    asp-route-sectionId="@applicationSection.SectionId"
+                                                    asp-route-pageId="@pg.PageId"
+                                                    asp-route-redirectAction="Feedback"
+                                                >
+                                                    @pg.LinkTitle
+                                                </a>
+                                            </span>
                                             @if (pg.AllFeedbackIsCompleted)
                                             {
                                                 <strong class="govuk-tag app-task-list__task-completed" id="feedback-completed">Completed</strong>

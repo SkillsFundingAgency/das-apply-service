@@ -21,10 +21,15 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
     /// There is a Web-Friendly version located at: https://beta.companieshouse.gov.uk/
     /// </summary>
     public class CompaniesHouseApiClient
-    {
+    { 
         private readonly HttpClient _client;
         private readonly ILogger<CompaniesHouseApiClient> _logger;
         private readonly IApplyConfig _config;
+
+        public CompaniesHouseApiClient()
+        {
+
+        }
 
         public CompaniesHouseApiClient(HttpClient client, ILogger<CompaniesHouseApiClient> logger, IConfigurationService configurationService)
         {
@@ -33,7 +38,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             _config = configurationService.GetConfig().Result;
         }
 
-        public async Task<ApiResponse<Company>> GetCompany(string companyNumber)
+        public async virtual Task<ApiResponse<Company>> GetCompany(string companyNumber)
         {
             var company = await GetCompanyDetails(companyNumber);
 

@@ -29,24 +29,25 @@ namespace SFA.DAS.ApplyService.Application.Apply.Submit
 
                 if (application.ApplyData != null && submittingContact != null)
                 {
-                    if (application.ApplyData.ApplyDetails == null)
-                    {
-                        application.ApplyData.ApplyDetails = new ApplyDetails();
-                    }
+                    application.ApplyData.ApplyDetails = request.ApplyData.ApplyDetails;
+                    application.ApplyData.Sequences = request.ApplyData.Sequences;
 
                     if (string.IsNullOrWhiteSpace(application.ApplyData.ApplyDetails.ReferenceNumber))
                     {
                         application.ApplyData.ApplyDetails.ReferenceNumber = await _applyRepository.GetNextRoatpApplicationReference();
                     }
-
-                    if (application.ApplyData.ApplyDetails.ProviderRoute < 1)
-                    {
-                        application.ApplyData.ApplyDetails.ProviderRoute = request.ProviderRoute;
-                    }
-
+                    
                     application.ApplyData.ApplyDetails.ApplicationSubmittedOn = DateTime.UtcNow;
                     application.ApplyData.ApplyDetails.ApplicationSubmittedBy = submittingContact.Id;
 
+                    foreach(var sequence in application.ApplyData.Sequences)
+                    {
+                        if (!sequence.NotRequired)
+                        {
+                            sequence.Status = ApplicationStatus.Submitted;
+                        }
+                    }
+                    
                     await _applyRepository.SubmitApplication(application.ApplicationId, application.ApplyData, submittingContact.Id);
 
                     return true;

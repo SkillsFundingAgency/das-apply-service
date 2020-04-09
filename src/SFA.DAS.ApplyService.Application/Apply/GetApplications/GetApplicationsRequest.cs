@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using MediatR;
+using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply.GetApplications
