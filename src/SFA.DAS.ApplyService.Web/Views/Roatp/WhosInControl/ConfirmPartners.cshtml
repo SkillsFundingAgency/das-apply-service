@@ -9,76 +9,76 @@
 
 }
 
-@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
+<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
 
+@*
+<form asp-controller="RoatpWhosInControlApplication" asp-action="@Model.BackAction" method="get" name="backForm">
+    <input type="hidden" asp-for="ApplicationId" />
+    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+</form>
+*@
 
-@*<div class="grid-row">
-    <form asp-controller="RoatpWhosInControlApplication" asp-action="@Model.BackAction" method="get" name="backForm">
-        @Html.HiddenFor(x => x.ApplicationId)
-        <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
-    </form>
-</div>*@
+<main class="govuk-main-wrapper " id="main-content" role="main">
 
-<div class="govuk-width-container">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-    <main class="govuk-main-wrapper " id="main-content" role="main">
-
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-
-                <span class="govuk-caption-l">@Model.SectionTitle</span>
-                <h1 class="govuk-heading-l">Confirm your organisation's partners</h1>
-            </div>
+            <span class="govuk-caption-l">@Model.SectionTitle</span>
+            <h1 class="govuk-heading-xl">Confirm your organisation's partners</h1>
         </div>
+    </div>
 
-        <table class="govuk-table">
+    <table class="govuk-table">
 
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    @foreach (var title in Model.PartnerData.HeadingTitles)
-                    {
-                        <th class="govuk-table__header" scope="col">@Html.Raw(title)</th>
-                    }
-                    <th class="govuk-table__header" scope="col"></th>
-                    <th class="govuk-table__header" scope="col"></th>
-                </tr>
-            </thead>
-            <tbody class="govuk-table_body">
-                @for (var index = 0; index < Model.PartnerData.DataRows.Count; index++)
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                @foreach (var title in Model.PartnerData.HeadingTitles)
                 {
-                    <tr class="govuk-table__row">
-                        @foreach (var column in Model.PartnerData.DataRows[index].Columns)
-                        {
-                            <td class="govuk-table__cell">@column</td>
-                        }
-                        <td class="govuk-table__cell"><a href="@Url.Action("EditPartner", "RoatpWhosInControlApplication", new { Model.ApplicationId, index })">Change</a></td>
-                        <td class="govuk-table__cell"><a href="@Url.Action("RemovePartner", "RoatpWhosInControlApplication", new { Model.ApplicationId, index })">Remove</a></td>
-                    </tr>
+                    <th class="govuk-table__header" scope="col">@Html.Raw(title)</th>
                 }
-            </tbody>
-        </table>
-        @if (Model.PartnerData.DataRows.Count < ConfirmPartnersViewModel.MaximumNumberOfPartners)
-        {
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-two-thirds">
-                    <p class="govuk-body">
-                        <a class="govuk-link" href="@Url.Action("PartnershipType", "RoatpWhosInControlApplication", new { Model.ApplicationId })">Add another partner</a>
-                    </p>
-                </div>
-            </div>
-        }
+                <th class="govuk-table__header" scope="col"></th>
+                <th class="govuk-table__header" scope="col"></th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table_body">
+            @for (var index = 0; index < Model.PartnerData.DataRows.Count; index++)
+            {
+                <tr class="govuk-table__row">
+                    @foreach (var column in Model.PartnerData.DataRows[index].Columns)
+                    {
+                        <td class="govuk-table__cell">@column</td>
+                    }
+                    <td class="govuk-table__cell govuk-table__cell--numeric">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-action="EditPartner" asp-controller="RoatpWhosInControlApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-index="@index">Change<span class="govuk-visually-hidden"> partner</span></a>
+                    </td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-action="RemovePartner" asp-controller="RoatpWhosInControlApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-index="@index">Remove<span class="govuk-visually-hidden"> partner</span></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (Model.PartnerData.DataRows.Count < ConfirmPartnersViewModel.MaximumNumberOfPartners)
+    {
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <form method="post" asp-action="CompletePeopleInControlSection">
-                    @Html.HiddenFor(x => x.ApplicationId)
-                    @Html.HiddenFor(x => x.GetHelpAction)
-
-                    <button type="submit" class="govuk-button">Confirm and continue</button>
-                </form>
+                <p class="govuk-body">
+                    <a class="govuk-link" asp-action="PartnershipType" asp-controller="RoatpWhosInControlApplication" asp-route-applicationId="@Model.ApplicationId">Add another partner</a>
+                </p>
             </div>
         </div>
-    </main>
-    <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
-</div>
+    }
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="post" asp-action="CompletePeopleInControlSection">
+                <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="GetHelpAction" />
+
+                <button type="submit" class="govuk-button">Confirm and continue</button>
+            </form>
+            <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
+        </div>
+    </div>
+</main>
 
 

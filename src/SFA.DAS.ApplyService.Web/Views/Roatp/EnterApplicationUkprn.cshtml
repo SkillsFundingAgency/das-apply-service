@@ -7,78 +7,75 @@
     bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
 }
 
-@{ await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml"); }
+<partial name="~/Views/Roatp/PreambleHeader.cshtml" />
 
-@*<div class="grid-row">
-    <form asp-controller="RoatpApplicationPreamble" asp-action="TermsAndConditions" method="get" name="backForm">
-        <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
-    </form>
-</div>*@
+@*
+<form asp-controller="RoatpApplicationPreamble" asp-action="TermsAndConditions" method="get" name="backForm">
+    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+</form>
+*@
 
-@if (!ViewData.ModelState.IsValid || showErrors)
-{
-    <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-        <h2 class="govuk-error-summary__title" id="error-summary-title">
-            There is a problem
-        </h2>
-        <div class="govuk-error-summary__body">
-            <ul class="govuk-list govuk-error-summary__list">
-                @foreach(var error in Model.ErrorMessages)
-                {
-                    <li><a href="#@error.Field">@error.ErrorMessage</a></li>
-                }
-            </ul>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @if (!ViewData.ModelState.IsValid || showErrors)
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            @foreach(var error in Model.ErrorMessages)
+                            {
+                                <li><a href="#@error.Field">@error.ErrorMessage</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+            <h1 class="govuk-heading-xl">What is your organisation's UK provider reference number (UKPRN)?</h1>
+            <p class="govuk-body">This is an 8-digit number from the UK Register of Learning Providers (UKRLP).</p>
         </div>
     </div>
-}
 
-    <div class="govuk-width-container">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="post" asp-action="SearchByUkprn" asp-controller="RoatpApplicationPreamble">
+                <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="SequenceId" />
+                <input type="hidden" asp-for="SectionId" />
+                <input type="hidden" asp-for="PageId" />
 
-        <main class="govuk-main-wrapper " id="main-content" role="main">
+                <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="UKPRN" sfa-validationerror-class="form-group-error">
+                    @if (showErrors)
+                    {
+                        <span class="govuk-error-message">
+                            @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "UKPRN")?.ErrorMessage)
+                        </span>
+                    }
 
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-two-thirds">
-                    <h1 class="govuk-heading-l">What is your organisation's UK provider reference number (UKPRN)?</h1>
-                    <p class="govuk-body">This is an 8-digit number from the UK Register of Learning Providers (UKRLP).</p>
+                    <label for="UKPRN" class="govuk-label">UKPRN</label>
+
+                    <input id="UKPRN" name="UKPRN" type="text" class="govuk-input govuk-!-width-one-third" asp-for="UKPRN"
+                            sfa-validation-for="UKPRN" sfa-validationerror-class="form-control-error" />
                 </div>
-            </div>
 
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-two-thirds">
-                    <form method="post" asp-action="SearchByUkprn" asp-controller="RoatpApplicationPreamble">
-
-                        <div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="UKPRN" sfa-validationerror-class="form-group-error">
-                            @if (showErrors)
-                            {
-                                <span class="govuk-error-message">
-                                    @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "UKPRN")?.ErrorMessage)
-                                </span>
-                            }
-
-                            <label for="UKPRN" class="govuk-label">UKPRN</label>
-
-                            <input id="UKPRN" name="UKPRN" type="text" class="govuk-input govuk-!-width-one-third" asp-for="UKPRN"
-                                   sfa-validation-for="UKPRN" sfa-validationerror-class="form-control-error" />
-                        </div>
-
-                        <details class="govuk-details" role="group">
-                            <summary class="govuk-details__summary" role="button" aria-controls="details-content-ukprn" aria-expanded="false">
-                                <span class="govuk-details__summary-text">
-                                    I do not have a UKPRN
-                                </span>
-                            </summary>
-                            <div class="govuk-details__text" id="details-content-ukprn" aria-hidden="true">
-                                <p>To get a UKPRN, you’ll need to <a href="https://www.ukrlp.co.uk/" target="_blank">register with the UKRLP (opens in a new window or tab)</a>.</p>
-                                <p>After you’ve registered and received a UKPRN, sign back in to continue with this application.</p>
-                            </div>
-                        </details>
-                        @Html.HiddenFor(x => x.PageId)
-                        @Html.HiddenFor(x => x.SequenceId)
-                        @Html.HiddenFor(x => x.SectionId)
-                        <input type="submit" class="govuk-button" value="Save and continue" />
-                    </form>
-                </div>
-            </div>
-        </main>
-        <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
+                <details class="govuk-details" role="group">
+                    <summary class="govuk-details__summary" role="button" aria-controls="details-content-ukprn" aria-expanded="false">
+                        <span class="govuk-details__summary-text">
+                            I do not have a UKPRN
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text" id="details-content-ukprn" aria-hidden="true">
+                        <p>To get a UKPRN, you’ll need to <a href="https://www.ukrlp.co.uk/" target="_blank" class="govuk-link">register with the UKRLP (opens in a new window or tab)</a>.</p>
+                        <p>After you’ve registered and received a UKPRN, sign back in to continue with this application.</p>
+                    </div>
+                </details>
+                <input type="submit" class="govuk-button" value="Save and continue" />
+            </form>
+            <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
+        </div>
     </div>
+</main>
