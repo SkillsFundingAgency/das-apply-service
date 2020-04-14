@@ -27,7 +27,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         private readonly ILogger<QnaApiClient> _logger;
         private readonly IQnaTokenService _tokenService;
         private static readonly HttpClient _httpClient = new HttpClient();
-        private readonly RetryPolicy<HttpResponseMessage> _retryPolicy;
+        private readonly AsyncRetryPolicy<HttpResponseMessage> _retryPolicy;
         private readonly string _environmentName;
 
         protected readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
