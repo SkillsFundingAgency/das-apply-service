@@ -24,8 +24,7 @@
             }
         </span>
     }
-    <input id="PersonInControlName" name="PersonInControlName" type="text" class="govuk-input @nameError" asp-for="PersonInControlName"
-           sfa-validation-for="PartnerName" sfa-validationerror-class="form-control-error" />
+    <input type="text" class="govuk-input @nameError" asp-for="PersonInControlName" sfa-validation-for="PartnerName" sfa-validationerror-class="form-control-error" />
 </div>
 
 @if (!Model.DateOfBirthOptional)

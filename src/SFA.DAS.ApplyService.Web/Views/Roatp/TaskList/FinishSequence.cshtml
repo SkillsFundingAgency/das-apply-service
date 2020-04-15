@@ -7,7 +7,8 @@
 
     <li>
         <h2 class="app-task-list__section">
-            @Html.Raw(Convert.ToInt32(applicationSequence.SequenceId)). @Html.Raw(applicationSequence.Description)
+            <span class="app-task-list__section-number">@Html.Raw(applicationSequence.SequenceId). </span>
+            @Html.Raw(applicationSequence.Description)
         </h2>
         <ul class="app-task-list__items">
             @foreach (var section in applicationSequence.Sections.OrderBy(sec => sec.SectionId))
@@ -26,9 +27,18 @@
                     @if (Model.ApplicationSequencesCompleted() && Model.PreviousSectionCompleted(applicationSequence.SequenceId, section.SectionId))
                     {
                         <li class="app-task-list__item">
-                            <a class="app-task-list__task_name" href="@Url.Action("Section", "RoatpApplication", new { section.ApplicationId, section.SequenceId, section.SectionId })">
-                                @Html.Raw(section.Title)
-                            </a>
+                            <span class="app-task-list__task-name">
+                                <a
+                                    class="govuk-link"
+                                    asp-action="Section"
+                                    asp-controller="RoatpApplication"
+                                    asp-route-applicationId="@(section.ApplicationId)"
+                                    asp-route-sequenceId="@(section.SequenceId)"
+                                    asp-route-sectionId="@(section.SectionId)"
+                                >
+                                    @Html.Raw(section.Title)
+                                </a>
+                            </span>
                             <strong class="govuk-tag app-task-list__task-@Model.FinishCss(section.SectionId)" id="completed"> @Model.FinishSectionStatus(section.SectionId)</strong>
                         </li>
                     }
@@ -44,9 +54,11 @@
             @if (Model.ApplicationSequencesCompleted() && Model.PreviousSectionCompleted(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.SubmitApplication)) 
             {
                 <li class="app-task-list__item">
-                    <a class="app-task-list__task_name" href="@Url.Action("SubmitApplication", "RoatpApplication", new { Model.ApplicationId })">
-                        Submit application
-                    </a>
+                    <span class="app-task-list__task-name">
+                        <a class="govuk-link" asp-action="SubmitApplication" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">
+                            Submit application
+                        </a>
+                    </span>
                     @{
                         var finishSectionCss = "";
                         if (Model.SectionStatus(RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.TermsAndConditions) == "Completed")

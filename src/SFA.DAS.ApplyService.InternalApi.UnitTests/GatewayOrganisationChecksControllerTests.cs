@@ -132,7 +132,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _qnaApiClient
                .Setup(x => x.GetAnswerValue(_applicationId,
                                            RoatpWorkflowSequenceIds.YourOrganisation,
-                                           RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed,
+                                           RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails,
                                            RoatpWorkflowPageIds.WebsiteManuallyEntered,
                                            RoatpYourOrganisationQuestionIdConstants.WebsiteManuallyEntered)).ReturnsAsync(applyWebsite);
         }

@@ -65,7 +65,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             {
                 applyWebsite = await _qnaApiClient.GetAnswerValue(applicationId,
                                                                     RoatpWorkflowSequenceIds.YourOrganisation,
-                                                                    RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed,
+                                                                    RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails,
                                                                     RoatpWorkflowPageIds.WebsiteManuallyEntered,
                                                                     RoatpYourOrganisationQuestionIdConstants.WebsiteManuallyEntered);
                 if (!string.IsNullOrEmpty(applyWebsite))

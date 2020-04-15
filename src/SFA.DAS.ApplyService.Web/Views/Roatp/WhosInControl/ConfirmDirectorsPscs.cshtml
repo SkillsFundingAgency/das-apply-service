@@ -1,29 +1,24 @@
 ﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ConfirmDirectorsPscsViewModel
 
-@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
+<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
 
 
-@*<div class="grid-row">
-    <a class="govuk-back-link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Back</a>
-</div>*@
+<a class="govuk-back-link" asp-action="TaskList" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">Back</a>
+
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
             <span class="govuk-caption-l">@Model.SectionTitle</span>
-            <h1 class="govuk-heading-l">Confirm who's in control</h1>
+            <h1 class="govuk-heading-xl">Confirm who's in control</h1>
             <p class="govuk-body">These are the details we found on Companies House</p>
 
             <form method="post" asp-action="DirectorsPscsConfirmed" novalidate enctype="multipart/form-data">
+                <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="GetHelpAction" />
 
-                @Html.HiddenFor(x => x.ApplicationId)
-                @Html.HiddenFor(x => x.GetHelpAction)
-
-                @{ await Html.RenderPartialAsync("~/Views/Roatp/WhosInControl/PeopleInControl.cshtml", Model.CompaniesHouseDirectors); }
-
-                @{ await Html.RenderPartialAsync("~/Views/Roatp/WhosInControl/PeopleInControl.cshtml", Model.CompaniesHousePscs); }
-
-                <button type="submit" class="govuk-button">Confirm and continue</button>
+                <partial name="~/Views/Roatp/WhosInControl/PeopleInControl.cshtml" for="CompaniesHouseDirectors" />
+                <partial name="~/Views/Roatp/WhosInControl/PeopleInControl.cshtml" for="CompaniesHousePscs" />
 
                 <details class="govuk-details">
                     <summary class="govuk-details__summary">
@@ -33,7 +28,7 @@
                     </summary>
                     <div class="govuk-details__text">
                         <p class="govuk-body">
-                            Contact Companies House to <a href="https://www.gov.uk/file-changes-to-a-company-with-companies-house" target="_blank">change these details (opens in a new window or tab)</a>.
+                            Contact Companies House to <a href="https://www.gov.uk/file-changes-to-a-company-with-companies-house" target="_blank" class="govuk-link">change these details (opens in a new window or tab)</a>.
                         </p>
                         <p class="govuk-body">
                             After your changes have been confirmed, sign back in to continue with this application.
@@ -41,8 +36,10 @@
                     </div>
                 </details>
 
+                <button type="submit" class="govuk-button">Confirm and continue</button>
+
             </form>
+            <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
         </div>
     </div>
 </main>
-<partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
