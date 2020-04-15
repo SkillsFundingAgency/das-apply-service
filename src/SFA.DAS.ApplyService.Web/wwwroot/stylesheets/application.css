@@ -18,6 +18,22 @@
   }
 }
 
+.das-lower-button-link {
+    display: block;
+    font-size: 16px;
+    font-size: 1rem;
+    line-height: 1.1875rem;
+    margin-bottom: 22px;
+}
+
+@media (min-width: 40.0625em) {
+    .das-lower-button-link {
+        font-size: 19px;
+        font-size: 1.1875rem;
+        line-height: 1;
+    }
+}
+
 .govuk-button--looks-like-link {
   display: block;
   padding: 0;

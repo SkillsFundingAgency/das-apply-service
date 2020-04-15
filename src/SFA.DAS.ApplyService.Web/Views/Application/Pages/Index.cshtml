@@ -278,19 +278,9 @@
                             {
                                 pageId = link.LinkPageId;
                             }
-
-                            if (!String.IsNullOrWhiteSpace(link.CssClasses))
-                            {
-
-                                <a class="govuk-link @link.CssClasses" asp-action="@link.Action" asp-controller="@link.Controller" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@pageId">@link.Caption</a>
-
-                            }
-                            else
-                            {
-                                <p class="govuk-body">
-                                    <a class="govuk-link" asp-action="@link.Action" asp-controller="@link.Controller" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@pageId">@link.Caption</a>
-                                </p>
-                            }
+                            
+                            <a class="govuk-link @link.CssClasses" asp-action="@link.Action" asp-controller="@link.Controller" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@pageId">@link.Caption</a>
+                                                        
                         }
                     }
 
