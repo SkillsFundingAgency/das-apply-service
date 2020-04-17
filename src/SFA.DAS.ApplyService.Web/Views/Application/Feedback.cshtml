@@ -45,7 +45,7 @@
                 @foreach (var applicationSection in Model.Sections.OrderBy(s => s.SectionId))
                 {
                     <li>
-                        <h2 id="@applicationSection.Id" class="govuk-heading-l">@applicationSection.LinkTitle</h2>
+                        <h2 id="@applicationSection.Id" class="app-task-list__section">@applicationSection.LinkTitle</h2>
                         @{
                             var pagesWithNewFeedback = applicationSection.QnAData.Pages.Where(p => p.HasNewFeedback);
 
