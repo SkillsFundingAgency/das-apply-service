@@ -134,6 +134,27 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<bool> UpdateGatewayReviewStatusAndComment(Guid applicationId, string gatewayReviewStatus, string gatewayReviewComment, string userName)
+        {
+            var applicationStatus = ApplicationStatus.GatewayAssessed;
+            if(gatewayReviewStatus.Equals(GatewayReviewStatus.AskForClarification))
+                applicationStatus = ApplicationStatus.Submitted;
+
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE [Apply]
+                                                   SET [ApplicationStatus] = @applicationStatus
+                                                      ,[GatewayReviewStatus] = @gatewayReviewStatus
+                                                      ,[GatewayReviewComment] = @gatewayReviewComment
+                                                      ,[UpdatedAt] = GetUTCDATE()
+                                                      ,[UpdatedBy] = @userName
+                                                 WHERE [ApplicationId] = @applicationId",
+                    new { applicationId, applicationStatus, gatewayReviewStatus, gatewayReviewComment, userName });
+            }
+
+            return await Task.FromResult(true);
+        }
+
         public async Task<bool> CanSubmitApplication(Guid applicationId)
         {
             var canSubmit = false;
@@ -312,8 +333,8 @@ namespace SFA.DAS.ApplyService.Data
                         new
                         {
                             applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
-                            gatewayReviewStatusApproved = GatewayReviewStatus.Approved,
-                            gatewayReviewStatusDeclined = GatewayReviewStatus.Declined
+                            gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
+                            gatewayReviewStatusDeclined = GatewayReviewStatus.Decline
                         })).ToList();
             }
         }
@@ -374,12 +395,12 @@ namespace SFA.DAS.ApplyService.Data
                 if(isGatewayApproved)
                 {
                     application.ApplicationStatus = ApplicationStatus.GatewayAssessed;
-                    application.GatewayReviewStatus = GatewayReviewStatus.Approved;
+                    application.GatewayReviewStatus = GatewayReviewStatus.Pass;
                 }
                 else
                 {
                     application.ApplicationStatus = ApplicationStatus.Rejected;
-                    application.GatewayReviewStatus = GatewayReviewStatus.Declined;
+                    application.GatewayReviewStatus = GatewayReviewStatus.Decline;
                 }
 
                 using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -961,7 +982,7 @@ namespace SFA.DAS.ApplyService.Data
                         new
                         {
                             applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
-                            gatewayReviewStatusApproved = GatewayReviewStatus.Approved
+                            gatewayReviewStatusApproved = GatewayReviewStatus.Pass
                         })).ToList();
             }
         }
