@@ -21,7 +21,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
         private readonly IInternalQnaApiClient _qnaApiClient;
         private readonly ILogger<GatewayApiChecksService> _logger;
 
-        public GatewayApiChecksService(CompaniesHouseApiClient companiesHouseApiClient, CharityCommissionApiClient charityCommissionApiClient
+        public GatewayApiChecksService(CompaniesHouseApiClient companiesHouseApiClient, CharityCommissionApiClient charityCommissionApiClient,
                                        IRoatpApiClient roatpApiClient, IInternalQnaApiClient qnaApiClient,
                                        ILogger<GatewayApiChecksService> logger)
         {
