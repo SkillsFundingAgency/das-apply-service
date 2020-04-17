@@ -17,12 +17,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
     {
         private readonly CompaniesHouseApiClient _companiesHouseApiClient;
         private readonly CharityCommissionApiClient _charityCommissionClient;
-        private readonly RoatpApiClient _roatpApiClient;
+        private readonly IRoatpApiClient _roatpApiClient;
         private readonly IInternalQnaApiClient _qnaApiClient;
         private readonly ILogger<GatewayApiChecksService> _logger;
 
-        public GatewayApiChecksService(CompaniesHouseApiClient companiesHouseApiClient, CharityCommissionApiClient charityCommissionApiClient,
-                                       RoatpApiClient roatpApiClient, IInternalQnaApiClient qnaApiClient,
+        public GatewayApiChecksService(CompaniesHouseApiClient companiesHouseApiClient, CharityCommissionApiClient charityCommissionApiClient
+                                       IRoatpApiClient roatpApiClient, IInternalQnaApiClient qnaApiClient,
                                        ILogger<GatewayApiChecksService> logger)
         {
             _companiesHouseApiClient = companiesHouseApiClient;
