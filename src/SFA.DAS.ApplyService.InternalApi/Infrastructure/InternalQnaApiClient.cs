@@ -121,7 +121,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                     }
                 }
             }
-
             return null;
         }
 
@@ -133,6 +132,33 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             var result = new FileStreamResult(fileStream, response.Content.Headers.ContentType.MediaType);
             result.FileDownloadName = response.Content.Headers.ContentDisposition.FileName;
             return result;
+        }
+
+        public async Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag, string questionId = null)
+        {
+            var answer = new Answer { QuestionId = questionId };
+
+            var questionTagData = await GetQuestionTag(applicationId, questionTag);
+            if (questionTagData != null)
+            {
+                answer.Value = questionTagData;
+            }
+
+            return answer;
+        }
+
+        public async Task<TabularData> GetTabularDataByTag(Guid applicationId, string questionTag)
+        {
+            var answer = await GetAnswerByTag(applicationId, questionTag);
+
+            if (answer?.Value == null)
+            {
+                return null;
+            }
+
+            var tabularData = JsonConvert.DeserializeObject<TabularData>(answer.Value);
+
+            return tabularData;
         }
     }
 }

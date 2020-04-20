@@ -225,7 +225,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string FinishCOA3Supporting = "COAPart3Supporting";
         public static string AddManagementHierarchy = "AddManagementHierarchy";
         public static string UKRLPPrimaryVerificationSource = "UKRLPPrimaryVerificationSource";
-
+        public static string UKRLPVerificationCompanyNumber = "UKRLPVerificationCompanyNumber";
+        public static string UKRLPVerificationCharityRegNumber = "UKRLPVerificationCharityRegNumber";
     }
 
     public static class RoatpPreambleQuestionBuilder
@@ -532,7 +533,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
         private static void CreateCompaniesHousePscData(ApplicationDetails applicationDetails, List<PreambleAnswer> questions)
         {
-            if (applicationDetails.CompanySummary.PersonsSignificationControl != null && applicationDetails.CompanySummary.PersonsSignificationControl.Count > 0)
+            if (applicationDetails.CompanySummary.PersonsWithSignificantControl != null && applicationDetails.CompanySummary.PersonsWithSignificantControl.Count > 0)
             {
                 var table = new TabularData
                 {
@@ -541,7 +542,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                     DataRows = new List<TabularDataRow>()
                 };
 
-                foreach (var person in applicationDetails.CompanySummary.PersonsSignificationControl)
+                foreach (var person in applicationDetails.CompanySummary.PersonsWithSignificantControl)
                 {
                     var dataRow = new TabularDataRow
                     {

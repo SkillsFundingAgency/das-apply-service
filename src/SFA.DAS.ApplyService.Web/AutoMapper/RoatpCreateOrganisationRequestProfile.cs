@@ -63,7 +63,7 @@ namespace SFA.DAS.ApplyService.Web.AutoMapper
                     Directors = Mapper.Map<List<DirectorInformation>>(source.CompanySummary.Directors),
                     PersonsSignificationControl =
                         Mapper.Map<List<PersonSignificantControlInformation>>(source.CompanySummary
-                            .PersonsSignificationControl),
+                            .PersonsWithSignificantControl),
                     ManualEntryRequired = source.CompanySummary.ManualEntryRequired
                 };
             }

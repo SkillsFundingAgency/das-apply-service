@@ -73,11 +73,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             await Task.WhenAll(hasDeliveredTrainingAsSubcontractorTask, contactFileNameTask);
 
-            return new SubcontractorDeclaration
+            var result = new SubcontractorDeclaration
             {
-                HasDeliveredTrainingAsSubcontractor = hasDeliveredTrainingAsSubcontractorTask.Result.ToUpper() == "YES",
+                HasDeliveredTrainingAsSubcontractor = hasDeliveredTrainingAsSubcontractorTask.Result?.ToUpper() == "YES",
                 ContractFileName = contactFileNameTask.Result
             };
+
+            return result;
         }
 
         [HttpGet("/Accreditation/{applicationId}/SubcontractDeclaration/ContractFile")]
