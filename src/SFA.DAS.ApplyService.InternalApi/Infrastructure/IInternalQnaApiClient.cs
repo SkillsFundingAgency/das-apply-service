@@ -12,5 +12,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
         Task<Page> GetPageBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId);
         Task<string> GetAnswerValue(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId);
         Task<string> GetAnswerValueFromActiveQuestion(Guid applicationId, int sequenceNo, int sectionNo, params PageAndQuestion[] possibleQuestions);
+
+        Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag, string questionId = null);
+
+        Task<TabularData> GetTabularDataByTag(Guid applicationId, string questionTag);
     }
 }
