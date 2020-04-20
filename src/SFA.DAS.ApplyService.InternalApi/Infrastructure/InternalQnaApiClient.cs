@@ -122,7 +122,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             return null;
         }
 
-        private string GetAnswerFromFurtherQuestions(Question question, Page pageContainingQuestion, string questionId)
+        private static string GetAnswerFromFurtherQuestions(Question question, Page pageContainingQuestion, string questionId)
         {
             if (question?.Input?.Options != null)
             {
