@@ -280,7 +280,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, List<Question> answeredQuestions)
         {
-            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId);
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId, pageId);
             if (!canUpdate)
             {
                 return RedirectToAction("TaskList", new { applicationId });
@@ -360,7 +360,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Skip(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
-            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId);
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId, pageId);
             if (!canUpdate)
             {
                 return RedirectToAction("TaskList", new { applicationId });
@@ -401,7 +401,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var redirectAction = vm.RedirectAction;
 
 
-            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId);
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId, pageId);
             if (!canUpdate)
             {
                 return RedirectToAction("TaskList", new { applicationId });
@@ -624,7 +624,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
         }
 
-        private async Task<bool> CanUpdateApplication(Guid applicationId, int? sequenceId = null, int? sectionId = null)
+        private async Task<bool> CanUpdateApplication(Guid applicationId, int? sequenceId = null, int? sectionId = null, string pageId = null)
         {
             bool canUpdate = false;
 
@@ -650,7 +650,19 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                             if (section != null)
                             {
-                                canUpdate = true;
+                                if (!string.IsNullOrWhiteSpace(pageId))
+                                {
+                                    var page = await _qnaApiClient.GetPage(applicationId, section.SectionId, pageId);
+                                    if (page != null && page.Active)
+                                    {
+                                        canUpdate = true;
+                                    }
+                                }
+                                else
+                                {
+                                    // No need to check the page
+                                    canUpdate = true;
+                                }
                             }
                         }
                         else
