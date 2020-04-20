@@ -12,7 +12,7 @@ using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
-    public class InternalQnaApiClient:IInternalQnaApiClient
+    public class InternalQnaApiClient : IInternalQnaApiClient
     {
         private readonly ILogger<InternalQnaApiClient> _logger;
         private readonly IQnaTokenService _tokenService;
@@ -119,8 +119,34 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                     }
                 }
             }
-
             return null;
+        }
+
+        public async Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag, string questionId = null)
+        {
+            var answer = new Answer { QuestionId = questionId };
+
+            var questionTagData = await GetQuestionTag(applicationId, questionTag);
+            if (questionTagData != null)
+            {
+                answer.Value = questionTagData;
+            }
+
+            return answer;
+        }
+
+        public async Task<TabularData> GetTabularDataByTag(Guid applicationId, string questionTag)
+        {
+            var answer = await GetAnswerByTag(applicationId, questionTag);
+
+            if (answer?.Value == null)
+            {
+                return null;
+            }
+
+            var tabularData = JsonConvert.DeserializeObject<TabularData>(answer.Value);
+
+            return tabularData;
         }
     }
 }
