@@ -114,6 +114,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             
             switch (application.ApplicationStatus)
             {
+                case ApplicationStatus.Cancelled:
+                    return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
                 case ApplicationStatus.Approved:
                     return View("~/Views/Application/Approved.cshtml", application);
                 case ApplicationStatus.Rejected:
@@ -280,7 +282,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, List<Question> answeredQuestions)
         {
-            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId);
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId, pageId);
             if (!canUpdate)
             {
                 return RedirectToAction("TaskList", new { applicationId });
@@ -360,7 +362,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Skip(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
-            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId);
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId, pageId);
             if (!canUpdate)
             {
                 return RedirectToAction("TaskList", new { applicationId });
@@ -401,7 +403,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var redirectAction = vm.RedirectAction;
 
 
-            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId);
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId, pageId);
             if (!canUpdate)
             {
                 return RedirectToAction("TaskList", new { applicationId });
@@ -624,7 +626,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
         }
 
-        private async Task<bool> CanUpdateApplication(Guid applicationId, int? sequenceId = null, int? sectionId = null)
+        private async Task<bool> CanUpdateApplication(Guid applicationId, int? sequenceId = null, int? sectionId = null, string pageId = null)
         {
             bool canUpdate = false;
 
@@ -650,7 +652,19 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                             if (section != null)
                             {
-                                canUpdate = true;
+                                if (!string.IsNullOrWhiteSpace(pageId))
+                                {
+                                    var page = await _qnaApiClient.GetPage(applicationId, section.SectionId, pageId);
+                                    if (page != null && page.Active)
+                                    {
+                                        canUpdate = true;
+                                    }
+                                }
+                                else
+                                {
+                                    // No need to check the page
+                                    canUpdate = true;
+                                }
                             }
                         }
                         else
@@ -894,7 +908,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             List<Answer> answers = new List<Answer>();
 
-            // These are special in that they drive other things and thus should not be deemed as an answer
             var excludedInputs = new List<string> { "postcodeSearch", "checkAll", "ApplicationId", "RedirectAction" };
 
             // Add answers from the Form post
@@ -1295,9 +1308,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 ApplicationId = model.ApplicationId,
                 ProviderRoute = Convert.ToInt32(providerRoute.Value),
-                ProviderRouteName = selectedProviderRoute?.RouteName,
+                ProviderRouteName = selectedProviderRoute?.RouteName,   
                 SubmittingContactId = User.GetUserId(),
-                ApplyData = application.ApplyData
+                ApplyData = application.ApplyData    
             };
 
             var submitResult = await _apiClient.SubmitApplication(submitApplicationRequest);

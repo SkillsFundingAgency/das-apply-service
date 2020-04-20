@@ -6,38 +6,34 @@
     Layout = "_Layout";
 }
 
-@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
+<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
 
-@*<div class="grid-row">
-    <form asp-controller="RoatpApplication" asp-action="TaskList" method="get" name="backForm">
-        @Html.HiddenFor(x => x.ApplicationId)
-        <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
-    </form>
-</div>*@
+@*
+<form asp-controller="RoatpApplication" asp-action="TaskList" method="get" name="backForm">
+    <input type="hidden" asp-for="ApplicationId" />
+    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+</form>
+*@
 
-<div class="govuk-width-container">
-
-    <main class="govuk-main-wrapper " id="main-content" role="main">
-
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-l">@title</h1>
-                <p class="govuk-body">
-                    If you change your UKPRN, you may be required to answer the following application questions again. This is because the information we get from UKRLP determines which application questions we ask you.
-                </p>
-                <p class="govuk-body">
-                    If you do not provide the correct UKPRN, your application may be rejected.
-                </p>
-                
-                <form method="post" asp-action="ConfirmChangeUkprn" asp-controller="RoatpApplicationPreamble">                      
-                    @Html.HiddenFor(x => x.ApplicationId)
-                    <div class="govuk-grid-row">
-                        <div class="govuk-grid-column-two-thirds">
-                            <input type="submit" class="govuk-button" value="Continue" />
-                        </div>
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">@title</h1>
+            <p class="govuk-body">
+                If you change your UKPRN, you may be required to answer the following application questions again. This is because the information we get from UKRLP determines which application questions we ask you.
+            </p>
+            <p class="govuk-body">
+                If you do not provide the correct UKPRN, your application may be rejected.
+            </p>
+            
+            <form method="post" asp-action="ConfirmChangeUkprn" asp-controller="RoatpApplicationPreamble">                      
+                <input type="hidden" asp-for="ApplicationId" />
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-two-thirds">
+                        <input type="submit" class="govuk-button" value="Continue" />
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
-    </main>
-</div>
+    </div>
+</main>

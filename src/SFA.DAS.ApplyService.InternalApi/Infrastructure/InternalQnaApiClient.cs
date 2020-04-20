@@ -79,11 +79,18 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                         foreach (var pageOfAnswers in pageContainingQuestion.PageOfAnswers)
                         {
                             var pageAnswer = pageOfAnswers.Answers.FirstOrDefault(x => x.QuestionId == questionId);
-
-                            if (pageAnswer != null)
+                            if(pageAnswer != null)
                             {
                                 return pageAnswer.Value;
                             }
+                        }
+                    }
+                    else // In case question/answer is buried in FurtherQuestions
+                    {
+                        var furtherQuestionAnswer = GetAnswerFromFurtherQuestions(question, pageContainingQuestion, questionId);
+                        if(furtherQuestionAnswer != null)
+                        {
+                            return furtherQuestionAnswer;
                         }
                     }
                 }
@@ -100,6 +107,58 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             var result = new FileStreamResult(fileStream, response.Content.Headers.ContentType.MediaType);
             result.FileDownloadName = response.Content.Headers.ContentDisposition.FileName;
             return result;
+        }
+
+        private string GetAnswerFromFurtherQuestions(Question question, Page pageContainingQuestion, string questionId)
+        {
+            if (question?.Input?.Options != null)
+            {
+                foreach (var option in question?.Input?.Options)
+                {
+                    foreach (var furtherQuestion in option?.FurtherQuestions ?? Enumerable.Empty<Question>())
+                    {
+                        if (furtherQuestion.QuestionId == questionId && pageContainingQuestion.PageOfAnswers != null)
+                        {
+                            foreach (var pageOfAnswers in pageContainingQuestion.PageOfAnswers)
+                            {
+                                var pageAnswer = pageOfAnswers.Answers.FirstOrDefault(x => x.QuestionId == questionId);
+                                if (pageAnswer != null)
+                                {
+                                    return pageAnswer.Value;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        public async Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag, string questionId = null)
+        {
+            var answer = new Answer { QuestionId = questionId };
+
+            var questionTagData = await GetQuestionTag(applicationId, questionTag);
+            if (questionTagData != null)
+            {
+                answer.Value = questionTagData;
+            }
+
+            return answer;
+        }
+
+        public async Task<TabularData> GetTabularDataByTag(Guid applicationId, string questionTag)
+        {
+            var answer = await GetAnswerByTag(applicationId, questionTag);
+
+            if (answer?.Value == null)
+            {
+                return null;
+            }
+
+            var tabularData = JsonConvert.DeserializeObject<TabularData>(answer.Value);
+
+            return tabularData;
         }
     }
 }
