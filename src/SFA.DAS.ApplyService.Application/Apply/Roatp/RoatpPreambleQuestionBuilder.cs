@@ -50,6 +50,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
     public class RoatpYourOrganisationQuestionIdConstants
     {
         public static string WebsiteManuallyEntered = "YO-41";
+        public static string IcoNumber = "YO-30";
         public static string CompaniesHouseDirectors = "YO-70";
         public static string CompaniesHousePSCs = "YO-71";
         public static string CompaniesHouseDetailsConfirmed = "YO-75";
@@ -154,6 +155,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string YourOrganisationParentCompanyCheck = "20";
         public static string YourOrganisationParentCompanyDetails = "21";
         public static string WebsiteManuallyEntered = "40";
+        public static string YourOrganisationIcoNumber = "30";
         public static string ConditionsOfAcceptance = "999999";
 
         public static class WhosInControl
@@ -239,6 +241,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string FinishCOA3MainEmployer = "COAPart3MainEmployer";
         public static string FinishCOA3Supporting = "COAPart3Supporting";
         public static string AddManagementHierarchy = "AddManagementHierarchy";
+        public static string UKRLPPrimaryVerificationSource = "UKRLPPrimaryVerificationSource";
 
     }
 

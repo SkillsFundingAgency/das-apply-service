@@ -894,7 +894,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             List<Answer> answers = new List<Answer>();
 
-            // These are special in that they drive other things and thus should not be deemed as an answer
             var excludedInputs = new List<string> { "postcodeSearch", "checkAll", "ApplicationId", "RedirectAction" };
 
             // Add answers from the Form post
@@ -1295,9 +1294,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 ApplicationId = model.ApplicationId,
                 ProviderRoute = Convert.ToInt32(providerRoute.Value),
-                ProviderRouteName = selectedProviderRoute?.RouteName,
+                ProviderRouteName = selectedProviderRoute?.RouteName,   
                 SubmittingContactId = User.GetUserId(),
-                ApplyData = application.ApplyData
+                ApplyData = application.ApplyData    
             };
 
             var submitResult = await _apiClient.SubmitApplication(submitApplicationRequest);

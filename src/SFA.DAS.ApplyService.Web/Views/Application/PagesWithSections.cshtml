@@ -10,11 +10,11 @@
     var pagesToCheck = Model.QnAData.Pages.Where(p => p.Active && !p.NotRequired && p.DisplayType!=null && p.DisplayType == "PagesWithSections").ToList();
     var pageId = pagesToCheck?.FirstOrDefault()?.PageId;
 }
-@{ await Html.RenderPartialAsync("~/Views/Roatp/ApplicationHeader.cshtml"); }
 
-@*<div class="grid-row">
-    <a class="govuk-back-link" href="@Url.Action("Back", "RoatpApplication", new { Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pageId, redirectAction = "TaskList" })">Back</a>
-</div>*@
+<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
+
+@*<a class="govuk-back-link" asp-action="Back" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@pageId" asp-route-redirectAction="TaskList">Back</a>*@
+
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -45,10 +45,20 @@
                                 }
 
                                 <li class="app-task-list__item">
-                                    <a class="govuk-link app-task-list__task-name"
-                                       href="@Url.Action("Page", "RoatpApplication", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pg.PageId, redirectAction="Section"})">
-                                        @pg.LinkTitle
-                                    </a>
+                                    <span class="app-task-list__task-name">
+                                        <a
+                                            class="govuk-link"
+                                            asp-action="Page"
+                                            asp-controller="RoatpApplication"
+                                            asp-route-applicationId="@Model.ApplicationId"
+                                            asp-route-sequenceId="@Model.SequenceId"
+                                            asp-route-sectionId="@Model.SectionId"
+                                            asp-route-pageId="@pg.PageId"
+                                            asp-route-redirectAction="Section"
+                                        >
+                                           @pg.LinkTitle
+                                        </a>
+                                    </span>
                                     @if (pg.StatusText== TaskListSectionStatus.Completed)
                                     {
                                         <strong class="govuk-tag app-task-list__task-completed" id="completed">Completed</strong>
@@ -73,7 +83,7 @@
                         </ul>
                     </li>
                 </ul>
-                <a href="@Url.Action("Tasklist", "RoatpApplication", new {applicationId = Model.ApplicationId})" class="govuk-button">Return to application overview</a>
+                <a class="govuk-button" asp-action="Tasklist" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">Return to application overview</a>
             }
         </div>
     </div>
