@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SFA.DAS.ApplyService.Web.Services
+namespace SFA.DAS.ApplyService.Application.Services
 {
     public static class DateOfBirthFormatter
     {
@@ -59,6 +59,34 @@ namespace SFA.DAS.ApplyService.Web.Services
                 return string.Empty;
             }
             return shortDob.Substring(endIndex).Trim();
+        }
+
+
+        public static string GetMonthYearDescription(string shortDob)
+        {
+            var separator =',';
+            if (string.IsNullOrEmpty(shortDob))
+            {
+                return string.Empty;
+            }
+
+            var details = shortDob.Split(separator);
+            if (details.Length != 2)
+                return string.Empty;
+
+            var year = details[1];
+            var month = details[0];
+
+
+            if (!int.TryParse(month, out var monthNumber))
+                return string.Empty;
+
+            if (monthNumber < 1 || monthNumber > 12)
+                return string.Empty;
+
+            var monthDescription = ShortMonthNames[monthNumber - 1];
+
+            return $"{monthDescription} {year}";
         }
     }
 }

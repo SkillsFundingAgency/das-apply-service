@@ -23,7 +23,7 @@ namespace SFA.DAS.ApplyService.Domain.CompaniesHouse
         }
         public DateTime? IncorporationDate { get; set; }
         public List<DirectorInformation> Directors { get; set; }
-        public List<PersonSignificantControlInformation> PersonsSignificationControl { get; set; }
+        public List<PersonSignificantControlInformation> PersonsWithSignificantControl { get; set; }
         public Dictionary<string, string> CompanyTypeDescriptions { get; set; }
 
         public bool ManualEntryRequired { get; set; }
