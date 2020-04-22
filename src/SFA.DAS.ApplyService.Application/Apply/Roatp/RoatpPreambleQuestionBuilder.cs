@@ -75,6 +75,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string GradeWithinLast3YearsOfsFunded = "YO-310";
         public static string GradeWithinLast3YearsNonOfsFunded = "YO-311";
 
+        public static string IsPostGradTrainingOnlyApprenticeship = "YO-250";
+		public static string HasDeliveredTrainingAsSubcontractor = "YO-350";
+        public static string ContractFileName = "YO-360";
     }
 
     public class RoatpCriminalComplianceChecksQuestionIdConstants
@@ -197,6 +200,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static string FullInspectionApprenticeshipGradeOfsFunded = "301";
             public static string GradeWithinLast3YearsOfsFunded = "310";
             public static string GradeWithinLast3YearsNonOfsFunded = "311";
+            public static string IsPostGradTrainingOnlyApprenticeship = "250";
+			public static string SubcontractorDeclaration = "350";
+            public static string SubcontractorContractFile = "360";
         }
 
         public class CriminalComplianceChecks

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -145,6 +147,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                 }
             }
             return null;
+        }
+
+        public async Task<FileStreamResult> GetDownloadFile(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId)
+        {
+            var response = await _httpClient.GetAsync($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}/questions/{questionId}/download");
+
+            var fileStream = await response.Content.ReadAsStreamAsync();
+            var result = new FileStreamResult(fileStream, response.Content.Headers.ContentType.MediaType);
+            result.FileDownloadName = response.Content.Headers.ContentDisposition.FileName;
+            return result;
         }
 
         public async Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag, string questionId = null)
