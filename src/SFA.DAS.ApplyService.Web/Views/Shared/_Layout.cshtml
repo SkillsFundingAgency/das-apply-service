@@ -93,13 +93,13 @@
          <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                <h2 class="govuk-heading-m das-cookie-banner__header">Tell us whether you accept cookies</h2>
-               <p class="govuk-body">We use <a href="/Home/Cookies" class="govuk-link govuk-link--no-visited-state">cookies to collect information</a> about how you use the register of apprenticeship training provider service. We use this information to make the website work as well as possible and improve the service.</p>
+               <p class="govuk-body">We use <a asp-controller="Home" asp-action="Cookies" class="govuk-link govuk-link--no-visited-state">cookies to collect information</a> about how you use the register of apprenticeship training provider service. We use this information to make the website work as well as possible and improve the service.</p>
                <div class="das-cookie-banner__buttons">
                   <div class="das-cookie-banner__button-wrap das-cookie-banner__button-accept">
                      <button class="govuk-button das-button--outline das-cookie-banner__button" type="submit" data-accept-cookies="true">Accept all cookies</button>
                   </div>
                   <div class="das-cookie-banner__button-wrap das-cookie-banner__button-settings">
-                     <a class="govuk-button das-button--outline das-cookie-banner__button" role="button" href="/Home/Cookies">Set cookie preferences</a>
+                     <a class="govuk-button das-button--outline das-cookie-banner__button" role="button" asp-controller="Home" asp-action="Cookies">Set cookie preferences</a>
                   </div>
                </div>
             </div>
@@ -107,7 +107,7 @@
       </div>
       <div class="das-cookie-banner__confirmation govuk-width-container" tabindex="-1">
          <p class="govuk-body das-cookie-banner__confirmation-message">
-            You've accepted all cookies. You can <a class="govuk-link" href="/Home/Cookies">change your cookie settings</a> at any time.
+            You've accepted all cookies. You can <a class="govuk-link" asp-controller="Home" asp-action="Cookies">change your cookie settings</a> at any time.
          </p>
          <button class="das-cookie-banner__hide-button" data-hide-cookie-banner="true">Hide</button>
       </div>
@@ -170,7 +170,7 @@
                         <a href="https://www.gov.uk/government/publications/esfa-privacy-notice" class="govuk-footer__link" target="_blank">Privacy notice</a>
                     </li>
                     <li class="govuk-footer__inline-list-item">
-                        <a class="govuk-footer__link" asp-controller="Home" asp-action="Accessibility">Accessibility</a>
+                        <a class="govuk-footer__link" asp-controller="Home" asp-action="Accessibility">Accessibility statement</a>
                     </li>
                 </ul>
                 <svg role="presentation" focusable="false" class="govuk-footer__licence-logo" xmlns="http://www.w3.org/2000/svg"
