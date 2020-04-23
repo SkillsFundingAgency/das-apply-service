@@ -331,14 +331,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             else
             {
                 // when the model state has no errors the page will be displayed with the last valid values which were saved
-                var page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
+                // AM: I have commented out the code below as we are making identical calls and checks twice
+                //var page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
                 
-                if (page == null)
-                {
-                    return RedirectToAction("TaskList", new {applicationId = applicationId});
-                }
+                //if (page == null)
+                //{
+                //    return RedirectToAction("TaskList", new {applicationId = applicationId});
+                //}
 
-                page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
+                var page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
                 if (page == null || page.Questions == null)
                 {
                     return await TaskList(applicationId);
