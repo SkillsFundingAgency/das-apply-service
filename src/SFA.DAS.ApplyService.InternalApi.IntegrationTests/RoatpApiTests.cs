@@ -23,6 +23,7 @@
         private const string ConnectionString = "UseDevelopmentStorage=true;";
 
         private RoatpApiClient _apiClient;
+        private HttpClient _httpClient;
 
         [SetUp]
         public void Before_each_test()
@@ -31,11 +32,12 @@
             _config = new ConfigurationService(hostingEnvironment.Object, "LOCAL", ConnectionString, Version,
                 ServiceName);
 
+            _httpClient = new HttpClient();
             _config.GetConfig().GetAwaiter().GetResult().RoatpApiAuthentication.ApiBaseAddress = RoatpApiBaseAddress;
 
             var logger = new Mock<ILogger<RoatpApiClient>>();
 
-            _apiClient = new RoatpApiClient(new HttpClient(), logger.Object, _config, new RoatpTokenService(_config));
+            _apiClient = new RoatpApiClient(_httpClient, logger.Object, _config, new RoatpTokenService(_config, hostingEnvironment.Object));
         }
 
         [Test]
@@ -71,7 +73,7 @@
         [Test]
         public void Matching_UKPRN_returns_single_result()
         {
-            var ukprn = "10012385";
+            var ukprn = "10001724";
             
             var result = _apiClient.GetUkrlpDetails(ukprn).GetAwaiter().GetResult();
 
@@ -83,7 +85,7 @@
             matchResult.ContactDetails.FirstOrDefault(x => x.ContactType == "L").Should().NotBeNull();
             matchResult.VerificationDate.Should().NotBeNull();
             matchResult.VerificationDetails
-                .FirstOrDefault(x => x.VerificationAuthority == "Sole Trader or Non-limited Partnership")
+                .FirstOrDefault(x => x.VerificationAuthority == "Companies House")
                 .Should().NotBeNull();
             matchResult.ProviderAliases.Count.Should().Be(1);
         }

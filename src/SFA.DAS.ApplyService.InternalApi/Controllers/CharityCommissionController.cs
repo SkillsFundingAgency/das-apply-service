@@ -26,6 +26,7 @@
             _retryPolicy = GetRetryPolicy();
         }
 
+        [HttpGet]
         [Route("charity-commission-lookup")]
         public async Task<IActionResult> CharityDetails(int charityNumber)
         {

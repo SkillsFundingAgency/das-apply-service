@@ -1,33 +1,22 @@
 ﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ConfirmTrusteesViewModel
 
-<div class="govuk-phase-banner govuk-width-container roatp__navigation">
-    <nav>
-        <ul id="navigation" class="roatp__navigation " aria-label="Top Level Navigation">
+<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
 
-            <li class="roatp__navigation-item">
+@*@if (Model.VerifiedCompaniesHouse)
+{
+    <a class="govuk-back-link" asp-action="ConfirmDirectorsPscs" asp-controller="RoatpWhosInControlApplication" asp-route-ApplicationId="@Model.ApplicationId">Back</a>
+}
+else
+{
+    <a class="govuk-back-link" asp-action="TaskList" asp-controller="RoatpApplication" asp-route-ApplicationId="@Model.ApplicationId">Back</a>
+}*@
 
-                <a class="govuk-header__link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Application overview</a>
 
-            </li>
-
-        </ul>
-    </nav>
-</div>
-
-<div class="grid-row">
-    @if (Model.VerifiedCompaniesHouse)
-    {            
-        <a class="govuk-back-link" href="@Url.Action("ConfirmDirectorsPscs", "RoatpWhosInControlApplication", new { Model.ApplicationId })">Back</a>
-    }
-    else
-    {
-        <a class="govuk-back-link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Back</a>
-    }
-</div>
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
+            <span class="govuk-caption-l">@Model.SectionTitle</span>
             @if (Model.Trustees != null && Model.Trustees.TableData != null && Model.Trustees.TableData.DataRows.Count == 1)
             {
                 <h1 class="govuk-heading-xl">Confirm your organisation's trustee</h1>
@@ -38,14 +27,16 @@
             }
             <p class="govuk-body">These are the details we found on the Charity Commission for England and Wales.</p>
 
-            <form method="post" asp-action="TrusteesConfirmed" novalidate enctype="multipart/form-data">
+        </div>
 
-                @Html.HiddenFor(x => x.ApplicationId)
+        <form method="post" asp-action="TrusteesConfirmed" novalidate enctype="multipart/form-data">
+            <input type="hidden" asp-for="ApplicationId" />
+            <input type="hidden" asp-for="GetHelpAction" />
 
-                @{ await Html.RenderPartialAsync("~/Views/Roatp/WhosInControl/PeopleInControl.cshtml", Model.Trustees); }
-
-                <button type="submit" class="govuk-button">Confirm and continue</button>
-
+            <div class="govuk-grid-column-one-half">
+                <partial name="~/Views/Roatp/WhosInControl/PeopleInControl.cshtml" for="Trustees" />
+            </div>
+            <div class="govuk-grid-column-two-thirds">
                 <details class="govuk-details">
                     <summary class="govuk-details__summary">
                         <span class="govuk-details__summary-text">
@@ -54,12 +45,17 @@
                     </summary>
                     <div class="govuk-details__text">
                         <p class="govuk-body">
-                            Contact the Charity Commission to <a href="https://www.gov.uk/change-your-charitys-details" target="_blank">change these details (opens in a new window or tab)</a>.
+                            Contact the Charity Commission to <a href="https://www.gov.uk/change-your-charitys-details" target="_blank" class="govuk-link">change these details (opens in a new window or tab)</a>.
                         </p>
                     </div>
                 </details>
 
-            </form>
+                <button type="submit" class="govuk-button">Confirm and continue</button>
+            </div>
+        </form>
+
+        <div class="govuk-grid-column-two-thirds">
+            <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
         </div>
     </div>
 </main>

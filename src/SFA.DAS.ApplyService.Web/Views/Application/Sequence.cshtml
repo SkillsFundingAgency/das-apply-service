@@ -1,5 +1,5 @@
 @using SFA.DAS.ApplyService.Domain.Entities
-@model SFA.DAS.ApplyService.Web.Controllers.SequenceViewModel
+@model SFA.DAS.ApplyService.Web.ViewModels.SequenceViewModel
 
 @{
     ViewBag.Title = "Application overview";
@@ -11,8 +11,6 @@
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl">Application overview</h1>
-
             @if (!ViewData.ModelState.IsValid || Model.ErrorMessages?.Any() is true)
             {
                 <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
@@ -30,7 +28,10 @@
                         </ul>
                     </div>
                 </div>
+
             }
+
+            <h1 class="govuk-heading-xl">Application overview</h1>
 
             @if (Model.Status == ApplicationSequenceStatus.Submitted)
             {
@@ -57,7 +58,7 @@
                             </span>
                             @if (Model.Status != ApplicationSequenceStatus.Submitted)
                             {
-                                <a class="govuk-link" href="@Url.Action("Section", "Application", new { applicationSection.ApplicationId, applicationSection.SequenceId, applicationSection.SectionId })">
+                                <a class="govuk-link" asp-action="Section" asp-controller="Application" asp-route-applicationId="@applicationSection.ApplicationId" asp-route-sequenceId="@applicationSection.SequenceId" asp-route-sectionId="@applicationSection.SectionId">
                                     Go to @applicationSection.LinkTitle.ToLower()
                                 </a>
                             }
@@ -69,8 +70,8 @@
                 @if (Model.Status != ApplicationSequenceStatus.Submitted)
                 {
                     <form asp-action="Submit" asp-controller="Application">
-                        <input type="hidden" id="applicationId" name="Id" value="@Model.ApplicationId" />
-                        <input type="hidden" id="sequenceId" name="sequenceNo" value="@Model.SequenceId" />
+                        <input type="hidden" asp-for="ApplicationId" />
+                        <input type="hidden" asp-for="SequenceId" />
                         <div class="govuk-form-group">
                             <button type="submit" class="govuk-button">
                                 Submit

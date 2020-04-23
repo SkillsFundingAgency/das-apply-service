@@ -1,5 +1,5 @@
 @using SFA.DAS.ApplyService.Domain.Entities
-@model SFA.DAS.ApplyService.Web.Controllers.SequenceViewModel
+@model SFA.DAS.ApplyService.Web.ViewModels.SequenceViewModel
 
 @{
     ViewBag.Title = "Feedback";
@@ -9,8 +9,6 @@
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl">Application feedback</h1>
-
             @if (!ViewData.ModelState.IsValid || Model.ErrorMessages?.Any() is true)
             {
                 <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
@@ -29,6 +27,8 @@
                     </div>
                 </div>
             }
+
+            <h1 class="govuk-heading-xl">Application feedback</h1>
 
             @if (Model.SequenceId == 1)
             {
@@ -55,8 +55,21 @@
                                     @foreach (var pg in pagesWithNewFeedback.OrderBy(p => p.PageId))
                                     {
                                         <li class="app-task-list__item">
-                                            <a aria-describedby="feedback-completed" class="app-task-list__task-name"
-                                               href="@Url.Action("Page", "Application", new { applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = applicationSection.SectionId, pageId = pg.PageId, redirectAction = "Feedback" })">@pg.LinkTitle</a>
+                                            <span class="app-task-list__task-name">
+                                                <a
+                                                    aria-describedby="feedback-completed"
+                                                    class="govuk-link"
+                                                    asp-action="Page"
+                                                    asp-controller="Application"
+                                                    asp-route-applicationId="@Model.ApplicationId"
+                                                    asp-route-sequenceId="@Model.SequenceId"
+                                                    asp-route-sectionId="@applicationSection.SectionId"
+                                                    asp-route-pageId="@pg.PageId"
+                                                    asp-route-redirectAction="Feedback"
+                                                >
+                                                    @pg.LinkTitle
+                                                </a>
+                                            </span>
                                             @if (pg.AllFeedbackIsCompleted)
                                             {
                                                 <strong class="govuk-tag app-task-list__task-completed" id="feedback-completed">Completed</strong>
@@ -78,8 +91,8 @@
             {
                 <div>
                     <form asp-action="Submit" asp-controller="Application">
-                        <input type="hidden" id="applicationId" name="Id" value="@Model.ApplicationId" />
-                        <input type="hidden" id="sequenceId" name="sequenceNo" value="@Model.SequenceId" />
+                        <input type="hidden" asp-for="ApplicationId" />
+                        <input type="hidden" asp-for="SequenceId" />
                         <div class="govuk-form-group">
                             <button type="submit" class="govuk-button">
                                 Submit application
@@ -90,6 +103,4 @@
             }
         </div>
     </div>
-
-
 </main>

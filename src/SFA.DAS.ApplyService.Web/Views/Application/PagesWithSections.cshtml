@@ -1,4 +1,5 @@
-﻿@model SFA.DAS.ApplyService.Domain.Entities.ApplicationSection
+﻿@using SFA.DAS.ApplyService.Web.ViewModels.Roatp
+@model SFA.DAS.ApplyService.Domain.Entities.ApplicationSection
 
 @{
     ViewBag.Title = @Model.Title;
@@ -6,10 +7,14 @@
     var pageTitle = "";
     var isSamePage = false;
     var nextPageTitle = "";
-    var pagesToCheck = Model.QnAData.Pages.Where(p => p.Active && !p.NotRequired).ToList();
+    var pagesToCheck = Model.QnAData.Pages.Where(p => p.Active && !p.NotRequired && p.DisplayType!=null && p.DisplayType == "PagesWithSections").ToList();
+    var pageId = pagesToCheck?.FirstOrDefault()?.PageId;
 }
 
-<a href="@Url.Action("Sequence", "Application", new {applicationId = Model.ApplicationId})" class="govuk-back-link">Back to application overview</a>
+<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
+
+@*<a class="govuk-back-link" asp-action="Back" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@pageId" asp-route-redirectAction="TaskList">Back</a>*@
+
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -23,13 +28,13 @@
                 <ul class="govuk-list">
                     <li>
                         <ul class="app-task-list govuk-!-margin-bottom-7">
-                            @for (var i=0; i < pagesToCheck.Count; i++)
+                            @for (var i = 0; i < pagesToCheck.Count; i++)
                             {
                                 var pg = pagesToCheck[i];
                                 isSamePage = pageTitle == pg.Title;
                                 pageTitle = pg.Title;
                                 nextPageTitle = "";
-                                if (i < pagesToCheck.Count-1)
+                                if (i < pagesToCheck.Count - 1)
                                 {
                                     nextPageTitle = (pagesToCheck[i + 1]).Title;
                                 }
@@ -38,32 +43,47 @@
                                 {
                                     <h2 class="govuk-heading-m">@Html.Raw(pg.Title)</h2>
                                 }
-                           
+
                                 <li class="app-task-list__item">
-                                    <a class="govuk-link app-task-list__task-name" 
-                                       href="@Url.Action("Page", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pg.PageId, redirectAction="Section"})">
-                                        @pg.LinkTitle
-                                    </a>
-                                    @if (pg.Complete)
+                                    <span class="app-task-list__task-name">
+                                        <a
+                                            class="govuk-link"
+                                            asp-action="Page"
+                                            asp-controller="RoatpApplication"
+                                            asp-route-applicationId="@Model.ApplicationId"
+                                            asp-route-sequenceId="@Model.SequenceId"
+                                            asp-route-sectionId="@Model.SectionId"
+                                            asp-route-pageId="@pg.PageId"
+                                            asp-route-redirectAction="Section"
+                                        >
+                                           @pg.LinkTitle
+                                        </a>
+                                    </span>
+                                    @if (pg.StatusText== TaskListSectionStatus.Completed)
                                     {
                                         <strong class="govuk-tag app-task-list__task-completed" id="completed">Completed</strong>
                                     }
+                                    
+                                    @if (pg.StatusText == TaskListSectionStatus.InProgress)
+                                    {
+                                        <strong class="govuk-tag app-task-list__task-inprogress" id="inprogress">In progress</strong>
+                                    }
                                 </li>
-                                
+
                                 @if (nextPageTitle != pageTitle)
-                                 {
+                                {
                                     @Html.Raw("</ul>");
                                     if (i < pagesToCheck.Count - 1)
                                     {
                                         @Html.Raw("<ul class=\"app-task-list govuk-!-margin-bottom-7\">")
                                     }
                                 }
-                                
+
                             }
                         </ul>
                     </li>
                 </ul>
-                <a href="@Url.Action("Sequence", "Application", new {applicationId = Model.ApplicationId})" class="govuk-button">Return to application overview</a>
+                <a class="govuk-button" asp-action="Tasklist" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">Return to application overview</a>
             }
         </div>
     </div>

@@ -1,0 +1,31 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ExistingApplicationViewModel
+
+@{
+    var title = $"An application already exists for the UKPRN {Model.UKPRN}";
+    ViewBag.Title = title;
+    Layout = "_Layout";
+}
+
+<partial name="~/Views/Roatp/PreambleHeader.cshtml" />
+
+@*
+<form asp-controller="RoatpApplicationPreamble" asp-action="EnterApplicationUkprn" method="get" name="backForm">
+    <input type="hidden" asp-for="UKPRN" />
+    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+</form>
+*@
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl">@title</h1>
+            <p class="govuk-body">
+                To continue with the application, <a asp-action="Index" asp-controller="Home">sign in</a> using the account details that were used to start the application.
+            </p>
+            <p class="govuk-body">
+                If you think this is wrong, email <br />
+                <a href="mailto:helpdesk@manage-apprenticeships.service.gov.uk" class="govuk-link">helpdesk@manage-apprenticeships.service.gov.uk</a> or call 08000 150 600.
+            </p>
+        </div>
+    </div>
+</main>

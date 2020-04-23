@@ -1,0 +1,78 @@
+﻿@using MoreLinq;
+@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.AddEditPeopleInControlViewModel
+
+@{
+    bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
+    var nameError = showErrors && Model.ErrorMessages.FirstOrDefault(x => x.Field == "PersonInControlName") != null ? "govuk-input--error" : "";
+    var showNameError = !String.IsNullOrEmpty(nameError);
+    var dobMonthError = showErrors && Model.ErrorMessages.FirstOrDefault(x => x.Field == "PersonInControlDobMonth") != null ? "govuk-input--error" : "";
+    var showDobMonthError = !String.IsNullOrEmpty(dobMonthError);
+    var dobYearError = showErrors && Model.ErrorMessages.FirstOrDefault(x => x.Field == "PersonInControlDobYear") != null ? "govuk-input--error" : "";
+    var showDobYearError = !String.IsNullOrEmpty(dobYearError);
+    var errorMessages = Model.ErrorMessages != null ? Model.ErrorMessages.DistinctBy(x => x.ErrorMessage) : null;
+}
+
+<div class="govuk-form-group @(showNameError ? "govuk-form-group--error" : "")" sfa-validation-for="PersonInControlName" sfa-validationerror-class="form-group-error">
+
+    <label for="PersonInControlName" class="govuk-label">Full name</label>
+    @if (showErrors)
+    {
+        <span class="govuk-error-message">
+            @foreach(var nameErrorMessage in errorMessages.Where(x => x.Field == "PersonInControlName"))
+            {
+                @Html.Raw(nameErrorMessage.ErrorMessage) <br />
+            }
+        </span>
+    }
+    <input type="text" class="govuk-input @nameError" asp-for="PersonInControlName" sfa-validation-for="PartnerName" sfa-validationerror-class="form-control-error" />
+</div>
+
+@if (!Model.DateOfBirthOptional)
+{
+    <div class="govuk-form-group @((showDobMonthError || showDobYearError) ? "govuk-form-group--error" : "")" sfa-validation-for="PersonInControlDobMonth" sfa-validationerror-class="form-group-error">
+
+        <p class="govuk-label">Date of birth</p>
+        <span class="govuk-hint" id="dob-hint">
+            For example, 3 1980
+        </span>
+        @if (showErrors)
+        {
+        <span class="govuk-error-message">
+            @foreach (var dobMonthErrorMessage in errorMessages.Where(x => x.Field == "PersonInControlDobMonth"))
+            {
+                @Html.Raw(dobMonthErrorMessage.ErrorMessage) <br />
+            }
+            @foreach (var dobYearErrorMessage in errorMessages.Where(x => x.Field == "PersonInControlDobYear"))
+            {
+                @Html.Raw(dobYearErrorMessage.ErrorMessage) <br />
+            }
+        </span>
+        }
+        <div class="govuk-date-input" id="dob">
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group" sfa-validation-for="PersonInControlDobMonth">
+                    <label class="govuk-label govuk-date-input__label" for="PersonInControlDobMonth">Month</label>
+                    <input value="@Model.PersonInControlDobMonth"
+                           class="govuk-input govuk-date-input__input govuk-input--width-2 @dobMonthError"
+                           id="PersonInControlDobMonth"
+                           name="PersonInControlDobMonth"
+                           type="number"
+                           pattern="[0-9]*"
+                           sfa-validation-for="PersonInControlDobMonth" />
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group" sfa-validation-for="PersonInControlDobYear">
+                    <label class="govuk-label govuk-date-input__label" for="PersonInControlDobYear">Year</label>
+                    <input value="@Model.PersonInControlDobYear"
+                           class="govuk-input govuk-date-input__input govuk-input--width-4 @dobYearError"
+                           id="PersonInControlDobYear"
+                           name="PersonInControlDobYear"
+                           type="number"
+                           pattern="[0-9]*"
+                           sfa-validation-for="PersonInControlDobYear" />
+                </div>
+            </div>
+        </div>
+    </div>
+}

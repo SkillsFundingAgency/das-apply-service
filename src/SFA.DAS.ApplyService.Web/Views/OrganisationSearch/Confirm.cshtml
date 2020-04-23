@@ -14,7 +14,7 @@
     var epaoId = organisation?.Id?.Split(',').FirstOrDefault(id => epaoRegex.Match(id).Success);
 }
 
-<a asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString" class="govuk-back-link">Back to search results</a>
+@*<a asp-action="Results" asp-controller="OrganisationSearch" asp-route-searchString="@Model.SearchString" class="govuk-back-link">Back to search results</a>*@
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -94,7 +94,7 @@
         {
             <div class="govuk-grid-column-full">
                 <div class="govuk-form-group">
-                    <h1 class="govuk-heading-l">We cannot find your organisation details</h1>
+                    <h1 class="govuk-heading-xl">We cannot find your organisation details</h1>
                     <p class="govuk-body">Check the:</p>
                     <ul class="govuk-list govuk-list--bullet">
                         <li>spelling of the name</li>

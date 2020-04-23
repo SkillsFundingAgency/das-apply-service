@@ -1,59 +1,84 @@
-﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ConfirmPartnersViewModel
+﻿@using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
+@model ConfirmPartnersViewModel
 
 @{
-    ViewBag.Title = "PLACEHOLDER Confirm Partners";
+    ViewBag.Title = "Confirm your organisation's partners";
     Layout = "_Layout";
 
     bool showErrors = TempData["ShowErrors"] as bool? ?? false;
+
 }
 
-<div class="govuk-phase-banner govuk-width-container roatp__navigation">
-    <nav>
-        <ul id="navigation" class="roatp__navigation " aria-label="Top Level Navigation">
+<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
 
-            <li class="roatp__navigation-item">
+@*
+<form asp-controller="RoatpWhosInControlApplication" asp-action="@Model.BackAction" method="get" name="backForm">
+    <input type="hidden" asp-for="ApplicationId" />
+    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+</form>
+*@
 
-                <a class="govuk-header__link" href="@Url.Action("TaskList", "RoatpApplication", new { Model.ApplicationId })">Application overview</a>
+<main class="govuk-main-wrapper " id="main-content" role="main">
 
-            </li>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-        </ul>
-    </nav>
-</div>
-
-<div class="grid-row">
-    <form asp-controller="RoatpWhosInControlApplication" asp-action="@Model.BackAction" method="get" name="backForm">
-        @Html.HiddenFor(x => x.ApplicationId)
-        <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
-    </form>
-</div>
-
-@if (!ViewData.ModelState.IsValid || showErrors)
-{
-<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-    <h2 class="govuk-error-summary__title" id="error-summary-title">
-        There is a problem
-    </h2>
-    <div class="govuk-error-summary__body">
-        <ul class="govuk-list govuk-error-summary__list">
-            <li><a sfa-validation-for="PartnershipType"></a></li>
-        </ul>
+            <span class="govuk-caption-l">@Model.SectionTitle</span>
+            <h1 class="govuk-heading-xl">Confirm your organisation's partners</h1>
+        </div>
     </div>
-</div>
-}
 
-<div class="govuk-width-container">
+    <table class="govuk-table">
 
-    <main class="govuk-main-wrapper " id="main-content" role="main">
-
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                @foreach (var title in Model.PartnerData.HeadingTitles)
+                {
+                    <th class="govuk-table__header" scope="col">@Html.Raw(title)</th>
+                }
+                <th class="govuk-table__header" scope="col"></th>
+                <th class="govuk-table__header" scope="col"></th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table_body">
+            @for (var index = 0; index < Model.PartnerData.DataRows.Count; index++)
+            {
+                <tr class="govuk-table__row">
+                    @foreach (var column in Model.PartnerData.DataRows[index].Columns)
+                    {
+                        <td class="govuk-table__cell">@column</td>
+                    }
+                    <td class="govuk-table__cell govuk-table__cell--numeric">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-action="EditPartner" asp-controller="RoatpWhosInControlApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-index="@index">Change<span class="govuk-visually-hidden"> partner</span></a>
+                    </td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-action="RemovePartner" asp-controller="RoatpWhosInControlApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-index="@index">Remove<span class="govuk-visually-hidden"> partner</span></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (Model.PartnerData.DataRows.Count < ConfirmPartnersViewModel.MaximumNumberOfPartners)
+    {
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <h1 class="govuk-heading-l">PLACEHOLDER Confirm Partners</h1>
+                <p class="govuk-body">
+                    <a class="govuk-link" asp-action="PartnershipType" asp-controller="RoatpWhosInControlApplication" asp-route-applicationId="@Model.ApplicationId">Add another partner</a>
+                </p>
             </div>
         </div>
+    }
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="post" asp-action="CompletePeopleInControlSection">
+                <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="GetHelpAction" />
 
-
-    </main>
-</div>
+                <button type="submit" class="govuk-button">Confirm and continue</button>
+            </form>
+            <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
+        </div>
+    </div>
+</main>
 
 

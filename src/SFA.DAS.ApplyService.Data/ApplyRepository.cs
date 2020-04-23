@@ -1,11 +1,11 @@
 using Dapper;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply;
-using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data.DapperTypeHandlers;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Roatp;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -23,32 +23,575 @@ namespace SFA.DAS.ApplyService.Data
         {
             _logger = logger;
             _config = configurationService.GetConfig().Result;
+            
+            SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
             SqlMapper.AddTypeHandler(typeof(OrganisationDetails), new OrganisationDetailsHandler());
             SqlMapper.AddTypeHandler(typeof(QnAData), new QnADataHandler());
             SqlMapper.AddTypeHandler(typeof(ApplicationData), new ApplicationDataHandler());
-            SqlMapper.AddTypeHandler(typeof(FinancialApplicationGrade), new FinancialApplicationGradeDataHandler());
+            SqlMapper.AddTypeHandler(typeof(FinancialReviewDetails), new FinancialReviewDetailsDataHandler());
         }
 
-        public async Task<List<Domain.Entities.Application>> GetUserApplications(Guid userId)
+        public async Task<Guid> StartApplication(Guid applicationId, ApplyData applyData, Guid organisationId, Guid createdBy)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                return (await connection.QueryAsync<Domain.Entities.Application>(@"SELECT a.* FROM Contacts c
-                                                    INNER JOIN Applications a ON a.ApplyingOrganisationId = c.ApplyOrganisationID
+                return await connection.QuerySingleAsync<Guid>(
+                    @"INSERT INTO Apply (ApplicationId, OrganisationId, ApplicationStatus, ApplyData, AssessorReviewStatus, GatewayReviewStatus, FinancialReviewStatus, CreatedBy, CreatedAt)
+                                        OUTPUT INSERTED.[ApplicationId] 
+                                        VALUES (@applicationId, @organisationId, @applicationStatus, @applyData, @reviewStatus, @gatewayReviewStatus, @financialReviewStatus, @createdBy, GETUTCDATE())",
+                    new { applicationId, organisationId, applicationStatus = ApplicationStatus.InProgress, applyData, reviewStatus = ApplicationReviewStatus.Draft, gatewayReviewStatus = GatewayReviewStatus.Draft, financialReviewStatus = FinancialReviewStatus.Draft, createdBy });
+            }
+        }
+
+        public async Task<Apply> GetApplication(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var application = await connection.QuerySingleOrDefaultAsync<Apply>(@"SELECT * FROM apply WHERE ApplicationId = @applicationId", new { applicationId });
+
+                //if (application != null)
+                //{
+                //    application.ApplyingOrganisation = await GetOrganisationForApplication(applicationId);
+                //}
+
+                return application;
+            }
+        }
+
+        public async Task<List<Apply>> GetUserApplications(Guid userId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<Apply>(@"SELECT a.* FROM Contacts c
+                                                    INNER JOIN Apply a ON a.OrganisationId = c.ApplyOrganisationID
                                                     WHERE c.Id = @userId AND a.CreatedBy = @userId", new { userId })).ToList();
             }
         }
 
-        public async Task<List<Domain.Entities.Application>> GetOrganisationApplications(Guid userId)
+        public async Task<List<Apply>> GetOrganisationApplications(Guid userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                return (await connection.QueryAsync<Domain.Entities.Application>(@"SELECT a.* FROM Contacts c
-                                                    INNER JOIN Applications a ON a.ApplyingOrganisationId = c.ApplyOrganisationID
+                return (await connection.QueryAsync<Apply>(@"SELECT a.* FROM Contacts c
+                                                    INNER JOIN Apply a ON a.OrganisationId = c.ApplyOrganisationID
                                                     WHERE c.Id = @userId", new { userId })).ToList();
             }
         }
 
+        public async Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<Domain.Entities.GatewayPageAnswerSummary>(@"SELECT applicationId,pageid,status from GatewayAnswer
+                                                    WHERE applicationId = @applicationId", new { applicationId })).ToList();
+            }
+        }
+
+        public async Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId)
+        {
+
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QuerySingleOrDefaultAsync<GatewayPageAnswer>(@"SELECT * from GatewayAnswer
+                                                    WHERE applicationId = @applicationId and pageid = @pageId",
+                    new {applicationId, pageId}));
+            }
+        }
+
+        public async Task<string> GetGatewayPageStatus(Guid applicationId, string pageId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QuerySingleOrDefaultAsync<string>(@"SELECT Status from GatewayAnswer WHERE applicationId = @applicationId and pageid = @pageId",
+                    new { applicationId, pageId }));
+            }
+        }
+
+        public async Task<string> GetGatewayPageComments(Guid applicationId, string pageId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QuerySingleOrDefaultAsync<string>(@"SELECT Comments from GatewayAnswer WHERE applicationId = @applicationId and pageid = @pageId",
+                    new { applicationId, pageId }));
+            }
+        }
+
+        public async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string userName, string status, string comments)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+
+                    await connection.ExecuteAsync(
+                        @"IF NOT EXISTS (select * from GatewayAnswer where applicationId = @applicationId and pageId = @pageId)
+	                                                        INSERT INTO GatewayAnswer ([ApplicationId],[PageId],[Status],[comments],[CreatedAt],[CreatedBy])
+														         values (@applicationId, @pageId,@status,@comments,GetUTCDATE(),@userName)
+                                                        ELSE
+                                                         UPDATE GatewayAnswer
+                                                                    SET  Status = @status, Comments =@comments, UpdatedBy = @userName, UpdatedAt = GETUTCDATE() 
+                                                                    WHERE  ApplicationId = @applicationId and pageId = @pageId",
+                        new { applicationId, pageId, status, comments, userName });
+                
+            }
+        }
+
+        public async Task<bool> CanSubmitApplication(Guid applicationId)
+        {
+            var canSubmit = false;
+
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var application = await GetApplication(applicationId);
+                var invalidApplicationStatuses = new List<string> { ApplicationStatus.Approved, ApplicationStatus.Rejected };
+
+                // Application must exist and has not already been Approved or Rejected
+                if (application != null && !invalidApplicationStatuses.Contains(application.ApplicationStatus))
+                {
+                    var otherAppsInProgress = await connection.QueryAsync<Domain.Entities.Apply>(@"
+                                                        SELECT a.*
+                                                        FROM Apply a
+                                                        INNER JOIN Organisations o ON o.Id = a.OrganisationId
+														INNER JOIN Contacts con ON a.OrganisationId = con.ApplyOrganisationID
+                                                        WHERE a.OrganisationId = (SELECT OrganisationId FROM Apply WHERE ApplicationId = @applicationId)
+														AND a.CreatedBy <> (SELECT CreatedBy FROM Apply WHERE ApplicationId = @applicationId)
+                                                        AND a.ApplicationStatus NOT IN (@applicationStatusApproved, @applicationStatusApprovedRejected)",
+                                                            new
+                                                            {
+                                                                applicationId,
+                                                                applicationStatusApproved = ApplicationStatus.Approved,
+                                                                applicationStatusApprovedRejected = ApplicationStatus.Rejected
+                                                            });
+
+                    canSubmit = !otherAppsInProgress.Any();
+                }
+            }
+
+            return canSubmit;
+        }
+
+        public async Task SubmitApplication(Guid applicationId, ApplyData applyData, Guid submittedBy)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE Apply
+                                                SET ApplicationStatus = @ApplicationStatus, 
+                                                    ApplyData = @applyData, 
+                                                    AssessorReviewStatus = @ReviewStatus, 
+                                                    GatewayReviewStatus = @GatewayReviewStatus, 
+                                                    FinancialReviewStatus = @FinancialReviewStatus,
+                                                    UpdatedBy = @submittedBy, 
+                                                    UpdatedAt = GETUTCDATE() 
+                                                WHERE  (Apply.ApplicationId = @applicationId)",
+                                                new { applicationId, 
+                                                      ApplicationStatus = ApplicationStatus.Submitted, 
+                                                      applyData, 
+                                                      ReviewStatus = ApplicationReviewStatus.New, 
+                                                      GatewayReviewStatus = GatewayReviewStatus.New, 
+                                                      FinancialReviewStatus = FinancialReviewStatus.New,
+                                                      submittedBy });
+            }
+        }
+
+        public async Task<Guid> SnapshotApplication(Guid applicationId, Guid snapshotApplicationId, List<ApplySequence> newSequences)
+        {
+            var currentApplication = await GetApplication(applicationId);
+
+            if (currentApplication != null)
+            {
+                var newApplyData = new ApplyData
+                {
+                    Sequences = newSequences,
+                    ApplyDetails = currentApplication.ApplyData?.ApplyDetails
+                };
+
+                using (var connection = new SqlConnection(_config.SqlConnectionString))
+                {
+                    return await connection.QuerySingleAsync<Guid>(
+                        @"INSERT INTO ApplySnapshots (ApplicationId, SnapshotApplicationId, SnapshotDate, OrganisationId, ApplicationStatus, ApplyData, GatewayReviewStatus, AssessorReviewStatus, FinancialReviewStatus, FinancialGrade)
+                          OUTPUT INSERTED.[SnapshotApplicationId] 
+                          VALUES (@ApplicationId, @snapshotApplicationId, GETUTCDATE(), @OrganisationId, @ApplicationStatus, @newApplyData, @GatewayReviewStatus, @AssessorReviewStatus, @FinancialReviewStatus, @FinancialGrade)",
+                        new
+                        {
+                            currentApplication.ApplicationId,
+                            snapshotApplicationId,
+                            currentApplication.OrganisationId,
+                            currentApplication.ApplicationStatus,
+                            newApplyData,
+                            currentApplication.GatewayReviewStatus,
+                            currentApplication.AssessorReviewStatus,
+                            currentApplication.FinancialReviewStatus,
+                            currentApplication.FinancialGrade
+                        });
+                }
+            }
+
+            return Guid.Empty;
+        }
+
+        public async Task<List<RoatpApplicationSummaryItem>> GetNewGatewayApplications()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection
+                    .QueryAsync<RoatpApplicationSummaryItem>(
+                        @"SELECT 
+                            apply.Id AS Id,
+                            apply.ApplicationId AS ApplicationId,
+                            apply.ApplicationStatus AS ApplicationStatus,
+                            apply.GatewayReviewStatus AS GatewayReviewStatus,
+                            apply.AssessorReviewStatus AS AssessorReviewStatus,
+                            apply.FinancialReviewStatus AS FinancialReviewStatus,
+                            org.Name AS OrganisationName,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate
+	                      FROM Apply apply
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+	                      WHERE apply.ApplicationStatus = @applicationStatusSubmitted AND apply.DeletedAt IS NULL
+	                        AND apply.GatewayReviewStatus = @gatewayReviewStatusNew",
+                        new
+                        {
+                            applicationStatusSubmitted = ApplicationStatus.Submitted,
+                            gatewayReviewStatusNew = GatewayReviewStatus.New
+                        })).ToList();
+            }
+        }
+
+        public async Task<List<RoatpApplicationSummaryItem>> GetInProgressGatewayApplications()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection
+                    .QueryAsync<RoatpApplicationSummaryItem>(
+                        @"SELECT 
+                            apply.Id AS Id,
+                            apply.ApplicationId AS ApplicationId,
+                            apply.ApplicationStatus AS ApplicationStatus,
+                            apply.GatewayReviewStatus AS GatewayReviewStatus,
+                            apply.AssessorReviewStatus AS AssessorReviewStatus,
+                            apply.FinancialReviewStatus AS FinancialReviewStatus,
+                            org.Name AS OrganisationName,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate
+	                      FROM Apply apply
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+	                      WHERE apply.ApplicationStatus = @applicationStatusSubmitted AND apply.DeletedAt IS NULL
+	                        AND apply.GatewayReviewStatus = @gatewayReviewStatusInProgress",
+                        new
+                        {
+                            applicationStatusSubmitted = ApplicationStatus.Submitted,
+                            gatewayReviewStatusInProgress = GatewayReviewStatus.InProgress
+                        })).ToList();
+            }
+        }
+
+        public async Task<List<RoatpApplicationSummaryItem>> GetClosedGatewayApplications()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection
+                    .QueryAsync<RoatpApplicationSummaryItem>(
+                        @"SELECT 
+                            apply.Id AS Id,
+                            apply.ApplicationId AS ApplicationId,
+                            apply.ApplicationStatus AS ApplicationStatus,
+                            apply.GatewayReviewStatus AS GatewayReviewStatus,
+                            apply.AssessorReviewStatus AS AssessorReviewStatus,
+                            apply.FinancialReviewStatus AS FinancialReviewStatus,
+                            org.Name AS OrganisationName,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate
+	                      FROM Apply apply
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+	                      WHERE apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
+	                        AND apply.GatewayReviewStatus IN (@gatewayReviewStatusApproved, @gatewayReviewStatusDeclined)",
+                        new
+                        {
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
+                            gatewayReviewStatusApproved = GatewayReviewStatus.Approved,
+                            gatewayReviewStatusDeclined = GatewayReviewStatus.Declined
+                        })).ToList();
+            }
+        }
+
+        public async Task StartGatewayReview(Guid applicationId, string reviewer)
+        {
+            var application = await GetApplication(applicationId);
+
+            if (application != null && application.GatewayReviewStatus == GatewayReviewStatus.New)
+            {
+                application.GatewayReviewStatus = GatewayReviewStatus.InProgress;
+                application.UpdatedBy = reviewer;
+                application.UpdatedAt = DateTime.UtcNow;
+
+                using (var connection = new SqlConnection(_config.SqlConnectionString))
+                {
+                    await connection.ExecuteAsync(@"UPDATE Apply
+                                                    SET  GatewayReviewStatus = @GatewayReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
+                                                    WHERE Apply.ApplicationId = @ApplicationId",
+                                                    new { application.ApplicationId, application.ApplyData, application.GatewayReviewStatus, application.UpdatedBy });
+                }
+            }
+        }
+
+        public async Task<bool> ChangeProviderRoute(Guid applicationId, int providerRoute, string providerRouteName)
+        {
+            var application = await GetApplication(applicationId);
+            var applyData = application?.ApplyData;
+
+            if (application != null && applyData?.ApplyDetails != null)
+            {
+                applyData.ApplyDetails.ProviderRoute = providerRoute;
+                applyData.ApplyDetails.ProviderRouteName = providerRouteName;
+
+                using (var connection = new SqlConnection(_config.SqlConnectionString))
+                {
+                    await connection.ExecuteAsync(@"UPDATE Apply
+                                                    SET  ApplyData = @applyData
+                                                    WHERE  ApplicationId = @ApplicationId",
+                                                    new { application.ApplicationId, applyData });
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+        
+        public async Task EvaluateGateway(Guid applicationId, bool isGatewayApproved, string evaluatedBy)
+        {
+            var application = await GetApplication(applicationId);
+
+            if (application != null && application.GatewayReviewStatus == GatewayReviewStatus.InProgress)
+            {
+                application.UpdatedBy = evaluatedBy;
+                application.UpdatedAt = DateTime.UtcNow;
+
+                if(isGatewayApproved)
+                {
+                    application.ApplicationStatus = ApplicationStatus.GatewayAssessed;
+                    application.GatewayReviewStatus = GatewayReviewStatus.Approved;
+                }
+                else
+                {
+                    application.ApplicationStatus = ApplicationStatus.Rejected;
+                    application.GatewayReviewStatus = GatewayReviewStatus.Declined;
+                }
+
+                using (var connection = new SqlConnection(_config.SqlConnectionString))
+                {
+                    await connection.ExecuteAsync(@"UPDATE Apply
+                                                    SET  ApplicationStatus = @ApplicationStatus, GatewayReviewStatus = @GatewayReviewStatus, UpdatedBy = @UpdatedBy, UpdatedAt = GETUTCDATE() 
+                                                    WHERE Apply.ApplicationId = @ApplicationId",
+                                                    new { application.ApplicationId, application.ApplyData, application.ApplicationStatus, application.GatewayReviewStatus, application.UpdatedBy });
+                }
+            }
+        }
+
+        public async Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection
+                    .QueryAsync<RoatpFinancialSummaryItem>(
+                        @"SELECT 
+                            apply.Id AS Id,
+                            apply.ApplicationId AS ApplicationId,
+                            apply.ApplicationStatus AS ApplicationStatus,
+                            apply.GatewayReviewStatus AS GatewayReviewStatus,
+                            apply.AssessorReviewStatus AS AssessorReviewStatus,
+                            apply.FinancialReviewStatus AS FinancialReviewStatus,
+                            apply.FinancialGrade AS FinancialReviewDetails,
+                            org.Name AS OrganisationName,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate
+	                      FROM Apply apply
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	                      
+                        CROSS APPLY OPENJSON(apply.ApplyData)
+                        WITH (
+                            Sequences nvarchar(max) '$.Sequences' AS JSON
+                        ) AS i
+                        CROSS APPLY (
+                            SELECT *
+                            FROM OPENJSON(i.Sequences)
+                            WITH (
+                                [SequenceNo] nvarchar(max) '$.SequenceNo',
+                                [NotRequired] nvarchar(max) '$.NotRequired'
+                            )
+                        ) s
+                        WHERE s.SequenceNo = @financialHealthSequence AND s.NotRequired = 'false'
+                        AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
+                        AND apply.FinancialReviewStatus IN ( @financialStatusDraft, @financialStatusNew, @financialStatusInProgress)",
+                        new
+                        {
+                            financialHealthSequence = 2,
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
+                            financialStatusDraft = FinancialReviewStatus.Draft,
+                            financialStatusNew = FinancialReviewStatus.New,
+                            financialStatusInProgress = FinancialReviewStatus.InProgress
+                        })).ToList();
+            }
+        }
+
+        public async Task<List<RoatpFinancialSummaryItem>> GetFeedbackAddedFinancialApplications()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection
+                    .QueryAsync<RoatpFinancialSummaryItem>(
+                        @"SELECT 
+                            apply.Id AS Id,
+                            apply.ApplicationId AS ApplicationId,
+                            apply.ApplicationStatus AS ApplicationStatus,
+                            apply.GatewayReviewStatus AS GatewayReviewStatus,
+                            apply.AssessorReviewStatus AS AssessorReviewStatus,
+                            apply.FinancialReviewStatus AS FinancialReviewStatus,
+                            apply.FinancialGrade AS FinancialReviewDetails,
+                            org.Name AS OrganisationName,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate
+	                      FROM Apply apply
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	                      
+                        CROSS APPLY OPENJSON(apply.ApplyData)
+                        WITH (
+                            Sequences nvarchar(max) '$.Sequences' AS JSON
+                        ) AS i
+                        CROSS APPLY (
+                            SELECT *
+                            FROM OPENJSON(i.Sequences)
+                            WITH (
+                                [SequenceNo] nvarchar(max) '$.SequenceNo',
+                                [NotRequired] nvarchar(max) '$.NotRequired'
+                            )
+                        ) s
+                        WHERE s.SequenceNo = @financialHealthSequence AND s.NotRequired = 'false'
+                        AND apply.DeletedAt IS NULL
+                        AND apply.FinancialReviewStatus IN ( @financialStatusClarification )",
+                        new
+                        {
+                            financialHealthSequence = 2,
+                            financialStatusClarification = FinancialReviewStatus.Clarification
+                        })).ToList();
+            }
+        }
+
+        public async Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection
+                   .QueryAsync<RoatpFinancialSummaryItem>(
+                       @"SELECT 
+                            apply.Id AS Id,
+                            apply.ApplicationId AS ApplicationId,
+                            apply.ApplicationStatus AS ApplicationStatus,
+                            apply.GatewayReviewStatus AS GatewayReviewStatus,
+                            apply.AssessorReviewStatus AS AssessorReviewStatus,
+                            apply.FinancialReviewStatus AS FinancialReviewStatus,
+                            apply.FinancialGrade AS FinancialReviewDetails,
+                            org.Name AS OrganisationName,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate
+	                      FROM Apply apply
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	
+                        CROSS APPLY OPENJSON(apply.ApplyData)
+                        WITH (
+                            Sequences nvarchar(max) '$.Sequences' AS JSON
+                        ) AS i
+                        CROSS APPLY (
+                            SELECT *
+                            FROM OPENJSON(i.Sequences)
+                            WITH (
+                                [SequenceNo] nvarchar(max) '$.SequenceNo',
+                                [NotRequired] nvarchar(max) '$.NotRequired'
+                            )
+                        ) s
+                        WHERE s.SequenceNo = @financialHealthSequence AND s.NotRequired = 'false'
+                        AND apply.DeletedAt IS NULL
+                        AND apply.FinancialReviewStatus IN ( @financialStatusApproved, @financialStatusDeclined, @financialStatusExempt, @financialStatusClarification )",
+                       new
+                       {
+                           financialHealthSequence = 2,
+                           financialStatusApproved = FinancialReviewStatus.Approved,
+                           financialStatusDeclined = FinancialReviewStatus.Declined,
+                           financialStatusExempt = FinancialReviewStatus.Exempt,
+                           financialStatusClarification = FinancialReviewStatus.Clarification // Place in here till we're happy with a Clarification tab in Admin Services
+                       })).ToList();
+            }
+        }
+
+        public async Task<bool> StartFinancialReview(Guid applicationId, string reviewer)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE Apply SET FinancialReviewStatus = @financialReviewStatusInProgress,
+                                                UpdatedAt = @updatedAt, UpdatedBy = @updatedBy
+                                                WHERE ApplicationId = @applicationId
+                                                AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
+                                                AND FinancialReviewStatus IN ( @draftStatus, @newStatus )",
+                        new
+                        {
+                            applicationId,
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
+                            financialReviewStatusInProgress = FinancialReviewStatus.InProgress,
+                            updatedAt = DateTime.UtcNow,
+                            updatedBy = reviewer,
+                            draftStatus = FinancialReviewStatus.Draft,
+                            newStatus = FinancialReviewStatus.New
+                        });
+            }
+
+            return true;
+        }
+
+        public async Task<bool> RecordFinancialGrade(Guid applicationId, FinancialReviewDetails financialReviewDetails, string financialReviewStatus)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE Apply 
+                                                         SET FinancialGrade = @financialReviewDetails,
+                                                         FinancialReviewStatus = @financialReviewStatus
+                                                         WHERE ApplicationId = @applicationId",
+                                                new
+                                                {
+                                                    applicationId,
+                                                    financialReviewDetails,
+                                                    financialReviewStatus
+                                                });
+            }
+
+            return true;
+        }
+
+        public async Task<bool> IsUkprnWhitelisted(int ukprn)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return await connection.QuerySingleAsync<bool>(@"SELECT
+                                                                      CASE WHEN EXISTS 
+                                                                      (
+                                                                            SELECT UKPRN FROM dbo.WhitelistedProviders WHERE UKPRN = @ukprn
+                                                                      )
+                                                                      THEN 'TRUE'
+                                                                      ELSE 'FALSE'
+                                                                  END",
+                                                                  new { ukprn });
+            }
+        }
+
+
+
+        // NOTE: This is old stuff or things which are not migrated over yet
         public async Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId, int sectionId, Guid? userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -258,99 +801,6 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<bool> CanSubmitApplication(ApplicationSubmitRequest request)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                var orgId = await connection.QuerySingleOrDefaultAsync<Guid>(@"SELECT ApplyingOrganisationId
-                                                                      FROM Applications
-                                                                      WHERE Id = @ApplicationId", new { request.ApplicationId });
-
-                if (orgId == default(Guid)) return false;
-
-                // Prevent submission if non-EPAO Organisation and another user has an application in progress
-                var otherAppsInProgress = await connection.QueryAsync<Domain.Entities.Application>(@"
-                                                        SELECT a.*
-                                                        FROM Applications a
-                                                        INNER JOIN Organisations o ON o.Id = a.ApplyingOrganisationId
-                                                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = a.Id
-                                                        INNER JOIN Contacts con ON a.ApplyingOrganisationId = con.ApplyOrganisationID
-                                                        WHERE a.ApplyingOrganisationId = @orgId AND a.CreatedBy <> @UserId
-                                                        AND a.ApplicationStatus NOT IN (@approvedStatus, @rejectedStatus)
-                                                        AND o.RoEPAOApproved = 0 AND seq.IsActive = 1
-                                                        AND (seq.SequenceId = 2 OR (seq.SequenceId = 1 AND seq.Status = @seqSubmittedStatus))",
-                                                        new
-                                                        {
-                                                            orgId,
-                                                            request.UserId,
-                                                            approvedStatus = ApplicationStatus.Approved,
-                                                            rejectedStatus = ApplicationStatus.Rejected,
-                                                            seqSubmittedStatus = ApplicationSequenceStatus.Submitted,
-                                                        });
-
-                return !otherAppsInProgress.Any();
-            }
-        }
-
-        public async Task SubmitApplicationSequence(ApplicationSubmitRequest request, ApplicationData applicationdata)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                var sections = await GetSections(request.ApplicationId, request.SequenceId, request.UserId);
-
-                foreach(var section in sections)
-                {
-                    if(section.Status == ApplicationSectionStatus.Draft)
-                    {
-                        section.Status = ApplicationSequenceStatus.Submitted;
-                    }
-                    else if (section.QnAData.Pages.Any(p => p.HasNewFeedback))
-                    {
-                        section.Status = ApplicationSequenceStatus.Submitted;
-                    }
-                    else if (section.QnAData.FinancialApplicationGrade != null)
-                    {
-                        switch (section.QnAData.FinancialApplicationGrade.SelectedGrade)
-                        {
-                            case null:
-                            case FinancialApplicationSelectedGrade.Inadequate:
-                                section.Status = ApplicationSequenceStatus.Submitted;
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-
-                    foreach(var page in section.QnAData.Pages)
-                    {
-                        if (page.HasNewFeedback)
-                        {
-                            page.Feedback.ForEach(f => f.IsNew = false);
-                            page.Feedback.ForEach(f => f.IsCompleted = true);
-                            section.QnAData.RequestedFeedbackAnswered = true;
-                        }
-                    }
-                }
-
-                await UpdateSections(sections);
-
-                await connection.ExecuteAsync(@"UPDATE ApplicationSequences
-                                                SET    Status = 'Submitted'
-                                                FROM   ApplicationSequences INNER JOIN
-                                                         Applications ON ApplicationSequences.ApplicationId = Applications.Id INNER JOIN
-                                                         Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
-                                                WHERE  (ApplicationSequences.ApplicationId = @ApplicationId) AND (ApplicationSequences.SequenceId = @SequenceId) AND Contacts.Id = @UserId;
-
-                                                UPDATE       Applications
-                                                SET                ApplicationStatus = 'Submitted', ApplicationData = @applicationdata
-                                                FROM            Applications INNER JOIN
-                                                                Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
-                                                WHERE  (Applications.Id = @ApplicationId) AND Contacts.Id = @UserId	",
-                    new {request.ApplicationId, request.UserId, request.SequenceId, applicationdata });
-                }
-
-        }
-
         public async Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string sequenceStatus, string applicationStatus)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -448,41 +898,14 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task UpdateApplicationData(Guid applicationId, ApplicationData applicationData)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(@"UPDATE Applications
-                                                SET    ApplicationData = @applicationData
-                                                WHERE  Applications.Id = @applicationId",
-                    new {applicationId, applicationData});
-            }
-        }
-
-        public async Task<Domain.Entities.Application> GetApplication(Guid applicationId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                var application = await connection.QuerySingleOrDefaultAsync<Domain.Entities.Application>(@"SELECT * FROM Applications WHERE Id = @applicationId", new {applicationId});
-
-                if(application != null)
-                {
-                    application.ApplyingOrganisation = await GetOrganisationForApplication(applicationId);
-                }
-
-                return application;
-            }
-        }
 
         public async Task UpdateApplicationStatus(Guid applicationId, string status)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"UPDATE Applications
-                                                SET  ApplicationStatus = @status
-                                                FROM Applications
-                                                INNER JOIN Contacts ON Applications.ApplyingOrganisationId = Contacts.ApplyOrganisationID
-                                                WHERE  (Applications.Id = @ApplicationId)", new {applicationId, status});
+                await connection.ExecuteAsync(@"UPDATE Apply
+                                                SET  ApplicationStatus = @status                                                
+                                                WHERE ApplicationId = @ApplicationId", new {applicationId, status});
             }
         }
 
@@ -513,317 +936,92 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceId)
+        public async Task<List<RoatpApplicationSummaryItem>> GetOpenApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection
-                    .QueryAsync<ApplicationSummaryItem>(
-                        @"SELECT OrganisationName, ApplicationId, SequenceId,
-                            CASE WHEN SequenceId = 1 THEN 'Midpoint'
-                                 WHEN SequenceId = 2 THEN 'Standard'
-                                 ELSE 'Unknown'
-                            END As ApplicationType,
-                            StandardName,
-                            StandardCode,
-                            SubmittedDate,
-                            SubmissionCount,
-                            CASE WHEN SequenceId = 1 THEN Sec3Status
-		                         ELSE NULL
-	                        END As FinancialStatus,
-                            CASE WHEN SequenceId = 1 THEN SelectedFinancialGrade
-		                         ELSE NULL
-	                        END As FinancialGrade,
-	                        CASE WHEN (SequenceStatus = @sequenceStatusFeedbackAdded) THEN @sequenceStatusFeedbackAdded
-                                 WHEN (SubmissionCount > 1 AND SequenceId = 1 AND Sec1Status = @sectionStatusSubmitted AND Sec2Status = @sectionStatusSubmitted) THEN @sequenceStatusResubmitted
-                                 WHEN (SubmissionCount > 1 AND SequenceId = 1 AND Sec1Status = Sec2Status AND Sec3Status = @sectionStatusSubmitted) THEN @sequenceStatusResubmitted
-                                 WHEN (SubmissionCount > 1 AND SequenceId = 2 AND Sec4Status = @sectionStatusSubmitted) THEN @sequenceStatusResubmitted
-                                 WHEN (SubmissionCount > 1 AND RequestedFeedbackAnswered = 'true') THEN @sequenceStatusResubmitted
-                                 WHEN (SequenceId = 1 AND Sec1Status = Sec2Status) THEN Sec1Status
-		                         WHEN SequenceId = 2 THEN Sec4Status
-		                         ELSE @sectionStatusInProgress
-	                        END As CurrentStatus
-                        FROM (
-	                        SELECT 
-                                org.Name AS OrganisationName,
-                                appl.id AS ApplicationId,
-                                seq.SequenceId AS SequenceId,
-                                CASE WHEN seq.SequenceId = 1 THEN NULL
-		                             ELSE JSON_VALUE(appl.ApplicationData, '$.StandardName')
-                                END As StandardName,
-                                CASE WHEN seq.SequenceId = 1 THEN NULL
-		                             ELSE JSON_VALUE(appl.ApplicationData, '$.StandardCode')
-                                END As StandardCode,
-                                CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.LatestInitSubmissionDate')
-		                             WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.LatestStandardSubmissionDate')
-		                             ELSE NULL
-	                            END As SubmittedDate,
-                                CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount')
-		                             WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardSubmissionsCount')
-		                             ELSE 0
-	                            END As SubmissionCount,
-                                MAX(CASE WHEN sec.[SectionId] = 3 THEN JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.SelectedGrade') ELSE NULL END) AS SelectedFinancialGrade,
-                                seq.Status AS SequenceStatus,
-	                            MAX(CASE WHEN sec.[SectionId] = 1 THEN sec.[Status] ELSE NULL END) AS Sec1Status,
-	                            MAX(CASE WHEN sec.[SectionId] = 2 THEN sec.[Status] ELSE NULL END) AS Sec2Status,
-	                            MAX(CASE WHEN sec.[SectionId] = 3 THEN sec.[Status] ELSE NULL END) AS Sec3Status,
-	                            MAX(CASE WHEN sec.[SectionId] = 4 THEN sec.[Status] ELSE NULL END) AS Sec4Status,
-                                MAX(JSON_VALUE(sec.QnAData, '$.RequestedFeedbackAnswered')) AS RequestedFeedbackAnswered
-	                        FROM Applications appl
-	                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
-	                        INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id 
-	                        INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-	                        WHERE appl.ApplicationStatus = @applicationStatusSubmitted
-                                AND seq.SequenceId = @sequenceId
-                                AND seq.Status = @sequenceStatusSubmitted
-                                AND seq.IsActive = 1
-	                        GROUP BY seq.SequenceId, seq.Status, appl.ApplyingOrganisationId, appl.id, org.Name, appl.ApplicationData 
-                        ) ab",
-                        new
-                        {
-                            sequenceId,
-                            applicationStatusSubmitted = ApplicationStatus.Submitted,
-                            sequenceStatusSubmitted = ApplicationSequenceStatus.Submitted,
-                            sequenceStatusResubmitted = ApplicationSequenceStatus.Resubmitted,
-                            sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded,
-                            sectionStatusSubmitted = ApplicationSectionStatus.Submitted,
-                            sectionStatusInProgress = ApplicationSectionStatus.InProgress   
-                        })).ToList();
-            }
-        }
-
-        public async Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection
-                    .QueryAsync<ApplicationSummaryItem>(
-                        @"SELECT OrganisationName, ApplicationId, SequenceId,
-                            CASE WHEN SequenceId = 1 THEN 'Midpoint'
-                                 WHEN SequenceId = 2 THEN 'Standard'
-                                 ELSE 'Unknown'
-                            END As ApplicationType,
-                            StandardName,
-                            StandardCode,
-                            FeedbackAddedDate,
-                            SubmissionCount,
-                            SequenceStatus AS CurrentStatus
-                        FROM (
-	                        SELECT 
-                                org.Name AS OrganisationName,
-                                appl.id AS ApplicationId,
-                                seq.SequenceId AS SequenceId,
-                                CASE WHEN seq.SequenceId = 1 THEN NULL
-		                             ELSE JSON_VALUE(appl.ApplicationData, '$.StandardName')
-                                END As StandardName,
-                                CASE WHEN seq.SequenceId = 1 THEN NULL
-		                             ELSE JSON_VALUE(appl.ApplicationData, '$.StandardCode')
-                                END As StandardCode,
-                                CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.InitSubmissionFeedbackAddedDate')
-		                             WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardSubmissionFeedbackAddedDate')
-		                             ELSE NULL
-	                            END As FeedbackAddedDate,
-                                CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount')
-		                             WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardSubmissionsCount')
-		                             ELSE 0
-	                            END As SubmissionCount,
-                                seq.Status AS SequenceStatus
-	                        FROM Applications appl
-	                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
-	                        INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-	                        WHERE appl.ApplicationStatus = @applicationStatusFeedbackAdded
-                                AND seq.Status = @sequenceStatusFeedbackAdded
-                                AND seq.IsActive = 1
-	                        GROUP BY seq.SequenceId, seq.Status, appl.ApplyingOrganisationId, appl.id, org.Name, appl.ApplicationData 
-                        ) ab",
-                        new
-                        {
-                            applicationStatusFeedbackAdded = ApplicationStatus.FeedbackAdded,
-                            sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded
-                        })).ToList();
-            }
-        }
-
-        public async Task<List<ApplicationSummaryItem>> GetClosedApplications()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection
-                    .QueryAsync<ApplicationSummaryItem>(
-                        @"SELECT OrganisationName, ApplicationId, SequenceId,
-                            CASE WHEN SequenceId = 1 THEN 'Midpoint'
-                                 WHEN SequenceId = 2 THEN 'Standard'
-                                 ELSE 'Unknown'
-                            END As ApplicationType,
-                            StandardName,
-                            StandardCode,
-                            ClosedDate,
-                            SubmissionCount,
-                            SequenceStatus As CurrentStatus
-                        FROM (
-	                        SELECT 
-                                org.Name AS OrganisationName,
-                                appl.id AS ApplicationId,
-                                seq.SequenceId AS SequenceId,
-                            CASE WHEN seq.SequenceId = 1 THEN NULL
-		                            ELSE JSON_VALUE(appl.ApplicationData, '$.StandardName')
-                            END As StandardName,
-                            CASE WHEN seq.SequenceId = 1 THEN NULL
-		                            ELSE JSON_VALUE(appl.ApplicationData, '$.StandardCode')
-                            END As StandardCode,
-                            CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.InitSubmissionClosedDate')
-		                         WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardSubmissionClosedDate')
-		                         ELSE NULL
-	                        END As ClosedDate,
-                            CASE WHEN seq.SequenceId = 1 THEN JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount')
-		                         WHEN seq.SequenceId = 2 THEN JSON_VALUE(appl.ApplicationData, '$.StandardSubmissionsCount')
-		                         ELSE 0
-	                        END As SubmissionCount,
-                                seq.Status As SequenceStatus
-	                        FROM Applications appl
-	                        INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
-	                        INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-	                        WHERE seq.Status IN (@sequenceStatusApproved, @sequenceStatusRejected) AND seq.NotRequired = 0 AND appl.DeletedAt IS NULL
-	                        GROUP BY seq.SequenceId, seq.Status, appl.ApplyingOrganisationId, appl.id, org.Name, appl.ApplicationData 
-                        ) ab",
-                        new
-                        {
-                            sequenceStatusApproved = ApplicationSequenceStatus.Approved,
-                            sequenceStatusRejected = ApplicationSequenceStatus.Rejected
-                        })).ToList();
-            }
-        }
-
-        public async Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection
-                    .QueryAsync<FinancialApplicationSummaryItem>(
+                    .QueryAsync<RoatpApplicationSummaryItem>(
                         @"SELECT 
+                            apply.Id AS Id,
+                            apply.ApplicationId AS ApplicationId,
+                            apply.ApplicationStatus AS ApplicationStatus,
+                            apply.GatewayReviewStatus AS GatewayReviewStatus,
+                            apply.AssessorReviewStatus AS AssessorReviewStatus,
+                            apply.FinancialReviewStatus AS FinancialReviewStatus,
                             org.Name AS OrganisationName,
-                            appl.id AS ApplicationId,
-                            seq.SequenceId AS SequenceId,
-                            sec.SectionId AS SectionId,
-                            JSON_VALUE(appl.ApplicationData, '$.LatestInitSubmissionDate') As SubmittedDate,
-                            JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') As SubmissionCount,
-	                        CASE WHEN (seq.Status = @sequenceStatusFeedbackAdded) THEN @sequenceStatusFeedbackAdded
-                                 WHEN (JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') > 1 AND sec.Status = @financialStatusSubmitted) THEN @sequenceStatusResubmitted
-                                 WHEN (JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') > 1 AND JSON_VALUE(sec.QnAData, '$.RequestedFeedbackAnswered') = 'true') THEN @sequenceStatusResubmitted
-                                 ELSE sec.Status
-	                        END As CurrentStatus
-	                      FROM Applications appl
-	                      INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
-	                      INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id
-	                      INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-	                      WHERE seq.SequenceId = 1 AND sec.SectionId = 3 AND seq.IsActive = 1
-                            AND appl.ApplicationStatus = @applicationStatusSubmitted
-                            AND seq.Status = @sequenceStatusSubmitted
-                            AND sec.Status IN (@financialStatusSubmitted, @financialStatusInProgress)",
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate
+	                      FROM Apply apply
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+	                      WHERE apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
+	                        AND apply.GatewayReviewStatus = @gatewayReviewStatusApproved",
                         new
                         {
-                            applicationStatusSubmitted = ApplicationStatus.Submitted,
-                            sequenceStatusSubmitted = ApplicationSequenceStatus.Submitted,
-                            sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded,
-                            sequenceStatusResubmitted = ApplicationSequenceStatus.Resubmitted,
-                            financialStatusSubmitted = ApplicationSectionStatus.Submitted,
-                            financialStatusInProgress = ApplicationSectionStatus.InProgress
+                            applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
+                            gatewayReviewStatusApproved = GatewayReviewStatus.Approved
                         })).ToList();
             }
         }
 
-        public async Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications()
+        public async Task<List<RoatpApplicationSummaryItem>> GetFeedbackAddedApplications()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return(await connection
+                    .QueryAsync<RoatpApplicationSummaryItem>(
+                        @"SELECT 
+                            apply.Id AS Id,
+                            apply.ApplicationId AS ApplicationId,
+                            apply.ApplicationStatus AS ApplicationStatus,
+                            apply.GatewayReviewStatus AS GatewayReviewStatus,
+                            apply.AssessorReviewStatus AS AssessorReviewStatus,
+                            apply.FinancialReviewStatus AS FinancialReviewStatus,
+                            org.Name AS OrganisationName,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate
+	                      FROM Apply apply
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+	                      WHERE apply.ApplicationStatus = @applicationStatusFeedbackAdded AND apply.DeletedAt IS NULL",
+                        new
+                        {
+                            applicationStatusFeedbackAdded = ApplicationStatus.FeedbackAdded
+                        })).ToList();
+            }
+        }
+
+        public async Task<List<RoatpApplicationSummaryItem>> GetClosedApplications()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection
-                    .QueryAsync<FinancialApplicationSummaryItem>(
+                    .QueryAsync<RoatpApplicationSummaryItem>(
                         @"SELECT 
+                            apply.Id AS Id,
+                            apply.ApplicationId AS ApplicationId,
+                            apply.ApplicationStatus AS ApplicationStatus,
+                            apply.GatewayReviewStatus AS GatewayReviewStatus,
+                            apply.AssessorReviewStatus AS AssessorReviewStatus,
+                            apply.FinancialReviewStatus AS FinancialReviewStatus,
                             org.Name AS OrganisationName,
-                            appl.id AS ApplicationId,
-                            seq.SequenceId AS SequenceId,
-                            sec.SectionId AS SectionId,
-                            JSON_QUERY(sec.QnAData, '$.FinancialApplicationGrade') AS Grade,
-                            ISNULL(JSON_VALUE(appl.ApplicationData, '$.InitSubmissionFeedbackAddedDate'),
-								   JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.GradedDateTime')) As FeedbackAddedDate,
-                            JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') As SubmissionCount,
-	                        seq.Status As CurrentStatus
-	                      FROM Applications appl
-	                      INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
-	                      INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id
-	                      INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-	                      WHERE seq.SequenceId = 1 AND sec.SectionId = 3 AND seq.IsActive = 1
-                            AND (
-                                    seq.Status = @sequenceStatusFeedbackAdded
-                                    OR ( 
-                                            sec.Status IN (@financialStatusGraded, @financialStatusEvaluated)
-                                            AND JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.SelectedGrade') = @selectedGradeInadequate
-                                        )
-                                )",
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ApplicationRoute,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate
+	                      FROM Apply apply
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId	
+	                        WHERE ApplicationStatus IN ( @applicationStatusApproved, @applicationStatusDeclined ) AND apply.DeletedAt IS NULL",
                         new
                         {
-                            sequenceStatusFeedbackAdded = ApplicationSequenceStatus.FeedbackAdded,
-                            financialStatusGraded = ApplicationSectionStatus.Graded,
-                            financialStatusEvaluated = ApplicationSectionStatus.Evaluated,
-                            selectedGradeInadequate = FinancialApplicationSelectedGrade.Inadequate
+                            applicationStatusApproved = ApplicationStatus.Approved,
+                            applicationStatusDeclined = ApplicationStatus.Rejected
                         })).ToList();
             }
         }
-
-        public async Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection
-                    .QueryAsync<FinancialApplicationSummaryItem>(
-                        @"SELECT 
-                            org.Name AS OrganisationName,
-                            appl.id AS ApplicationId,
-                            seq.SequenceId AS SequenceId,
-                            sec.SectionId AS SectionId,
-                            JSON_QUERY(sec.QnAData, '$.FinancialApplicationGrade') AS Grade,
-                            JSON_VALUE(appl.ApplicationData, '$.InitSubmissionClosedDate') As ClosedDate,
-                            JSON_VALUE(appl.ApplicationData, '$.InitSubmissionsCount') As SubmissionCount,
-	                        CASE WHEN (seq.Status = @sequenceStatusApproved) THEN @sequenceStatusApproved
-                                 WHEN (seq.Status = @sequenceStatusRejected) THEN @sequenceStatusRejected
-                                 ELSE sec.Status
-	                        END As CurrentStatus
-	                      FROM Applications appl
-	                      INNER JOIN ApplicationSequences seq ON seq.ApplicationId = appl.Id
-	                      INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id
-	                      INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-	                      WHERE seq.SequenceId = 1 AND sec.SectionId = 3 AND seq.NotRequired = 0 AND appl.DeletedAt IS NULL
-	                        AND JSON_QUERY(sec.QnAData, '$.FinancialApplicationGrade') IS NOT NULL						  
-                            AND (
-                                    seq.Status IN (@sequenceStatusApproved, @sequenceStatusRejected)
-                                    OR ( 
-                                            sec.Status IN (@financialStatusGraded, @financialStatusEvaluated)
-                                            AND JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.SelectedGrade') <> @selectedGradeInadequate
-                                        )
-                                )",
-                        new
-                        {
-                            sequenceStatusApproved = ApplicationSequenceStatus.Approved,
-                            sequenceStatusRejected = ApplicationSequenceStatus.Rejected,
-                            financialStatusGraded = ApplicationSectionStatus.Graded,
-                            financialStatusEvaluated = ApplicationSectionStatus.Evaluated,
-                            selectedGradeInadequate = FinancialApplicationSelectedGrade.Inadequate
-                        })).ToList();
-            }
-        }
-
-
-        //
-        //        public async Task UpdateFinancialGrade(Guid applicationId, FinancialApplicationGrade updatedGrade)
-        //        {
-        //            using (var connection = new SqlConnection(_config.SqlConnectionString))
-        //            {
-        //                await connection.ExecuteAsync(@"UPDATE Applications
-        //                                                SET    ApplicationData = @serialisedData
-        //                                                WHERE  Applications.Id = @applicationId",
-        //                    new {applicationId, updatedGrade});
-        //            }
-        //        }
 
         public async Task StartApplicationReview(Guid applicationId, int sectionId)
         {
@@ -835,18 +1033,7 @@ namespace SFA.DAS.ApplyService.Data
                     new { applicationId, sectionId });
             }
         }
-
-        public async Task StartFinancialReview(Guid applicationId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                await connection.ExecuteAsync(@"UPDATE ApplicationSections 
-                                                SET Status = 'In Progress'
-                                                WHERE ApplicationId = @applicationId AND SectionId = 3 AND SequenceId = 1",
-                    new {applicationId});
-            }
-        }
-
+        
         public async Task<Organisation> GetOrganisationForApplication(Guid applicationId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -873,29 +1060,6 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<dynamic>> GetPreviousFinancialApplications()
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                return (await connection.QueryAsync(@"SELECT org.Name, sec.Status, appl.Id, 
-                                                JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.GradedBy') AS GradedBy, 
-	                                            JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.GradedDateTime') AS GradedDateTime,
-                                                JSON_VALUE(sec.QnAData, '$.FinancialApplicationGrade.SelectedGrade') AS Grade
-                                FROM Applications appl
-                            INNER JOIN Organisations org ON org.Id = appl.ApplyingOrganisationId
-                            INNER JOIN ApplicationSections sec ON sec.ApplicationId = appl.Id
-                            WHERE appl.ApplicationStatus = @applicationStatusSubmitted
-                            AND sec.SectionId = 3 
-                            AND (sec.Status = @financialStatusGraded)",
-                    new
-                    {
-                        applicationStatusSubmitted = ApplicationStatus.Submitted, 
-                        financialStatusGraded = ApplicationSectionStatus.Graded
-                    })).ToList();
-            }
-        }
-
- 
 
         public async Task<int> GetNextAppReferenceSequence()
         {
@@ -965,5 +1129,84 @@ namespace SFA.DAS.ApplyService.Data
                     });
             }
         }
+
+        public async Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatusByUkprn(string ukprn)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var applicationStatuses = await connection.QueryAsync<RoatpApplicationStatus>(
+                    @"select a.Id AS ApplicationId, a.ApplicationStatus AS Status
+                      from dbo.Apply a
+                      where UKPRN = @ukprn",
+                 new { ukprn });
+
+                return await Task.FromResult(applicationStatuses);
+            }
+        }
+
+        public async Task<string> GetNextRoatpApplicationReference()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var nextInSequence = (await connection.QueryAsync<int>(@"SELECT NEXT VALUE FOR RoatpAppReferenceSequence")).FirstOrDefault();
+
+                return $"APR{nextInSequence}";
+            }
+        }
+
+
+
+        public async Task<bool> StartAssessorReview(Guid applicationId, string reviewer)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE Apply SET AssessorReviewStatus = @assessorReviewStatusInProgress,
+                                                UpdatedAt = @updatedAt, UpdatedBy = @updatedBy
+                                                WHERE ApplicationId = @applicationId
+                                                AND AssessorReviewStatus IN ( @draftStatus, @newStatus )",
+                        new
+                        {
+                            applicationId,
+                            assessorReviewStatusInProgress = AssessorReviewStatus.InProgress,
+                            updatedAt = DateTime.UtcNow,
+                            updatedBy = reviewer,
+                            draftStatus = AssessorReviewStatus.Draft,
+                            newStatus = AssessorReviewStatus.New
+                        });
+            }
+
+            return await Task.FromResult(true);
+        }
+
+        public async Task<ApplyData> GetApplyData(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var applyDataResults = await connection.QueryAsync<ApplyData>(@"SELECT ApplyData FROM Apply WHERE ApplicationId = @applicationId",
+                    new { applicationId });
+
+                return applyDataResults.FirstOrDefault();
+            }
+        }
+
+        public async Task<bool> UpdateApplyData(Guid applicationId, ApplyData applyData, string updatedBy)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE Apply SET ApplyData = @applyData,
+                                                UpdatedAt = @updatedAt, UpdatedBy = @updatedBy
+                                                WHERE ApplicationId = @applicationId",
+                            new
+                            {
+                                applicationId,
+                                updatedAt = DateTime.UtcNow,
+                                updatedBy,
+                                applyData
+                            });
+            }
+
+            return await Task.FromResult(true);
+        }
+
     }
 }

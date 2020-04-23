@@ -1,0 +1,59 @@
+﻿@using MoreLinq;
+@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.AddEditManagementHierarchyViewModel
+
+@{
+    ViewBag.Title = $"Enter the {Model.Identifier}'s details";
+    Layout = "_Layout";
+}
+
+<partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
+
+@*
+<form asp-controller="RoatpManagementHierarchy" asp-action="ConfirmManagementHierarchy" method="get" name="backForm">
+    <input type="hidden" asp-for="ApplicationId" />
+    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+</form>
+*@
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
+                            {
+                                <li><a sfa-validation-for="@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+
+            <span class="govuk-caption-l">@Model.SectionTitle</span>
+            <h1 class="govuk-heading-xl">Enter the @Model.Identifier's details</h1>
+        </div>
+    </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="post" asp-action="UpdateManagementHierarchyDetails">
+                <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="Index" />
+                <input type="hidden" asp-for="Identifier" />
+                <input type="hidden" asp-for="GetHelpAction" />
+
+                <partial name="~/Views/Roatp/ManagementHierarchy/AddEditManagementHierarchy.cshtml" for="@Model" />
+                <button type="submit" class="govuk-button govuk-!-margin-right-3">Confirm and continue</button>
+
+                <a class="govuk-link das-inline-button-link govuk-link--no-visited-state" asp-action="ConfirmManagementHierarchy" asp-controller="RoatpManagementHierarchy" asp-route-applicationId="@Model.ApplicationId">Return to this question later</a>
+            </form>
+            <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
+        </div>
+    </div>
+</main>

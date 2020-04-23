@@ -1,3 +1,5 @@
+using SFA.DAS.ApplyService.Domain.Ukrlp;
+
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
     using System.Collections.Generic;
@@ -8,5 +10,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
     {
         Task<IEnumerable<ApplicationRoute>> GetApplicationRoutes();
         Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(long ukprn);
+        Task<IEnumerable<ProviderDetails>> GetUkrlpProviderDetails(string ukprn);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 
@@ -17,6 +18,11 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         public async Task<string> GetTokenisedValue(Guid applicationId, string tokenisedValue)
         {
+            if (string.IsNullOrEmpty(tokenisedValue))
+            {
+                return string.Empty;
+            }
+
             if (ContainsTokens(tokenisedValue))
             {
                 var questionTagName = GetTokenIdentifier(tokenisedValue);
@@ -27,8 +33,8 @@ namespace SFA.DAS.ApplyService.Web.Services
 
                 if (questionValue != null)
                 {
-                    var tokenReplacementValue = tokenisedValue.Replace(stringToReplace, questionValue.Value);
-                    return tokenReplacementValue;
+                    var tokenReplacementValue = tokenisedValue.Replace(stringToReplace, WebUtility.HtmlEncode(questionValue.Value));
+                    return  tokenReplacementValue;
                 }
             }
 

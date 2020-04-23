@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.Financial;
 using SFA.DAS.ApplyService.Application.Apply.Financial.Applications;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -40,18 +41,23 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return Ok(applications);
         }
 
-        [HttpPost("/Financial/{applicationId}/UpdateGrade")]
-        public async Task<ActionResult> UpdateGrade(Guid applicationId, [FromBody] FinancialApplicationGrade updatedGrade)
+        [HttpPost("/Financial/{applicationId}/Grade")]
+        public async Task<IActionResult> RecordGrade(Guid applicationId, [FromBody] FinancialReviewDetails financialReviewDetails)
         {
-            await _mediator.Send(new UpdateGradeRequest(applicationId, updatedGrade));
+            await _mediator.Send(new RecordGradeRequest(applicationId, financialReviewDetails));
             return Ok();
         }
 
         [HttpPost("/Financial/{applicationId}/StartReview")]
-        public async Task<ActionResult> StartReview(Guid applicationId)
+        public async Task<ActionResult> StartReview(Guid applicationId, [FromBody] StartFinancialReviewApplicationRequest request)
         {
-            await _mediator.Send(new StartFinancialReviewRequest(applicationId));
+            await _mediator.Send(new StartFinancialReviewRequest(applicationId, request.Reviewer));
             return Ok();
         }
+    }
+
+    public class StartFinancialReviewApplicationRequest
+    {
+        public string Reviewer { get; set; }
     }
 }

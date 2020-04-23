@@ -5,7 +5,7 @@
     Layout = "_Layout";
 }
 
-<a href="@Url.Action("Sequence", "Application", new {applicationId = Model.ApplicationId})" class="govuk-back-link">Back to application overview</a>
+@*<a asp-action="Sequence" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" class="govuk-back-link">Back to application overview</a>*@
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -27,9 +27,20 @@
                                         @foreach (var question in pg.Questions)
                                         {
                                             <li class="app-task-list__item">
-                                                <a class="govuk-link app-task-list__task-name" href="@Url.Action("Page", "Application", new {applicationId = Model.ApplicationId, sequenceId = Model.SequenceId, sectionId = Model.SectionId, pageId = pg.PageId, redirectAction="Section"})">
-                                                    @question.ShortLabel
-                                                </a>
+                                                <span class="app-task-list__task-name">
+                                                    <a
+                                                        class="govuk-link"
+                                                        asp-action="Page"
+                                                        asp-controller="Application"
+                                                        asp-route-applicationId="@Model.ApplicationId"
+                                                        asp-route-sequenceId="@Model.SequenceId"
+                                                        asp-route-sectionId="@Model.SectionId"
+                                                        asp-route-pageId="@pg.PageId"
+                                                        asp-route-redirectAction="Section"
+                                                    >
+                                                        @question.ShortLabel
+                                                    </a>
+                                                </span>
                                                 @if (pg.IsQuestionAnswered(question.QuestionId))
                                                 {
                                                     <strong class="govuk-tag app-task-list__task-completed" id="completed">Completed</strong>
@@ -42,7 +53,7 @@
                         </ul>
                     </li>
                 </ul>
-                <a href="@Url.Action("Sequence", "Application", new {applicationId = Model.ApplicationId})" class="govuk-button">Return to application overview</a>
+                <a asp-action="Sequence" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" class="govuk-button">Return to application overview</a>
             }
         </div>
     </div>

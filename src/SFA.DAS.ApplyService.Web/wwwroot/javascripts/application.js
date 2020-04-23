@@ -1,5 +1,6 @@
 // Application javascript
 window.GOVUKFrontend.initAll();
+window.DASFrontend.cookies.init();
 
 (function(global) {
   "use strict";

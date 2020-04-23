@@ -1,6 +1,7 @@
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Roatp;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,8 +10,57 @@ namespace SFA.DAS.ApplyService.Application.Apply
 {
     public interface IApplyRepository
     {
-        Task<List<Domain.Entities.Application>> GetUserApplications(Guid userId);
-        Task<List<Domain.Entities.Application>> GetOrganisationApplications(Guid userId);
+        Task<Guid> StartApplication(Guid applicationId, ApplyData applyData, Guid organisationId, Guid createdBy);
+
+        Task<Domain.Entities.Apply> GetApplication(Guid applicationId);
+        Task<List<Domain.Entities.Apply>> GetUserApplications(Guid userId);
+        Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid userId);
+
+        Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId);
+        Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId);
+
+        Task<string> GetGatewayPageStatus(Guid applicationId, string pageId);
+        Task<string> GetGatewayPageComments(Guid applicationId, string pageId);
+
+        Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string userName, string status, string comments);
+
+        Task<bool> CanSubmitApplication(Guid applicationId);
+        Task SubmitApplication(Guid applicationId, ApplyData applyData, Guid submittedBy);
+
+        Task<Guid> SnapshotApplication(Guid applicationId, Guid snapshotApplicationId, List<ApplySequence> newSequences);
+
+        Task<List<RoatpApplicationSummaryItem>> GetNewGatewayApplications();
+        Task<List<RoatpApplicationSummaryItem>> GetInProgressGatewayApplications();
+        Task<List<RoatpApplicationSummaryItem>> GetClosedGatewayApplications();
+        Task StartGatewayReview(Guid applicationId, string reviewer);
+        Task EvaluateGateway(Guid applicationId, bool isGatewayApproved, string evaluatedBy);
+
+        Task<List<RoatpApplicationSummaryItem>> GetOpenApplications();
+        Task<List<RoatpApplicationSummaryItem>> GetFeedbackAddedApplications();
+        Task<List<RoatpApplicationSummaryItem>> GetClosedApplications();
+
+        Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications();
+        Task<List<RoatpFinancialSummaryItem>> GetFeedbackAddedFinancialApplications();
+        Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications();
+        Task<bool> StartFinancialReview(Guid applicationId, string reviewer);
+        Task<bool> RecordFinancialGrade(Guid applicationId, FinancialReviewDetails financialReviewDetails, string financialReviewStatus);
+
+
+        Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatusByUkprn(string ukprn);
+
+        Task<string> GetNextRoatpApplicationReference();
+
+        Task<bool> StartAssessorReview(Guid applicationId, string reviewer);  
+        
+        Task<ApplyData> GetApplyData(Guid applicationId);
+
+        Task<bool> UpdateApplyData(Guid applicationId, ApplyData applyData, string updatedBy);
+
+        Task<bool> ChangeProviderRoute(Guid applicationId, int providerRoute, string providerRouteName);
+
+        Task<bool> IsUkprnWhitelisted(int ukprn);
+
+        // NOTE: This is old stuff or things which are not migrated over yet
         Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId,  int sectionId, Guid? userId);
         Task<List<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid? userId);
         Task<List<ApplicationSection>> GetSections(Guid applicationId);
@@ -23,25 +73,15 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task UpdateSections(List<ApplicationSection> sections);
         Task UpdateSequences(List<ApplicationSequence> sequences);
         Task SaveSection(ApplicationSection section, Guid? userId = null);
-        Task<List<ApplicationSummaryItem>> GetOpenApplications(int sequenceId);
-        Task<List<ApplicationSummaryItem>> GetFeedbackAddedApplications();
-        Task<List<ApplicationSummaryItem>> GetClosedApplications();
-        Task<List<FinancialApplicationSummaryItem>> GetOpenFinancialApplications();
-        Task<List<FinancialApplicationSummaryItem>> GetFeedbackAddedFinancialApplications();
-        Task<List<FinancialApplicationSummaryItem>> GetClosedFinancialApplications();
-        Task<bool> CanSubmitApplication(ApplicationSubmitRequest request);
-        Task SubmitApplicationSequence(ApplicationSubmitRequest request, ApplicationData applicationdata);
+             
         Task UpdateSequenceStatus(Guid applicationId, int sequenceId, string sequenceStatus, string applicationStatus);
         Task CloseSequence(Guid applicationId, int sequenceId);
         Task<List<ApplicationSequence>> GetSequences(Guid applicationId);
         Task OpenSequence(Guid applicationId, int nextSequenceId);
-        Task UpdateApplicationData(Guid applicationId, ApplicationData applicationData);
-        Task<Domain.Entities.Application> GetApplication(Guid requestApplicationId);
         Task UpdateApplicationStatus(Guid applicationId, string status);
         Task DeleteRelatedApplications(Guid applicationId);
 
         Task StartApplicationReview(Guid applicationId, int sectionId);
-        Task StartFinancialReview(Guid applicationId);
         Task<Organisation> GetOrganisationForApplication(Guid applicationId);
 
         Task<string> CheckOrganisationStandardStatus(Guid applicationId, int standardId);
@@ -53,5 +93,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<bool> IsSectionCompleted(Guid applicationId, Guid applicationSectionId);
 
         Task RemoveSectionCompleted(Guid applicationId, Guid applicationSectionId);
+       
     }
 }

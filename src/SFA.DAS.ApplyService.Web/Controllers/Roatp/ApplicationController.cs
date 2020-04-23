@@ -34,7 +34,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
 
-        public async Task<IActionResult> DeleteFile(Guid Id, int sequenceNo, int sectionId, string pageId, string questionId, string filename, string redirectAction)
+        public async Task<IActionResult> DeleteFile(Guid Id, int sequenceNo, int sectionId, string pageId, string questionId, string filename, string __redirectAction)
         {
             var applicationId = Id;
             var sequences = await _qnaApiClient.GetSequences(applicationId);
@@ -42,11 +42,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
             var selectedSection = sections.Single(x => x.SectionId == sectionId);
 
-
-            await _apiClient.RemoveSectionCompleted(applicationId, selectedSection.Id);
             await _qnaApiClient.DeleteFile(applicationId, selectedSection.Id, pageId, questionId, filename);
 
-            return RedirectToAction("Page", "RoatpApplication", new { applicationId, sequenceId = sequenceNo, sectionId, pageId, redirectAction });
+            return RedirectToAction("Page", "RoatpApplication", new { applicationId, sequenceId = sequenceNo, sectionId, pageId, redirectAction = __redirectAction });
         }
     }
 }

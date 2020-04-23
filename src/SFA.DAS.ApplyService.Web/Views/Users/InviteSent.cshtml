@@ -9,7 +9,20 @@ ViewBag.Title = "Confirm your identity";
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-xl">Confirm your identity</h1>
-            <p class="govuk-body">We've sent an invite to @Model.Email. Use the link in the email to complete sign up.</p>
+            <p class="govuk-body">We've sent a confirmation email to @Model.Email.</p>
+            <p class="govuk-body">Use the link in the email to confirm your details and continue creating an account.</p>
+
+            <details class="govuk-details" role="group">
+                <summary class="govuk-details__summary" role="button" aria-controls="details-content-email" aria-expanded="false">
+                    <span class="govuk-details__summary-text">
+                        I have not received the confirmation email
+                    </span>
+                </summary>
+                <div class="govuk-details__text" id="details-content-email" aria-hidden="true">
+                    <p>If you have not received the confirmation email, check your junk folder or try creating an account again.</p>
+                </div>
+            </details>
+
         </div>
     </div>
 </main>

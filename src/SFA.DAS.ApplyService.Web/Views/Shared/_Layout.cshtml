@@ -7,9 +7,35 @@
 <html lang="en" class="govuk-template ">
 <head>
     <environment exclude="Development">
-        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-120145707-1" ></script>
-        <script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'UA-120145707-1');</script>
+        <!-- Data Layer  -->
+        <script>
+            dataLayer = [{
+                'vpv': '@Context.Request.Path'
+            }];
+        </script>
+        <!-- End Data Layer  -->
+
+        <!-- Google Tag Manager -->
+        <script>
+            (function (w, d, s, l, i) {
+                w[l] = w[l] || [];
+                w[l].push({
+                    'gtm.start':
+                        new Date().getTime(),
+                    event: 'gtm.js'
+                });
+                var f = d.getElementsByTagName(s)[0],
+                    j = d.createElement(s),
+                    dl = l !== 'dataLayer' ? '&l=' + l : '';
+                j.async = true;
+                j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+                f.parentNode.insertBefore(j, f);
+            })(window, document, 'script', 'dataLayer', 'GTM-KVSLVQ9');
+        </script>
+        <!-- End Google Tag Manager -->
     </environment>
+
     <meta charset="utf-8"/>
     <title>@ViewBag.Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -50,12 +76,43 @@
 </script>
 
 <environment exclude="Development">
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-MKHR6KG');</script>
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MKHR6KG" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KVSLVQ9" height="0" width="0" style="display: none; visibility: hidden"></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
 </environment>
 
 <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
 @{ var config = await Config.GetConfig(); }
+
+
+<div data-module="cookie-banner" role="region" aria-label="cookie banner">
+   <div class="das-cookie-banner">
+      <div class="das-cookie-banner__wrapper govuk-width-container">
+         <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+               <h2 class="govuk-heading-m das-cookie-banner__header">Tell us whether you accept cookies</h2>
+               <p class="govuk-body">We use <a href="/Home/Cookies" class="govuk-link govuk-link--no-visited-state">cookies to collect information</a> about how you use the register of apprenticeship training provider service. We use this information to make the website work as well as possible and improve the service.</p>
+               <div class="das-cookie-banner__buttons">
+                  <div class="das-cookie-banner__button-wrap das-cookie-banner__button-accept">
+                     <button class="govuk-button das-button--outline das-cookie-banner__button" type="submit" data-accept-cookies="true">Accept all cookies</button>
+                  </div>
+                  <div class="das-cookie-banner__button-wrap das-cookie-banner__button-settings">
+                     <a class="govuk-button das-button--outline das-cookie-banner__button" role="button" href="/Home/Cookies">Set cookie preferences</a>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="das-cookie-banner__confirmation govuk-width-container" tabindex="-1">
+         <p class="govuk-body das-cookie-banner__confirmation-message">
+            You've accepted all cookies. You can <a class="govuk-link" href="/Home/Cookies">change your cookie settings</a> at any time.
+         </p>
+         <button class="das-cookie-banner__hide-button" data-hide-cookie-banner="true">Hide</button>
+      </div>
+   </div>
+</div>
 
 <header class="govuk-header " role="banner" data-module="header">
     <div class="govuk-header__container govuk-width-container govuk-header__container--das-epao">
@@ -77,7 +134,7 @@
         </div>
         <div class="govuk-header__content">
             <a asp-controller="Home" asp-action="Index" class="govuk-header__link govuk-header__link--service-name">
-                Apply to join the register of apprenticeship training providers
+                Register of apprenticeship training providers service
             </a>
         </div>
     </div>
@@ -90,7 +147,7 @@
                 beta
             </strong>
             <span class="govuk-phase-banner__text">
-                This is a new service - your <a href="#">feedback</a> will help us to improve it.
+                This is a new service.
             </span>
         </p>
     </div>
@@ -110,7 +167,10 @@
                         <a class="govuk-footer__link" asp-controller="Home" asp-action="Cookies">Cookies</a>
                     </li>
                     <li class="govuk-footer__inline-list-item">
-                        <a class="govuk-footer__link" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        <a href="https://www.gov.uk/government/publications/esfa-privacy-notice" class="govuk-footer__link" target="_blank">Privacy notice</a>
+                    </li>
+                    <li class="govuk-footer__inline-list-item">
+                        <a class="govuk-footer__link" asp-controller="Home" asp-action="Accessibility">Accessibility</a>
                     </li>
                 </ul>
                 <svg role="presentation" focusable="false" class="govuk-footer__licence-logo" xmlns="http://www.w3.org/2000/svg"
@@ -135,12 +195,13 @@
     </div>
 </footer>
 
-<script src="/javascripts/govuk-frontend-2.5.1.min.js"></script>
+<script src="~/javascripts/govuk-frontend-2.5.1.min.js"></script>
 <environment include="Development">
-    <script src="/javascripts/application.js"></script>
+    <script src="~/javascripts/das-cookie-banner.js"></script>
+    <script src="~/javascripts/application.js"></script>
 </environment>
 <environment exclude="Development">
-    <script src="/javascripts/application.min.js"></script>
+    <script src="~/javascripts/application.min.js"></script>
 </environment>
 
 @RenderSection("Scripts", required: false)

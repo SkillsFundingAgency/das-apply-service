@@ -11,6 +11,9 @@
     using Polly;
     using Polly.Retry;
     using Microsoft.AspNetCore.Authorization;
+    using MediatR;
+    using Microsoft.Extensions.Options;
+    using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
 
     [Authorize]
     public class RoatpApplicationController : Controller
@@ -21,14 +24,21 @@
         
         private AsyncRetryPolicy _retryPolicy;
 
-        public RoatpApplicationController(ILogger<RoatpApplicationController> logger, RoatpApiClient apiClient)
+        private readonly IMediator _mediator;
+
+        private readonly List<RoatpSequences> _roatpSequences;
+
+        public RoatpApplicationController(ILogger<RoatpApplicationController> logger, RoatpApiClient apiClient, IMediator mediator, IOptions<List<RoatpSequences>> roatpSequences)
         {
             _logger = logger;
             _apiClient = apiClient;
             _retryPolicy = GetRetryPolicy();
+            _mediator = mediator;
+            _roatpSequences = roatpSequences.Value;
         }
 
         [Route("all-roatp-routes")]
+        [HttpGet]
         public async Task<IActionResult> GetApplicationRoutes()
         {
             var providerTypes = await _retryPolicy.ExecuteAsync(context => _apiClient.GetProviderTypes(), new Context());
@@ -39,6 +49,7 @@
         }
 
         [Route("ukprn-on-register")]
+        [HttpGet]
         public async Task<IActionResult> UkprnOnRegister(long ukprn)
         {
             var registerStatus = await _retryPolicy.ExecuteAsync(
@@ -47,6 +58,13 @@
      
             return Ok(registerStatus);
         
+        }
+
+        [Route("roatp-sequences")]
+        [HttpGet]
+        public async Task<IActionResult> RoatpSequences()
+        {
+            return Ok(_roatpSequences);
         }
 
         private AsyncRetryPolicy GetRetryPolicy()

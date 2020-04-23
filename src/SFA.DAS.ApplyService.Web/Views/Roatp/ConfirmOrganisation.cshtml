@@ -5,126 +5,121 @@
     Layout = "_Layout";
 }
 
-@{ await Html.RenderPartialAsync("~/Views/Roatp/PreambleHeader.cshtml"); }
+<partial name="~/Views/Roatp/PreambleHeader.cshtml" />
 
-<div class="grid-row">
-    <form asp-controller="RoatpApplicationPreamble" asp-action="EnterApplicationUkprn" method="get" name="backForm">
-        <input type="hidden" asp-for="UKPRN" />
-        <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
-    </form>
-</div>
+@*
+<form asp-controller="RoatpApplicationPreamble" asp-action="EnterApplicationUkprn" method="get" name="backForm">
+    <input type="hidden" asp-for="UKPRN" />
+    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
+</form>
+*@
 
-<div class="govuk-width-container">
+<main class="govuk-main-wrapper" id="main-content" role="main">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-form-group">
+                <h1 class="govuk-heading-xl">Confirm your organisation's details</h1>
 
-    <main class="govuk-main-wrapper" id="main-content" role="main">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <div class="govuk-form-group">
-                    <h1 class="govuk-heading-l">Confirm your organisation's details</h1>
+                <p class="govuk-body">These are the details we found on UKRLP for @Model.UKPRN.</p>
 
-                    <p class="govuk-body">These are the details we found on UKRLP for @Model.UKPRN.</p>
-
-                    <dl class="govuk-summary-list">
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Legal name
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @Model.ProviderDetails.ProviderName
-                            </dd>
-                        </div>
-
-                        @if (Model.ProviderDetails.ProviderAliases.Count > 0 && !String.IsNullOrWhiteSpace(Model.ProviderDetails.ProviderAliases[0].Alias))
-                        {
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">
-                                    Trading name
-                                </dt>
-                                <dd class="govuk-summary-list__value">
-                                    @Model.ProviderDetails.ProviderAliases[0].Alias
-                                </dd>
-                            </div>
-                        }
-
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Business address
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @Html.Raw(Model.FormattedLegalAddress())
-                            </dd>
-                        </div>
-
-                        @if (!String.IsNullOrWhiteSpace(Model.LegalContactDetails.ContactWebsiteAddress))
-                        {
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">
-                                    Website
-                                </dt>
-                                <dd class="govuk-summary-list__value">
-                                    @Model.LegalContactDetails.ContactWebsiteAddress
-                                </dd>
-                            </div>
-                        }
-                        @if (Model.ProviderDetails.VerifiedByCompaniesHouse)
-                        {
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">
-                                    Company number
-                                </dt>
-                                <dd class="govuk-summary-list__value">
-                                    @Model.CompaniesHouseNumber
-                                </dd>
-                            </div>
-                        }
-                        @if (Model.ProviderDetails.VerifiedbyCharityCommission)
-                        {
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">
-                                    Charity registration number
-                                </dt>
-                                <dd class="govuk-summary-list__value">
-                                    @Model.CharityNumber
-                                </dd>
-                            </div>
-                        }
-
-                        @if (Model.ProviderDetails.SoleTraderOrPartnership)
-                        {
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">
-                                    Organisation type
-                                </dt>
-                                <dd class="govuk-summary-list__value">
-                                    Sole trader or partnership
-                                </dd>
-                            </div>
-                        }
-                    </dl>
-
-                    <details class="govuk-details" role="group">
-                        <summary class="govuk-details__summary" role="button" aria-controls="details-content-incorrect" aria-expanded="false">
-                            <span class="govuk-details__summary-text">
-                                What if these details are wrong?
-                            </span>
-                        </summary>
-                        <div class="govuk-details__text" id="details-content-incorrect" aria-hidden="true">
-                            <p>
-                                Contact the UKRLP helpdesk on 0345 202 1600 or <a href="mailto:helpdesk@ukrlp.co.uk">helpdesk@ukrlp.co.uk</a> to make changes.
-                            </p>
-                            <p>
-                                After your changes have been confirmed, sign back in to continue with this application.
-                            </p>
-                        </div>
-                    </details>
-
-                    <div class="govuk-grid-row">
-                        <form method="get" asp-action="VerifyOrganisationDetails" asp-controller="RoatpApplicationPreamble">
-                            <input type="submit" class="govuk-button" value="Confirm and continue" />
-                        </form>
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Legal name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Model.ProviderDetails.ProviderName
+                        </dd>
                     </div>
-                </div>
+
+                    @if (Model.ProviderDetails.ProviderAliases.Count > 0 && !String.IsNullOrWhiteSpace(Model.ProviderDetails.ProviderAliases[0].Alias))
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Trading name
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.ProviderDetails.ProviderAliases[0].Alias
+                            </dd>
+                        </div>
+                    }
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Business address
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @Html.Raw(Model.FormattedLegalAddress())
+                        </dd>
+                    </div>
+
+                    @if (!String.IsNullOrWhiteSpace(Model.LegalContactDetails.ContactWebsiteAddress))
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Website
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.LegalContactDetails.ContactWebsiteAddress
+                            </dd>
+                        </div>
+                    }
+                    @if (Model.ProviderDetails.VerifiedByCompaniesHouse)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Company number
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.CompaniesHouseNumber
+                            </dd>
+                        </div>
+                    }
+                    @if (Model.ProviderDetails.VerifiedbyCharityCommission)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Charity registration number
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.CharityNumber
+                            </dd>
+                        </div>
+                    }
+
+                    @if (Model.ProviderDetails.SoleTraderOrPartnership)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Organisation type
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                Sole trader or partnership
+                            </dd>
+                        </div>
+                    }
+                </dl>
+
+                <details class="govuk-details" role="group">
+                    <summary class="govuk-details__summary" role="button" aria-controls="details-content-incorrect" aria-expanded="false">
+                        <span class="govuk-details__summary-text">
+                            What if these details are wrong?
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text" id="details-content-incorrect" aria-hidden="true">
+                        <p>
+                            Contact the UKRLP helpdesk on 0345 202 1600 or <a class="govuk-link" href="mailto:helpdesk@ukrlp.co.uk">helpdesk@ukrlp.co.uk</a> to make changes.
+                        </p>
+                        <p>
+                            After your changes have been confirmed, sign back in to continue with this application.
+                        </p>
+                    </div>
+                </details>
+
+                <form method="get" asp-action="VerifyOrganisationDetails" asp-controller="RoatpApplicationPreamble">
+                    <input type="submit" class="govuk-button" value="Confirm and continue" />
+                </form>
             </div>
         </div>
-    </main>
-</div>
+    </div>
+</main>
