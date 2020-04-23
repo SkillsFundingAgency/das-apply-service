@@ -1,6 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -91,6 +91,19 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
             return null;
         }
+
+        public async Task<string> GetAnswerValueFromActiveQuestion(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId)
+        {
+            var pageContainingQuestion = await GetPageBySectionNo(applicationId, sequenceNo, sectionNo, pageId);
+
+            if (!pageContainingQuestion.Active)
+            {
+                return null;
+            }
+
+            return GetAnswerValue(questionId, pageContainingQuestion);
+        }
+
         private static string GetAnswerValue(string questionId, Page pageContainingQuestion)
         {
             if (pageContainingQuestion?.Questions != null)
@@ -102,7 +115,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                         foreach (var pageOfAnswers in pageContainingQuestion.PageOfAnswers)
                         {
                             var pageAnswer = pageOfAnswers.Answers.FirstOrDefault(x => x.QuestionId == questionId);
-                            if(pageAnswer != null)
+                            if (pageAnswer != null)
                             {
                                 {
                                     return pageAnswer.Value;
@@ -113,7 +126,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                     else // In case question/answer is buried in FurtherQuestions
                     {
                         var furtherQuestionAnswer = GetAnswerFromFurtherQuestions(question, pageContainingQuestion, questionId);
-                        if(furtherQuestionAnswer != null)
+                        if (furtherQuestionAnswer != null)
                         {
                             return furtherQuestionAnswer;
                         }

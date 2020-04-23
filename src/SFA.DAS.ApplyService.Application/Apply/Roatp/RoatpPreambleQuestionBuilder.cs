@@ -63,9 +63,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string AddPeopleInControl = "YO-130";
         public static string OfficeForStudents = "YO-235";
         public static string InitialTeacherTraining = "YO-240";
+<<<<<<< HEAD
         public static string IsPostGradTrainingOnlyApprenticeship = "YO-250";
 		public static string HasDeliveredTrainingAsSubcontractor = "YO-350";
         public static string ContractFileName = "YO-360";
+=======
+>>>>>>> APR-1332_AddOfstedEndpoint
         public static string HasHadFullInspection = "YO-260";
         public static string ReceivedFullInspectionGradeForApprenticeships = "YO-270";
         public static string FullInspectionOverallEffectivenessGrade = "YO-280";
@@ -78,6 +81,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string GradeWithinLast3YearsOfsFunded = "YO-310";
         public static string GradeWithinLast3YearsNonOfsFunded = "YO-311";
 
+<<<<<<< HEAD
+=======
+        public static string IsPostGradTrainingOnlyApprenticeship = "YO-250";
+		public static string HasDeliveredTrainingAsSubcontractor = "YO-350";
+        public static string ContractFileName = "YO-360";
+>>>>>>> APR-1332_AddOfstedEndpoint
     }
 
     public class RoatpCriminalComplianceChecksQuestionIdConstants
