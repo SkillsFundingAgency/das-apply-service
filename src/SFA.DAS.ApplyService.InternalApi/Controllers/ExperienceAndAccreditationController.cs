@@ -94,43 +94,43 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("/Accreditation/{applicationId}/OfstedDetails")]
         public async Task<OfstedDetails> GetOfstedDetails(Guid applicationId)
         {
-            var hasHadFullInspectionTask = _qnaApiClient.GetAnswerValue(applicationId,
+            var hasHadFullInspectionTask = _qnaApiClient.GetAnswerValueFromActiveQuestion(applicationId,
                 RoatpWorkflowSequenceIds.YourOrganisation,
                 RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
                 RoatpWorkflowPageIds.ExperienceAndAccreditations.HasHadFullInspection,
                 RoatpYourOrganisationQuestionIdConstants.HasHadFullInspection);
 
-            var receivedFullInspectionGradeForApprenticeshipsTask = _qnaApiClient.GetAnswerValue(applicationId,
+            var receivedFullInspectionGradeForApprenticeshipsTask = _qnaApiClient.GetAnswerValueFromActiveQuestion(applicationId,
                 RoatpWorkflowSequenceIds.YourOrganisation,
                 RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
                 RoatpWorkflowPageIds.ExperienceAndAccreditations.ReceivedFullInspectionGradeForApprenticeships,
                 RoatpYourOrganisationQuestionIdConstants.ReceivedFullInspectionGradeForApprenticeships);
 
-            var fullInspectionOverallEffectivenessGradeTask = _qnaApiClient.GetAnswerValue(applicationId,
+            var fullInspectionOverallEffectivenessGradeTask = _qnaApiClient.GetAnswerValueFromActiveQuestion(applicationId,
                 RoatpWorkflowSequenceIds.YourOrganisation,
                 RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
                 RoatpWorkflowPageIds.ExperienceAndAccreditations.FullInspectionOverallEffectivenessGrade,
                 RoatpYourOrganisationQuestionIdConstants.FullInspectionOverallEffectivenessGrade);
 
-            var hasHadMonitoringVisitTask = _qnaApiClient.GetAnswerValue(applicationId,
+            var hasHadMonitoringVisitTask = _qnaApiClient.GetAnswerValueFromActiveQuestion(applicationId,
                 RoatpWorkflowSequenceIds.YourOrganisation,
                 RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
                 RoatpWorkflowPageIds.ExperienceAndAccreditations.HasHadMonitoringVisit,
                 RoatpYourOrganisationQuestionIdConstants.HasHadMonitoringVisit);
 
-            var hasMaintainedFundingSinceInspectionTask = _qnaApiClient.GetAnswerValue(applicationId,
+            var hasMaintainedFundingSinceInspectionTask = _qnaApiClient.GetAnswerValueFromActiveQuestion(applicationId,
                 RoatpWorkflowSequenceIds.YourOrganisation,
                 RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
                 RoatpWorkflowPageIds.ExperienceAndAccreditations.HasMaintainedFundingSinceInspection,
                 RoatpYourOrganisationQuestionIdConstants.HasMaintainedFundingSinceInspection);
 
-            var hasHadShortInspectionWithinLast3YearsTask = _qnaApiClient.GetAnswerValue(applicationId,
+            var hasHadShortInspectionWithinLast3YearsTask = _qnaApiClient.GetAnswerValueFromActiveQuestion(applicationId,
                 RoatpWorkflowSequenceIds.YourOrganisation,
                 RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
                 RoatpWorkflowPageIds.ExperienceAndAccreditations.HasHadShortInspectionWithinLast3Years,
                 RoatpYourOrganisationQuestionIdConstants.HasHadShortInspectionWithinLast3Years);
 
-            var hasMaintainedFullGradeInShortInspectionTask = _qnaApiClient.GetAnswerValue(applicationId,
+            var hasMaintainedFullGradeInShortInspectionTask = _qnaApiClient.GetAnswerValueFromActiveQuestion(applicationId,
                 RoatpWorkflowSequenceIds.YourOrganisation,
                 RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
                 RoatpWorkflowPageIds.ExperienceAndAccreditations.HasMaintainedFullGradeInShortInspection,
@@ -155,15 +155,15 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             return new OfstedDetails
             {
-                HasHadFullInspection = hasHadFullInspectionTask.Result?.ToUpper() == "YES",
-                ReceivedFullInspectionGradeForApprenticeships = receivedFullInspectionGradeForApprenticeshipsTask.Result?.ToUpper() == "YES",
+                HasHadFullInspection = hasHadFullInspectionTask.Result != null ? hasHadFullInspectionTask.Result.ToUpper() == "YES" : (bool?)null,
+                ReceivedFullInspectionGradeForApprenticeships = receivedFullInspectionGradeForApprenticeshipsTask.Result != null ? receivedFullInspectionGradeForApprenticeshipsTask.Result.ToUpper() == "YES" : (bool?)null,
                 FullInspectionOverallEffectivenessGrade = fullInspectionOverallEffectivenessGradeTask.Result,
-                HasMaintainedFundingSinceInspection = hasMaintainedFundingSinceInspectionTask.Result?.ToUpper() == "YES",
-                HasHadShortInspectionWithinLast3Years = hasHadShortInspectionWithinLast3YearsTask.Result?.ToUpper() == "YES",
-                HasMaintainedFullGradeInShortInspection = hasMaintainedFullGradeInShortInspectionTask.Result?.ToUpper() == "YES",
-                HasHadMonitoringVisit = hasHadMonitoringVisitTask.Result?.ToUpper() == "YES",
+                HasMaintainedFundingSinceInspection = hasMaintainedFundingSinceInspectionTask.Result != null ? hasMaintainedFundingSinceInspectionTask.Result.ToUpper() == "YES" : (bool?)null,
+                HasHadShortInspectionWithinLast3Years = hasHadShortInspectionWithinLast3YearsTask.Result != null ? hasHadShortInspectionWithinLast3YearsTask.Result.ToUpper() == "YES" : (bool?)null,
+                HasMaintainedFullGradeInShortInspection = hasMaintainedFullGradeInShortInspectionTask.Result != null ? hasMaintainedFullGradeInShortInspectionTask.Result.ToUpper() == "YES" : (bool?)null,
+                HasHadMonitoringVisit = hasHadMonitoringVisitTask.Result != null ? hasHadMonitoringVisitTask.Result.ToUpper() == "YES" : (bool?)null,
                 FullInspectionApprenticeshipGrade = fullInspectionApprenticeshipGradeTask.Result,
-                GradeWithinTheLast3Years = gradeWithinLast3YearsTask.Result?.ToUpper() == "YES"
+                GradeWithinTheLast3Years = gradeWithinLast3YearsTask.Result != null ? gradeWithinLast3YearsTask.Result.ToUpper() == "YES" : (bool?)null,
             };
         }
     }
