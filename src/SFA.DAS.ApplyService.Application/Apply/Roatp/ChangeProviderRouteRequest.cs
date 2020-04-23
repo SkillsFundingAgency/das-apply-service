@@ -7,5 +7,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
     {
         public Guid ApplicationId { get; set; }
         public int ProviderRoute { get; set; }
+        public string ProviderRouteName { get; set; }
     }
 }

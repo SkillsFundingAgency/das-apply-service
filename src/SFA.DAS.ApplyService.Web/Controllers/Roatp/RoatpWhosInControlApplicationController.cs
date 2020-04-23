@@ -14,6 +14,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.InternalApi.Types;
+using SFA.DAS.ApplyService.Application.Services;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {    

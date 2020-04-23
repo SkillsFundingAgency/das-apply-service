@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
     using Configuration;
+    using Microsoft.AspNetCore.Hosting;
     using Microsoft.IdentityModel.Clients.ActiveDirectory;
 
     public class RoatpTokenService : IRoatpTokenService
@@ -14,12 +15,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
         {
             _hostingEnvironment = hostingEnvironment;
             _configuration = configurationService.GetConfig().Result;
+            _hostingEnvironment = hostingEnvironment;
         }
 
-        public string GetToken()
+        public string GetToken(string baseUrl)
         {
-            if (_hostingEnvironment.IsDevelopment())
+            var uri = new Uri(baseUrl);
+            if (uri.IsLoopback)
+            {
                 return string.Empty;
+            }
 
             var tenantId = _configuration.RoatpApiAuthentication.TenantId;
             var clientId = _configuration.RoatpApiAuthentication.ClientId;

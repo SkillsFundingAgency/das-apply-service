@@ -20,7 +20,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         {
             _logger.LogInformation($"Changing ProviderRoute to {request.ProviderRoute} for Application ID {request.ApplicationId}");
 
-            return await _repository.ChangeProviderRoute(request.ApplicationId, request.ProviderRoute);
+            return await _repository.ChangeProviderRoute(request.ApplicationId, request.ProviderRoute, request.ProviderRouteName);
         }
     }
 }

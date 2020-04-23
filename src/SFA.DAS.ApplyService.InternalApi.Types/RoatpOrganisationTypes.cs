@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.ApplyService.InternalApi.Types
 {
-    public class RoatpOrganisationTypes
+    public class RoatpOrganisationTypes 
     {
         public const string Company = "Company";
         public const string CompanyAndCharity = "Company and charity";

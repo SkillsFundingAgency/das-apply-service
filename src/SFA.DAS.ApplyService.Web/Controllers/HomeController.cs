@@ -22,6 +22,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return View();
         }
 
+        public IActionResult CookieDetails()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();
