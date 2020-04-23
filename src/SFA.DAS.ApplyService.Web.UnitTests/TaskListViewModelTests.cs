@@ -638,11 +638,6 @@
         {
             var model = GetTaskListViewModelWithSectionsUpToWhosInControlCompleted();
 
-            model.VerifiedCompaniesHouse = false;
-            model.VerifiedCharityCommission = false;
-            model.CompaniesHouseDataConfirmed = false;
-            model.CharityCommissionDataConfirmed = false;
-            model.WhosInControlConfirmed = false;
             model.WhosInControlStarted = true;
 
             model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.InProgress);
