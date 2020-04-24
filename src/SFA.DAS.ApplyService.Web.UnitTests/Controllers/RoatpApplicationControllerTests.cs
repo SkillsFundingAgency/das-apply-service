@@ -230,6 +230,28 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
+        public void Applications_shows_enter_ukprn_page_if_application_cancelled()
+        {
+            var submittedApp = new Domain.Entities.Apply
+            {
+                ApplicationStatus = ApplicationStatus.Cancelled
+            };
+            var applications = new List<Domain.Entities.Apply>
+            {
+                submittedApp
+            };
+
+            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
+
+            var result = _controller.Applications().GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("EnterApplicationUkprn");
+            redirectResult.ControllerName.Should().Be("RoatpApplicationPreamble");
+        }
+
+        [Test]
         public void Submit_application_presents_confirmation_page_with_legal_name()
         {
             var organisationNameAnswer = new Answer
