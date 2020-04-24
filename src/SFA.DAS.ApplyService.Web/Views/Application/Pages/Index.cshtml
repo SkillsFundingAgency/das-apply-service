@@ -70,9 +70,17 @@
                     {
                         if (hasModelTitle)
                         {
-                            <h1 class="govuk-heading-xl">
-                                @Html.Raw(Model.Title)
-                            </h1>
+        <h1 class="govuk-heading-xl">
+            @if (Model.ShowTitleAsCaption)
+            {
+                @Html.Raw(Model.LinkTitle)
+            }
+            else
+            {
+                @Html.Raw(Model.Title)
+            }
+
+        </h1>
                         }
 
                         @if (hasBodyText)

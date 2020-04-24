@@ -38,6 +38,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
             _pageOverrideConfiguration = pageOverrideConfiguration;
             LinksConfiguration = linksConfiguration.Where(x=>x.PageId == pageId).ToList();
             SectionTitle = sectionTitle;
+            ShowTitleAsCaption = page.ShowTitleAsCaption;
             PeopleInControlDetails = peopleInControlDetails;
 
             if (page != null)
@@ -54,6 +55,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels
         public string PageId { get; set; }
         public string PageContext { get; set; }
         public string Title { get; set; }
+        public bool ShowTitleAsCaption { get; set; }
 
         public string DisplayType { get; set; }
 
