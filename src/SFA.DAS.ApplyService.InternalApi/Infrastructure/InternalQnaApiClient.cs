@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -10,6 +11,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
@@ -41,6 +43,23 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
             _environmentName = configurationService.GetEnvironmentName();
         }
+
+        public async Task<ApplicationSequence> GetSequenceBySequenceNo(Guid applicationId, int sequenceNo)
+        {
+            var response = await _httpClient.GetAsync($"Applications/{applicationId}/Sequences/{sequenceNo}");
+
+            return await response.Content.ReadAsAsync<ApplicationSequence>();
+        }
+
+
+        public async Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId, Guid sequenceId)
+        {
+            var response = await _httpClient.GetAsync($"Applications/{applicationId}/Sequences/{sequenceId}/sections");
+
+            return await response.Content.ReadAsAsync<IEnumerable<ApplicationSection>>();
+        }
+
+
         public async Task<string> GetQuestionTag(Guid applicationId, string questionTag)
         {
             var response = await _httpClient.GetAsync($"Applications/{applicationId}/applicationData/{questionTag}");
