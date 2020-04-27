@@ -61,16 +61,23 @@
                     </span>
                 }
 
-                <h1 class="govuk-heading-xl">
-                    @if (Model?.DisplayType == "PagesWithSections")
-                    {
-                        @Model.LinkTitle
-                    }
-                    else
-                    {
-                        @Model.Title
-                    }
-                </h1>
+        <h1 class="govuk-heading-xl">
+            @if (Model?.DisplayType == "PagesWithSections")
+            {
+                @Model.LinkTitle
+            }
+            else
+            {
+                @if (Model.ShowTitleAsCaption)
+                {
+                    @Html.Raw(Model.LinkTitle)
+                }
+                else
+                {
+                    @Html.Raw(Model.Title)
+                }
+            }
+        </h1>
             }
 
             @if (Model.HasFeedback)
