@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -97,8 +99,44 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                     }
                 }
             }
-
             return null;
+        }
+
+        public async Task<FileStreamResult> GetDownloadFile(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId)
+        {
+            var response = await GetResponse($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}/questions/{questionId}/download");
+
+            var fileStream = await response.Content.ReadAsStreamAsync();
+            var result = new FileStreamResult(fileStream, response.Content.Headers.ContentType.MediaType);
+            result.FileDownloadName = response.Content.Headers.ContentDisposition.FileName;
+            return result;
+        }
+
+        public async Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag, string questionId = null)
+        {
+            var answer = new Answer { QuestionId = questionId };
+
+            var questionTagData = await GetQuestionTag(applicationId, questionTag);
+            if (questionTagData != null)
+            {
+                answer.Value = questionTagData;
+            }
+
+            return answer;
+        }
+
+        public async Task<TabularData> GetTabularDataByTag(Guid applicationId, string questionTag)
+        {
+            var answer = await GetAnswerByTag(applicationId, questionTag);
+
+            if (answer?.Value == null)
+            {
+                return null;
+            }
+
+            var tabularData = JsonConvert.DeserializeObject<TabularData>(answer.Value);
+
+            return tabularData;
         }
     }
 }

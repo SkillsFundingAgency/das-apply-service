@@ -14,7 +14,7 @@
     {
         public RoatpApiClient(HttpClient httpClient, ILogger<RoatpApiClient> logger, IRoatpTokenService tokenService) : base(httpClient, logger)
         {
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken());
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken(httpClient.BaseAddress));
         }
 
         public async virtual Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(string ukprn)

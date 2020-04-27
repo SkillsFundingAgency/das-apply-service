@@ -54,9 +54,6 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var configurationService = new Mock<IConfigurationService>();
             configurationService.Setup(x => x.GetConfig()).ReturnsAsync(new ApplyConfig { RoatpApiAuthentication = new RoatpApiAuthentication { ApiBaseAddress = "https://localhost"} });
 
-            var roatpTokenService = new Mock<IRoatpTokenService>();
-            roatpTokenService.Setup(x => x.GetToken()).Returns(string.Empty);
-
             _applyRepository = new Mock<IApplyRepository>();
             _logger = new Mock<ILogger<GatewayApiChecksController>>();
             _companiesHouseApiClient = new Mock<CompaniesHouseApiClient>();

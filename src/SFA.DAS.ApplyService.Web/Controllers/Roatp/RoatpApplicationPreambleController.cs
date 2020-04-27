@@ -412,8 +412,8 @@
                 companyDetails = await _companiesHouseApiClient.GetCompanyDetails(companiesHouseVerification.VerificationId);
 
                 if ((companyDetails.Directors == null || companyDetails.Directors.Count == 0)
-                    && (companyDetails.PersonsSignificationControl == null ||
-                        companyDetails.PersonsSignificationControl.Count == 0))
+                    && (companyDetails.PersonsWithSignificantControl == null ||
+                        companyDetails.PersonsWithSignificantControl.Count == 0))
                 {
                     companyDetails.ManualEntryRequired = true;
                 }
