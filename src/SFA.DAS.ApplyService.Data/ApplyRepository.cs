@@ -1130,9 +1130,30 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public Task<List<RoatpAssessorApplicationSummary>> GetNewAssessorApplications(string userId)
+        public async Task<List<RoatpAssessorApplicationSummary>> GetNewAssessorApplications(string userId)
         {
-            throw new NotImplementedException();
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection
+                    .QueryAsync<RoatpAssessorApplicationSummary>(
+                        @"SELECT 
+                            org.Name AS OrganisationName,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ProviderRoute,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
+                            Assessor1Name,
+                            Assessor2Name
+	                      FROM Apply apply
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+	                      WHERE apply.ApplicationStatus = @applicationStatusSubmitted AND apply.DeletedAt IS NULL AND apply.GatewayReviewStatus = @gatewayReviewStatusApproved AND (Assessor1UserId IS NULL OR Assessor1UserId <> @userId AND Assessor2UserId IS NULL)",
+                        new
+                        {
+                            applicationStatusSubmitted = ApplicationStatus.Submitted,
+                            gatewayReviewStatusApproved = GatewayReviewStatus.Approved,
+                            userId = userId
+                        })).ToList();
+            }
         }
 
         public async Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatusByUkprn(string ukprn)

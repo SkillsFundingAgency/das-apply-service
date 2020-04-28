@@ -6,7 +6,6 @@
     [ApplicationStatus] NVARCHAR(20) NOT NULL DEFAULT 'New', 
     [ApplyData] NVARCHAR(MAX) NULL, 
     [GatewayReviewStatus] NVARCHAR(20) NOT NULL DEFAULT 'Draft',
-    [AssessorReviewStatus] NVARCHAR(20) NOT NULL DEFAULT 'Draft',
     [FinancialReviewStatus] NVARCHAR(20) NOT NULL DEFAULT 'Draft',
     [FinancialGrade] NVARCHAR(MAX) NULL, 
     [CreatedAt] DATETIME2 NOT NULL, 
@@ -15,7 +14,13 @@
     [UpdatedBy] NVARCHAR(256) NULL, 
     [DeletedAt] DATETIME2 NULL, 
     [DeletedBy] NVARCHAR(256) NULL,
-    [UKPRN] AS JSON_VALUE(ApplyData, '$.ApplyDetails.UKPRN') PERSISTED
+    [UKPRN] AS JSON_VALUE(ApplyData, '$.ApplyDetails.UKPRN') PERSISTED, 
+    [Assessor1UserId] NVARCHAR(256) NULL, 
+    [Assessor2UserId] NVARCHAR(256) NULL, 
+    [Assessor1Name] NVARCHAR(256) NULL, 
+    [Assessor2Name] NVARCHAR(256) NULL, 
+    [Assessor1ReviewStatus] NVARCHAR(20) NULL, 
+    [Assessor2ReviewStatus] NVARCHAR(20) NULL
 )
 GO
 CREATE INDEX [IX_Apply_ApplicationId] ON [Apply] ([ApplicationId])
