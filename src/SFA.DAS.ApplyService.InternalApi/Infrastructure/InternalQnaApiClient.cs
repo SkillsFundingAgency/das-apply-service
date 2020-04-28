@@ -43,6 +43,22 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
             _environmentName = configurationService.GetEnvironmentName();
         }
+
+        public async Task<IEnumerable<ApplicationSequence>> GetSequences(Guid applicationId)
+        {
+            var response = await _httpClient.GetAsync($"Applications/{applicationId}/Sequences");
+
+            return await response.Content.ReadAsAsync<IEnumerable<ApplicationSequence>>();
+        }
+
+        public async Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId)
+        {
+            var response = await _httpClient.GetAsync($"Applications/{applicationId}/sections");
+
+            return await response.Content.ReadAsAsync<IEnumerable<ApplicationSection>>();
+        }
+
+
         public async Task<string> GetQuestionTag(Guid applicationId, string questionTag)
         {
             var response = await _httpClient.GetAsync($"Applications/{applicationId}/applicationData/{questionTag}");
