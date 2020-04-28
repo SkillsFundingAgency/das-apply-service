@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -10,6 +11,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
@@ -70,6 +72,40 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
         {
             var pageContainingQuestion = await GetPageBySectionNo(applicationId, sequenceNo, sectionNo, pageId);
 
+            return GetAnswerValue(questionId, pageContainingQuestion);
+        }
+
+        public async Task<string> GetAnswerValueFromActiveQuestion(Guid applicationId, int sequenceNo, int sectionNo, params PageAndQuestion[] possibleQuestions)
+        {
+            foreach (var question in possibleQuestions)
+            {
+                var pageContainingQuestion = await GetPageBySectionNo(applicationId, sequenceNo, sectionNo, question.PageId);
+
+                if (!pageContainingQuestion.Active)
+                {
+                    continue;
+                }
+
+                return GetAnswerValue(question.QuestionId, pageContainingQuestion);
+            }
+
+            return null;
+        }
+
+        public async Task<string> GetAnswerValueFromActiveQuestion(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId)
+        {
+            var pageContainingQuestion = await GetPageBySectionNo(applicationId, sequenceNo, sectionNo, pageId);
+
+            if (!pageContainingQuestion.Active)
+            {
+                return null;
+            }
+
+            return GetAnswerValue(questionId, pageContainingQuestion);
+        }
+
+        private static string GetAnswerValue(string questionId, Page pageContainingQuestion)
+        {
             if (pageContainingQuestion?.Questions != null)
             {
                 foreach (var question in pageContainingQuestion.Questions)
@@ -79,16 +115,18 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                         foreach (var pageOfAnswers in pageContainingQuestion.PageOfAnswers)
                         {
                             var pageAnswer = pageOfAnswers.Answers.FirstOrDefault(x => x.QuestionId == questionId);
-                            if(pageAnswer != null)
+                            if (pageAnswer != null)
                             {
-                                return pageAnswer.Value;
+                                {
+                                    return pageAnswer.Value;
+                                }
                             }
                         }
                     }
                     else // In case question/answer is buried in FurtherQuestions
                     {
                         var furtherQuestionAnswer = GetAnswerFromFurtherQuestions(question, pageContainingQuestion, questionId);
-                        if(furtherQuestionAnswer != null)
+                        if (furtherQuestionAnswer != null)
                         {
                             return furtherQuestionAnswer;
                         }
@@ -99,7 +137,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             return null;
         }
 
-        private string GetAnswerFromFurtherQuestions(Question question, Page pageContainingQuestion, string questionId)
+        private static string GetAnswerFromFurtherQuestions(Question question, Page pageContainingQuestion, string questionId)
         {
             if (question?.Input?.Options != null)
             {
