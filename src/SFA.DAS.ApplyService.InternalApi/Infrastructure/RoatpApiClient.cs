@@ -9,12 +9,13 @@
     using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
     using SFA.DAS.ApplyService.InternalApi.Models.Ukrlp;
     using SFA.DAS.ApplyService.Infrastructure.ApiClients;
+    using System;
 
     public class RoatpApiClient : ApiClientBase<RoatpApiClient>, IRoatpApiClient
     {
         public RoatpApiClient(HttpClient httpClient, ILogger<RoatpApiClient> logger, IRoatpTokenService tokenService) : base(httpClient, logger)
         {
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken());
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken(_httpClient.BaseAddress.ToString()));
         }
 
         public async virtual Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(string ukprn)
@@ -35,7 +36,22 @@
         {
             _logger.LogInformation($"Retrieving UKRLP details for {ukprn}");
 
-            return await Get<UkprnLookupResponse>($"/api/v1/ukrlp/lookup/{ukprn}");
+            var apiResponse = await Get<UkprnLookupResponse>($"{_httpClient.BaseAddress}/api/v1/ukrlp/lookup/{ukprn}");
+
+            return apiResponse;
+        }
+
+        private async Task<T> Get<T>(string uri)
+        {
+            using (var response = await _httpClient.GetAsync(new Uri(uri, UriKind.Absolute)))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadAsAsync<T>();
+                }
+
+                return default(T);
+            }
         }
     }
 }
