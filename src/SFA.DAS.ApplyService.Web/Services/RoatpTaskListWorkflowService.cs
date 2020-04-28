@@ -151,7 +151,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             }
             var finishSequence = applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.Finish);
 
-            var notRequiredOverrides = _notRequiredOverridesService.GetNotRequiredOverrides(applicationId);
+            var notRequiredOverrides = _notRequiredOverridesService.GetNotRequiredOverrides(applicationId).GetAwaiter().GetResult();
 
             if (notRequiredOverrides != null && notRequiredOverrides.Any(condition =>
                                                             condition.AllConditionsMet &&
@@ -212,7 +212,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         public bool SectionNotRequired(Guid applicationId, int sequenceId, int sectionId)
         {
-            var notRequiredOverrides = _notRequiredOverridesService.GetNotRequiredOverrides(applicationId);
+            var notRequiredOverrides = _notRequiredOverridesService.GetNotRequiredOverrides(applicationId).GetAwaiter().GetResult();
 
             if (notRequiredOverrides.Any(condition =>
                                                         sequenceId == condition.SequenceId &&

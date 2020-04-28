@@ -1259,7 +1259,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var roatpSequences = await _apiClient.GetRoatpSequences();
 
-            var notRequiredOverrides = _notRequiredOverridesService.GetNotRequiredOverrides(model.ApplicationId);
+            var notRequiredOverrides = await _notRequiredOverridesService.GetNotRequiredOverrides(model.ApplicationId);
 
             var organisationVerificationStatus = await _organisationVerificationService.GetOrganisationVerificationStatus(model.ApplicationId);
             var sequences = _roatpTaskListWorkflowService.GetApplicationSequences(model.ApplicationId);

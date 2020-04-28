@@ -54,5 +54,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatus(string ukprn);
 
         Task<bool> UpdateApplicationStatus(Guid applicationId, string applicationStatus);
+
+        Task<NotRequiredOverrideConfiguration> GetNotRequiredOverrides(Guid applicationId);
+
+        Task<bool> UpdateNotRequiredOverrides(Guid applicationId, NotRequiredOverrideConfiguration notRequiredOverrides);
     }
 }

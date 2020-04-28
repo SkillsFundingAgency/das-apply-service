@@ -9,6 +9,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
     using SFA.DAS.ApplyService.Domain.Roatp;
     using SFA.DAS.ApplyService.Web.Configuration;
     using SFA.DAS.ApplyService.Web.Services;
+    using NotRequiredOverrideConfiguration = Configuration.NotRequiredOverrideConfiguration;
 
     public class TaskListViewModel : ApplicationSummaryViewModel
     {
