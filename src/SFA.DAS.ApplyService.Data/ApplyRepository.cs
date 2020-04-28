@@ -1130,6 +1130,11 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public Task<List<RoatpAssessorApplicationSummary>> GetNewAssessorApplications(string userId)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatusByUkprn(string ukprn)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
