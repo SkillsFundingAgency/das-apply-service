@@ -6,6 +6,7 @@
     [ApplicationStatus] NVARCHAR(20) NOT NULL DEFAULT 'New', 
     [ApplyData] NVARCHAR(MAX) NULL, 
     [GatewayReviewStatus] NVARCHAR(20) NOT NULL DEFAULT 'Draft',
+    [AssessorReviewStatus] NVARCHAR(20) NOT NULL DEFAULT 'Draft',
     [FinancialReviewStatus] NVARCHAR(20) NOT NULL DEFAULT 'Draft',
     [FinancialGrade] NVARCHAR(MAX) NULL, 
     [CreatedAt] DATETIME2 NOT NULL, 
