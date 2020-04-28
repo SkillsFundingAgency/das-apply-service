@@ -428,12 +428,11 @@ namespace SFA.DAS.ApplyService.Data
                         ) s
                         WHERE s.SequenceNo = @financialHealthSequence
                         AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
-                        AND apply.FinancialReviewStatus IN ( @financialStatusDraft, @financialStatusNew, @financialStatusInProgress)",
+                        AND apply.FinancialReviewStatus IN (@financialStatusNew, @financialStatusInProgress)",
                         new
                         {
                             financialHealthSequence = 2,
                             applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
-                            financialStatusDraft = FinancialReviewStatus.Draft,
                             financialStatusNew = FinancialReviewStatus.New,
                             financialStatusInProgress = FinancialReviewStatus.InProgress
                         })).ToList();
@@ -477,11 +476,11 @@ namespace SFA.DAS.ApplyService.Data
                         ) s
                         WHERE s.SequenceNo = @financialHealthSequence
                         AND apply.DeletedAt IS NULL
-                        AND apply.FinancialReviewStatus IN ( @financialStatusClarification )",
+                        AND apply.FinancialReviewStatus IN ( @financialStatusClarificationSent )",
                         new
                         {
                             financialHealthSequence = 2,
-                            financialStatusClarification = FinancialReviewStatus.Clarification
+                            financialStatusClarificationSent = FinancialReviewStatus.ClarificationSent
                         })).ToList();
             }
         }
@@ -523,12 +522,12 @@ namespace SFA.DAS.ApplyService.Data
                         ) s
                         WHERE s.SequenceNo = @financialHealthSequence
                         AND apply.DeletedAt IS NULL
-                        AND apply.FinancialReviewStatus IN ( @financialStatusApproved, @financialStatusDeclined, @financialStatusExempt )",
+                        AND apply.FinancialReviewStatus IN ( @financialStatusPass, @financialStatusFail, @financialStatusExempt )",
                        new
                        {
                            financialHealthSequence = 2,
-                           financialStatusApproved = FinancialReviewStatus.Approved,
-                           financialStatusDeclined = FinancialReviewStatus.Declined,
+                           financialStatusPass = FinancialReviewStatus.Pass,
+                           financialStatusFail = FinancialReviewStatus.Fail,
                            financialStatusExempt = FinancialReviewStatus.Exempt
                        })).ToList();
             }

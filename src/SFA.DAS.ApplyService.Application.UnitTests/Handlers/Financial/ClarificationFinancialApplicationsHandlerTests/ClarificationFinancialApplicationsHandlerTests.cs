@@ -23,7 +23,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.Financial.Clarific
         [SetUp]
         public void Setup()
         {
-            var clarificationFinancialApplication = new RoatpFinancialSummaryItem { ApplicationStatus = ApplicationStatus.GatewayAssessed, FinancialReviewStatus = FinancialReviewStatus.Clarification, SubmittedDate = DateTime.Now, FeedbackAddedDate = DateTime.Now };
+            var clarificationFinancialApplication = new RoatpFinancialSummaryItem { ApplicationStatus = ApplicationStatus.GatewayAssessed, FinancialReviewStatus = FinancialReviewStatus.ClarificationSent, SubmittedDate = DateTime.Now, FeedbackAddedDate = DateTime.Now };
 
             _clarificationApplications = new List<RoatpFinancialSummaryItem> { clarificationFinancialApplication };
 
