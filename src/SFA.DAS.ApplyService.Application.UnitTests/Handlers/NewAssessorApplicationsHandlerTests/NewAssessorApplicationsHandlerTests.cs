@@ -7,7 +7,7 @@ using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Assessor;
 using SFA.DAS.ApplyService.Domain.Apply;
 
-namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.NewGatewayApplicationsHandlerTests
+namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.NewAssessorApplicationsHandlerTests
 {
     class NewAssessorApplicationsHandlerTests
     {
