@@ -6,14 +6,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
-using SFA.DAS.ApplyService.InternalApi.Services;
-using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
+    [Authorize]
     public class RoatpAssessorController : Controller
     {
         private readonly ILogger<RoatpAssessorController> _logger;
@@ -31,21 +31,15 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet]
         public async Task<ActionResult<List<AssessorSequence>>> GetAssessorOverview(Guid applicationId)
         {
-            const int protectingYourApprenticesSequenceNumber = 4;
-            const int readinessToEngageSequenceNumber = 5;
-            const int planningApprenticeshipTrainingSequenceNumber = 6;
-            const int deliveringApprenticeshipTrainingSequenceNumber = 7;
-            const int evaluatingApprenticeshipTrainingSequenceNumber = 8;
-
             var allQnaSections = await _qnaApiClient.GetSections(applicationId);
 
             return new List<AssessorSequence>
             {
-                GetAssessorSequence(allQnaSections, protectingYourApprenticesSequenceNumber, "Protecting your apprentices checks"),
-                GetAssessorSequence(allQnaSections, readinessToEngageSequenceNumber, "Readiness to engage checks"),
-                GetAssessorSequence(allQnaSections, planningApprenticeshipTrainingSequenceNumber, "Planning apprenticeship training checks"),
-                GetAssessorSequence(allQnaSections, deliveringApprenticeshipTrainingSequenceNumber, "Delivering apprenticeship training checks"),
-                GetAssessorSequence(allQnaSections, evaluatingApprenticeshipTrainingSequenceNumber, "Evaluating apprenticeship training checks")
+                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.ProtectingYourApprentices, "Protecting your apprentices checks"),
+                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.ReadinessToEngage, "Readiness to engage checks"),
+                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.PlanningApprenticeshipTraining, "Planning apprenticeship training checks"),
+                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining, "Delivering apprenticeship training checks"),
+                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.EvaluatingApprenticeshipTraining, "Evaluating apprenticeship training checks")
             };
         }
 
