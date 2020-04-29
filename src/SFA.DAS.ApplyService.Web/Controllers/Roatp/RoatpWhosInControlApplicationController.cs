@@ -183,7 +183,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             }
             else
             {
-                return RedirectToAction("ConfirmTrusteesDob", new { applicationId });
+                //return RedirectToAction("ConfirmTrusteesDob", new { applicationId }); // original
+                return RedirectToAction("AddPeopleInControl", new { applicationId });
             }
         }
 
