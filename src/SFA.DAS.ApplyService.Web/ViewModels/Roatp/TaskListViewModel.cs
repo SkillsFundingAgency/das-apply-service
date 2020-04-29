@@ -100,6 +100,11 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                     return TaskListSectionStatus.Completed;
                 }
 
+                if (WhosInControlStarted)
+                {
+                    return TaskListSectionStatus.InProgress;
+                }
+
                 return TaskListSectionStatus.Next;
             }          
         }
@@ -316,6 +321,8 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public bool CompaniesHouseDataConfirmed { get; set; }
         public bool CharityCommissionDataConfirmed { get; set; }
         public bool WhosInControlConfirmed { get; set; }
+
+        public bool WhosInControlStarted { get; set; }
 
         public string WhosInControlStartPageId
         {
