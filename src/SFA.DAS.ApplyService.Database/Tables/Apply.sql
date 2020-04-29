@@ -17,7 +17,7 @@
     [DeletedBy] NVARCHAR(256) NULL,
     [UKPRN] AS JSON_VALUE(ApplyData, '$.ApplyDetails.UKPRN') PERSISTED,
     [NotRequiredOverrides] NVARCHAR(MAX) NULL, 
-    [OversightStatus] NVARCHAR(20) NULL DEFAULT 'New', 
+    [OversightStatus] NVARCHAR(20) NOT NULL DEFAULT 'New', 
     [ApplicationDeterminedDate] DATETIME2 NULL
 )
 GO
