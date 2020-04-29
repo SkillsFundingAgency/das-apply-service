@@ -1,51 +1,39 @@
-﻿using Microsoft.IdentityModel.Clients.ActiveDirectory;
+﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Net.Http.Headers;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using System;
-using SFA.DAS.ApplyService.InternalApi.Models.ReferenceData;
-using AutoMapper;
-using SFA.DAS.ApplyService.Configuration;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Infrastructure.ApiClients;
+using SFA.DAS.ApplyService.InternalApi.Models.ReferenceData;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
-    public class ReferenceDataApiClient
+    public class ReferenceDataApiClient : ApiClientBase<ReferenceDataApiClient>
     {
-        private readonly HttpClient _client;
-        private readonly ILogger<ReferenceDataApiClient> _logger;
         private readonly IApplyConfig _config;
 
-        public ReferenceDataApiClient(HttpClient client, ILogger<ReferenceDataApiClient> logger, IConfigurationService configurationService)
+        public ReferenceDataApiClient(HttpClient httpClient, ILogger<ReferenceDataApiClient> logger, IConfigurationService configurationService) : base(httpClient, logger)
         {
-            _client = client;
-            _logger = logger;
-            _config = configurationService.GetConfig().Result;
+            _config = configurationService.GetConfig().GetAwaiter().GetResult();
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GetToken());
         }
 
         public async Task<IEnumerable<Types.OrganisationSearchResult>> SearchOrgansiation(string searchTerm, bool exactMatch)
         {
             _logger.LogInformation($"Searching Reference Data API. Search Term: {searchTerm}");
-            var apiResponse = await Get<IEnumerable<Organisation>>($"/api/organisations?searchTerm={searchTerm}");
+            var apiResponse = await Get<List<Organisation>>($"/api/organisations?searchTerm={searchTerm}");
 
             if(exactMatch)
             {
-                apiResponse = apiResponse?.Where(r => r.Name.Equals(searchTerm, StringComparison.InvariantCultureIgnoreCase)).AsEnumerable();
+                apiResponse = apiResponse?.Where(r => r.Name.Equals(searchTerm, StringComparison.InvariantCultureIgnoreCase)).ToList();
             }
 
             return Mapper.Map<IEnumerable<Organisation>, IEnumerable<Types.OrganisationSearchResult>>(apiResponse);
-        }
-
-        private async Task<T> Get<T>(string uri)
-        {
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", GetToken());
-
-            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Relative)))
-            {
-                return await response.Content.ReadAsAsync<T>();
-            }
         }
 
         private string GetToken()
