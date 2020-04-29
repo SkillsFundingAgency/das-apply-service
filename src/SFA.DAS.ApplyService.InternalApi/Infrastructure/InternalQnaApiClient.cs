@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -104,64 +105,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             return GetAnswerValue(questionId, pageContainingQuestion);
         }
 
-        private static string GetAnswerValue(string questionId, Page pageContainingQuestion)
-        {
-            if (pageContainingQuestion?.Questions != null)
-            {
-                foreach (var question in pageContainingQuestion.Questions)
-                {
-                    if (question.QuestionId == questionId && pageContainingQuestion.PageOfAnswers != null)
-                    {
-                        foreach (var pageOfAnswers in pageContainingQuestion.PageOfAnswers)
-                        {
-                            var pageAnswer = pageOfAnswers.Answers.FirstOrDefault(x => x.QuestionId == questionId);
-                            if (pageAnswer != null)
-                            {
-                                {
-                                    return pageAnswer.Value;
-                                }
-                            }
-                        }
-                    }
-                    else // In case question/answer is buried in FurtherQuestions
-                    {
-                        var furtherQuestionAnswer = GetAnswerFromFurtherQuestions(question, pageContainingQuestion, questionId);
-                        if (furtherQuestionAnswer != null)
-                        {
-                            return furtherQuestionAnswer;
-                        }
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        private static string GetAnswerFromFurtherQuestions(Question question, Page pageContainingQuestion, string questionId)
-        {
-            if (question?.Input?.Options != null)
-            {
-                foreach (var option in question?.Input?.Options)
-                {
-                    foreach (var furtherQuestion in option?.FurtherQuestions ?? Enumerable.Empty<Question>())
-                    {
-                        if (furtherQuestion.QuestionId == questionId && pageContainingQuestion.PageOfAnswers != null)
-                        {
-                            foreach (var pageOfAnswers in pageContainingQuestion.PageOfAnswers)
-                            {
-                                var pageAnswer = pageOfAnswers.Answers.FirstOrDefault(x => x.QuestionId == questionId);
-                                if (pageAnswer != null)
-                                {
-                                    return pageAnswer.Value;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-
         public async Task<FileStreamResult> GetDownloadFile(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId)
         {
             var response = await _httpClient.GetAsync($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}/questions/{questionId}/download");
@@ -197,6 +140,79 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             var tabularData = JsonConvert.DeserializeObject<TabularData>(answer.Value);
 
             return tabularData;
+        }
+
+        public async Task<ApplicationSection> GetSectionBySectionNo(Guid applicationId, int sequenceNo, int sectionNo)
+        {
+            var response = await _httpClient.GetAsync($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}");
+
+            return await response.Content.ReadAsAsync<ApplicationSection>();
+        }
+
+
+        private static string GetAnswerValue(string questionId, Page pageContainingQuestion)
+        {
+            if (pageContainingQuestion?.Questions != null)
+            {
+                foreach (var question in pageContainingQuestion.Questions)
+                {
+                    if (question.QuestionId == questionId && pageContainingQuestion.PageOfAnswers != null)
+                    {
+                        foreach (var pageOfAnswers in pageContainingQuestion.PageOfAnswers)
+                        {
+                            var pageAnswer = pageOfAnswers.Answers.FirstOrDefault(x => x.QuestionId == questionId);
+                            if (pageAnswer != null)
+                            {
+                                {
+                                    return pageAnswer.Value;
+                                }
+                            }
+                        }
+                    }
+                    else // In case question/answer is buried in FurtherQuestions
+                    {
+                        var furtherQuestionAnswer = GetAnswerFromFurtherQuestions(question, pageContainingQuestion, questionId);
+                        if (furtherQuestionAnswer != null)
+                        {
+                            return furtherQuestionAnswer;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public async Task<SkipPageResponse> SkipPageBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId)
+        {
+            var response = await _httpClient.PostAsJsonAsync($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}/skip", new object());
+
+            return await response.Content.ReadAsAsync<SkipPageResponse>();
+        }
+
+        private static string GetAnswerFromFurtherQuestions(Question question, Page pageContainingQuestion, string questionId)
+        {
+            if (question?.Input?.Options != null)
+            {
+                foreach (var option in question?.Input?.Options)
+                {
+                    foreach (var furtherQuestion in option?.FurtherQuestions ?? Enumerable.Empty<Question>())
+                    {
+                        if (furtherQuestion.QuestionId == questionId && pageContainingQuestion.PageOfAnswers != null)
+                        {
+                            foreach (var pageOfAnswers in pageContainingQuestion.PageOfAnswers)
+                            {
+                                var pageAnswer = pageOfAnswers.Answers.FirstOrDefault(x => x.QuestionId == questionId);
+                                if (pageAnswer != null)
+                                {
+                                    return pageAnswer.Value;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
         }
     }
 }

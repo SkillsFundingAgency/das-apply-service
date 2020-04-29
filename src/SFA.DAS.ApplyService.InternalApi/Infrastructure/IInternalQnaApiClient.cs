@@ -6,6 +6,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.ApplyService.Application.Apply;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
@@ -22,5 +23,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
         Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag, string questionId = null);
 
         Task<TabularData> GetTabularDataByTag(Guid applicationId, string questionTag);
+
+        Task<ApplicationSection> GetSectionBySectionNo(Guid applicationId, int sequenceNo, int sectionNo);
+        Task<SkipPageResponse> SkipPageBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId);
     }
 }
