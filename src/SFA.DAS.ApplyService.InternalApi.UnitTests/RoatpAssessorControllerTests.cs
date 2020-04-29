@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -33,6 +34,17 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var actualResult = await _controller.NewApplications(expectedUser);
 
             Assert.AreSame(expectedResult, actualResult);
+        }
+
+        [Test]
+        public async Task Assign_application_sets_assessor_details()
+        {
+            var request = new AssignAssessorApplicationRequest { AssessorName = "sdfjfsdg", AssessorNumber = 1, AssessorUserId = "dsalkjfhjfdg" };
+            var applicationid = Guid.NewGuid();
+
+            await _controller.AssignApplication(applicationid, request);
+
+            _mediator.Verify(x => x.Send(It.Is<AssignAssessorRequest>(r => r.ApplicationId == applicationid && r.AssessorName == request.AssessorName && r.AssessorNumber == request.AssessorNumber && r.AssessorUserId == request.AssessorUserId), It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 }

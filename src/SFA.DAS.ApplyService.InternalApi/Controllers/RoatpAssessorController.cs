@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -25,5 +26,18 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             return applications;
         }
+
+        [HttpPost("Assessor/Applications/{applicationId}/Assign")]
+        public async Task AssignApplication(Guid applicationId, [FromBody] AssignAssessorApplicationRequest request)
+        {
+            await _mediator.Send(new AssignAssessorRequest(applicationId, request.AssessorNumber, request.AssessorUserId, request.AssessorName));
+        }
+    }
+
+    public class AssignAssessorApplicationRequest
+    {
+        public int AssessorNumber { get; set; }
+        public string AssessorUserId { get; set; }
+        public string AssessorName { get; set; }
     }
 }
