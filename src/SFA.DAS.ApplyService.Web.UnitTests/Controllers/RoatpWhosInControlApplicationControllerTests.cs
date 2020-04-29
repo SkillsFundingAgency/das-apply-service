@@ -14,6 +14,7 @@ using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
 using System.Collections.Generic;
 using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Session;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
@@ -841,8 +842,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _applicationClient.VerifyAll();
         }
 
-        [TestCase(SoleTraderOrPartnershipViewModel.OrganisationTypePartnership, "PartnershipType")]
-        [TestCase(SoleTraderOrPartnershipViewModel.OrganisationTypeSoleTrader, "AddSoleTradeDob")]
+        [TestCase(RoatpOrganisationTypes.Partnership, "PartnershipType")]
+        [TestCase(RoatpOrganisationTypes.SoleTrader, "AddSoleTradeDob")]
         public void Confirm_sole_trader_or_partnership_redirects_to_partnership_type_or_add_sole_trader_dob(string organisationType, string expectedActionName)
         {
             var section = new ApplicationSection

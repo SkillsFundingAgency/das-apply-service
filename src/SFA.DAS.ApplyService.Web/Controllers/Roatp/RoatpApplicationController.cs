@@ -12,6 +12,7 @@ using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
+using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
@@ -533,16 +534,27 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var whosInControlConfirmed = false;
 
-            var soleTraderDateOfBirthAnswer = await _qnaApiClient.GetAnswer(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob, RoatpYourOrganisationQuestionIdConstants.AddSoleTradeDob);
-            if (soleTraderDateOfBirthAnswer != null && !String.IsNullOrEmpty(soleTraderDateOfBirthAnswer.Value))
+            var organisationType = await _qnaApiClient.GetAnswer(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.SoleTraderPartnership, RoatpYourOrganisationQuestionIdConstants.SoleTradeOrPartnership);
+
+            var whosInControlStarted = organisationType != null && (organisationType.Value == RoatpOrganisationTypes.SoleTrader || organisationType.Value == RoatpOrganisationTypes.Partnership);
+
+            if (organisationType != null && organisationType.Value == RoatpOrganisationTypes.SoleTrader)
             {
-                whosInControlConfirmed = true;
+                var soleTraderDateOfBirthAnswer = await _qnaApiClient.GetAnswer(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob, RoatpYourOrganisationQuestionIdConstants.AddSoleTradeDob);
+                if (soleTraderDateOfBirthAnswer != null && !String.IsNullOrEmpty(soleTraderDateOfBirthAnswer.Value))
+                {
+                    whosInControlConfirmed = true;
+                }
             }
-            var partnersDetailsAnswer = await _qnaApiClient.GetAnswer(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddPartners, RoatpYourOrganisationQuestionIdConstants.AddPartners);
-            if (partnersDetailsAnswer != null && !String.IsNullOrEmpty(partnersDetailsAnswer.Value))
+            else if (organisationType != null && organisationType.Value == RoatpOrganisationTypes.Partnership)
             {
-                whosInControlConfirmed = true;
+                var partnersDetailsAnswer = await _qnaApiClient.GetAnswer(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddPartners, RoatpYourOrganisationQuestionIdConstants.AddPartners);
+                if (partnersDetailsAnswer != null && !String.IsNullOrEmpty(partnersDetailsAnswer.Value))
+                {
+                    whosInControlConfirmed = true;
+                }
             }
+
             var pscsDetailsAnswer = await _qnaApiClient.GetAnswer(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl, RoatpYourOrganisationQuestionIdConstants.AddPeopleInControl);
             if (pscsDetailsAnswer != null && !String.IsNullOrEmpty(pscsDetailsAnswer.Value))
             {
@@ -563,6 +575,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 CharityCommissionManualEntry = (charityCommissionManualEntry.Value == "TRUE"),
                 CompaniesHouseDataConfirmed = (companiesHouseDataConfirmed != null && companiesHouseDataConfirmed.Value == "Y"),
                 CharityCommissionDataConfirmed = (charityCommissionDataConfirmed != null && charityCommissionDataConfirmed.Value == "TRUE"),
+                WhosInControlStarted = whosInControlStarted,
                 WhosInControlConfirmed = whosInControlConfirmed,
                 ApplicationRouteId = providerRoute.Value
             };
