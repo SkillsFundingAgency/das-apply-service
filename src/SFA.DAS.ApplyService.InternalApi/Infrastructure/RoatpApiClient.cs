@@ -9,6 +9,7 @@
     using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
     using SFA.DAS.ApplyService.InternalApi.Models.Ukrlp;
     using SFA.DAS.ApplyService.Infrastructure.ApiClients;
+    using System;
 
     public class RoatpApiClient : ApiClientBase<RoatpApiClient>, IRoatpApiClient
     {

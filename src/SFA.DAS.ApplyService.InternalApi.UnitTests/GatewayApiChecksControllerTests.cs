@@ -29,6 +29,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private Mock<CharityCommissionApiClient> _charityCommissionApiClient;
         private Mock<IRoatpApiClient> _roatpApiClient;
         private Mock<IInternalQnaApiClient> _qnaApiClient;
+        private Mock<ILogger<GatewayApiChecksService>> _serviceLogger;
         private IGatewayApiChecksService _gatewayApiChecksService;
 
         private GatewayApiChecksController _controller;
@@ -60,8 +61,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _charityCommissionApiClient = new Mock<CharityCommissionApiClient>();
             _roatpApiClient = new Mock<IRoatpApiClient>();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
+            _serviceLogger = new Mock<ILogger<GatewayApiChecksService>>();
             _gatewayApiChecksService = new GatewayApiChecksService(_companiesHouseApiClient.Object, _charityCommissionApiClient.Object,
-                                                                   _roatpApiClient.Object, _qnaApiClient.Object);
+                                                                   _roatpApiClient.Object, _qnaApiClient.Object, _serviceLogger.Object);
 
             _controller = new GatewayApiChecksController(_applyRepository.Object, _logger.Object, _gatewayApiChecksService);
         }
