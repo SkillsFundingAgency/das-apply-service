@@ -52,6 +52,7 @@
       <ProjectReference Include="..\SFA.DAS.ApplyService.Data\SFA.DAS.ApplyService.Data.csproj" />
       <ProjectReference Include="..\SFA.DAS.ApplyService.DfeSignIn\SFA.DAS.ApplyService.DfeSignIn.csproj" />
       <ProjectReference Include="..\SFA.DAS.ApplyService.EmailService\SFA.DAS.ApplyService.EmailService.csproj" />
+      <ProjectReference Include="..\SFA.DAS.ApplyService.Infrastructure\SFA.DAS.ApplyService.Infrastructure.csproj" />
       <ProjectReference Include="..\SFA.DAS.ApplyService.InternalApi.Types\SFA.DAS.ApplyService.InternalApi.Types.csproj" />
     </ItemGroup>
     
