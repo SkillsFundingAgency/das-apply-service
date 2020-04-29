@@ -3,17 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Entities;
-using System.IO;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
     public interface IInternalQnaApiClient
     {
-        Task<IEnumerable<ApplicationSequence>> GetSequences(Guid applicationId);
         Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId);
 
         Task<string> GetQuestionTag(Guid applicationId, string questionTag);
