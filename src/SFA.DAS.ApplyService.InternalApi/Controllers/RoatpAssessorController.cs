@@ -45,13 +45,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
         private AssessorSequence GetAssessorSequence(IEnumerable<ApplicationSection> qnaSections, int sequenceNumber, string sequenceTitle)
         {
-            const int introductionSectionNumber = 1;
+            var sectionsToExclude = RoatpWorkflowSectionIds.GetWhatYouWillNeedSectionsForSequence(sequenceNumber);
 
             return new AssessorSequence
             {
                 SequenceNumber = sequenceNumber,
                 SequenceTitle = sequenceTitle,
-                Sections = qnaSections.Where(sec => sec.SequenceId == sequenceNumber && sec.SectionId != introductionSectionNumber)
+                Sections = qnaSections.Where(sec => sec.SequenceId == sequenceNumber && !sectionsToExclude.Contains(sec.SectionId))
                 .Select(sec =>
                 {
                     return new AssessorSection { SectionNumber = sec.SectionId, LinkTitle = sec.Title, Status = string.Empty };
