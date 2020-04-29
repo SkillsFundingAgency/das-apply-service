@@ -1137,6 +1137,7 @@ namespace SFA.DAS.ApplyService.Data
                 return (await connection
                     .QueryAsync<RoatpAssessorApplicationSummary>(
                         @"SELECT 
+                            ApplicationId,
                             org.Name AS OrganisationName,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
                             JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
@@ -1152,6 +1153,36 @@ namespace SFA.DAS.ApplyService.Data
                             gatewayReviewStatusApproved = GatewayReviewStatus.Approved,
                             userId = userId
                         })).ToList();
+            }
+        }
+
+        public async Task UpdateAssessor1(Guid applicationId, string userId, string userName)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE Apply SET Assessor1UserId = @userId, Assessor1Name = @userName
+                                                Where ApplicationId = @applicationId",
+                    new
+                    {
+                        applicationId,
+                        userId,
+                        userName
+                    });
+            }
+        }
+
+        public async Task UpdateAssessor2(Guid applicationId, string userId, string userName)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE Apply SET Assessor2UserId = @userId, Assessor2Name = @userName
+                                                Where ApplicationId = @applicationId",
+                    new
+                    {
+                        applicationId,
+                        userId,
+                        userName
+                    });
             }
         }
 

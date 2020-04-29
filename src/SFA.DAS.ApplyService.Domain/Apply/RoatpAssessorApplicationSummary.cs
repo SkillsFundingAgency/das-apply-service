@@ -4,6 +4,7 @@ namespace SFA.DAS.ApplyService.Domain.Apply
 {
     public class RoatpAssessorApplicationSummary
     {
+        public Guid ApplicationId { get; set; }
         public string OrganisationName { get; set; }
         public string Ukprn { get; set; }
         public string ApplicationReferenceNumber { get; set; }
