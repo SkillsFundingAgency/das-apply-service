@@ -1,40 +1,26 @@
-﻿using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.InternalApi.Types.CompaniesHouse;
-using AutoMapper;
+﻿using AutoMapper;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    using System;
+    using Microsoft.Extensions.Logging;
     using System.Net;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
-    using SFA.DAS.ApplyService.Configuration;
-    using Microsoft.AspNetCore.Http;
     using SFA.DAS.ApplyService.Domain.CompaniesHouse;
+    using SFA.DAS.ApplyService.InternalApi.Types.CompaniesHouse;
+    using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 
-    public class CompaniesHouseApiClient : ICompaniesHouseApiClient
+    public class CompaniesHouseApiClient : ApiClientBase<CompaniesHouseApiClient>, ICompaniesHouseApiClient
     {
-        private ILogger<CompaniesHouseApiClient> _logger;
-        private readonly ITokenService _tokenService;
-        private static readonly HttpClient _httpClient = new HttpClient();
-
-        public CompaniesHouseApiClient(IConfigurationService configurationService,
-            ILogger<CompaniesHouseApiClient> logger, ITokenService tokenService)
+        public CompaniesHouseApiClient(HttpClient httpClient, ILogger<CompaniesHouseApiClient> logger, ITokenService tokenService) : base(httpClient, logger)
         {
-            _tokenService = tokenService;
-            _logger = logger;
-            if (_httpClient.BaseAddress == null)
-            {
-                _httpClient.BaseAddress = new Uri(configurationService.GetConfig().Result.InternalApi.Uri);
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken());
         }
 
         public async Task<CompaniesHouseSummary> GetCompanyDetails(string companiesHouseNumber)
         {
-            var requestMessage =
-                await _httpClient.GetAsync($"companies-house-lookup?companyNumber={companiesHouseNumber}");
+            var requestMessage = await GetResponse($"companies-house-lookup?companyNumber={companiesHouseNumber}");
 
             if (requestMessage.IsSuccessStatusCode)
             {

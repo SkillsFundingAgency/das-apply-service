@@ -48,10 +48,10 @@
                         <td class="govuk-table__cell">@column</td>
                     }
                     <td class="govuk-table__cell govuk-table__cell--numeric">
-                        <a class="govuk-link govuk-link--no-visited-state" asp-action="EditPeopleInControl" asp-controller="RoatpWhosInControlApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-index="@index">Change<span class="govuk-visually-hidden"> person in control</span></a>
+                        <a class="govuk-link govuk-link--no-visited-state" asp-action="EditPeopleInControl" asp-controller="RoatpWhosInControlApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-index="@index">Change<span class="govuk-visually-hidden"> @Model.PeopleInControlData.DataRows[index].Columns[0]</span></a>
                     </td>
                     <td class="govuk-table__cell govuk-table__cell--numeric">
-                        <a class="govuk-link govuk-link--no-visited-state" asp-action="RemovePeopleInControl" asp-controller="RoatpWhosInControlApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-index="@index">Remove<span class="govuk-visually-hidden"> person in control</span></a>
+                        <a class="govuk-link govuk-link--no-visited-state" asp-action="RemovePeopleInControl" asp-controller="RoatpWhosInControlApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-index="@index">Remove<span class="govuk-visually-hidden"> @Model.PeopleInControlData.DataRows[index].Columns[0]</span></a>
                     </td>
                 </tr>
             }
