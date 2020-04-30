@@ -11,7 +11,6 @@ using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Assessor;
-using SFA.DAS.ApplyService.Application.Apply.Oversight;
 using SFA.DAS.ApplyService.Application.Apply.Snapshot;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
@@ -61,7 +60,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), false));
         }
-        
+
         [HttpGet("/Applications/Existing/{ukprn}")]
         public async Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatus(string ukprn)
         {
@@ -72,7 +71,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<ActionResult<bool>> UpdateApplicationStatus([FromBody] UpdateApplicationStatusRequest request)
         {
             return await _mediator.Send(request);
-        }     
+        }
 
         [HttpPost("/Application/ChangeProviderRoute")]
         public async Task<ActionResult<bool>> ChangeProviderRoute([FromBody] ChangeProviderRouteRequest request)
@@ -99,28 +98,24 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpPost("/Application/{applicationId}/StartAssessorReview")]
-        public async Task<bool> StartAssessorReview(Guid applicationId, [FromBody] StartAssessorReviewApplicationRequest request)
+        public async Task<bool> StartAssessorReview(Guid applicationId,
+            [FromBody] StartAssessorReviewApplicationRequest request)
         {
             return await _mediator.Send(new StartAssessorReviewRequest(applicationId, request.Reviewer));
         }
 
         [HttpPost("/Application/{applicationId}/StartAssessorSectionReview")]
-        public async Task<bool> StartAssessorSectionReview(Guid applicationId, [FromBody] StartAssessorSectionReviewRequest request)
+        public async Task<bool> StartAssessorSectionReview(Guid applicationId,
+            [FromBody] StartAssessorSectionReviewRequest request)
         {
             return await _mediator.Send(request);
         }
 
-        [HttpPost("/Application/{applicationId}/AssessorEvaluateSection")] 
-        public async Task<bool> AssessorEvaluateSection(Guid applicationId, [FromBody] AssessorEvaluateSectionRequest request)
+        [HttpPost("/Application/{applicationId}/AssessorEvaluateSection")]
+        public async Task<bool> AssessorEvaluateSection(Guid applicationId,
+            [FromBody] AssessorEvaluateSectionRequest request)
         {
             return await _mediator.Send(request);
-        }
-
-
-        [HttpGet("/Applications/Oversight/Pending")]
-        public async Task<IEnumerable<ApplicationOversightDetails>> GetOversightPending()
-        {
-            return await _mediator.Send(new GetOversightsPendingRequest());
         }
     }
 
