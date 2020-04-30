@@ -1147,7 +1147,8 @@ namespace SFA.DAS.ApplyService.Data
                             Assessor2Name
 	                      FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
-	                      WHERE apply.DeletedAt IS NULL AND apply.GatewayReviewStatus = @gatewayReviewStatusApproved AND (Assessor1UserId IS NULL OR Assessor1UserId <> @userId AND Assessor2UserId IS NULL)",
+	                      WHERE apply.DeletedAt IS NULL AND apply.GatewayReviewStatus = @gatewayReviewStatusApproved AND (Assessor1UserId IS NULL OR Assessor1UserId <> @userId AND Assessor2UserId IS NULL)
+                          ORDER BY JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn')",
                         new
                         {
                             gatewayReviewStatusApproved = GatewayReviewStatus.Approved,
