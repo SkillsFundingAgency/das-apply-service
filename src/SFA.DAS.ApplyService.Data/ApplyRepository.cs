@@ -1156,6 +1156,23 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<int> GetNewAssessorApplicationsCount(string userId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection
+                    .ExecuteScalarAsync<int>(
+                        @"SELECT COUNT(1)
+	                      FROM Apply apply
+	                      WHERE apply.DeletedAt IS NULL AND apply.GatewayReviewStatus = @gatewayReviewStatusApproved AND (Assessor1UserId IS NULL OR Assessor1UserId <> @userId AND Assessor2UserId IS NULL)",
+                        new
+                        {
+                            gatewayReviewStatusApproved = GatewayReviewStatus.Approved,
+                            userId = userId
+                        }));
+            }
+        }
+
         public async Task UpdateAssessor1(Guid applicationId, string userId, string userName)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
