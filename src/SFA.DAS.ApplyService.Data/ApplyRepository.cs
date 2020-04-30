@@ -1147,7 +1147,7 @@ namespace SFA.DAS.ApplyService.Data
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.DeletedAt IS NULL
-                          and GatewayReviewStatus  in ('Pass','Fail')
+                          and GatewayReviewStatus  in ('Pass')
 						  and AssessorReviewStatus in ('Pass','Fail')
 						  and FinancialReviewStatus in ('Pass','Fail')
 						  and apply.OversightStatus NOT IN ('Successful','Unsuccessful')")).ToList();
@@ -1172,7 +1172,7 @@ namespace SFA.DAS.ApplyService.Data
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.DeletedAt IS NULL
-                          and GatewayReviewStatus  in ('Pass','Fail')
+                          and GatewayReviewStatus  in ('Pass')
 						  and AssessorReviewStatus in ('Pass','Fail')
 						  and FinancialReviewStatus in ('Pass','Fail')
 						  and apply.OversightStatus IN ('Successful','Unsuccessful')")).ToList();
