@@ -93,6 +93,10 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<bool> IsSectionCompleted(Guid applicationId, Guid applicationSectionId);
 
         Task RemoveSectionCompleted(Guid applicationId, Guid applicationSectionId);
-       
+
+        Task<List<RoatpAssessorApplicationSummary>> GetNewAssessorApplications(string userId);
+        Task<int> GetNewAssessorApplicationsCount(string userId);
+        Task UpdateAssessor1(Guid applicationId, string userId, string userName);
+        Task UpdateAssessor2(Guid applicationId, string userId, string userName);
     }
 }
