@@ -10,13 +10,13 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.AssessorSummaryHan
     [TestFixture]
     public class AssessorSummaryHandlerTests
     {
-        private Mock<IApplyRepository> _repository;
+        private Mock<IAssessorRepository> _repository;
         private AssessorSummaryHandler _handler;
 
         [SetUp]
         public void TestSetup()
         {
-            _repository = new Mock<IApplyRepository>();
+            _repository = new Mock<IAssessorRepository>();
             _handler = new AssessorSummaryHandler(_repository.Object);
         }
 

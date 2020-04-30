@@ -12,13 +12,13 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.NewAssessorApplica
     [TestFixture]
     public class NewAssessorApplicationsHandlerTests
     {
-        private Mock<IApplyRepository> _repository;
+        private Mock<IAssessorRepository> _repository;
         private NewAssessorApplicationsHandler _handler;
 
         [SetUp]
         public void TestSetup()
         {
-            _repository = new Mock<IApplyRepository>();
+            _repository = new Mock<IAssessorRepository>();
             _handler = new NewAssessorApplicationsHandler(_repository.Object);
         }
 

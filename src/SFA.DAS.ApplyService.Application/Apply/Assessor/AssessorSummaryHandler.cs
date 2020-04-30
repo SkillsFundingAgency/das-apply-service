@@ -7,9 +7,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
     public class AssessorSummaryHandler : IRequestHandler<AssessorSummaryRequest, RoatpAssessorSummary>
     {
-        private readonly IApplyRepository _repository;
+        private readonly IAssessorRepository _repository;
 
-        public AssessorSummaryHandler(IApplyRepository repository)
+        public AssessorSummaryHandler(IAssessorRepository repository)
         {
             _repository = repository;
         }
