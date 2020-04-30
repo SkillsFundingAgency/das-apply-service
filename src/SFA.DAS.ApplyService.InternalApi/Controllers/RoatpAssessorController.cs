@@ -19,6 +19,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             _mediator = mediator;
         }
 
+        [HttpGet("Assessor/Applications/{userId}")]
+        public async Task<RoatpAssessorSummary> AssessorSummary(string userId)
+        {
+            var summary = await _mediator.Send(new AssessorSummaryRequest(userId));
+
+            return summary ;
+        }
+
         [HttpGet("Assessor/Applications/{userId}/New")]
         public async Task<List<RoatpAssessorApplicationSummary>> NewApplications(string userId)
         {

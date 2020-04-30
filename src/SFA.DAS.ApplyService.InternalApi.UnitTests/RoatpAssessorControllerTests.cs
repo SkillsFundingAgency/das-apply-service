@@ -25,6 +25,18 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         }
 
         [Test]
+        public async Task Get_summary_returns_summary_for_the_user()
+        {
+            var expectedUser = "sadjkffgdji";
+            var expectedResult = new RoatpAssessorSummary(1, 1, 1, 1);
+            _mediator.Setup(x => x.Send(It.Is<AssessorSummaryRequest>(y => y.UserId == expectedUser), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
+
+            var actualResult = await _controller.AssessorSummary(expectedUser);
+
+            Assert.AreSame(expectedResult, actualResult);
+        }
+
+        [Test]
         public async Task Get_new_applications_returns_new_applications_for_the_user()
         {
             var expectedUser = "sadjkffgdji";
