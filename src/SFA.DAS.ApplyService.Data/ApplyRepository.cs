@@ -1130,6 +1130,55 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<List<ApplicationOversightDetails>> GetOversightsPending()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<ApplicationOversightDetails>(@"SELECT 
+                            apply.Id AS Id,
+                            apply.ApplicationId AS ApplicationId,
+							 org.Name AS OrganisationName,
+					        JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
+							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
+							apply.OversightStatus,
+							Apply.ApplicationDeterminedDate
+                              FROM Apply apply
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+	                      WHERE apply.DeletedAt IS NULL
+                          and GatewayReviewStatus  in ('Pass','Fail')
+						  and AssessorReviewStatus in ('Pass','Fail')
+						  and FinancialReviewStatus in ('Pass','Fail')
+						  and apply.OversightStatus NOT IN ('Successful','Unsuccessful')")).ToList();
+            }
+        }
+
+
+        public async Task<List<ApplicationOversightDetails>> GetOversightsCompleted()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<ApplicationOversightDetails>(@"SELECT 
+                            apply.Id AS Id,
+                            apply.ApplicationId AS ApplicationId,
+							 org.Name AS OrganisationName,
+					        JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
+							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
+							apply.OversightStatus,
+							Apply.ApplicationDeterminedDate
+                              FROM Apply apply
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+	                      WHERE apply.DeletedAt IS NULL
+                          and GatewayReviewStatus  in ('Pass','Fail')
+						  and AssessorReviewStatus in ('Pass','Fail')
+						  and FinancialReviewStatus in ('Pass','Fail')
+						  and apply.OversightStatus IN ('Successful','Unsuccessful')")).ToList();
+            }
+        }
+
         public async Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatusByUkprn(string ukprn)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))

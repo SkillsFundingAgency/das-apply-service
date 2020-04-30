@@ -93,6 +93,9 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<bool> IsSectionCompleted(Guid applicationId, Guid applicationSectionId);
 
         Task RemoveSectionCompleted(Guid applicationId, Guid applicationSectionId);
-       
+
+        Task<List<ApplicationOversightDetails>> GetOversightsPending();
+
+        Task<List<ApplicationOversightDetails>> GetOversightsCompleted();
     }
 }

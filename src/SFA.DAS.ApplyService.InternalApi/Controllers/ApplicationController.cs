@@ -11,6 +11,7 @@ using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Assessor;
+using SFA.DAS.ApplyService.Application.Apply.Oversight;
 using SFA.DAS.ApplyService.Application.Apply.Snapshot;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
@@ -113,6 +114,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<bool> AssessorEvaluateSection(Guid applicationId, [FromBody] AssessorEvaluateSectionRequest request)
         {
             return await _mediator.Send(request);
+        }
+
+
+        [HttpGet("/Applications/Oversight/Pending")]
+        public async Task<IEnumerable<ApplicationOversightDetails>> GetOversightPending()
+        {
+            return await _mediator.Send(new GetOversightsPendingRequest());
         }
     }
 
