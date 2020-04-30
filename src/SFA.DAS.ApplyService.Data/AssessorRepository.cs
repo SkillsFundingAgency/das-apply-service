@@ -19,6 +19,18 @@ namespace SFA.DAS.ApplyService.Data
         private readonly IApplyConfig _config;
         private readonly ILogger<AssessorRepository> _logger;
 
+        private const string ApplicationSummaryFields = @"ApplicationId,
+                            org.Name AS OrganisationName,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ProviderRoute,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
+                            Assessor1Name,
+                            Assessor2Name,
+                            Assessor1UserId,
+                            Assessor2UserId
+            ";
+
         public AssessorRepository(IConfigurationService configurationService, ILogger<AssessorRepository> logger)
         {
             _logger = logger;
@@ -31,19 +43,12 @@ namespace SFA.DAS.ApplyService.Data
             {
                 return (await connection
                     .QueryAsync<RoatpAssessorApplicationSummary>(
-                        @"SELECT 
-                            ApplicationId,
-                            org.Name AS OrganisationName,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName') AS ProviderRoute,
-                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS SubmittedDate,
-                            Assessor1Name,
-                            Assessor2Name
-	                      FROM Apply apply
-	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
-	                      WHERE apply.DeletedAt IS NULL AND apply.GatewayReviewStatus = 'Approved' AND ISNULL(Assessor1UserId, '') <> @userId AND ISNULL(Assessor2UserId, '') <> @userId AND (Assessor1UserId IS NULL OR Assessor2UserId IS NULL)
-                          ORDER BY JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn')",
+                        $@"SELECT 
+                            {ApplicationSummaryFields}
+	                        FROM Apply apply
+	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+	                        WHERE apply.DeletedAt IS NULL AND apply.GatewayReviewStatus = 'Approved' AND ISNULL(Assessor1UserId, '') <> @userId AND ISNULL(Assessor2UserId, '') <> @userId AND (Assessor1UserId IS NULL OR Assessor2UserId IS NULL)
+                            ORDER BY JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn')",
                         new
                         {
                             gatewayReviewStatusApproved = GatewayReviewStatus.Approved,
@@ -98,6 +103,32 @@ namespace SFA.DAS.ApplyService.Data
                         userName,
                         inProgressReviewStatus = AssessorReviewStatus.InProgress
                     });
+            }
+        }
+
+        public async Task<List<RoatpAssessorApplicationSummary>> GetInProgressAssessorApplications(string userId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection
+                    .QueryAsync<RoatpAssessorApplicationSummary>(
+                        $@"SELECT 
+                            {ApplicationSummaryFields}
+	                        FROM Apply apply
+	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+	                        WHERE apply.DeletedAt IS NULL AND 
+                            (
+                                -- Assigned to the current user and in progress
+                                (apply.Assessor1ReviewStatus = @inProgressReviewStatus AND apply.Assessor1UserId = @userId) OR (apply.Assessor1ReviewStatus = @inProgressReviewStatus AND apply.Assessor1UserId = @userId)
+                                OR
+                                -- Assigned to any two other assessors and in progress
+                                (apply.Assessor1UserId IS NOT NULL AND apply.Assessor2UserId IS NOT NULL AND (apply.Assessor1ReviewStatus = @inProgressReviewStatus OR Assessor2ReviewStatus = @inProgressReviewStatus))
+                            ORDER BY JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn')",
+                        new
+                        {
+                            inProgressReviewStatus = AssessorReviewStatus.InProgress,
+                            userId = userId
+                        })).ToList();
             }
         }
     }
