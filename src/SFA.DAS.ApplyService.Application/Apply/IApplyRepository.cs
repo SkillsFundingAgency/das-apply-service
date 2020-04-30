@@ -97,5 +97,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<ApplicationOversightDetails>> GetOversightsPending();
 
         Task<List<ApplicationOversightDetails>> GetOversightsCompleted();
+
+        Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, DateTime applicationDeterminedDate, string updatedBy);
     }
 }

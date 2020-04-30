@@ -160,4 +160,11 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string InProgress = "In Progress";
         public const string Evaluated = "Evaluated";
     }
+
+    public static class OversightReviewStatus
+    {
+        public const string New = "New";
+        public const string Successful = "Successful";
+        public const string Unsuccessful = "Unsuccessful";
+    }
 }

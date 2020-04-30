@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using MediatR;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
@@ -96,6 +98,25 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             Assert.AreEqual(oversight.ProviderRoute, returnedOversight.ProviderRoute);
             Assert.AreEqual(oversight.ApplicationReferenceNumber, returnedOversight.ApplicationReferenceNumber);
             Assert.AreEqual(oversight.OversightStatus, returnedOversight.OversightStatus);
+        }
+
+        [TestCase(OversightReviewStatus.Successful)]
+        [TestCase(OversightReviewStatus.Unsuccessful)]
+        public async Task Record_oversight_outcome_updates_oversight_status_and_determined_date(string oversightStatus)
+        {
+            var command = new RecordOversightOutcomeCommand
+            {
+                ApplicationDeterminedDate = DateTime.Now,
+                OversightStatus = oversightStatus,
+                ApplicationId = Guid.NewGuid(),
+                UserName = "Test user"
+            };
+
+            _mediator.Setup(x => x.Send(command, It.IsAny<CancellationToken>())).ReturnsAsync(true);
+
+            var result = await _controller.RecordOversightOutcome(command);
+            result.Should().NotBeNull();
+            result.Value.Should().BeTrue();
         }
     }
 }
