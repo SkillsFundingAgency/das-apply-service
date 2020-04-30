@@ -22,6 +22,9 @@
     [Assessor2Name] NVARCHAR(256) NULL, 
     [Assessor1ReviewStatus] NVARCHAR(20) NULL, 
     [Assessor2ReviewStatus] NVARCHAR(20) NULL
+    [NotRequiredOverrides] NVARCHAR(MAX) NULL, 
+    [OversightStatus] NVARCHAR(20) NOT NULL DEFAULT 'New', 
+    [ApplicationDeterminedDate] DATETIME2 NULL
 )
 GO
 CREATE INDEX [IX_Apply_ApplicationId] ON [Apply] ([ApplicationId])
