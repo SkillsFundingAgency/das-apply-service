@@ -73,13 +73,14 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"UPDATE Apply SET Assessor1UserId = @userId, Assessor1Name = @userName
+                await connection.ExecuteAsync(@"UPDATE Apply SET Assessor1UserId = @userId, Assessor1Name = @userName, Assessor1ReviewStatus = @inProgressReviewStatus
                                                 Where ApplicationId = @applicationId",
                     new
                     {
                         applicationId,
                         userId,
-                        userName
+                        userName,
+                        inProgressReviewStatus = AssessorReviewStatus.InProgress
                     });
             }
         }
@@ -88,13 +89,14 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"UPDATE Apply SET Assessor2UserId = @userId, Assessor2Name = @userName
+                await connection.ExecuteAsync(@"UPDATE Apply SET Assessor2UserId = @userId, Assessor2Name = @userName, Assessor2ReviewStatus = @inProgressReviewStatus
                                                 Where ApplicationId = @applicationId",
                     new
                     {
                         applicationId,
                         userId,
-                        userName
+                        userName,
+                        inProgressReviewStatus = AssessorReviewStatus.InProgress
                     });
             }
         }
