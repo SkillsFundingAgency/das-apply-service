@@ -28,8 +28,9 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.AssignAssessorHand
             var applicationId = Guid.NewGuid();
             var expectedUserId = "sadjkffgdji";
             var expectedUserName = "sadjkffgdji";
+            var assessorNumber = 1;
             
-            await _handler.Handle(new AssignAssessorRequest(applicationId, 1, expectedUserId, expectedUserName), new CancellationToken());
+            await _handler.Handle(new AssignAssessorRequest(applicationId, assessorNumber, expectedUserId, expectedUserName), new CancellationToken());
 
             _repository.Verify(x => x.UpdateAssessor1(applicationId, expectedUserId,expectedUserName), Times.Once);
         }
@@ -40,8 +41,9 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.AssignAssessorHand
             var applicationId = Guid.NewGuid();
             var expectedUserId = "sadjkffgdji";
             var expectedUserName = "sadjkffgdji";
+            var assessorNumber = 2;
 
-            await _handler.Handle(new AssignAssessorRequest(applicationId, 2, expectedUserId, expectedUserName), new CancellationToken());
+            await _handler.Handle(new AssignAssessorRequest(applicationId, assessorNumber, expectedUserId, expectedUserName), new CancellationToken());
 
             _repository.Verify(x => x.UpdateAssessor2(applicationId, expectedUserId, expectedUserName), Times.Once);
         }

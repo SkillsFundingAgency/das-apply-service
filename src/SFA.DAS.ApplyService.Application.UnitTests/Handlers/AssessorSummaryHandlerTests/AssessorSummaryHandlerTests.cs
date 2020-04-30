@@ -7,7 +7,8 @@ using SFA.DAS.ApplyService.Application.Apply.Assessor;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.AssessorSummaryHandlerTests
 {
-    class AssessorSummaryHandlerTests
+    [TestFixture]
+    public class AssessorSummaryHandlerTests
     {
         private Mock<IApplyRepository> _repository;
         private AssessorSummaryHandler _handler;

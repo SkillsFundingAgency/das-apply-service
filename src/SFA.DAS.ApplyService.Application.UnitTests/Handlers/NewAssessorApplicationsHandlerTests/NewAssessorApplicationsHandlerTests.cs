@@ -9,7 +9,8 @@ using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.NewAssessorApplicationsHandlerTests
 {
-    class NewAssessorApplicationsHandlerTests
+    [TestFixture]
+    public class NewAssessorApplicationsHandlerTests
     {
         private Mock<IApplyRepository> _repository;
         private NewAssessorApplicationsHandler _handler;

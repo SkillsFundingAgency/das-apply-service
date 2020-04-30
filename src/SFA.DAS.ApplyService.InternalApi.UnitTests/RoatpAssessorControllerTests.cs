@@ -28,7 +28,11 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task Get_summary_returns_summary_for_the_user()
         {
             var expectedUser = "sadjkffgdji";
-            var expectedResult = new RoatpAssessorSummary(1, 1, 1, 1);
+            var newApplications = 1;
+            var inprogressApplications = 2;
+            var moderationApplications = 3;
+            var clarificationApplications = 4;
+            var expectedResult = new RoatpAssessorSummary(newApplications, inprogressApplications, moderationApplications, clarificationApplications);
             _mediator.Setup(x => x.Send(It.Is<AssessorSummaryRequest>(y => y.UserId == expectedUser), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
 
             var actualResult = await _controller.AssessorSummary(expectedUser);
