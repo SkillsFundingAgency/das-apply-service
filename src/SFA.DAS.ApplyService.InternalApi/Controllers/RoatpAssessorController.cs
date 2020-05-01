@@ -54,8 +54,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             await _mediator.Send(new AssignAssessorRequest(applicationId, request.AssessorNumber, request.AssessorUserId, request.AssessorName));
         }
 
-        [Route("Assessor/Applications/{applicationId}/Overview")]
-        [HttpGet]
+        [HttpGet("Assessor/Applications/{applicationId}/Overview")]
         public async Task<List<AssessorSequence>> GetAssessorOverview(Guid applicationId)
         {
             var allQnaSections = await _qnaApiClient.GetSections(applicationId);
