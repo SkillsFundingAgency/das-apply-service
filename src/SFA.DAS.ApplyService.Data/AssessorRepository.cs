@@ -145,7 +145,7 @@ namespace SFA.DAS.ApplyService.Data
 	                      WHERE {InProgressApplicationsWhereClause}",
                         new
                         {
-                            gatewayReviewStatusApproved = GatewayReviewStatus.Approved,
+                            inProgressReviewStatus = AssessorReviewStatus.InProgress,
                             userId = userId
                         }));
             }
