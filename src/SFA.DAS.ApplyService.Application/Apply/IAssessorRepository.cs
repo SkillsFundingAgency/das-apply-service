@@ -12,5 +12,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task UpdateAssessor1(Guid applicationId, string userId, string userName);
         Task UpdateAssessor2(Guid applicationId, string userId, string userName);
         Task<List<RoatpAssessorApplicationSummary>> GetInProgressAssessorApplications(string userId);
+        Task<int> GetInProgressAssessorApplicationsCount(string userId);
     }
 }
