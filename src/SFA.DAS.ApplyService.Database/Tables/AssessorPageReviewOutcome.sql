@@ -27,11 +27,5 @@ GO
 ALTER TABLE [dbo].AssessorPageReviewOutcome ADD DEFAULT (getutcdate()) FOR [CreatedAt]
 GO
 
-CREATE INDEX [IX_AssessorPageReviewOutcome_ApplicationId_Assessor1UserId] ON [AssessorPageReviewOutcome] ([ApplicationId], [Assessor1UserId])
-GO
-
-CREATE INDEX [IX_AssessorPageReviewOutcome_ApplicationId_Assessor2UserId] ON [AssessorPageReviewOutcome] ([ApplicationId], [Assessor2UserId])
-GO
-
-CREATE INDEX [IX_AssessorPageReviewOutcome_ApplicationId] ON [AssessorPageReviewOutcome] ([ApplicationId], [SequenceNumber], [SectionNumber])
+CREATE INDEX [IX_AssessorPageReviewOutcome_ApplicationId] ON [AssessorPageReviewOutcome] ([ApplicationId])
 GO
