@@ -54,7 +54,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             await _mediator.Send(new AssignAssessorRequest(applicationId, request.AssessorNumber, request.AssessorUserId, request.AssessorName));
         }
 
-        [Route("Assessor/{applicationId}/Overview")]
+        [Route("Assessor/Applications/{applicationId}/Overview")]
         [HttpGet]
         public async Task<List<AssessorSequence>> GetAssessorOverview(Guid applicationId)
         {
