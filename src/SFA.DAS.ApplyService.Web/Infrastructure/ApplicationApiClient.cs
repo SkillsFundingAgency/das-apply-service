@@ -1,138 +1,106 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
-using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.InternalApi.Types;
-using StartQnaApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartQnaApplicationResponse;
+using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    using SFA.DAS.ApplyService.Application.Apply.Roatp;
-    using SFA.DAS.ApplyService.Domain.Roatp;
-
-    public class ApplicationApiClient : IApplicationApiClient
+    public class ApplicationApiClient : ApiClientBase<ApplicationApiClient>, IApplicationApiClient
     {
-        private readonly ILogger<ApplicationApiClient> _logger;
-        private readonly ITokenService _tokenService;
-        private static readonly HttpClient _httpClient = new HttpClient();
-
-        public ApplicationApiClient(IConfigurationService configurationService, ILogger<ApplicationApiClient> logger, ITokenService tokenService)
+        public ApplicationApiClient(HttpClient httpClient, ILogger<ApplicationApiClient> logger, ITokenService tokenService) : base(httpClient, logger)
         {
-            _logger = logger;
-            _tokenService = tokenService;
-            if (_httpClient.BaseAddress == null)
-            {
-                _httpClient.BaseAddress = new Uri(configurationService.GetConfig().Result.InternalApi.Uri);
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken());
         }
 
         public async Task<Guid> StartApplication(StartApplicationRequest startApplicationRequest)
         {
-            var httpResponse = await _httpClient.PostAsJsonAsync("/Application/Start", startApplicationRequest);
-            var startApplicationResponse = await httpResponse.Content.ReadAsAsync<Guid>();
-            return startApplicationResponse;
+            return await Post<StartApplicationRequest, Guid>($"/Application/Start", startApplicationRequest);
         }
 
         public async Task<bool> SubmitApplication(SubmitApplicationRequest submitApplicationRequest)
         {
-            var httpResponse = await _httpClient.PostAsJsonAsync("/Application/Submit", submitApplicationRequest);
-            var submitApplicationResponse = await httpResponse.Content.ReadAsAsync<bool>();
-            return submitApplicationResponse;
+            return await Post<SubmitApplicationRequest, bool>($"/Application/Submit", submitApplicationRequest);
         }
 
         public async Task<bool> ChangeProviderRoute(ChangeProviderRouteRequest changeProviderRouteRequest)
         {
-            var httpResponse = await _httpClient.PostAsJsonAsync("/Application/ChangeProviderRoute", changeProviderRouteRequest);
-            var changeProviderRouteResponse = await httpResponse.Content.ReadAsAsync<bool>();
-            return changeProviderRouteResponse;
+            return await Post<ChangeProviderRouteRequest, bool>($"/Application/ChangeProviderRoute", changeProviderRouteRequest);
         }
 
         public async Task<Domain.Entities.Apply> GetApplication(Guid applicationId)
         {
-            return await (await _httpClient.GetAsync($"Application/{applicationId}")).Content
-                .ReadAsAsync<Domain.Entities.Apply>();
+            return await Get<Domain.Entities.Apply>($"Application/{applicationId}");
         }
 
         public async Task<List<Domain.Entities.Apply>> GetApplications(Guid userId, bool createdBy)
         {
             if (!createdBy)
             {
-                return await (await _httpClient.GetAsync($"/Applications/{userId}/Organisation")).Content
-                .ReadAsAsync<List<Domain.Entities.Apply>>();
+                return await Get<List<Domain.Entities.Apply>>($"Applications/{userId}/Organisation");
             }
 
-            return await (await _httpClient.GetAsync($"/Applications/{userId}")).Content
-                .ReadAsAsync<List<Domain.Entities.Apply>>();
+            return await Get<List<Domain.Entities.Apply>>($"Applications/{userId}");
         }
+
         public async Task<IEnumerable<RoatpSequences>> GetRoatpSequences()
         {
-            return await (await _httpClient.GetAsync($"/roatp-sequences")).Content
-               .ReadAsAsync<IEnumerable<RoatpSequences>>();
+            return await Get<List<RoatpSequences>>($"roatp-sequences");
         }
 
 
         // NOTE: This is old stuff or things which are not migrated over yet       
         public async Task<ApplicationSequence> GetSequence(Guid applicationId, Guid userId)
         {
-            return await (await _httpClient.GetAsync($"Application/{applicationId}/User/{userId}/Sections")).Content
-                .ReadAsAsync<ApplicationSequence>();
+            return await Get<ApplicationSequence>($"Application/{applicationId}/User/{userId}/Sections");
         }
 
         public async Task<IEnumerable<ApplicationSequence>> GetSequences(Guid applicationId)
         {
-            return await (await _httpClient.GetAsync($"Application/{applicationId}/Sequences")).Content
-                .ReadAsAsync<IEnumerable<ApplicationSequence>>();
+            return await Get<List<ApplicationSequence>>($"Application/{applicationId}/Sequences");
         }
 
         public async Task<ApplicationSection> GetSection(Guid applicationId, int sequenceId, int sectionId, Guid userId)
         {
-            return await (await _httpClient.GetAsync(
-                    $"Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections/{sectionId}")).Content
-                .ReadAsAsync<ApplicationSection>();
+            return await Get<ApplicationSection>($"Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections/{sectionId}");
         }
 
         public async Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId, int sequenceId, Guid userId)
         {
-            return await (await _httpClient.GetAsync(
-                    $"Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections")).Content
-                .ReadAsAsync<IEnumerable<ApplicationSection>>();
+            return await Get<List<ApplicationSection>>($"Application/{applicationId}/User/{userId}/Sequences/{sequenceId}/Sections");
         }
 
         public async Task<Page> GetPage(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid userId)
         {
-            return await (await _httpClient.GetAsync(
-                    $"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}")
-                )
-                .Content.ReadAsAsync<Page>();
+            return await Get<Page>($"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}");
         }
 
         public async Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, Guid userId, int sequenceId,
             int sectionId, string pageId, List<Answer> answers, bool saveNewAnswers)
         {
-            return await (await _httpClient.PostAsJsonAsync(
+            return await Post<dynamic, SetPageAnswersResponse>(
                     $"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}",
-                    new { answers, saveNewAnswers })).Content
-                .ReadAsAsync<SetPageAnswersResponse>();
+                    new { answers, saveNewAnswers });
         }
 
         public async Task DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId,
             Guid userId)
         {
-            await _httpClient.PostAsJsonAsync(
-                $"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/DeleteAnswer/{answerId}",
-                new { });
+            await Post(
+                    $"Application/{applicationId}/User/{userId}/Sequence/{sequenceId}/Sections/{sectionId}/Pages/{pageId}/DeleteAnswer/{answerId}",
+                    new { });
         }
 
         public async Task ImportWorkflow(IFormFile file)
@@ -152,49 +120,47 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<string> GetApplicationStatus(Guid applicationId, int standardCode)
         {
-            return await(await _httpClient.GetAsync(
-                $"Application/{applicationId}/standard/{standardCode}/check-status")).Content.ReadAsStringAsync();
+            return await Get($"Application/{applicationId}/standard/{standardCode}/check-status");
         }
 
         public async Task<List<StandardCollation>> GetStandards()
         {
-            return await(await _httpClient.GetAsync("all-standards")).Content.ReadAsAsync<List<StandardCollation>>();
+            return await Get<List<StandardCollation>>($"all-standards");
         }
 
         public async Task<List<Option>> GetQuestionDataFedOptions(string dataEndpoint)
         {
-            return await(await _httpClient.GetAsync($"QuestionOptions/{dataEndpoint}")).Content.ReadAsAsync<List<Option>>();
+            return await Get<List<Option>>($"QuestionOptions/{dataEndpoint}");
         }
 
         public async Task DeleteFile(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId)
         {
-            await _httpClient.PostAsJsonAsync($"/DeleteFile", new {applicationId, userId, sequenceId, sectionId, pageId, questionId});
+            await Post($"/DeleteFile", new { applicationId, userId, sequenceId, sectionId, pageId, questionId });
         }
 
         public async Task<Organisation> GetOrganisationByUserId(Guid userId)
         {
-            return await(await _httpClient.GetAsync($"organisations/userId/{userId}")).Content.ReadAsAsync<Organisation>();
+            return await Get<Organisation>($"organisations/userId/{userId}");
         }
 
         public async Task<Organisation> GetOrganisationByUkprn(string ukprn)
         {
-            return await (await _httpClient.GetAsync($"organisations/ukprn/{ukprn}")).Content.ReadAsAsync<Organisation>();
+            return await Get<Organisation>($"organisations/ukprn/{ukprn}");
         }
 
         public async Task<Organisation> GetOrganisationByName(string name)
         {
-            return await (await _httpClient.GetAsync($"organisations/name/{WebUtility.UrlEncode(name)}")).Content.ReadAsAsync<Organisation>();
+            return await Get<Organisation>($"organisations/name/{WebUtility.UrlEncode(name)}");
         }
 
         public async Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatus(string ukprn)
         {
-            return await (await _httpClient.GetAsync($"/Applications/Existing/{ukprn}")).Content.ReadAsAsync<IEnumerable<RoatpApplicationStatus>>();
+            return await Get<List<RoatpApplicationStatus>>($"/Applications/Existing/{ukprn}");
         }
 
         public async Task<bool> UpdateApplicationStatus(Guid applicationId, string applicationStatus)
         {
-            var httpResponse = await _httpClient.PostAsJsonAsync($"/Application/Status", new { applicationId, applicationStatus });
-            return await httpResponse.Content.ReadAsAsync<bool>();            
+            return await Post<dynamic, bool>($"/Application/Status", new { applicationId, applicationStatus });          
         }
     }
 }

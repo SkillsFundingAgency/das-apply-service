@@ -1,28 +1,21 @@
-﻿using SFA.DAS.ApplyService.Configuration;
-using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.InternalApi.Types;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Infrastructure.ApiClients;
+using SFA.DAS.ApplyService.InternalApi.Types;
 using FHADetails = SFA.DAS.ApplyService.InternalApi.Types.FHADetails;
 using OrganisationDetails = SFA.DAS.ApplyService.InternalApi.Types.OrganisationDetails;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    public class OrganisationApiClient : IOrganisationApiClient
+    public class OrganisationApiClient : ApiClientBase<OrganisationApiClient>, IOrganisationApiClient
     {
-        private readonly ITokenService _tokenService;
-        private static readonly HttpClient _httpClient = new HttpClient();
-
-        public OrganisationApiClient(IConfigurationService configurationService, ITokenService tokenService)
+        public OrganisationApiClient(HttpClient httpClient, ILogger<OrganisationApiClient> logger, ITokenService tokenService) : base(httpClient, logger)
         {
-            _tokenService = tokenService;
-            if (_httpClient.BaseAddress == null)
-            {
-                _httpClient.BaseAddress = new Uri(configurationService.GetConfig().Result.InternalApi.Uri);
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken());
         }
 
         public async Task<Organisation> Create(OrganisationSearchResult organisation, Guid userId)
@@ -65,14 +58,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<Organisation> Create(CreateOrganisationRequest request, Guid userId)
         {
-            return await (await _httpClient.PostAsJsonAsync($"/Organisations", request)).Content
-                .ReadAsAsync<Organisation>();
+            return await Post<CreateOrganisationRequest, Organisation>($"/Organisations", request);
         }
 
         public async Task<Organisation> GetByUser(Guid userId)
         {
-            return await (await _httpClient.GetAsync($"Organisations/UserId/{userId}")).Content
-                .ReadAsAsync<Organisation>();
+            return await Get<Organisation>($"Organisations/UserId/{userId}");
         }
     }
 }

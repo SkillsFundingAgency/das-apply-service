@@ -16,6 +16,7 @@ using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.InternalApi.Types.CompaniesHouse;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.InternalApi.Services;
+using SFA.DAS.ApplyService.Configuration;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
@@ -26,8 +27,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private Mock<ILogger<GatewayApiChecksController>> _logger;
         private Mock<CompaniesHouseApiClient> _companiesHouseApiClient;
         private Mock<CharityCommissionApiClient> _charityCommissionApiClient;
-        private Mock<RoatpApiClient> _roatpApiClient;
+        private Mock<IRoatpApiClient> _roatpApiClient;
         private Mock<IInternalQnaApiClient> _qnaApiClient;
+        private Mock<ILogger<GatewayApiChecksService>> _serviceLogger;
         private IGatewayApiChecksService _gatewayApiChecksService;
 
         private GatewayApiChecksController _controller;
@@ -50,14 +52,18 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         [SetUp]
         public void Before_each_test()
         {
+            var configurationService = new Mock<IConfigurationService>();
+            configurationService.Setup(x => x.GetConfig()).ReturnsAsync(new ApplyConfig { RoatpApiAuthentication = new RoatpApiAuthentication { ApiBaseAddress = "https://localhost"} });
+
             _applyRepository = new Mock<IApplyRepository>();
             _logger = new Mock<ILogger<GatewayApiChecksController>>();
             _companiesHouseApiClient = new Mock<CompaniesHouseApiClient>();
             _charityCommissionApiClient = new Mock<CharityCommissionApiClient>();
-            _roatpApiClient = new Mock<RoatpApiClient>();
+            _roatpApiClient = new Mock<IRoatpApiClient>();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
+            _serviceLogger = new Mock<ILogger<GatewayApiChecksService>>();
             _gatewayApiChecksService = new GatewayApiChecksService(_companiesHouseApiClient.Object, _charityCommissionApiClient.Object,
-                                                                   _roatpApiClient.Object, _qnaApiClient.Object);
+                                                                   _roatpApiClient.Object, _qnaApiClient.Object, _serviceLogger.Object);
 
             _controller = new GatewayApiChecksController(_applyRepository.Object, _logger.Object, _gatewayApiChecksService);
         }

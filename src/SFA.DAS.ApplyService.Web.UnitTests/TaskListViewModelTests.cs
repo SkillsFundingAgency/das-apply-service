@@ -628,8 +628,19 @@
             model.CharityCommissionDataConfirmed = false;
             model.CharityCommissionManualEntry = true;
             model.WhosInControlConfirmed = false;
+            model.WhosInControlStarted = false;
 
             model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.Completed);
+        }
+
+        [Test]
+        public void Whos_in_control_section_status_shows_as_pending_if_not_verified_by_companies_house_or_charity_commission_and_whos_in_control_has_started_but_not_confirmed()
+        {
+            var model = GetTaskListViewModelWithSectionsUpToWhosInControlCompleted();
+
+            model.WhosInControlStarted = true;
+
+            model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.InProgress);
         }
 
 
