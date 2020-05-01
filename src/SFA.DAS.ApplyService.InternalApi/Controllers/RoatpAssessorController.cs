@@ -25,7 +25,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         private readonly IInternalQnaApiClient _qnaApiClient;
 
         public RoatpAssessorController(ILogger<RoatpAssessorController> logger, IMediator mediator, IApplyRepository applyRepository, IInternalQnaApiClient qnaApiClient)
-        {   
+        {
             _logger = logger;
             _mediator = mediator;
             _applyRepository = applyRepository;
@@ -62,28 +62,47 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             return new List<AssessorSequence>
             {
-                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.ProtectingYourApprentices, "Protecting your apprentices checks"),
-                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.ReadinessToEngage, "Readiness to engage checks"),
-                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.PlanningApprenticeshipTraining, "Planning apprenticeship training checks"),
-                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining, "Delivering apprenticeship training checks"),
-                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.EvaluatingApprenticeshipTraining, "Evaluating apprenticeship training checks")
+                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.ProtectingYourApprentices),
+                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.ReadinessToEngage),
+                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.PlanningApprenticeshipTraining),
+                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining),
+                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.EvaluatingApprenticeshipTraining)
             };
         }
 
-        private AssessorSequence GetAssessorSequence(IEnumerable<ApplicationSection> qnaSections, int sequenceNumber, string sequenceTitle)
+        private AssessorSequence GetAssessorSequence(IEnumerable<ApplicationSection> qnaSections, int sequenceNumber)
         {
             var sectionsToExclude = RoatpWorkflowSectionIds.GetWhatYouWillNeedSectionsForSequence(sequenceNumber);
 
             return new AssessorSequence
             {
                 SequenceNumber = sequenceNumber,
-                SequenceTitle = sequenceTitle,
+                SequenceTitle = GetSequenceTitle(sequenceNumber),
                 Sections = qnaSections.Where(sec => sec.SequenceId == sequenceNumber && !sectionsToExclude.Contains(sec.SectionId))
                 .Select(sec =>
                 {
                     return new AssessorSection { SectionNumber = sec.SectionId, LinkTitle = sec.Title, Status = string.Empty };
                 }).ToList()
             };
+        }
+
+        private static string GetSequenceTitle(int sequenceId)
+        {
+            switch (sequenceId)
+            {
+                case RoatpWorkflowSequenceIds.ProtectingYourApprentices:
+                    return "Protecting your apprentices checks";
+                case RoatpWorkflowSequenceIds.ReadinessToEngage:
+                    return "Readiness to engage checks";
+                case RoatpWorkflowSequenceIds.PlanningApprenticeshipTraining:
+                    return "Planning apprenticeship training checks";
+                case RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining:
+                    return "Delivering apprenticeship training checks";
+                case RoatpWorkflowSequenceIds.EvaluatingApprenticeshipTraining:
+                    return "Evaluating apprenticeship training checks";
+                default:
+                    return null;
+            }
         }
     }
 
