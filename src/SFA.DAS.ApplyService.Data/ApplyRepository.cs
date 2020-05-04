@@ -1147,10 +1147,22 @@ namespace SFA.DAS.ApplyService.Data
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.DeletedAt IS NULL
-                          and GatewayReviewStatus  in ('Pass')
-						  and AssessorReviewStatus in ('Pass','Fail')
-						  and FinancialReviewStatus in ('Pass','Fail')
-						  and apply.OversightStatus NOT IN ('Successful','Unsuccessful')")).ToList();
+                          and GatewayReviewStatus  in (@gatewayReviewStatusApproved)
+						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
+						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)
+						  and apply.OversightStatus NOT IN (@oversightReviewStatusPass,@oversightReviewStatusFail)
+                            order by JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') ASC, Org.Name ASC", new
+                        {
+                            gatewayReviewStatusApproved = GatewayReviewStatus.Approved,
+                            assessorReviewStatusApproved = AssessorReviewStatus.Approved,
+                            assessorReviewStatusDeclined = AssessorReviewStatus.Declined,
+                            financialReviewStatusApproved = FinancialReviewStatus.Approved,
+                            financialReviewStatusDeclined = FinancialReviewStatus.Declined,
+                            financialReviewStatusExempt = FinancialReviewStatus.Exempt,
+                            oversightReviewStatusPass=OversightReviewStatus.Pass,
+                            oversightReviewStatusFail = OversightReviewStatus.Fail
+
+                        })).ToList();
             }
         }
 
@@ -1172,10 +1184,22 @@ namespace SFA.DAS.ApplyService.Data
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.DeletedAt IS NULL
-                          and GatewayReviewStatus  in ('Pass')
-						  and AssessorReviewStatus in ('Pass','Fail')
-						  and FinancialReviewStatus in ('Pass','Fail')
-						  and apply.OversightStatus IN ('Successful','Unsuccessful')")).ToList();
+                          and GatewayReviewStatus  in (@gatewayReviewStatusApproved)
+						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
+						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)
+						  and apply.OversightStatus IN (@oversightReviewStatusPass,@oversightReviewStatusFail)  
+                            order by JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') ASC, Org.Name ASC", new
+                    {
+                        gatewayReviewStatusApproved = GatewayReviewStatus.Approved,
+                        assessorReviewStatusApproved = AssessorReviewStatus.Approved,
+                        assessorReviewStatusDeclined = AssessorReviewStatus.Declined,
+                        financialReviewStatusApproved = FinancialReviewStatus.Approved,
+                        financialReviewStatusDeclined = FinancialReviewStatus.Declined,
+                        financialReviewStatusExempt = FinancialReviewStatus.Exempt,
+                        oversightReviewStatusPass = OversightReviewStatus.Pass,
+                        oversightReviewStatusFail = OversightReviewStatus.Fail
+
+                    })).ToList();
             }
         }
 

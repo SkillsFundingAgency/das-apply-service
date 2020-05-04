@@ -154,6 +154,17 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Exempt = "Exempt";
     }
 
+
+    public static class OversightReviewStatus
+    {
+        public const string New = "New";
+        public const string InProgress = "In Progress";
+        public const string Pass = "Successful";
+        public const string Fail = "Unsuccessful";
+        public const string Reopened = "Reopened";
+        public const string Withdrawn = "Withdrawn";
+    }
+
     public static class SequenceReviewStatus
     {
         public const string New = "";
