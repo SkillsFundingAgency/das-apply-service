@@ -57,7 +57,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("Assessor/Applications/{applicationId}/Overview")]
         public async Task<List<AssessorSequence>> GetAssessorOverview(Guid applicationId)
         {
-            var allQnaSections = await _qnaApiClient.GetSections(applicationId);
+            var allQnaSections = await _qnaApiClient.GetAllApplicationSections(applicationId);
 
             return new List<AssessorSequence>
             {

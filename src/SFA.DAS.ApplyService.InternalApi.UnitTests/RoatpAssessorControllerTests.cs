@@ -69,7 +69,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 new ApplicationSection {ApplicationId = _applicationId, SequenceId = RoatpWorkflowSequenceIds.Finish, SectionId = 1}
             };
 
-            _qnaApiClient.Setup(x => x.GetSections(_applicationId)).ReturnsAsync(sections);
+            _qnaApiClient.Setup(x => x.GetAllApplicationSections(_applicationId)).ReturnsAsync(sections);
         }
 
         [Test]
