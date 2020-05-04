@@ -71,6 +71,7 @@
     <Build Include="Tables\ApplySnapshots.sql" />
     <Build Include="Tables\WhitelistedProviders.sql" />
     <Build Include="Tables\GatewayAnswer.sql" />
+    <Build Include="Tables\AssessorPageReviewOutcome.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment1.sql" />
