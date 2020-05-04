@@ -25,6 +25,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken());
         }
 
+        public async Task<ApplicationSequence> GetSequenceBySequenceNo(Guid applicationId, int sequenceNo)
+        {
+            return await Get<ApplicationSequence>($"Applications/{applicationId}/Sequences/{sequenceNo}");
+        }
+
+        public async Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId, Guid sequenceId)
+        {
+            return await Get<List<ApplicationSection>>($"Applications/{applicationId}/Sequences/{sequenceId}/sections");
+        }
+
         public async Task<string> GetQuestionTag(Guid applicationId, string questionTag)
         {
             var response = await GetResponse($"Applications/{applicationId}/applicationData/{questionTag}");
