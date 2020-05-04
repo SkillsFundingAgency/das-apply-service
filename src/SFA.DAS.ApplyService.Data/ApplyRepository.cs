@@ -1300,5 +1300,103 @@ namespace SFA.DAS.ApplyService.Data
             return await Task.FromResult(true);
         }
 
+        public async Task SubmitAssessorPageOutcome(Guid applicationId, 
+                                                    int sequenceNumber,
+                                                    int sectionNumber,
+                                                    string pageId,
+                                                    int assessorType,
+                                                    string userId,
+                                                    string status,
+                                                    string comment)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+
+                await connection.ExecuteAsync(
+                    @"IF (@assessorType = 1)
+                        BEGIN
+                            IF NOT EXISTS (SELECT * FROM [AssessorPageReviewOutcome]
+							                        WHERE [ApplicationId] = @applicationId AND
+									                        [SequenceNumber] = @sequenceNumber AND
+									                        [SectionNumber] = @sectionNumber AND
+									                        [PageId] = @pageId)
+		                        BEGIN
+			                        INSERT INTO [dbo].[AssessorPageReviewOutcome]
+					                           ([ApplicationId]
+					                           ,[SequenceNumber]
+					                           ,[SectionNumber]
+					                           ,[PageId]
+					                           ,[Assessor1UserId]
+					                           ,[Assessor1ReviewStatus]
+					                           ,[Assessor1ReviewComment]
+					                           ,[CreatedBy])
+				                         VALUES
+					                           (@applicationId
+					                           ,@sequenceNumber
+					                           ,@sectionNumber
+					                           ,@pageId
+					                           ,@userId
+					                           ,@status
+					                           ,@comment
+					                           ,@userId)                     
+		                        END
+                             ELSE
+		                        BEGIN
+			                        UPDATE [AssessorPageReviewOutcome]
+			                           SET [Assessor1UserId] = @userId
+                                          ,[Assessor1ReviewStatus] = @status
+				                          ,[Assessor1ReviewComment] = @comment
+				                          ,[UpdatedAt] = GETUTCDATE()
+				                          ,[UpdatedBy] = @userId
+			                        WHERE [ApplicationId] = @applicationId AND
+					                        [SequenceNumber] = @sequenceNumber AND
+					                        [SectionNumber] = @sectionNumber AND
+					                        [PageId] = @pageId
+		                        END                                                         
+                        END
+                      IF (@assessorType = 2)
+                        BEGIN
+                             IF NOT EXISTS (SELECT * FROM [AssessorPageReviewOutcome]
+							                        WHERE [ApplicationId] = @applicationId AND
+									                        [SequenceNumber] = @sequenceNumber AND
+									                        [SectionNumber] = @sectionNumber AND
+									                        [PageId] = @pageId)
+		                        BEGIN
+			                        INSERT INTO [dbo].[AssessorPageReviewOutcome]
+					                           ([ApplicationId]
+					                           ,[SequenceNumber]
+					                           ,[SectionNumber]
+					                           ,[PageId]
+					                           ,[Assessor2UserId]
+					                           ,[Assessor2ReviewStatus]
+					                           ,[Assessor2ReviewComment]
+					                           ,[CreatedBy])
+				                         VALUES
+					                           (@applicationId
+					                           ,@sequenceNumber
+					                           ,@sectionNumber
+					                           ,@pageId
+					                           ,@userId
+					                           ,@status
+					                           ,@comment
+					                           ,@userId)                     
+		                        END
+                             ELSE
+		                        BEGIN
+			                        UPDATE [AssessorPageReviewOutcome]
+			                           SET [Assessor2UserId] = @userId
+                                          ,[Assessor2ReviewStatus] = @status
+				                          ,[Assessor2ReviewComment] = @comment
+				                          ,[UpdatedAt] = GETUTCDATE()
+				                          ,[UpdatedBy] = @userId
+			                        WHERE [ApplicationId] = @applicationId AND
+					                        [SequenceNumber] = @sequenceNumber AND
+					                        [SectionNumber] = @sectionNumber AND
+					                        [PageId] = @pageId
+		                        END                   
+                        END",
+                    new { applicationId, sequenceNumber, sectionNumber, pageId, assessorType, userId, status, comment });
+            }
+        }
     }
 }

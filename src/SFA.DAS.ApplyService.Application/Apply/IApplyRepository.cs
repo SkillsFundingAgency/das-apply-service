@@ -99,5 +99,14 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<int> GetNewAssessorApplicationsCount(string userId);
         Task UpdateAssessor1(Guid applicationId, string userId, string userName);
         Task UpdateAssessor2(Guid applicationId, string userId, string userName);
+
+        Task SubmitAssessorPageOutcome(Guid applicationId,
+                                                    int sequenceNumber,
+                                                    int sectionNumber,
+                                                    string pageId,
+                                                    int assessorType,
+                                                    string userId,
+                                                    string status,
+                                                    string comment);
     }
 }

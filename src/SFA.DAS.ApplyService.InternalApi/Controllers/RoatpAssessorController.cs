@@ -40,6 +40,19 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             await _mediator.Send(new AssignAssessorRequest(applicationId, request.AssessorNumber, request.AssessorUserId, request.AssessorName));
         }
+
+        [HttpPost("Assessor/SubmitPageOutcome")]
+        public async Task SubmitAssessorPageOutcome([FromBody] SubmitAssessorPageOutcomeRequest request)
+        {
+            await _mediator.Send(new SubmitAssessorPageOutcomeHandlerRequest(request.ApplicationId, 
+                                                                                request.SequenceNumber, 
+                                                                                request.SectionNumber, 
+                                                                                request.PageId,
+                                                                                request.AssessorType,
+                                                                                request.UserId,
+                                                                                request.Status,
+                                                                                request.Comment));
+        }
     }
 
     public class AssignAssessorApplicationRequest
@@ -47,5 +60,17 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public int AssessorNumber { get; set; }
         public string AssessorUserId { get; set; }
         public string AssessorName { get; set; }
+    }
+
+    public class SubmitAssessorPageOutcomeRequest
+    {
+        public Guid ApplicationId { get; set; }
+        public int SequenceNumber { get; set; }
+        public int SectionNumber { get; set; }
+        public string PageId { get; set; }
+        public int AssessorType { get; set; }
+        public string UserId { get; set; }
+        public string Status { get; set; }
+        public string Comment { get; set; }
     }
 }
