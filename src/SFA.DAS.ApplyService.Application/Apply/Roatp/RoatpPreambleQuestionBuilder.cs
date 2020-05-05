@@ -94,23 +94,23 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
     public static class RoatpWorkflowSequenceIds
     {
-        public static int Preamble = 0;
-        public static int YourOrganisation = 1;
-        public static int FinancialEvidence = 2;
-        public static int CriminalComplianceChecks = 3;
-        public static int ProtectingYourApprentices = 4;
-        public static int ReadinessToEngage = 5;
-        public static int PlanningApprenticeshipTraining = 6;
-        public static int DeliveringApprenticeshipTraining = 7;
-        public static int EvaluatingApprenticeshipTraining = 8;
-        public static int Finish = 9;
-        public static int ConditionsOfAcceptance = 99;
+        public const int Preamble = 0;
+        public const int YourOrganisation = 1;
+        public const int FinancialEvidence = 2;
+        public const int CriminalComplianceChecks = 3;
+        public const int ProtectingYourApprentices = 4;
+        public const int ReadinessToEngage = 5;
+        public const int PlanningApprenticeshipTraining = 6;
+        public const int DeliveringApprenticeshipTraining = 7;
+        public const int EvaluatingApprenticeshipTraining = 8;
+        public const int Finish = 9;
+        public const int ConditionsOfAcceptance = 99;
     }
 
     public static class RoatpWorkflowSectionIds
     {
-        public static int Preamble = 1;
-        public static int ConditionsOfAcceptance = 1;
+        public const int Preamble = 1;
+        public const int ConditionsOfAcceptance = 1;
 
         public static class YourOrganisation
         {
@@ -123,28 +123,50 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
         public static class FinancialEvidence
         {
-            public static int WhatYouWillNeed = 1;
-            public static int YourOrganisationsFinancialEvidence = 2;
+            public const int WhatYouWillNeed = 1;
+            public const int YourOrganisationsFinancialEvidence = 2;
         }
 
         public static class CriminalComplianceChecks
         {
-            public static int WhatYouWillNeed = 1;
-            public static int ChecksOnYourOrganisation = 2;
-            public static int WhatYouWillNeed_CheckOnWhosInControl = 3;
-            public static int CheckOnWhosInControl = 4;
+            public const int WhatYouWillNeed = 1;
+            public const int ChecksOnYourOrganisation = 2;
+            public const int WhatYouWillNeed_CheckOnWhosInControl = 3;
+            public const int CheckOnWhosInControl = 4;
+        }
+
+        public static class ProtectingYourApprentices
+        {
+            public const int WhatYouWillNeed = 1;
+        }
+
+        public static class ReadinessToEngage
+        {
+            public const int WhatYouWillNeed = 1;
+        }
+
+        public static class PlanningApprenticeshipTraining
+        {
+            public const int WhatYouWillNeed = 1;
         }
 
         public static class DeliveringApprenticeshipTraining
         {
-            public static int ManagementHierarchy = 3;
+            public const int WhatYouWillNeed = 1;
+            public const int ManagementHierarchy = 3;
         }
+
+        public static class EvaluatingApprenticeshipTraining
+        {
+            public const int WhatYouWillNeed = 1;
+        }
+
         public static class Finish
         {
-            public static int ApplicationPermissionsAndChecks = 1;
-            public static int CommercialInConfidenceInformation = 2;
-            public static int TermsAndConditions = 3;
-            public static int SubmitApplication = 4;
+            public const int ApplicationPermissionsAndChecks = 1;
+            public const int CommercialInConfidenceInformation = 2;
+            public const int TermsAndConditions = 3;
+            public const int SubmitApplication = 4;
         }
     }
 
