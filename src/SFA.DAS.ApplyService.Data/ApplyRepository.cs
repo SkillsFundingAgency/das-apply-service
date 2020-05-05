@@ -1398,5 +1398,104 @@ namespace SFA.DAS.ApplyService.Data
                     new { applicationId, sequenceNumber, sectionNumber, pageId, assessorType, userId, status, comment });
             }
         }
+
+        public async Task<PageReviewOutcome> GetPageReviewOutcome(Guid applicationId,
+                                                                    int sequenceNumber,
+                                                                    int sectionNumber,
+                                                                    string pageId,
+                                                                    int assessorType,
+                                                                    string userId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var pageReviewOutcomeResults = await connection.QueryAsync<PageReviewOutcome>(@"IF (@assessorType = 1)
+	                                                                BEGIN
+		                                                                SELECT [ApplicationId]
+			                                                                  ,[SequenceNumber]
+			                                                                  ,[SectionNumber]
+			                                                                  ,[PageId]
+			                                                                  ,@assessorType AS AssessorType
+			                                                                  ,[Assessor1UserId] AS UserId
+			                                                                  ,[Assessor1ReviewStatus] AS [Status]
+			                                                                  ,[Assessor1ReviewComment] AS Comment
+		                                                                  FROM [dbo].[AssessorPageReviewOutcome]
+		                                                                  WHERE [ApplicationId] = @applicationId AND
+				                                                                [SequenceNumber] = @sequenceNumber AND
+				                                                                [SectionNumber] = @sectionNumber AND
+				                                                                [PageId] = @pageId AND
+				                                                                [Assessor1UserId] = @userId                                                        
+	                                                                END
+                                                                IF (@assessorType = 2)
+	                                                                BEGIN
+		                                                                SELECT [ApplicationId]
+			                                                                  ,[SequenceNumber]
+			                                                                  ,[SectionNumber]
+			                                                                  ,[PageId]
+			                                                                  ,@assessorType AS AssessorType
+			                                                                  ,[Assessor2UserId] AS UserId
+			                                                                  ,[Assessor2ReviewStatus] AS [Status]
+			                                                                  ,[Assessor2ReviewComment] AS Comment
+		                                                                  FROM [dbo].[AssessorPageReviewOutcome]
+		                                                                  WHERE [ApplicationId] = @applicationId AND
+				                                                                [SequenceNumber] = @sequenceNumber AND
+				                                                                [SectionNumber] = @sectionNumber AND
+				                                                                [PageId] = @pageId AND
+				                                                                [Assessor2UserId] = @userId                      
+	                                                                END",
+                    new { applicationId, sequenceNumber, sectionNumber, pageId, assessorType, userId });
+
+                return pageReviewOutcomeResults.FirstOrDefault();
+            }
+        }
+
+        public async Task<List<PageReviewOutcome>> GetAssessorReviewOutcomesPerSection(Guid applicationId,
+                                                            int sequenceNumber,
+                                                            int sectionNumber,
+                                                            int assessorType,
+                                                            string userId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var pageReviewOutcomeResults = await connection.QueryAsync<PageReviewOutcome>(@"IF (@assessorType = 1)
+	                                                                BEGIN
+		                                                                SELECT [ApplicationId]
+			                                                                  ,[SequenceNumber]
+			                                                                  ,[SectionNumber]
+			                                                                  ,[PageId]
+			                                                                  ,@assessorType AS AssessorType
+			                                                                  ,[Assessor1UserId] AS UserId
+			                                                                  ,[Assessor1ReviewStatus] AS [Status]
+			                                                                  ,[Assessor1ReviewComment] AS Comment
+		                                                                  FROM [dbo].[AssessorPageReviewOutcome]
+		                                                                  WHERE [ApplicationId] = @applicationId AND
+				                                                                [SequenceNumber] = @sequenceNumber AND
+				                                                                [SectionNumber] = @sectionNumber AND
+				                                                                [Assessor1UserId] = @userId                                                        
+	                                                                END
+                                                                IF (@assessorType = 2)
+	                                                                BEGIN
+		                                                                SELECT [ApplicationId]
+			                                                                  ,[SequenceNumber]
+			                                                                  ,[SectionNumber]
+			                                                                  ,[PageId]
+			                                                                  ,@assessorType AS AssessorType
+			                                                                  ,[Assessor2UserId] AS UserId
+			                                                                  ,[Assessor2ReviewStatus] AS [Status]
+			                                                                  ,[Assessor2ReviewComment] AS Comment
+		                                                                  FROM [dbo].[AssessorPageReviewOutcome]
+		                                                                  WHERE [ApplicationId] = @applicationId AND
+				                                                                [SequenceNumber] = @sequenceNumber AND
+				                                                                [SectionNumber] = @sectionNumber AND
+				                                                                [Assessor2UserId] = @userId                      
+	                                                                END",
+                    new { applicationId, sequenceNumber, sectionNumber, assessorType, userId });
+
+                return pageReviewOutcomeResults.ToList();
+            }
+        }
+
+
+
+
     }
 }
