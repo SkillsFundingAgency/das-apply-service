@@ -79,7 +79,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
         private AssessorSequence GetAssessorSequence(IEnumerable<ApplicationSection> qnaSections, int sequenceNumber)
         {
-            var sectionsToExclude = RoatpWorkflowSectionIds.GetWhatYouWillNeedSectionsForSequence(sequenceNumber);
+            var sectionsToExclude = GetWhatYouWillNeedSectionsForSequence(sequenceNumber);
 
             return new AssessorSequence
             {
@@ -91,6 +91,44 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                     return new AssessorSection { SectionNumber = sec.SectionId, LinkTitle = sec.Title, Status = string.Empty };
                 }).ToList()
             };
+        }
+
+        private static List<int> GetWhatYouWillNeedSectionsForSequence(int sequenceNumber)
+        {
+            var sections = new List<int>();
+
+            switch (sequenceNumber)
+            {
+                case RoatpWorkflowSequenceIds.YourOrganisation:
+                    sections.Add(RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed);
+                    break;
+                case RoatpWorkflowSequenceIds.FinancialEvidence:
+                    sections.Add(RoatpWorkflowSectionIds.FinancialEvidence.WhatYouWillNeed);
+                    break;
+                case RoatpWorkflowSequenceIds.CriminalComplianceChecks:
+                    sections.Add(RoatpWorkflowSectionIds.CriminalComplianceChecks.WhatYouWillNeed);
+                    sections.Add(RoatpWorkflowSectionIds.CriminalComplianceChecks.WhatYouWillNeed_CheckOnWhosInControl);
+                    break;
+                case RoatpWorkflowSequenceIds.ProtectingYourApprentices:
+                    sections.Add(RoatpWorkflowSectionIds.ProtectingYourApprentices.WhatYouWillNeed);
+                    break;
+                case RoatpWorkflowSequenceIds.ReadinessToEngage:
+                    sections.Add(RoatpWorkflowSectionIds.ReadinessToEngage.WhatYouWillNeed);
+                    break;
+                case RoatpWorkflowSequenceIds.PlanningApprenticeshipTraining:
+                    sections.Add(RoatpWorkflowSectionIds.PlanningApprenticeshipTraining.WhatYouWillNeed);
+                    break;
+                case RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining:
+                    sections.Add(RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.WhatYouWillNeed);
+                    break;
+                case RoatpWorkflowSequenceIds.EvaluatingApprenticeshipTraining:
+                    sections.Add(RoatpWorkflowSectionIds.EvaluatingApprenticeshipTraining.WhatYouWillNeed);
+                    break;
+                default:
+                    break;
+            }
+
+            return sections;
         }
 
         private static string GetSequenceTitle(int sequenceId)

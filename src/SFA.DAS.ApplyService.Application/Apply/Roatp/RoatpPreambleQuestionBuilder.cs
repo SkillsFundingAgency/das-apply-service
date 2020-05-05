@@ -168,44 +168,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public const int TermsAndConditions = 3;
             public const int SubmitApplication = 4;
         }
-
-        public static List<int> GetWhatYouWillNeedSectionsForSequence(int sequenceId)
-        {
-            var sections = new List<int>();
-
-            switch (sequenceId)
-            {
-                case RoatpWorkflowSequenceIds.YourOrganisation:
-                    sections.Add(YourOrganisation.WhatYouWillNeed);
-                    break;
-                case RoatpWorkflowSequenceIds.FinancialEvidence:
-                    sections.Add(FinancialEvidence.WhatYouWillNeed);
-                    break;
-                case RoatpWorkflowSequenceIds.CriminalComplianceChecks:
-                    sections.Add(CriminalComplianceChecks.WhatYouWillNeed);
-                    sections.Add(CriminalComplianceChecks.WhatYouWillNeed_CheckOnWhosInControl);
-                    break;
-                case RoatpWorkflowSequenceIds.ProtectingYourApprentices:
-                    sections.Add(ProtectingYourApprentices.WhatYouWillNeed);
-                    break;
-                case RoatpWorkflowSequenceIds.ReadinessToEngage:
-                    sections.Add(ReadinessToEngage.WhatYouWillNeed);
-                    break;
-                case RoatpWorkflowSequenceIds.PlanningApprenticeshipTraining:
-                    sections.Add(PlanningApprenticeshipTraining.WhatYouWillNeed);
-                    break;
-                case RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining:
-                    sections.Add(DeliveringApprenticeshipTraining.WhatYouWillNeed);
-                    break;
-                case RoatpWorkflowSequenceIds.EvaluatingApprenticeshipTraining:
-                    sections.Add(EvaluatingApprenticeshipTraining.WhatYouWillNeed);
-                    break;
-                default:
-                    break;
-            }
-
-            return sections;
-        }
     }
 
     public static class RoatpWorkflowPageIds
