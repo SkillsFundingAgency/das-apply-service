@@ -61,6 +61,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string AddPartners = "YO-110";
         public static string AddSoleTradeDob = "YO-120";
         public static string AddPeopleInControl = "YO-130";
+        public static string OrganisationTypeMainSupporting = "YO-140";
+        public static string OrganisationTypeEmployer = "YO-150";
+        public static string PublicBodyTypeMainSupporting = "YO-170";
+        public static string PublicBodyTypeEmployer = "YO-171";
+        public static string EducationalInstituteTypeMainSupporting = "YO-160";
+        public static string EducationalInstituteTypeEmployer = "YO-161";
         public static string OfficeForStudents = "YO-235";
         public static string InitialTeacherTraining = "YO-240";
         public static string HasHadFullInspection = "YO-260";
@@ -183,6 +189,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         {
             public static string MainSupportingStartPage = "140";
             public static string EmployerStartPage = "150";
+            public static string PublicBodyTypeMainSupporting = "170";
+            public static string PublicBodyTypeEmployer = "171";
+            public static string EducationalInstituteTypeMainSupporting = "160";
+            public static string EducationalInstituteTypeEmployer = "161";
         }
 
         public class ExperienceAndAccreditations

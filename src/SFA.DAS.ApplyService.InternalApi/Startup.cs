@@ -257,7 +257,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IRoatpTokenService, RoatpTokenService>();
             services.AddTransient<IGatewayApiChecksService, GatewayApiChecksService>();
             services.AddTransient<ICriminalComplianceChecksQuestionLookupService, CriminalComplianceChecksQuestionLookupService>();
-
+            services.AddTransient<IRegistrationDetailsService, RegistrationDetailsService>();
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
         }
     }

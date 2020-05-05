@@ -10,6 +10,7 @@ using SFA.DAS.ApplyService.Application.Apply.Oversight;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
+using SFA.DAS.ApplyService.InternalApi.Services;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
@@ -17,6 +18,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
     public class OversightControllerTests
     {
         private Mock<IMediator> _mediator;
+        private Mock<IRegistrationDetailsService> _service;
         private OversightController _controller;
 
 
@@ -24,7 +26,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public void Before_each_test()
         {
             _mediator = new Mock<IMediator>();
-            _controller = new OversightController(_mediator.Object);
+            _service = new Mock<IRegistrationDetailsService>();
+            _controller = new OversightController(_mediator.Object, _service.Object);
         }
 
         [Test]
