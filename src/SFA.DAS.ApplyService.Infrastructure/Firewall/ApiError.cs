@@ -1,8 +1,12 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System.Diagnostics.CodeAnalysis;
 
-namespace SFA.DAS.ApplyService.Web.Infrastructure
+namespace SFA.DAS.ApplyService.Infrastructure.Firewall
 {
+    /// <summary>
+    /// This is raised when the WAF (Web Application Firewall) intercepts what it thinks is a suspicious request
+    /// or there is an internal network issue.
+    /// </summary>
     [ExcludeFromCodeCoverage]
     public class ApiError
     {

@@ -63,6 +63,21 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string AddPeopleInControl = "YO-130";
         public static string OfficeForStudents = "YO-235";
         public static string InitialTeacherTraining = "YO-240";
+        public static string HasHadFullInspection = "YO-260";
+        public static string ReceivedFullInspectionGradeForApprenticeships = "YO-270";
+        public static string FullInspectionOverallEffectivenessGrade = "YO-280";
+        public static string HasHadMonitoringVisit = "YO-290";
+        public static string HasMaintainedFundingSinceInspection = "YO-320";
+        public static string HasHadShortInspectionWithinLast3Years = "YO-330";
+        public static string HasMaintainedFullGradeInShortInspection = "YO-340";
+        public static string FullInspectionApprenticeshipGradeOfsFunded = "YO-300";
+        public static string FullInspectionApprenticeshipGradeNonOfsFunded = "YO-301";
+        public static string GradeWithinLast3YearsOfsFunded = "YO-310";
+        public static string GradeWithinLast3YearsNonOfsFunded = "YO-311";
+
+        public static string IsPostGradTrainingOnlyApprenticeship = "YO-250";
+		public static string HasDeliveredTrainingAsSubcontractor = "YO-350";
+        public static string ContractFileName = "YO-360";
     }
 
     public class RoatpCriminalComplianceChecksQuestionIdConstants
@@ -174,6 +189,20 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         { 
             public static string OfficeForStudents = "235";
             public static string InitialTeacherTraining = "240";
+            public static string HasHadFullInspection = "260";
+            public static string ReceivedFullInspectionGradeForApprenticeships = "270";
+            public static string FullInspectionOverallEffectivenessGrade = "280";
+            public static string HasHadMonitoringVisit = "290";
+            public static string HasMaintainedFundingSinceInspection = "320";
+            public static string HasHadShortInspectionWithinLast3Years = "330";
+            public static string HasMaintainedFullGradeInShortInspection = "340";
+            public static string FullInspectionApprenticeshipGradeNonOfsFunded = "300";
+            public static string FullInspectionApprenticeshipGradeOfsFunded = "301";
+            public static string GradeWithinLast3YearsOfsFunded = "310";
+            public static string GradeWithinLast3YearsNonOfsFunded = "311";
+            public static string IsPostGradTrainingOnlyApprenticeship = "250";
+			public static string SubcontractorDeclaration = "350";
+            public static string SubcontractorContractFile = "360";
         }
 
         public class CriminalComplianceChecks
@@ -219,7 +248,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string FinishCOA3Supporting = "COAPart3Supporting";
         public static string AddManagementHierarchy = "AddManagementHierarchy";
         public static string UKRLPPrimaryVerificationSource = "UKRLPPrimaryVerificationSource";
-
+        public static string UKRLPVerificationCompanyNumber = "UKRLPVerificationCompanyNumber";
+        public static string UKRLPVerificationCharityRegNumber = "UKRLPVerificationCharityRegNumber";
     }
 
     public static class RoatpPreambleQuestionBuilder
@@ -526,7 +556,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
         private static void CreateCompaniesHousePscData(ApplicationDetails applicationDetails, List<PreambleAnswer> questions)
         {
-            if (applicationDetails.CompanySummary.PersonsSignificationControl != null && applicationDetails.CompanySummary.PersonsSignificationControl.Count > 0)
+            if (applicationDetails.CompanySummary.PersonsWithSignificantControl != null && applicationDetails.CompanySummary.PersonsWithSignificantControl.Count > 0)
             {
                 var table = new TabularData
                 {
@@ -535,7 +565,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                     DataRows = new List<TabularDataRow>()
                 };
 
-                foreach (var person in applicationDetails.CompanySummary.PersonsSignificationControl)
+                foreach (var person in applicationDetails.CompanySummary.PersonsWithSignificantControl)
                 {
                     var dataRow = new TabularDataRow
                     {

@@ -21,9 +21,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
         public CharityCommissionApiClient()
         {
-
+            // Constructor used for Mocking CharityCommissionApiClient
         }
-         
+
 
         public CharityCommissionApiClient(ISearchCharitiesV1SoapClient client, ILogger<CharityCommissionApiClient> logger, IConfigurationService configurationService)
         {
