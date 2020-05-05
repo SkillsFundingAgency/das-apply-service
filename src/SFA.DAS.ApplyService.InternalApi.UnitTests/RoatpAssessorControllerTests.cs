@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -11,6 +12,7 @@ using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,6 +23,10 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
     public class RoatpAssessorControllerTests
     {
         private readonly Guid _applicationId = Guid.NewGuid();
+        private readonly int _sequenceId = RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining;
+        private readonly int _sectionId = RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy;
+        private readonly string _firstPageId = "1";
+        private readonly string _lastPageId = "999";
 
         private Mock<ILogger<RoatpAssessorController>> _logger;
         private Mock<IMediator> _mediator;
@@ -131,6 +137,92 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             Assert.That(actualSequences, Is.Not.Null);
             Assert.That(actualSequences.Select(seq => seq.SequenceNumber), Is.EquivalentTo(expectedSequenceNumbers));
+        }
+
+        [Test]
+        public async Task GetFirstAssessorPage_gets_first_page_in_section()
+        {
+            var section = new ApplicationSection
+            {
+                ApplicationId = _applicationId,
+                SequenceId = _sequenceId,
+                SectionId = _sectionId,
+                QnAData = new QnAData
+                {
+                    Pages = new List<Page> { GenerateQnAPage(_firstPageId), GenerateQnAPage(_lastPageId) }
+                }
+            };
+
+            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId)).ReturnsAsync(section);
+
+            _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _firstPageId)).ReturnsAsync(new SkipPageResponse { NextAction = "NextPage", NextActionId = _lastPageId });
+            _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _lastPageId)).ReturnsAsync(new SkipPageResponse { NextAction = "ReturnToSection" });
+
+            var actualPage = await _controller.GetFirstAssessorPage(_applicationId, _sequenceId, _sectionId);
+
+            Assert.That(actualPage, Is.Not.Null);
+            Assert.That(actualPage.PageId, Is.EqualTo(_firstPageId));
+            Assert.That(actualPage.NextPageId, Is.EqualTo(_lastPageId));
+        }
+
+        [Test]
+        public async Task GetAssessorPage_when_last_page_gets_expected_page()
+        {
+            var section = new ApplicationSection
+            {
+                ApplicationId = _applicationId,
+                SequenceId = _sequenceId,
+                SectionId = _sectionId,
+                QnAData = new QnAData
+                {
+                    Pages = new List<Page> { GenerateQnAPage(_firstPageId), GenerateQnAPage(_lastPageId) }
+                }
+            };
+
+            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId)).ReturnsAsync(section);
+
+            _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _firstPageId)).ReturnsAsync(new SkipPageResponse { NextAction = "NextPage", NextActionId = _lastPageId });
+            _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _lastPageId)).ReturnsAsync(new SkipPageResponse { NextAction = "ReturnToSection" });
+
+            var actualPage = await _controller.GetAssessorPage(_applicationId, _sequenceId, _sectionId, _lastPageId);
+
+            Assert.That(actualPage, Is.Not.Null);
+            Assert.That(actualPage.PageId, Is.EqualTo(_lastPageId));
+            Assert.That(actualPage.NextPageId, Is.Null);
+        }
+
+        [Test]
+        public async Task DownloadFile_gets_expected_file()
+        {
+            var questionId = "1";
+            var filename = "file.txt";
+            var expectedFileStream = new FileStreamResult(new MemoryStream(), "application/pdf");
+
+            _qnaApiClient.Setup(x => x.DownloadSpecifiedFile(_applicationId, _sequenceId, _sectionId, _firstPageId, questionId, filename)).ReturnsAsync(expectedFileStream);
+
+            var result = _controller.DownloadFile(_applicationId, _sequenceId, _sectionId, _firstPageId, questionId, filename).Result;
+
+            Assert.AreSame(expectedFileStream, result);
+        }
+
+
+
+        private static Page GenerateQnAPage(string pageId)
+        {
+            return new Page
+            {
+                PageId = pageId,
+                Questions = new List<Question>
+                {
+                    new Question
+                    {
+                        QuestionId = $"Q{pageId}",
+                        QuestionBodyText = "QuestionBodyText",
+                        Input = new Input { Type = "TextArea" }
+                    }
+                },
+                PageOfAnswers = new List<PageOfAnswers> { new PageOfAnswers { Answers = new List<Answer> { new Answer { QuestionId = $"Q{pageId}", Value = "Value" } } } }
+            };
         }
     }
 }
