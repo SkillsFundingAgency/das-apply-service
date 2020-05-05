@@ -12,6 +12,7 @@ using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
+using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
@@ -114,6 +115,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             
             switch (application.ApplicationStatus)
             {
+                case ApplicationStatus.Cancelled:
+                    return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
                 case ApplicationStatus.Approved:
                     return View("~/Views/Application/Approved.cshtml", application);
                 case ApplicationStatus.Rejected:
@@ -261,11 +264,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var section = await _qnaApiClient.GetSection(applicationId, selectedSection.Id);
 
-            if (sequenceId == RoatpWorkflowSequenceIds.YourOrganisation && sectionId == RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails)
-            {
-                await RemoveIrrelevantQuestions(applicationId, section);
-            }
-
             if (section?.DisplayType == SectionDisplayType.PagesWithSections)
             {
                 var applicationSection = _pagesWithSectionsFlowService.ProcessPagesInSectionsForStatusText(selectedSection);
@@ -280,7 +278,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Page(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, List<Question> answeredQuestions)
         {
-            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId);
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId, pageId);
             if (!canUpdate)
             {
                 return RedirectToAction("TaskList", new { applicationId });
@@ -360,7 +358,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Skip(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction)
         {
-            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId);
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId, pageId);
             if (!canUpdate)
             {
                 return RedirectToAction("TaskList", new { applicationId });
@@ -371,12 +369,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             // Note that SkipPage could have updated the section within QnA, so you must get the latest version!
             var section = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
-
-            if (sequenceId == RoatpWorkflowSequenceIds.YourOrganisation &&
-                sectionId == RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails)
-            {
-                await RemoveIrrelevantQuestions(applicationId, section);
-            }
 
             if (nextPageId == null || section.QnAData.Pages.FirstOrDefault(x => x.PageId == nextPageId) == null)
                 return await TaskList(applicationId);
@@ -401,7 +393,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var redirectAction = vm.RedirectAction;
 
 
-            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId);
+            var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId, pageId);
             if (!canUpdate)
             {
                 return RedirectToAction("TaskList", new { applicationId });
@@ -531,16 +523,27 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var whosInControlConfirmed = false;
 
-            var soleTraderDateOfBirthAnswer = await _qnaApiClient.GetAnswer(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob, RoatpYourOrganisationQuestionIdConstants.AddSoleTradeDob);
-            if (soleTraderDateOfBirthAnswer != null && !String.IsNullOrEmpty(soleTraderDateOfBirthAnswer.Value))
+            var organisationType = await _qnaApiClient.GetAnswer(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.SoleTraderPartnership, RoatpYourOrganisationQuestionIdConstants.SoleTradeOrPartnership);
+
+            var whosInControlStarted = organisationType != null && (organisationType.Value == RoatpOrganisationTypes.SoleTrader || organisationType.Value == RoatpOrganisationTypes.Partnership);
+
+            if (organisationType != null && organisationType.Value == RoatpOrganisationTypes.SoleTrader)
             {
-                whosInControlConfirmed = true;
+                var soleTraderDateOfBirthAnswer = await _qnaApiClient.GetAnswer(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob, RoatpYourOrganisationQuestionIdConstants.AddSoleTradeDob);
+                if (soleTraderDateOfBirthAnswer != null && !String.IsNullOrEmpty(soleTraderDateOfBirthAnswer.Value))
+                {
+                    whosInControlConfirmed = true;
+                }
             }
-            var partnersDetailsAnswer = await _qnaApiClient.GetAnswer(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddPartners, RoatpYourOrganisationQuestionIdConstants.AddPartners);
-            if (partnersDetailsAnswer != null && !String.IsNullOrEmpty(partnersDetailsAnswer.Value))
+            else if (organisationType != null && organisationType.Value == RoatpOrganisationTypes.Partnership)
             {
-                whosInControlConfirmed = true;
+                var partnersDetailsAnswer = await _qnaApiClient.GetAnswer(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddPartners, RoatpYourOrganisationQuestionIdConstants.AddPartners);
+                if (partnersDetailsAnswer != null && !String.IsNullOrEmpty(partnersDetailsAnswer.Value))
+                {
+                    whosInControlConfirmed = true;
+                }
             }
+
             var pscsDetailsAnswer = await _qnaApiClient.GetAnswer(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl, RoatpYourOrganisationQuestionIdConstants.AddPeopleInControl);
             if (pscsDetailsAnswer != null && !String.IsNullOrEmpty(pscsDetailsAnswer.Value))
             {
@@ -561,6 +564,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 CharityCommissionManualEntry = (charityCommissionManualEntry.Value == "TRUE"),
                 CompaniesHouseDataConfirmed = (companiesHouseDataConfirmed != null && companiesHouseDataConfirmed.Value == "Y"),
                 CharityCommissionDataConfirmed = (charityCommissionDataConfirmed != null && charityCommissionDataConfirmed.Value == "TRUE"),
+                WhosInControlStarted = whosInControlStarted,
                 WhosInControlConfirmed = whosInControlConfirmed,
                 ApplicationRouteId = providerRoute.Value
             };
@@ -588,28 +592,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             return notRequiredOverrides;
         }
-
-        private async Task RemoveIrrelevantQuestions(Guid applicationId, ApplicationSection section)
-        {
-            const int DefaultSectionId = 1;
-            var sequences = await _qnaApiClient.GetSequences(applicationId);
-            var preambleSequence = sequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.Preamble);
-            var preambleSections = await _qnaApiClient.GetSections(applicationId, preambleSequence.Id);
-            var preambleSection = preambleSections.FirstOrDefault(x => x.SectionId == DefaultSectionId);
-            var isCompanyAnswer = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany);
-            if (isCompanyAnswer?.Value == null || isCompanyAnswer.Value.ToUpper() != "TRUE")
-            {
-                if (section != null)
-                {
-                    var parentCompanyPages = section.QnAData.Pages.Where(x => x.PageId == RoatpWorkflowPageIds.YourOrganisationParentCompanyCheck
-                                                                                              || x.PageId == RoatpWorkflowPageIds.YourOrganisationParentCompanyDetails).ToList();
-                    foreach (var page in parentCompanyPages)
-                    {
-                        section.QnAData.Pages.Remove(page);
-                    }
-                }
-            }
-        }
         
         private void PopulateAdditionalSequenceFields(IEnumerable<ApplicationSequence> sequences)
         {
@@ -624,7 +606,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
         }
 
-        private async Task<bool> CanUpdateApplication(Guid applicationId, int? sequenceId = null, int? sectionId = null)
+        private async Task<bool> CanUpdateApplication(Guid applicationId, int? sequenceId = null, int? sectionId = null, string pageId = null)
         {
             bool canUpdate = false;
 
@@ -650,7 +632,19 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                             if (section != null)
                             {
-                                canUpdate = true;
+                                if (!string.IsNullOrWhiteSpace(pageId))
+                                {
+                                    var page = await _qnaApiClient.GetPage(applicationId, section.SectionId, pageId);
+                                    if (page != null && page.Active)
+                                    {
+                                        canUpdate = true;
+                                    }
+                                }
+                                else
+                                {
+                                    // No need to check the page
+                                    canUpdate = true;
+                                }
                             }
                         }
                         else
@@ -894,6 +888,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             List<Answer> answers = new List<Answer>();
 
+            // These are special in that they drive other things and thus should not be deemed as an answer
             var excludedInputs = new List<string> { "postcodeSearch", "checkAll", "ApplicationId", "RedirectAction" };
 
             // Add answers from the Form post

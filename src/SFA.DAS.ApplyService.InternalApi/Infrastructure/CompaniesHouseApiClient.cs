@@ -28,7 +28,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
         public CompaniesHouseApiClient()
         {
-
+            // Constructor used for Mocking CompaniesHouseApiClient
         }
 
         public CompaniesHouseApiClient(HttpClient client, ILogger<CompaniesHouseApiClient> logger, IConfigurationService configurationService)

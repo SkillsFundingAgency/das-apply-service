@@ -36,16 +36,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
                 case FinancialApplicationSelectedGrade.Outstanding:
                 case FinancialApplicationSelectedGrade.Good:
                 case FinancialApplicationSelectedGrade.Satisfactory:
-                    return FinancialReviewStatus.Approved;
+                    return FinancialReviewStatus.Pass;
 
                 case FinancialApplicationSelectedGrade.Exempt:
                     return FinancialReviewStatus.Exempt;
 
                 case FinancialApplicationSelectedGrade.Clarification:
-                    return FinancialReviewStatus.Clarification;
+                    return FinancialReviewStatus.ClarificationSent;
 
                 default:
-                    return FinancialReviewStatus.Declined;
+                    return FinancialReviewStatus.Fail;
             }
         }
     }
