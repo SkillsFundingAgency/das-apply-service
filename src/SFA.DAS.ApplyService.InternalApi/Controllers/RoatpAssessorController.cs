@@ -40,6 +40,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             await _mediator.Send(new AssignAssessorRequest(applicationId, request.AssessorNumber, request.AssessorUserId, request.AssessorName));
         }
+
+        [HttpGet("Assessor/Applications/{userId}/InProgress")]
+        public async Task<List<RoatpAssessorApplicationSummary>> InProgressApplications(string userId)
+        {
+            var applications = await _mediator.Send(new InProgressAssessorApplicationsRequest(userId));
+
+            return applications;
+        }
     }
 
     public class AssignAssessorApplicationRequest
