@@ -37,7 +37,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             var summary = await _mediator.Send(new AssessorSummaryRequest(userId));
 
-            return summary;
+            return summary ;
         }
 
         [HttpGet("Assessor/Applications/{userId}/New")]
@@ -52,6 +52,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task AssignApplication(Guid applicationId, [FromBody] AssignAssessorApplicationRequest request)
         {
             await _mediator.Send(new AssignAssessorRequest(applicationId, request.AssessorNumber, request.AssessorUserId, request.AssessorName));
+        }
+
+        [HttpGet("Assessor/Applications/{userId}/InProgress")]
+        public async Task<List<RoatpAssessorApplicationSummary>> InProgressApplications(string userId)
+        {
+            var applications = await _mediator.Send(new InProgressAssessorApplicationsRequest(userId));
+
+            return applications;
         }
 
         [HttpGet("Assessor/Applications/{applicationId}/Overview")]

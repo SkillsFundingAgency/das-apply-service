@@ -30,7 +30,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private RoatpAssessorController _controller;
 
         [SetUp]
-        public void Setup()
+        public void TestSetup()
         {
             _mediator = new Mock<IMediator>();
             _applyRepository = new Mock<IApplyRepository>();     
@@ -109,6 +109,18 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             await _controller.AssignApplication(applicationid, request);
 
             _mediator.Verify(x => x.Send(It.Is<AssignAssessorRequest>(r => r.ApplicationId == applicationid && r.AssessorName == request.AssessorName && r.AssessorNumber == request.AssessorNumber && r.AssessorUserId == request.AssessorUserId), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Test]
+        public async Task Get_in_progress_applications_returns_in_progress_applications_for_the_user()
+        {
+            var expectedUser = "sadjkffgdji";
+            var expectedResult = new List<RoatpAssessorApplicationSummary>();
+            _mediator.Setup(x => x.Send(It.Is<InProgressAssessorApplicationsRequest>(y => y.UserId == expectedUser), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
+
+            var actualResult = await _controller.InProgressApplications(expectedUser);
+
+            Assert.AreSame(expectedResult, actualResult);
         }
 
         [Test]

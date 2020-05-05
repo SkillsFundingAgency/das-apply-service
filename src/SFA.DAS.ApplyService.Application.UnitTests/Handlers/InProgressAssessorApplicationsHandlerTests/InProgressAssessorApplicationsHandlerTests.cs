@@ -7,29 +7,29 @@ using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Assessor;
 using SFA.DAS.ApplyService.Domain.Apply;
 
-namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.NewAssessorApplicationsHandlerTests
+namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.InProgressAssessorApplicationsHandlerTests
 {
     [TestFixture]
-    public class NewAssessorApplicationsHandlerTests
+    public class InProgressAssessorApplicationsHandlerTests
     {
         private Mock<IAssessorRepository> _repository;
-        private NewAssessorApplicationsHandler _handler;
+        private InProgressAssessorApplicationsHandler _handler;
 
         [SetUp]
         public void TestSetup()
         {
             _repository = new Mock<IAssessorRepository>();
-            _handler = new NewAssessorApplicationsHandler(_repository.Object);
+            _handler = new InProgressAssessorApplicationsHandler(_repository.Object);
         }
 
         [Test]
-        public async Task Get_new_applications_returns_new_applications_for_the_user()
+        public async Task Get_in_progress_applications_returns_in_progress_applications_for_the_user()
         {
             var expectedUser = "sadjkffgdji";
             var expectedResult = new List<RoatpAssessorApplicationSummary>();
-            _repository.Setup(x => x.GetNewAssessorApplications(expectedUser)).ReturnsAsync(expectedResult);
+            _repository.Setup(x => x.GetInProgressAssessorApplications(expectedUser)).ReturnsAsync(expectedResult);
 
-            var actualResult = await _handler.Handle(new NewAssessorApplicationsRequest(expectedUser), new CancellationToken());
+            var actualResult = await _handler.Handle(new InProgressAssessorApplicationsRequest(expectedUser), new CancellationToken());
 
             Assert.AreSame(expectedResult, actualResult);
         }
