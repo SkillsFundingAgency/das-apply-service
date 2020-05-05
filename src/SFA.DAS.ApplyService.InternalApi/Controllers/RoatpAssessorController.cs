@@ -149,6 +149,71 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                     return null;
             }
         }
+
+        [HttpGet("Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page")]
+        public async Task<AssessorPage> GetFirstAssessorPage(Guid applicationId, int sequenceNumber, int sectionNumber)
+        {
+            return await GetAssessorPage(applicationId, sequenceNumber, sectionNumber, null);
+        }
+
+        [HttpGet("Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}")]
+        public async Task<AssessorPage> GetAssessorPage(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId)
+        {
+            AssessorPage page = null;
+
+            var qnaSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceNumber, sectionNumber);
+            var qnaPage = qnaSection?.QnAData.Pages.FirstOrDefault(p => p.PageId == pageId || string.IsNullOrEmpty(pageId));
+
+            if (qnaPage != null)
+            {
+                page = new AssessorPage
+                {
+                    ApplicationId = applicationId,
+                    SequenceNumber = sequenceNumber,
+                    SectionNumber = sectionNumber,
+                    PageId = qnaPage.PageId,
+
+                    Caption = GetSequenceTitle(sequenceNumber),
+                    Heading = qnaSection.LinkTitle,
+                    Title = qnaPage.Title,
+                    BodyText = qnaPage.BodyText,
+
+                    Questions = qnaPage.Questions.Select(qnaQuestion =>
+                    {
+                        return new AssessorQuestion
+                        {
+                            QuestionId = qnaQuestion.QuestionId,
+                            Label = qnaQuestion.Label,
+                            QuestionBodyText = qnaQuestion.QuestionBodyText,
+                            InputType = qnaQuestion.Input?.Type,
+                            InputPrefix = qnaQuestion.Input?.InputPrefix,
+                            InputSuffix = qnaQuestion.Input?.InputSuffix
+                        };
+                    }).ToList(),
+
+                    Answers = qnaPage.PageOfAnswers.SelectMany(pao => pao.Answers).ToLookup(a => a.QuestionId).Select(group =>
+                    {
+                        return new AssessorAnswer { QuestionId = group.Key, Value = group.FirstOrDefault()?.Value };
+                    }).ToList()
+                };
+
+                var nextPageAction = await _qnaApiClient.SkipPageBySectionNo(page.ApplicationId, page.SequenceNumber, page.SectionNumber, page.PageId);
+
+                if ("NextPage".Equals(nextPageAction?.NextAction, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    page.NextPageId = nextPageAction.NextActionId;
+                }
+            }
+
+            return page;
+        }
+
+
+        [HttpGet("Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}/questions/{questionId}/download/{filename}")]
+        public async Task<FileStreamResult> DownloadFile(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string questionId, string filename)
+        {
+            return await _qnaApiClient.DownloadSpecifiedFile(applicationId, sequenceNumber, sectionNumber, pageId, questionId, filename);
+        }
     }
 
     public class AssignAssessorApplicationRequest
