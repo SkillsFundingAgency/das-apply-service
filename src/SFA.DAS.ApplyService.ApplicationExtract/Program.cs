@@ -53,7 +53,7 @@ namespace SFA.DAS.ApplyService.ApplicationExtract
                 }
             }
 
-            var outputString = JsonConvert.SerializeObject(outputSection);
+            var outputString = JsonConvert.SerializeObject(outputSection, Formatting.Indented);
             File.WriteAllText(outputPath + @"\" + section.Title + ".json", outputString);
         }
     }
