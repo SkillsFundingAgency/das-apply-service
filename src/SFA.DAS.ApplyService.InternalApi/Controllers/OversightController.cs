@@ -36,13 +36,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(new GetOversightsCompletedRequest());
         }
 
-        [HttpGet]
-        [Route("Oversights/RegisterDetails/{applicationId}")]
-        public async Task<ActionResult<RoatpRegistrationDetails>> GetRegisterDetails(Guid applicationId)
-        {
-            return await _mediator.Send(new GetRoatpRegistrationDetailsRequest(applicationId));
-        }
-
         [HttpPost]
         [Route("Oversight/Outcome")]
         public async Task<ActionResult<bool>> RecordOversightOutcome([FromBody] RecordOversightOutcomeCommand command)
