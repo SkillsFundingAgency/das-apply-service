@@ -121,5 +121,27 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             result.Should().NotBeNull();
             result.Value.Should().BeTrue();
         }
+
+        [Test]
+        public async Task Get_registration_details_retrieves_information_for_adding_provider_to_register()
+        {
+            var applicationId = Guid.NewGuid();
+            var response = new RoatpRegistrationDetails
+            {
+                UKPRN = "10001234",
+                LegalName = "Legal Name",
+                TradingName = "Trading Name",
+                ProviderTypeId = 1,
+                OrganisationTypeId = 2,
+                CompanyNumber = "5550003",
+                CharityNumber = "125622"
+            };
+
+            _service.Setup(x => x.GetRegistrationDetails(applicationId)).ReturnsAsync(response);
+
+            var result = await _controller.GetRegistrationDetails(applicationId);
+
+            result.Value.UKPRN.Should().Be(response.UKPRN);
+        }
     }
 }
