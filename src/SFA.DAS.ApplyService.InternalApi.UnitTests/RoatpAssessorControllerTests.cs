@@ -62,5 +62,99 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             _mediator.Verify(x => x.Send(It.Is<AssignAssessorRequest>(r => r.ApplicationId == applicationid && r.AssessorName == request.AssessorName && r.AssessorNumber == request.AssessorNumber && r.AssessorUserId == request.AssessorUserId), It.IsAny<CancellationToken>()), Times.Once);
         }
+
+        [Test]
+        public async Task SubmitAssessorPageOutcome_calls_mediator()
+        {
+            var applicationid = Guid.NewGuid();
+            var request = new SubmitAssessorPageOutcomeRequest { ApplicationId = applicationid, SequenceNumber = 1, SectionNumber = 2, PageId = "30", AssessorType = 2,
+                                                                 UserId = "4fs7f-userId-7gfhh", Status = "Fail", Comment = "Very bad" };
+
+            await _controller.SubmitAssessorPageOutcome(request);
+
+            _mediator.Verify(x => x.Send(It.Is<SubmitAssessorPageOutcomeHandlerRequest>(r => r.ApplicationId == applicationid && r.SequenceNumber == request.SequenceNumber && r.SectionNumber == request.SectionNumber && 
+                   r.PageId == request.PageId && r.AssessorType == request.AssessorType && r.UserId == request.UserId && r.Status == request.Status && r.Comment == request.Comment), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Test]
+        public async Task GetPageReviewOutcome_returns_expected_PageReviewOutcome()
+        {
+            var expectedApplicationid = Guid.NewGuid();
+            var expectedSequenceNumber = 1;
+            var expectedSectionNumber = 2;
+            var expectedPageId = "30";
+            var expectedAssessorType = 2;
+            var expectedUserId = "4fs7f-userId-7gfhh";
+
+            var request = new GetPageReviewOutcomeRequest
+            { 
+                ApplicationId = expectedApplicationid,
+                SequenceNumber = expectedSequenceNumber,
+                SectionNumber = expectedSectionNumber,
+                PageId = expectedPageId,
+                AssessorType = expectedAssessorType,
+                UserId = expectedUserId
+            };
+
+            var expectedResult = new PageReviewOutcome();
+            _mediator.Setup(x => x.Send(It.Is<GetPageReviewOutcomeHandlerRequest>(r => r.ApplicationId == expectedApplicationid && r.SequenceNumber == expectedSequenceNumber &&
+                        r.SectionNumber == expectedSectionNumber && r.PageId == expectedPageId && r.AssessorType == expectedAssessorType && 
+                        r.UserId == expectedUserId), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
+
+            var actualResult = await _controller.GetPageReviewOutcome(request);
+
+            Assert.AreSame(expectedResult, actualResult);
+        }
+
+        [Test]
+        public async Task GetAssessorReviewOutcomesPerSection_returns_expected_list_of_PageReviewOutcome()
+        {
+            var expectedApplicationid = Guid.NewGuid();
+            var expectedSequenceNumber = 1;
+            var expectedSectionNumber = 2;
+            var expectedAssessorType = 2;
+            var expectedUserId = "4fs7f-userId-7gfhh";
+
+            var request = new GetAssessorReviewOutcomesPerSectionRequest
+            {
+                ApplicationId = expectedApplicationid,
+                SequenceNumber = expectedSequenceNumber,
+                SectionNumber = expectedSectionNumber,
+                AssessorType = expectedAssessorType,
+                UserId = expectedUserId
+            };
+
+            var expectedResult = new List<PageReviewOutcome>();
+            _mediator.Setup(x => x.Send(It.Is<GetAssessorReviewOutcomesPerSectionHandlerRequest>(r => r.ApplicationId == expectedApplicationid && r.SequenceNumber == expectedSequenceNumber &&
+                        r.SectionNumber == expectedSectionNumber && r.AssessorType == expectedAssessorType &&
+                        r.UserId == expectedUserId), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
+
+            var actualResult = await _controller.GetAssessorReviewOutcomesPerSection(request);
+
+            Assert.AreSame(expectedResult, actualResult);
+        }
+
+        [Test]
+        public async Task GetAllAssessorReviewOutcomes_returns_expected_list_of_PageReviewOutcome()
+        {
+            var expectedApplicationid = Guid.NewGuid();
+            var expectedAssessorType = 2;
+            var expectedUserId = "4fs7f-userId-7gfhh";
+
+            var request = new GetAllAssessorReviewOutcomesRequest
+            {
+                ApplicationId = expectedApplicationid,
+                AssessorType = expectedAssessorType,
+                UserId = expectedUserId
+            };
+
+            var expectedResult = new List<PageReviewOutcome>();
+            _mediator.Setup(x => x.Send(It.Is<GetAllAssessorReviewOutcomesHandlerRequest>(r => r.ApplicationId == expectedApplicationid && 
+                        r.AssessorType == expectedAssessorType && r.UserId == expectedUserId), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
+
+            var actualResult = await _controller.GetAllAssessorReviewOutcomes(request);
+
+            Assert.AreSame(expectedResult, actualResult);
+        }
     }
 }

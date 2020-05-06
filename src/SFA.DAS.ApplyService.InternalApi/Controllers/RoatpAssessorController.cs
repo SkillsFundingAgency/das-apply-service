@@ -78,6 +78,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             return assessorReviewOutcomes;
         }
+
+        [HttpPost("Assessor/GetAllAssessorReviewOutcomes")]
+        public async Task<List<PageReviewOutcome>> GetAllAssessorReviewOutcomes([FromBody] GetAllAssessorReviewOutcomesRequest request)
+        {
+            var assessorReviewOutcomes = await _mediator.Send(new GetAllAssessorReviewOutcomesHandlerRequest(request.ApplicationId,
+                                                                                request.AssessorType,
+                                                                                request.UserId));
+
+            return assessorReviewOutcomes;
+        }
     }
 
     public class AssignAssessorApplicationRequest
@@ -114,6 +124,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public Guid ApplicationId { get; set; }
         public int SequenceNumber { get; set; }
         public int SectionNumber { get; set; }
+        public int AssessorType { get; set; }
+        public string UserId { get; set; }
+    }
+
+    public class GetAllAssessorReviewOutcomesRequest
+    {
+        public Guid ApplicationId { get; set; }
         public int AssessorType { get; set; }
         public string UserId { get; set; }
     }
