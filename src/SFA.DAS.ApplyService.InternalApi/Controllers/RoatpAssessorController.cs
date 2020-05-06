@@ -149,14 +149,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                     return null;
             }
         }
-    }
 
         [HttpPost("Assessor/SubmitPageOutcome")]
         public async Task SubmitAssessorPageOutcome([FromBody] SubmitAssessorPageOutcomeRequest request)
         {
-            await _mediator.Send(new SubmitAssessorPageOutcomeHandlerRequest(request.ApplicationId, 
-                                                                                request.SequenceNumber, 
-                                                                                request.SectionNumber, 
+            await _mediator.Send(new SubmitAssessorPageOutcomeHandlerRequest(request.ApplicationId,
+                                                                                request.SequenceNumber,
+                                                                                request.SectionNumber,
                                                                                 request.PageId,
                                                                                 request.AssessorType,
                                                                                 request.UserId,
@@ -199,6 +198,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return assessorReviewOutcomes;
         }
     }
+
 
     public class AssignAssessorApplicationRequest
     {

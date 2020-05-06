@@ -95,10 +95,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         Task RemoveSectionCompleted(Guid applicationId, Guid applicationSectionId);
 
-        Task<List<RoatpAssessorApplicationSummary>> GetNewAssessorApplications(string userId);
-        Task<int> GetNewAssessorApplicationsCount(string userId);
-        Task UpdateAssessor1(Guid applicationId, string userId, string userName);
-        Task UpdateAssessor2(Guid applicationId, string userId, string userName);
+
 
         Task SubmitAssessorPageOutcome(Guid applicationId,
                                                     int sequenceNumber,
