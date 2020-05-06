@@ -93,6 +93,36 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             Assert.IsFalse(actualResult.IsPostGradOnlyApprenticeship);
         }
 
+
+        [Test]
+        public void get_initial_teacher_training_does_not_lookup_pgta_answer_if_itt_is_no()
+        {
+            _qnaApiClient
+                .Setup(x => x.GetAnswerValue(_applicationId,
+                    RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.InitialTeacherTraining,
+                    RoatpYourOrganisationQuestionIdConstants.InitialTeacherTraining)).ReturnsAsync("No");
+
+            _qnaApiClient
+                .Setup(x => x.GetAnswerValue(_applicationId,
+                    RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.IsPostGradTrainingOnlyApprenticeship,
+                    RoatpYourOrganisationQuestionIdConstants.IsPostGradTrainingOnlyApprenticeship)).ReturnsAsync("No");
+
+
+            var actualResult = _controller.GetInitialTeacherTraining(_applicationId).Result;
+
+            Assert.IsFalse(actualResult.DoesOrganisationOfferInitialTeacherTraining);
+            Assert.IsFalse(actualResult.IsPostGradOnlyApprenticeship);
+            _qnaApiClient.Verify(x => x.GetAnswerValue(_applicationId,
+                    RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.IsPostGradTrainingOnlyApprenticeship,
+                    RoatpYourOrganisationQuestionIdConstants.IsPostGradTrainingOnlyApprenticeship), Times.Never);
+        }
+
         [Test]
         public void get_gateway_declaration_returns_expected_declaration_answers()
         {
