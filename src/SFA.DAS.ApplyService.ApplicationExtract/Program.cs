@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 
@@ -50,26 +51,44 @@ namespace SFA.DAS.ApplyService.ApplicationExtract
             var outputSection = new Section();
             outputSection.Title = section.Title;
 
-            foreach (var page in section.QnAData.Pages.Where(x => x.Active && !x.NotRequired))
-            {
-                foreach (var question in page.Questions)
-                {
-                    outputSection.Questions.Add(new Question
-                    {
-                        QuestionText = question.Label,
-                        Answer = page.PageOfAnswers.SingleOrDefault()?.Answers.SingleOrDefault(x => x.QuestionId == question.QuestionId)?.Value
-                    });
-                }
-            }
-
-            var outputString = JsonConvert.SerializeObject(outputSection, Formatting.Indented);
             var directoryPath = Path.Combine(outputPath, "Sequence " + section.SequenceId);
             if (!Directory.Exists(directoryPath))
             {
                 Directory.CreateDirectory(directoryPath);
             }
+
+            foreach (var page in section.QnAData.Pages.Where(x => x.Active && !x.NotRequired))
+            {
+                foreach (var question in page.Questions)
+                {
+                    var questionAnswer = page.PageOfAnswers.SingleOrDefault()?.Answers.SingleOrDefault(x => x.QuestionId == question.QuestionId)?.Value;
+
+                    outputSection.Questions.Add(new Question
+                    {
+                        QuestionText = question.Label,
+                        Answer = questionAnswer
+                    });
+
+                    if (question.Input.Type == "FileUpload" && !string.IsNullOrEmpty(questionAnswer))
+                    {
+                        await DownloadFile(section.ApplicationId, section.Id, page.PageId, question.QuestionId, questionAnswer, directoryPath);
+                    }
+                }
+            }
+
+            var outputString = JsonConvert.SerializeObject(outputSection, Formatting.Indented);
+            
             var filePath = Path.Combine(directoryPath, section.SectionId + " - " + section.Title + ".json");
             File.WriteAllText(filePath, outputString);
+        }
+
+        private static async Task DownloadFile(Guid applicationId, Guid sectionId, string pageId, string questionId, string fileName, string directoryPath)
+        {
+            var fileResponse = await _qnaClient.DownloadFile(applicationId, sectionId, pageId, questionId, fileName);
+
+            var outputStream = File.Create(Path.Combine(directoryPath, fileName));
+            await fileResponse.Content.CopyToAsync(outputStream);
+            outputStream.Close();
         }
     }
 
