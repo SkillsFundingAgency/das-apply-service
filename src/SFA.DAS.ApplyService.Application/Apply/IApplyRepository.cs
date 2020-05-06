@@ -15,7 +15,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<Domain.Entities.Apply> GetApplication(Guid applicationId);
         Task<List<Domain.Entities.Apply>> GetUserApplications(Guid userId);
         Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid userId);
-
         Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId);
         Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId);
 
@@ -97,5 +96,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<ApplicationOversightDetails>> GetOversightsPending();
 
         Task<List<ApplicationOversightDetails>> GetOversightsCompleted();
+        Task<ApplicationOversightDetails> GetOversightDetails(Guid applicationId);
+
     }
 }

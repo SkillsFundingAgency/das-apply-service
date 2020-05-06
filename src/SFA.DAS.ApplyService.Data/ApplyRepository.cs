@@ -1188,7 +1188,7 @@ namespace SFA.DAS.ApplyService.Data
 						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
 						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)
 						  and apply.OversightStatus IN (@oversightReviewStatusPass,@oversightReviewStatusFail)  
-                            order by JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') ASC, Org.Name ASC", new
+                            order by JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') ASC, Apply.ApplicationDeterminedDate ASC, Org.Name ASC", new
                     {
                         gatewayReviewStatusApproved = GatewayReviewStatus.Approved,
                         assessorReviewStatusApproved = AssessorReviewStatus.Approved,
@@ -1200,6 +1200,29 @@ namespace SFA.DAS.ApplyService.Data
                         oversightReviewStatusFail = OversightReviewStatus.Fail
 
                     })).ToList();
+            }
+        }
+
+        public async Task<ApplicationOversightDetails> GetOversightDetails(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var applyDataResults = await connection.QueryAsync<ApplicationOversightDetails>(@"SELECT 
+                            apply.Id AS Id,
+                            apply.ApplicationId AS ApplicationId,
+							 org.Name AS OrganisationName,
+					        JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
+							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
+							apply.OversightStatus,
+							Apply.ApplicationDeterminedDate
+                              FROM Apply apply
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+                        WHERE apply.ApplicationId = @applicationId",
+                    new { applicationId });
+
+                return applyDataResults.FirstOrDefault();
             }
         }
 

@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NPOI.HPSF;
 using SFA.DAS.ApplyService.Application.Apply.Oversight;
 using SFA.DAS.ApplyService.Domain.Apply;
 
@@ -30,6 +32,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<ActionResult<List<ApplicationOversightDetails>>> OversightsCompleted()
         {
             return await _mediator.Send(new GetOversightsCompletedRequest());
+        }
+
+        [HttpGet]
+        [Route("Oversights/{applicationId}")]
+        public async Task<ActionResult<ApplicationOversightDetails>> OversightDetails(Guid applicationId)
+        {
+            return await _mediator.Send(new GetOversightDetailsRequest(applicationId));
         }
     }
 }
