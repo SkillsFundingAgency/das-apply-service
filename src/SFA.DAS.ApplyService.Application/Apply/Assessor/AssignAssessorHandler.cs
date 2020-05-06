@@ -7,12 +7,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
     public class AssignAssessorHandler : IRequestHandler<AssignAssessorRequest>
     {
-        private readonly IApplyRepository _applyRepository;
+        private readonly IAssessorRepository _assessorRepository;
         private readonly ILogger<AssignAssessorHandler> _logger;
 
-        public AssignAssessorHandler(IApplyRepository applyRepository, ILogger<AssignAssessorHandler> logger)
+        public AssignAssessorHandler(IAssessorRepository assessorRepository, ILogger<AssignAssessorHandler> logger)
         {
-            _applyRepository = applyRepository;
+            _assessorRepository = assessorRepository;
             _logger = logger;
         }
 
@@ -22,11 +22,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 
             if (request.AssessorNumber == 1)
             {
-                await _applyRepository.UpdateAssessor1(request.ApplicationId, request.AssessorUserId, request.AssessorName);
+                await _assessorRepository.UpdateAssessor1(request.ApplicationId, request.AssessorUserId, request.AssessorName);
             }
             else
             {
-                await _applyRepository.UpdateAssessor2(request.ApplicationId, request.AssessorUserId, request.AssessorName);
+                await _assessorRepository.UpdateAssessor2(request.ApplicationId, request.AssessorUserId, request.AssessorName);
             }
 
             return Unit.Value;

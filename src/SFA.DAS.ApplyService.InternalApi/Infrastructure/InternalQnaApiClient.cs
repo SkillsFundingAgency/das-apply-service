@@ -35,6 +35,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             return await Get<List<ApplicationSection>>($"Applications/{applicationId}/Sequences/{sequenceId}/sections");
         }
 
+        public async Task<IEnumerable<ApplicationSection>> GetAllApplicationSections(Guid applicationId)
+        {
+            return await Get<List<ApplicationSection>>($"Applications/{applicationId}/sections");
+        }
+
         public async Task<string> GetQuestionTag(Guid applicationId, string questionTag)
         {
             var response = await GetResponse($"Applications/{applicationId}/applicationData/{questionTag}");
