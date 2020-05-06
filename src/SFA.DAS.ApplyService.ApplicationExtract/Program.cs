@@ -14,6 +14,8 @@ namespace SFA.DAS.ApplyService.ApplicationExtract
 {
     class Program
     {
+        private static QnaApiClient _qnaClient;
+
         static async Task Main(string[] args)
         {
             var configService = new ConfigService();
@@ -27,16 +29,23 @@ namespace SFA.DAS.ApplyService.ApplicationExtract
             Console.WriteLine("Enter the application id (GUID):");
             var applicationId = Guid.Parse(Console.ReadLine());
 
-            var qnaClient = new QnaApiClient(configService, new NullLogger<QnaApiClient>(), new QnaTokenService(configService, new HostingEnvironment { EnvironmentName = EnvironmentName.Development }));
-            var result = await qnaClient.GetSections(applicationId);
+            outputPath = Path.Combine(outputPath, applicationId.ToString());
+
+            _qnaClient = new QnaApiClient(configService, new NullLogger<QnaApiClient>(), new QnaTokenService(configService, new HostingEnvironment { EnvironmentName = EnvironmentName.Development }));
+            var result = await _qnaClient.GetSections(applicationId);
 
             foreach (var section in result.Where(x => !x.NotRequired))
             {
-                WriteSectionQuestionsAndAnswers(section, outputPath);
+                await WriteSectionQuestionsAndAnswers(section, outputPath);
             }
+
+            Console.Clear();
+            Console.WriteLine("All QnA data has been saved");
+            Console.Write("Press any key to exit");
+            Console.Read();
         }
 
-        private static void WriteSectionQuestionsAndAnswers(ApplicationSection section, string outputPath)
+        private static async Task WriteSectionQuestionsAndAnswers(ApplicationSection section, string outputPath)
         {
             var outputSection = new Section();
             outputSection.Title = section.Title;
@@ -54,7 +63,13 @@ namespace SFA.DAS.ApplyService.ApplicationExtract
             }
 
             var outputString = JsonConvert.SerializeObject(outputSection, Formatting.Indented);
-            File.WriteAllText(outputPath + @"\" + section.Title + ".json", outputString);
+            var directoryPath = Path.Combine(outputPath, "Sequence " + section.SequenceId);
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+            var filePath = Path.Combine(directoryPath, section.SectionId + " - " + section.Title + ".json");
+            File.WriteAllText(filePath, outputString);
         }
     }
 
