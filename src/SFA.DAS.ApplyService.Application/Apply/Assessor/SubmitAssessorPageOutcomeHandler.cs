@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
-    public class SubmitAssessorPageOutcomeHandler : IRequestHandler<SubmitAssessorPageOutcomeHandlerRequest>
+    public class SubmitAssessorPageOutcomeHandler : IRequestHandler<SubmitAssessorPageOutcomeRequest>
     {
         private readonly IApplyRepository _repository;
         private readonly ILogger<SubmitAssessorPageOutcomeHandler> _logger;
@@ -19,7 +19,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
             _logger = logger;
         }
 
-        public async Task<Unit> Handle(SubmitAssessorPageOutcomeHandlerRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(SubmitAssessorPageOutcomeRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"SubmitAssessorPageOutcome for ApplicationId '{request.ApplicationId}' - " +
                                                     $"SequenceNumber '{request.SequenceNumber}' - SectionNumber '{request.SectionNumber}' - PageId '{request.PageId}' - " +

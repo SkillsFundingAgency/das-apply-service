@@ -53,7 +53,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetPageReviewOutco
             _repository.Setup(x => x.GetPageReviewOutcome(expectedApplicationId, expectedSequenceNumber, expectedSectionNumber, 
                                                           expectedPageId, expectedAssessorType, expectedUserId)).ReturnsAsync(expectedResult);
 
-            var actualResult = await _handler.Handle(new GetPageReviewOutcomeHandlerRequest(expectedApplicationId, expectedSequenceNumber, expectedSectionNumber,
+            var actualResult = await _handler.Handle(new GetPageReviewOutcomeRequest(expectedApplicationId, expectedSequenceNumber, expectedSectionNumber,
                                                           expectedPageId, expectedAssessorType, expectedUserId), new CancellationToken());
 
             Assert.AreSame(expectedResult, actualResult);

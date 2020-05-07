@@ -142,7 +142,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             await _controller.SubmitAssessorPageOutcome(request);
 
-            _mediator.Verify(x => x.Send(It.Is<SubmitAssessorPageOutcomeHandlerRequest>(r => r.ApplicationId == applicationId && r.SequenceNumber == request.SequenceNumber && r.SectionNumber == request.SectionNumber && 
+            _mediator.Verify(x => x.Send(It.Is<SubmitAssessorPageOutcomeRequest>(r => r.ApplicationId == applicationId && r.SequenceNumber == request.SequenceNumber && r.SectionNumber == request.SectionNumber && 
                    r.PageId == request.PageId && r.AssessorType == request.AssessorType && r.UserId == request.UserId && r.Status == request.Status && r.Comment == request.Comment), It.IsAny<CancellationToken>()), Times.Once);
         }
 
@@ -167,7 +167,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             };
 
             var expectedResult = new PageReviewOutcome();
-            _mediator.Setup(x => x.Send(It.Is<GetPageReviewOutcomeHandlerRequest>(r => r.ApplicationId == expectedApplicationId && r.SequenceNumber == expectedSequenceNumber &&
+            _mediator.Setup(x => x.Send(It.Is<GetPageReviewOutcomeRequest>(r => r.ApplicationId == expectedApplicationId && r.SequenceNumber == expectedSequenceNumber &&
                         r.SectionNumber == expectedSectionNumber && r.PageId == expectedPageId && r.AssessorType == expectedAssessorType && 
                         r.UserId == expectedUserId), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
 
@@ -195,7 +195,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             };
 
             var expectedResult = new List<PageReviewOutcome>();
-            _mediator.Setup(x => x.Send(It.Is<GetAssessorReviewOutcomesPerSectionHandlerRequest>(r => r.ApplicationId == expectedApplicationId && r.SequenceNumber == expectedSequenceNumber &&
+            _mediator.Setup(x => x.Send(It.Is<GetAssessorReviewOutcomesPerSectionRequest>(r => r.ApplicationId == expectedApplicationId && r.SequenceNumber == expectedSequenceNumber &&
                         r.SectionNumber == expectedSectionNumber && r.AssessorType == expectedAssessorType &&
                         r.UserId == expectedUserId), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
 
@@ -219,7 +219,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             };
 
             var expectedResult = new List<PageReviewOutcome>();
-            _mediator.Setup(x => x.Send(It.Is<GetAllAssessorReviewOutcomesHandlerRequest>(r => r.ApplicationId == expectedApplicationId && 
+            _mediator.Setup(x => x.Send(It.Is<GetAllAssessorReviewOutcomesRequest>(r => r.ApplicationId == expectedApplicationId && 
                         r.AssessorType == expectedAssessorType && r.UserId == expectedUserId), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
 
             var actualResult = await _controller.GetAllAssessorReviewOutcomes(request);

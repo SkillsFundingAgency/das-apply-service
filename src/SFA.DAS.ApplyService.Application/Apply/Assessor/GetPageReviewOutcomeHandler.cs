@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
-    public class GetPageReviewOutcomeHandler : IRequestHandler<GetPageReviewOutcomeHandlerRequest, PageReviewOutcome>
+    public class GetPageReviewOutcomeHandler : IRequestHandler<GetPageReviewOutcomeRequest, PageReviewOutcome>
     {
         private readonly IApplyRepository _repository;
         private readonly ILogger<GetPageReviewOutcomeHandler> _logger;
@@ -20,7 +20,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
             _logger = logger;
         }
 
-        public async Task<PageReviewOutcome> Handle(GetPageReviewOutcomeHandlerRequest request, CancellationToken cancellationToken)
+        public async Task<PageReviewOutcome> Handle(GetPageReviewOutcomeRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"GetPageReviewOutcome for ApplicationId '{request.ApplicationId}' - " +
                                                     $"SequenceNumber '{request.SequenceNumber}' - SectionNumber '{request.SectionNumber}' - PageId '{request.PageId}' - " +

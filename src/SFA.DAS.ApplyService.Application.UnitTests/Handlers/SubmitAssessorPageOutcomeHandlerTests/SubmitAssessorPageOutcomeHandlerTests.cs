@@ -36,7 +36,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.SubmitAssessorPage
             var status = "Fail";
             var comment = "Very bad";
 
-            await _handler.Handle(new SubmitAssessorPageOutcomeHandlerRequest(applicationId, sequenceNumber, sectionNumber, pageId, assessorType, userId, status, comment), new CancellationToken());
+            await _handler.Handle(new SubmitAssessorPageOutcomeRequest(applicationId, sequenceNumber, sectionNumber, pageId, assessorType, userId, status, comment), new CancellationToken());
 
             _repository.Verify(x => x.SubmitAssessorPageOutcome(applicationId, sequenceNumber, sectionNumber, pageId, assessorType, userId, status, comment), Times.Once);
         }

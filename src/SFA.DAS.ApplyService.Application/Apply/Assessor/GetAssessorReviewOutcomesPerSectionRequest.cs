@@ -6,9 +6,14 @@ using System.Text;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
-    public class GetAssessorReviewOutcomesPerSectionHandlerRequest : IRequest<List<PageReviewOutcome>>
+    public class GetAssessorReviewOutcomesPerSectionRequest : IRequest<List<PageReviewOutcome>>
     {
-        public GetAssessorReviewOutcomesPerSectionHandlerRequest(Guid applicationId,
+        public GetAssessorReviewOutcomesPerSectionRequest()
+        {
+
+        }
+
+        public GetAssessorReviewOutcomesPerSectionRequest(Guid applicationId,
                                                                     int sequenceNumber,
                                                                     int sectionNumber,
                                                                     int assessorType,

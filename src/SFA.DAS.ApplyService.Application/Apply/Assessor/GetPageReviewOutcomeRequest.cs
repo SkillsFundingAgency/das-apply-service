@@ -6,9 +6,14 @@ using System.Text;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
-    public class GetPageReviewOutcomeHandlerRequest : IRequest<PageReviewOutcome>
+    public class GetPageReviewOutcomeRequest : IRequest<PageReviewOutcome>
     {
-        public GetPageReviewOutcomeHandlerRequest(Guid applicationId,
+        public GetPageReviewOutcomeRequest()
+        {
+
+        }
+
+        public GetPageReviewOutcomeRequest(Guid applicationId,
                                                     int sequenceNumber,
                                                     int sectionNumber,
                                                     string pageId,

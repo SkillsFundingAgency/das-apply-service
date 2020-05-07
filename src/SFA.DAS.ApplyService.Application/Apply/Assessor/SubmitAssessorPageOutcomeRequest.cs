@@ -5,9 +5,14 @@ using System.Text;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
-    public class SubmitAssessorPageOutcomeHandlerRequest : IRequest
+    public class SubmitAssessorPageOutcomeRequest : IRequest
     {
-        public SubmitAssessorPageOutcomeHandlerRequest(Guid applicationId,
+        public SubmitAssessorPageOutcomeRequest()
+        {
+
+        }
+
+        public SubmitAssessorPageOutcomeRequest(Guid applicationId,
                                                         int sequenceNumber,
                                                         int sectionNumber,
                                                         string pageId,

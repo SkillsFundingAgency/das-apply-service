@@ -153,7 +153,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("Assessor/SubmitPageOutcome")]
         public async Task SubmitAssessorPageOutcome([FromBody] SubmitAssessorPageOutcomeRequest request)
         {
-            await _mediator.Send(new SubmitAssessorPageOutcomeHandlerRequest(request.ApplicationId,
+            await _mediator.Send(new SubmitAssessorPageOutcomeRequest(request.ApplicationId,
                                                                                 request.SequenceNumber,
                                                                                 request.SectionNumber,
                                                                                 request.PageId,
@@ -166,7 +166,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("Assessor/GetPageReviewOutcome")]
         public async Task<PageReviewOutcome> GetPageReviewOutcome([FromBody] GetPageReviewOutcomeRequest request)
         {
-            var pageReviewOutcome = await _mediator.Send(new GetPageReviewOutcomeHandlerRequest(request.ApplicationId,
+            var pageReviewOutcome = await _mediator.Send(new GetPageReviewOutcomeRequest(request.ApplicationId,
                                                                                 request.SequenceNumber,
                                                                                 request.SectionNumber,
                                                                                 request.PageId,
@@ -179,7 +179,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("Assessor/GetAssessorReviewOutcomesPerSection")]
         public async Task<List<PageReviewOutcome>> GetAssessorReviewOutcomesPerSection([FromBody] GetAssessorReviewOutcomesPerSectionRequest request)
         {
-            var assessorReviewOutcomes = await _mediator.Send(new GetAssessorReviewOutcomesPerSectionHandlerRequest(request.ApplicationId,
+            var assessorReviewOutcomes = await _mediator.Send(new GetAssessorReviewOutcomesPerSectionRequest(request.ApplicationId,
                                                                                 request.SequenceNumber,
                                                                                 request.SectionNumber,
                                                                                 request.AssessorType,
@@ -191,7 +191,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("Assessor/GetAllAssessorReviewOutcomes")]
         public async Task<List<PageReviewOutcome>> GetAllAssessorReviewOutcomes([FromBody] GetAllAssessorReviewOutcomesRequest request)
         {
-            var assessorReviewOutcomes = await _mediator.Send(new GetAllAssessorReviewOutcomesHandlerRequest(request.ApplicationId,
+            var assessorReviewOutcomes = await _mediator.Send(new GetAllAssessorReviewOutcomesRequest(request.ApplicationId,
                                                                                 request.AssessorType,
                                                                                 request.UserId));
 
@@ -207,41 +207,5 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public string AssessorName { get; set; }
     }
 
-    public class SubmitAssessorPageOutcomeRequest
-    {
-        public Guid ApplicationId { get; set; }
-        public int SequenceNumber { get; set; }
-        public int SectionNumber { get; set; }
-        public string PageId { get; set; }
-        public int AssessorType { get; set; }
-        public string UserId { get; set; }
-        public string Status { get; set; }
-        public string Comment { get; set; }
-    }
 
-    public class GetPageReviewOutcomeRequest
-    {
-        public Guid ApplicationId { get; set; }
-        public int SequenceNumber { get; set; }
-        public int SectionNumber { get; set; }
-        public string PageId { get; set; }
-        public int AssessorType { get; set; }
-        public string UserId { get; set; }     
-    }
-
-    public class GetAssessorReviewOutcomesPerSectionRequest
-    {
-        public Guid ApplicationId { get; set; }
-        public int SequenceNumber { get; set; }
-        public int SectionNumber { get; set; }
-        public int AssessorType { get; set; }
-        public string UserId { get; set; }
-    }
-
-    public class GetAllAssessorReviewOutcomesRequest
-    {
-        public Guid ApplicationId { get; set; }
-        public int AssessorType { get; set; }
-        public string UserId { get; set; }
-    }
 }

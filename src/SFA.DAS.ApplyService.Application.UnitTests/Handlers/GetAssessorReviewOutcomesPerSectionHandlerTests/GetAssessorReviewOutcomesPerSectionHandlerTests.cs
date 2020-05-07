@@ -56,7 +56,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAssessorReviewO
             _repository.Setup(x => x.GetAssessorReviewOutcomesPerSection(expectedApplicationId, expectedSequenceNumber, expectedSectionNumber,
                                                           expectedAssessorType, expectedUserId)).ReturnsAsync(expectedResult);
 
-            var actualResult = await _handler.Handle(new GetAssessorReviewOutcomesPerSectionHandlerRequest(expectedApplicationId, expectedSequenceNumber, expectedSectionNumber,
+            var actualResult = await _handler.Handle(new GetAssessorReviewOutcomesPerSectionRequest(expectedApplicationId, expectedSequenceNumber, expectedSectionNumber,
                                                           expectedAssessorType, expectedUserId), new CancellationToken());
 
             Assert.AreSame(expectedResult, actualResult);

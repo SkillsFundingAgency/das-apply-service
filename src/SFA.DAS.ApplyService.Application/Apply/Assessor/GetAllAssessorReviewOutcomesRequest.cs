@@ -6,9 +6,14 @@ using System.Text;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
-    public class GetAllAssessorReviewOutcomesHandlerRequest : IRequest<List<PageReviewOutcome>>
+    public class GetAllAssessorReviewOutcomesRequest : IRequest<List<PageReviewOutcome>>
     {
-        public GetAllAssessorReviewOutcomesHandlerRequest(Guid applicationId,
+        public GetAllAssessorReviewOutcomesRequest()
+        {
+
+        }
+
+        public GetAllAssessorReviewOutcomesRequest(Guid applicationId,
                                                            int assessorType,
                                                         string userId)
         {
