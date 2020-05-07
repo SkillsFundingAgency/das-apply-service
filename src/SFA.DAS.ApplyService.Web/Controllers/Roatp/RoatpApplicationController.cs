@@ -286,13 +286,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             _pageNavigationTrackingService.AddPageToNavigationStack(pageId);
 
-            var sequences = await _qnaApiClient.GetSequences(applicationId);
-            var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
-            var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
-            var selectedSection = sections.Single(x => x.SectionId == sectionId);
+            var selectedSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
             var sectionTitle = selectedSection.LinkTitle;
-
-            var sequence = await _qnaApiClient.GetSequence(applicationId, selectedSequence.Id);
 
             PageViewModel viewModel = null;
             var returnUrl = Request.Headers["Referer"].ToString();
@@ -466,8 +461,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
             }
 
-            return await SaveAnswersGiven(applicationId, sequenceId, sectionId, pageId, redirectAction,
-                string.Empty);
+            return await SaveAnswersGiven(applicationId, selectedSection.Id, pageId, page, redirectAction, string.Empty);
         }
 
         [Route("apply-training-provider-tasklist")]
@@ -599,6 +593,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
         }
 
+        //TODO: Move this method to the API rather than pulling all of the application back over the wire then checking.
         private async Task<bool> CanUpdateApplication(Guid applicationId, int? sequenceId = null, int? sectionId = null, string pageId = null)
         {
             bool canUpdate = false;
@@ -694,16 +689,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return page;
         }
 
-        private async Task<IActionResult> SaveAnswersGiven(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, string __formAction)
+        private async Task<IActionResult> SaveAnswersGiven(Guid applicationId, Guid sectionId, string pageId, Page page, string redirectAction, string __formAction)
         {
-            var sequences = await _qnaApiClient.GetSequences(applicationId);
-            var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
-            var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
-            var selectedSection = sections.Single(x => x.SectionId == sectionId);
-
-            var page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
-
-            var errorMessages = new List<ValidationErrorDetail>();
             var answers = new List<Answer>();
 
             answers.AddRange(GetAnswersFromForm(page));
@@ -728,11 +715,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             RunCustomValidations(page, answers);
             if (ModelState.IsValid == false)
             {
-                page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
+                page = await _qnaApiClient.GetPage(applicationId, sectionId, pageId);
 
 
                 this.TempData["InvalidPage"] = JsonConvert.SerializeObject(page);
-                return await Page(applicationId, sequenceId, sectionId, pageId, redirectAction, null);
+                return await Page(applicationId, page.SequenceId, page.SectionId, pageId, redirectAction, null);
             }
 
             //todo: Should we convert this to a custom validation?
@@ -745,9 +732,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     ModelState.AddModelError(checkBoxListQuestionId, InvalidCheckBoxListSelectionErrorMessage);
 
                     //Can this be made common? What about DataFedOptions?
-                    page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
+                    page = await _qnaApiClient.GetPage(applicationId, sectionId, pageId);
                     this.TempData["InvalidPage"] = JsonConvert.SerializeObject(page);
-                    return await Page(applicationId, sequenceId, sectionId, pageId, redirectAction, null);
+                    return await Page(applicationId, page.SequenceId, page.SectionId, pageId, redirectAction, null);
                 }
             }
 
@@ -760,7 +747,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (isFileUploadPage)
             {
-                var uploadFileResult = await _qnaApiClient.Upload(applicationId, selectedSection.Id, pageId, HttpContext.Request.Form.Files);
+                var uploadFileResult = await _qnaApiClient.Upload(applicationId, sectionId, pageId, HttpContext.Request.Form.Files);
                 validationPassed = uploadFileResult.ValidationPassed;
                 validationErrors = uploadFileResult.ValidationErrors;
                 nextAction = uploadFileResult.NextAction;
@@ -768,7 +755,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
             else
             {
-                var updatePageResult = await _qnaApiClient.UpdatePageAnswers(applicationId, selectedSection.Id, pageId, answers);
+                var updatePageResult = await _qnaApiClient.UpdatePageAnswers(applicationId, sectionId, pageId, answers);
                 validationPassed = updatePageResult.ValidationPassed;
                 validationErrors = updatePageResult.ValidationErrors;
                 nextAction = updatePageResult.NextAction;
@@ -782,8 +769,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     return RedirectToAction("Page", new
                     {
                         applicationId,
-                        sequenceId = selectedSequence.SequenceId,
-                        sectionId = selectedSection.SectionId,
+                        sequenceId = page.SequenceId,
+                        sectionId = page.SectionId,
                         pageId = nextActionId,
                         redirectAction
                     });
@@ -796,7 +783,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 if ("ReturnToSection".Equals(nextAction, StringComparison.InvariantCultureIgnoreCase) && (page.DisplayType == SectionDisplayType.PagesWithSections || page.DisplayType == "OtherPagesInPagesWithSections"))
                 {
-                    return await Section(applicationId, selectedSequence.SequenceId, selectedSection.SectionId);
+                    return await Section(applicationId, page.SequenceId, page.SectionId);
                 }
 
                 if (string.IsNullOrEmpty(nextActionId) || !"NextPage".Equals(nextAction, StringComparison.InvariantCultureIgnoreCase))
@@ -807,8 +794,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("Page", new
                 {
                     applicationId,
-                    sequenceId = selectedSequence.SequenceId,
-                    sectionId = selectedSection.SectionId,
+                    sequenceId = page.SequenceId,
+                    sectionId = page.SectionId,
                     pageId = nextActionId,
                     redirectAction
                 });
@@ -823,7 +810,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
             }
 
-            page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
+            page = await _qnaApiClient.GetPage(applicationId, sectionId, pageId);
 
             if (isFileUploadPage != true)
             {
@@ -833,7 +820,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var invalidPage = await GetDataFedOptions(applicationId, page);
             this.TempData["InvalidPage"] = JsonConvert.SerializeObject(invalidPage);
 
-            return await Page(applicationId, sequenceId, sectionId, pageId, redirectAction, page?.Questions);
+            return await Page(applicationId, page.SequenceId, page.SectionId, pageId, redirectAction, page?.Questions);
         }
 
         private static Page StoreEnteredAnswers(List<Answer> answers, Page page)

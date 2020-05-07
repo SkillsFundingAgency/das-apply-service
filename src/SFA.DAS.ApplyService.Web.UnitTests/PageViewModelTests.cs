@@ -66,7 +66,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 _sequenceId,
                 _sectionId,
                 pageId,
-                CreateTestPage(pageId, _sectionId.ToString()),
+                CreateTestPage(pageId, _sectionId),
                 _pageContext,
                 _redirectAction,
                 _returnUrl,
@@ -90,7 +90,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 _sequenceId,
                 _sectionId,
                 pageId,
-                CreateTestPage(pageId, _sectionId.ToString()),
+                CreateTestPage(pageId, _sectionId),
                 _pageContext,
                 _redirectAction,
                 _returnUrl,
@@ -113,7 +113,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 _sequenceId,
                 _sectionId,
                 pageId,
-                CreateTestPage(pageId, _sectionId.ToString()),
+                CreateTestPage(pageId, _sectionId),
                 _pageContext,
                 _redirectAction,
                 _returnUrl,
@@ -136,7 +136,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 _sequenceId,
                 _sectionId,
                 pageId,
-                CreateTestPage(pageId, _sectionId.ToString()),
+                CreateTestPage(pageId, _sectionId),
                 _pageContext,
                 _redirectAction,
                 _returnUrl,
@@ -149,7 +149,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             model.HideCTA.Should().BeTrue();
         }
         
-        private Page CreateTestPage(string pageId, string sectionId)
+        private Page CreateTestPage(string pageId, int sectionId)
         {
             return new Page
             {
