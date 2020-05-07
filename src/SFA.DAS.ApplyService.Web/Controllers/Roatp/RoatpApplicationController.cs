@@ -59,12 +59,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
             IQnaApiClient qnaApiClient, IOptions<List<TaskListConfiguration>> configuration, IProcessPageFlowService processPageFlowService,
             IPagesWithSectionsFlowService pagesWithSectionsFlowService,
-        IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
-            IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks, 
-            ICustomValidatorFactory customValidatorFactory, IOptions<List<NotRequiredOverrideConfiguration>> notRequiredOverrides, 
+        IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration,
+            IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks,
+            ICustomValidatorFactory customValidatorFactory, IOptions<List<NotRequiredOverrideConfiguration>> notRequiredOverrides,
             IRoatpApiClient roatpApiClient, ISubmitApplicationConfirmationEmailService submitApplicationEmailService,
             ITabularDataRepository tabularDataRepository)
-            :base(sessionService)
+            : base(sessionService)
         {
             _apiClient = apiClient;
             _logger = logger;
@@ -104,15 +104,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             applications = applications.Where(app => app.ApplicationStatus != ApplicationStatus.Rejected).ToList();
 
             if (!applications.Any())
-            {              
+            {
                 return await StartApplication(userId);
             }
-            
+
             if (applications.Count > 1)
                 return View(applications);
 
             var application = applications.First();
-            
+
             switch (application.ApplicationStatus)
             {
                 case ApplicationStatus.Cancelled:
@@ -126,7 +126,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 case ApplicationStatus.Submitted:
                     return RedirectToAction("ApplicationSubmitted", new { applicationId = application.ApplicationId });
                 default:
-                    return RedirectToAction("TaskList", new {applicationId = application.ApplicationId });
+                    return RedirectToAction("TaskList", new { applicationId = application.ApplicationId });
             }
         }
 
@@ -148,7 +148,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var startApplicationJson = JsonConvert.SerializeObject(startApplicationData);
             _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse PRE: userid: [{userId.ToString()}], applicationType: [{applicationType}], startApplicationJson: [{startApplicationJson}]");
             var qnaResponse = await _qnaApiClient.StartApplication(userId.ToString(), applicationType, startApplicationJson);
-            _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse POST: applicationId: [{qnaResponse ?.ApplicationId}]");
+            _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse POST: applicationId: [{qnaResponse?.ApplicationId}]");
 
             if (qnaResponse != null)
             {
@@ -212,11 +212,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> SequenceSignPost(Guid applicationId)
         {
             var application = await _apiClient.GetApplication(applicationId);
-            if(application is null)
+            if (application is null)
             {
                 return RedirectToAction("Applications");
             }
-            
+
             if (application.ApplicationStatus == ApplicationStatus.Approved)
             {
                 return View("~/Views/Application/Approved.cshtml", application);
@@ -272,7 +272,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var pageId = section.QnAData.Pages.FirstOrDefault()?.PageId;
 
-            return await Page(applicationId, sequenceId, sectionId, pageId, "TaskList",null);
+            return await Page(applicationId, sequenceId, sectionId, pageId, "TaskList", null);
         }
 
         [HttpGet]
@@ -293,16 +293,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var sectionTitle = selectedSection.LinkTitle;
 
             var sequence = await _qnaApiClient.GetSequence(applicationId, selectedSequence.Id);
-            
+
             PageViewModel viewModel = null;
             var returnUrl = Request.Headers["Referer"].ToString();
 
             string pageContext = string.Empty;
-            
+
             if (!ModelState.IsValid)
             {
                 // when the model state has errors the page will be displayed with the values which failed validation
-                var page = JsonConvert.DeserializeObject<Page>((string) this.TempData["InvalidPage"]);
+                var page = JsonConvert.DeserializeObject<Page>((string)this.TempData["InvalidPage"]);
 
                 var peopleInControlDetails = await GetPeopleInControlDetails(applicationId, sequenceId, sectionId);
 
@@ -321,10 +321,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 // when the model state has no errors the page will be displayed with the last valid values which were saved
                 var page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
-                
+
                 if (page == null)
                 {
-                    return RedirectToAction("TaskList", new {applicationId = applicationId});
+                    return RedirectToAction("TaskList", new { applicationId = applicationId });
                 }
 
                 var section = await _qnaApiClient.GetSection(applicationId, selectedSection.Id);
@@ -350,9 +350,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return View("~/Views/Application/Pages/MultipleAnswers.cshtml", viewModel);
             }
 
-            PopulateGetHelpWithQuestion(viewModel, pageId);         
+            PopulateGetHelpWithQuestion(viewModel, pageId);
 
-            return View("~/Views/Application/Pages/Index.cshtml", viewModel);            
+            return View("~/Views/Application/Pages/Index.cshtml", viewModel);
         }
 
         [HttpGet]
@@ -376,7 +376,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return RedirectToAction("Page", new
             {
                 applicationId,
-                sequenceId ,
+                sequenceId,
                 sectionId,
                 pageId = nextPageId,
                 redirectAction
@@ -392,7 +392,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var pageId = vm.PageId;
             var redirectAction = vm.RedirectAction;
 
-
             var canUpdate = await CanUpdateApplication(applicationId, sequenceId, sectionId, pageId);
             if (!canUpdate)
             {
@@ -401,12 +400,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             _pageNavigationTrackingService.AddPageToNavigationStack(pageId);
 
-            var sequences = await _qnaApiClient.GetSequences(applicationId);
-            var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
-            var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
-            var selectedSection = sections.Single(x => x.SectionId == sectionId);
-
-            var sequence = await _qnaApiClient.GetSequence(applicationId, selectedSequence.Id);
+            var selectedSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
 
             PageViewModel viewModel = null;
             var returnUrl = Request.Headers["Referer"].ToString();
@@ -442,39 +436,38 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return View("~/Views/Application/Pages/Index.cshtml", viewModel);
             }
 
-                // when the model state has no errors the page will be displayed with the last valid values which were saved
-                var page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
+            // when the model state has no errors the page will be displayed with the last valid values which were saved
+            var page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
 
-                if (page == null)
+            if (page == null)
+            {
+                return RedirectToAction("TaskList", new { applicationId = applicationId });
+            }
+
+            if (IsFileUploadWithNonEmptyValue(page))
+            {
+                var nextActionResult = await _qnaApiClient.SkipPageBySectionNo(applicationId, sequenceId, sectionId, pageId);
+
+                if (nextActionResult?.NextAction == "NextPage")
+                {
+
+                    return RedirectToAction("Page", new
+                    {
+                        applicationId,
+                        sequenceId = sequenceId,
+                        sectionId = sectionId,
+                        pageId = nextActionResult.NextActionId,
+                        redirectAction
+                    });
+                }
+                else
                 {
                     return RedirectToAction("TaskList", new { applicationId = applicationId });
                 }
+            }
 
-                if (IsFileUploadWithNonEmptyValue(page))
-                {
-                    var nextActionResult =
-                    await _qnaApiClient.SkipPageBySectionNo(applicationId, sequenceId, sectionId, pageId);
-
-                    if (nextActionResult?.NextAction == "NextPage")
-                    {
-
-                        return RedirectToAction("Page", new
-                        {
-                            applicationId,
-                            sequenceId = selectedSequence.SequenceId,
-                            sectionId = selectedSection.SectionId,
-                            pageId = nextActionResult.NextActionId,
-                            redirectAction
-                        });
-                    } 
-                    else
-                    {
-                        return RedirectToAction("TaskList", new {applicationId = applicationId});
-                    }
-                }
-
-                return await SaveAnswersGiven(applicationId, sequenceId, sectionId, pageId, redirectAction,
-                    string.Empty);
+            return await SaveAnswersGiven(applicationId, sequenceId, sectionId, pageId, redirectAction,
+                string.Empty);
         }
 
         [Route("apply-training-provider-tasklist")]
@@ -492,10 +485,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             PopulateAdditionalSequenceFields(sequences);
 
             var filteredSequences = sequences.Where(x => x.SequenceId != RoatpWorkflowSequenceIds.Preamble && x.SequenceId != RoatpWorkflowSequenceIds.ConditionsOfAcceptance).OrderBy(y => y.SequenceId);
-            
+
             foreach (var sequence in filteredSequences)
             {
-                var sections = await _qnaApiClient.GetSections(applicationId, sequence.Id);                
+                var sections = await _qnaApiClient.GetSections(applicationId, sequence.Id);
                 sequence.Sections = sections.ToList();
             }
 
@@ -576,11 +569,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var applicationData = await _qnaApiClient.GetApplicationData(applicationId) as JObject;
 
-            if (applicationData == null) 
-            { 
-                return notRequiredOverrides; 
+            if (applicationData == null)
+            {
+                return notRequiredOverrides;
             }
-            
+
             foreach (var overrideConfig in notRequiredOverrides)
             {
                 foreach (var condition in overrideConfig.Conditions)
@@ -592,7 +585,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             return notRequiredOverrides;
         }
-        
+
         private void PopulateAdditionalSequenceFields(IEnumerable<ApplicationSequence> sequences)
         {
             foreach (var sequence in sequences)
@@ -613,7 +606,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var applyingUser = await _usersApiClient.GetUserBySignInId((await _userService.GetSignInId()).ToString());
             var userId = applyingUser?.Id ?? Guid.Empty;
 
-            var applications = await _apiClient.GetApplications(userId, false);            
+            var applications = await _apiClient.GetApplications(userId, false);
             var application = applications?.FirstOrDefault(app => app.ApplicationId == applicationId);
 
             var validApplicationStatuses = new string[] { ApplicationStatus.InProgress, ApplicationStatus.FeedbackAdded };
@@ -695,12 +688,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         }
                     }
                 }
-                
+
             }
 
             return page;
         }
-        
+
         private async Task<IActionResult> SaveAnswersGiven(Guid applicationId, int sequenceId, int sectionId, string pageId, string redirectAction, string __formAction)
         {
             var sequences = await _qnaApiClient.GetSequences(applicationId);
@@ -716,11 +709,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             answers.AddRange(GetAnswersFromForm(page));
 
             // We need to back fill files as GetAnswersFromForm will place blank answers. This won't be a problem when we've fully moved over to the EPAO's way of saving answers
-            foreach(var fileUploadAnswer in GetAnswersFromFiles())
+            foreach (var fileUploadAnswer in GetAnswersFromFiles())
             {
                 var answer = answers.FirstOrDefault(a => a.QuestionId == fileUploadAnswer.QuestionId);
 
-                if(answer != null)
+                if (answer != null)
                 {
                     answer.Value = fileUploadAnswer.Value;
                 }
@@ -731,15 +724,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             ApplyFormattingToAnswers(answers, page);
-            
+
             RunCustomValidations(page, answers);
-            if(ModelState.IsValid == false)
+            if (ModelState.IsValid == false)
             {
                 page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
 
 
                 this.TempData["InvalidPage"] = JsonConvert.SerializeObject(page);
-                return await Page(applicationId, sequenceId, sectionId, pageId, redirectAction,null);
+                return await Page(applicationId, sequenceId, sectionId, pageId, redirectAction, null);
             }
 
             //todo: Should we convert this to a custom validation?
@@ -754,7 +747,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     //Can this be made common? What about DataFedOptions?
                     page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
                     this.TempData["InvalidPage"] = JsonConvert.SerializeObject(page);
-                    return await Page(applicationId, sequenceId, sectionId, pageId, redirectAction,null);
+                    return await Page(applicationId, sequenceId, sectionId, pageId, redirectAction, null);
                 }
             }
 
@@ -786,27 +779,39 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 if (__formAction == "Add" && page.AllowMultipleAnswers)
                 {
-                    return RedirectToAction("Page", new {applicationId, sequenceId = selectedSequence.SequenceId,
-                        sectionId = selectedSection.SectionId, pageId = nextActionId, redirectAction});
+                    return RedirectToAction("Page", new
+                    {
+                        applicationId,
+                        sequenceId = selectedSequence.SequenceId,
+                        sectionId = selectedSection.SectionId,
+                        pageId = nextActionId,
+                        redirectAction
+                    });
                 }
 
                 if (redirectAction == "Feedback")
                 {
-                    return RedirectToAction("Feedback", new {applicationId});
+                    return RedirectToAction("Feedback", new { applicationId });
                 }
 
-                if ("ReturnToSection".Equals(nextAction, StringComparison.InvariantCultureIgnoreCase) && (page.DisplayType==SectionDisplayType.PagesWithSections || page.DisplayType =="OtherPagesInPagesWithSections"))
+                if ("ReturnToSection".Equals(nextAction, StringComparison.InvariantCultureIgnoreCase) && (page.DisplayType == SectionDisplayType.PagesWithSections || page.DisplayType == "OtherPagesInPagesWithSections"))
                 {
-                    return await Section(applicationId, selectedSequence.SequenceId,selectedSection.SectionId);
+                    return await Section(applicationId, selectedSequence.SequenceId, selectedSection.SectionId);
                 }
 
                 if (string.IsNullOrEmpty(nextActionId) || !"NextPage".Equals(nextAction, StringComparison.InvariantCultureIgnoreCase))
                 {
                     return await TaskList(applicationId);
                 }
-        
-                return RedirectToAction("Page", new {applicationId, sequenceId = selectedSequence.SequenceId,
-                    sectionId = selectedSection.SectionId, pageId = nextActionId, redirectAction});                                   
+
+                return RedirectToAction("Page", new
+                {
+                    applicationId,
+                    sequenceId = selectedSequence.SequenceId,
+                    sectionId = selectedSection.SectionId,
+                    pageId = nextActionId,
+                    redirectAction
+                });
             }
 
             if (validationErrors != null)
@@ -851,7 +856,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             foreach (var answer in answers)
             {
                 var question = page.Questions.FirstOrDefault(x => x.QuestionId == answer.QuestionId);
-                if (question != null && question.Input != null 
+                if (question != null && question.Input != null
                                      && !String.IsNullOrWhiteSpace(question.Input.InputClasses)
                                      && question.Input.InputClasses.Contains(InputClassUpperCase))
                 {
@@ -862,7 +867,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private static IEnumerable<Question> PageContainsCheckBoxListQuestions(Page page)
         {
-            return page.Questions.Where(q => q.Input.Type == "CheckBoxList" || q.Input.Type=="ComplexCheckBoxList");
+            return page.Questions.Where(q => q.Input.Type == "CheckBoxList" || q.Input.Type == "ComplexCheckBoxList");
         }
 
         private static string CheckBoxListHasInvalidSelections(IEnumerable<Question> checkBoxListQuestions, List<Answer> answers)
@@ -911,7 +916,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             // Get all questions that have FurtherQuestions in a ComplexRadio
             var questionsWithFutherQuestions = page.Questions.Where(x => (x.Input.Type == "ComplexRadio" || x.Input.Type == "ComplexCheckBoxList") && x.Input.Options != null && x.Input.Options.Any(o => o.FurtherQuestions != null && o.FurtherQuestions.Any()));
 
-       
+
             foreach (var question in questionsWithFutherQuestions)
             {
                 if (question.Input.Type == "ComplexRadio")
@@ -936,7 +941,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     var answerForQuestion = answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
 
                     if (answerForQuestion?.Value == null) continue;
-                    
+
                     // This different funcationality required as the checkbox may and will return a comma delimited list of responses
                     var splitAnswers = answerForQuestion.Value.Split(",", StringSplitOptions.RemoveEmptyEntries);
                     // Remove FurtherQuestion answers to all other Options as they were not selected and thus should not be stored
@@ -1035,7 +1040,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             foreach (var file in HttpContext.Request.Form.Files)
             {
-                
+
                 var typeValidation = page.Questions.First(q => q.QuestionId == file.Name).Input.Validations.FirstOrDefault(v => v.Name == "FileType");
                 if (typeValidation != null)
                 {
@@ -1051,13 +1056,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     else
                     {
                         // Only add to answers if type validation passes.
-                        answers.Add(new Answer() {QuestionId = file.Name, Value = file.FileName});
+                        answers.Add(new Answer() { QuestionId = file.Name, Value = file.FileName });
                     }
                 }
                 else
                 {
                     // Only add to answers if type validation passes.
-                    answers.Add(new Answer() {QuestionId = file.Name, Value = file.FileName});
+                    answers.Add(new Answer() { QuestionId = file.Name, Value = file.FileName });
                 }
             }
 
@@ -1127,7 +1132,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     validationErrors.Add(validationError);
                 }
             }
-            else if(sequence.Sections.Where(sec => sec.QnAData.RequestedFeedbackAnswered is false || sec.QnAData.Pages.Any(p => !p.AllFeedbackIsCompleted)).Any())
+            else if (sequence.Sections.Where(sec => sec.QnAData.RequestedFeedbackAnswered is false || sec.QnAData.Pages.Any(p => !p.AllFeedbackIsCompleted)).Any())
             {
                 foreach (var sectionFeedbackNotYetCompleted in sequence.Sections.Where(sec => sec.QnAData.RequestedFeedbackAnswered is false || sec.QnAData.Pages.Any(p => !p.AllFeedbackIsCompleted)))
                 {
@@ -1139,12 +1144,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return validationErrors;
         }
 
-        [HttpGet]  
+        [HttpGet]
         public async Task<IActionResult> DeleteAnswer(Guid applicationId, int sequenceId, int sectionId, string pageId, Guid answerId, string redirectAction)
         {
             await _apiClient.DeleteAnswer(applicationId, sequenceId, sectionId, pageId, answerId, User.GetUserId());
-            
-            return RedirectToAction("Page", new {applicationId, sequenceId, sectionId, pageId, redirectAction});
+
+            return RedirectToAction("Page", new { applicationId, sequenceId, sectionId, pageId, redirectAction });
         }
 
         [HttpGet]
@@ -1270,7 +1275,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 var applicationSequence = await _qnaApiClient.GetSequenceBySequenceNo(model.ApplicationId, sequence.SequenceNo);
                 var sections = await _qnaApiClient.GetSections(model.ApplicationId, applicationSequence.Id);
                 applicationSequence.Sections = sections.ToList();
-                foreach(var section in sections)
+                foreach (var section in sections)
                 {
                     var applySection = sequence.Sections.FirstOrDefault(x => x.SectionNo == section.SectionId);
                     if (applySection != null)
@@ -1278,7 +1283,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         applySection.NotRequired = await SectionNotRequired(applicationSequence, _notRequiredOverrides, section.SectionId, roatpSequences);
                     }
                 }
-                
+
                 applicationSequence.Sections = sections.ToList();
                 sequence.NotRequired = SequenceNotRequired(applicationSequence, _notRequiredOverrides);
             }
@@ -1289,9 +1294,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 ApplicationId = model.ApplicationId,
                 ProviderRoute = Convert.ToInt32(providerRoute.Value),
-                ProviderRouteName = selectedProviderRoute?.RouteName,   
+                ProviderRouteName = selectedProviderRoute?.RouteName,
                 SubmittingContactId = User.GetUserId(),
-                ApplyData = application.ApplyData    
+                ApplyData = application.ApplyData
             };
 
             var submitResult = await _apiClient.SubmitApplication(submitApplicationRequest);
@@ -1318,7 +1323,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> ApplicationSubmitted(Guid applicationId)
         {
-            var application = await _apiClient.GetApplication(applicationId);           
+            var application = await _apiClient.GetApplication(applicationId);
             var applicationData = application.ApplyData.ApplyDetails;
 
             var model = new ApplicationSummaryViewModel
@@ -1360,7 +1365,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             viewModel.BodyText =
                 await _questionPropertyTokeniser.GetTokenisedValue(viewModel.ApplicationId, viewModel.BodyText);
 
-        foreach(var questionModel in viewModel.Questions)
+            foreach (var questionModel in viewModel.Questions)
             {
                 questionModel.Hint = await _questionPropertyTokeniser.GetTokenisedValue(viewModel.ApplicationId, questionModel.Hint);
                 questionModel.Label = await _questionPropertyTokeniser.GetTokenisedValue(viewModel.ApplicationId, questionModel.Label);
@@ -1373,17 +1378,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private bool IsFileUploadWithNonEmptyValue(Page page)
         {
-            if (page.PageOfAnswers == null || page.PageOfAnswers.Count == 0 ||  page.Questions == null || page.Questions.Count == 0 || page.Questions[0].Input.Type != "FileUpload")
+            if (page.PageOfAnswers == null || page.PageOfAnswers.Count == 0 || page.Questions == null || page.Questions.Count == 0 || page.Questions[0].Input.Type != "FileUpload")
                 return false;
 
             var fileUploadAnswerValue = string.Empty;
 
             foreach (var question in page.Questions)
             {
-                if (fileUploadAnswerValue==string.Empty)
-                    fileUploadAnswerValue= page.PageOfAnswers[0].Answers.FirstOrDefault(x => x.QuestionId == question.QuestionId)?.Value;
+                if (fileUploadAnswerValue == string.Empty)
+                    fileUploadAnswerValue = page.PageOfAnswers[0].Answers.FirstOrDefault(x => x.QuestionId == question.QuestionId)?.Value;
             }
-        
+
             return !string.IsNullOrEmpty(fileUploadAnswerValue);
         }
 
@@ -1397,7 +1402,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 {
                     var result = customValidation.Validate();
 
-                    if(result.IsValid == false)
+                    if (result.IsValid == false)
                     {
                         ModelState.AddModelError(result.QuestionId, result.ErrorMessage);
                     }
@@ -1448,9 +1453,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 sequence
             };
 
-            foreach(var section in sequence.Sections)
+            foreach (var section in sequence.Sections)
             {
-                if (RoatpTaskListWorkflowService.SectionStatus(sequences, notRequiredOverrides, sequence.SequenceId, section.SectionId) == TaskListSectionStatus.NotRequired) 
+                if (RoatpTaskListWorkflowService.SectionStatus(sequences, notRequiredOverrides, sequence.SequenceId, section.SectionId) == TaskListSectionStatus.NotRequired)
                 {
                     notRequiredCount++;
                 }
@@ -1459,7 +1464,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return (sectionCount == notRequiredCount);
         }
 
-        private async Task<bool> SectionNotRequired(ApplicationSequence sequence, List<NotRequiredOverrideConfiguration> notRequiredOverrides, 
+        private async Task<bool> SectionNotRequired(ApplicationSequence sequence, List<NotRequiredOverrideConfiguration> notRequiredOverrides,
                                                     int sectionId, IEnumerable<RoatpSequences> roatpSequences)
         {
             var sequences = new List<ApplicationSequence>
