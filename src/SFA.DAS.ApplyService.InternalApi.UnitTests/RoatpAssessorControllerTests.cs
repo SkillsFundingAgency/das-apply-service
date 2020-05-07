@@ -10,6 +10,7 @@ using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
+using SFA.DAS.ApplyService.InternalApi.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -32,7 +33,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private Mock<IMediator> _mediator;
         private Mock<IApplyRepository> _applyRepository;
         private Mock<IInternalQnaApiClient> _qnaApiClient;
-
+        private Mock<IAssessorLookupService> _lookupService;
         private RoatpAssessorController _controller;
 
         [SetUp]
@@ -42,8 +43,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _applyRepository = new Mock<IApplyRepository>();     
             _logger = new Mock<ILogger<RoatpAssessorController>>();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
+            _lookupService = new Mock<IAssessorLookupService>();
 
-            _controller = new RoatpAssessorController(_logger.Object, _mediator.Object, _applyRepository.Object, _qnaApiClient.Object);
+            _controller = new RoatpAssessorController(_logger.Object, _mediator.Object, _applyRepository.Object, _qnaApiClient.Object, _lookupService.Object);
         }
 
         [Test]

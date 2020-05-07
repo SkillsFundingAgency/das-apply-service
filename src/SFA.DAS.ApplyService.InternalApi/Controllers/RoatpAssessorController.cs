@@ -13,6 +13,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.InternalApi.Services;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -23,13 +24,15 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         private readonly IMediator _mediator;
         private readonly IApplyRepository _applyRepository;
         private readonly IInternalQnaApiClient _qnaApiClient;
+        private readonly IAssessorLookupService _assessorLookupService;
 
-        public RoatpAssessorController(ILogger<RoatpAssessorController> logger, IMediator mediator, IApplyRepository applyRepository, IInternalQnaApiClient qnaApiClient)
+        public RoatpAssessorController(ILogger<RoatpAssessorController> logger, IMediator mediator, IApplyRepository applyRepository, IInternalQnaApiClient qnaApiClient, IAssessorLookupService assessorLookupService)
         {
             _logger = logger;
             _mediator = mediator;
             _applyRepository = applyRepository;
             _qnaApiClient = qnaApiClient;
+            _assessorLookupService = assessorLookupService;
         }
 
         [HttpGet("Assessor/Applications/{userId}")]
@@ -84,7 +87,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return new AssessorSequence
             {
                 SequenceNumber = sequenceNumber,
-                SequenceTitle = GetSequenceTitle(sequenceNumber),
+                SequenceTitle = _assessorLookupService.GetTitleForSequence(sequenceNumber),
                 Sections = qnaSections.Where(sec => sec.SequenceId == sequenceNumber && !sectionsToExclude.Contains(sec.SectionId))
                 .Select(sec =>
                 {
@@ -131,24 +134,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return sections;
         }
 
-        private static string GetSequenceTitle(int sequenceId)
-        {
-            switch (sequenceId)
-            {
-                case RoatpWorkflowSequenceIds.ProtectingYourApprentices:
-                    return "Protecting your apprentices checks";
-                case RoatpWorkflowSequenceIds.ReadinessToEngage:
-                    return "Readiness to engage checks";
-                case RoatpWorkflowSequenceIds.PlanningApprenticeshipTraining:
-                    return "Planning apprenticeship training checks";
-                case RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining:
-                    return "Delivering apprenticeship training checks";
-                case RoatpWorkflowSequenceIds.EvaluatingApprenticeshipTraining:
-                    return "Evaluating apprenticeship training checks";
-                default:
-                    return null;
-            }
-        }
 
         [HttpGet("Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page")]
         public async Task<AssessorPage> GetFirstAssessorPage(Guid applicationId, int sequenceNumber, int sectionNumber)
@@ -173,8 +158,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                     SectionNumber = sectionNumber,
                     PageId = qnaPage.PageId,
 
-                    Caption = GetSequenceTitle(sequenceNumber),
-                    Heading = qnaSection.LinkTitle,
+                    Caption = _assessorLookupService.GetTitleForSequence(sequenceNumber) ?? qnaSection.LinkTitle,
+                    Heading = _assessorLookupService.GetTitleForPage(qnaPage.PageId) ?? qnaPage.LinkTitle,
                     Title = qnaPage.Title,
                     BodyText = qnaPage.BodyText,
 
