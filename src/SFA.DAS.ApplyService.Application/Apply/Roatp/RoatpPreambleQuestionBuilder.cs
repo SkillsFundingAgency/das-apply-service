@@ -201,13 +201,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
               public static string AddManagementHierarchy = "7200";
         }
 
-        public class DescribeYourOrganisation
+        public static class DescribeYourOrganisation
         {
             public static string MainSupportingStartPage = "140";
             public static string EmployerStartPage = "150";
         }
 
-        public class ExperienceAndAccreditations
+        public static class ExperienceAndAccreditations
         { 
             public static string OfficeForStudents = "235";
             public static string InitialTeacherTraining = "240";
@@ -227,14 +227,71 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static string SubcontractorContractFile = "360";
         }
 
-        public class CriminalComplianceChecks
+        public static class CriminalComplianceChecks
         {
             public static string CompositionCreditors = "3100";
             public static string OrganisationFailedToRepayFunds = "3110";
             public static string OrganisationContractTermination = "3120";
         }
 
-        public class Finish
+        public static class ProtectingYourApprentices
+        {
+            public const string ContinuityPlan = "4010";
+            public const string EqualityAndDiversityPolicy = "4020";
+            public const string SafeguardingPolicy = "4030";
+            public const string SafeguardingOverallResponsibility = "4035";
+            public const string SafeguardingPolicyIncludesPreventDutyPolicy = "4037";
+            public const string PreventDutyPolicy = "4038";
+            public const string HealthAndSafetyPolicy = "4040";
+            public const string HealthAndSafetyOverallResponsibility = "4050";
+            public const string ActingAsASubcontractor = "4060";
+        }
+
+        public static class ReadinessToEngage
+        {
+            public const string EngagedWithEmployers = "5100";
+            public const string RelationshipWithEmployers = "5110";
+            public const string RelationshipWithEmployersResponsible = "5120";
+            public const string PromoteApprenticeshipsToEmployers = "5130";
+            public const string ComplaintsPolicy = "5200";
+            public const string ComplaintsPolicyWebsite = "5210";
+            public const string ContractForServicesTemplate = "5300";
+            public const string CommitmentStatementTemplate = "5400";
+            public const string PriorLearningAssessment = "5500";
+            public const string PriorLearningQualifications = "5510";
+            public const string SubcontractorsUse = "5600";
+            public const string SubcontractorsDueDiligence = "5610";
+        }
+
+        public static class PlanningApprenticeshipTraining
+        {
+            public const string TypeOfApprenticeshipTraining_Main = "6020";
+            public const string TypeOfApprenticeshipTraining_Employer = "6022";
+            public const string TypeOfApprenticeshipTraining_Supporting = "6023";
+            public const string ApplicationStandards = "6030";
+            public const string ApplicationFrameworks_MainEmployer = "6050";
+            public const string ApplicationFrameworks_Supporting = "6060";
+            public const string OrganisationTransition_MainEmployer = "6052";
+            public const string OrganisationTransition_Supporting = "6062";
+            public const string OnlyDeliveringApprenticeshipFrameworks_MainEmployer = "6054";
+            public const string OnlyDeliveringApprenticeshipFrameworks_Supporting = "6064";
+            public const string ReadyToDeliverTraining = "6200";
+            public const string ReadyToDeliverTrainingResponsible = "6700";
+            public const string EngagingWithAwardingBodies = "6800";
+            public const string EngagingWithAssessmentOrganisations = "6900";
+            public const string EnsureApprenticesAreSupported = "6300";
+            public const string EnsureApprenticesAreSupportedHow = "6310";
+            public const string EnsureApprenticesAreSupportedOtherWays = "6320";
+            public const string ForecastingStarts = "6400";
+            public const string ReadyToDeliverAgainstStarts = "6410";
+            public const string RecruitNewStaff = "6420";
+            public const string RatioOfStaffToApprentices = "6430";
+            public const string OnTheJobTrainingTeachingMethods = "6500";
+            public const string OnTheJobTrainingTeachingRelevance = "6510";
+            public const string AddressWhereApprenticesWillBeTrained = "6600";
+        }
+
+        public static class Finish
         {
             public static string ApplicationPermissionsChecksShutterPage = "10005";
             public static string TermsConditionsCOAPart2ShutterPage = "10006";
