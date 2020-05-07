@@ -153,25 +153,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("Assessor/SubmitPageOutcome")]
         public async Task SubmitAssessorPageOutcome([FromBody] SubmitAssessorPageOutcomeRequest request)
         {
-            await _mediator.Send(new SubmitAssessorPageOutcomeRequest(request.ApplicationId,
-                                                                                request.SequenceNumber,
-                                                                                request.SectionNumber,
-                                                                                request.PageId,
-                                                                                request.AssessorType,
-                                                                                request.UserId,
-                                                                                request.Status,
-                                                                                request.Comment));
+            await _mediator.Send(request);
         }
 
         [HttpPost("Assessor/GetPageReviewOutcome")]
         public async Task<PageReviewOutcome> GetPageReviewOutcome([FromBody] GetPageReviewOutcomeRequest request)
         {
-            var pageReviewOutcome = await _mediator.Send(new GetPageReviewOutcomeRequest(request.ApplicationId,
-                                                                                request.SequenceNumber,
-                                                                                request.SectionNumber,
-                                                                                request.PageId,
-                                                                                request.AssessorType,
-                                                                                request.UserId));
+            var pageReviewOutcome = await _mediator.Send(request);
 
             return pageReviewOutcome;
         }
@@ -179,11 +167,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("Assessor/GetAssessorReviewOutcomesPerSection")]
         public async Task<List<PageReviewOutcome>> GetAssessorReviewOutcomesPerSection([FromBody] GetAssessorReviewOutcomesPerSectionRequest request)
         {
-            var assessorReviewOutcomes = await _mediator.Send(new GetAssessorReviewOutcomesPerSectionRequest(request.ApplicationId,
-                                                                                request.SequenceNumber,
-                                                                                request.SectionNumber,
-                                                                                request.AssessorType,
-                                                                                request.UserId));
+            var assessorReviewOutcomes = await _mediator.Send(request);
 
             return assessorReviewOutcomes;
         }
@@ -191,9 +175,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("Assessor/GetAllAssessorReviewOutcomes")]
         public async Task<List<PageReviewOutcome>> GetAllAssessorReviewOutcomes([FromBody] GetAllAssessorReviewOutcomesRequest request)
         {
-            var assessorReviewOutcomes = await _mediator.Send(new GetAllAssessorReviewOutcomesRequest(request.ApplicationId,
-                                                                                request.AssessorType,
-                                                                                request.UserId));
+            var assessorReviewOutcomes = await _mediator.Send(request);
 
             return assessorReviewOutcomes;
         }
