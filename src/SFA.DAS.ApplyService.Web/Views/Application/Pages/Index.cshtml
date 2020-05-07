@@ -1,5 +1,5 @@
 @model SFA.DAS.ApplyService.Web.ViewModels.PageViewModel
-
+@using SFA.DAS.ApplyService.Domain.Entities
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + (@Model.Title ?? "Page not active");
 
@@ -9,7 +9,7 @@
 <partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
 
 @*
-<a class="govuk-back-link" asp-action="Back" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId" asp-route-redirectAction="TaskList">Back</a>
+    <a class="govuk-back-link" asp-action="Back" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId" asp-route-redirectAction="TaskList">Back</a>
 *@
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
@@ -60,7 +60,7 @@
                         </span>
                     }
 
-                    @if (Model.DisplayType == "PagesWithSections" || Model.DisplayType == "OtherPagesInPagesWithSections")
+                    @if (Model.DisplayType == PageDisplayType.PagesWithSections || Model.DisplayType == PageDisplayType.OtherPagesInPagesWithSections)
                     {
                         <h1 class="govuk-heading-xl">
                             @Html.Raw(Model.BodyText)
@@ -105,7 +105,8 @@
                         {
                             <div class="govuk-form-group @(!ViewData.ModelState.IsValid ? "govuk-form-group--error" : "")">
                                 <fieldset class="govuk-fieldset">
-                                    @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio" || question.Type == "CheckboxList" || question.Type == "ComplexCheckBoxList")
+                                    @if (question.Type == QuestionType.Checkbox || question.Type == QuestionType.Radio || question.Type == QuestionType.ComplexRadio
+                                      || question.Type == QuestionType.CheckboxList || question.Type == QuestionType.ComplexCheckboxList)
                                     {
                                         <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
                                             @if (Model.PageContext != null)
@@ -120,7 +121,7 @@
                                             }
 
 
-                                            @if (Model.DisplayType == "PagesWithSections" || Model.DisplayType == "OtherPagesInPagesWithSections")
+                                            @if (Model.DisplayType == PageDisplayType.PagesWithSections || Model.DisplayType == PageDisplayType.OtherPagesInPagesWithSections)
                                             {
                                                 <h1 class="govuk-heading-xl">
                                                     @Html.Raw(Model.BodyText)
@@ -135,13 +136,14 @@
                                             }
                                         </legend>
 
-                                        if (!string.IsNullOrWhiteSpace(@Model.BodyText) && Model.DisplayType != "PagesWithSections" && Model.DisplayType != "OtherPagesInPagesWithSections")
+                                        if (!string.IsNullOrWhiteSpace(@Model.BodyText) && Model.DisplayType != PageDisplayType.PagesWithSections 
+                                            && Model.DisplayType != PageDisplayType.OtherPagesInPagesWithSections)
                                         {
                                             @Html.Raw(Model.BodyText)
                                         }
                                         else
                                         {
-                                            @if (Model.DisplayType == "PagesWithSections" || Model.DisplayType == "OtherPagesInPagesWithSections")
+                                            @if (Model.DisplayType == PageDisplayType.PagesWithSections || Model.DisplayType == PageDisplayType.OtherPagesInPagesWithSections)
                                             {
                                                 <label class="govuk-label">
                                                     @Html.Raw(question.Label)
@@ -189,7 +191,8 @@
                                         </span>
                                     }
 
-                                    @if ((question.Type == "ComplexRadio" || question.Type == "ComplexCheckBoxList") && (question.ErrorMessages == null || question.ErrorMessages.Count == 0))
+                                    @if ((question.Type == QuestionType.ComplexRadio || question.Type == QuestionType.ComplexCheckboxList)
+                                       && (question.ErrorMessages == null || question.ErrorMessages.Count == 0))
                                     {
                                         question.ErrorMessages = Model.ErrorMessages;
                                     }
@@ -210,7 +213,7 @@
                         {
                             <div class="govuk-form-group @(question.ErrorMessages?.Any() ?? false ? "govuk-form-group--error" : "")">
 
-                                @if (question.Type == "Address")
+                                @if (question.Type == QuestionType.Address)
                                 {
                                     <h2 class="govuk-heading-l">
                                         @Html.Raw(question.Label)
@@ -235,7 +238,8 @@
                                     </span>
                                 }
 
-                                @if ((question.Type == "ComplexRadio" || question.Type == "ComplexCheckBoxList") && (question.ErrorMessages == null || question.ErrorMessages.Count == 0))
+                                @if ((question.Type == QuestionType.ComplexRadio || question.Type == QuestionType.ComplexCheckboxList)
+                                   && (question.ErrorMessages == null || question.ErrorMessages.Count == 0))
                                 {
                                     question.ErrorMessages = Model.ErrorMessages;
                                 }
