@@ -35,7 +35,7 @@ namespace SFA.DAS.ApplyService.ApplicationExtract
             _qnaClient = new QnaApiClient(configService, new NullLogger<QnaApiClient>(), new QnaTokenService(configService, new HostingEnvironment { EnvironmentName = EnvironmentName.Development }));
             var result = await _qnaClient.GetSections(applicationId);
 
-            foreach (var section in result.Where(x => !x.NotRequired))
+            foreach (var section in result.Where(x => !x.NotRequired && x.PagesActive > 0))
             {
                 await WriteSectionQuestionsAndAnswers(section, outputPath);
             }
@@ -61,11 +61,30 @@ namespace SFA.DAS.ApplyService.ApplicationExtract
             {
                 foreach (var question in page.Questions)
                 {
+                    var questionText = question.Label;
                     var questionAnswer = page.PageOfAnswers.SingleOrDefault()?.Answers.SingleOrDefault(x => x.QuestionId == question.QuestionId)?.Value;
+                    if (question.Input.Type == "TabularData")
+                    {
+                        if(!string.IsNullOrEmpty(questionAnswer))
+                        { 
+                            var tabularData = JsonConvert.DeserializeObject<TabularData>(questionAnswer);
+                            questionText = tabularData.Caption;
+                            questionAnswer = "";
+                            foreach (var row in tabularData.DataRows)
+                            {
+                                questionAnswer += "\n";
+                                foreach (var column in row.Columns)
+                                {
+                                    questionAnswer += column;
+                                    questionAnswer += " - ";
+                                }
+                            }
+                        }
+                    }
 
                     outputSection.Questions.Add(new Question
                     {
-                        QuestionText = question.Label,
+                        QuestionText = questionText,
                         Answer = questionAnswer
                     });
 
