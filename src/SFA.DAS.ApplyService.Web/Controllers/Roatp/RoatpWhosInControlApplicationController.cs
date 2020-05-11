@@ -138,6 +138,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             var trusteesData = await _tabularDataRepository.GetTabularDataAnswer(applicationId, RoatpWorkflowQuestionTags.CharityCommissionTrustees);
 
+            if(trusteesData is null)
+            {
+                return RedirectToAction("AddPeopleInControl", new { applicationId });
+            };
+
+
             var model = new ConfirmTrusteesViewModel
             {
                 ApplicationId = applicationId,
@@ -183,8 +189,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             }
             else
             {
-                //return RedirectToAction("ConfirmTrusteesDob", new { applicationId }); // original
-                return RedirectToAction("AddPeopleInControl", new { applicationId });
+                return RedirectToAction("ConfirmTrusteesDob", new { applicationId }); // original
+                //return RedirectToAction("AddPeopleInControl", new { applicationId });
             }
         }
 
