@@ -8,11 +8,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
     public class GetAssessorReviewOutcomesPerSectionRequest : IRequest<List<PageReviewOutcome>>
     {
-        public GetAssessorReviewOutcomesPerSectionRequest()
-        {
-
-        }
-
         public GetAssessorReviewOutcomesPerSectionRequest(Guid applicationId,
                                                                     int sequenceNumber,
                                                                     int sectionNumber,
@@ -26,10 +21,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
             UserId = userId;
         }
 
-        public Guid ApplicationId { get; set; }
-        public int SequenceNumber { get; set; }
-        public int SectionNumber { get; set; }
-        public int AssessorType { get; set; }
-        public string UserId { get; set; }
+        public Guid ApplicationId { get; }
+        public int SequenceNumber { get; }
+        public int SectionNumber { get; }
+        public int AssessorType { get;  }
+        public string UserId { get; }
     }
 }

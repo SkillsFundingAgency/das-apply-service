@@ -11,10 +11,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
     public class GetAllAssessorReviewOutcomesHandler : IRequestHandler<GetAllAssessorReviewOutcomesRequest, List<PageReviewOutcome>>
     {
-        private readonly IApplyRepository _repository;
+        private readonly IAssessorRepository _repository;
         private readonly ILogger<GetAllAssessorReviewOutcomesHandler> _logger;
 
-        public GetAllAssessorReviewOutcomesHandler(IApplyRepository repository, ILogger<GetAllAssessorReviewOutcomesHandler> logger)
+        public GetAllAssessorReviewOutcomesHandler(IAssessorRepository repository, ILogger<GetAllAssessorReviewOutcomesHandler> logger)
         {
             _repository = repository;
             _logger = logger;
