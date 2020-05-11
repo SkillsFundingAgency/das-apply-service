@@ -7,8 +7,8 @@ namespace SFA.DAS.ApplyService.Domain.Apply
     public class Page
     {
         public string PageId { get; set; }
-        public int SequenceId { get; set; }
-        public int SectionId { get; set; }
+        public string SequenceId { get; set; }
+        public string SectionId { get; set; }
         public string Title { get; set; }
         public string LinkTitle { get; set; }
         public string InfoText { get; set; }

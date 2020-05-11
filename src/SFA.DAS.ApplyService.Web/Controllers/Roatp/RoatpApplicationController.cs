@@ -461,7 +461,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
             }
 
-            return await SaveAnswersGiven(applicationId, selectedSection.Id, pageId, page, redirectAction, string.Empty);
+            return await SaveAnswersGiven(applicationId, selectedSection.Id, selectedSection.SectionId, selectedSection.SequenceId, pageId, page, redirectAction, string.Empty);
         }
 
         [Route("apply-training-provider-tasklist")]
@@ -689,7 +689,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return page;
         }
 
-        private async Task<IActionResult> SaveAnswersGiven(Guid applicationId, Guid sectionId, string pageId, Page page, string redirectAction, string __formAction)
+        private async Task<IActionResult> SaveAnswersGiven(Guid applicationId, Guid sectionId, int sectionNo, int sequenceNo, string pageId, Page page, string redirectAction, string __formAction)
         {
             var answers = new List<Answer>();
 
@@ -719,7 +719,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
 
                 this.TempData["InvalidPage"] = JsonConvert.SerializeObject(page);
-                return await Page(applicationId, page.SequenceId, page.SectionId, pageId, redirectAction, null);
+                return await Page(applicationId, sequenceNo, sectionNo, pageId, redirectAction, null);
             }
 
             //todo: Should we convert this to a custom validation?
@@ -734,7 +734,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     //Can this be made common? What about DataFedOptions?
                     page = await _qnaApiClient.GetPage(applicationId, sectionId, pageId);
                     this.TempData["InvalidPage"] = JsonConvert.SerializeObject(page);
-                    return await Page(applicationId, page.SequenceId, page.SectionId, pageId, redirectAction, null);
+                    return await Page(applicationId, sequenceNo, sectionNo, pageId, redirectAction, null);
                 }
             }
 
@@ -783,7 +783,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 if ("ReturnToSection".Equals(nextAction, StringComparison.InvariantCultureIgnoreCase) && (page.DisplayType == SectionDisplayType.PagesWithSections || page.DisplayType == "OtherPagesInPagesWithSections"))
                 {
-                    return await Section(applicationId, page.SequenceId, page.SectionId);
+                    return await Section(applicationId, sequenceNo, sectionNo);
                 }
 
                 if (string.IsNullOrEmpty(nextActionId) || !"NextPage".Equals(nextAction, StringComparison.InvariantCultureIgnoreCase))
@@ -819,7 +819,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var invalidPage = await GetDataFedOptions(applicationId, page);
             this.TempData["InvalidPage"] = JsonConvert.SerializeObject(invalidPage);
 
-            return await Page(applicationId, page.SequenceId, page.SectionId, pageId, redirectAction, page?.Questions);
+            return await Page(applicationId, sequenceNo, sectionNo, pageId, redirectAction, page?.Questions);
         }
 
         private static Page StoreEnteredAnswers(List<Answer> answers, Page page)
