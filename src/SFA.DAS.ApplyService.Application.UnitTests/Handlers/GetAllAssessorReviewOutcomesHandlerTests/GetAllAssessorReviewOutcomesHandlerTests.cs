@@ -15,13 +15,13 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAllAssessorRevi
     [TestFixture]
     public class GetAllAssessorReviewOutcomesHandlerTests
     {
-        protected Mock<IApplyRepository> _repository;
+        protected Mock<IAssessorRepository> _repository;
         protected GetAllAssessorReviewOutcomesHandler _handler;
 
         [SetUp]
         public void TestSetup()
         {
-            _repository = new Mock<IApplyRepository>();
+            _repository = new Mock<IAssessorRepository>();
             _handler = new GetAllAssessorReviewOutcomesHandler(_repository.Object, Mock.Of<ILogger<GetAllAssessorReviewOutcomesHandler>>());
         }
 

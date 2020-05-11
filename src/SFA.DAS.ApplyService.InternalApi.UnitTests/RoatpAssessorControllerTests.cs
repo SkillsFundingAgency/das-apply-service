@@ -137,8 +137,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task SubmitAssessorPageOutcome_calls_mediator()
         {
             var applicationId = Guid.NewGuid();
-            var request = new SubmitAssessorPageOutcomeRequest { ApplicationId = applicationId, SequenceNumber = 1, SectionNumber = 2, PageId = "30", AssessorType = 2,
-                                                                 UserId = "4fs7f-userId-7gfhh", Status = "Fail", Comment = "Very bad" };
+            var request = new SubmitAssessorPageOutcomeRequest(applicationId, 1, 2, "30", 2, "4fs7f-userId-7gfhh", "Fail", "Very bad");
 
             await _controller.SubmitAssessorPageOutcome(request);
 
@@ -156,15 +155,12 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var expectedAssessorType = 2;
             var expectedUserId = "4fs7f-userId-7gfhh";
 
-            var request = new GetPageReviewOutcomeRequest
-            { 
-                ApplicationId = expectedApplicationId,
-                SequenceNumber = expectedSequenceNumber,
-                SectionNumber = expectedSectionNumber,
-                PageId = expectedPageId,
-                AssessorType = expectedAssessorType,
-                UserId = expectedUserId
-            };
+            var request = new GetPageReviewOutcomeRequest( expectedApplicationId,
+                                                            expectedSequenceNumber,
+                                                            expectedSectionNumber,
+                                                            expectedPageId,
+                                                            expectedAssessorType,
+                                                            expectedUserId);
 
             var expectedResult = new PageReviewOutcome();
             _mediator.Setup(x => x.Send(It.Is<GetPageReviewOutcomeRequest>(r => r.ApplicationId == expectedApplicationId && r.SequenceNumber == expectedSequenceNumber &&
@@ -185,14 +181,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var expectedAssessorType = 2;
             var expectedUserId = "4fs7f-userId-7gfhh";
 
-            var request = new GetAssessorReviewOutcomesPerSectionRequest
-            {
-                ApplicationId = expectedApplicationId,
-                SequenceNumber = expectedSequenceNumber,
-                SectionNumber = expectedSectionNumber,
-                AssessorType = expectedAssessorType,
-                UserId = expectedUserId
-            };
+            var request = new GetAssessorReviewOutcomesPerSectionRequest(expectedApplicationId, expectedSequenceNumber, expectedSectionNumber, expectedAssessorType, expectedUserId);
 
             var expectedResult = new List<PageReviewOutcome>();
             _mediator.Setup(x => x.Send(It.Is<GetAssessorReviewOutcomesPerSectionRequest>(r => r.ApplicationId == expectedApplicationId && r.SequenceNumber == expectedSequenceNumber &&
@@ -211,12 +200,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var expectedAssessorType = 2;
             var expectedUserId = "4fs7f-userId-7gfhh";
 
-            var request = new GetAllAssessorReviewOutcomesRequest
-            {
-                ApplicationId = expectedApplicationId,
-                AssessorType = expectedAssessorType,
-                UserId = expectedUserId
-            };
+            var request = new GetAllAssessorReviewOutcomesRequest(expectedApplicationId, expectedAssessorType, expectedUserId);
 
             var expectedResult = new List<PageReviewOutcome>();
             _mediator.Setup(x => x.Send(It.Is<GetAllAssessorReviewOutcomesRequest>(r => r.ApplicationId == expectedApplicationId && 

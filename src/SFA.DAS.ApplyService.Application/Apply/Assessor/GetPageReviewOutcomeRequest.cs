@@ -8,11 +8,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
     public class GetPageReviewOutcomeRequest : IRequest<PageReviewOutcome>
     {
-        public GetPageReviewOutcomeRequest()
-        {
-
-        }
-
         public GetPageReviewOutcomeRequest(Guid applicationId,
                                                     int sequenceNumber,
                                                     int sectionNumber,
@@ -28,11 +23,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
             UserId = userId;
         }
 
-        public Guid ApplicationId { get; set; }
-        public int SequenceNumber { get; set; }
-        public int SectionNumber { get; set; }
-        public string PageId { get; set; }
-        public int AssessorType { get; set; }
-        public string UserId { get; set; }
+        public Guid ApplicationId { get; }
+        public int SequenceNumber { get; }
+        public int SectionNumber { get; }
+        public string PageId { get; }
+        public int AssessorType { get; }
+        public string UserId { get; }
     }
 }

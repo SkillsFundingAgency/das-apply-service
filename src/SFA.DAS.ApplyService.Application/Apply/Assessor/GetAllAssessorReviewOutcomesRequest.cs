@@ -8,13 +8,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
     public class GetAllAssessorReviewOutcomesRequest : IRequest<List<PageReviewOutcome>>
     {
-        public GetAllAssessorReviewOutcomesRequest()
-        {
-
-        }
-
         public GetAllAssessorReviewOutcomesRequest(Guid applicationId,
-                                                           int assessorType,
+                                                        int assessorType,
                                                         string userId)
         {
             ApplicationId = applicationId;
@@ -22,8 +17,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
             UserId = userId;
         }
 
-        public Guid ApplicationId { get; set; }
-        public int AssessorType { get; set; }
-        public string UserId { get; set; }
+        public Guid ApplicationId { get; }
+        public int AssessorType { get; }
+        public string UserId { get; }
     }
 }
