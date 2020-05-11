@@ -806,7 +806,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 foreach (var error in validationErrors)
                 {
                     ModelState.AddModelError(error.Key, error.Value);
-                    var valid = ModelState.IsValid;
                 }
             }
 
