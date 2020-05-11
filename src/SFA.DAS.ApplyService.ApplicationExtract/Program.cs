@@ -32,7 +32,7 @@ namespace SFA.DAS.ApplyService.ApplicationExtract
 
             outputPath = Path.Combine(outputPath, applicationId.ToString());
 
-            _qnaClient = new QnaApiClient(configService, new NullLogger<QnaApiClient>(), new QnaTokenService(configService, new HostingEnvironment { EnvironmentName = EnvironmentName.Development }));
+            _qnaClient = new QnaApiClient(configService, new NullLogger<QnaApiClient>(), new QnaTokenService(configService, new HostingEnvironment { EnvironmentName = EnvironmentName.Staging }));
             var result = await _qnaClient.GetSections(applicationId);
 
             foreach (var section in result.Where(x => !x.NotRequired && x.PagesActive > 0))
@@ -96,8 +96,7 @@ namespace SFA.DAS.ApplyService.ApplicationExtract
             }
 
             var outputString = JsonConvert.SerializeObject(outputSection, Formatting.Indented);
-            
-            var filePath = Path.Combine(directoryPath, section.SectionId + " - " + section.Title + ".json");
+            var filePath = Path.Combine(directoryPath, section.SectionId + " - " + section.LinkTitle + ".json");
             File.WriteAllText(filePath, outputString);
         }
 
@@ -158,7 +157,7 @@ namespace SFA.DAS.ApplyService.ApplicationExtract
 
         public string GetEnvironmentName()
         {
-            return "DEV";
+            return "PP";
         }
     }
 }
