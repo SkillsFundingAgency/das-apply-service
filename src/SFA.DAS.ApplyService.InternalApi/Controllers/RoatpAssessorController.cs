@@ -158,6 +158,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                     SectionNumber = sectionNumber,
                     PageId = qnaPage.PageId,
 
+                    DisplayType = qnaPage.DisplayType,
                     Caption = _assessorLookupService.GetTitleForSequence(sequenceNumber) ?? qnaSection.LinkTitle,
                     Heading = _assessorLookupService.GetTitleForPage(qnaPage.PageId) ?? qnaPage.LinkTitle,
                     Title = qnaPage.Title,

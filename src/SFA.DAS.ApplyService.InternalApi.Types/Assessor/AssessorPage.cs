@@ -15,6 +15,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.Assessor
 
         public string NextPageId { get; set; }
 
+        public string DisplayType { get; set; }
+
         public string Caption { get; set; }
         public string Heading { get; set; }
 
