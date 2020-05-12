@@ -488,10 +488,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
 
-            var verifiedCompaniesHouse = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany);
-            var companiesHouseManualEntry = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CompaniesHouseManualEntryRequired);
-            var verifiedCharityCommission = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity);
-            var charityCommissionManualEntry = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CharityCommissionTrusteeManualEntry);
+            var preamblePage = await _qnaApiClient.GetPageBySectionNo(applicationId, RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble);
+            var verifiedCompaniesHouse = _qnaApiClient.GetAnswer(preamblePage, RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany);
+            var companiesHouseManualEntry = _qnaApiClient.GetAnswer(preamblePage, RoatpPreambleQuestionIdConstants.CompaniesHouseManualEntryRequired);
+            var verifiedCharityCommission = _qnaApiClient.GetAnswer(preamblePage, RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity);
+            var charityCommissionManualEntry = _qnaApiClient.GetAnswer(preamblePage, RoatpPreambleQuestionIdConstants.CharityCommissionTrusteeManualEntry);
 
             var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
 

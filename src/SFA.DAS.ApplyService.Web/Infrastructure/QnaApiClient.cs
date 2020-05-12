@@ -177,6 +177,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         {
             var pageContainingQuestion = await GetPageBySectionNo(applicationId, sequenceNo, sectionNo, pageId);
 
+            return GetAnswer(pageContainingQuestion, questionId);
+        }
+
+        public Answer GetAnswer(Page pageContainingQuestion, string questionId)
+        {
             if (pageContainingQuestion?.Questions != null)
             {
                 foreach (var question in pageContainingQuestion.Questions)
