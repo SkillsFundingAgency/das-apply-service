@@ -423,8 +423,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             // when the model state has no errors the page will be displayed with the last valid values which were saved
-            var page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
-
+            var page = selectedSection.GetPage(pageId);
+            
             if (page == null)
             {
                 return RedirectToAction("TaskList", new { applicationId = applicationId });
@@ -750,8 +750,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     return RedirectToAction("Page", new
                     {
                         applicationId,
-                        sequenceId = page.SequenceId,
-                        sectionId = page.SectionId,
+                        sequenceId = sequenceNo,
+                        sectionId = sectionNo,
                         pageId = nextActionId,
                         redirectAction
                     });
@@ -775,8 +775,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("Page", new
                 {
                     applicationId,
-                    sequenceId = page.SequenceId,
-                    sectionId = page.SectionId,
+                    sequenceId = sequenceNo,
+                    sectionId = sectionNo,
                     pageId = nextActionId,
                     redirectAction
                 });
