@@ -314,17 +314,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
             else
             {
-                // when the model state has no errors the page will be displayed with the last valid values which were saved
-                var page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
-
-                if (page == null)
-                {
-                    return RedirectToAction("TaskList", new { applicationId = applicationId });
-                }
-
-                var section = await _qnaApiClient.GetSection(applicationId, selectedSection.Id);
-
-                page = await _qnaApiClient.GetPage(applicationId, selectedSection.Id, pageId);
+                var page = selectedSection.GetPage(pageId);
+                
                 if (page == null || page.Questions == null)
                 {
                     return await TaskList(applicationId);
