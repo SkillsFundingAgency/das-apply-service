@@ -1225,6 +1225,5 @@ namespace SFA.DAS.ApplyService.Data
 
             return await Task.FromResult(true);
         }
-
     }
 }

@@ -32,24 +32,31 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("/Accreditation/{applicationId}/InitialTeacherTraining")]
         public async Task<InitialTeacherTraining> GetInitialTeacherTraining(Guid applicationId)
         {
-            var initialTeacherTrainingTask = _qnaApiClient.GetAnswerValue(applicationId,
+            var initialTeacherTraining = await _qnaApiClient.GetAnswerValue(applicationId,
                 RoatpWorkflowSequenceIds.YourOrganisation,
                 RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
                 RoatpWorkflowPageIds.ExperienceAndAccreditations.InitialTeacherTraining,
                 RoatpYourOrganisationQuestionIdConstants.InitialTeacherTraining);
 
-            var isPostGradTrainingOnlyApprenticeshipTask = _qnaApiClient.GetAnswerValue(applicationId,
-                RoatpWorkflowSequenceIds.YourOrganisation,
-                RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
-                RoatpWorkflowPageIds.ExperienceAndAccreditations.IsPostGradTrainingOnlyApprenticeship,
-                RoatpYourOrganisationQuestionIdConstants.IsPostGradTrainingOnlyApprenticeship);
+            if (initialTeacherTraining.ToUpper() == "YES")
+            {
+                var isPostGradTrainingOnlyApprenticeship = await _qnaApiClient.GetAnswerValue(applicationId,
+                    RoatpWorkflowSequenceIds.YourOrganisation,
+                    RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
+                    RoatpWorkflowPageIds.ExperienceAndAccreditations.IsPostGradTrainingOnlyApprenticeship,
+                    RoatpYourOrganisationQuestionIdConstants.IsPostGradTrainingOnlyApprenticeship);
 
-            await Task.WhenAll(initialTeacherTrainingTask, isPostGradTrainingOnlyApprenticeshipTask);
+                return new InitialTeacherTraining
+                {
+                    DoesOrganisationOfferInitialTeacherTraining = true,
+                    IsPostGradOnlyApprenticeship = isPostGradTrainingOnlyApprenticeship.ToUpper() == "YES"
+                };
+            }
 
             return new InitialTeacherTraining
             {
-                DoesOrganisationOfferInitialTeacherTraining = initialTeacherTrainingTask.Result.ToUpper() == "YES",
-                IsPostGradOnlyApprenticeship = isPostGradTrainingOnlyApprenticeshipTask.Result.ToUpper() == "YES"
+                DoesOrganisationOfferInitialTeacherTraining = false,
+                IsPostGradOnlyApprenticeship = false
             };
         }
 

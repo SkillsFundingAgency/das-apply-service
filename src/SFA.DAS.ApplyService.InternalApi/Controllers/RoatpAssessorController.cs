@@ -200,7 +200,38 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             return await _qnaApiClient.DownloadSpecifiedFile(applicationId, sequenceNumber, sectionNumber, pageId, questionId, filename);
         }
+
+        [HttpPost("Assessor/SubmitPageOutcome")]
+        public async Task SubmitAssessorPageOutcome([FromBody] SubmitAssessorPageOutcomeRequest request)
+        {
+            await _mediator.Send(request);
+        }
+
+        [HttpPost("Assessor/GetPageReviewOutcome")]
+        public async Task<PageReviewOutcome> GetPageReviewOutcome([FromBody] GetPageReviewOutcomeRequest request)
+        {
+            var pageReviewOutcome = await _mediator.Send(request);
+
+            return pageReviewOutcome;
+        }
+
+        [HttpPost("Assessor/GetAssessorReviewOutcomesPerSection")]
+        public async Task<List<PageReviewOutcome>> GetAssessorReviewOutcomesPerSection([FromBody] GetAssessorReviewOutcomesPerSectionRequest request)
+        {
+            var assessorReviewOutcomes = await _mediator.Send(request);
+
+            return assessorReviewOutcomes;
+        }
+
+        [HttpPost("Assessor/GetAllAssessorReviewOutcomes")]
+        public async Task<List<PageReviewOutcome>> GetAllAssessorReviewOutcomes([FromBody] GetAllAssessorReviewOutcomesRequest request)
+        {
+            var assessorReviewOutcomes = await _mediator.Send(request);
+
+            return assessorReviewOutcomes;
+        }
     }
+
 
     public class AssignAssessorApplicationRequest
     {
@@ -208,4 +239,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public string AssessorUserId { get; set; }
         public string AssessorName { get; set; }
     }
+
+
 }
