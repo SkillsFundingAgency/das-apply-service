@@ -185,7 +185,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
                 var nextPageAction = await _qnaApiClient.SkipPageBySectionNo(page.ApplicationId, page.SequenceNumber, page.SectionNumber, page.PageId);
 
-                if ("NextPage".Equals(nextPageAction?.NextAction, StringComparison.InvariantCultureIgnoreCase))
+                if (nextPageAction != null && "NextPage".Equals(nextPageAction.NextAction, StringComparison.InvariantCultureIgnoreCase))
                 {
                     page.NextPageId = nextPageAction.NextActionId;
                 }
