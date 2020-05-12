@@ -127,8 +127,10 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Draft = "Draft";
         public const string New = "New";
         public const string InProgress = "In Progress";
-        public const string Approved = "Approved";
-        public const string Declined = "Declined";
+        public const string ClarificationSent = "Clarification sent";
+        public const string Resubmitted = "Re-submitted";
+        public const string Fail = "Fail";
+        public const string Pass = "Pass";
     }
 
     public static class AssessorReviewStatus
@@ -148,9 +150,11 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string New = "New";
         public const string InProgress = "In Progress";
 
-        public const string Approved = "Approved";
-        public const string Declined = "Declined";
-        public const string Clarification = "Clarification";
+        public const string ClarificationSent = "Clarification Sent";
+        public const string Resubmitted = "Resubmitted";
+
+        public const string Pass = "Pass";
+        public const string Fail = "Fail";   
         public const string Exempt = "Exempt";
     }
 

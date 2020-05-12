@@ -83,7 +83,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
                         OnTokenValidated = async context =>
                         {
-                            var client = context.HttpContext.RequestServices.GetRequiredService<UsersApiClient>();
+                            var client = context.HttpContext.RequestServices.GetRequiredService<IUsersApiClient>();
                             var signInId = context.Principal.FindFirst("sub").Value;
                             var user = await client.GetUserBySignInId(signInId);
                             if (user != null)
