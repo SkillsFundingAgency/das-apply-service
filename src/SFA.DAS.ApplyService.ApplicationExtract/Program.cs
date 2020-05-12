@@ -104,11 +104,17 @@ namespace SFA.DAS.ApplyService.ApplicationExtract
                 await DownloadFile(section.ApplicationId, section.Id, page.PageId, question.QuestionId, questionAnswer, directoryPath);
             }
 
-            foreach (var option in question.Input.Options)
+            if (question.Input.Options != null)
             {
-                foreach (var furtherQuestion in option.FurtherQuestions)
+                foreach (var option in question.Input.Options)
                 {
-                    await OutputQuestion(section, furtherQuestion, page, outputSection, directoryPath);
+                    if (option.FurtherQuestions != null)
+                    {
+                        foreach (var furtherQuestion in option.FurtherQuestions)
+                        {
+                            await OutputQuestion(section, furtherQuestion, page, outputSection, directoryPath);
+                        }
+                    }
                 }
             }
         }
