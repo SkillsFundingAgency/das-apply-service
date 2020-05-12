@@ -49,16 +49,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(new GetApplicationRequest(applicationId));
         }
 
-        [HttpGet("Applications/{userId}")]
-        public async Task<ActionResult<List<Domain.Entities.Apply>>> GetApplications(string userId)
+        [HttpGet("Applications/{signinId}")]
+        public async Task<ActionResult<List<Domain.Entities.Apply>>> GetApplications(string signinId)
         {
-            return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), true));
+            return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(signinId), true));
         }
 
-        [HttpGet("Applications/{userId}/Organisation")]
-        public async Task<ActionResult<List<Domain.Entities.Apply>>> GetOrganisationApplications(string userId)
+        [HttpGet("Applications/{signinId}/Organisation")]
+        public async Task<ActionResult<List<Domain.Entities.Apply>>> GetOrganisationApplications(string signinId)
         {
-            return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(userId), false));
+            return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(signinId), false));
         }
         
         [HttpGet("/Applications/Existing/{ukprn}")]

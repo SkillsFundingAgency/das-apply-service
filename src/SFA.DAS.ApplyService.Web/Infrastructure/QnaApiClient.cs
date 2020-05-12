@@ -173,9 +173,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         }
 
 
-        public async Task<Answer> GetAnswer(Guid applicationId, Guid sectionId, string pageId, string questionId)
+        public async Task<Answer> GetAnswer(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId)
         {
-            var pageContainingQuestion = await GetPage(applicationId, sectionId, pageId);
+            var pageContainingQuestion = await GetPageBySectionNo(applicationId, sequenceNo, sectionNo, pageId);
 
             if (pageContainingQuestion?.Questions != null)
             {

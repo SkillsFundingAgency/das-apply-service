@@ -97,15 +97,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             _logger.LogInformation($"Got LoggedInUser from Session: {user}");
 
-            var applyUser = await _usersApiClient.GetUserBySignInId((await _userService.GetSignInId()).ToString());
-            var userId = applyUser?.Id ?? Guid.Empty;
-
-            var applications = await _apiClient.GetApplications(userId, false);
+            var signinId = await _userService.GetSignInId();
+            var applications = await _apiClient.GetApplications(signinId, false);
             applications = applications.Where(app => app.ApplicationStatus != ApplicationStatus.Rejected).ToList();
 
             if (!applications.Any())
             {
-                return await StartApplication(userId);
+                return await StartApplication(signinId);
             }
 
             if (applications.Count > 1)
@@ -130,7 +128,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
         }
 
-        private async Task<IActionResult> StartApplication(Guid userId)
+        private async Task<IActionResult> StartApplication(Guid signinId)
         {
             var applicationType = ApplicationTypes.RegisterTrainingProviders;
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
@@ -145,9 +143,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 ["ApplyProviderRoute"] = providerRoute.ToString()
             };
 
+            var user = await _usersApiClient.GetUserBySignInId(signinId.ToString());
+
             var startApplicationJson = JsonConvert.SerializeObject(startApplicationData);
-            _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse PRE: userid: [{userId.ToString()}], applicationType: [{applicationType}], startApplicationJson: [{startApplicationJson}]");
-            var qnaResponse = await _qnaApiClient.StartApplication(userId.ToString(), applicationType, startApplicationJson);
+            _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse PRE: userid: [{user.Id.ToString()}], applicationType: [{applicationType}], startApplicationJson: [{startApplicationJson}]");
+            var qnaResponse = await _qnaApiClient.StartApplication(user.Id.ToString(), applicationType, startApplicationJson);
             _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse POST: applicationId: [{qnaResponse?.ApplicationId}]");
 
             if (qnaResponse != null)
@@ -155,7 +155,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 var allQnaSequences = await _qnaApiClient.GetSequences(qnaResponse.ApplicationId);
                 var allQnaSections = await _qnaApiClient.GetSections(qnaResponse.ApplicationId);
 
-                var startApplicationRequest = BuildStartApplicationRequest(qnaResponse.ApplicationId, userId, providerRoute, allQnaSequences, allQnaSections);
+                var startApplicationRequest = BuildStartApplicationRequest(qnaResponse.ApplicationId, user.Id, providerRoute, allQnaSequences, allQnaSections);
 
                 var applicationId = await _apiClient.StartApplication(startApplicationRequest);
                 _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking response from StartApplication POST: applicationId: [{applicationId}]");
@@ -488,35 +488,27 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
 
-            var preambleSequence = sequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.Preamble);
-            var preambleSections = await _qnaApiClient.GetSections(applicationId, preambleSequence.Id);
-            var preambleSection = preambleSections.FirstOrDefault();
-            var verifiedCompaniesHouse = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany);
-            var companiesHouseManualEntry = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CompaniesHouseManualEntryRequired);
-            var verifiedCharityCommission = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity);
-            var charityCommissionManualEntry = await _qnaApiClient.GetAnswer(applicationId, preambleSection.Id, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CharityCommissionTrusteeManualEntry);
+            var verifiedCompaniesHouse = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany);
+            var companiesHouseManualEntry = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CompaniesHouseManualEntryRequired);
+            var verifiedCharityCommission = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity);
+            var charityCommissionManualEntry = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble, RoatpPreambleQuestionIdConstants.CharityCommissionTrusteeManualEntry);
 
             var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
 
             var populatedNotRequiredOverrides = await PopulateNotRequiredOverridesWithApplicationData(applicationId, _notRequiredOverrides);
 
-            var yourOrganisationSequence =
-                sequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
-            var yourOrganisationSections = await _qnaApiClient.GetSections(applicationId, yourOrganisationSequence.Id);
-            var whosInControlSection = yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
-
-            var companiesHouseDataConfirmed = await _qnaApiClient.GetAnswer(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, RoatpYourOrganisationQuestionIdConstants.CompaniesHouseDetailsConfirmed);
-            var charityCommissionDataConfirmed = await _qnaApiClient.GetAnswer(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage, RoatpYourOrganisationQuestionIdConstants.CharityCommissionDetailsConfirmed);
+            var companiesHouseDataConfirmed = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, RoatpYourOrganisationQuestionIdConstants.CompaniesHouseDetailsConfirmed);
+            var charityCommissionDataConfirmed = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage, RoatpYourOrganisationQuestionIdConstants.CharityCommissionDetailsConfirmed);
 
             var whosInControlConfirmed = false;
 
-            var organisationType = await _qnaApiClient.GetAnswer(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.SoleTraderPartnership, RoatpYourOrganisationQuestionIdConstants.SoleTradeOrPartnership);
+            var organisationType = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.SoleTraderPartnership, RoatpYourOrganisationQuestionIdConstants.SoleTradeOrPartnership);
 
             var whosInControlStarted = organisationType != null && (organisationType.Value == RoatpOrganisationTypes.SoleTrader || organisationType.Value == RoatpOrganisationTypes.Partnership);
 
             if (organisationType != null && organisationType.Value == RoatpOrganisationTypes.SoleTrader)
             {
-                var soleTraderDateOfBirthAnswer = await _qnaApiClient.GetAnswer(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob, RoatpYourOrganisationQuestionIdConstants.AddSoleTradeDob);
+                var soleTraderDateOfBirthAnswer = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob, RoatpYourOrganisationQuestionIdConstants.AddSoleTradeDob);
                 if (soleTraderDateOfBirthAnswer != null && !String.IsNullOrEmpty(soleTraderDateOfBirthAnswer.Value))
                 {
                     whosInControlConfirmed = true;
@@ -524,14 +516,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
             else if (organisationType != null && organisationType.Value == RoatpOrganisationTypes.Partnership)
             {
-                var partnersDetailsAnswer = await _qnaApiClient.GetAnswer(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddPartners, RoatpYourOrganisationQuestionIdConstants.AddPartners);
+                var partnersDetailsAnswer = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.AddPartners, RoatpYourOrganisationQuestionIdConstants.AddPartners);
                 if (partnersDetailsAnswer != null && !String.IsNullOrEmpty(partnersDetailsAnswer.Value))
                 {
                     whosInControlConfirmed = true;
                 }
             }
 
-            var pscsDetailsAnswer = await _qnaApiClient.GetAnswer(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl, RoatpYourOrganisationQuestionIdConstants.AddPeopleInControl);
+            var pscsDetailsAnswer = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl, RoatpYourOrganisationQuestionIdConstants.AddPeopleInControl);
             if (pscsDetailsAnswer != null && !String.IsNullOrEmpty(pscsDetailsAnswer.Value))
             {
                 whosInControlConfirmed = true;
@@ -598,10 +590,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             bool canUpdate = false;
 
-            var applyingUser = await _usersApiClient.GetUserBySignInId((await _userService.GetSignInId()).ToString());
-            var userId = applyingUser?.Id ?? Guid.Empty;
-
-            var applications = await _apiClient.GetApplications(userId, false);
+            var applications = await _apiClient.GetApplications(await _userService.GetSignInId(), false);
             var application = applications?.FirstOrDefault(app => app.ApplicationId == applicationId);
 
             var validApplicationStatuses = new string[] { ApplicationStatus.InProgress, ApplicationStatus.FeedbackAdded };
@@ -1080,7 +1069,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
             }
 
-            var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
             var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
 
             var submitApplicationRequest = new Application.Apply.Submit.SubmitApplicationRequest
