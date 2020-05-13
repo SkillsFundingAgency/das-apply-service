@@ -20,6 +20,15 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     [Authorize]
     public class RoatpAssessorController : Controller
     {
+        private static readonly List<int> _AssessorSequences = new List<int>
+        {
+            RoatpWorkflowSequenceIds.ProtectingYourApprentices,
+            RoatpWorkflowSequenceIds.ReadinessToEngage,
+            RoatpWorkflowSequenceIds.PlanningApprenticeshipTraining,
+            RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
+            RoatpWorkflowSequenceIds.EvaluatingApprenticeshipTraining
+        };
+
         private readonly ILogger<RoatpAssessorController> _logger;
         private readonly IMediator _mediator;
         private readonly IApplyRepository _applyRepository;
@@ -68,32 +77,43 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("Assessor/Applications/{applicationId}/Overview")]
         public async Task<List<AssessorSequence>> GetAssessorOverview(Guid applicationId)
         {
+            var overviewSequences = new List<AssessorSequence>();
+
             var allQnaSections = await _qnaApiClient.GetAllApplicationSections(applicationId);
 
-            return new List<AssessorSequence>
+            if (allQnaSections != null)
             {
-                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.ProtectingYourApprentices),
-                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.ReadinessToEngage),
-                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.PlanningApprenticeshipTraining),
-                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining),
-                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.EvaluatingApprenticeshipTraining)
-            };
+                foreach (var sequenceNumber in _AssessorSequences)
+                {
+                    var sequence = GetAssessorSequence(allQnaSections, sequenceNumber);
+                    overviewSequences.Add(sequence);
+                }
+            }
+
+            return overviewSequences;
         }
 
         private AssessorSequence GetAssessorSequence(IEnumerable<ApplicationSection> qnaSections, int sequenceNumber)
         {
-            var sectionsToExclude = GetWhatYouWillNeedSectionsForSequence(sequenceNumber);
+            AssessorSequence sequence = null;
 
-            return new AssessorSequence
+            if (_AssessorSequences.Contains(sequenceNumber))
             {
-                SequenceNumber = sequenceNumber,
-                SequenceTitle = _assessorLookupService.GetTitleForSequence(sequenceNumber),
-                Sections = qnaSections.Where(sec => sec.SequenceId == sequenceNumber && !sectionsToExclude.Contains(sec.SectionId))
-                .Select(sec =>
+                var sectionsToExclude = GetWhatYouWillNeedSectionsForSequence(sequenceNumber);               
+
+                sequence = new AssessorSequence
                 {
-                    return new AssessorSection { SectionNumber = sec.SectionId, LinkTitle = sec.Title, Status = string.Empty };
-                }).ToList()
-            };
+                    SequenceNumber = sequenceNumber,
+                    SequenceTitle = _assessorLookupService.GetTitleForSequence(sequenceNumber),
+                    Sections = qnaSections.Where(sec => sec.SequenceId == sequenceNumber && !sectionsToExclude.Contains(sec.SectionId))
+                    .Select(sec =>
+                    {
+                        return new AssessorSection { SectionNumber = sec.SectionId, LinkTitle = sec.Title, Status = string.Empty };
+                    }).ToList()
+                };
+            }
+
+            return sequence;
         }
 
         private static List<int> GetWhatYouWillNeedSectionsForSequence(int sequenceNumber)
@@ -146,48 +166,51 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             AssessorPage page = null;
 
-            var qnaSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceNumber, sectionNumber);
-            var qnaPage = qnaSection?.QnAData.Pages.FirstOrDefault(p => p.PageId == pageId || string.IsNullOrEmpty(pageId));
-
-            if (qnaPage != null)
+            if (_AssessorSequences.Contains(sequenceNumber))
             {
-                page = new AssessorPage
+                var qnaSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceNumber, sectionNumber);
+                var qnaPage = qnaSection?.QnAData.Pages.FirstOrDefault(p => p.PageId == pageId || string.IsNullOrEmpty(pageId));
+
+                if (qnaPage != null)
                 {
-                    ApplicationId = applicationId,
-                    SequenceNumber = sequenceNumber,
-                    SectionNumber = sectionNumber,
-                    PageId = qnaPage.PageId,
-
-                    DisplayType = qnaPage.DisplayType,
-                    Caption = _assessorLookupService.GetTitleForSequence(sequenceNumber) ?? qnaSection.LinkTitle,
-                    Heading = _assessorLookupService.GetTitleForPage(qnaPage.PageId) ?? qnaPage.LinkTitle,
-                    Title = qnaPage.Title,
-                    BodyText = qnaPage.BodyText,
-
-                    Questions = qnaPage.Questions.Select(qnaQuestion =>
+                    page = new AssessorPage
                     {
-                        return new AssessorQuestion
+                        ApplicationId = applicationId,
+                        SequenceNumber = sequenceNumber,
+                        SectionNumber = sectionNumber,
+                        PageId = qnaPage.PageId,
+
+                        DisplayType = qnaPage.DisplayType,
+                        Caption = _assessorLookupService.GetTitleForSequence(sequenceNumber) ?? qnaSection.LinkTitle,
+                        Heading = _assessorLookupService.GetTitleForPage(qnaPage.PageId) ?? qnaPage.LinkTitle,
+                        Title = qnaPage.Title,
+                        BodyText = qnaPage.BodyText,
+
+                        Questions = qnaPage.Questions.Select(qnaQuestion =>
                         {
-                            QuestionId = qnaQuestion.QuestionId,
-                            Label = qnaQuestion.Label,
-                            QuestionBodyText = qnaQuestion.QuestionBodyText,
-                            InputType = qnaQuestion.Input?.Type,
-                            InputPrefix = qnaQuestion.Input?.InputPrefix,
-                            InputSuffix = qnaQuestion.Input?.InputSuffix
-                        };
-                    }).ToList(),
+                            return new AssessorQuestion
+                            {
+                                QuestionId = qnaQuestion.QuestionId,
+                                Label = qnaQuestion.Label,
+                                QuestionBodyText = qnaQuestion.QuestionBodyText,
+                                InputType = qnaQuestion.Input?.Type,
+                                InputPrefix = qnaQuestion.Input?.InputPrefix,
+                                InputSuffix = qnaQuestion.Input?.InputSuffix
+                            };
+                        }).ToList(),
 
-                    Answers = qnaPage.PageOfAnswers.SelectMany(pao => pao.Answers).ToLookup(a => a.QuestionId).Select(group =>
+                        Answers = qnaPage.PageOfAnswers.SelectMany(pao => pao.Answers).ToLookup(a => a.QuestionId).Select(group =>
+                        {
+                            return new AssessorAnswer { QuestionId = group.Key, Value = group.FirstOrDefault()?.Value };
+                        }).ToList()
+                    };
+
+                    var nextPageAction = await _qnaApiClient.SkipPageBySectionNo(page.ApplicationId, page.SequenceNumber, page.SectionNumber, page.PageId);
+
+                    if (nextPageAction != null && "NextPage".Equals(nextPageAction.NextAction, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        return new AssessorAnswer { QuestionId = group.Key, Value = group.FirstOrDefault()?.Value };
-                    }).ToList()
-                };
-
-                var nextPageAction = await _qnaApiClient.SkipPageBySectionNo(page.ApplicationId, page.SequenceNumber, page.SectionNumber, page.PageId);
-
-                if (nextPageAction != null && "NextPage".Equals(nextPageAction.NextAction, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    page.NextPageId = nextPageAction.NextActionId;
+                        page.NextPageId = nextPageAction.NextActionId;
+                    }
                 }
             }
 

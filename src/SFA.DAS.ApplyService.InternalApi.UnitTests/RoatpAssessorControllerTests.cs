@@ -272,6 +272,15 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         }
 
         [Test]
+        public async Task GetFirstAssessorPage_returns_null_if_invalid_sequence()
+        {
+            var invalidSequenceId = int.MinValue;
+
+            var actualPage = await _controller.GetFirstAssessorPage(_applicationId, invalidSequenceId, _sectionId);
+            Assert.That(actualPage, Is.Null);
+        }
+
+        [Test]
         public async Task DownloadFile_gets_expected_file()
         {
             var questionId = "1";
