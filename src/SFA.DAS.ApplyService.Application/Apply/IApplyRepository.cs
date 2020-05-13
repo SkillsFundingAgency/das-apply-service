@@ -22,6 +22,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<string> GetGatewayPageComments(Guid applicationId, string pageId);
 
         Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string userName, string status, string comments);
+        Task<bool> UpdateGatewayReviewStatusAndComment(Guid applicationId, string gatewayReviewStatus, string gatewayReviewComment, string userName);
 
         Task<bool> CanSubmitApplication(Guid applicationId);
         Task SubmitApplication(Guid applicationId, ApplyData applyData, Guid submittedBy);
@@ -39,8 +40,9 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<RoatpApplicationSummaryItem>> GetClosedApplications();
 
         Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications();
-        Task<List<RoatpFinancialSummaryItem>> GetFeedbackAddedFinancialApplications();
+        Task<List<RoatpFinancialSummaryItem>> GetClarificationFinancialApplications();
         Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications();
+        Task<RoatpFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts();
         Task<bool> StartFinancialReview(Guid applicationId, string reviewer);
         Task<bool> RecordFinancialGrade(Guid applicationId, FinancialReviewDetails financialReviewDetails, string financialReviewStatus);
 
