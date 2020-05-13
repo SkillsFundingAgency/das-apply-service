@@ -91,16 +91,37 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 .ReturnsAsync(pendingOversights);
 
             var actualResult = await _controller.OversightsPending();
-
             var returnedOversight = actualResult.Value[0];
 
-            Assert.AreEqual(oversight.Id, returnedOversight.Id);
-            Assert.AreEqual(oversight.ApplicationId, returnedOversight.ApplicationId);
-            Assert.AreEqual(oversight.OrganisationName, returnedOversight.OrganisationName);
-            Assert.AreEqual(oversight.Ukprn, returnedOversight.Ukprn);
-            Assert.AreEqual(oversight.ProviderRoute, returnedOversight.ProviderRoute);
-            Assert.AreEqual(oversight.ApplicationReferenceNumber, returnedOversight.ApplicationReferenceNumber);
-            Assert.AreEqual(oversight.OversightStatus, returnedOversight.OversightStatus);
+            Assert.That(returnedOversight,Is.SameAs(oversight));
+        }
+
+
+        [Test]
+        public async Task Check_oversight_details_result_is_as_expected()
+        {
+            var applicationId = Guid.NewGuid();
+
+            var oversight = new ApplicationOversightDetails
+            {
+                Id = Guid.NewGuid(),
+                ApplicationId = applicationId,
+                OrganisationName = "XXX Limited",
+                Ukprn = "12344321",
+                ProviderRoute = "Main",
+                ApplicationReferenceNumber = "APR000111",
+                OversightStatus = "New"
+            };
+
+            _mediator
+                .Setup(x => x.Send(It.IsAny<GetOversightDetailsRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(oversight);
+
+            var actualResult = await _controller.OversightDetails(applicationId);
+
+            var returnedOversight = actualResult.Value;
+
+            Assert.That(returnedOversight, Is.SameAs(oversight));
         }
 
         [TestCase(OversightReviewStatus.Successful)]

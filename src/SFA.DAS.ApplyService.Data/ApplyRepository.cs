@@ -1165,10 +1165,22 @@ namespace SFA.DAS.ApplyService.Data
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.DeletedAt IS NULL
-                          and GatewayReviewStatus  in ('Pass')
-						  and AssessorReviewStatus in ('Pass','Fail')
-						  and FinancialReviewStatus in ('Pass','Fail')
-						  and apply.OversightStatus NOT IN ('Successful','Unsuccessful')")).ToList();
+                          and GatewayReviewStatus  in (@gatewayReviewStatusApproved)
+						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
+						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)
+						  and apply.OversightStatus NOT IN (@oversightReviewStatusPass,@oversightReviewStatusFail)
+                            order by JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') ASC, Org.Name ASC", new
+                        {
+                            gatewayReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.GatewayReviewStatus.Approved,
+                            assessorReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Approved,
+                            assessorReviewStatusDeclined = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Declined,
+                            financialReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Pass,
+                            financialReviewStatusDeclined = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Fail,
+                            financialReviewStatusExempt = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Exempt,
+                            oversightReviewStatusPass= SFA.DAS.ApplyService.Domain.Entities.OversightReviewStatus.Successful,
+                            oversightReviewStatusFail = SFA.DAS.ApplyService.Domain.Entities.OversightReviewStatus.Unsuccessful
+
+                        })).ToList();
             }
         }
 
@@ -1190,10 +1202,45 @@ namespace SFA.DAS.ApplyService.Data
                               FROM Apply apply
 	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                      WHERE apply.DeletedAt IS NULL
-                          and GatewayReviewStatus  in ('Pass')
-						  and AssessorReviewStatus in ('Pass','Fail')
-						  and FinancialReviewStatus in ('Pass','Fail')
-						  and apply.OversightStatus IN ('Successful','Unsuccessful')")).ToList();
+                          and GatewayReviewStatus  in (@gatewayReviewStatusApproved)
+						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
+						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)
+						  and apply.OversightStatus IN (@oversightReviewStatusPass,@oversightReviewStatusFail)  
+                            order by JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') ASC, Apply.ApplicationDeterminedDate ASC, Org.Name ASC", new
+                    {
+                        gatewayReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.GatewayReviewStatus.Approved,
+                        assessorReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Approved,
+                        assessorReviewStatusDeclined = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Declined,
+                        financialReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Pass,
+                        financialReviewStatusDeclined = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Fail,
+                        financialReviewStatusExempt = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Exempt,
+                        oversightReviewStatusPass = SFA.DAS.ApplyService.Domain.Entities.OversightReviewStatus.Successful,
+                        oversightReviewStatusFail = SFA.DAS.ApplyService.Domain.Entities.OversightReviewStatus.Unsuccessful
+
+                    })).ToList();
+            }
+        }
+
+        public async Task<ApplicationOversightDetails> GetOversightDetails(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var applyDataResults = await connection.QueryAsync<ApplicationOversightDetails>(@"SELECT 
+                            apply.Id AS Id,
+                            apply.ApplicationId AS ApplicationId,
+							 org.Name AS OrganisationName,
+					        JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
+							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
+							apply.OversightStatus,
+							Apply.ApplicationDeterminedDate
+                              FROM Apply apply
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+                        WHERE apply.ApplicationId = @applicationId",
+                    new { applicationId });
+
+                return applyDataResults.FirstOrDefault();
             }
         }
 
