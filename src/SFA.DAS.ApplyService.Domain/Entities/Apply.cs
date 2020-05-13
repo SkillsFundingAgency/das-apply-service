@@ -154,7 +154,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Resubmitted = "Resubmitted";
 
         public const string Pass = "Pass";
-        public const string Fail = "Fail";   
+        public const string Fail = "Fail";
         public const string Exempt = "Exempt";
     }
 

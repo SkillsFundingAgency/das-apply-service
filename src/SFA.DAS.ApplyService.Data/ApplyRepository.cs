@@ -447,13 +447,14 @@ namespace SFA.DAS.ApplyService.Data
                                 [NotRequired] nvarchar(max) '$.NotRequired'
                             )
                         ) s
-                        WHERE s.SequenceNo = @financialHealthSequence
+                        WHERE s.SequenceNo = @financialHealthSequence AND s.NotRequired = 'false'
                         AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
-                        AND apply.FinancialReviewStatus IN (@financialStatusNew, @financialStatusInProgress)",
+                        AND apply.FinancialReviewStatus IN ( @financialStatusDraft, @financialStatusNew, @financialStatusInProgress)",
                         new
                         {
                             financialHealthSequence = 2,
                             applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
+                            financialStatusDraft = FinancialReviewStatus.Draft,
                             financialStatusNew = FinancialReviewStatus.New,
                             financialStatusInProgress = FinancialReviewStatus.InProgress
                         })).ToList();
@@ -495,7 +496,7 @@ namespace SFA.DAS.ApplyService.Data
                                 [NotRequired] nvarchar(max) '$.NotRequired'
                             )
                         ) s
-                        WHERE s.SequenceNo = @financialHealthSequence
+                        WHERE s.SequenceNo = @financialHealthSequence AND s.NotRequired = 'false'
                         AND apply.DeletedAt IS NULL
                         AND apply.FinancialReviewStatus IN ( @financialStatusClarificationSent )",
                         new
@@ -541,15 +542,16 @@ namespace SFA.DAS.ApplyService.Data
                                 [NotRequired] nvarchar(max) '$.NotRequired'
                             )
                         ) s
-                        WHERE s.SequenceNo = @financialHealthSequence
+                        WHERE s.SequenceNo = @financialHealthSequence AND s.NotRequired = 'false'
                         AND apply.DeletedAt IS NULL
-                        AND apply.FinancialReviewStatus IN ( @financialStatusPass, @financialStatusFail, @financialStatusExempt )",
+                        AND apply.FinancialReviewStatus IN ( @financialStatusApproved, @financialStatusDeclined, @financialStatusExempt, @financialStatusClarification )",
                        new
                        {
                            financialHealthSequence = 2,
-                           financialStatusPass = FinancialReviewStatus.Pass,
-                           financialStatusFail = FinancialReviewStatus.Fail,
-                           financialStatusExempt = FinancialReviewStatus.Exempt
+                           financialStatusApproved = FinancialReviewStatus.Pass,
+                           financialStatusDeclined = FinancialReviewStatus.Fail,
+                           financialStatusExempt = FinancialReviewStatus.Exempt,
+                           financialStatusClarification = FinancialReviewStatus.ClarificationSent // Place in here till we're happy with a Clarification tab in Admin Services
                        })).ToList();
             }
         }
