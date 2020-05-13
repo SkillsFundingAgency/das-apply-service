@@ -447,8 +447,8 @@ namespace SFA.DAS.ApplyService.Data
                                 [NotRequired] nvarchar(max) '$.NotRequired'
                             )
                         ) s
-                        WHERE s.SequenceNo = @financialHealthSequence AND s.NotRequired = 'false'
-                        AND apply.ApplicationStatus = @applicationStatusGatewayAssessed
+                        WHERE s.SequenceNo = @financialHealthSequence
+                        AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
                         AND apply.FinancialReviewStatus IN (@financialStatusNew, @financialStatusInProgress)",
                         new
                         {
@@ -541,7 +541,7 @@ namespace SFA.DAS.ApplyService.Data
                                 [NotRequired] nvarchar(max) '$.NotRequired'
                             )
                         ) s
-                        WHERE s.SequenceNo = @financialHealthSequence AND s.NotRequired = 'false'
+                        WHERE s.SequenceNo = @financialHealthSequence
                         AND apply.DeletedAt IS NULL
                         AND apply.FinancialReviewStatus IN ( @financialStatusPass, @financialStatusFail, @financialStatusExempt )",
                        new
