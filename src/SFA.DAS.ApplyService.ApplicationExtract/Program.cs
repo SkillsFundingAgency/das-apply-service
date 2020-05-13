@@ -79,8 +79,14 @@ namespace SFA.DAS.ApplyService.ApplicationExtract
                 if (!string.IsNullOrEmpty(questionAnswer))
                 {
                     var tabularData = JsonConvert.DeserializeObject<TabularData>(questionAnswer);
-                    questionText = tabularData.Caption;
+                    questionText = tabularData.Caption ?? question.Label;
                     questionAnswer = "";
+                    foreach (var column in tabularData.HeadingTitles)
+                    {
+                        questionText += " - ";
+                        questionText += column;
+                    }
+
                     foreach (var row in tabularData.DataRows)
                     {
                         questionAnswer += "\n";
@@ -93,11 +99,14 @@ namespace SFA.DAS.ApplyService.ApplicationExtract
                 }
             }
 
-            outputSection.Questions.Add(new Question
+            if (!string.IsNullOrEmpty(questionAnswer))
             {
-                QuestionText = questionText,
-                Answer = questionAnswer
-            });
+                outputSection.Questions.Add(new Question
+                {
+                    QuestionText = questionText,
+                    Answer = questionAnswer
+                });
+            }
 
             if (question.Input.Type == "FileUpload" && !string.IsNullOrEmpty(questionAnswer))
             {
