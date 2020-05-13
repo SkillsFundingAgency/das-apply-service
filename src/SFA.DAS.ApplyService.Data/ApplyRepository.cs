@@ -1192,7 +1192,7 @@ namespace SFA.DAS.ApplyService.Data
 						  and apply.OversightStatus NOT IN (@oversightReviewStatusPass,@oversightReviewStatusFail)
                             order by JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') ASC, Org.Name ASC", new
                         {
-                            gatewayReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.GatewayReviewStatus.Approved,
+                            gatewayReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.GatewayReviewStatus.Pass,
                             assessorReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Approved,
                             assessorReviewStatusDeclined = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Declined,
                             financialReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Pass,
@@ -1229,7 +1229,7 @@ namespace SFA.DAS.ApplyService.Data
 						  and apply.OversightStatus IN (@oversightReviewStatusPass,@oversightReviewStatusFail)  
                             order by JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') ASC, Apply.ApplicationDeterminedDate ASC, Org.Name ASC", new
                     {
-                        gatewayReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.GatewayReviewStatus.Approved,
+                        gatewayReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.GatewayReviewStatus.Pass,
                         assessorReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Approved,
                         assessorReviewStatusDeclined = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Declined,
                         financialReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Pass,
