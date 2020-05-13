@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using Moq;
 using NUnit.Framework;
@@ -45,9 +43,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.OversightHandlerTe
             ApplyRepository.Setup(r => r.GetOversightDetails(applicationId)).ReturnsAsync(applicationDetails);
 
             var result = _handler.Handle(new GetOversightDetailsRequest(applicationId), new CancellationToken()).GetAwaiter().GetResult();
-
-            Assert.AreEqual(applicationId, result.ApplicationId);
-           
+            Assert.That(applicationDetails, Is.SameAs(result));
         }
     }
 }

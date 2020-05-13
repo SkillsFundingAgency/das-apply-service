@@ -86,16 +86,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 .ReturnsAsync(pendingOversights);
 
             var actualResult = await _controller.OversightsPending();
-
             var returnedOversight = actualResult.Value[0];
 
-            Assert.AreEqual(oversight.Id, returnedOversight.Id);
-            Assert.AreEqual(oversight.ApplicationId, returnedOversight.ApplicationId);
-            Assert.AreEqual(oversight.OrganisationName, returnedOversight.OrganisationName);
-            Assert.AreEqual(oversight.Ukprn, returnedOversight.Ukprn);
-            Assert.AreEqual(oversight.ProviderRoute, returnedOversight.ProviderRoute);
-            Assert.AreEqual(oversight.ApplicationReferenceNumber, returnedOversight.ApplicationReferenceNumber);
-            Assert.AreEqual(oversight.OversightStatus, returnedOversight.OversightStatus);
+            Assert.That(returnedOversight,Is.SameAs(oversight));
         }
 
 
@@ -123,14 +116,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             var returnedOversight = actualResult.Value;
 
-            Assert.AreEqual(oversight.Id, returnedOversight.Id);
-            Assert.AreEqual(applicationId, returnedOversight.ApplicationId);
-            Assert.AreEqual(oversight.ApplicationId, returnedOversight.ApplicationId);
-            Assert.AreEqual(oversight.OrganisationName, returnedOversight.OrganisationName);
-            Assert.AreEqual(oversight.Ukprn, returnedOversight.Ukprn);
-            Assert.AreEqual(oversight.ProviderRoute, returnedOversight.ProviderRoute);
-            Assert.AreEqual(oversight.ApplicationReferenceNumber, returnedOversight.ApplicationReferenceNumber);
-            Assert.AreEqual(oversight.OversightStatus, returnedOversight.OversightStatus);
+            Assert.That(returnedOversight, Is.SameAs(oversight));
         }
     }
 }
