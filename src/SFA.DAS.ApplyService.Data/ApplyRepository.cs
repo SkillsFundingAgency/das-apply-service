@@ -478,7 +478,7 @@ namespace SFA.DAS.ApplyService.Data
                         new
                         {
                             financialHealthSequence = 2,
-                            financialStatusClarification = FinancialReviewStatus.Clarification
+                            financialStatusClarification = FinancialReviewStatus.ClarificationSent
                         })).ToList();
             }
         }
@@ -522,10 +522,10 @@ namespace SFA.DAS.ApplyService.Data
                        new
                        {
                            financialHealthSequence = 2,
-                           financialStatusApproved = FinancialReviewStatus.Approved,
-                           financialStatusDeclined = FinancialReviewStatus.Declined,
+                           financialStatusApproved = FinancialReviewStatus.Pass,
+                           financialStatusDeclined = FinancialReviewStatus.Fail,
                            financialStatusExempt = FinancialReviewStatus.Exempt,
-                           financialStatusClarification = FinancialReviewStatus.Clarification // Place in here till we're happy with a Clarification tab in Admin Services
+                           financialStatusClarification = FinancialReviewStatus.ClarificationSent // Place in here till we're happy with a Clarification tab in Admin Services
                        })).ToList();
             }
         }
@@ -1156,8 +1156,8 @@ namespace SFA.DAS.ApplyService.Data
                             gatewayReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.GatewayReviewStatus.Approved,
                             assessorReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Approved,
                             assessorReviewStatusDeclined = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Declined,
-                            financialReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Approved,
-                            financialReviewStatusDeclined = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Declined,
+                            financialReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Pass,
+                            financialReviewStatusDeclined = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Fail,
                             financialReviewStatusExempt = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Exempt,
                             oversightReviewStatusPass= SFA.DAS.ApplyService.Domain.Entities.OversightReviewStatus.Pass,
                             oversightReviewStatusFail = SFA.DAS.ApplyService.Domain.Entities.OversightReviewStatus.Fail
@@ -1193,8 +1193,8 @@ namespace SFA.DAS.ApplyService.Data
                         gatewayReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.GatewayReviewStatus.Approved,
                         assessorReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Approved,
                         assessorReviewStatusDeclined = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Declined,
-                        financialReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Approved,
-                        financialReviewStatusDeclined = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Declined,
+                        financialReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Pass,
+                        financialReviewStatusDeclined = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Fail,
                         financialReviewStatusExempt = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Exempt,
                         oversightReviewStatusPass = SFA.DAS.ApplyService.Domain.Entities.OversightReviewStatus.Pass,
                         oversightReviewStatusFail = SFA.DAS.ApplyService.Domain.Entities.OversightReviewStatus.Fail
