@@ -1153,14 +1153,14 @@ namespace SFA.DAS.ApplyService.Data
 						  and apply.OversightStatus NOT IN (@oversightReviewStatusPass,@oversightReviewStatusFail)
                             order by JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') ASC, Org.Name ASC", new
                         {
-                            gatewayReviewStatusApproved = GatewayReviewStatus.Approved,
-                            assessorReviewStatusApproved = AssessorReviewStatus.Approved,
-                            assessorReviewStatusDeclined = AssessorReviewStatus.Declined,
-                            financialReviewStatusApproved = FinancialReviewStatus.Approved,
-                            financialReviewStatusDeclined = FinancialReviewStatus.Declined,
-                            financialReviewStatusExempt = FinancialReviewStatus.Exempt,
-                            oversightReviewStatusPass=OversightReviewStatus.Pass,
-                            oversightReviewStatusFail = OversightReviewStatus.Fail
+                            gatewayReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.GatewayReviewStatus.Approved,
+                            assessorReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Approved,
+                            assessorReviewStatusDeclined = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Declined,
+                            financialReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Approved,
+                            financialReviewStatusDeclined = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Declined,
+                            financialReviewStatusExempt = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Exempt,
+                            oversightReviewStatusPass= SFA.DAS.ApplyService.Domain.Entities.OversightReviewStatus.Pass,
+                            oversightReviewStatusFail = SFA.DAS.ApplyService.Domain.Entities.OversightReviewStatus.Fail
 
                         })).ToList();
             }
@@ -1190,14 +1190,14 @@ namespace SFA.DAS.ApplyService.Data
 						  and apply.OversightStatus IN (@oversightReviewStatusPass,@oversightReviewStatusFail)  
                             order by JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') ASC, Apply.ApplicationDeterminedDate ASC, Org.Name ASC", new
                     {
-                        gatewayReviewStatusApproved = GatewayReviewStatus.Approved,
-                        assessorReviewStatusApproved = AssessorReviewStatus.Approved,
-                        assessorReviewStatusDeclined = AssessorReviewStatus.Declined,
-                        financialReviewStatusApproved = FinancialReviewStatus.Approved,
-                        financialReviewStatusDeclined = FinancialReviewStatus.Declined,
-                        financialReviewStatusExempt = FinancialReviewStatus.Exempt,
-                        oversightReviewStatusPass = OversightReviewStatus.Pass,
-                        oversightReviewStatusFail = OversightReviewStatus.Fail
+                        gatewayReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.GatewayReviewStatus.Approved,
+                        assessorReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Approved,
+                        assessorReviewStatusDeclined = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Declined,
+                        financialReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Approved,
+                        financialReviewStatusDeclined = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Declined,
+                        financialReviewStatusExempt = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Exempt,
+                        oversightReviewStatusPass = SFA.DAS.ApplyService.Domain.Entities.OversightReviewStatus.Pass,
+                        oversightReviewStatusFail = SFA.DAS.ApplyService.Domain.Entities.OversightReviewStatus.Fail
 
                     })).ToList();
             }
