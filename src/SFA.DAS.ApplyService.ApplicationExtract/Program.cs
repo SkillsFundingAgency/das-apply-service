@@ -101,6 +101,11 @@ namespace SFA.DAS.ApplyService.ApplicationExtract
 
             if (!string.IsNullOrEmpty(questionAnswer))
             {
+                if (string.IsNullOrEmpty(questionText))
+                {
+                    questionText = question.QuestionTag;
+                }
+
                 outputSection.Questions.Add(new Question
                 {
                     QuestionText = questionText,
