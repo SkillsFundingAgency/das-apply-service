@@ -90,7 +90,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 }
             }
 
-            return overviewSequences;
+            return overviewSequences.OrderBy(seq => seq.SequenceNumber).ToList();
         }
 
         private AssessorSequence GetAssessorSequence(IEnumerable<ApplicationSection> qnaSections, int sequenceNumber)
@@ -109,7 +109,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                     .Select(sec =>
                     {
                         return new AssessorSection { SectionNumber = sec.SectionId, LinkTitle = sec.Title, Status = string.Empty };
-                    }).ToList()
+                    })
+                    .OrderBy(sec => sec.SectionNumber).ToList()
                 };
             }
 
