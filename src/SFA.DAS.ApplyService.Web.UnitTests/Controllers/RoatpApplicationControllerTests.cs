@@ -41,7 +41,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IConfigurationService> _configService;
         private Mock<IUserService> _userService;
         private Mock<IQnaApiClient> _qnaApiClient;
-        private Mock<IProcessPageFlowService> _processPageFlowService;
         private Mock<IQuestionPropertyTokeniser> _questionPropertyTokeniser;
         private Mock<IOptions<List<TaskListConfiguration>>> _configuration;
         private Mock<IPageNavigationTrackingService> _pageNavigationTrackingService;
@@ -71,7 +70,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _configService = new Mock<IConfigurationService>();
             _userService = new Mock<IUserService>();
             _qnaApiClient = new Mock<IQnaApiClient>();
-            _processPageFlowService = new Mock<IProcessPageFlowService>();
             _pagesWithSectionsFlowService = new Mock<IPagesWithSectionsFlowService>();
 
             _questionPropertyTokeniser = new Mock<IQuestionPropertyTokeniser>();
@@ -87,7 +85,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _controller = new RoatpApplicationController(_apiClient.Object, _logger.Object, _sessionService.Object, _configService.Object,
                                                          _userService.Object, _usersApiClient.Object, _qnaApiClient.Object, _configuration.Object,
-                                                         _processPageFlowService.Object, _pagesWithSectionsFlowService.Object,
+                                                         _pagesWithSectionsFlowService.Object,
                                                          _questionPropertyTokeniser.Object, _pageOverrideConfiguration.Object,
                                                          _pageNavigationTrackingService.Object, _qnaLinks.Object, _customValidatorFactory.Object,
                                                          _notRequiredOverrides.Object, _roatpApiClient.Object,
