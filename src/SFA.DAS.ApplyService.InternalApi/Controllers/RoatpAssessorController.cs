@@ -14,6 +14,7 @@ using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.InternalApi.Services;
+using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -79,13 +80,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             var overviewSequences = new List<AssessorSequence>();
 
-            var allQnaSections = await _qnaApiClient.GetAllApplicationSections(applicationId);
+            var application = await _mediator.Send(new GetApplicationRequest(applicationId));
+            var allQnaSections = await _qnaApiClient.GetAllApplicationSections(applicationId);            
 
-            if (allQnaSections != null)
+            if (allQnaSections != null && application?.ApplyData != null)
             {
                 foreach (var sequenceNumber in _AssessorSequences)
                 {
-                    var sequence = GetAssessorSequence(allQnaSections, sequenceNumber);
+                    var applySequence = application.ApplyData.Sequences?.FirstOrDefault(seq => seq.SequenceNo == sequenceNumber);
+
+                    var sequence = GetAssessorSequence(sequenceNumber, allQnaSections, applySequence);
                     overviewSequences.Add(sequence);
                 }
             }
@@ -93,7 +97,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return overviewSequences.OrderBy(seq => seq.SequenceNumber).ToList();
         }
 
-        private AssessorSequence GetAssessorSequence(IEnumerable<ApplicationSection> qnaSections, int sequenceNumber)
+        private AssessorSequence GetAssessorSequence(int sequenceNumber, IEnumerable<ApplicationSection> qnaSections, ApplySequence applySequence)
         {
             AssessorSequence sequence = null;
 
@@ -112,6 +116,19 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                     })
                     .OrderBy(sec => sec.SectionNumber).ToList()
                 };
+
+                if(applySequence != null)
+                {
+                    foreach (var section in sequence.Sections)
+                    {
+                        var applySection = applySequence?.Sections?.FirstOrDefault(sec => sec.SectionNo == section.SectionNumber);
+
+                        if (applySequence.NotRequired || applySection?.NotRequired == true)
+                        {
+                            section.Status = "Not Required";
+                        }
+                    }
+                }
             }
 
             return sequence;

@@ -5,6 +5,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Assessor;
+using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -102,6 +103,17 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         [Test]
         public async Task GetAssessorOverview_gets_expected_sequences()
         {
+            var application = new Apply
+            {
+                ApplicationId = _applicationId,
+                ApplyData = new ApplyData
+                {
+                    Sequences = new List<ApplySequence>()
+                }
+            };
+
+            _mediator.Setup(x => x.Send(It.Is<GetApplicationRequest>(y => y.ApplicationId == _applicationId), It.IsAny<CancellationToken>())).ReturnsAsync(application);
+
             var allSections = new List<ApplicationSection>
             {
                 new ApplicationSection {ApplicationId = _applicationId, SequenceId = RoatpWorkflowSequenceIds.Preamble, SectionId = 1},
