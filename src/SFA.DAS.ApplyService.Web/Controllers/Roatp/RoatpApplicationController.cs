@@ -462,11 +462,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             PopulateAdditionalSequenceFields(sequences);
 
             var filteredSequences = sequences.Where(x => x.SequenceId != RoatpWorkflowSequenceIds.Preamble && x.SequenceId != RoatpWorkflowSequenceIds.ConditionsOfAcceptance).OrderBy(y => y.SequenceId);
+            var sections = await _qnaApiClient.GetSections(applicationId);
 
             foreach (var sequence in filteredSequences)
             {
-                var sections = await _qnaApiClient.GetSections(applicationId, sequence.Id);
-                sequence.Sections = sections.ToList();
+                sequence.Sections = sections.Where(s => s.SequenceId == sequence.SequenceId).ToList();
             }
 
             var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
@@ -1221,7 +1221,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             // FUTURE WORK: Validate all sections have had requested feedback answered
 
 
-            var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
             var providerRoute = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.ProviderRoute);
 
             var application = await _apiClient.GetApplication(model.ApplicationId);
@@ -1231,6 +1230,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             foreach (var sequence in application.ApplyData.Sequences)
             {
                 var applicationSequence = await _qnaApiClient.GetSequenceBySequenceNo(model.ApplicationId, sequence.SequenceNo);
+
                 var sections = await _qnaApiClient.GetSections(model.ApplicationId, applicationSequence.Id);
                 applicationSequence.Sections = sections.ToList();
                 foreach (var section in sections)
