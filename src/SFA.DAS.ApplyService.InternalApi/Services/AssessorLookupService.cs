@@ -120,6 +120,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.AddressWhereApprenticesWillBeTrained:
                     return "Where apprentices will be trained";
 
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy:
+                    return "Management hierarchy for apprenticeships";
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ChooseYourOrganisationsSectors:
                     return "Sectors and employee experience";
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.MostExperiencedEmployee:

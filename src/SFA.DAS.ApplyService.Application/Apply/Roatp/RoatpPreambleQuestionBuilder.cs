@@ -294,6 +294,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
         public static class DeliveringApprenticeshipTraining
         {
+            public const string ManagementHierarchy = "7200";
             public const string ChooseYourOrganisationsSectors = "7600";
 
             public static class AgricultureEnvironmentalAndAnimalCare
