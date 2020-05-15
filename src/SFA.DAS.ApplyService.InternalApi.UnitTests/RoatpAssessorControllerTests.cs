@@ -301,7 +301,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             _qnaApiClient.Setup(x => x.DownloadSpecifiedFile(_applicationId, _sequenceId, _sectionId, _firstPageId, questionId, filename)).ReturnsAsync(expectedFileStream);
 
-            var result = _controller.DownloadFile(_applicationId, _sequenceId, _sectionId, _firstPageId, questionId, filename).Result;
+            var result = await _controller.DownloadFile(_applicationId, _sequenceId, _sectionId, _firstPageId, questionId, filename);
 
             Assert.AreSame(expectedFileStream, result);
         }
