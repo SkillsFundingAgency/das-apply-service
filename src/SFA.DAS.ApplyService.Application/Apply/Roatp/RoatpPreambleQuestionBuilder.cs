@@ -439,6 +439,18 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             }
         }
 
+        public static class EvaluatingApprenticeshipTraining
+        {
+            public const string QualityProcessEvaluating = "8100";
+            public const string QualityProcessImprovements = "8110";
+            public const string QualityProcessIncludesApprenticeshipTraining = "8200";
+            public const string QualityProcessQuality_MainEmployer = "8210";
+            public const string QualityProcessQuality_Supporting = "8220";
+            public const string QualityProcessReviewing = "8230";
+            public const string CollectApprenticeshipData = "8300";
+            public const string IndividualisedLearnerRecordData = "8310";
+        }
+
         public static class Finish
         {
             public static string ApplicationPermissionsChecksShutterPage = "10005";

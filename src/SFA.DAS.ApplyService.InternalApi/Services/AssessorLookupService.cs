@@ -194,6 +194,24 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                     return "An example of how the policy is used to improve employee sector expertise";
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ImproveEmployeeKnowledge:
                     return "An example of how the policy is used to maintain employee teaching and training knowledge";
+
+                case RoatpWorkflowPageIds.EvaluatingApprenticeshipTraining.QualityProcessEvaluating:
+                    return "Process for evaluating the quality of training delivered";
+                case RoatpWorkflowPageIds.EvaluatingApprenticeshipTraining.QualityProcessImprovements:
+                    return "Improvements made using process for evaluating the quality of training delivered";
+                case RoatpWorkflowPageIds.EvaluatingApprenticeshipTraining.QualityProcessIncludesApprenticeshipTraining:
+                    return "Process for evaluating the quality of training delivered include apprenticeship training";
+                case RoatpWorkflowPageIds.EvaluatingApprenticeshipTraining.QualityProcessQuality_MainEmployer:
+                    return "Evaluate the quality of apprenticeship training";
+                case RoatpWorkflowPageIds.EvaluatingApprenticeshipTraining.QualityProcessQuality_Supporting:
+                    return "Evaluate the quality of apprenticeship training";
+                case RoatpWorkflowPageIds.EvaluatingApprenticeshipTraining.QualityProcessReviewing:
+                    return "Review process for evaluating the quality of training delivered";
+                case RoatpWorkflowPageIds.EvaluatingApprenticeshipTraining.CollectApprenticeshipData:
+                    return "Systems and processes to collect apprenticeship data";
+                case RoatpWorkflowPageIds.EvaluatingApprenticeshipTraining.IndividualisedLearnerRecordData:
+                    return "Individualised Learner Record (ILR) data";
+
                 default:
                     return null;
             }
