@@ -120,8 +120,42 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.AddressWhereApprenticesWillBeTrained:
                     return "Where apprentices will be trained";
 
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.OverallAccountability:
+                    return "Overall accountability for apprenticeships";
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy:
                     return "Management hierarchy for apprenticeships";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.QualityAndHighStandards:
+                    return "Management hierarchy's expectations for quality and high standards in apprenticeship training";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.QualityAndHighStandardsMonitoring:
+                    return "How expectations for quality and high standards in apprenticeship training are monitored and evaluated";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.QualityAndHighStandardsResponsible:
+                    return "Overall responsibility for maintaining expectations for quality and high standards in apprenticeship training";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.QualityAndHighStandardsExpectations:
+                    return "Expectations for quality and high standards in apprenticeship training communicated to employees";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.TeamResponsible:
+                    return "Team responsible for developing and delivering training";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.PersonResponsible_SoleTrader:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.PersonResponsible:
+                    return "Someone responsible for developing and delivering training";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.DevelopAndDeliverTraining_Team:
+                    return "Who the team worked with to develop and deliver training";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.OverallManager_MainEmployer:
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.OverallManager_Supporting:
+                    return "Overall manager for the team responsible for developing and delivering training";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HowTeamWorked_Organisations:
+                    return "How the team worked with other organisations to develop and deliver training";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HowTeamWorked_OrganisationsAndEmployers:
+                    return "How the team worked with other organisations and employers to develop and deliver training";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HowTeamWorked_Employers:
+                    return "How the team worked with employers to develop and deliver training";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.DevelopAndDeliverTraining_Person:
+                    return "Who has this person has worked with to develop and deliver training?";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HowPersonWorked_Organisations:
+                    return "How has this person worked with other organisations to develop and deliver training";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HowPersonWorked_OrganisationsAndEmployers:
+                    return "How has this person worked with other organisations and employers to develop and deliver training";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HowPersonWorked_Employers:
+                    return "How has this person worked with employers to develop and deliver training";
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ChooseYourOrganisationsSectors:
                     return "Sectors and employee experience";
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.MostExperiencedEmployee:
@@ -154,6 +188,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                     return "Employee experience in 'Sales, marketing and procurement' sector";
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.TransportAndLogistics.MostExperiencedEmployee:
                     return "Employee experience in 'Transport and logistics' sector";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ProfessionalDevelopmentPolicy:
+                    return "Policy for professional development of employees";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ImproveEmployeeSectorExpertise:
+                    return "An example of how the policy is used to improve employee sector expertise";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ImproveEmployeeKnowledge:
+                    return "An example of how the policy is used to maintain employee teaching and training knowledge";
                 default:
                     return null;
             }
