@@ -120,6 +120,38 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.AddressWhereApprenticesWillBeTrained:
                     return "Where apprentices will be trained";
 
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ChooseYourOrganisationsSectors:
+                    return "Sectors and employee experience";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.MostExperiencedEmployee:
+                    return "Employee experience in 'Agriculture, environmental and animal care' sector";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.BusinessAndAdministration.MostExperiencedEmployee:
+                    return "Employee experience in 'Business and administration' sector";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CareServices.MostExperiencedEmployee:
+                    return "Employee experience in 'Care Services' sector";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CateringAndHospitality.MostExperiencedEmployee:
+                    return "Employee experience in 'Catering and hospitality' sector";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.Construction.MostExperiencedEmployee:
+                    return "Employee experience in 'Construction' sector";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CreativeAndDesign.MostExperiencedEmployee:
+                    return "Employee experience in 'Creative and design' sector";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.Digital.MostExperiencedEmployee:
+                    return "Employee experience in 'Digital' sector";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.EducationAndChildcare.MostExperiencedEmployee:
+                    return "Employee experience in 'Education and childcare' sector";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.EngineeringAndManufacturing.MostExperiencedEmployee:
+                    return "Employee experience in 'Engineering and manufacturing' sector";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HairAndBeauty.MostExperiencedEmployee:
+                    return "Employee experience in 'Hair and Beauty' sector";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HealthAndScience.MostExperiencedEmployee:
+                    return "Employee experience in 'Health and Science' sector";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.LegalFinanceAndAccounting.MostExperiencedEmployee:
+                    return "Employee experience in 'Legal, finance and accounting' sector";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ProtectiveServices.MostExperiencedEmployee:
+                    return "Employee experience in 'Protective services' sector";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.SalesMarketingAndProcurement.MostExperiencedEmployee:
+                    return "Employee experience in 'Sales, marketing and procurement' sector";
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.TransportAndLogistics.MostExperiencedEmployee:
+                    return "Employee experience in 'Transport and logistics' sector";
                 default:
                     return null;
             }
