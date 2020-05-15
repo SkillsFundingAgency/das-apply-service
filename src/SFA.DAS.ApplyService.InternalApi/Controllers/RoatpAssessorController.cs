@@ -15,6 +15,7 @@ using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.InternalApi.Services;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
+using SFA.DAS.ApplyService.Domain.Apply.Assessor;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -59,6 +60,24 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             var applications = await _mediator.Send(new NewAssessorApplicationsRequest(userId));
 
             return applications;
+        }
+
+
+        [HttpGet("Assessor/Applications/ChosenSectors/{applicationId}")]
+        public async Task<List<Sector>> ChosenSectors(Guid applicationId)
+        {
+            var qnaSection = await _qnaApiClient.GetSectionBySectionNo(
+                applicationId,
+                RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
+                RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees);
+
+            var sectionStartingPages = qnaSection?.QnAData?.Pages.Where(x=>x.DisplayType == SectionDisplayType.PagesWithSections 
+                                                                           && x.PageId != RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ChooseYourOrganisationsSectors
+                                                                           && x.Active
+                                                                           && x.Complete 
+                                                                           && !x.NotRequired);
+
+            return sectionStartingPages?.Select(page => new Sector {Title = page.LinkTitle, PageId = page.PageId}).ToList();
         }
 
         [HttpPost("Assessor/Applications/{applicationId}/Assign")]
