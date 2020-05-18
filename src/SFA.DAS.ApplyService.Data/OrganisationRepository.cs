@@ -176,7 +176,7 @@ namespace SFA.DAS.ApplyService.Data
                 var sql =
                     "SELECT * " +
                     "FROM [Organisations] " +
-                    "WHERE Name LIKE @name";
+                    "WHERE Name = @name";
 
                 var orgs = await connection.QueryAsync<Organisation>(sql, new { name });
                 var org = orgs.FirstOrDefault();
