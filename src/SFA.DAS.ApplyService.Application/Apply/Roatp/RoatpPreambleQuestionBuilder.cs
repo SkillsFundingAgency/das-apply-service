@@ -294,7 +294,29 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
         public static class DeliveringApprenticeshipTraining
         {
+            public const string OverallAccountability = "7100";
+            public const string ManagementHierarchy = "7200";
+            public const string QualityAndHighStandards = "7300";
+            public const string QualityAndHighStandardsMonitoring = "7305";
+            public const string QualityAndHighStandardsResponsible = "7310";
+            public const string QualityAndHighStandardsExpectations = "7320";
+            public const string TeamResponsible = "7500";
+            public const string PersonResponsible_SoleTrader = "7510";
+            public const string PersonResponsible = "7520";
+            public const string DevelopAndDeliverTraining_Team = "7530";
+            public const string OverallManager_MainEmployer = "7540";
+            public const string OverallManager_Supporting = "7590";
+            public const string HowTeamWorked_Organisations = "7570";
+            public const string HowTeamWorked_OrganisationsAndEmployers = "7591";
+            public const string HowTeamWorked_Employers = "7592";
+            public const string DevelopAndDeliverTraining_Person = "7560";
+            public const string HowPersonWorked_Organisations = "7593";
+            public const string HowPersonWorked_OrganisationsAndEmployers = "7594";
+            public const string HowPersonWorked_Employers = "7595";
             public const string ChooseYourOrganisationsSectors = "7600";
+            public const string ProfessionalDevelopmentPolicy = "7700";
+            public const string ImproveEmployeeSectorExpertise = "7710";
+            public const string ImproveEmployeeKnowledge = "7720";
 
             public static class AgricultureEnvironmentalAndAnimalCare
             {
@@ -415,6 +437,18 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public const string TypeOfTrainingDelivered = "7682";
                 public const string HowTrainingHasBeenDelivered = "7683";
             }
+        }
+
+        public static class EvaluatingApprenticeshipTraining
+        {
+            public const string QualityProcessEvaluating = "8100";
+            public const string QualityProcessImprovements = "8110";
+            public const string QualityProcessIncludesApprenticeshipTraining = "8200";
+            public const string QualityProcessQuality_MainEmployer = "8210";
+            public const string QualityProcessQuality_Supporting = "8220";
+            public const string QualityProcessReviewing = "8230";
+            public const string CollectApprenticeshipData = "8300";
+            public const string IndividualisedLearnerRecordData = "8310";
         }
 
         public static class Finish
