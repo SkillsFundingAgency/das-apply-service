@@ -16,6 +16,7 @@ using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.InternalApi.Services;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Domain.Apply.Assessor;
+using SFA.DAS.ApplyService.InternalApi.Mappers;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -51,7 +52,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             var summary = await _mediator.Send(new AssessorSummaryRequest(userId));
 
-            return summary ;
+            return summary;
         }
 
         [HttpGet("Assessor/Applications/{userId}/New")]
@@ -100,7 +101,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             var overviewSequences = new List<AssessorSequence>();
 
             var application = await _mediator.Send(new GetApplicationRequest(applicationId));
-            var allQnaSections = await _qnaApiClient.GetAllApplicationSections(applicationId);            
+            var allQnaSections = await _qnaApiClient.GetAllApplicationSections(applicationId);
 
             if (allQnaSections != null && application?.ApplyData != null)
             {
@@ -122,7 +123,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             if (_AssessorSequences.Contains(sequenceNumber))
             {
-                var sectionsToExclude = GetWhatYouWillNeedSectionsForSequence(sequenceNumber);               
+                var sectionsToExclude = GetWhatYouWillNeedSectionsForSequence(sequenceNumber);
 
                 sequence = new AssessorSequence
                 {
@@ -136,7 +137,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                     .OrderBy(sec => sec.SectionNumber).ToList()
                 };
 
-                if(applySequence != null)
+                if (applySequence != null)
                 {
                     foreach (var section in sequence.Sections)
                     {
@@ -210,37 +211,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
                 if (qnaPage != null)
                 {
-                    page = new AssessorPage
-                    {
-                        ApplicationId = applicationId,
-                        SequenceNumber = sequenceNumber,
-                        SectionNumber = sectionNumber,
-                        PageId = qnaPage.PageId,
-
-                        DisplayType = qnaPage.DisplayType,
-                        Caption = _assessorLookupService.GetTitleForSequence(sequenceNumber) ?? qnaSection.LinkTitle,
-                        Heading = _assessorLookupService.GetTitleForPage(qnaPage.PageId) ?? qnaPage.LinkTitle,
-                        Title = qnaPage.Title,
-                        BodyText = qnaPage.BodyText,
-
-                        Questions = qnaPage.Questions.Select(qnaQuestion =>
-                        {
-                            return new AssessorQuestion
-                            {
-                                QuestionId = qnaQuestion.QuestionId,
-                                Label = qnaQuestion.Label,
-                                QuestionBodyText = qnaQuestion.QuestionBodyText,
-                                InputType = qnaQuestion.Input?.Type,
-                                InputPrefix = qnaQuestion.Input?.InputPrefix,
-                                InputSuffix = qnaQuestion.Input?.InputSuffix
-                            };
-                        }).ToList(),
-
-                        Answers = qnaPage.PageOfAnswers.SelectMany(pao => pao.Answers).ToLookup(a => a.QuestionId).Select(group =>
-                        {
-                            return new AssessorAnswer { QuestionId = group.Key, Value = group.FirstOrDefault()?.Value };
-                        }).ToList()
-                    };
+                    page = qnaPage.ToAssessorPage(_assessorLookupService, applicationId, sequenceNumber, sectionNumber);
 
                     var nextPageAction = await _qnaApiClient.SkipPageBySectionNo(page.ApplicationId, page.SequenceNumber, page.SectionNumber, page.PageId);
 
