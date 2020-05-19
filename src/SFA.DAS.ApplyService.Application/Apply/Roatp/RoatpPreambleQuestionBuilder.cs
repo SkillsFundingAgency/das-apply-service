@@ -154,6 +154,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         {
             public const int WhatYouWillNeed = 1;
             public const int ManagementHierarchy = 3;
+            public const int YourSectorsAndEmployees = 6;
         }
 
         public static class EvaluatingApprenticeshipTraining
@@ -201,13 +202,13 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
               public static string AddManagementHierarchy = "7200";
         }
 
-        public class DescribeYourOrganisation
+        public static class DescribeYourOrganisation
         {
             public static string MainSupportingStartPage = "140";
             public static string EmployerStartPage = "150";
         }
 
-        public class ExperienceAndAccreditations
+        public static class ExperienceAndAccreditations
         { 
             public static string OfficeForStudents = "235";
             public static string InitialTeacherTraining = "240";
@@ -227,14 +228,230 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static string SubcontractorContractFile = "360";
         }
 
-        public class CriminalComplianceChecks
+        public static class CriminalComplianceChecks
         {
             public static string CompositionCreditors = "3100";
             public static string OrganisationFailedToRepayFunds = "3110";
             public static string OrganisationContractTermination = "3120";
         }
 
-        public class Finish
+        public static class ProtectingYourApprentices
+        {
+            public const string ContinuityPlan = "4010";
+            public const string EqualityAndDiversityPolicy = "4020";
+            public const string SafeguardingPolicy = "4030";
+            public const string SafeguardingOverallResponsibility = "4035";
+            public const string SafeguardingPolicyIncludesPreventDutyPolicy = "4037";
+            public const string PreventDutyPolicy = "4038";
+            public const string HealthAndSafetyPolicy = "4040";
+            public const string HealthAndSafetyOverallResponsibility = "4050";
+            public const string ActingAsASubcontractor = "4060";
+        }
+
+        public static class ReadinessToEngage
+        {
+            public const string EngagedWithEmployers = "5100";
+            public const string RelationshipWithEmployers = "5110";
+            public const string RelationshipWithEmployersResponsible = "5120";
+            public const string PromoteApprenticeshipsToEmployers = "5130";
+            public const string ComplaintsPolicy = "5200";
+            public const string ComplaintsPolicyWebsite = "5210";
+            public const string ContractForServicesTemplate = "5300";
+            public const string CommitmentStatementTemplate = "5400";
+            public const string PriorLearningAssessment = "5500";
+            public const string PriorLearningQualifications = "5510";
+            public const string SubcontractorsUse = "5600";
+            public const string SubcontractorsDueDiligence = "5610";
+        }
+
+        public static class PlanningApprenticeshipTraining
+        {
+            public const string TypeOfApprenticeshipTraining_Main = "6020";
+            public const string TypeOfApprenticeshipTraining_Employer = "6022";
+            public const string TypeOfApprenticeshipTraining_Supporting = "6023";
+            public const string ApplicationStandards = "6030";
+            public const string ApplicationFrameworks_MainEmployer = "6050";
+            public const string ApplicationFrameworks_Supporting = "6060";
+            public const string OrganisationTransition_MainEmployer = "6052";
+            public const string OrganisationTransition_Supporting = "6062";
+            public const string OnlyDeliveringApprenticeshipFrameworks_MainEmployer = "6054";
+            public const string OnlyDeliveringApprenticeshipFrameworks_Supporting = "6064";
+            public const string ReadyToDeliverTraining = "6200";
+            public const string ReadyToDeliverTrainingResponsible = "6700";
+            public const string EngagingWithAwardingBodies = "6800";
+            public const string EngagingWithAssessmentOrganisations = "6900";
+            public const string EnsureApprenticesAreSupported = "6300";
+            public const string EnsureApprenticesAreSupportedHow = "6310";
+            public const string EnsureApprenticesAreSupportedOtherWays = "6320";
+            public const string ForecastingStarts = "6400";
+            public const string ReadyToDeliverAgainstStarts = "6410";
+            public const string RecruitNewStaff = "6420";
+            public const string RatioOfStaffToApprentices = "6430";
+            public const string OnTheJobTrainingTeachingMethods = "6500";
+            public const string OnTheJobTrainingTeachingRelevance = "6510";
+            public const string AddressWhereApprenticesWillBeTrained = "6600";
+        }
+
+        public static class DeliveringApprenticeshipTraining
+        {
+            public const string OverallAccountability = "7100";
+            public const string ManagementHierarchy = "7200";
+            public const string QualityAndHighStandards = "7300";
+            public const string QualityAndHighStandardsMonitoring = "7305";
+            public const string QualityAndHighStandardsResponsible = "7310";
+            public const string QualityAndHighStandardsExpectations = "7320";
+            public const string TeamResponsible = "7500";
+            public const string PersonResponsible_SoleTrader = "7510";
+            public const string PersonResponsible = "7520";
+            public const string DevelopAndDeliverTraining_Team = "7530";
+            public const string OverallManager_MainEmployer = "7540";
+            public const string OverallManager_Supporting = "7590";
+            public const string HowTeamWorked_Organisations = "7570";
+            public const string HowTeamWorked_OrganisationsAndEmployers = "7591";
+            public const string HowTeamWorked_Employers = "7592";
+            public const string DevelopAndDeliverTraining_Person = "7560";
+            public const string HowPersonWorked_Organisations = "7593";
+            public const string HowPersonWorked_OrganisationsAndEmployers = "7594";
+            public const string HowPersonWorked_Employers = "7595";
+            public const string ChooseYourOrganisationsSectors = "7600";
+            public const string ProfessionalDevelopmentPolicy = "7700";
+            public const string ImproveEmployeeSectorExpertise = "7710";
+            public const string ImproveEmployeeKnowledge = "7720";
+
+            public static class AgricultureEnvironmentalAndAnimalCare
+            {
+                public const string MostExperiencedEmployee = "7610";
+                public const string EmployeesExperience = "7611";
+                public const string TypeOfTrainingDelivered = "7612";
+                public const string HowTrainingHasBeenDelivered = "7613";
+            }
+
+            public static class BusinessAndAdministration
+            {
+                public const string MostExperiencedEmployee = "7615";
+                public const string EmployeesExperience = "7616";
+                public const string TypeOfTrainingDelivered = "7617";
+                public const string HowTrainingHasBeenDelivered = "7618";
+            }
+
+            public static class CareServices
+            {
+                public const string MostExperiencedEmployee = "7620";
+                public const string EmployeesExperience = "7621";
+                public const string TypeOfTrainingDelivered = "7622";
+                public const string HowTrainingHasBeenDelivered = "7623";
+            }
+
+            public static class CateringAndHospitality
+            {
+                public const string MostExperiencedEmployee = "7625";
+                public const string EmployeesExperience = "7626";
+                public const string TypeOfTrainingDelivered = "7627";
+                public const string HowTrainingHasBeenDelivered = "7628";
+            }
+
+            public static class Construction
+            {
+                public const string MostExperiencedEmployee = "7630";
+                public const string EmployeesExperience = "7631";
+                public const string TypeOfTrainingDelivered = "7632";
+                public const string HowTrainingHasBeenDelivered = "7633";
+            }
+
+            public static class CreativeAndDesign
+            {
+                public const string MostExperiencedEmployee = "7635";
+                public const string EmployeesExperience = "7636";
+                public const string TypeOfTrainingDelivered = "7637";
+                public const string HowTrainingHasBeenDelivered = "7638";
+            }
+
+            public static class Digital
+            {
+                public const string MostExperiencedEmployee = "7640";
+                public const string EmployeesExperience = "7641";
+                public const string TypeOfTrainingDelivered = "7642";
+                public const string HowTrainingHasBeenDelivered = "7643";
+            }
+
+            public static class EducationAndChildcare
+            {
+                public const string MostExperiencedEmployee = "7645";
+                public const string EmployeesExperience = "7646";
+                public const string TypeOfTrainingDelivered = "7647";
+                public const string HowTrainingHasBeenDelivered = "7648";
+            }
+
+            public static class EngineeringAndManufacturing
+            {
+                public const string MostExperiencedEmployee = "7650";
+                public const string EmployeesExperience = "7651";
+                public const string TypeOfTrainingDelivered = "7652";
+                public const string HowTrainingHasBeenDelivered = "7653";
+            }
+
+            public static class HairAndBeauty
+            {
+                public const string MostExperiencedEmployee = "7655";
+                public const string EmployeesExperience = "7656";
+                public const string TypeOfTrainingDelivered = "7657";
+                public const string HowTrainingHasBeenDelivered = "7658";
+            }
+
+            public static class HealthAndScience
+            {
+                public const string MostExperiencedEmployee = "7660";
+                public const string EmployeesExperience = "7661";
+                public const string TypeOfTrainingDelivered = "7662";
+                public const string HowTrainingHasBeenDelivered = "7663";
+            }
+
+            public static class LegalFinanceAndAccounting
+            {
+                public const string MostExperiencedEmployee = "7665";
+                public const string EmployeesExperience = "7666";
+                public const string TypeOfTrainingDelivered = "7667";
+                public const string HowTrainingHasBeenDelivered = "7668";
+            }
+
+            public static class ProtectiveServices
+            {
+                public const string MostExperiencedEmployee = "7670";
+                public const string EmployeesExperience = "7671";
+                public const string TypeOfTrainingDelivered = "7672";
+                public const string HowTrainingHasBeenDelivered = "7673";
+            }
+
+            public static class SalesMarketingAndProcurement
+            {
+                public const string MostExperiencedEmployee = "7675";
+                public const string EmployeesExperience = "7676";
+                public const string TypeOfTrainingDelivered = "7677";
+                public const string HowTrainingHasBeenDelivered = "7678";
+            }
+
+            public static class TransportAndLogistics
+            {
+                public const string MostExperiencedEmployee = "7680";
+                public const string EmployeesExperience = "7681";
+                public const string TypeOfTrainingDelivered = "7682";
+                public const string HowTrainingHasBeenDelivered = "7683";
+            }
+        }
+
+        public static class EvaluatingApprenticeshipTraining
+        {
+            public const string QualityProcessEvaluating = "8100";
+            public const string QualityProcessImprovements = "8110";
+            public const string QualityProcessIncludesApprenticeshipTraining = "8200";
+            public const string QualityProcessQuality_MainEmployer = "8210";
+            public const string QualityProcessQuality_Supporting = "8220";
+            public const string QualityProcessReviewing = "8230";
+            public const string CollectApprenticeshipData = "8300";
+            public const string IndividualisedLearnerRecordData = "8310";
+        }
+
+        public static class Finish
         {
             public static string ApplicationPermissionsChecksShutterPage = "10005";
             public static string TermsConditionsCOAPart2ShutterPage = "10006";

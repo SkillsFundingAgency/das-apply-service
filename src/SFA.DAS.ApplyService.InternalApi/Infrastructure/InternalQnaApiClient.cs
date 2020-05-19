@@ -15,6 +15,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.Infrastructure.Firewall;
 using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
+using SFA.DAS.ApplyService.Application.Apply;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
@@ -38,6 +39,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
         public async Task<IEnumerable<ApplicationSection>> GetAllApplicationSections(Guid applicationId)
         {
             return await Get<List<ApplicationSection>>($"Applications/{applicationId}/sections");
+        }
+
+        public async Task<ApplicationSection> GetSectionBySectionNo(Guid applicationId, int sequenceNo, int sectionNo)
+        {
+            return await Get<ApplicationSection>($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}");
+        }
+
+        public async Task<SkipPageResponse> SkipPageBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId)
+        {
+            return await Post<object, SkipPageResponse>($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}/skip", new object());
         }
 
         public async Task<string> GetQuestionTag(Guid applicationId, string questionTag)
@@ -166,6 +177,26 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             var result = new FileStreamResult(fileStream, response.Content.Headers.ContentType.MediaType);
             result.FileDownloadName = response.Content.Headers.ContentDisposition.FileName;
             return result;
+        }
+
+        public async Task<FileStreamResult> DownloadSpecifiedFile(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId, string filename)
+        {
+            var section = await GetSectionBySectionNo(applicationId, sequenceNo, sectionNo);
+
+            if (section != null)
+            {
+                var response = await GetResponse($"/applications/{section.ApplicationId}/sections/{section.Id}/pages/{pageId}/questions/{questionId}/download/{filename}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var fileStream = await response.Content.ReadAsStreamAsync();
+                    var result = new FileStreamResult(fileStream, response.Content.Headers.ContentType.MediaType);
+                    result.FileDownloadName = response.Content.Headers.ContentDisposition.FileName;
+                    return result;
+                }
+            }
+
+            return null;
         }
 
         public async Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag, string questionId = null)

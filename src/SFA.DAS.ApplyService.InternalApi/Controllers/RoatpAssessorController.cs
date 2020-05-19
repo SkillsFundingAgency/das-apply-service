@@ -13,23 +13,37 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.InternalApi.Services;
+using SFA.DAS.ApplyService.Application.Apply.GetApplications;
+using SFA.DAS.ApplyService.InternalApi.Mappers;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
     [Authorize]
     public class RoatpAssessorController : Controller
     {
+        private static readonly List<int> _AssessorSequences = new List<int>
+        {
+            RoatpWorkflowSequenceIds.ProtectingYourApprentices,
+            RoatpWorkflowSequenceIds.ReadinessToEngage,
+            RoatpWorkflowSequenceIds.PlanningApprenticeshipTraining,
+            RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
+            RoatpWorkflowSequenceIds.EvaluatingApprenticeshipTraining
+        };
+
         private readonly ILogger<RoatpAssessorController> _logger;
         private readonly IMediator _mediator;
         private readonly IApplyRepository _applyRepository;
         private readonly IInternalQnaApiClient _qnaApiClient;
+        private readonly IAssessorLookupService _assessorLookupService;
 
-        public RoatpAssessorController(ILogger<RoatpAssessorController> logger, IMediator mediator, IApplyRepository applyRepository, IInternalQnaApiClient qnaApiClient)
+        public RoatpAssessorController(ILogger<RoatpAssessorController> logger, IMediator mediator, IApplyRepository applyRepository, IInternalQnaApiClient qnaApiClient, IAssessorLookupService assessorLookupService)
         {
             _logger = logger;
             _mediator = mediator;
             _applyRepository = applyRepository;
             _qnaApiClient = qnaApiClient;
+            _assessorLookupService = assessorLookupService;
         }
 
         [HttpGet("Assessor/Applications/{userId}")]
@@ -37,7 +51,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             var summary = await _mediator.Send(new AssessorSummaryRequest(userId));
 
-            return summary ;
+            return summary;
         }
 
         [HttpGet("Assessor/Applications/{userId}/New")]
@@ -65,32 +79,60 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("Assessor/Applications/{applicationId}/Overview")]
         public async Task<List<AssessorSequence>> GetAssessorOverview(Guid applicationId)
         {
+            var overviewSequences = new List<AssessorSequence>();
+
+            var application = await _mediator.Send(new GetApplicationRequest(applicationId));
             var allQnaSections = await _qnaApiClient.GetAllApplicationSections(applicationId);
 
-            return new List<AssessorSequence>
+            if (allQnaSections != null && application?.ApplyData != null)
             {
-                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.ProtectingYourApprentices),
-                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.ReadinessToEngage),
-                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.PlanningApprenticeshipTraining),
-                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining),
-                GetAssessorSequence(allQnaSections, RoatpWorkflowSequenceIds.EvaluatingApprenticeshipTraining)
-            };
+                foreach (var sequenceNumber in _AssessorSequences)
+                {
+                    var applySequence = application.ApplyData.Sequences?.FirstOrDefault(seq => seq.SequenceNo == sequenceNumber);
+
+                    var sequence = GetAssessorSequence(sequenceNumber, allQnaSections, applySequence);
+                    overviewSequences.Add(sequence);
+                }
+            }
+
+            return overviewSequences.OrderBy(seq => seq.SequenceNumber).ToList();
         }
 
-        private AssessorSequence GetAssessorSequence(IEnumerable<ApplicationSection> qnaSections, int sequenceNumber)
+        private AssessorSequence GetAssessorSequence(int sequenceNumber, IEnumerable<ApplicationSection> qnaSections, ApplySequence applySequence)
         {
-            var sectionsToExclude = GetWhatYouWillNeedSectionsForSequence(sequenceNumber);
+            AssessorSequence sequence = null;
 
-            return new AssessorSequence
+            if (_AssessorSequences.Contains(sequenceNumber))
             {
-                SequenceNumber = sequenceNumber,
-                SequenceTitle = GetSequenceTitle(sequenceNumber),
-                Sections = qnaSections.Where(sec => sec.SequenceId == sequenceNumber && !sectionsToExclude.Contains(sec.SectionId))
-                .Select(sec =>
+                var sectionsToExclude = GetWhatYouWillNeedSectionsForSequence(sequenceNumber);
+
+                sequence = new AssessorSequence
                 {
-                    return new AssessorSection { SectionNumber = sec.SectionId, LinkTitle = sec.Title, Status = string.Empty };
-                }).ToList()
-            };
+                    SequenceNumber = sequenceNumber,
+                    SequenceTitle = _assessorLookupService.GetTitleForSequence(sequenceNumber),
+                    Sections = qnaSections.Where(sec => sec.SequenceId == sequenceNumber && !sectionsToExclude.Contains(sec.SectionId))
+                    .Select(sec =>
+                    {
+                        return new AssessorSection { SectionNumber = sec.SectionId, LinkTitle = sec.Title, Status = string.Empty };
+                    })
+                    .OrderBy(sec => sec.SectionNumber).ToList()
+                };
+
+                if (applySequence != null)
+                {
+                    foreach (var section in sequence.Sections)
+                    {
+                        var applySection = applySequence?.Sections?.FirstOrDefault(sec => sec.SectionNo == section.SectionNumber);
+
+                        if (applySequence.NotRequired || applySection?.NotRequired == true)
+                        {
+                            section.Status = "Not Required";
+                        }
+                    }
+                }
+            }
+
+            return sequence;
         }
 
         private static List<int> GetWhatYouWillNeedSectionsForSequence(int sequenceNumber)
@@ -131,23 +173,44 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return sections;
         }
 
-        private static string GetSequenceTitle(int sequenceId)
+
+        [HttpGet("Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page")]
+        public async Task<AssessorPage> GetFirstAssessorPage(Guid applicationId, int sequenceNumber, int sectionNumber)
         {
-            switch (sequenceId)
+            return await GetAssessorPage(applicationId, sequenceNumber, sectionNumber, null);
+        }
+
+        [HttpGet("Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}")]
+        public async Task<AssessorPage> GetAssessorPage(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId)
+        {
+            AssessorPage page = null;
+
+            if (_AssessorSequences.Contains(sequenceNumber))
             {
-                case RoatpWorkflowSequenceIds.ProtectingYourApprentices:
-                    return "Protecting your apprentices checks";
-                case RoatpWorkflowSequenceIds.ReadinessToEngage:
-                    return "Readiness to engage checks";
-                case RoatpWorkflowSequenceIds.PlanningApprenticeshipTraining:
-                    return "Planning apprenticeship training checks";
-                case RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining:
-                    return "Delivering apprenticeship training checks";
-                case RoatpWorkflowSequenceIds.EvaluatingApprenticeshipTraining:
-                    return "Evaluating apprenticeship training checks";
-                default:
-                    return null;
+                var qnaSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceNumber, sectionNumber);
+                var qnaPage = qnaSection?.QnAData.Pages.FirstOrDefault(p => p.PageId == pageId || string.IsNullOrEmpty(pageId));
+
+                if (qnaPage != null)
+                {
+                    page = qnaPage.ToAssessorPage(_assessorLookupService, applicationId, sequenceNumber, sectionNumber);
+
+                    var nextPageAction = await _qnaApiClient.SkipPageBySectionNo(page.ApplicationId, page.SequenceNumber, page.SectionNumber, page.PageId);
+
+                    if (nextPageAction != null && "NextPage".Equals(nextPageAction.NextAction, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        page.NextPageId = nextPageAction.NextActionId;
+                    }
+                }
             }
+
+            return page;
+        }
+
+
+        [HttpGet("Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}/questions/{questionId}/download/{filename}")]
+        public async Task<FileStreamResult> DownloadFile(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string questionId, string filename)
+        {
+            return await _qnaApiClient.DownloadSpecifiedFile(applicationId, sequenceNumber, sectionNumber, pageId, questionId, filename);
         }
 
         [HttpPost("Assessor/SubmitPageOutcome")]
