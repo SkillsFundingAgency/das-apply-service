@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SFA.DAS.ApplyService.Domain.Apply.Assessor
+﻿namespace SFA.DAS.ApplyService.Domain.Apply.Assessor
 {
     public class Sector
     {
