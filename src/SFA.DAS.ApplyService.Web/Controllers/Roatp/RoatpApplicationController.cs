@@ -1160,16 +1160,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     // Make sure we have answers within the page to update
                     if (answers != null && answers.Any())
                     {
-                        var sectionNo = answers[0].SectionId;
-                        var sequenceNo = answers[0].SequenceId;
                         var pageId = answers[0].PageId;
 
-                        var section = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceNo, sectionNo);
-
-                        if (section != null)
-                        {
-                            await _qnaApiClient.UpdatePageAnswers(applicationId, section.Id, pageId, answers.ToList<Answer>());
-                        }
+                        await _qnaApiClient.UpdatePageAnswers(applicationId, answers[0].SequenceId, answers[0].SectionId, pageId, answers.ToList<Answer>());
                     }
                 }
             }

@@ -220,10 +220,25 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, Guid sectionId, string pageId, List<Answer> answers)
         {
             // NOTE: This should be called SetPageAnswers, but leaving alone for now
-            var response = await _httpClient.PostAsJsonAsync($"/Applications/{applicationId}/sections/{sectionId}/pages/{pageId}", answers);
+            var response = await _httpClient.PostAsJsonAsync($"/Applications/{applicationId}//sections/{sectionId}/pages/{pageId}", answers);
 
             var json = await response.Content.ReadAsStringAsync();
 
+            return HandleUpdatePageAnswersResponse(applicationId, pageId, response, json);
+        }
+
+        public async Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, int sequenceNo, int sectionNo, string pageId, List<Answer> answers)
+        {
+            // NOTE: This should be called SetPageAnswers, but leaving alone for now
+            var response = await _httpClient.PostAsJsonAsync($"/Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}", answers);
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            return HandleUpdatePageAnswersResponse(applicationId, pageId, response, json);
+        }
+
+        private SetPageAnswersResponse HandleUpdatePageAnswersResponse(Guid applicationId, string pageId, HttpResponseMessage response, string json)
+        {
             if (response.IsSuccessStatusCode)
             {
                 return JsonConvert.DeserializeObject<SetPageAnswersResponse>(json);
@@ -233,7 +248,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 var apiError = GetApiErrorFromJson(json);
                 var apiErrorMessage = apiError?.Message ?? json;
 
-                _logger.LogError($"Error Updating Page Answers into QnA. Application: {applicationId} | SectionId: {sectionId} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}");
+                _logger.LogError(
+                    $"Error Updating Page Answers into QnA. Application: {applicationId} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}");
 
                 var validationErrorMessage = "Cannot save answers at this time. Please contact your system administrator.";
 
@@ -244,7 +260,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 }
 
                 var validationError = new KeyValuePair<string, string>(string.Empty, validationErrorMessage);
-                return new SetPageAnswersResponse { ValidationPassed = false, ValidationErrors = new List<KeyValuePair<string, string>> { validationError } };
+                return new SetPageAnswersResponse
+                    {ValidationPassed = false, ValidationErrors = new List<KeyValuePair<string, string>> {validationError}};
             }
         }
 

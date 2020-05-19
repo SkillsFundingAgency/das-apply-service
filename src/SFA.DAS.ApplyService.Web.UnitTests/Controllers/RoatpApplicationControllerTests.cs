@@ -157,14 +157,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _apiClient.Setup(x => x.StartApplication(It.IsAny<StartApplicationRequest>())).ReturnsAsync(applicationId).Verifiable();
 
-            var providerRouteSection = new ApplicationSection
-            {
-                ApplicationId = applicationId,
-                SectionId = 1
-            };
-
-            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(providerRouteSection);
-
             var result = _controller.Applications().GetAwaiter().GetResult();
 
             var redirectResult = result as RedirectToActionResult;
