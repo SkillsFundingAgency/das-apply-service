@@ -1229,7 +1229,7 @@ namespace SFA.DAS.ApplyService.Data
 						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
 						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)
 						  and apply.OversightStatus IN (@oversightReviewStatusPass,@oversightReviewStatusFail)  
-                            order by JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') ASC, Apply.ApplicationDeterminedDate ASC, Org.Name ASC", new
+                            order by Apply.ApplicationDeterminedDate ASC, JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') ASC,  Org.Name ASC", new
                     {
                         gatewayReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.GatewayReviewStatus.Pass,
                         assessorReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Approved,
