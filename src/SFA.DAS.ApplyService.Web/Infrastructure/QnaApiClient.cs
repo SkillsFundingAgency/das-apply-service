@@ -220,7 +220,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         public async Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, Guid sectionId, string pageId, List<Answer> answers)
         {
             // NOTE: This should be called SetPageAnswers, but leaving alone for now
-            var response = await _httpClient.PostAsJsonAsync($"/Applications/{applicationId}//sections/{sectionId}/pages/{pageId}", answers);
+            var response = await _httpClient.PostAsJsonAsync($"/Applications/{applicationId}/sections/{sectionId}/pages/{pageId}", answers);
 
             var json = await response.Content.ReadAsStringAsync();
 
