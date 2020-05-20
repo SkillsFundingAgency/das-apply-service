@@ -23,6 +23,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<string> GetGatewayPageComments(Guid applicationId, string pageId);
 
         Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string userName, string status, string comments);
+        Task<bool> UpdateGatewayReviewStatusAndComment(Guid applicationId, string gatewayReviewStatus, string gatewayReviewComment, string userName);
 
         Task<bool> CanSubmitApplication(Guid applicationId);
         Task SubmitApplication(Guid applicationId, ApplyData applyData, Guid submittedBy);
@@ -83,6 +84,8 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task DeleteRelatedApplications(Guid applicationId);
 
         Task StartApplicationReview(Guid applicationId, int sectionId);
+
+        Task<Contact> GetContactForApplication(Guid applicationId);
         Task<Organisation> GetOrganisationForApplication(Guid applicationId);
 
         Task<string> CheckOrganisationStandardStatus(Guid applicationId, int standardId);
