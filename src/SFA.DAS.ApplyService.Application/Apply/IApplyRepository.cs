@@ -83,6 +83,8 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task DeleteRelatedApplications(Guid applicationId);
 
         Task StartApplicationReview(Guid applicationId, int sectionId);
+
+        Task<Contact> GetContactForApplication(Guid applicationId);
         Task<Organisation> GetOrganisationForApplication(Guid applicationId);
 
         Task<string> CheckOrganisationStandardStatus(Guid applicationId, int standardId);

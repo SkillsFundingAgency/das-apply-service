@@ -52,6 +52,7 @@ namespace SFA.DAS.ApplyService.Data
                 //if (application != null)
                 //{
                 //    application.ApplyingOrganisation = await GetOrganisationForApplication(applicationId);
+                //    application.ApplyingContact = await GetContactForApplication(applicationId);
                 //}
 
                 return application;
@@ -1051,14 +1052,25 @@ namespace SFA.DAS.ApplyService.Data
                     new { applicationId, sectionId });
             }
         }
-        
+
+        public async Task<Contact> GetContactForApplication(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return await connection.QuerySingleOrDefaultAsync<Contact>(@"SELECT con.* FROM Contacts con 
+                                                                        INNER JOIN Apply appl ON appl.CreatedBy = con.Id
+                                                                        WHERE appl.ApplicationId = @ApplicationId",
+                    new { applicationId });
+            }
+        }
+
         public async Task<Organisation> GetOrganisationForApplication(Guid applicationId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                return await connection.QuerySingleAsync<Organisation>(@"SELECT org.* FROM Organisations org 
-                                                                        INNER JOIN Applications appl ON appl.ApplyingOrganisationId = org.Id
-                                                                        WHERE appl.Id = @ApplicationId",
+                return await connection.QuerySingleOrDefaultAsync<Organisation>(@"SELECT org.* FROM Organisations org 
+                                                                        INNER JOIN Apply appl ON appl.OrganisationId = org.Id
+                                                                        WHERE appl.ApplicationId = @ApplicationId",
                     new {applicationId});
             }
         }
