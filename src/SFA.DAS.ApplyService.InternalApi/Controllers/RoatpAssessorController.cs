@@ -193,6 +193,31 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
 
+
+        [HttpGet("Assessor/Applications/{applicationId}/SectorDetails/{pageId}")]
+        public async Task<SectorDetails> GetSectorDetails(Guid applicationId, string pageId)
+        {
+
+            var sequenceNumber = RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining;
+            var sectionNumber = RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees;
+            var page2ExperienceQualificationsMemberships = new AssessorPage();
+            var page3TypeOfTraining = new AssessorPage();
+            var page4HowDeliveredAndDuration = new AssessorPage();
+            var page1NameRoleExperience = await GetAssessorPage(applicationId, sequenceNumber, sectionNumber, pageId);
+
+            if (!string.IsNullOrEmpty(page1NameRoleExperience.NextPageId))
+                page2ExperienceQualificationsMemberships = await GetAssessorPage(applicationId, sequenceNumber, sectionNumber, page1NameRoleExperience.NextPageId);
+
+            if (!string.IsNullOrEmpty(page2ExperienceQualificationsMemberships.NextPageId))
+                page3TypeOfTraining = await GetAssessorPage(applicationId, sequenceNumber, sectionNumber, page2ExperienceQualificationsMemberships.NextPageId);
+
+            if (!string.IsNullOrEmpty(page3TypeOfTraining.NextPageId))
+                page4HowDeliveredAndDuration = await GetAssessorPage(applicationId, sequenceNumber, sectionNumber, page3TypeOfTraining.NextPageId);
+
+
+            return null;
+        }
+
         [HttpGet("Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page")]
         public async Task<AssessorPage> GetFirstAssessorPage(Guid applicationId, int sequenceNumber, int sectionNumber)
         {
