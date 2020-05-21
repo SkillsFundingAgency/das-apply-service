@@ -1648,12 +1648,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 ApplicationRouteId = chosenApplicationRouteId
             };
 
-            var preambleSection = new ApplicationSection { Id = Guid.NewGuid() };
-
-            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.Preamble,
-                                RoatpWorkflowSectionIds.Preamble)).ReturnsAsync(preambleSection).Verifiable();
-
-            _qnaApiClient.Setup(x => x.UpdatePageAnswers(It.IsAny<Guid>(), preambleSection.Id, It.IsAny<string>(), It.IsAny<List<Answer>>()))
+            _qnaApiClient.Setup(x => x.UpdatePageAnswers(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.Preamble,
+                    RoatpWorkflowSectionIds.Preamble, It.IsAny<string>(), It.IsAny<List<Answer>>()))
                                .ReturnsAsync(new ApplyService.Application.Apply.SetPageAnswersResponse
                                {
                                    ValidationPassed = true
@@ -1724,12 +1720,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 LevyPayingEmployer = "Y"
             };
 
-            var preambleSection = new ApplicationSection { Id = Guid.NewGuid() };
-
-            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.Preamble,
-                                RoatpWorkflowSectionIds.Preamble)).ReturnsAsync(preambleSection).Verifiable();
-
-            _qnaApiClient.Setup(x => x.UpdatePageAnswers(It.IsAny<Guid>(), preambleSection.Id, It.IsAny<string>(), It.IsAny<List<Answer>>()))
+            _qnaApiClient.Setup(x => x.UpdatePageAnswers(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.Preamble,
+                    RoatpWorkflowSectionIds.Preamble, It.IsAny<string>(), It.IsAny<List<Answer>>()))
                                .ReturnsAsync(new ApplyService.Application.Apply.SetPageAnswersResponse
                                {
                                    ValidationPassed = true

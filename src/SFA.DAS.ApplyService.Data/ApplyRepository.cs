@@ -58,23 +58,23 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<Apply>> GetUserApplications(Guid userId)
+        public async Task<List<Apply>> GetUserApplications(Guid signinId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection.QueryAsync<Apply>(@"SELECT a.* FROM Contacts c
                                                     INNER JOIN Apply a ON a.OrganisationId = c.ApplyOrganisationID
-                                                    WHERE c.Id = @userId AND a.CreatedBy = @userId", new { userId })).ToList();
+                                                    WHERE c.SigninId = @signinId AND a.CreatedBy = c.Id", new { signinId })).ToList();
             }
         }
 
-        public async Task<List<Apply>> GetOrganisationApplications(Guid userId)
+        public async Task<List<Apply>> GetOrganisationApplications(Guid signinId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection.QueryAsync<Apply>(@"SELECT a.* FROM Contacts c
                                                     INNER JOIN Apply a ON a.OrganisationId = c.ApplyOrganisationID
-                                                    WHERE c.Id = @userId", new { userId })).ToList();
+                                                    WHERE c.SigninId = @signinId", new { signinId })).ToList();
             }
         }
 
