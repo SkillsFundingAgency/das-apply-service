@@ -131,7 +131,7 @@ namespace SFA.DAS.ApplyService.Data
                 
                 connection.Execute(
                     "UPDATE [Organisations] " +
-                    "SET CreatedBy = @userId" +
+                    "SET CreatedBy = @userId " +
                     "WHERE [Id] = @organisationId",
                     new { userId, organisationId });
             }
