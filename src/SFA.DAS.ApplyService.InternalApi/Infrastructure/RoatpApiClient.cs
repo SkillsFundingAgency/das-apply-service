@@ -38,5 +38,10 @@
 
             return await Get<UkprnLookupResponse>($"/api/v1/ukrlp/lookup/{ukprn}");
         }
+
+        public async Task<IEnumerable<OrganisationType>> GetOrganisationTypes(int? providerTypeId)
+        {
+            return await Get<List<OrganisationType>>($"/api/v1/lookupData/organisationTypes?providerTypeId={providerTypeId}");
+        }
     }
 }

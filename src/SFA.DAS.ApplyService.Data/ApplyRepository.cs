@@ -59,23 +59,23 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<Apply>> GetUserApplications(Guid userId)
+        public async Task<List<Apply>> GetUserApplications(Guid signinId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection.QueryAsync<Apply>(@"SELECT a.* FROM Contacts c
                                                     INNER JOIN Apply a ON a.OrganisationId = c.ApplyOrganisationID
-                                                    WHERE c.Id = @userId AND a.CreatedBy = @userId", new { userId })).ToList();
+                                                    WHERE c.SigninId = @signinId AND a.CreatedBy = c.Id", new { signinId })).ToList();
             }
         }
 
-        public async Task<List<Apply>> GetOrganisationApplications(Guid userId)
+        public async Task<List<Apply>> GetOrganisationApplications(Guid signinId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection.QueryAsync<Apply>(@"SELECT a.* FROM Contacts c
                                                     INNER JOIN Apply a ON a.OrganisationId = c.ApplyOrganisationID
-                                                    WHERE c.Id = @userId", new { userId })).ToList();
+                                                    WHERE c.SigninId = @signinId", new { signinId })).ToList();
             }
         }
 
@@ -448,13 +448,14 @@ namespace SFA.DAS.ApplyService.Data
                                 [NotRequired] nvarchar(max) '$.NotRequired'
                             )
                         ) s
-                        WHERE s.SequenceNo = @financialHealthSequence
+                        WHERE s.SequenceNo = @financialHealthSequence AND s.NotRequired = 'false'
                         AND apply.ApplicationStatus = @applicationStatusGatewayAssessed AND apply.DeletedAt IS NULL
-                        AND apply.FinancialReviewStatus IN (@financialStatusNew, @financialStatusInProgress)",
+                        AND apply.FinancialReviewStatus IN ( @financialStatusDraft, @financialStatusNew, @financialStatusInProgress)",
                         new
                         {
                             financialHealthSequence = 2,
                             applicationStatusGatewayAssessed = ApplicationStatus.GatewayAssessed,
+                            financialStatusDraft = FinancialReviewStatus.Draft,
                             financialStatusNew = FinancialReviewStatus.New,
                             financialStatusInProgress = FinancialReviewStatus.InProgress
                         })).ToList();
@@ -496,7 +497,7 @@ namespace SFA.DAS.ApplyService.Data
                                 [NotRequired] nvarchar(max) '$.NotRequired'
                             )
                         ) s
-                        WHERE s.SequenceNo = @financialHealthSequence
+                        WHERE s.SequenceNo = @financialHealthSequence AND s.NotRequired = 'false'
                         AND apply.DeletedAt IS NULL
                         AND apply.FinancialReviewStatus IN ( @financialStatusClarificationSent )",
                         new
@@ -542,15 +543,16 @@ namespace SFA.DAS.ApplyService.Data
                                 [NotRequired] nvarchar(max) '$.NotRequired'
                             )
                         ) s
-                        WHERE s.SequenceNo = @financialHealthSequence
+                        WHERE s.SequenceNo = @financialHealthSequence AND s.NotRequired = 'false'
                         AND apply.DeletedAt IS NULL
-                        AND apply.FinancialReviewStatus IN ( @financialStatusPass, @financialStatusFail, @financialStatusExempt )",
+                        AND apply.FinancialReviewStatus IN ( @financialStatusApproved, @financialStatusDeclined, @financialStatusExempt, @financialStatusClarification )",
                        new
                        {
                            financialHealthSequence = 2,
-                           financialStatusPass = FinancialReviewStatus.Pass,
-                           financialStatusFail = FinancialReviewStatus.Fail,
-                           financialStatusExempt = FinancialReviewStatus.Exempt
+                           financialStatusApproved = FinancialReviewStatus.Pass,
+                           financialStatusDeclined = FinancialReviewStatus.Fail,
+                           financialStatusExempt = FinancialReviewStatus.Exempt,
+                           financialStatusClarification = FinancialReviewStatus.ClarificationSent // Place in here till we're happy with a Clarification tab in Admin Services
                        })).ToList();
             }
         }
@@ -1181,6 +1183,102 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<List<ApplicationOversightDetails>> GetOversightsPending()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<ApplicationOversightDetails>(@"SELECT 
+                            apply.Id AS Id,
+                            apply.ApplicationId AS ApplicationId,
+							 org.Name AS OrganisationName,
+					        JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
+							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
+							apply.OversightStatus,
+							Apply.ApplicationDeterminedDate
+                              FROM Apply apply
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+	                      WHERE apply.DeletedAt IS NULL
+                          and GatewayReviewStatus  in (@gatewayReviewStatusApproved)
+						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
+						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)
+						  and apply.OversightStatus NOT IN (@oversightReviewStatusPass,@oversightReviewStatusFail)
+                            order by CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  Org.Name ASC", new
+                        {
+                            gatewayReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.GatewayReviewStatus.Pass,
+                            assessorReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Approved,
+                            assessorReviewStatusDeclined = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Declined,
+                            financialReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Pass,
+                            financialReviewStatusDeclined = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Fail,
+                            financialReviewStatusExempt = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Exempt,
+                            oversightReviewStatusPass= SFA.DAS.ApplyService.Domain.Entities.OversightReviewStatus.Successful,
+                            oversightReviewStatusFail = SFA.DAS.ApplyService.Domain.Entities.OversightReviewStatus.Unsuccessful
+
+                        })).ToList();
+            }
+        }
+
+
+        public async Task<List<ApplicationOversightDetails>> GetOversightsCompleted()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QueryAsync<ApplicationOversightDetails>(@"SELECT 
+                            apply.Id AS Id,
+                            apply.ApplicationId AS ApplicationId,
+							 org.Name AS OrganisationName,
+					        JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
+							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
+							apply.OversightStatus,
+							Apply.ApplicationDeterminedDate
+                              FROM Apply apply
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+	                      WHERE apply.DeletedAt IS NULL
+                          and GatewayReviewStatus  in (@gatewayReviewStatusApproved)
+						  and AssessorReviewStatus in (@assessorReviewStatusApproved,@assessorReviewStatusDeclined)
+						  and FinancialReviewStatus in (@financialReviewStatusApproved,@financialReviewStatusDeclined, @financialReviewStatusExempt)
+						  and apply.OversightStatus IN (@oversightReviewStatusPass,@oversightReviewStatusFail)  
+                             order by cast(Apply.ApplicationDeterminedDate as DATE) ASC, CAST(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS DATE) ASC,  Org.Name ASC", new
+                    {
+                        gatewayReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.GatewayReviewStatus.Pass,
+                        assessorReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Approved,
+                        assessorReviewStatusDeclined = SFA.DAS.ApplyService.Domain.Entities.AssessorReviewStatus.Declined,
+                        financialReviewStatusApproved = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Pass,
+                        financialReviewStatusDeclined = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Fail,
+                        financialReviewStatusExempt = SFA.DAS.ApplyService.Domain.Entities.FinancialReviewStatus.Exempt,
+                        oversightReviewStatusPass = SFA.DAS.ApplyService.Domain.Entities.OversightReviewStatus.Successful,
+                        oversightReviewStatusFail = SFA.DAS.ApplyService.Domain.Entities.OversightReviewStatus.Unsuccessful
+
+                    })).ToList();
+            }
+        }
+
+        public async Task<ApplicationOversightDetails> GetOversightDetails(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var applyDataResults = await connection.QueryAsync<ApplicationOversightDetails>(@"SELECT 
+                            apply.Id AS Id,
+                            apply.ApplicationId AS ApplicationId,
+							 org.Name AS OrganisationName,
+					        JSON_VALUE(apply.ApplyData, '$.ApplyDetails.UKPRN') AS Ukprn,
+                            REPLACE(JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ProviderRouteName'),' provider','') AS ProviderRoute,
+							JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ReferenceNumber') AS ApplicationReferenceNumber,
+                            JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn') AS ApplicationSubmittedDate,
+							apply.OversightStatus,
+							Apply.ApplicationDeterminedDate
+                              FROM Apply apply
+	                      INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+                        WHERE apply.ApplicationId = @applicationId",
+                    new { applicationId });
+
+                return applyDataResults.FirstOrDefault();
+            }
+        }
+
         public async Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatusByUkprn(string ukprn)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -1258,5 +1356,29 @@ namespace SFA.DAS.ApplyService.Data
 
             return await Task.FromResult(true);
         }
+
+        public async Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, DateTime applicationDeterminedDate, string updatedBy)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE Apply 
+                                                SET OversightStatus = @oversightStatus, 
+                                                ApplicationDeterminedDate = @applicationDeterminedDate,
+                                                UpdatedBy = @updatedBy,
+                                                UpdatedAt = @updatedAt
+                                                WHERE ApplicationId = @applicationId",
+                            new
+                            {
+                                applicationId,
+                                updatedAt = DateTime.UtcNow,
+                                updatedBy,
+                                oversightStatus,
+                                applicationDeterminedDate
+                            });
+            }
+
+            return await Task.FromResult(true);
+        }
+
     }
 }
