@@ -154,7 +154,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Resubmitted = "Resubmitted";
 
         public const string Pass = "Pass";
-        public const string Fail = "Fail";   
+        public const string Fail = "Fail";
         public const string Exempt = "Exempt";
     }
 
@@ -163,5 +163,12 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string New = "";
         public const string InProgress = "In Progress";
         public const string Evaluated = "Evaluated";
+    }
+
+    public static class OversightReviewStatus
+    {
+        public const string New = "New";
+        public const string Successful = "Successful";
+        public const string Unsuccessful = "Unsuccessful";
     }
 }
