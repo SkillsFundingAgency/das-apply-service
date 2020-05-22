@@ -13,6 +13,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<Guid> StartApplication(Guid applicationId, ApplyData applyData, Guid organisationId, Guid createdBy);
 
         Task<Domain.Entities.Apply> GetApplication(Guid applicationId);
+
         Task<List<Domain.Entities.Apply>> GetUserApplications(Guid signinId);
         Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid signinId);
 
@@ -95,6 +96,11 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<bool> IsSectionCompleted(Guid applicationId, Guid applicationSectionId);
 
         Task RemoveSectionCompleted(Guid applicationId, Guid applicationSectionId);
-       
+
+        Task<List<ApplicationOversightDetails>> GetOversightsPending();
+        Task<List<ApplicationOversightDetails>> GetOversightsCompleted();
+
+        Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, DateTime applicationDeterminedDate, string updatedBy);
+        Task<ApplicationOversightDetails> GetOversightDetails(Guid applicationId);
     }
 }
