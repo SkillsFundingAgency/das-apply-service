@@ -25,7 +25,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<bool> ChangeProviderRoute(ChangeProviderRouteRequest changeProviderRouteRequest);
 
         Task<Domain.Entities.Apply> GetApplication(Guid applicationId);
-        Task<List<Domain.Entities.Apply>> GetApplications(Guid userId, bool createdBy);
+        Task<List<Domain.Entities.Apply>> GetApplications(Guid signinId, bool createdBy);
 
         Task<IEnumerable<RoatpSequences>> GetRoatpSequences();
 

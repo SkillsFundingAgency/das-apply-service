@@ -13,8 +13,10 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<Guid> StartApplication(Guid applicationId, ApplyData applyData, Guid organisationId, Guid createdBy);
 
         Task<Domain.Entities.Apply> GetApplication(Guid applicationId);
-        Task<List<Domain.Entities.Apply>> GetUserApplications(Guid userId);
-        Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid userId);
+
+        Task<List<Domain.Entities.Apply>> GetUserApplications(Guid signinId);
+        Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid signinId);
+
         Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId);
         Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId);
 
