@@ -1,4 +1,6 @@
 ﻿
+using SFA.DAS.ApplyService.Domain.Sectors;
+
 namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 {
     using System;
@@ -318,12 +320,29 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public const string ImproveEmployeeSectorExpertise = "7710";
             public const string ImproveEmployeeKnowledge = "7720";
 
+
             public static class AgricultureEnvironmentalAndAnimalCare
             {
                 public const string MostExperiencedEmployee = "7610";
                 public const string EmployeesExperience = "7611";
                 public const string TypeOfTrainingDelivered = "7612";
                 public const string HowTrainingHasBeenDelivered = "7613";
+
+                public static SectorQuestionIds SectorQuestionIds =>
+                    new SectorQuestionIds
+                    {
+                        FullName = "DAT-7610.1",
+                        JobRole = "DAT-7610.2",
+                        TimeInRole = "DAT-7610.3",
+                        ExperienceOfDelivering = "DAT-76111",
+                        DoTheyHaveQualifications = "DAT-76112",
+                        AwardingBodies = "DAT-76113",
+                        TradeMemberships = "DAT-76114",
+                        WhatTypeOfTrainingDelivered = "DAT-76121",
+                        HowHaveTheyDeliveredTraining = "DAT-76131",
+                        ExperienceOfDeliveringTraining = "DAT-76132",
+                        TypicalDurationOfTraining = "DAT-76133"
+                    };
             }
 
             public static class BusinessAndAdministration
@@ -332,6 +351,21 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public const string EmployeesExperience = "7616";
                 public const string TypeOfTrainingDelivered = "7617";
                 public const string HowTrainingHasBeenDelivered = "7618";
+                public static SectorQuestionIds SectorQuestionIds =>
+                    new SectorQuestionIds
+                    {
+                        FullName = "DAT-7615.1",
+                        JobRole = "DAT-7615.2",
+                        TimeInRole = "DAT-7615.3",
+                        ExperienceOfDelivering = "DAT-76161",
+                        DoTheyHaveQualifications = "DAT-76162",
+                        AwardingBodies = "DAT-76163",
+                        TradeMemberships = "DAT-76164",
+                        WhatTypeOfTrainingDelivered = "DAT-76171",
+                        HowHaveTheyDeliveredTraining = "DAT-76181",
+                        ExperienceOfDeliveringTraining = "DAT-76182",
+                        TypicalDurationOfTraining = "DAT-76183"
+                    };
             }
 
             public static class CareServices
@@ -340,6 +374,21 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public const string EmployeesExperience = "7621";
                 public const string TypeOfTrainingDelivered = "7622";
                 public const string HowTrainingHasBeenDelivered = "7623";
+                public static SectorQuestionIds SectorQuestionIds =>
+                    new SectorQuestionIds
+                    {
+                        FullName = "DAT-7620.1",
+                        JobRole = "DAT-7620.2",
+                        TimeInRole = "DAT-7620.3",
+                        ExperienceOfDelivering = "DAT-76211",
+                        DoTheyHaveQualifications = "DAT-76212",
+                        AwardingBodies = "DAT-76213",
+                        TradeMemberships = "DAT-76214",
+                        WhatTypeOfTrainingDelivered = "DAT-76221",
+                        HowHaveTheyDeliveredTraining = "DAT-76231",
+                        ExperienceOfDeliveringTraining = "DAT-76232",
+                        TypicalDurationOfTraining = "DAT-76233"
+                    };
             }
 
             public static class CateringAndHospitality
@@ -348,6 +397,21 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public const string EmployeesExperience = "7626";
                 public const string TypeOfTrainingDelivered = "7627";
                 public const string HowTrainingHasBeenDelivered = "7628";
+                public static SectorQuestionIds SectorQuestionIds =>
+                    new SectorQuestionIds
+                    {
+                        FullName = "DAT-7625.1",
+                        JobRole = "DAT-7625.2",
+                        TimeInRole = "DAT-7625.3",
+                        ExperienceOfDelivering = "DAT-76261",
+                        DoTheyHaveQualifications = "DAT-76262",
+                        AwardingBodies = "DAT-76263",
+                        TradeMemberships = "DAT-76264",
+                        WhatTypeOfTrainingDelivered = "DAT-76271",
+                        HowHaveTheyDeliveredTraining = "DAT-76281",
+                        ExperienceOfDeliveringTraining = "DAT-76282",
+                        TypicalDurationOfTraining = "DAT-76283"
+                    };
             }
 
             public static class Construction
@@ -356,6 +420,21 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public const string EmployeesExperience = "7631";
                 public const string TypeOfTrainingDelivered = "7632";
                 public const string HowTrainingHasBeenDelivered = "7633";
+                public static SectorQuestionIds SectorQuestionIds =>
+                    new SectorQuestionIds
+                    {
+                        FullName = "DAT-7630.1",
+                        JobRole = "DAT-7630.2",
+                        TimeInRole = "DAT-7630.3",
+                        ExperienceOfDelivering = "DAT-76311",
+                        DoTheyHaveQualifications = "DAT-76312",
+                        AwardingBodies = "DAT-76313",
+                        TradeMemberships = "DAT-76314",
+                        WhatTypeOfTrainingDelivered = "DAT-76321",
+                        HowHaveTheyDeliveredTraining = "DAT-76331",
+                        ExperienceOfDeliveringTraining = "DAT-76332",
+                        TypicalDurationOfTraining = "DAT-76333"
+                    };
             }
 
             public static class CreativeAndDesign
@@ -364,6 +443,21 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public const string EmployeesExperience = "7636";
                 public const string TypeOfTrainingDelivered = "7637";
                 public const string HowTrainingHasBeenDelivered = "7638";
+                public static SectorQuestionIds SectorQuestionIds =>
+                    new SectorQuestionIds
+                    {
+                        FullName = "DAT-7635.1",
+                        JobRole = "DAT-7635.2",
+                        TimeInRole = "DAT-7635.3",
+                        ExperienceOfDelivering = "DAT-76361",
+                        DoTheyHaveQualifications = "DAT-76362",
+                        AwardingBodies = "DAT-76363",
+                        TradeMemberships = "DAT-76364",
+                        WhatTypeOfTrainingDelivered = "DAT-76371",
+                        HowHaveTheyDeliveredTraining = "DAT-76381",
+                        ExperienceOfDeliveringTraining = "DAT-76382",
+                        TypicalDurationOfTraining = "DAT-76383"
+                    };
             }
 
             public static class Digital
@@ -372,6 +466,21 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public const string EmployeesExperience = "7641";
                 public const string TypeOfTrainingDelivered = "7642";
                 public const string HowTrainingHasBeenDelivered = "7643";
+                public static SectorQuestionIds SectorQuestionIds =>
+                    new SectorQuestionIds
+                    {
+                        FullName = "DAT-7640.1",
+                        JobRole = "DAT-7640.2",
+                        TimeInRole = "DAT-7640.3",
+                        ExperienceOfDelivering = "DAT-76411",
+                        DoTheyHaveQualifications = "DAT-76412",
+                        AwardingBodies = "DAT-76413",
+                        TradeMemberships = "DAT-76414",
+                        WhatTypeOfTrainingDelivered = "DAT-76421",
+                        HowHaveTheyDeliveredTraining = "DAT-76431",
+                        ExperienceOfDeliveringTraining = "DAT-76432",
+                        TypicalDurationOfTraining = "DAT-76433"
+                    };
             }
 
             public static class EducationAndChildcare
@@ -380,6 +489,21 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public const string EmployeesExperience = "7646";
                 public const string TypeOfTrainingDelivered = "7647";
                 public const string HowTrainingHasBeenDelivered = "7648";
+                public static SectorQuestionIds SectorQuestionIds =>
+                    new SectorQuestionIds
+                    {
+                        FullName = "DAT-7645.1",
+                        JobRole = "DAT-7645.2",
+                        TimeInRole = "DAT-7645.3",
+                        ExperienceOfDelivering = "DAT-76461",
+                        DoTheyHaveQualifications = "DAT-76462",
+                        AwardingBodies = "DAT-76463",
+                        TradeMemberships = "DAT-76464",
+                        WhatTypeOfTrainingDelivered = "DAT-76471",
+                        HowHaveTheyDeliveredTraining = "DAT-76481",
+                        ExperienceOfDeliveringTraining = "DAT-76482",
+                        TypicalDurationOfTraining = "DAT-76483"
+                    };
             }
 
             public static class EngineeringAndManufacturing
@@ -388,6 +512,21 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public const string EmployeesExperience = "7651";
                 public const string TypeOfTrainingDelivered = "7652";
                 public const string HowTrainingHasBeenDelivered = "7653";
+                public static SectorQuestionIds SectorQuestionIds =>
+                    new SectorQuestionIds
+                    {
+                        FullName = "DAT-7650.1",
+                        JobRole = "DAT-7650.2",
+                        TimeInRole = "DAT-7650.3",
+                        ExperienceOfDelivering = "DAT-76511",
+                        DoTheyHaveQualifications = "DAT-76512",
+                        AwardingBodies = "DAT-76513",
+                        TradeMemberships = "DAT-76514",
+                        WhatTypeOfTrainingDelivered = "DAT-76521",
+                        HowHaveTheyDeliveredTraining = "DAT-76531",
+                        ExperienceOfDeliveringTraining = "DAT-76532",
+                        TypicalDurationOfTraining = "DAT-76533"
+                    };
             }
 
             public static class HairAndBeauty
@@ -396,6 +535,21 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public const string EmployeesExperience = "7656";
                 public const string TypeOfTrainingDelivered = "7657";
                 public const string HowTrainingHasBeenDelivered = "7658";
+                public static SectorQuestionIds SectorQuestionIds =>
+                    new SectorQuestionIds
+                    {
+                        FullName = "DAT-7655.1",
+                        JobRole = "DAT-7655.2",
+                        TimeInRole = "DAT-7655.3",
+                        ExperienceOfDelivering = "DAT-76561",
+                        DoTheyHaveQualifications = "DAT-76562",
+                        AwardingBodies = "DAT-76563",
+                        TradeMemberships = "DAT-76564",
+                        WhatTypeOfTrainingDelivered = "DAT-76571",
+                        HowHaveTheyDeliveredTraining = "DAT-76581",
+                        ExperienceOfDeliveringTraining = "DAT-76582",
+                        TypicalDurationOfTraining = "DAT-76583"
+                    };
             }
 
             public static class HealthAndScience
@@ -404,6 +558,21 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public const string EmployeesExperience = "7661";
                 public const string TypeOfTrainingDelivered = "7662";
                 public const string HowTrainingHasBeenDelivered = "7663";
+                public static SectorQuestionIds SectorQuestionIds =>
+                    new SectorQuestionIds
+                    {
+                        FullName = "DAT-7660.1",
+                        JobRole = "DAT-7660.2",
+                        TimeInRole = "DAT-7660.3",
+                        ExperienceOfDelivering = "DAT-76611",
+                        DoTheyHaveQualifications = "DAT-76612",
+                        AwardingBodies = "DAT-76613",
+                        TradeMemberships = "DAT-76614",
+                        WhatTypeOfTrainingDelivered = "DAT-76621",
+                        HowHaveTheyDeliveredTraining = "DAT-76631",
+                        ExperienceOfDeliveringTraining = "DAT-76632",
+                        TypicalDurationOfTraining = "DAT-76633"
+                    };
             }
 
             public static class LegalFinanceAndAccounting
@@ -412,6 +581,21 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public const string EmployeesExperience = "7666";
                 public const string TypeOfTrainingDelivered = "7667";
                 public const string HowTrainingHasBeenDelivered = "7668";
+                public static SectorQuestionIds SectorQuestionIds =>
+                    new SectorQuestionIds
+                    {
+                        FullName = "DAT-7665.1",
+                        JobRole = "DAT-7665.2",
+                        TimeInRole = "DAT-7665.3",
+                        ExperienceOfDelivering = "DAT-76661",
+                        DoTheyHaveQualifications = "DAT-76662",
+                        AwardingBodies = "DAT-76663",
+                        TradeMemberships = "DAT-76664",
+                        WhatTypeOfTrainingDelivered = "DAT-76671",
+                        HowHaveTheyDeliveredTraining = "DAT-76681",
+                        ExperienceOfDeliveringTraining = "DAT-76682",
+                        TypicalDurationOfTraining = "DAT-76683"
+                    };
             }
 
             public static class ProtectiveServices
@@ -420,6 +604,21 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public const string EmployeesExperience = "7671";
                 public const string TypeOfTrainingDelivered = "7672";
                 public const string HowTrainingHasBeenDelivered = "7673";
+                public static SectorQuestionIds SectorQuestionIds =>
+                    new SectorQuestionIds
+                    {
+                        FullName = "DAT-7670.1",
+                        JobRole = "DAT-7670.2",
+                        TimeInRole = "DAT-7670.3",
+                        ExperienceOfDelivering = "DAT-76711",
+                        DoTheyHaveQualifications = "DAT-76712",
+                        AwardingBodies = "DAT-76713",
+                        TradeMemberships = "DAT-76714",
+                        WhatTypeOfTrainingDelivered = "DAT-76721",
+                        HowHaveTheyDeliveredTraining = "DAT-76731",
+                        ExperienceOfDeliveringTraining = "DAT-76732",
+                        TypicalDurationOfTraining = "DAT-76733"
+                    };
             }
 
             public static class SalesMarketingAndProcurement
@@ -428,6 +627,21 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public const string EmployeesExperience = "7676";
                 public const string TypeOfTrainingDelivered = "7677";
                 public const string HowTrainingHasBeenDelivered = "7678";
+                public static SectorQuestionIds SectorQuestionIds =>
+                    new SectorQuestionIds
+                    {
+                        FullName = "DAT-7675.1",
+                        JobRole = "DAT-7675.2",
+                        TimeInRole = "DAT-7675.3",
+                        ExperienceOfDelivering = "DAT-76761",
+                        DoTheyHaveQualifications = "DAT-76762",
+                        AwardingBodies = "DAT-76763",
+                        TradeMemberships = "DAT-76764",
+                        WhatTypeOfTrainingDelivered = "DAT-76771",
+                        HowHaveTheyDeliveredTraining = "DAT-76781",
+                        ExperienceOfDeliveringTraining = "DAT-76782",
+                        TypicalDurationOfTraining = "DAT-76783"
+                    };
             }
 
             public static class TransportAndLogistics
@@ -436,6 +650,21 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public const string EmployeesExperience = "7681";
                 public const string TypeOfTrainingDelivered = "7682";
                 public const string HowTrainingHasBeenDelivered = "7683";
+                public static SectorQuestionIds SectorQuestionIds =>
+                    new SectorQuestionIds
+                    {
+                        FullName = "DAT-7680.1",
+                        JobRole = "DAT-7680.2",
+                        TimeInRole = "DAT-7680.3",
+                        ExperienceOfDelivering = "DAT-76811",
+                        DoTheyHaveQualifications = "DAT-76812",
+                        AwardingBodies = "DAT-76813",
+                        TradeMemberships = "DAT-76814",
+                        WhatTypeOfTrainingDelivered = "DAT-76821",
+                        HowHaveTheyDeliveredTraining = "DAT-76831",
+                        ExperienceOfDeliveringTraining = "DAT-76832",
+                        TypicalDurationOfTraining = "DAT-76833"
+                    };
             }
         }
 

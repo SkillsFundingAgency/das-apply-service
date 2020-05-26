@@ -193,10 +193,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
 
-
         [HttpGet("Assessor/Applications/{applicationId}/SectorDetails/{pageId}")]
         public async Task<SectorDetails> GetSectorDetails(Guid applicationId, string pageId)
         {
+            var sectorDetails = new SectorDetails();
+
+            var sectorPageIds = _assessorLookupService.GetSectorQuestionIdsForSectorPageId(pageId);
+
+            if (sectorPageIds == null)
+                return sectorDetails;
+
 
             var sequenceNumber = RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining;
             var sectionNumber = RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees;
@@ -205,17 +211,107 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             var page4HowDeliveredAndDuration = new AssessorPage();
             var page1NameRoleExperience = await GetAssessorPage(applicationId, sequenceNumber, sectionNumber, pageId);
 
+            if (page1NameRoleExperience == null)
+                return sectorDetails;
+            if (page1NameRoleExperience?.Answers != null && page1NameRoleExperience.Answers.Any())
+            {
+                sectorDetails.FullName =
+                    ExtractAnswerValueFromQuestionId(page1NameRoleExperience.Answers, sectorPageIds.FullName);
+                sectorDetails.JobRole =
+                    ExtractAnswerValueFromQuestionId(page1NameRoleExperience.Answers, sectorPageIds.JobRole);
+                sectorDetails.TimeInRole =
+                    ExtractAnswerValueFromQuestionId(page1NameRoleExperience.Answers, sectorPageIds.TimeInRole);
+            }
+
+
             if (!string.IsNullOrEmpty(page1NameRoleExperience.NextPageId))
-                page2ExperienceQualificationsMemberships = await GetAssessorPage(applicationId, sequenceNumber, sectionNumber, page1NameRoleExperience.NextPageId);
+            {
+                page2ExperienceQualificationsMemberships = await GetAssessorPage(applicationId, sequenceNumber,
+                    sectionNumber, page1NameRoleExperience.NextPageId);
+
+                sectorDetails.ExperienceOfDelivering =
+                    ExtractAnswerValueFromQuestionId(page2ExperienceQualificationsMemberships.Answers,
+                        sectorPageIds.ExperienceOfDelivering);
+                sectorDetails.WhereDidTheyGainThisExperience =
+                    ExtractValueFromFurtherQuestions(page2ExperienceQualificationsMemberships,
+                        sectorPageIds.ExperienceOfDelivering);
+
+                sectorDetails.DoTheyHaveQualifications = ExtractAnswerValueFromQuestionId(
+                    page2ExperienceQualificationsMemberships.Answers, sectorPageIds.DoTheyHaveQualifications);
+
+                sectorDetails.WhatQualificationsDoTheyHave =
+                    ExtractValueFromFurtherQuestions(page2ExperienceQualificationsMemberships,
+                        sectorPageIds.DoTheyHaveQualifications);
+
+                sectorDetails.ApprovedByAwardingBodies = ExtractAnswerValueFromQuestionId(
+                    page2ExperienceQualificationsMemberships.Answers, sectorPageIds.AwardingBodies);
+
+                sectorDetails.NamesOfAwardingBodies =
+                    ExtractValueFromFurtherQuestions(page2ExperienceQualificationsMemberships,
+                        sectorPageIds.AwardingBodies);
+
+
+                sectorDetails.DoTheyHaveTradeBodyMemberships = ExtractAnswerValueFromQuestionId(
+                    page2ExperienceQualificationsMemberships.Answers, sectorPageIds.TradeMemberships);
+
+                sectorDetails.NamesOfTradeBodyMemberships =
+                    ExtractValueFromFurtherQuestions(page2ExperienceQualificationsMemberships,
+                        sectorPageIds.TradeMemberships);
+
+            }
 
             if (!string.IsNullOrEmpty(page2ExperienceQualificationsMemberships.NextPageId))
-                page3TypeOfTraining = await GetAssessorPage(applicationId, sequenceNumber, sectionNumber, page2ExperienceQualificationsMemberships.NextPageId);
+            {
+                page3TypeOfTraining = await GetAssessorPage(applicationId, sequenceNumber, sectionNumber,
+                    page2ExperienceQualificationsMemberships.NextPageId);
+
+                sectorDetails.WhatTypeOfTrainingDelivered = ExtractAnswerValueFromQuestionId(
+                    page3TypeOfTraining.Answers, sectorPageIds.WhatTypeOfTrainingDelivered);
+            }
 
             if (!string.IsNullOrEmpty(page3TypeOfTraining.NextPageId))
-                page4HowDeliveredAndDuration = await GetAssessorPage(applicationId, sequenceNumber, sectionNumber, page3TypeOfTraining.NextPageId);
+            {
+                page4HowDeliveredAndDuration = await GetAssessorPage(applicationId, sequenceNumber, sectionNumber,
+                    page3TypeOfTraining.NextPageId);
+
+                var howHaveTheyDelivered =
+                    ExtractAnswerValueFromQuestionId(page4HowDeliveredAndDuration.Answers, sectorPageIds.HowHaveTheyDeliveredTraining);
+
+                var otherIsHowTheyDelivered = "other";
+
+                sectorDetails.HowHaveTheyDeliveredTraining = 
+                    string.Equals(howHaveTheyDelivered, otherIsHowTheyDelivered, StringComparison.InvariantCultureIgnoreCase)
+                    ? ExtractValueFromFurtherQuestions(page4HowDeliveredAndDuration, sectorPageIds.HowHaveTheyDeliveredTraining)
+                    : howHaveTheyDelivered;
+
+                sectorDetails.ExperienceOfDeliveringTraining = ExtractAnswerValueFromQuestionId(
+                    page4HowDeliveredAndDuration.Answers, sectorPageIds.ExperienceOfDeliveringTraining);
+
+                sectorDetails.TypicalDurationOfTraining = ExtractAnswerValueFromQuestionId(
+                    page4HowDeliveredAndDuration.Answers, sectorPageIds.TypicalDurationOfTraining);
+            }
+
+            return sectorDetails;
+        }
+
+        private static string ExtractAnswerValueFromQuestionId(IReadOnlyCollection<AssessorAnswer> answers, string questionId)
+        {
+            if (answers == null) return string.Empty;
+            if (questionId == null) return string.Empty;
+            var answer = answers.FirstOrDefault(x => x.QuestionId == questionId);
+            return answer?.Value;
+        }
 
 
-            return null;
+        private static string ExtractValueFromFurtherQuestions(AssessorPage assessorPage, string questionId)
+        {
+            var mainQuestionAnswer = ExtractAnswerValueFromQuestionId(assessorPage.Answers, questionId);
+            var furtherQuestionsQuestionId = assessorPage?.Questions
+                .FirstOrDefault(x => x.QuestionId == questionId)?.Options?
+                .FirstOrDefault(o => o.Value == mainQuestionAnswer)?.FurtherQuestions?.FirstOrDefault()
+                ?.QuestionId;
+
+            return ExtractAnswerValueFromQuestionId(assessorPage?.Answers, furtherQuestionsQuestionId);
         }
 
         [HttpGet("Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page")]
