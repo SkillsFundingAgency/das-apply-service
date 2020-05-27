@@ -56,5 +56,16 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services
 
             Assert.That(actualTitle, Is.Null);
         }
+
+        [Test]
+        public void GetSectorIdsForSectorPageId()
+        {
+            var pageId = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.MostExperiencedEmployee;
+            var result = _assessorLookupService.GetSectorQuestionIdsForSectorPageId(pageId);
+
+            Assert.AreEqual(
+                Newtonsoft.Json.JsonConvert.SerializeObject(result)
+                , Newtonsoft.Json.JsonConvert.SerializeObject(RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.SectorQuestionIds));
+        }
     }
 }
