@@ -21,11 +21,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
         {
             var mainQuestionAnswer = ExtractAnswerValueFromQuestionId(assessorPage.Answers, questionId);
 
-
-            var q = assessorPage?.Questions?
-                .FirstOrDefault(z => z.QuestionId == questionId);
-
-
             var furtherQuestionsQuestionId = assessorPage?.Questions?
                 .FirstOrDefault(x => x.QuestionId == questionId)?.Options?
                 .FirstOrDefault(o => o.Value == mainQuestionAnswer)?.FurtherQuestions?.FirstOrDefault()
