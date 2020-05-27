@@ -14,13 +14,19 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             if (answers == null) return string.Empty;
             if (questionId == null) return string.Empty;
             var answer = answers.FirstOrDefault(x => x.QuestionId == questionId);
-            return answer?.Value;
+            return answer?.Value ?? string.Empty;
         }
 
         public  string ExtractFurtherQuestionAnswerValueFromQuestionId(AssessorPage assessorPage, string questionId)
         {
             var mainQuestionAnswer = ExtractAnswerValueFromQuestionId(assessorPage.Answers, questionId);
-            var furtherQuestionsQuestionId = assessorPage?.Questions
+
+
+            var q = assessorPage?.Questions?
+                .FirstOrDefault(z => z.QuestionId == questionId);
+
+
+            var furtherQuestionsQuestionId = assessorPage?.Questions?
                 .FirstOrDefault(x => x.QuestionId == questionId)?.Options?
                 .FirstOrDefault(o => o.Value == mainQuestionAnswer)?.FurtherQuestions?.FirstOrDefault()
                 ?.QuestionId;
