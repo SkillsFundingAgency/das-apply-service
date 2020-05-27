@@ -34,7 +34,6 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
         private Mock<ILogger<RoatpAssessorController>> _logger;
         private Mock<IMediator> _mediator;
-        private Mock<IApplyRepository> _applyRepository;
         private Mock<IInternalQnaApiClient> _qnaApiClient;
         private Mock<IAssessorLookupService> _lookupService;
         private RoatpAssessorController _controller;
@@ -44,12 +43,11 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public void TestSetup()
         {
             _mediator = new Mock<IMediator>();
-            _applyRepository = new Mock<IApplyRepository>();     
             _logger = new Mock<ILogger<RoatpAssessorController>>();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
             _lookupService = new Mock<IAssessorLookupService>();
 
-            _controller = new RoatpAssessorController(_logger.Object, _mediator.Object, _applyRepository.Object, _qnaApiClient.Object, _lookupService.Object);
+            _controller = new RoatpAssessorController(_logger.Object, _mediator.Object, _qnaApiClient.Object, _lookupService.Object, Mock.Of<IExtractAnswerValueService>());
         }
 
         [Test]

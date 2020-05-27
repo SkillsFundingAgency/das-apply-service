@@ -319,7 +319,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public const string ProfessionalDevelopmentPolicy = "7700";
             public const string ImproveEmployeeSectorExpertise = "7710";
             public const string ImproveEmployeeKnowledge = "7720";
-
+            public const string DeliveringTrainingOther = "other";
 
             public static class AgricultureEnvironmentalAndAnimalCare
             {
