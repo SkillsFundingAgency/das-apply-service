@@ -151,6 +151,27 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<List<RoatpModerationApplicationSummary>> GetApplicationsInModeration()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection
+                    .QueryAsync<RoatpModerationApplicationSummary>(
+                        $@"SELECT 
+                            {ApplicationSummaryFields}
+                            , ModerationStatus
+	                        FROM Apply apply
+	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+	                        WHERE (Assessor1ReviewStatus = @approvedReviewStatus OR Assessor2ReviewStatus = @approvedReviewStatus) AND ModerationStatus <> @completedModerationStatus
+                            ORDER BY JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn')",
+                        new
+                        {
+                            approvedReviewStatus = AssessorReviewStatus.Approved,
+                            completedModerationStatus = ModerationStatus.Complete
+                        })).ToList();
+            }
+        }
+
         public async Task SubmitAssessorPageOutcome(Guid applicationId,
                                                     int sequenceNumber,
                                                     int sectionNumber,
