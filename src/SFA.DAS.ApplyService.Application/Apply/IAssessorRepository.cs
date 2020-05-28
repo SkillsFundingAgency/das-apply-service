@@ -12,8 +12,8 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task UpdateAssessor1(Guid applicationId, string userId, string userName);
         Task UpdateAssessor2(Guid applicationId, string userId, string userName);
         Task<List<RoatpAssessorApplicationSummary>> GetInProgressAssessorApplications(string userId);
-        Task<List<RoatpAssessorApplicationSummary>> GetApplicationsInModeration();
         Task<int> GetInProgressAssessorApplicationsCount(string userId);
+        Task<List<RoatpModerationApplicationSummary>> GetApplicationsInModeration();
         Task SubmitAssessorPageOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, int assessorType, string userId, string status, string comment);
         Task<PageReviewOutcome> GetPageReviewOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, int assessorType, string userId);
         Task<List<PageReviewOutcome>> GetAssessorReviewOutcomesPerSection(Guid applicationId, int sequenceNumber, int sectionNumber, int assessorType, string userId);

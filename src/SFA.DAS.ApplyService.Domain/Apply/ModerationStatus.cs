@@ -3,6 +3,7 @@
     public enum ModerationStatus
     {
         New,
-        InModeration
+        InModeration,
+        Complete
     }
 }
