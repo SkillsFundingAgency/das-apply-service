@@ -27,7 +27,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Mappers
 
             if (qnaPage.Questions != null && qnaPage.Questions.Any())
             {
-                page.Questions = new List<AssessorQuestion>(qnaPage.Questions.Select(q => { return q.ToAssessorQuestion(); }));
+                page.Questions = new List<AssessorQuestion>(qnaPage.Questions.Select(q => { return q.ToAssessorQuestion(assessorLookupService); }));
             }
 
             if (qnaPage.PageOfAnswers != null && qnaPage.PageOfAnswers.Any())
@@ -42,12 +42,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Mappers
             return page;
         }
 
-        public static AssessorQuestion ToAssessorQuestion(this Question qnaQuestion)
+        private static AssessorQuestion ToAssessorQuestion(this Question qnaQuestion, IAssessorLookupService assessorLookupService)
         {
             var question = new AssessorQuestion
             {
                 QuestionId = qnaQuestion.QuestionId,
-                Label = qnaQuestion.Label,
+                Label = assessorLookupService?.GetLabelForQuestion(qnaQuestion.QuestionId) ?? qnaQuestion.Label,
                 QuestionBodyText = qnaQuestion.QuestionBodyText,
                 InputType = qnaQuestion.Input?.Type,
                 InputPrefix = qnaQuestion.Input?.InputPrefix,
@@ -56,13 +56,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Mappers
 
             if (qnaQuestion.Input?.Options != null && qnaQuestion.Input.Options.Any())
             {
-                question.Options = new List<AssessorOption>(qnaQuestion.Input.Options.Select(opt => { return opt.ToAssessorOption(); }));
+                question.Options = new List<AssessorOption>(qnaQuestion.Input.Options.Select(opt => { return opt.ToAssessorOption(assessorLookupService); }));
             }
 
             return question;
         }
 
-        public static AssessorOption ToAssessorOption(this Option qnaOption)
+        private static AssessorOption ToAssessorOption(this Option qnaOption, IAssessorLookupService assessorLookupService)
         {
             var option = new AssessorOption
             {
@@ -73,7 +73,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Mappers
 
             if (qnaOption.FurtherQuestions != null && qnaOption.FurtherQuestions.Any())
             {
-                option.FurtherQuestions = new List<AssessorQuestion>(qnaOption.FurtherQuestions.Select(fq => { return fq.ToAssessorQuestion(); }));
+                option.FurtherQuestions = new List<AssessorQuestion>(qnaOption.FurtherQuestions.Select(fq => { return fq.ToAssessorQuestion(assessorLookupService); }));
             }
 
             return option;
