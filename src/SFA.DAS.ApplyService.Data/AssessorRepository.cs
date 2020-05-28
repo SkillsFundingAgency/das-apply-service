@@ -172,6 +172,23 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<int> GetApplicationsInModerationCount()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection
+                    .ExecuteScalarAsync<int>(
+                        $@"SELECT COUNT(1)
+	                      FROM Apply apply
+	                      (Assessor1ReviewStatus = @approvedReviewStatus OR Assessor2ReviewStatus = @approvedReviewStatus) AND ModerationStatus <> @completedModerationStatus",
+                        new
+                        {
+                            approvedReviewStatus = AssessorReviewStatus.Approved,
+                            completedModerationStatus = ModerationStatus.Complete
+                        }));
+            }
+        }
+
         public async Task SubmitAssessorPageOutcome(Guid applicationId,
                                                     int sequenceNumber,
                                                     int sectionNumber,

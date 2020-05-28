@@ -18,10 +18,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
         {
             var newApplicationCount = _repository.GetNewAssessorApplicationsCount(request.UserId);
             var inProgressApplicationCount = _repository.GetInProgressAssessorApplicationsCount(request.UserId);
+            var inModerationApplicationCount = _repository.GetApplicationsInModerationCount();
 
-            await Task.WhenAll(newApplicationCount, inProgressApplicationCount);
+            await Task.WhenAll(newApplicationCount, inProgressApplicationCount, inModerationApplicationCount);
 
-            return new RoatpAssessorSummary(newApplicationCount.Result, inProgressApplicationCount.Result, 0, 0);
+            return new RoatpAssessorSummary(newApplicationCount.Result, inProgressApplicationCount.Result, inModerationApplicationCount.Result, 0);
         }
     }
 }

@@ -43,5 +43,17 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.AssessorSummaryHan
 
             Assert.AreEqual(expectedResult, actualResult.InProgressApplications);
         }
+
+        [Test]
+        public async Task Get_assessor_summary_returns_number_of_applications_in_moderation()
+        {
+            var expectedUser = "sadjkffgdji";
+            var expectedResult = 4;
+            _repository.Setup(x => x.GetApplicationsInModerationCount()).ReturnsAsync(expectedResult);
+
+            var actualResult = await _handler.Handle(new AssessorSummaryRequest(expectedUser), new CancellationToken());
+
+            Assert.AreEqual(expectedResult, actualResult.ModerationApplications);
+        }
     }
 }
