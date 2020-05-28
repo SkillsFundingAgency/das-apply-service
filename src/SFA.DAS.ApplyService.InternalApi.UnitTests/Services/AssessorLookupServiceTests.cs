@@ -66,6 +66,6 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services
             Assert.AreEqual(
                 Newtonsoft.Json.JsonConvert.SerializeObject(result)
                 , Newtonsoft.Json.JsonConvert.SerializeObject(RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.SectorQuestionIds));
-        }
+          }
     }
 }

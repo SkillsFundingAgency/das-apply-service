@@ -26,12 +26,12 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private readonly int _sectionId =
             RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees;
 
-        private readonly string _firstPageId = "7610";
-        private readonly string _secondPage = "7611";
-        private readonly string _thirdPage = "7612";
-        private readonly string _fourthPage = "7613";
+        private readonly string _firstPageId = "57610";
+        private readonly string _secondPage = "57611";
+        private readonly string _thirdPage = "57612";
+        private readonly string _fourthPage = "57613";
 
-        private readonly string _pageId = "7610";
+        private readonly string _pageId = "57610";
 
         private Mock<ILogger<RoatpAssessorController>> _logger;
         private Mock<IMediator> _mediator;
