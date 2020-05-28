@@ -20,6 +20,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Domain.Apply.Assessor;
+using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
@@ -36,6 +37,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private Mock<IMediator> _mediator;
         private Mock<IInternalQnaApiClient> _qnaApiClient;
         private Mock<IAssessorLookupService> _lookupService;
+        private Mock<IGetAssessorPageService> _getAssessorPageService;
+        private Mock<ISectorDetailsOrchestratorService> _sectorDetailsOrchestratorService;
         private RoatpAssessorController _controller;
 
 
@@ -46,8 +49,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _logger = new Mock<ILogger<RoatpAssessorController>>();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
             _lookupService = new Mock<IAssessorLookupService>();
-
-            _controller = new RoatpAssessorController(_logger.Object, _mediator.Object, _qnaApiClient.Object, _lookupService.Object, Mock.Of<IExtractAnswerValueService>());
+            _getAssessorPageService = new Mock<IGetAssessorPageService>();
+            _controller = new RoatpAssessorController(_logger.Object, _mediator.Object, _qnaApiClient.Object, _lookupService.Object, _getAssessorPageService.Object, Mock.Of<ISectorDetailsOrchestratorService>());
         }
 
         [Test]
@@ -250,7 +253,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _firstPageId)).ReturnsAsync(new SkipPageResponse { NextAction = "NextPage", NextActionId = _lastPageId });
             _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _lastPageId)).ReturnsAsync(new SkipPageResponse { NextAction = "ReturnToSection" });
-
+            _getAssessorPageService
+                .Setup(x => x.GetAssessorPage(section.ApplicationId, section.SequenceId, section.SectionId,
+                    null)).ReturnsAsync(new AssessorPage { PageId = _firstPageId, NextPageId = _lastPageId});
             var actualPage = await _controller.GetFirstAssessorPage(_applicationId, _sequenceId, _sectionId);
 
             Assert.That(actualPage, Is.Not.Null);
@@ -276,7 +281,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _firstPageId)).ReturnsAsync(new SkipPageResponse { NextAction = "NextPage", NextActionId = _lastPageId });
             _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _lastPageId)).ReturnsAsync(new SkipPageResponse { NextAction = "ReturnToSection" });
-
+            _getAssessorPageService
+                .Setup(x => x.GetAssessorPage(section.ApplicationId, section.SequenceId, section.SectionId,
+                    _lastPageId)).ReturnsAsync(new AssessorPage{PageId = _lastPageId});
             var actualPage = await _controller.GetAssessorPage(_applicationId, _sequenceId, _sectionId, _lastPageId);
 
             Assert.That(actualPage, Is.Not.Null);

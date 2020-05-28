@@ -260,6 +260,8 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<ICriminalComplianceChecksQuestionLookupService, CriminalComplianceChecksQuestionLookupService>();
             services.AddTransient<IAssessorLookupService, AssessorLookupService>();
             services.AddTransient<IExtractAnswerValueService, ExtractAnswerValueService>();
+            services.AddTransient<IGetAssessorPageService, GetAssessorPageService>();
+            services.AddTransient<ISectorDetailsOrchestratorService, SectorDetailsOrchestratorService>();
 
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
         }
