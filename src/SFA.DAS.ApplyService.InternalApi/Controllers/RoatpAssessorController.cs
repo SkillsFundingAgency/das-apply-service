@@ -33,15 +33,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
         private readonly ILogger<RoatpAssessorController> _logger;
         private readonly IMediator _mediator;
-        private readonly IApplyRepository _applyRepository;
         private readonly IInternalQnaApiClient _qnaApiClient;
         private readonly IAssessorLookupService _assessorLookupService;
 
-        public RoatpAssessorController(ILogger<RoatpAssessorController> logger, IMediator mediator, IApplyRepository applyRepository, IInternalQnaApiClient qnaApiClient, IAssessorLookupService assessorLookupService)
+        public RoatpAssessorController(ILogger<RoatpAssessorController> logger, IMediator mediator, IInternalQnaApiClient qnaApiClient, IAssessorLookupService assessorLookupService)
         {
             _logger = logger;
             _mediator = mediator;
-            _applyRepository = applyRepository;
             _qnaApiClient = qnaApiClient;
             _assessorLookupService = assessorLookupService;
         }
