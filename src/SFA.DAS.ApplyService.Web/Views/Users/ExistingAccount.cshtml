@@ -2,7 +2,7 @@
 @model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ExistingAccountViewModel
 
 @{
-    ViewBag.Title = "Is this your first time using the apprenticeship service (AS) sign in?";
+    ViewBag.Title = "Do you have an apprenticeship service (AS) sign in account?";
     var showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
 }
 
@@ -27,7 +27,7 @@
                 </div>
             }
 
-            <h1 class="govuk-heading-xl">Is this your first time using the apprenticeship service (AS) sign in?</h1>
+            <h1 class="govuk-heading-xl">Do you have an apprenticeship service (AS) sign in account?</h1>
 
         </div>
     </div>
@@ -65,7 +65,7 @@
                                        name="FirstTimeSignin" type="radio" value="N"
                                        sfa-validation-for="FirstTimeSignin" sfa-validationerror-class="form-control-error">
                                 <label class="govuk-label govuk-radios__label" for="FirstTimeSignin-No">
-                                    No - I've used it before
+                                    No - I need to create one
                                 </label>
 
                             </div>
