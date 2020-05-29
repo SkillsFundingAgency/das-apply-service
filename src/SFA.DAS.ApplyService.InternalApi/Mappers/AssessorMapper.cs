@@ -39,6 +39,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Mappers
                 }).ToList();
             }
 
+            page.GuidanceInformation = GetGuidanceInformation(page);
+
             return page;
         }
 
@@ -77,6 +79,32 @@ namespace SFA.DAS.ApplyService.InternalApi.Mappers
             }
 
             return option;
+        }
+
+        private static List<string> GetGuidanceInformation(AssessorPage page)
+        {
+            var guidanceInformation = new List<string>();
+
+            if (page != null)
+            {
+                if (!string.IsNullOrEmpty(page.BodyText))
+                {
+                    guidanceInformation.Add(page.BodyText);
+                }
+
+                if (page.Questions != null)
+                {
+                    foreach (var question in page.Questions)
+                    {
+                        if (!string.IsNullOrEmpty(question.QuestionBodyText))
+                        {
+                            guidanceInformation.Add(question.QuestionBodyText);
+                        }
+                    }
+                }
+            }
+
+            return guidanceInformation;
         }
     }
 }
