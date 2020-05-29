@@ -26,12 +26,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                 .FirstOrDefault(o => o.Value == mainQuestionAnswer)?.FurtherQuestions?.FirstOrDefault()
                 ?.QuestionId;
 
-            //if (furtherQuestionsQuestionId)
-            //var furtherQuestionsQuestionId = assessorPage?.Questions?
-            //    .FirstOrDefault(x => x.QuestionId == questionId)?.Options?
-            //    .FirstOrDefault(o => o.Value == mainQuestionAnswer)?.FurtherQuestions?.FirstOrDefault()
-            //    ?.QuestionId;
-
             return ExtractAnswerValueFromQuestionId(assessorPage?.Answers, furtherQuestionsQuestionId);
         }
     }
