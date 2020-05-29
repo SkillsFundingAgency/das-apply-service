@@ -1,11 +1,11 @@
 // _cookies.js
 
-(function(root) {
+(function (root) {
   "use strict";
 
   window.GOVUK = window.GOVUK || {};
 
-  window.GOVUK.cookie = function(name, value, options) {
+  window.GOVUK.cookie = function (name, value, options) {
     if (typeof value !== "undefined") {
       if (value === false || value === null) {
         return window.GOVUK.setCookie(name, "", { days: -1 });
@@ -21,7 +21,7 @@
     }
   };
 
-  window.GOVUK.setCookie = function(name, value, options) {
+  window.GOVUK.setCookie = function (name, value, options) {
     if (typeof options === "undefined") {
       options = {};
     }
@@ -40,7 +40,7 @@
     document.cookie = cookieString + ";domain=" + window.GOVUK.getDomain();
   };
 
-  window.GOVUK.getCookie = function(name) {
+  window.GOVUK.getCookie = function (name) {
     var nameEQ = name + "=";
     var cookies = document.cookie.split(";");
     for (var i = 0, len = cookies.length; i < len; i++) {
@@ -55,7 +55,7 @@
     return null;
   };
 
-  window.GOVUK.getDomain = function() {
+  window.GOVUK.getDomain = function () {
     return window.location.hostname !== "localhost"
       ? window.location.hostname.slice(
           window.location.hostname.indexOf(".") + 1
@@ -71,13 +71,13 @@ function CookieBanner(module) {
   this.settings = {
     seenCookieName: "DASSeenCookieMessage",
     cookiePolicy: {
-      AnalyticsConsent: true,
-      MarketingConsent: false
-    }
+      AnalyticsConsent: false,
+      MarketingConsent: false,
+    },
   };
 }
 
-CookieBanner.prototype.start = function() {
+CookieBanner.prototype.start = function () {
   this.module.cookieBanner = this.module.querySelector(".das-cookie-banner");
   this.module.cookieBannerInnerWrap = this.module.querySelector(
     ".das-cookie-banner__wrapper"
@@ -88,7 +88,7 @@ CookieBanner.prototype.start = function() {
   this.setupCookieMessage();
 };
 
-CookieBanner.prototype.setupCookieMessage = function() {
+CookieBanner.prototype.setupCookieMessage = function () {
   this.module.hideLink = this.module.querySelector(
     "button[data-hide-cookie-banner]"
   );
@@ -113,35 +113,35 @@ CookieBanner.prototype.setupCookieMessage = function() {
   this.showCookieBanner();
 };
 
-CookieBanner.prototype.showCookieBanner = function() {
+CookieBanner.prototype.showCookieBanner = function () {
   var cookiePolicy = this.settings.cookiePolicy;
   this.module.cookieBanner.style.display = "block";
-  Object.keys(cookiePolicy).forEach(function(cookieName) {
+  Object.keys(cookiePolicy).forEach(function (cookieName) {
     window.GOVUK.cookie(cookieName, cookiePolicy[cookieName].toString(), {
       days: 365,
-      sameSite: "None"
+      sameSite: "None",
     });
   });
 };
 
-CookieBanner.prototype.hideCookieBanner = function() {
+CookieBanner.prototype.hideCookieBanner = function () {
   this.module.cookieBanner.style.display = "none";
   window.GOVUK.cookie(this.settings.seenCookieName, true, {
     days: 365,
-    sameSite: "None"
+    sameSite: "None",
   });
 };
 
-CookieBanner.prototype.acceptAllCookies = function() {
+CookieBanner.prototype.acceptAllCookies = function () {
   this.module.cookieBannerInnerWrap.style.display = "none";
   this.module.cookieBannerConfirmationMessage.style.display = "block";
 
   window.GOVUK.cookie(this.settings.seenCookieName, true, {
     days: 365,
-    sameSite: "None"
+    sameSite: "None",
   });
 
-  Object.keys(this.settings.cookiePolicy).forEach(function(cookieName) {
+  Object.keys(this.settings.cookiePolicy).forEach(function (cookieName) {
     window.GOVUK.cookie(cookieName, true, { days: 365, sameSite: "None" });
   });
 };
@@ -153,10 +153,10 @@ function CookieSettings(module, options) {
   this.settings = {
     seenCookieName: "DASSeenCookieMessage",
     cookiePolicy: {
-      AnalyticsConsent: true,
-      MarketingConsent: false
+      AnalyticsConsent: false,
+      MarketingConsent: false,
     },
-    isModal: options === "modal"
+    isModal: options === "modal",
   };
 
   if (!this.settings.isModal) {
@@ -172,15 +172,15 @@ function CookieSettings(module, options) {
   }
 }
 
-CookieSettings.prototype.start = function() {
+CookieSettings.prototype.start = function () {
   this.setRadioValues();
   this.module.addEventListener("submit", this.formSubmitted.bind(this));
 };
 
-CookieSettings.prototype.setRadioValues = function() {
+CookieSettings.prototype.setRadioValues = function () {
   var cookiePolicy = this.settings.cookiePolicy;
 
-  Object.keys(cookiePolicy).forEach(function(cookieName) {
+  Object.keys(cookiePolicy).forEach(function (cookieName) {
     var existingCookie = window.GOVUK.cookie(cookieName),
       radioButtonValue =
         existingCookie !== null ? existingCookie : cookiePolicy[cookieName],
@@ -196,7 +196,7 @@ CookieSettings.prototype.setRadioValues = function() {
   });
 };
 
-CookieSettings.prototype.formSubmitted = function(event) {
+CookieSettings.prototype.formSubmitted = function (event) {
   event.preventDefault();
 
   var formInputs = event.target.getElementsByTagName("input"),
@@ -213,7 +213,7 @@ CookieSettings.prototype.formSubmitted = function(event) {
 
   window.GOVUK.setCookie(this.settings.seenCookieName, true, {
     days: 365,
-    sameSite: "None"
+    sameSite: "None",
   });
 
   if (button.length > 0) {
@@ -229,7 +229,7 @@ CookieSettings.prototype.formSubmitted = function(event) {
   }
 };
 
-CookieSettings.prototype.showConfirmationMessage = function() {
+CookieSettings.prototype.showConfirmationMessage = function () {
   var confirmationMessage = document.querySelector(
     "div[data-cookie-confirmation]"
   );
@@ -250,15 +250,15 @@ CookieSettings.prototype.showConfirmationMessage = function() {
   confirmationMessage.style.display = "block";
 };
 
-CookieSettings.prototype.getReferrerLink = function() {
+CookieSettings.prototype.getReferrerLink = function () {
   return document.referrer ? new URL(document.referrer).pathname : false;
 };
 
-CookieSettings.prototype.hideCookieSettings = function() {
+CookieSettings.prototype.hideCookieSettings = function () {
   document.getElementById("cookie-settings").style.display = "none";
 };
 
-CookieSettings.prototype.modalControls = function() {
+CookieSettings.prototype.modalControls = function () {
   var closeLink = document.createElement("a");
   //var closeLinkText = document.createTextNode("Close cookie settings");
   var closeIcon = htmlToElement(
@@ -278,7 +278,7 @@ function htmlToElement(html) {
 
 // Cookie banner initialisation
 
-(function(global) {
+(function (global) {
   "use strict";
 
   var DASFrontend = global.DASFrontend || {};
@@ -287,7 +287,7 @@ function htmlToElement(html) {
     $cookieBanner: document.querySelector("[data-module='cookie-banner']"),
     $cookieSettings: document.querySelector("[data-module='cookie-settings']"),
 
-    init: function() {
+    init: function () {
       if (this.$cookieBanner !== null) {
         var newCookieBanner = new CookieBanner(this.$cookieBanner);
 
@@ -304,7 +304,7 @@ function htmlToElement(html) {
         );
         newCookieSettings.start();
       }
-    }
+    },
   };
 
   global.DASFrontend = DASFrontend;
