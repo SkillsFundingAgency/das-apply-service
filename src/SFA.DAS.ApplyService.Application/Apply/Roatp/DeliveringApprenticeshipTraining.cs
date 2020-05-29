@@ -29,7 +29,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public const string ProfessionalDevelopmentPolicy = "7700";
             public const string ImproveEmployeeSectorExpertise = "7710";
             public const string ImproveEmployeeKnowledge = "7720";
-            public const string DeliveringTrainingOther = "other";
+            public const string DeliveringTrainingOther = "Other";
 
             public static class AgricultureEnvironmentalAndAnimalCare
             {
@@ -51,6 +51,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                         TradeMemberships = "DAT-76114",
                         WhatTypeOfTrainingDelivered = "DAT-76121",
                         HowHaveTheyDeliveredTraining = "DAT-76131",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76131.1",
                         ExperienceOfDeliveringTraining = "DAT-76132",
                         TypicalDurationOfTraining = "DAT-76133"
                     };
@@ -76,6 +77,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                         TradeMemberships = "DAT-76164",
                         WhatTypeOfTrainingDelivered = "DAT-76171",
                         HowHaveTheyDeliveredTraining = "DAT-76181",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76181.1",
                         ExperienceOfDeliveringTraining = "DAT-76182",
                         TypicalDurationOfTraining = "DAT-76183"
                     };
@@ -101,6 +103,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                         TradeMemberships = "DAT-76214",
                         WhatTypeOfTrainingDelivered = "DAT-76221",
                         HowHaveTheyDeliveredTraining = "DAT-76231",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76231.1",
                         ExperienceOfDeliveringTraining = "DAT-76232",
                         TypicalDurationOfTraining = "DAT-76233"
                     };
@@ -126,6 +129,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                         TradeMemberships = "DAT-76264",
                         WhatTypeOfTrainingDelivered = "DAT-76271",
                         HowHaveTheyDeliveredTraining = "DAT-76281",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76281.1",
                         ExperienceOfDeliveringTraining = "DAT-76282",
                         TypicalDurationOfTraining = "DAT-76283"
                     };
@@ -151,6 +155,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                         TradeMemberships = "DAT-76314",
                         WhatTypeOfTrainingDelivered = "DAT-76321",
                         HowHaveTheyDeliveredTraining = "DAT-76331",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76331.1",
                         ExperienceOfDeliveringTraining = "DAT-76332",
                         TypicalDurationOfTraining = "DAT-76333"
                     };
@@ -176,6 +181,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                         TradeMemberships = "DAT-76364",
                         WhatTypeOfTrainingDelivered = "DAT-76371",
                         HowHaveTheyDeliveredTraining = "DAT-76381",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76381.1",
                         ExperienceOfDeliveringTraining = "DAT-76382",
                         TypicalDurationOfTraining = "DAT-76383"
                     };
@@ -201,6 +207,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                         TradeMemberships = "DAT-76414",
                         WhatTypeOfTrainingDelivered = "DAT-76421",
                         HowHaveTheyDeliveredTraining = "DAT-76431",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76431.1",
                         ExperienceOfDeliveringTraining = "DAT-76432",
                         TypicalDurationOfTraining = "DAT-76433"
                     };
@@ -226,6 +233,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                         TradeMemberships = "DAT-76464",
                         WhatTypeOfTrainingDelivered = "DAT-76471",
                         HowHaveTheyDeliveredTraining = "DAT-76481",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-761481.1",
                         ExperienceOfDeliveringTraining = "DAT-76482",
                         TypicalDurationOfTraining = "DAT-76483"
                     };
@@ -251,6 +259,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                         TradeMemberships = "DAT-76514",
                         WhatTypeOfTrainingDelivered = "DAT-76521",
                         HowHaveTheyDeliveredTraining = "DAT-76531",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76531.1",
                         ExperienceOfDeliveringTraining = "DAT-76532",
                         TypicalDurationOfTraining = "DAT-76533"
                     };
@@ -276,6 +285,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                         TradeMemberships = "DAT-76564",
                         WhatTypeOfTrainingDelivered = "DAT-76571",
                         HowHaveTheyDeliveredTraining = "DAT-76581",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76581.1",
                         ExperienceOfDeliveringTraining = "DAT-76582",
                         TypicalDurationOfTraining = "DAT-76583"
                     };
@@ -301,6 +311,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                         TradeMemberships = "DAT-76614",
                         WhatTypeOfTrainingDelivered = "DAT-76621",
                         HowHaveTheyDeliveredTraining = "DAT-76631",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76631.1",
                         ExperienceOfDeliveringTraining = "DAT-76632",
                         TypicalDurationOfTraining = "DAT-76633"
                     };
@@ -326,6 +337,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                         TradeMemberships = "DAT-76664",
                         WhatTypeOfTrainingDelivered = "DAT-76671",
                         HowHaveTheyDeliveredTraining = "DAT-76681",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76681.1",
                         ExperienceOfDeliveringTraining = "DAT-76682",
                         TypicalDurationOfTraining = "DAT-76683"
                     };
@@ -351,6 +363,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                         TradeMemberships = "DAT-76714",
                         WhatTypeOfTrainingDelivered = "DAT-76721",
                         HowHaveTheyDeliveredTraining = "DAT-76731",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76731.1",
                         ExperienceOfDeliveringTraining = "DAT-76732",
                         TypicalDurationOfTraining = "DAT-76733"
                     };
@@ -376,6 +389,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                         TradeMemberships = "DAT-76764",
                         WhatTypeOfTrainingDelivered = "DAT-76771",
                         HowHaveTheyDeliveredTraining = "DAT-76781",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76781.1",
                         ExperienceOfDeliveringTraining = "DAT-76782",
                         TypicalDurationOfTraining = "DAT-76783"
                     };
@@ -401,6 +415,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                         TradeMemberships = "DAT-76814",
                         WhatTypeOfTrainingDelivered = "DAT-76821",
                         HowHaveTheyDeliveredTraining = "DAT-76831",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76831.1",
                         ExperienceOfDeliveringTraining = "DAT-76832",
                         TypicalDurationOfTraining = "DAT-76833"
                     };

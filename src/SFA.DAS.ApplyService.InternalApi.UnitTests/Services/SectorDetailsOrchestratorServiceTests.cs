@@ -206,7 +206,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services
                 .Returns(RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.DeliveringTrainingOther);
 
             _extractAnswerValueService
-                .Setup(a => a.ExtractFurtherQuestionAnswerValueFromQuestionId(It.IsAny<AssessorPage>(), _sectorQuestionIds.HowHaveTheyDeliveredTraining))
+                .Setup(a => a.ExtractAnswerValueFromQuestionId(It.IsAny<List<AssessorAnswer>>(), _sectorQuestionIds.HowHaveTheyDeliveredTrainingOther))
                 .Returns(howHaveTheyDeliveredDescription);
 
             _extractAnswerValueService

@@ -144,13 +144,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             var otherIsHowTheyDelivered =
                 RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.DeliveringTrainingOther;
 
-            sectorDetails.HowHaveTheyDeliveredTraining =
-                string.Equals(howHaveTheyDelivered, otherIsHowTheyDelivered,
-                    StringComparison.InvariantCultureIgnoreCase)
-                    ? _extractAnswerValueService.ExtractFurtherQuestionAnswerValueFromQuestionId(
-                        page4HowDeliveredAndDuration, sectorPageIds.HowHaveTheyDeliveredTraining)
-                    : howHaveTheyDelivered;
+            if (howHaveTheyDelivered.Contains(otherIsHowTheyDelivered))
+            {
+                var otherWords =
+                    _extractAnswerValueService.ExtractAnswerValueFromQuestionId(page4HowDeliveredAndDuration.Answers,
+                        sectorPageIds.HowHaveTheyDeliveredTrainingOther);
+                howHaveTheyDelivered = howHaveTheyDelivered.Replace(otherIsHowTheyDelivered, otherWords.Replace(",", "&#44;"));
+            }
 
+            sectorDetails.HowHaveTheyDeliveredTraining = howHaveTheyDelivered;
+            
             sectorDetails.ExperienceOfDeliveringTraining =
                 _extractAnswerValueService.ExtractAnswerValueFromQuestionId(
                     page4HowDeliveredAndDuration.Answers, sectorPageIds.ExperienceOfDeliveringTraining);

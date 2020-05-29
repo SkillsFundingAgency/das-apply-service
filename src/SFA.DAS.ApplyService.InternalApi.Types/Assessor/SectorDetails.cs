@@ -19,6 +19,8 @@
         public string WhatTypeOfTrainingDelivered { get; set; }
 
         public string HowHaveTheyDeliveredTraining { get; set; }
+
+        public string[] HowIsTrainingDelivered => HowHaveTheyDeliveredTraining?.Split(',');
         public string ExperienceOfDeliveringTraining { get; set; }
         public string TypicalDurationOfTraining { get; set; }
     }

@@ -15,6 +15,7 @@
         public string WhatTypeOfTrainingDelivered { get; set; }
 
         public string HowHaveTheyDeliveredTraining { get; set; }
+        public string HowHaveTheyDeliveredTrainingOther { get; set; }
 
         public string ExperienceOfDeliveringTraining { get; set; }
         public string TypicalDurationOfTraining { get; set; }
