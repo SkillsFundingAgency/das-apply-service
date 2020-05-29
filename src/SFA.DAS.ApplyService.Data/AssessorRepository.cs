@@ -180,7 +180,7 @@ namespace SFA.DAS.ApplyService.Data
                     .ExecuteScalarAsync<int>(
                         $@"SELECT COUNT(1)
 	                      FROM Apply apply
-	                      (Assessor1ReviewStatus = @approvedReviewStatus OR Assessor2ReviewStatus = @approvedReviewStatus) AND ModerationStatus <> @completedModerationStatus",
+	                      WHERE (Assessor1ReviewStatus = @approvedReviewStatus OR Assessor2ReviewStatus = @approvedReviewStatus) AND ModerationStatus <> @completedModerationStatus",
                         new
                         {
                             approvedReviewStatus = AssessorReviewStatus.Approved,
