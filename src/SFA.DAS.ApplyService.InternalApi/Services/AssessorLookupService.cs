@@ -233,6 +233,45 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             }
         }
 
+        public string GetSectorNameForPage(string pageId)
+        {
+            switch (pageId)
+            {
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.MostExperiencedEmployee:
+                    return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.Name;
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.BusinessAndAdministration.MostExperiencedEmployee:
+                    return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.BusinessAndAdministration.Name;
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CareServices.MostExperiencedEmployee:
+                    return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CareServices.Name;
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CateringAndHospitality.MostExperiencedEmployee:
+                    return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CateringAndHospitality.Name;
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.Construction.MostExperiencedEmployee:
+                    return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.Construction.Name;
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CreativeAndDesign.MostExperiencedEmployee:
+                    return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.CreativeAndDesign.Name;
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.Digital.MostExperiencedEmployee:
+                    return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.Digital.Name;
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.EducationAndChildcare.MostExperiencedEmployee:
+                    return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.EducationAndChildcare.Name;
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.EngineeringAndManufacturing.MostExperiencedEmployee:
+                    return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.EngineeringAndManufacturing.Name;
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HairAndBeauty.MostExperiencedEmployee:
+                    return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HairAndBeauty.Name;
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HealthAndScience.MostExperiencedEmployee:
+                    return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HealthAndScience.Name;
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.LegalFinanceAndAccounting.MostExperiencedEmployee:
+                    return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.LegalFinanceAndAccounting.Name;
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ProtectiveServices.MostExperiencedEmployee:
+                    return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ProtectiveServices.Name;
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.SalesMarketingAndProcurement.MostExperiencedEmployee:
+                    return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.SalesMarketingAndProcurement.Name;
+                case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.TransportAndLogistics.MostExperiencedEmployee:
+                    return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.TransportAndLogistics.Name;
+                default:
+                    return null;
+            }
+        }
+
         public SectorQuestionIds GetSectorQuestionIdsForSectorPageId(string pageId)
         {
              switch (pageId)

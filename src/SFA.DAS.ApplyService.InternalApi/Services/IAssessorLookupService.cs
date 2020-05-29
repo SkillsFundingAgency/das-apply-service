@@ -7,6 +7,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
         string GetTitleForSequence(int sequenceId);
         string GetTitleForPage(string pageId);
 
+        string GetSectorNameForPage(string pageId);
+
         SectorQuestionIds GetSectorQuestionIdsForSectorPageId(string pageId);
     }
 }

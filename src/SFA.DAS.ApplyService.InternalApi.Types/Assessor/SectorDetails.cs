@@ -2,6 +2,7 @@
 {
     public class SectorDetails
     {
+        public string SectorName { get; set; }
         public string FullName { get; set; }
         public string JobRole { get; set; }
         public string TimeInRole { get; set; }

@@ -67,5 +67,15 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services
                 Newtonsoft.Json.JsonConvert.SerializeObject(result)
                 , Newtonsoft.Json.JsonConvert.SerializeObject(RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.SectorQuestionIds));
           }
+
+
+        [Test]
+        public void GetSectorNameForSectorPageId()
+        {
+            var pageId = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.MostExperiencedEmployee;
+            var actualName = _assessorLookupService.GetSectorNameForPage(pageId);
+
+            Assert.AreEqual(actualName, RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.Name);
+        }
     }
 }

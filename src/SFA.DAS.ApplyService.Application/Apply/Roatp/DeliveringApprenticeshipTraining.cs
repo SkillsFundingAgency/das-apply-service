@@ -33,6 +33,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
             public static class AgricultureEnvironmentalAndAnimalCare
             {
+                public const string Name = "Agriculture, environmental and animal care";
                 public const string MostExperiencedEmployee = "7610";
                 public const string EmployeesExperience = "7611";
                 public const string TypeOfTrainingDelivered = "7612";
@@ -57,6 +58,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
             public static class BusinessAndAdministration
             {
+                public const string Name = "Business and administration";
                 public const string MostExperiencedEmployee = "7615";
                 public const string EmployeesExperience = "7616";
                 public const string TypeOfTrainingDelivered = "7617";
@@ -81,6 +83,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
             public static class CareServices
             {
+                public const string Name = "Care Services";
                 public const string MostExperiencedEmployee = "7620";
                 public const string EmployeesExperience = "7621";
                 public const string TypeOfTrainingDelivered = "7622";
@@ -105,6 +108,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
             public static class CateringAndHospitality
             {
+                public const string Name = "Catering and hospitality";
                 public const string MostExperiencedEmployee = "7625";
                 public const string EmployeesExperience = "7626";
                 public const string TypeOfTrainingDelivered = "7627";
@@ -129,6 +133,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
             public static class Construction
             {
+                public const string Name = "Construction";
                 public const string MostExperiencedEmployee = "7630";
                 public const string EmployeesExperience = "7631";
                 public const string TypeOfTrainingDelivered = "7632";
@@ -153,6 +158,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
             public static class CreativeAndDesign
             {
+                public const string Name = "Creative and design";
                 public const string MostExperiencedEmployee = "7635";
                 public const string EmployeesExperience = "7636";
                 public const string TypeOfTrainingDelivered = "7637";
@@ -177,6 +183,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
             public static class Digital
             {
+                public const string Name = "Digital";
                 public const string MostExperiencedEmployee = "7640";
                 public const string EmployeesExperience = "7641";
                 public const string TypeOfTrainingDelivered = "7642";
@@ -201,6 +208,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
             public static class EducationAndChildcare
             {
+                public const string Name = "Education and childcare";
                 public const string MostExperiencedEmployee = "7645";
                 public const string EmployeesExperience = "7646";
                 public const string TypeOfTrainingDelivered = "7647";
@@ -225,6 +233,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
             public static class EngineeringAndManufacturing
             {
+                public const string Name = "Engineering and manufacturing";
                 public const string MostExperiencedEmployee = "7650";
                 public const string EmployeesExperience = "7651";
                 public const string TypeOfTrainingDelivered = "7652";
@@ -249,6 +258,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
             public static class HairAndBeauty
             {
+                public const string Name = "Hair and Beauty";
                 public const string MostExperiencedEmployee = "7655";
                 public const string EmployeesExperience = "7656";
                 public const string TypeOfTrainingDelivered = "7657";
@@ -273,6 +283,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
             public static class HealthAndScience
             {
+                public const string Name = "Health and Science";
                 public const string MostExperiencedEmployee = "7660";
                 public const string EmployeesExperience = "7661";
                 public const string TypeOfTrainingDelivered = "7662";
@@ -297,6 +308,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
             public static class LegalFinanceAndAccounting
             {
+                public const string Name = "Legal, finance and accounting";
                 public const string MostExperiencedEmployee = "7665";
                 public const string EmployeesExperience = "7666";
                 public const string TypeOfTrainingDelivered = "7667";
@@ -321,6 +333,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
             public static class ProtectiveServices
             {
+                public const string Name = "Protective services";
                 public const string MostExperiencedEmployee = "7670";
                 public const string EmployeesExperience = "7671";
                 public const string TypeOfTrainingDelivered = "7672";
@@ -345,6 +358,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
             public static class SalesMarketingAndProcurement
             {
+                public const string Name = "Sales, marketing and procurement";
                 public const string MostExperiencedEmployee = "7675";
                 public const string EmployeesExperience = "7676";
                 public const string TypeOfTrainingDelivered = "7677";
@@ -369,6 +383,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
             public static class TransportAndLogistics
             {
+                public const string Name = "Transport and logistics";
                 public const string MostExperiencedEmployee = "7680";
                 public const string EmployeesExperience = "7681";
                 public const string TypeOfTrainingDelivered = "7682";

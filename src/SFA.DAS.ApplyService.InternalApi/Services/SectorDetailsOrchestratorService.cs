@@ -24,6 +24,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
         {
             var sectorDetails = new SectorDetails();
 
+            sectorDetails.SectorName = _assessorLookupService.GetSectorNameForPage(pageId);
             var sectorPageIds = _assessorLookupService.GetSectorQuestionIdsForSectorPageId(pageId);
 
             if (sectorPageIds == null)
