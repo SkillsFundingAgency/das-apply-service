@@ -159,7 +159,7 @@ namespace SFA.DAS.ApplyService.Data
                     .QueryAsync<RoatpModerationApplicationSummary>(
                         $@"SELECT 
                             {ApplicationSummaryFields}
-                            , ModerationStatus
+                            , ModerationStatus AS Status
 	                        FROM Apply apply
 	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                        WHERE (Assessor1ReviewStatus = @approvedReviewStatus OR Assessor2ReviewStatus = @approvedReviewStatus) AND ModerationStatus <> @completedModerationStatus
