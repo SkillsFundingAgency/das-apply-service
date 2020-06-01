@@ -338,6 +338,11 @@ namespace SFA.DAS.ApplyService.Web.Services
                 {
                     return TaskListSectionStatus.Completed;
                 }
+                
+                if (organisationVerificationStatus.WhosInControlStarted)
+                {
+                    return TaskListSectionStatus.InProgress;
+                }
 
                 return TaskListSectionStatus.Next;
             

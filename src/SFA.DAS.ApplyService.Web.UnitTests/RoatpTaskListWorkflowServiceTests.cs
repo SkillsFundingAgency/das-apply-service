@@ -800,6 +800,27 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         }
 
         [Test]
+        public void Whos_in_control_section_status_shows_as_in_progress_if_not_verified_by_companies_house_or_charity_commission_and_whos_in_control_has_started_but_not_confirmed()
+        {
+            var applicationSequences = GenerateSectionsCompletedUpToWhosInControl();
+
+            var organisationVerificationStatus = new OrganisationVerificationStatus
+            {
+                VerifiedCompaniesHouse = true,
+                VerifiedCharityCommission = true,
+                CompaniesHouseDataConfirmed = true,
+                CharityCommissionDataConfirmed = false,
+                WhosInControlConfirmed = false,
+                WhosInControlStarted = true
+            };
+
+            var status = _service.SectionStatus(Guid.NewGuid(), RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
+                                   applicationSequences, organisationVerificationStatus);
+
+            status.Should().Be(TaskListSectionStatus.InProgress);
+        }
+
+        [Test]
         public void Whos_in_control_section_status_shows_as_in_progress_if_companies_house_and_charity_commission_verified_and_only_confirmed_charity()
         {
             var organisationVerificationStatus = new OrganisationVerificationStatus

@@ -3,6 +3,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using System;
@@ -145,6 +146,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                                                  RoatpYourOrganisationQuestionIdConstants.AddSoleTradeDob))
                          .ReturnsAsync(new Domain.Apply.Answer { Value = "details" });
 
+            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId,
+                                                 RoatpWorkflowSequenceIds.YourOrganisation,
+                                                 RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
+                                                 RoatpWorkflowPageIds.WhosInControl.SoleTraderPartnership,
+                                                 RoatpYourOrganisationQuestionIdConstants.SoleTradeOrPartnership))
+                                                 .ReturnsAsync(new Domain.Apply.Answer { Value = RoatpOrganisationTypes.SoleTrader });
+
             var verificationResult = _service.GetOrganisationVerificationStatus(_applicationId).GetAwaiter().GetResult();
 
             verificationResult.WhosInControlConfirmed.Should().BeTrue();
@@ -158,7 +166,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                                                  RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
                                                  RoatpWorkflowPageIds.WhosInControl.AddPartners,
                                                  RoatpYourOrganisationQuestionIdConstants.AddPartners))
-                         .ReturnsAsync(new Domain.Apply.Answer { Value = "details" });
+                                                 .ReturnsAsync(new Domain.Apply.Answer { Value = "details" });
+
+            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId,
+                                                 RoatpWorkflowSequenceIds.YourOrganisation,
+                                                 RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, 
+                                                 RoatpWorkflowPageIds.WhosInControl.SoleTraderPartnership,
+                                                 RoatpYourOrganisationQuestionIdConstants.SoleTradeOrPartnership))
+                                                 .ReturnsAsync(new Domain.Apply.Answer { Value = RoatpOrganisationTypes.Partnership });
 
             var verificationResult = _service.GetOrganisationVerificationStatus(_applicationId).GetAwaiter().GetResult();
 
