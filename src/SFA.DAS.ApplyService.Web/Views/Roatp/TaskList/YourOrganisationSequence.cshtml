@@ -15,7 +15,7 @@
             <li class="app-task-list__item">
                 <span class="app-task-list__task-name">
                     <a class="govuk-link" asp-action="WhatYouWillNeed" asp-controller="RoatpYourOrganisationApplication" asp-route-applicationId="@Model.ApplicationId">
-                        Introduction and what you'll need
+                        Introduction and what you'll need <span class="govuk-visually-hidden"> for your organisation</span>
                     </a>
                 </span>
                 <strong class="govuk-tag app-task-list__task-@Model.CssClass(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed)">@Model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed)</strong>

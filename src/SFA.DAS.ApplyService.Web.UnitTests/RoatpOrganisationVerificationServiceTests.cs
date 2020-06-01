@@ -16,58 +16,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         private Mock<IQnaApiClient> _qnaApiClient;
         private RoatpOrganisationVerificationService _service;
         private Guid _applicationId;
-        private Guid _preambleSequenceId;
-        private Guid _yourOrganisationSequenceId;
-        private Guid _preambleSectionId;
-        private Guid _whosInControlSectionId;
 
         [SetUp]
         public void Before_each_test()
         {
             _applicationId = Guid.NewGuid();
 
-            _preambleSequenceId = Guid.NewGuid();
-            _yourOrganisationSequenceId = Guid.NewGuid();
-            _preambleSectionId = Guid.NewGuid();
-            _whosInControlSectionId = Guid.NewGuid();
-
             _qnaApiClient = new Mock<IQnaApiClient>();
-
-            var sequences = new List<ApplicationSequence>
-            {
-                new ApplicationSequence
-                {
-                    SequenceId = RoatpWorkflowSequenceIds.Preamble,
-                    Id = _preambleSequenceId
-                },
-                new ApplicationSequence
-                {
-                    SequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
-                    Id = _yourOrganisationSequenceId
-                }
-            };
-
-            _qnaApiClient.Setup(x => x.GetSequences(_applicationId)).ReturnsAsync(sequences);
-
-            var preambleSections = new List<ApplicationSection>
-            {
-                new ApplicationSection
-                {
-                    Id = _preambleSectionId,
-                    SectionId = RoatpWorkflowSectionIds.Preamble
-                }
-            };
-            _qnaApiClient.Setup(x => x.GetSections(_applicationId, _preambleSequenceId)).ReturnsAsync(preambleSections);
-
-            var yourOrganisationSections = new List<ApplicationSection>
-            {
-                new ApplicationSection
-                {
-                    Id = _whosInControlSectionId,
-                    SectionId = RoatpWorkflowSectionIds.YourOrganisation.WhosInControl
-                }
-            };
-            _qnaApiClient.Setup(x => x.GetSections(_applicationId, _yourOrganisationSequenceId)).ReturnsAsync(yourOrganisationSections);
 
             _service = new RoatpOrganisationVerificationService(_qnaApiClient.Object);
         }
@@ -78,7 +33,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
 
         public void Verified_companies_house_matches_answer_in_preamble(string answerValue, bool expectedVerificationResult)
         {
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, _preambleSectionId, RoatpWorkflowPageIds.Preamble,
+            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId,
+                                                 RoatpWorkflowSequenceIds.Preamble,
+                                                 RoatpWorkflowSectionIds.Preamble,
+                                                 RoatpWorkflowPageIds.Preamble,
                                                  RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany))
                          .ReturnsAsync(new Domain.Apply.Answer { Value = answerValue });
 
@@ -93,7 +51,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
 
         public void Verified_charity_commission_matches_answer_in_preamble(string answerValue, bool expectedVerificationResult)
         {
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, _preambleSectionId, RoatpWorkflowPageIds.Preamble,
+            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, 
+                                                 RoatpWorkflowSequenceIds.Preamble,
+                                                 RoatpWorkflowSectionIds.Preamble, 
+                                                 RoatpWorkflowPageIds.Preamble,
                                                  RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity))
                          .ReturnsAsync(new Domain.Apply.Answer { Value = answerValue });
 
@@ -108,7 +69,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
 
         public void Companies_house_information_manual_entry_required_matches_answer_in_preamble(string answerValue, bool expectedVerificationResult)
         {
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, _preambleSectionId, RoatpWorkflowPageIds.Preamble,
+            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, 
+                                                 RoatpWorkflowSequenceIds.Preamble,
+                                                 RoatpWorkflowSectionIds.Preamble, 
+                                                 RoatpWorkflowPageIds.Preamble,
                                                  RoatpPreambleQuestionIdConstants.CompaniesHouseManualEntryRequired))
                          .ReturnsAsync(new Domain.Apply.Answer { Value = answerValue });
 
@@ -123,7 +87,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
 
         public void Charity_commission_information_manual_entry_required_matches_answer_in_preamble(string answerValue, bool expectedVerificationResult)
         {
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, _preambleSectionId, RoatpWorkflowPageIds.Preamble,
+            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, 
+                                                 RoatpWorkflowSequenceIds.Preamble,
+                                                 RoatpWorkflowSectionIds.Preamble, 
+                                                 RoatpWorkflowPageIds.Preamble,
                                                  RoatpPreambleQuestionIdConstants.CharityCommissionTrusteeManualEntry))
                          .ReturnsAsync(new Domain.Apply.Answer { Value = answerValue });
 
@@ -138,7 +105,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
 
         public void Companies_house_data_confirmed_matches_answer_in_whos_in_control_pages(string answerValue, bool expectedVerificationResult)
         {
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, _whosInControlSectionId, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage,
+            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, 
+                                                 RoatpWorkflowSequenceIds.YourOrganisation,
+                                                 RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, 
+                                                 RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage,
                                                  RoatpYourOrganisationQuestionIdConstants.CompaniesHouseDetailsConfirmed))
                          .ReturnsAsync(new Domain.Apply.Answer { Value = answerValue });
 
@@ -153,7 +123,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
 
         public void Charity_commission_data_confirmed_matches_answer_in_whos_in_control_pages(string answerValue, bool expectedVerificationResult)
         {
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, _whosInControlSectionId, RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage,
+            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId,
+                                                 RoatpWorkflowSequenceIds.YourOrganisation,
+                                                 RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
+                                                 RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage,
                                                  RoatpYourOrganisationQuestionIdConstants.CharityCommissionDetailsConfirmed))
                          .ReturnsAsync(new Domain.Apply.Answer { Value = answerValue });
 
@@ -165,7 +138,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         [Test]
         public void Whos_in_control_confirmed_is_true_if_manually_entered_sole_trader_details()
         {
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, _whosInControlSectionId, RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob,
+            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId,
+                                                 RoatpWorkflowSequenceIds.YourOrganisation,
+                                                 RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
+                                                 RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob,
                                                  RoatpYourOrganisationQuestionIdConstants.AddSoleTradeDob))
                          .ReturnsAsync(new Domain.Apply.Answer { Value = "details" });
 
@@ -177,7 +153,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         [Test]
         public void Whos_in_control_confirmed_is_true_if_manually_entered_partner_details()
         {
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, _whosInControlSectionId, RoatpWorkflowPageIds.WhosInControl.AddPartners,
+            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId,
+                                                 RoatpWorkflowSequenceIds.YourOrganisation,
+                                                 RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
+                                                 RoatpWorkflowPageIds.WhosInControl.AddPartners,
                                                  RoatpYourOrganisationQuestionIdConstants.AddPartners))
                          .ReturnsAsync(new Domain.Apply.Answer { Value = "details" });
 
@@ -189,7 +168,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         [Test]
         public void Whos_in_control_confirmed_is_true_if_manually_entered_psc_details()
         {
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, _whosInControlSectionId, RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl,
+            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, 
+                                                 RoatpWorkflowSequenceIds.YourOrganisation,
+                                                 RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, 
+                                                 RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl,
                                                  RoatpYourOrganisationQuestionIdConstants.AddPeopleInControl))
                          .ReturnsAsync(new Domain.Apply.Answer { Value = "details" });
 
@@ -202,15 +184,26 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         [TestCase(null)]
         public void Whos_in_control_confirmed_is_false_if_no_manually_entered_details(string answerValue)
         {
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, _whosInControlSectionId, RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob,
+            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId,
+                                                 RoatpWorkflowSequenceIds.YourOrganisation,
+                                                 RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, 
+                                                 RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob,
                                                  RoatpYourOrganisationQuestionIdConstants.AddSoleTradeDob))
-                         .ReturnsAsync(new Domain.Apply.Answer { Value = answerValue });
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, _whosInControlSectionId, RoatpWorkflowPageIds.WhosInControl.AddPartners,
+                                                 .ReturnsAsync(new Domain.Apply.Answer { Value = answerValue });
+
+            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, 
+                                                 RoatpWorkflowSequenceIds.YourOrganisation,
+                                                 RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
+                                                 RoatpWorkflowPageIds.WhosInControl.AddPartners,
                                                  RoatpYourOrganisationQuestionIdConstants.AddPartners))
-                         .ReturnsAsync(new Domain.Apply.Answer { Value = answerValue });
-            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, _whosInControlSectionId, RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl,
+                                                 .ReturnsAsync(new Domain.Apply.Answer { Value = answerValue });
+
+            _qnaApiClient.Setup(x => x.GetAnswer(_applicationId, 
+                                                 RoatpWorkflowSequenceIds.YourOrganisation,
+                                                 RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, 
+                                                 RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl,
                                                  RoatpYourOrganisationQuestionIdConstants.AddPeopleInControl))
-                         .ReturnsAsync(new Domain.Apply.Answer { Value = answerValue });
+                                                 .ReturnsAsync(new Domain.Apply.Answer { Value = answerValue });
 
             var verificationResult = _service.GetOrganisationVerificationStatus(_applicationId).GetAwaiter().GetResult();
 

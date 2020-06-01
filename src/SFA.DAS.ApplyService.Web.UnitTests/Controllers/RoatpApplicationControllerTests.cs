@@ -41,7 +41,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IConfigurationService> _configService;
         private Mock<IUserService> _userService;
         private Mock<IQnaApiClient> _qnaApiClient;
-        private Mock<IProcessPageFlowService> _processPageFlowService;
         private Mock<IQuestionPropertyTokeniser> _questionPropertyTokeniser;
         private Mock<IOptions<List<TaskListConfiguration>>> _configuration;
         private Mock<IPageNavigationTrackingService> _pageNavigationTrackingService;
@@ -57,6 +56,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IRoatpOrganisationVerificationService> _roatpOrganisationVerificationService;
         private Mock<INotRequiredOverridesService> _notRequiredOverridesService;
         private Mock<IRoatpTaskListWorkflowService> _taskListWorkflowService;
+        private Mock<IProcessPageFlowService> _processPageFlowService;
 
         [SetUp]
         public void Before_each_test()
@@ -75,7 +75,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _configService = new Mock<IConfigurationService>();
             _userService = new Mock<IUserService>();
             _qnaApiClient = new Mock<IQnaApiClient>();
-            _processPageFlowService = new Mock<IProcessPageFlowService>();
             _pagesWithSectionsFlowService = new Mock<IPagesWithSectionsFlowService>();
 
             _questionPropertyTokeniser = new Mock<IQuestionPropertyTokeniser>();
@@ -92,6 +91,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _roatpOrganisationVerificationService = new Mock<IRoatpOrganisationVerificationService>();
             _notRequiredOverridesService = new Mock<INotRequiredOverridesService>();
             _taskListWorkflowService = new Mock<IRoatpTaskListWorkflowService>();
+            _processPageFlowService = new Mock<IProcessPageFlowService>();
 
             _controller = new RoatpApplicationController(_apiClient.Object, _logger.Object, _sessionService.Object, _configService.Object,
                                                          _userService.Object, _usersApiClient.Object, _qnaApiClient.Object, 
@@ -168,14 +168,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _qnaApiClient.Setup(x => x.StartApplication(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(qnaResponse).Verifiable();
 
             _apiClient.Setup(x => x.StartApplication(It.IsAny<StartApplicationRequest>())).ReturnsAsync(applicationId).Verifiable();
-
-            var providerRouteSection = new ApplicationSection
-            {
-                ApplicationId = applicationId,
-                SectionId = 1
-            };
-
-            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(providerRouteSection);
 
             var result = _controller.Applications().GetAwaiter().GetResult();
 

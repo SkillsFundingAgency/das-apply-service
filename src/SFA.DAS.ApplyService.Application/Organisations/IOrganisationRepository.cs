@@ -6,17 +6,17 @@ namespace SFA.DAS.ApplyService.Application.Organisations
 {
     public interface IOrganisationRepository
     {
-        Task<Organisation> CreateOrganisation(Organisation organisation, Guid userId);
+        Task<Guid> CreateOrganisation(Organisation organisation, Guid userId);
         Task<Organisation> GetOrganisationByContactEmail(string email);
         Task<Organisation> GetOrganisationByName(string name);
         Task<Organisation> GetOrganisationByApplicationId(Guid applicationId);
-        Task<Organisation> UpdateOrganisation(Organisation organisation, Guid userId);
-        Task<Organisation> UpdateOrganisation(Organisation organisation);
+        Task UpdateOrganisation(Organisation organisation, Guid userId);
+        Task UpdateOrganisation(Organisation organisation);
         Task<Organisation> GetUserOrganisation(Guid userId);
         Task<Organisation> GetOrganisationByUserId(Guid userId);
         Task<Organisation> GetOrganisationByUkprn(string ukprn);
-        Task<Organisation> CreateOrganisation(Organisation organisation);
-        Task<Organisation> UpdateOrganisation(Guid organisationId, Guid userId);
+        Task<Guid> CreateOrganisation(Organisation organisation);
+        Task UpdateOrganisation(Guid organisationId, Guid userId);
         Task<Organisation> GetOrganisation(Guid organisationId);
     }
 }

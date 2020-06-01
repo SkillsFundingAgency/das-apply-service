@@ -20,7 +20,7 @@
     {
         private ILogger<RoatpApplicationController> _logger;
 
-        private RoatpApiClient _apiClient;
+        private IRoatpApiClient _apiClient;
         
         private AsyncRetryPolicy _retryPolicy;
 
@@ -28,7 +28,7 @@
 
         private readonly List<RoatpSequences> _roatpSequences;
 
-        public RoatpApplicationController(ILogger<RoatpApplicationController> logger, RoatpApiClient apiClient, IMediator mediator, IOptions<List<RoatpSequences>> roatpSequences)
+        public RoatpApplicationController(ILogger<RoatpApplicationController> logger, IRoatpApiClient apiClient, IMediator mediator, IOptions<List<RoatpSequences>> roatpSequences)
         {
             _logger = logger;
             _apiClient = apiClient;

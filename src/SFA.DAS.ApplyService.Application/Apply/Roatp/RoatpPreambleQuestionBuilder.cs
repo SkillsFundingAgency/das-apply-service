@@ -61,8 +61,26 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string AddPartners = "YO-110";
         public static string AddSoleTradeDob = "YO-120";
         public static string AddPeopleInControl = "YO-130";
+        public static string OrganisationTypeMainSupporting = "YO-140";
+        public static string OrganisationTypeEmployer = "YO-150";
+        public static string PublicBodyTypeMainSupporting = "YO-170";
+        public static string PublicBodyTypeEmployer = "YO-171";
+        public static string EducationalInstituteTypeMainSupporting = "YO-160";
+        public static string EducationalInstituteTypeEmployer = "YO-161";
         public static string OfficeForStudents = "YO-235";
         public static string InitialTeacherTraining = "YO-240";
+        public static string HasHadFullInspection = "YO-260";
+        public static string ReceivedFullInspectionGradeForApprenticeships = "YO-270";
+        public static string FullInspectionOverallEffectivenessGrade = "YO-280";
+        public static string HasHadMonitoringVisit = "YO-290";
+        public static string HasMaintainedFundingSinceInspection = "YO-320";
+        public static string HasHadShortInspectionWithinLast3Years = "YO-330";
+        public static string HasMaintainedFullGradeInShortInspection = "YO-340";
+        public static string FullInspectionApprenticeshipGradeOfsFunded = "YO-300";
+        public static string FullInspectionApprenticeshipGradeNonOfsFunded = "YO-301";
+        public static string GradeWithinLast3YearsOfsFunded = "YO-310";
+        public static string GradeWithinLast3YearsNonOfsFunded = "YO-311";
+
         public static string IsPostGradTrainingOnlyApprenticeship = "YO-250";
 		public static string HasDeliveredTrainingAsSubcontractor = "YO-350";
         public static string ContractFileName = "YO-360";
@@ -171,12 +189,27 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         {
             public static string MainSupportingStartPage = "140";
             public static string EmployerStartPage = "150";
+            public static string PublicBodyTypeMainSupporting = "170";
+            public static string PublicBodyTypeEmployer = "171";
+            public static string EducationalInstituteTypeMainSupporting = "160";
+            public static string EducationalInstituteTypeEmployer = "161";
         }
 
         public class ExperienceAndAccreditations
         { 
             public static string OfficeForStudents = "235";
             public static string InitialTeacherTraining = "240";
+            public static string HasHadFullInspection = "260";
+            public static string ReceivedFullInspectionGradeForApprenticeships = "270";
+            public static string FullInspectionOverallEffectivenessGrade = "280";
+            public static string HasHadMonitoringVisit = "290";
+            public static string HasMaintainedFundingSinceInspection = "320";
+            public static string HasHadShortInspectionWithinLast3Years = "330";
+            public static string HasMaintainedFullGradeInShortInspection = "340";
+            public static string FullInspectionApprenticeshipGradeNonOfsFunded = "300";
+            public static string FullInspectionApprenticeshipGradeOfsFunded = "301";
+            public static string GradeWithinLast3YearsOfsFunded = "310";
+            public static string GradeWithinLast3YearsNonOfsFunded = "311";
             public static string IsPostGradTrainingOnlyApprenticeship = "250";
 			public static string SubcontractorDeclaration = "350";
             public static string SubcontractorContractFile = "360";
