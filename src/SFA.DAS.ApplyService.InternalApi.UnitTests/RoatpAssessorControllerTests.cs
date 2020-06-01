@@ -19,6 +19,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using NPOI.OpenXmlFormats.Dml;
 using SFA.DAS.ApplyService.Domain.Apply.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 
@@ -32,10 +33,12 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private readonly int _sectionId = RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy;
         private readonly string _firstPageId = "1";
         private readonly string _lastPageId = "999";
+        private readonly string _userId = "user id";
 
         private Mock<ILogger<RoatpAssessorController>> _logger;
         private Mock<IMediator> _mediator;
         private Mock<IInternalQnaApiClient> _qnaApiClient;
+        private Mock<IAssessorRepository> _assessorRepository;
         private Mock<IAssessorLookupService> _lookupService;
         private Mock<IGetAssessorPageService> _getAssessorPageService;
         private Mock<ISectorDetailsOrchestratorService> _sectorDetailsOrchestratorService;
@@ -48,9 +51,10 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _mediator = new Mock<IMediator>();
             _logger = new Mock<ILogger<RoatpAssessorController>>();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
+            _assessorRepository = new Mock<IAssessorRepository>();
             _lookupService = new Mock<IAssessorLookupService>();
             _getAssessorPageService = new Mock<IGetAssessorPageService>();
-            _controller = new RoatpAssessorController(_logger.Object, _mediator.Object, _qnaApiClient.Object, _lookupService.Object, _getAssessorPageService.Object, Mock.Of<ISectorDetailsOrchestratorService>());
+            _controller = new RoatpAssessorController(_logger.Object, _mediator.Object, _qnaApiClient.Object, _assessorRepository.Object, _lookupService.Object, _getAssessorPageService.Object, Mock.Of<ISectorDetailsOrchestratorService>());
         }
 
         [Test]
@@ -391,7 +395,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
                 RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees)).ReturnsAsync(section);
 
-            var listOfSectors = await _controller.GetChosenSectors(_applicationId);
+            var listOfSectors = await _controller.GetChosenSectors(_applicationId, _userId);
 
             var expectedListOfSectors = new List<Sector>
             {

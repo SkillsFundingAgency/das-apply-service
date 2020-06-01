@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Apply.Assessor;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -33,12 +34,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         private readonly ILogger<RoatpAssessorController> _logger;
         private readonly IMediator _mediator;
         private readonly IInternalQnaApiClient _qnaApiClient;
+        private readonly IAssessorRepository _assessorRepository;
         private readonly IAssessorLookupService _assessorLookupService;
         private readonly IGetAssessorPageService _getAssessorPageService;
         private readonly ISectorDetailsOrchestratorService _sectorDetailsOrchestratorService;
 
         public RoatpAssessorController(ILogger<RoatpAssessorController> logger, IMediator mediator,
-            IInternalQnaApiClient qnaApiClient, IAssessorLookupService assessorLookupService,
+            IInternalQnaApiClient qnaApiClient, IAssessorRepository assessorRepository, IAssessorLookupService assessorLookupService,
             IGetAssessorPageService getAssessorPageService,
             ISectorDetailsOrchestratorService sectorDetailsOrchestratorService)
         {
@@ -48,6 +50,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             _assessorLookupService = assessorLookupService;
             _getAssessorPageService = getAssessorPageService;
             _sectorDetailsOrchestratorService = sectorDetailsOrchestratorService;
+            _assessorRepository = assessorRepository;
         }
 
         [HttpGet("Assessor/Applications/{userId}")]
@@ -66,9 +69,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return applications;
         }
 
-
-        [HttpGet("Assessor/Applications/ChosenSectors/{applicationId}")]
-        public async Task<List<Sector>> GetChosenSectors(Guid applicationId)
+        [HttpGet("Assessor/Applications/ChosenSectors/{applicationId}/user/{userId}")]
+        public async Task<List<Sector>> GetChosenSectors(Guid applicationId, string userId)
         {
             var qnaSection = await _qnaApiClient.GetSectionBySectionNo(
                 applicationId,
@@ -82,8 +84,29 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 && x.Complete
                 && !x.NotRequired);
 
-            return sectionStartingPages?.Select(page => new Sector {Title = page.LinkTitle, PageId = page.PageId})
+            var sectors = sectionStartingPages?.Select(page => new Sector { Title = page.LinkTitle, PageId = page.PageId })
                 .ToList();
+
+            if (sectors == null || !sectors.Any() || userId == null) return new List<Sector>();
+
+            var assessorType = await _assessorRepository.GetAssessorType(applicationId, userId);
+
+            var sectionStatuses = await _assessorRepository.GetAssessorReviewOutcomesPerSection(applicationId,
+                RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
+                RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees, (int)assessorType,
+                userId);
+
+            if (sectionStatuses == null || !sectionStatuses.Any()) return sectors;
+
+            foreach (var sector in sectors)
+            {
+                foreach (var sectorStatus in sectionStatuses.Where(sectorStatus => sector.PageId == sectorStatus.PageId))
+                {
+                    sector.Status = sectorStatus.Status;
+                }
+            }
+
+            return sectors;
         }
 
         [HttpPost("Assessor/Applications/{applicationId}/Assign")]

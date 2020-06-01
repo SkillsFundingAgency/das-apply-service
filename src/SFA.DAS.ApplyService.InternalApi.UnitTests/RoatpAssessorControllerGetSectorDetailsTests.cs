@@ -36,6 +36,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private Mock<ILogger<RoatpAssessorController>> _logger;
         private Mock<IMediator> _mediator;
         private Mock<IInternalQnaApiClient> _qnaApiClient;
+        private Mock<IAssessorRepository> _assessorRepository;
         private Mock<IAssessorLookupService> _lookupService;
         private RoatpAssessorController _controller;
         private Mock<ISectorDetailsOrchestratorService> _sectorDetailsOrchestratorService;
@@ -47,6 +48,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _mediator = new Mock<IMediator>();
             _logger = new Mock<ILogger<RoatpAssessorController>>();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
+            _assessorRepository = new Mock<IAssessorRepository>();
             _lookupService = new Mock<IAssessorLookupService>();
             _sectorDetailsOrchestratorService = new Mock<ISectorDetailsOrchestratorService>();
 
@@ -70,7 +72,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _secondPage)).ReturnsAsync(new SkipPageResponse { NextAction = "NextPage", NextActionId = _thirdPage });
             _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _thirdPage)).ReturnsAsync(new SkipPageResponse { NextAction = "NextPage", NextActionId = _fourthPage });
             _controller = new RoatpAssessorController(_logger.Object, _mediator.Object, 
-                _qnaApiClient.Object, _lookupService.Object, Mock.Of<IGetAssessorPageService>(), _sectorDetailsOrchestratorService.Object);
+                _qnaApiClient.Object, _assessorRepository.Object,  _lookupService.Object, Mock.Of<IGetAssessorPageService>(), _sectorDetailsOrchestratorService.Object);
         }
 
         [Test]

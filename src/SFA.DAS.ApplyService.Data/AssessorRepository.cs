@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.InternalApi.Types;
 
 namespace SFA.DAS.ApplyService.Data
 {
@@ -131,6 +132,30 @@ namespace SFA.DAS.ApplyService.Data
                             inProgressReviewStatus = AssessorReviewStatus.InProgress,
                             userId = userId
                         })).ToList();
+            }
+        }
+
+        public async Task<AssessorType> GetAssessorType(Guid applicationId, string userId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var assessorTypeValue = await connection
+                    .ExecuteScalarAsync<int>(
+                        $@"select max(assessorType) assessorType from ( 
+                            SELECT 1 assessorType FROM [SFA.Das.ApplyService].[dbo].[Apply] where Assessor1UserId = @userId
+                                union
+                            select 2
+                              FROM [SFA.Das.ApplyService].[dbo].[Apply] where Assessor2UserId = @userId
+                                union 
+                            select 0
+                        ) as assessorTypeValues",
+                        new
+                        {
+                            inProgressReviewStatus = AssessorReviewStatus.InProgress,
+                            userId = userId
+                        });
+
+                return (AssessorType) assessorTypeValue;
             }
         }
 
