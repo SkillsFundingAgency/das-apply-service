@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using NPOI.OpenXmlFormats.Dml;
 using SFA.DAS.ApplyService.Domain.Apply.Assessor;
+using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
@@ -43,6 +44,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private Mock<IGetAssessorPageService> _getAssessorPageService;
         private Mock<ISectorDetailsOrchestratorService> _sectorDetailsOrchestratorService;
         private RoatpAssessorController _controller;
+        private AssessorType _assessorType;
+        private List<PageReviewOutcome> _sectionStatuses;
 
 
         [SetUp]
@@ -54,6 +57,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _assessorRepository = new Mock<IAssessorRepository>();
             _lookupService = new Mock<IAssessorLookupService>();
             _getAssessorPageService = new Mock<IGetAssessorPageService>();
+            _sectionStatuses = new List<PageReviewOutcome>();
             _controller = new RoatpAssessorController(_logger.Object, _mediator.Object, _qnaApiClient.Object, _assessorRepository.Object, _lookupService.Object, _getAssessorPageService.Object, Mock.Of<ISectorDetailsOrchestratorService>());
         }
 
@@ -395,12 +399,37 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
                 RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees)).ReturnsAsync(section);
 
+            _assessorType = AssessorType.FirstAssessor;
+
+            _assessorRepository.Setup(x => x.GetAssessorType(_applicationId, _userId)).ReturnsAsync(_assessorType);
+
+            _sectionStatuses = new List<PageReviewOutcome>();
+            var page1Status = "Pass";
+            var page2Status = "Fail";
+            _sectionStatuses.Add(new PageReviewOutcome
+            {
+                ApplicationId = _applicationId,
+                PageId = sector1PageId,
+                Status = page1Status
+            });
+            _sectionStatuses.Add(new PageReviewOutcome
+            {
+                ApplicationId = _applicationId,
+                PageId = sector2PageId,
+                Status = page2Status
+            });
+
+            _assessorRepository.Setup(x => x.GetAssessorReviewOutcomesPerSection(_applicationId,
+                RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
+                RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees, (int) _assessorType,
+                _userId)).ReturnsAsync(_sectionStatuses);
+
             var listOfSectors = await _controller.GetChosenSectors(_applicationId, _userId);
 
             var expectedListOfSectors = new List<Sector>
             {
-                new Sector {PageId = sector1PageId, Title = sector1Title},
-                new Sector {PageId = sector2PageId, Title = sector2Title}
+                new Sector {PageId = sector1PageId, Title = sector1Title, Status = page1Status},
+                new Sector {PageId = sector2PageId, Title = sector2Title, Status = page2Status}
             };
 
             Assert.AreEqual(JsonConvert.SerializeObject(expectedListOfSectors), JsonConvert.SerializeObject(listOfSectors));
