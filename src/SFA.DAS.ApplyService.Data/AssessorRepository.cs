@@ -29,6 +29,14 @@ namespace SFA.DAS.ApplyService.Data
                             Assessor2UserId
             ";
 
+        private const string NewApplicationsWhereClause = @"
+                            apply.DeletedAt IS NULL AND apply.GatewayReviewStatus = @gatewayReviewStatusApproved
+                            -- Not assigned to current user
+                            AND ISNULL(apply.Assessor1UserId, '') <> @userId AND ISNULL(apply.Assessor2UserId, '') <> @userId
+                            -- Can be assigned to at least one assessor
+                            AND (apply.Assessor1UserId IS NULL OR apply.Assessor2UserId IS NULL)
+                            ";
+
         private const string InProgressApplicationsWhereClause = @"
                             apply.DeletedAt IS NULL AND 
                             (
@@ -53,10 +61,10 @@ namespace SFA.DAS.ApplyService.Data
                     .QueryAsync<RoatpAssessorApplicationSummary>(
                         $@"SELECT 
                             {ApplicationSummaryFields}
-	                        FROM Apply apply
-	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
-	                        WHERE apply.DeletedAt IS NULL AND apply.GatewayReviewStatus = @gatewayReviewStatusApproved AND ISNULL(Assessor1UserId, '') <> @userId AND ISNULL(Assessor2UserId, '') <> @userId AND (Assessor1UserId IS NULL OR Assessor2UserId IS NULL)
-                            ORDER BY JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn')",
+	                       FROM Apply apply
+	                       INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+	                       WHERE {NewApplicationsWhereClause}
+                           ORDER BY JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn')",
                         new
                         {
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
@@ -71,9 +79,9 @@ namespace SFA.DAS.ApplyService.Data
             {
                 return (await connection
                     .ExecuteScalarAsync<int>(
-                        @"SELECT COUNT(1)
+                        $@"SELECT COUNT(1)
 	                      FROM Apply apply
-	                      WHERE apply.DeletedAt IS NULL AND apply.GatewayReviewStatus = @gatewayReviewStatusApproved AND (Assessor1UserId IS NULL OR Assessor1UserId <> @userId AND Assessor2UserId IS NULL)",
+	                      WHERE {NewApplicationsWhereClause}",
                         new
                         {
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
