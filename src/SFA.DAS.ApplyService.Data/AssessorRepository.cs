@@ -38,10 +38,11 @@ namespace SFA.DAS.ApplyService.Data
                             ";
 
         private const string InProgressApplicationsWhereClause = @"
-                            apply.DeletedAt IS NULL AND 
+                            apply.DeletedAt IS NULL AND apply.GatewayReviewStatus = @gatewayReviewStatusApproved
+                            AND
                             (
                                 -- Assigned to the current user and in progress
-                                (apply.Assessor1ReviewStatus = @inProgressReviewStatus AND apply.Assessor1UserId = @userId) OR (apply.Assessor1ReviewStatus = @inProgressReviewStatus AND apply.Assessor1UserId = @userId)
+                                (apply.Assessor1ReviewStatus = @inProgressReviewStatus AND apply.Assessor1UserId = @userId) OR (apply.Assessor2ReviewStatus = @inProgressReviewStatus AND apply.Assessor2UserId = @userId)
                                 OR
                                 -- Assigned to any two other assessors and in progress
                                 (apply.Assessor1UserId IS NOT NULL AND apply.Assessor2UserId IS NOT NULL AND (apply.Assessor1ReviewStatus = @inProgressReviewStatus OR Assessor2ReviewStatus = @inProgressReviewStatus))
@@ -136,6 +137,7 @@ namespace SFA.DAS.ApplyService.Data
                             ORDER BY JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn')",
                         new
                         {
+                            gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
                             inProgressReviewStatus = AssessorReviewStatus.InProgress,
                             userId = userId
                         })).ToList();
@@ -153,6 +155,7 @@ namespace SFA.DAS.ApplyService.Data
 	                      WHERE {InProgressApplicationsWhereClause}",
                         new
                         {
+                            gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
                             inProgressReviewStatus = AssessorReviewStatus.InProgress,
                             userId = userId
                         }));
