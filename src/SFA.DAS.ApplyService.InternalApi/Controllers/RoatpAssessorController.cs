@@ -242,6 +242,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             return assessorReviewOutcomes;
         }
+
+        [HttpPost("Assessor/UpdateAssessorReviewStatus")]
+        public async Task UpdateAssessorReviewStatus([FromBody] UpdateAssessorReviewStatusRequest request)
+        {
+            await _mediator.Send(request);
+        }
     }
 
 
