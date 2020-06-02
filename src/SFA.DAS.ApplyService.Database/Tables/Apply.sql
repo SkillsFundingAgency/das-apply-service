@@ -17,7 +17,6 @@
     [DeletedAt] DATETIME2 NULL, 
     [DeletedBy] NVARCHAR(256) NULL,
     [UKPRN] AS JSON_VALUE(ApplyData, '$.ApplyDetails.UKPRN') PERSISTED,
-    [NotRequiredOverrides] NVARCHAR(MAX) NULL,
     [Assessor1UserId] NVARCHAR(256) NULL, 
     [Assessor2UserId] NVARCHAR(256) NULL, 
     [Assessor1Name] NVARCHAR(256) NULL, 
