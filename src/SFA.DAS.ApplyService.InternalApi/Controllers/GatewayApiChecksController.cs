@@ -60,11 +60,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             var applyData = await GetApplyData(applicationId);
 
-            if (applyData?.GatewayReviewDetails?.CompaniesHouseDetails == null)
-            {
-                return NotFound();
-            }
-
             return Ok(applyData.GatewayReviewDetails.CompaniesHouseDetails);
         }
 
@@ -73,11 +68,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task<IActionResult> GetCharityCommissionData(Guid applicationId)
         {
             var applyData = await GetApplyData(applicationId);
-
-            if (applyData?.GatewayReviewDetails?.CharityCommissionDetails == null)
-            {
-                return NotFound();
-            }
 
             return Ok(applyData.GatewayReviewDetails.CharityCommissionDetails);
         }

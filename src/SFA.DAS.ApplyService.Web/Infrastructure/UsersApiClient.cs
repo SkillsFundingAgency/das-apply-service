@@ -1,11 +1,11 @@
+using Microsoft.Extensions.Logging;
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Infrastructure.ApiClients;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Web.ViewModels;
 
@@ -24,69 +24,52 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task MigrateContactAndOrgs(MigrateContactOrganisation migrateContactOrganisation);
     }
 
-    public class UsersApiClient : IUsersApiClient
+    public class UsersApiClient : ApiClientBase<UsersApiClient>, IUsersApiClient
     {
-        private readonly ILogger<UsersApiClient> _logger;
-        private readonly ITokenService _tokenService;
-        private static readonly HttpClient _httpClient = new HttpClient();
-
-        public UsersApiClient(IConfigurationService configurationService, ILogger<UsersApiClient> logger, ITokenService tokenService)
+        public UsersApiClient(HttpClient httpClient, ILogger<UsersApiClient> logger, ITokenService tokenService) : base(httpClient, logger)
         {
-            _logger = logger;
-            _tokenService = tokenService;
-
-            if (_httpClient.BaseAddress == null)
-            {
-                _httpClient.BaseAddress = new Uri(configurationService.GetConfig().Result.InternalApi.Uri);
-            }
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken());
         }
 
         public async Task<bool> InviteUser(CreateAccountViewModel vm)
         {
-            var result = await _httpClient.PostAsJsonAsync("/Account/", vm);
-            return result.IsSuccessStatusCode;
+            var result = await Post($"/Account/", vm);
+            return result == HttpStatusCode.OK;
         }
 
         public async Task<Contact> GetUserBySignInId(string signInId)
         {
-            var httpResponseMessage = await _httpClient.GetAsync($"/Account/{signInId}");
-
-            var contactJson = await httpResponseMessage.Content.ReadAsStringAsync();
-
-            _logger.LogInformation($"GetUserBySignInId result: {contactJson}");
-            
-            return JsonConvert.DeserializeObject<Contact>(contactJson);
+            return await Get<Contact>($"/Account/{signInId}");
         }
 
         public async Task<bool> ApproveUser(Guid contactId)
         {
-            var result = await _httpClient.PostAsJsonAsync("/Account/{contactId}/approve", string.Empty);
-            return result.IsSuccessStatusCode;
+            var result = await Post($"/Account/{contactId}/approve", new { });
+            return result == HttpStatusCode.OK;
         }
 
         public async Task Callback(SignInCallback callback)
         {
-            await _httpClient.PostAsJsonAsync($"/Account/Callback", callback);
+            await Post($"/Account/Callback", callback);
         }
 
         public async Task MigrateUsers()
         {
-            await _httpClient.PostAsync("/Account/MigrateUsers", new StringContent(""));
+            await Post("/Account/MigrateUsers", new { });
         }
 
         public async Task AssociateOrganisationWithUser(Guid contactId, Guid organisationId)
         {
-            await _httpClient.PutAsJsonAsync($"/Account/UpdateContactWithOrgId", new UpdateContactOrgId
+            await Post($"/Account/UpdateContactWithOrgId", new UpdateContactOrgId
             {
-                ContactId=contactId,
-                OrganisationId=organisationId
-            } );
+                ContactId = contactId,
+                OrganisationId = organisationId
+            });
         }
 
         public async Task MigrateContactAndOrgs(MigrateContactOrganisation migrateContactOrganisation)
         {
-            await _httpClient.PostAsJsonAsync($"/Account/MigrateContactAndOrgs", migrateContactOrganisation);
+            await Post("/Account/MigrateContactAndOrgs", migrateContactOrganisation);
         }
     }
 }

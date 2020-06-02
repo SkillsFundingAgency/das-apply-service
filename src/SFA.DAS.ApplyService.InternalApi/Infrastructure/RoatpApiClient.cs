@@ -1,77 +1,47 @@
 ﻿namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
-    using System;
+    using Microsoft.Extensions.Logging;
     using System.Collections.Generic;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Threading.Tasks;
-    using Configuration;
-    using Domain.Roatp;
-    using Microsoft.Extensions.Logging;
+    using SFA.DAS.ApplyService.Domain.Roatp;
     using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
     using SFA.DAS.ApplyService.InternalApi.Models.Ukrlp;
+    using SFA.DAS.ApplyService.Infrastructure.ApiClients;
+    using System;
 
-    public class RoatpApiClient : IRoatpApiClient
+    public class RoatpApiClient : ApiClientBase<RoatpApiClient>, IRoatpApiClient
     {
-        private readonly HttpClient _client;
-        private readonly ILogger<RoatpApiClient> _logger;
-        private readonly IRoatpTokenService _tokenService;
-        private string _baseAddress;
-
-        public RoatpApiClient()
+        public RoatpApiClient(HttpClient httpClient, ILogger<RoatpApiClient> logger, IRoatpTokenService tokenService) : base(httpClient, logger)
         {
-
-        }
-        public RoatpApiClient(HttpClient client, ILogger<RoatpApiClient> logger, IConfigurationService configurationService, IRoatpTokenService tokenService)
-        {
-            _logger = logger;
-            _baseAddress = configurationService.GetConfig().Result.RoatpApiAuthentication.ApiBaseAddress;
-            _client = client;
-            _tokenService = tokenService;
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken(httpClient.BaseAddress));
         }
 
         public async virtual Task<OrganisationRegisterStatus> GetOrganisationRegisterStatus(string ukprn)
         {
             _logger.LogInformation($"Looking up RoATP status for UKPRN {ukprn}");
 
-            var apiResponse = await Get<OrganisationRegisterStatus>(
-                $"{_baseAddress}/api/v1/organisation/register-status?&ukprn={ukprn}");
-
-            return apiResponse;
+            return await Get<OrganisationRegisterStatus>($"/api/v1/organisation/register-status?&ukprn={ukprn}");
         }
 
         public async Task<IEnumerable<ProviderType>> GetProviderTypes()
         {
             _logger.LogInformation($"Retrieving RoATP provider types");
 
-            var apiResponse = await Get<IEnumerable<ProviderType>>($"{_baseAddress}/api/v1/lookupData/providerTypes");
-
-            return apiResponse;
+            return await Get<List<ProviderType>>($"/api/v1/lookupData/providerTypes");
         }
 
         public async virtual Task<UkprnLookupResponse> GetUkrlpDetails(string ukprn)
         {
             _logger.LogInformation($"Retrieving UKRLP details for {ukprn}");
 
-            var apiResponse = await Get<UkprnLookupResponse>($"{_baseAddress}/api/v1/ukrlp/lookup/{ukprn}");
-
-            return apiResponse;
+            return await Get<UkprnLookupResponse>($"/api/v1/ukrlp/lookup/{ukprn}");
         }
 
-        private async Task<T> Get<T>(string uri)
+        public async Task<IEnumerable<OrganisationType>> GetOrganisationTypes(int? providerTypeId)
         {
-            _client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _tokenService.GetToken(_baseAddress));
-
-            using (var response = await _client.GetAsync(new Uri(uri, UriKind.Absolute)))
-            {
-                if (response.IsSuccessStatusCode)
-                {
-                    return await response.Content.ReadAsAsync<T>();
-                }
-
-                return default(T);
-            }
+            return await Get<List<OrganisationType>>($"/api/v1/lookupData/organisationTypes?providerTypeId={providerTypeId}");
         }
     }
 }

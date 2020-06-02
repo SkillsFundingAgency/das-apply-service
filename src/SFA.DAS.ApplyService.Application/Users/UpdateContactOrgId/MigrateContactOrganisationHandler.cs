@@ -38,14 +38,13 @@ namespace SFA.DAS.ApplyService.Application.Users.UpdateContactOrgId
                     {
                         //Update organisation details
                         organisation.OrganisationDetails = requestOrganisation.OrganisationDetails;
-                        organisation = await _organisationRepository.UpdateOrganisation(organisation);
+                        await _organisationRepository.UpdateOrganisation(organisation);
                         organisationId = organisation.Id;
                     }
                     else
                     {
                         //Create new organisation
-                        organisation = await _organisationRepository.CreateOrganisation(requestOrganisation);
-                        organisationId = organisation.Id;
+                        organisationId = await _organisationRepository.CreateOrganisation(requestOrganisation);
                         newOrganisationCreated = true;
                     }
                 }

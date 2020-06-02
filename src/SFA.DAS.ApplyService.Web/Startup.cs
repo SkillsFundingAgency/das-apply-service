@@ -68,6 +68,8 @@ namespace SFA.DAS.ApplyService.Web
             
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
 
+            ConfigHttpClients(services);
+
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 options.DefaultRequestCulture = new RequestCulture("en-GB");
@@ -137,6 +139,83 @@ namespace SFA.DAS.ApplyService.Web
             ConfigureDependencyInjection(services);
         }
 
+        private void ConfigHttpClients(IServiceCollection services)
+        {
+            var acceptHeaderName = "Accept";
+            var acceptHeaderValue = "application/json";
+            var handlerLifeTime = TimeSpan.FromMinutes(5);
+
+            services.AddHttpClient<IApplicationApiClient, ApplicationApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<ICharityCommissionApiClient, CharityCommissionApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<ICompaniesHouseApiClient, CompaniesHouseApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<IEmailTemplateClient, EmailTemplateClient>(config =>
+            {
+                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<IOrganisationApiClient, OrganisationApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<OrganisationSearchApiClient, OrganisationSearchApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<IUkrlpApiClient, UkrlpApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<IUsersApiClient, UsersApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<IWhitelistedProvidersApiClient, WhitelistedProvidersApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+        }
+
         private void ConfigureDependencyInjection(IServiceCollection services)
         {
             services.RegisterAllTypes<IValidator>(new[] { typeof(IValidator).Assembly });
@@ -157,21 +236,10 @@ namespace SFA.DAS.ApplyService.Web
                 _configuration["EnvironmentName"]));
 
             services.AddTransient<IDfeSignInService, DfeSignInService>();
-
-            services.AddTransient<IUsersApiClient, UsersApiClient>();
-            services.AddTransient<UsersApiClient, UsersApiClient>();
-            services.AddTransient<IApplicationApiClient, ApplicationApiClient>();
-            services.AddTransient<OrganisationApiClient, OrganisationApiClient>();
-            services.AddTransient<OrganisationSearchApiClient, OrganisationSearchApiClient>();
             services.AddTransient<CreateAccountValidator, CreateAccountValidator>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IQnaTokenService, QnaTokenService>();
             services.AddTransient<IQnaApiClient, QnaApiClient>();
-            services.AddTransient<IOrganisationApiClient, OrganisationApiClient>();
-            services.AddTransient<IRoatpApiClient, RoatpApiClient>();
-            services.AddTransient<IUkrlpApiClient, UkrlpApiClient>();
-            services.AddTransient<ICompaniesHouseApiClient, CompaniesHouseApiClient>();
-            services.AddTransient<ICharityCommissionApiClient, CharityCommissionApiClient>();
             services.AddTransient<IProcessPageFlowService, ProcessPageFlowService>();
             services.AddTransient<IPagesWithSectionsFlowService, PagesWithSectionsFlowService>();
             services.AddTransient<IQuestionPropertyTokeniser, QuestionPropertyTokeniser>();
@@ -196,11 +264,10 @@ namespace SFA.DAS.ApplyService.Web
 
                 return new NotificationsApi(httpClient, apiConfiguration);
             });
-            services.AddTransient<IEmailTemplateClient, EmailTemplateClient>();
+
             services.AddTransient<ISubmitApplicationConfirmationEmailService, SubmitApplicationConfirmationEmailService>();
             services.AddTransient<ITabularDataService, TabularDataService>();
             services.AddTransient<ITabularDataRepository, TabularDataRepository>();
-            services.AddTransient<IWhitelistedProvidersApiClient, WhitelistedProvidersApiClient>();
             services.AddTransient<IUkprnWhitelistValidator, UkprnWhitelistValidator>();
             services.AddTransient<IRoatpTaskListWorkflowService, RoatpTaskListWorkflowService>();
             services.AddTransient<IRoatpOrganisationVerificationService, RoatpOrganisationVerificationService>();

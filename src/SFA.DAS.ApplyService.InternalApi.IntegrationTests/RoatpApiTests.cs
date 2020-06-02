@@ -23,21 +23,24 @@
         private const string ConnectionString = "UseDevelopmentStorage=true;";
 
         private RoatpApiClient _apiClient;
-        private HttpClient _httpClient;
 
         [SetUp]
         public void Before_each_test()
         {
-            var hostingEnvironment = new Mock<IHostingEnvironment>();
-            _config = new ConfigurationService(hostingEnvironment.Object, "LOCAL", ConnectionString, Version,
-                ServiceName);
-
-            _httpClient = new HttpClient();
-            _config.GetConfig().GetAwaiter().GetResult().RoatpApiAuthentication.ApiBaseAddress = RoatpApiBaseAddress;
+            var httpClient = new HttpClient
+            {
+                BaseAddress = new Uri(RoatpApiBaseAddress),
+            };
+            httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
 
             var logger = new Mock<ILogger<RoatpApiClient>>();
 
-            _apiClient = new RoatpApiClient(_httpClient, logger.Object, _config, new RoatpTokenService(_config, hostingEnvironment.Object));
+            var hostingEnvironment = new Mock<IHostingEnvironment>();
+            _config = new ConfigurationService(hostingEnvironment.Object, "LOCAL", ConnectionString, Version, ServiceName);
+
+            _config.GetConfig().GetAwaiter().GetResult().RoatpApiAuthentication.ApiBaseAddress = RoatpApiBaseAddress;
+
+            _apiClient = new RoatpApiClient(httpClient, logger.Object, new RoatpTokenService(_config));
         }
 
         [Test]

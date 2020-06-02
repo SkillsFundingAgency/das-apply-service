@@ -19,10 +19,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.GetApplications
         {
             if(!request.CreatedBy)
             {
-                return await _applyRepository.GetOrganisationApplications(request.UserId);
+                return await _applyRepository.GetOrganisationApplications(request.SigninId);
             }
 
-            return await _applyRepository.GetUserApplications(request.UserId);
+            return await _applyRepository.GetUserApplications(request.SigninId);
         }
     }
 }

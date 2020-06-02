@@ -13,5 +13,6 @@ namespace SFA.DAS.ApplyService.Domain.Roatp
         public bool CompaniesHouseDataConfirmed { get; set; }
         public bool CharityCommissionDataConfirmed { get; set; }
         public bool WhosInControlConfirmed { get; set; }
+        public bool WhosInControlStarted { get; set; }
     }
 }

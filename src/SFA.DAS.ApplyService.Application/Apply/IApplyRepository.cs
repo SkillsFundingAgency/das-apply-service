@@ -14,8 +14,9 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<Guid> StartApplication(Guid applicationId, ApplyData applyData, Guid organisationId, Guid createdBy);
 
         Task<Domain.Entities.Apply> GetApplication(Guid applicationId);
-        Task<List<Domain.Entities.Apply>> GetUserApplications(Guid userId);
-        Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid userId);
+
+        Task<List<Domain.Entities.Apply>> GetUserApplications(Guid signinId);
+        Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid signinId);
 
         Task<List<GatewayPageAnswerSummary>> GetGatewayPageAnswers(Guid applicationId);
         Task<GatewayPageAnswer> GetGatewayPageAnswer(Guid applicationId, string pageId);
@@ -24,6 +25,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<string> GetGatewayPageComments(Guid applicationId, string pageId);
 
         Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string userName, string status, string comments);
+        Task<bool> UpdateGatewayReviewStatusAndComment(Guid applicationId, string gatewayReviewStatus, string gatewayReviewComment, string userName);
 
         Task<bool> CanSubmitApplication(Guid applicationId);
         Task SubmitApplication(Guid applicationId, ApplyData applyData, Guid submittedBy);
@@ -41,8 +43,9 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<RoatpApplicationSummaryItem>> GetClosedApplications();
 
         Task<List<RoatpFinancialSummaryItem>> GetOpenFinancialApplications();
-        Task<List<RoatpFinancialSummaryItem>> GetFeedbackAddedFinancialApplications();
+        Task<List<RoatpFinancialSummaryItem>> GetClarificationFinancialApplications();
         Task<List<RoatpFinancialSummaryItem>> GetClosedFinancialApplications();
+        Task<RoatpFinancialApplicationsStatusCounts> GetFinancialApplicationsStatusCounts();
         Task<bool> StartFinancialReview(Guid applicationId, string reviewer);
         Task<bool> RecordFinancialGrade(Guid applicationId, FinancialReviewDetails financialReviewDetails, string financialReviewStatus);
 
@@ -99,5 +102,10 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         Task<bool> SaveNotRequiredOverrides(Guid applicationId, NotRequiredOverrideConfiguration notRequiredOverrides);
        
+        Task<List<ApplicationOversightDetails>> GetOversightsPending();
+        Task<List<ApplicationOversightDetails>> GetOversightsCompleted();
+
+        Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, DateTime applicationDeterminedDate, string updatedBy);
+        Task<ApplicationOversightDetails> GetOversightDetails(Guid applicationId);
     }
 }

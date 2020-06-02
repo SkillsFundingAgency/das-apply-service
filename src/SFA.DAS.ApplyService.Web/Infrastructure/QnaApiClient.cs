@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
 using Polly;
 using Polly.Extensions.Http;
 using Polly.Retry;
@@ -17,7 +17,7 @@ using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
-using System.IO;
+using SFA.DAS.ApplyService.Infrastructure.Firewall;
 using StartQnaApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartQnaApplicationResponse;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
@@ -173,10 +173,15 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         }
 
 
-        public async Task<Answer> GetAnswer(Guid applicationId, Guid sectionId, string pageId, string questionId)
+        public async Task<Answer> GetAnswer(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId)
         {
-            var pageContainingQuestion = await GetPage(applicationId, sectionId, pageId);
+            var pageContainingQuestion = await GetPageBySectionNo(applicationId, sequenceNo, sectionNo, pageId);
 
+            return GetAnswer(pageContainingQuestion, questionId);
+        }
+
+        public Answer GetAnswer(Page pageContainingQuestion, string questionId)
+        {
             if (pageContainingQuestion?.Questions != null)
             {
                 foreach (var question in pageContainingQuestion.Questions)
@@ -219,6 +224,21 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
             var json = await response.Content.ReadAsStringAsync();
 
+            return HandleUpdatePageAnswersResponse(applicationId, pageId, response, json);
+        }
+
+        public async Task<SetPageAnswersResponse> UpdatePageAnswers(Guid applicationId, int sequenceNo, int sectionNo, string pageId, List<Answer> answers)
+        {
+            // NOTE: This should be called SetPageAnswers, but leaving alone for now
+            var response = await _httpClient.PostAsJsonAsync($"/Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}", answers);
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            return HandleUpdatePageAnswersResponse(applicationId, pageId, response, json);
+        }
+
+        private SetPageAnswersResponse HandleUpdatePageAnswersResponse(Guid applicationId, string pageId, HttpResponseMessage response, string json)
+        {
             if (response.IsSuccessStatusCode)
             {
                 return JsonConvert.DeserializeObject<SetPageAnswersResponse>(json);
@@ -228,7 +248,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 var apiError = GetApiErrorFromJson(json);
                 var apiErrorMessage = apiError?.Message ?? json;
 
-                _logger.LogError($"Error Updating Page Answers into QnA. Application: {applicationId} | SectionId: {sectionId} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}");
+                _logger.LogError(
+                    $"Error Updating Page Answers into QnA. Application: {applicationId} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}");
 
                 var validationErrorMessage = "Cannot save answers at this time. Please contact your system administrator.";
 
@@ -239,7 +260,8 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 }
 
                 var validationError = new KeyValuePair<string, string>(string.Empty, validationErrorMessage);
-                return new SetPageAnswersResponse { ValidationPassed = false, ValidationErrors = new List<KeyValuePair<string, string>> { validationError } };
+                return new SetPageAnswersResponse
+                    {ValidationPassed = false, ValidationErrors = new List<KeyValuePair<string, string>> {validationError}};
             }
         }
 
