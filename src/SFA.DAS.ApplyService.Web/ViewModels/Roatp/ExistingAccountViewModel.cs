@@ -6,7 +6,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
     public class ExistingAccountViewModel
     {
-        [Required(ErrorMessage ="Tell us if this is your first time using the apprenticeship service (AS) sign in")]
+        [Required(ErrorMessage ="Tell us if you have an apprenticeship service (AS) sign in account")]
         public string FirstTimeSignin { get; set; }
 
         public List<ValidationErrorDetail> ErrorMessages { get; set; }
