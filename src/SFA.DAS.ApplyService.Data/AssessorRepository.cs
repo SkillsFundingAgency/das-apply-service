@@ -395,5 +395,30 @@ namespace SFA.DAS.ApplyService.Data
                 return pageReviewOutcomeResults.ToList();
             }
         }
-    }
+
+		public async Task UpdateAssessorReviewStatus(Guid applicationId, int assessorType, string userId, string status)
+		{
+			using (var connection = new SqlConnection(_config.SqlConnectionString))
+			{
+				await connection.ExecuteAsync(
+                    @"IF (@assessorType = 1)
+                        BEGIN
+		                    UPDATE [Apply]
+			                        SET Assessor1ReviewStatus = @status
+                                        , UpdatedAt = GETUTCDATE()
+				                        , UpdatedBy = @userId
+			                        WHERE ApplicationId = @applicationId AND DeletedAt IS NULL AND Assessor1UserId = @userId
+                        END
+                      IF (@assessorType = 2)
+                        BEGIN
+		                    UPDATE [Apply]
+			                        SET Assessor2ReviewStatus = @status
+                                        , UpdatedAt = GETUTCDATE()
+				                        , UpdatedBy = @userId
+			                        WHERE ApplicationId = @applicationId AND DeletedAt IS NULL AND Assessor2UserId = @userId                
+                        END",
+					new { applicationId, assessorType, userId, status });
+            }
+		}
+	}
 }
