@@ -29,11 +29,20 @@ namespace SFA.DAS.ApplyService.Data
                             Assessor2UserId
             ";
 
+        private const string NewApplicationsWhereClause = @"
+                            apply.DeletedAt IS NULL AND apply.GatewayReviewStatus = @gatewayReviewStatusApproved
+                            -- Not assigned to current user
+                            AND ISNULL(apply.Assessor1UserId, '') <> @userId AND ISNULL(apply.Assessor2UserId, '') <> @userId
+                            -- Can be assigned to at least one assessor
+                            AND (apply.Assessor1UserId IS NULL OR apply.Assessor2UserId IS NULL)
+                            ";
+
         private const string InProgressApplicationsWhereClause = @"
-                            apply.DeletedAt IS NULL AND 
+                            apply.DeletedAt IS NULL AND apply.GatewayReviewStatus = @gatewayReviewStatusApproved
+                            AND
                             (
                                 -- Assigned to the current user and in progress
-                                (apply.Assessor1ReviewStatus = @inProgressReviewStatus AND apply.Assessor1UserId = @userId) OR (apply.Assessor1ReviewStatus = @inProgressReviewStatus AND apply.Assessor1UserId = @userId)
+                                (apply.Assessor1ReviewStatus = @inProgressReviewStatus AND apply.Assessor1UserId = @userId) OR (apply.Assessor2ReviewStatus = @inProgressReviewStatus AND apply.Assessor2UserId = @userId)
                                 OR
                                 -- Assigned to any two other assessors and in progress
                                 (apply.Assessor1UserId IS NOT NULL AND apply.Assessor2UserId IS NOT NULL AND (apply.Assessor1ReviewStatus = @inProgressReviewStatus OR Assessor2ReviewStatus = @inProgressReviewStatus))
@@ -53,10 +62,10 @@ namespace SFA.DAS.ApplyService.Data
                     .QueryAsync<RoatpAssessorApplicationSummary>(
                         $@"SELECT 
                             {ApplicationSummaryFields}
-	                        FROM Apply apply
-	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
-	                        WHERE apply.DeletedAt IS NULL AND apply.GatewayReviewStatus = @gatewayReviewStatusApproved AND ISNULL(Assessor1UserId, '') <> @userId AND ISNULL(Assessor2UserId, '') <> @userId AND (Assessor1UserId IS NULL OR Assessor2UserId IS NULL)
-                            ORDER BY JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn')",
+	                       FROM Apply apply
+	                       INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+	                       WHERE {NewApplicationsWhereClause}
+                           ORDER BY JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn')",
                         new
                         {
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
@@ -71,9 +80,9 @@ namespace SFA.DAS.ApplyService.Data
             {
                 return (await connection
                     .ExecuteScalarAsync<int>(
-                        @"SELECT COUNT(1)
+                        $@"SELECT COUNT(1)
 	                      FROM Apply apply
-	                      WHERE apply.DeletedAt IS NULL AND apply.GatewayReviewStatus = @gatewayReviewStatusApproved AND (Assessor1UserId IS NULL OR Assessor1UserId <> @userId AND Assessor2UserId IS NULL)",
+	                      WHERE {NewApplicationsWhereClause}",
                         new
                         {
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
@@ -128,6 +137,7 @@ namespace SFA.DAS.ApplyService.Data
                             ORDER BY JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn')",
                         new
                         {
+                            gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
                             inProgressReviewStatus = AssessorReviewStatus.InProgress,
                             userId = userId
                         })).ToList();
@@ -145,6 +155,7 @@ namespace SFA.DAS.ApplyService.Data
 	                      WHERE {InProgressApplicationsWhereClause}",
                         new
                         {
+                            gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
                             inProgressReviewStatus = AssessorReviewStatus.InProgress,
                             userId = userId
                         }));
@@ -384,5 +395,30 @@ namespace SFA.DAS.ApplyService.Data
                 return pageReviewOutcomeResults.ToList();
             }
         }
-    }
+
+		public async Task UpdateAssessorReviewStatus(Guid applicationId, int assessorType, string userId, string status)
+		{
+			using (var connection = new SqlConnection(_config.SqlConnectionString))
+			{
+				await connection.ExecuteAsync(
+                    @"IF (@assessorType = 1)
+                        BEGIN
+		                    UPDATE [Apply]
+			                        SET Assessor1ReviewStatus = @status
+                                        , UpdatedAt = GETUTCDATE()
+				                        , UpdatedBy = @userId
+			                        WHERE ApplicationId = @applicationId AND DeletedAt IS NULL AND Assessor1UserId = @userId
+                        END
+                      IF (@assessorType = 2)
+                        BEGIN
+		                    UPDATE [Apply]
+			                        SET Assessor2ReviewStatus = @status
+                                        , UpdatedAt = GETUTCDATE()
+				                        , UpdatedBy = @userId
+			                        WHERE ApplicationId = @applicationId AND DeletedAt IS NULL AND Assessor2UserId = @userId                
+                        END",
+					new { applicationId, assessorType, userId, status });
+            }
+		}
+	}
 }

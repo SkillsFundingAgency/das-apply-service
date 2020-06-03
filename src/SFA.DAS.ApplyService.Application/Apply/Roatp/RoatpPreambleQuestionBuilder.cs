@@ -47,7 +47,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string COAStage1Application = "COA-1";                  
     }
 
-    public class RoatpYourOrganisationQuestionIdConstants
+    public static class RoatpYourOrganisationQuestionIdConstants
     {
         public static string WebsiteManuallyEntered = "YO-41";
         public static string IcoNumber = "YO-30";
@@ -61,6 +61,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string AddPartners = "YO-110";
         public static string AddSoleTradeDob = "YO-120";
         public static string AddPeopleInControl = "YO-130";
+        public static string OrganisationTypeMainSupporting = "YO-140";
+        public static string OrganisationTypeEmployer = "YO-150";
+        public static string PublicBodyTypeMainSupporting = "YO-170";
+        public static string PublicBodyTypeEmployer = "YO-171";
+        public static string EducationalInstituteTypeMainSupporting = "YO-160";
+        public static string EducationalInstituteTypeEmployer = "YO-161";
         public static string OfficeForStudents = "YO-235";
         public static string InitialTeacherTraining = "YO-240";
         public static string HasHadFullInspection = "YO-260";
@@ -80,16 +86,22 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string ContractFileName = "YO-360";
     }
 
-    public class RoatpCriminalComplianceChecksQuestionIdConstants
+    public static class RoatpCriminalComplianceChecksQuestionIdConstants
     {
         public static string CompositionCreditors = "CC-20";
         public static string OrganisationFailedToRepayFunds = "CC-21";
         public static string OrganisationContractTermination = "CC-22";
     }
 
-    public class RoatpDeliveringApprenticeshipTrainingQuestionIdConstants
+    public static class RoatpDeliveringApprenticeshipTrainingQuestionIdConstants
     {
         public static string ManagementHierarchy = "DAT-720";
+    }
+
+    public static class RoatpPlanningApprenticeshipTrainingQuestionIdConstants
+    {
+        public const string ApplicationFrameworks_MainEmployer = "PAT-50";
+        public const string ApplicationFrameworks_Supporting = "PAT-60";
     }
 
     public static class RoatpWorkflowSequenceIds
@@ -206,6 +218,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         {
             public static string MainSupportingStartPage = "140";
             public static string EmployerStartPage = "150";
+            public static string PublicBodyTypeMainSupporting = "170";
+            public static string PublicBodyTypeEmployer = "171";
+            public static string EducationalInstituteTypeMainSupporting = "160";
+            public static string EducationalInstituteTypeEmployer = "161";
         }
 
         public static class ExperienceAndAccreditations
