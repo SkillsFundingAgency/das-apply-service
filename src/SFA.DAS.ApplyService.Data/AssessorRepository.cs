@@ -152,10 +152,10 @@ namespace SFA.DAS.ApplyService.Data
                 var assessorTypeValue = await connection
                     .ExecuteScalarAsync<int>(
                         $@"select max(assessorType) assessorType from ( 
-                            SELECT 1 assessorType FROM [SFA.Das.ApplyService].[dbo].[Apply] where Assessor1UserId = @userId
+                            SELECT 1 assessorType FROM [Apply] where Assessor1UserId = @userId
                                 union
                             select 2
-                              FROM [SFA.Das.ApplyService].[dbo].[Apply] where Assessor2UserId = @userId
+                              FROM [Apply] where Assessor2UserId = @userId
                                 union 
                             select 0
                         ) as assessorTypeValues",
