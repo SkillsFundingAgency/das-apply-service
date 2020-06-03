@@ -26,5 +26,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Types.Assessor
         public List<AssessorQuestion> Questions { get; set; }
 
         public List<AssessorAnswer> Answers { get; set; }
+
+        public List<string> GuidanceInformation { get; set; }
     }
 }

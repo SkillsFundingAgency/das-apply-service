@@ -32,7 +32,9 @@ namespace SFA.DAS.ApplyService.Application.Organisations.UpdateOrganisation
                 existingOrganisation.RoEPAOApproved = request.RoEPAOApproved;
                 existingOrganisation.RoATPApproved = request.RoATPApproved;
 
-                return await _organisationRepository.UpdateOrganisation(existingOrganisation, request.UpdatedBy);
+                await _organisationRepository.UpdateOrganisation(existingOrganisation, request.UpdatedBy);
+
+                return existingOrganisation;
             }
 
             return null;

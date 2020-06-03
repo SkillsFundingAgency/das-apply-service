@@ -258,6 +258,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IRoatpTokenService, RoatpTokenService>();
             services.AddTransient<IGatewayApiChecksService, GatewayApiChecksService>();
             services.AddTransient<ICriminalComplianceChecksQuestionLookupService, CriminalComplianceChecksQuestionLookupService>();
+            services.AddTransient<IRegistrationDetailsService, RegistrationDetailsService>();
             services.AddTransient<IAssessorLookupService, AssessorLookupService>();
             services.AddTransient<IExtractAnswerValueService, ExtractAnswerValueService>();
             services.AddTransient<IGetAssessorPageService, GetAssessorPageService>();
