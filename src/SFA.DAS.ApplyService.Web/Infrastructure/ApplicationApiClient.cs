@@ -45,14 +45,14 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await Get<Domain.Entities.Apply>($"Application/{applicationId}");
         }
 
-        public async Task<List<Domain.Entities.Apply>> GetApplications(Guid userId, bool createdBy)
+        public async Task<List<Domain.Entities.Apply>> GetApplications(Guid signinId, bool createdBy)
         {
             if (!createdBy)
             {
-                return await Get<List<Domain.Entities.Apply>>($"Applications/{userId}/Organisation");
+                return await Get<List<Domain.Entities.Apply>>($"Applications/{signinId}/Organisation");
             }
 
-            return await Get<List<Domain.Entities.Apply>>($"Applications/{userId}");
+            return await Get<List<Domain.Entities.Apply>>($"Applications/{signinId}");
         }
 
         public async Task<IEnumerable<RoatpSequences>> GetRoatpSequences()

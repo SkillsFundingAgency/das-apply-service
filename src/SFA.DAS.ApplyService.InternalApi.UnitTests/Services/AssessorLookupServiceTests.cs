@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.InternalApi.Services;
-using System.Linq;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services
 {
@@ -55,6 +54,25 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services
             var actualTitle = _assessorLookupService.GetTitleForPage(invalidPageId);
 
             Assert.That(actualTitle, Is.Null);
+        }
+
+        [TestCase(RoatpPlanningApprenticeshipTrainingQuestionIdConstants.ApplicationFrameworks_MainEmployer)]
+        [TestCase(RoatpPlanningApprenticeshipTrainingQuestionIdConstants.ApplicationFrameworks_Supporting)]
+        public void GetLabelForQuestion_when_valid_question_returns_title(string validQuestionId)
+        {
+            var actualLabel = _assessorLookupService.GetLabelForQuestion(validQuestionId);
+
+            Assert.That(actualLabel, Is.Not.Null);
+        }
+
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase("invalid")]
+        public void GetLabelForQuestion_when_invalid_question_returns_null(string invalidQuestionId)
+        {
+            var actualLabel = _assessorLookupService.GetLabelForQuestion(invalidQuestionId);
+
+            Assert.That(actualLabel, Is.Null);
         }
 
         [Test]

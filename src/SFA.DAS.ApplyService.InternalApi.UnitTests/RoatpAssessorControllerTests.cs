@@ -417,6 +417,17 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             Assert.AreSame(expectedFileStream, result);
         }
 
+        [Test]
+        public async Task UpdateAssessorReviewStatus_calls_mediator()
+        {
+            var applicationId = Guid.NewGuid();
+            var request = new UpdateAssessorReviewStatusRequest(applicationId, 1, "4fs7f-userId-7gfhh", AssessorReviewStatus.Approved);
+
+            await _controller.UpdateAssessorReviewStatus(request);
+
+            _mediator.Verify(x => x.Send(It.Is<UpdateAssessorReviewStatusRequest>(r => r.ApplicationId == applicationId && r.AssessorType == request.AssessorType && r.UserId == request.UserId && r.Status == request.Status), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
 
 
         private static Page GenerateQnAPage(string pageId)

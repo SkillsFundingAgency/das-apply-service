@@ -90,6 +90,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                     return "Transitioning from apprenticeship frameworks to apprenticeship standards";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining
                     .OnlyDeliveringApprenticeshipFrameworks_MainEmployer:
+                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnlyDeliveringApprenticeshipFrameworks_MainEmployer:
                     return "Delivering apprenticeship frameworks only";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining
                     .OnlyDeliveringApprenticeshipFrameworks_Supporting:
@@ -232,10 +233,21 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                     return null;
             }
         }
+                public string GetLabelForQuestion(string questionId)
+        {
+            switch (questionId)
+            {
+                case RoatpPlanningApprenticeshipTrainingQuestionIdConstants.ApplicationFrameworks_MainEmployer:
+                case RoatpPlanningApprenticeshipTrainingQuestionIdConstants.ApplicationFrameworks_Supporting:
+                    return "Does your organisation have a plan to transition from apprenticeship frameworks to apprenticeship standards?";
+                default:
+                    return null;
+            }
+        }
 
         public string GetSectorNameForPage(string pageId)
         {
-            switch (pageId)
+            switch (questionId)
             {
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.MostExperiencedEmployee:
                     return RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.AgricultureEnvironmentalAndAnimalCare.Name;

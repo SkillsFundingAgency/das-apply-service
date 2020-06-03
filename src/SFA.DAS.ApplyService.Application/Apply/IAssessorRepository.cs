@@ -17,5 +17,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<PageReviewOutcome> GetPageReviewOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, int assessorType, string userId);
         Task<List<PageReviewOutcome>> GetAssessorReviewOutcomesPerSection(Guid applicationId, int sequenceNumber, int sectionNumber, int assessorType, string userId);
         Task<List<PageReviewOutcome>> GetAllAssessorReviewOutcomes(Guid applicationId, int assessorType, string userId);
+        Task UpdateAssessorReviewStatus(Guid applicationId, int assessorType, string userId, string status);
     }
 }
