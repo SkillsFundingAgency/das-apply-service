@@ -47,7 +47,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string COAStage1Application = "COA-1";                  
     }
 
-    public class RoatpYourOrganisationQuestionIdConstants
+    public static class RoatpYourOrganisationQuestionIdConstants
     {
         public static string WebsiteManuallyEntered = "YO-41";
         public static string IcoNumber = "YO-30";
@@ -86,16 +86,22 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string ContractFileName = "YO-360";
     }
 
-    public class RoatpCriminalComplianceChecksQuestionIdConstants
+    public static class RoatpCriminalComplianceChecksQuestionIdConstants
     {
         public static string CompositionCreditors = "CC-20";
         public static string OrganisationFailedToRepayFunds = "CC-21";
         public static string OrganisationContractTermination = "CC-22";
     }
 
-    public class RoatpDeliveringApprenticeshipTrainingQuestionIdConstants
+    public static class RoatpDeliveringApprenticeshipTrainingQuestionIdConstants
     {
         public static string ManagementHierarchy = "DAT-720";
+    }
+
+    public static class RoatpPlanningApprenticeshipTrainingQuestionIdConstants
+    {
+        public const string ApplicationFrameworks_MainEmployer = "PAT-50";
+        public const string ApplicationFrameworks_Supporting = "PAT-60";
     }
 
     public static class RoatpWorkflowSequenceIds

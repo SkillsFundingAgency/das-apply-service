@@ -216,5 +216,17 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                     return null;
             }
         }
+
+        public string GetLabelForQuestion(string questionId)
+        {
+            switch (questionId)
+            {
+                case RoatpPlanningApprenticeshipTrainingQuestionIdConstants.ApplicationFrameworks_MainEmployer:
+                case RoatpPlanningApprenticeshipTrainingQuestionIdConstants.ApplicationFrameworks_Supporting:
+                    return "Does your organisation have a plan to transition from apprenticeship frameworks to apprenticeship standards?";
+                default:
+                    return null;
+            }
+        }
     }
 }
