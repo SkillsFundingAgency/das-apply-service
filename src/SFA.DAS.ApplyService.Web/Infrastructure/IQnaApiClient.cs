@@ -17,6 +17,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
     public interface IQnaApiClient
     {
+        // TODO: Move over to use Nuget Package: SFA.DAS.QnA.Api.Types
         Task<StartQnaApplicationResponse> StartApplication(string userReference, string workflowType, string applicationData);
 
         Task<object> GetApplicationData(Guid applicationId);
