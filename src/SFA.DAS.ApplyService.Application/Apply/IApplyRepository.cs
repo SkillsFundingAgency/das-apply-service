@@ -89,7 +89,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<Contact> GetContactForApplication(Guid applicationId);
         Task<Organisation> GetOrganisationForApplication(Guid applicationId);
 
-        Task<string> CheckOrganisationStandardStatus(Guid applicationId, int standardId);
 
         Task<int> GetNextAppReferenceSequence();
         Task<string> GetWorkflowReferenceFormat(Guid requestApplicationId);

@@ -93,7 +93,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
         //private async Task NotifyContact(Guid applicationId, int sequenceId)
         //{
             //var application = await _applyRepository.GetApplication(applicationId);
-            //var standard = application.ApplicationData?.StandardName ?? string.Empty;
             //var reference = application.ApplicationData?.ReferenceNumber ?? string.Empty;
             //var config = await _configurationService.GetConfig();
             //var assessorSignInPage = $"{config.AssessorServiceBaseUrl}/Account/SignIn";
@@ -107,17 +106,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Review.Return
             //        var contactToNotify = await _contactRepository.GetContact(lastInitSubmission.SubmittedBy);
             //        await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_UPDATE, contactToNotify, 
             //            new { ServiceName = SERVICE_NAME, ServiceTeam = SERVICE_TEAM, Contact = contactToNotify.GivenNames, LoginLink = assessorSignInPage });
-            //    }
-            //}
-            //else if (sequenceId == 2)
-            //{
-            //    var lastStandardSubmission = application.ApplicationData?.StandardSubmissions.OrderByDescending(sub => sub.SubmittedAt).FirstOrDefault();
-
-            //    if (lastStandardSubmission != null)
-            //    {
-            //        var contactToNotify = await _contactRepository.GetContact(lastStandardSubmission.SubmittedBy);
-            //        await _emailServiceObject.SendEmailToContact(EmailTemplateName.APPLY_EPAO_RESPONSE, contactToNotify, 
-            //            new {ServiceName=SERVICE_NAME,ServiceTeam=SERVICE_TEAM, Contact= contactToNotify.GivenNames, standard, LoginLink = assessorSignInPage });
             //    }
             //}
         //}

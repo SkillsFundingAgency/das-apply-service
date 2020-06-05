@@ -32,15 +32,13 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.ReturnRequestHandl
             ///////////////////////////////////////////////////////////
             
             //var initSubmissions = new List<InitSubmission> { new InitSubmission() };
-            //var standardSubmissions = new List<StandardSubmission> { new StandardSubmission() };
-            //var applicationData = new ApplicationData { InitSubmissions = initSubmissions, StandardSubmissions = standardSubmissions };
+            //var applicationData = new ApplicationData { InitSubmissions = initSubmissions };
             //var application = new Domain.Entities.Application() { ApplicationData = applicationData };
 
             //var sequence1 = new ApplicationSequence { ApplicationId = application.Id, SequenceId = SequenceId.Stage1, Sections = new List<ApplicationSection>() };
-            //var sequence2 = new ApplicationSequence { ApplicationId = application.Id, SequenceId = SequenceId.Stage2, Sections = new List<ApplicationSection>() };
 
             //ApplyRepository = new Mock<IApplyRepository>();
-            //ApplyRepository.Setup(r => r.GetSequences(It.IsAny<Guid>())).ReturnsAsync(new List<ApplicationSequence> { sequence1, sequence2 });
+            //ApplyRepository.Setup(r => r.GetSequences(It.IsAny<Guid>())).ReturnsAsync(new List<ApplicationSequence> { sequence1 });
             //ApplyRepository.Setup(r => r.GetApplication(It.IsAny<Guid>())).ReturnsAsync(application);
 
             //ContactRepository = new Mock<IContactRepository>();

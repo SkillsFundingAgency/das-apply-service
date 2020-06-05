@@ -72,15 +72,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             return Mapper.Map<IEnumerable<DeliveryArea>, IEnumerable<DeliveryArea>>(apiResponse);
         }
 
-        public async Task<IEnumerable<StandardCollation>> GetStandards()
-        {
-            _logger.LogInformation($"Gathering Standards from EPAO Register.");
-            await Post($"/api/ao/update-standards", new { });
-            var apiResponse =
-                await Get<List<StandardCollation>>($"/api/ao/assessment-organisations/collated-standards");
-            return apiResponse;
-        }
-
         private string GetToken()
         {
             if (_hostingEnvironment.IsDevelopment())

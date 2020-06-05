@@ -881,25 +881,6 @@ namespace SFA.DAS.ApplyService.Data
                             break;
                     }
                 }
-                else if (sequenceId == 2)
-                {
-                    switch (sequenceStatus)
-                    {
-                        case ApplicationSequenceStatus.FeedbackAdded:
-                            await connection.ExecuteAsync(@"UPDATE Applications
-                                                                SET ApplicationData = JSON_MODIFY(ApplicationData, '$.StandardSubmissionFeedbackAddedDate', CONVERT(varchar(30), GETUTCDATE(), 126))
-                                                                WHERE  (Applications.Id = @ApplicationId);",
-                            new { applicationId });
-                            break;
-                        case ApplicationSequenceStatus.Rejected:
-                        case ApplicationSequenceStatus.Approved:
-                            await connection.ExecuteAsync(@"UPDATE Applications
-                                                    SET ApplicationData = JSON_MODIFY(ApplicationData, '$.StandardSubmissionClosedDate', CONVERT(varchar(30), GETUTCDATE(), 126))
-                                                    WHERE  (Applications.Id = @ApplicationId);",
-                            new { applicationId });
-                            break;
-                    }
-                }
             }
         }
 
@@ -1095,21 +1076,6 @@ namespace SFA.DAS.ApplyService.Data
                                                                         INNER JOIN Apply appl ON appl.OrganisationId = org.Id
                                                                         WHERE appl.ApplicationId = @ApplicationId",
                     new {applicationId});
-            }
-        }
-
-        public async Task<string> CheckOrganisationStandardStatus(Guid applicationId, int standardId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-               var applicationStatuses= await connection.QueryAsync<string>(@"select top 1 A.applicationStatus from Applications A
-                                                                    where JSON_VALUE(ApplicationData,'$.StandardCode')= @standardId
-                                                                    and ApplyingOrganisationId in 
-                                                                        (select ApplyingOrganisationId from Applications where Id = @applicationId)
-",
-                    new { applicationId, standardId });
-
-                return !applicationStatuses.Any() ? string.Empty : applicationStatuses.FirstOrDefault();
             }
         }
 

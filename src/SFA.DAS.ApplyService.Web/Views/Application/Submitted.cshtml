@@ -10,29 +10,12 @@
 
             <div class="govuk-panel govuk-panel--confirmation">
                 <h1 class="govuk-panel__title">
-                    @if (string.IsNullOrEmpty(Model.StandardName))
-                    {
                         <text>Stage 1 of your application has been submitted</text>
-                    }
-                    else
-                    {
-                        <text>Standard application submitted</text>
-                    }
                 </h1>
                 <div class="govuk-panel__body">
                     <div class="govuk-!-margin-bottom-6">
                         <span class="govuk-!-font-size-24">We will email the outcome to you within 2 weeks.</span>
                     </div>
-                    @if (!string.IsNullOrEmpty(Model.StandardName))
-                    {
-                        <div class="govuk-!-margin-bottom-4">
-                            <strong>@Model.StandardName</strong>
-                            <br />
-                            <strong>Level @Model.StandardLevel</strong>
-                            <br />
-                            <strong>Standard reference @Model.StandardReference</strong>
-                        </div>
-                    }
                     @if (!string.IsNullOrEmpty(Model.ReferenceNumber))
                     {
                         <div>
@@ -50,14 +33,7 @@
 
             <ul class="govuk-list govuk-list--bullet">
                 <li>
-                    @if (string.IsNullOrEmpty(Model.StandardName))
-                    {
-                        <text>if your application is successful, you will be able to apply to assess your first standard</text>
-                    }
-                    else
-                    {
-                        <text>if your application is successful, it will be added to the next update of the Register</text>
-                    }
+                    <text>if your application is successful, it will be added to the next update of the Register</text>
                 </li>
                 <li>if your application is not successful, we will ask you for additional information to reassess your application</li>
             </ul>

@@ -43,9 +43,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task ImportWorkflow(IFormFile file);
         
        
-        Task<string> GetApplicationStatus(Guid applicationId, int standardCode);
-
-        Task<List<StandardCollation>> GetStandards();
         Task<List<Option>> GetQuestionDataFedOptions(string dataEndpoint);
         Task DeleteFile(Guid applicationId, Guid userId, int sequenceId, int sectionId, string pageId, string questionId);
         Task<Organisation> GetOrganisationByUserId(Guid userId);
