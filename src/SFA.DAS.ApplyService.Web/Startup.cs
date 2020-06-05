@@ -179,13 +179,6 @@ namespace SFA.DAS.ApplyService.Web
             })
             .SetHandlerLifetime(handlerLifeTime);
 
-            services.AddHttpClient<OrganisationSearchApiClient, OrganisationSearchApiClient>(config =>
-            {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
-            })
-            .SetHandlerLifetime(handlerLifeTime);
-
             services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.InternalApi.Uri);
