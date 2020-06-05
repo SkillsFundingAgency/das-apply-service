@@ -16,7 +16,6 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.ApplyService.Application.Apply;
-using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Application.Email;
 using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Application.Interfaces;
@@ -226,9 +225,7 @@ namespace SFA.DAS.ApplyService.InternalApi
         }
 
         private void ConfigureDependencyInjection(IServiceCollection services)
-        {
-            ServiceCollectionExtensions.RegisterAllTypes<IValidator>(services, new[] { typeof(IValidator).Assembly });
-            
+        {            
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
                 
             services.AddSingleton<IConfigurationService>(sp => new ConfigurationService(
@@ -237,8 +234,6 @@ namespace SFA.DAS.ApplyService.InternalApi
                  _configuration["ConfigurationStorageConnectionString"],
                  _version,
                  _serviceName));
-
-            services.AddTransient<IValidatorFactory, ValidatorFactory>();
             
             services.AddTransient<IContactRepository, ContactRepository>();
             services.AddTransient<IApplyRepository, ApplyRepository>();

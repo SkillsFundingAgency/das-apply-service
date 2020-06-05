@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
-using SFA.DAS.ApplyService.Application.Apply.UpdatePageAnswers;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Types;
