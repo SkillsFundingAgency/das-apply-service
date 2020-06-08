@@ -60,13 +60,13 @@ To use RoATP admin functionality; you will need to have the following projects r
 The default JSON configuration was created to work with dotnet run:
 
 - Navigate to src/SFA.DAS.ApplyService.Web/
-- run `dotnet restore`
-- run `dotnet run`
-- Open https://localhost:6016
+  - run `dotnet restore`
+  - run `dotnet run`
+  - Open https://localhost:6016
 
 - Navigate to src/SFA.DAS.ApplyService.InternalApi/
-- run `dotnet restore`
-- run `dotnet run`
+  - run `dotnet restore`
+  - run `dotnet run`
 
 #### Sign Up
 
@@ -82,11 +82,11 @@ If you need to use the Sign Up functionality, there's some additional setup requ
 [JIRA](https://skillsfundingagency.atlassian.net/secure/RapidBoard.jspa?projectKey=APR&rapidView=453)
 
 Initial application process is as follows:
-	1. Create Sign In Account
-	2. Read & accept Conditions of Acceptance
-	3. Enter UKPRN to find company deals
-	4. Enter 'Preamble' information
-	5. Decide which type of Training Provider type you are
+  - Create Sign In Account
+  - Read & accept Conditions of Acceptance
+  - Enter UKPRN to find company deals
+  - Enter 'Preamble' information
+  - Decide which type of Training Provider type you are
 
 You will then be presented with a Task List with a list of sections containing questions, which must be answered appropriately.
 
