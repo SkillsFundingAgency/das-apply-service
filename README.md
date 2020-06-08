@@ -62,7 +62,7 @@ The default JSON configuration was created to work with dotnet run:
 - Navigate to src/SFA.DAS.ApplyService.Web/
 - run `dotnet restore`
 - run `dotnet run`
-- Open https://localhost:5015
+- Open https://localhost:6016
 
 - Navigate to src/SFA.DAS.ApplyService.InternalApi/
 - run `dotnet restore`
