@@ -47,6 +47,7 @@ Licensed under the [MIT license](https://github.com/SkillsFundingAgency/das-appl
 
 - [Login Service](https://github.com/SkillsFundingAgency/das-login-service)
 - [QnA API](https://github.com/SkillsFundingAgency/das-qna-api)
+- [RoATP Service](https://github.com/SkillsFundingAgency/das-roatp-service)
 
 To use RoATP admin functionality; you will need to have the following projects running:
 
