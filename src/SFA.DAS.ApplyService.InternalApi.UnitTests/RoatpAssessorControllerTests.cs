@@ -18,6 +18,11 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using NPOI.OpenXmlFormats.Dml;
+using SFA.DAS.ApplyService.Domain.Apply.Assessor;
+using SFA.DAS.ApplyService.InternalApi.Types;
+using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
@@ -29,24 +34,31 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private readonly int _sectionId = RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy;
         private readonly string _firstPageId = "1";
         private readonly string _lastPageId = "999";
+        private readonly string _userId = "user id";
 
         private Mock<ILogger<RoatpAssessorController>> _logger;
         private Mock<IMediator> _mediator;
-        private Mock<IApplyRepository> _applyRepository;
         private Mock<IInternalQnaApiClient> _qnaApiClient;
+        private Mock<IAssessorRepository> _assessorRepository;
         private Mock<IAssessorLookupService> _lookupService;
+        private Mock<IGetAssessorPageService> _getAssessorPageService;
+        private Mock<ISectorDetailsOrchestratorService> _sectorDetailsOrchestratorService;
         private RoatpAssessorController _controller;
+        private AssessorType _assessorType;
+        private List<PageReviewOutcome> _sectionStatuses;
+
 
         [SetUp]
         public void TestSetup()
         {
             _mediator = new Mock<IMediator>();
-            _applyRepository = new Mock<IApplyRepository>();     
             _logger = new Mock<ILogger<RoatpAssessorController>>();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
+            _assessorRepository = new Mock<IAssessorRepository>();
             _lookupService = new Mock<IAssessorLookupService>();
-
-            _controller = new RoatpAssessorController(_logger.Object, _mediator.Object, _applyRepository.Object, _qnaApiClient.Object, _lookupService.Object);
+            _getAssessorPageService = new Mock<IGetAssessorPageService>();
+            _sectionStatuses = new List<PageReviewOutcome>();
+            _controller = new RoatpAssessorController(_logger.Object, _mediator.Object, _qnaApiClient.Object, _assessorRepository.Object, _lookupService.Object, _getAssessorPageService.Object, Mock.Of<ISectorDetailsOrchestratorService>());
         }
 
         [Test]
@@ -249,7 +261,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _firstPageId)).ReturnsAsync(new SkipPageResponse { NextAction = "NextPage", NextActionId = _lastPageId });
             _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _lastPageId)).ReturnsAsync(new SkipPageResponse { NextAction = "ReturnToSection" });
-
+            _getAssessorPageService
+                .Setup(x => x.GetAssessorPage(section.ApplicationId, section.SequenceId, section.SectionId,
+                    null)).ReturnsAsync(new AssessorPage { PageId = _firstPageId, NextPageId = _lastPageId});
             var actualPage = await _controller.GetFirstAssessorPage(_applicationId, _sequenceId, _sectionId);
 
             Assert.That(actualPage, Is.Not.Null);
@@ -275,7 +289,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _firstPageId)).ReturnsAsync(new SkipPageResponse { NextAction = "NextPage", NextActionId = _lastPageId });
             _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _lastPageId)).ReturnsAsync(new SkipPageResponse { NextAction = "ReturnToSection" });
-
+            _getAssessorPageService
+                .Setup(x => x.GetAssessorPage(section.ApplicationId, section.SequenceId, section.SectionId,
+                    _lastPageId)).ReturnsAsync(new AssessorPage{PageId = _lastPageId});
             var actualPage = await _controller.GetAssessorPage(_applicationId, _sequenceId, _sectionId, _lastPageId);
 
             Assert.That(actualPage, Is.Not.Null);
@@ -291,6 +307,134 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var actualPage = await _controller.GetFirstAssessorPage(_applicationId, invalidSequenceId, _sectionId);
             Assert.That(actualPage, Is.Null);
         }
+
+        [Test]
+        public async Task GetChosenSectors_for_application()
+        {
+
+            var sector1PageId = "Sector1PageId";
+            var sector2PageId = "Sector2PageId";
+            var sector1Title = "Sector 1 Title";
+            var sector2Title = "Sector 2 Title";
+
+            var pageSector1Page1 = new Page
+            {
+                PageId = sector1PageId,
+                DisplayType = SectionDisplayType.PagesWithSections,
+                LinkTitle = sector1Title,
+                Active = true,
+                Complete = true,
+                NotRequired = false
+            };
+
+
+            var pageSector1Page2WrongType = new Page
+            {
+                PageId = "Sector1PageId",
+                DisplayType = SectionDisplayType.OtherPagesInPagesWithSections,
+                LinkTitle = "Sector 1 page 2 title",
+                Active = true,
+                Complete = true,
+                NotRequired = false
+            };
+
+            var pageSector2Page1 = new Page
+            {
+                PageId = sector2PageId,
+                DisplayType = SectionDisplayType.PagesWithSections,
+                LinkTitle = sector2Title,
+                Active = true,
+                Complete = true,
+                NotRequired = false
+            };
+
+            var pageSector3Page1Inactive = new Page
+            {
+                PageId = "Sector3PageId",
+                DisplayType = SectionDisplayType.PagesWithSections,
+                LinkTitle = "Sector 3 title",
+                Active = false,
+                Complete = true,
+                NotRequired = false
+            };
+
+            var pageSector4Page1Incomplete = new Page
+            {
+                PageId = "Sector4PageId",
+                DisplayType = SectionDisplayType.PagesWithSections,
+                LinkTitle = "Sector 4 title",
+                Active = true,
+                Complete = false,
+                NotRequired = false
+            };
+
+            var pageSector5Page1NotRequired = new Page
+            {
+                PageId = "Sector5PageId",
+                DisplayType = SectionDisplayType.PagesWithSections,
+                LinkTitle = "Sector 5 title",
+                Active = true,
+                Complete = true,
+                NotRequired = true
+            };
+
+            var section = new ApplicationSection
+            {
+                ApplicationId = _applicationId,
+                SequenceId = RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
+                SectionId = RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees,
+                QnAData = new QnAData
+                {
+                    Pages = new List<Page> { pageSector1Page1,
+                        pageSector1Page2WrongType,
+                        pageSector2Page1,
+                        pageSector3Page1Inactive,
+                        pageSector4Page1Incomplete,
+                        pageSector5Page1NotRequired }
+                }
+            };
+
+            var sectors = new List<Sector>();
+            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(_applicationId, 
+                RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
+                RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees)).ReturnsAsync(section);
+
+            _assessorType = AssessorType.FirstAssessor;
+
+            _assessorRepository.Setup(x => x.GetAssessorType(_applicationId, _userId)).ReturnsAsync(_assessorType);
+
+            _sectionStatuses = new List<PageReviewOutcome>();
+            var page1Status = "Pass";
+            var page2Status = "Fail";
+            _sectionStatuses.Add(new PageReviewOutcome
+            {
+                ApplicationId = _applicationId,
+                PageId = sector1PageId,
+                Status = page1Status
+            });
+            _sectionStatuses.Add(new PageReviewOutcome
+            {
+                ApplicationId = _applicationId,
+                PageId = sector2PageId,
+                Status = page2Status
+            });
+
+            _assessorRepository.Setup(x => x.GetAssessorReviewOutcomesPerSection(_applicationId,
+                RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
+                RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees, (int) _assessorType,
+                _userId)).ReturnsAsync(_sectionStatuses);
+
+            var listOfSectors = await _controller.GetChosenSectors(_applicationId, _userId);
+
+            var expectedListOfSectors = new List<Sector>
+            {
+                new Sector {PageId = sector1PageId, Title = sector1Title, Status = page1Status},
+                new Sector {PageId = sector2PageId, Title = sector2Title, Status = page2Status}
+            };
+
+            Assert.AreEqual(JsonConvert.SerializeObject(expectedListOfSectors), JsonConvert.SerializeObject(listOfSectors));
+        }
+
 
         [Test]
         public async Task DownloadFile_gets_expected_file()

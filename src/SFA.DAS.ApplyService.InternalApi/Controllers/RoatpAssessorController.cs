@@ -15,7 +15,7 @@ using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.InternalApi.Services;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
-using SFA.DAS.ApplyService.InternalApi.Mappers;
+using SFA.DAS.ApplyService.Domain.Apply.Assessor;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -33,17 +33,24 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
         private readonly ILogger<RoatpAssessorController> _logger;
         private readonly IMediator _mediator;
-        private readonly IApplyRepository _applyRepository;
         private readonly IInternalQnaApiClient _qnaApiClient;
+        private readonly IAssessorRepository _assessorRepository;
         private readonly IAssessorLookupService _assessorLookupService;
+        private readonly IGetAssessorPageService _getAssessorPageService;
+        private readonly ISectorDetailsOrchestratorService _sectorDetailsOrchestratorService;
 
-        public RoatpAssessorController(ILogger<RoatpAssessorController> logger, IMediator mediator, IApplyRepository applyRepository, IInternalQnaApiClient qnaApiClient, IAssessorLookupService assessorLookupService)
+        public RoatpAssessorController(ILogger<RoatpAssessorController> logger, IMediator mediator,
+            IInternalQnaApiClient qnaApiClient, IAssessorRepository assessorRepository, IAssessorLookupService assessorLookupService,
+            IGetAssessorPageService getAssessorPageService,
+            ISectorDetailsOrchestratorService sectorDetailsOrchestratorService)
         {
             _logger = logger;
             _mediator = mediator;
-            _applyRepository = applyRepository;
             _qnaApiClient = qnaApiClient;
             _assessorLookupService = assessorLookupService;
+            _getAssessorPageService = getAssessorPageService;
+            _sectorDetailsOrchestratorService = sectorDetailsOrchestratorService;
+            _assessorRepository = assessorRepository;
         }
 
         [HttpGet("Assessor/Applications/{userId}")]
@@ -62,10 +69,51 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return applications;
         }
 
+        [HttpGet("Assessor/Applications/ChosenSectors/{applicationId}/user/{userId}")]
+        public async Task<List<Sector>> GetChosenSectors(Guid applicationId, string userId)
+        {
+            var qnaSection = await _qnaApiClient.GetSectionBySectionNo(
+                applicationId,
+                RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
+                RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees);
+
+            var sectionStartingPages = qnaSection?.QnAData?.Pages.Where(x =>
+                x.DisplayType == SectionDisplayType.PagesWithSections
+                && x.PageId != RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ChooseYourOrganisationsSectors
+                && x.Active
+                && x.Complete
+                && !x.NotRequired);
+
+            var sectors = sectionStartingPages?.Select(page => new Sector { Title = page.LinkTitle, PageId = page.PageId })
+                .ToList();
+
+            if (sectors == null || !sectors.Any() || userId == null) return new List<Sector>();
+
+            var assessorType = await _assessorRepository.GetAssessorType(applicationId, userId);
+
+            var sectionStatuses = await _assessorRepository.GetAssessorReviewOutcomesPerSection(applicationId,
+                RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
+                RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees, (int)assessorType,
+                userId);
+
+            if (sectionStatuses == null || !sectionStatuses.Any()) return sectors;
+
+            foreach (var sector in sectors)
+            {
+                foreach (var sectorStatus in sectionStatuses.Where(sectorStatus => sector.PageId == sectorStatus.PageId))
+                {
+                    sector.Status = sectorStatus.Status;
+                }
+            }
+
+            return sectors;
+        }
+
         [HttpPost("Assessor/Applications/{applicationId}/Assign")]
         public async Task AssignApplication(Guid applicationId, [FromBody] AssignAssessorApplicationRequest request)
         {
-            await _mediator.Send(new AssignAssessorRequest(applicationId, request.AssessorNumber, request.AssessorUserId, request.AssessorName));
+            await _mediator.Send(new AssignAssessorRequest(applicationId, request.AssessorNumber,
+                request.AssessorUserId, request.AssessorName));
         }
 
         [HttpGet("Assessor/Applications/{userId}/InProgress")]
@@ -88,7 +136,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             {
                 foreach (var sequenceNumber in _AssessorSequences)
                 {
-                    var applySequence = application.ApplyData.Sequences?.FirstOrDefault(seq => seq.SequenceNo == sequenceNumber);
+                    var applySequence =
+                        application.ApplyData.Sequences?.FirstOrDefault(seq => seq.SequenceNo == sequenceNumber);
 
                     var sequence = GetAssessorSequence(sequenceNumber, allQnaSections, applySequence);
                     overviewSequences.Add(sequence);
@@ -98,7 +147,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return overviewSequences.OrderBy(seq => seq.SequenceNumber).ToList();
         }
 
-        private AssessorSequence GetAssessorSequence(int sequenceNumber, IEnumerable<ApplicationSection> qnaSections, ApplySequence applySequence)
+        private AssessorSequence GetAssessorSequence(int sequenceNumber, IEnumerable<ApplicationSection> qnaSections,
+            ApplySequence applySequence)
         {
             AssessorSequence sequence = null;
 
@@ -110,19 +160,22 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 {
                     SequenceNumber = sequenceNumber,
                     SequenceTitle = _assessorLookupService.GetTitleForSequence(sequenceNumber),
-                    Sections = qnaSections.Where(sec => sec.SequenceId == sequenceNumber && !sectionsToExclude.Contains(sec.SectionId))
-                    .Select(sec =>
-                    {
-                        return new AssessorSection { SectionNumber = sec.SectionId, LinkTitle = sec.Title, Status = string.Empty };
-                    })
-                    .OrderBy(sec => sec.SectionNumber).ToList()
+                    Sections = qnaSections.Where(sec =>
+                            sec.SequenceId == sequenceNumber && !sectionsToExclude.Contains(sec.SectionId))
+                        .Select(sec =>
+                        {
+                            return new AssessorSection
+                                {SectionNumber = sec.SectionId, LinkTitle = sec.Title, Status = string.Empty};
+                        })
+                        .OrderBy(sec => sec.SectionNumber).ToList()
                 };
 
                 if (applySequence != null)
                 {
                     foreach (var section in sequence.Sections)
                     {
-                        var applySection = applySequence?.Sections?.FirstOrDefault(sec => sec.SectionNo == section.SectionNumber);
+                        var applySection =
+                            applySequence?.Sections?.FirstOrDefault(sec => sec.SectionNo == section.SectionNumber);
 
                         if (applySequence.NotRequired || applySection?.NotRequired == true)
                         {
@@ -174,43 +227,41 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
 
+        [HttpGet("Assessor/Applications/{applicationId}/SectorDetails/{pageId}")]
+        public async Task<SectorDetails> GetSectorDetails(Guid applicationId, string pageId)
+        {
+            return await _sectorDetailsOrchestratorService.GetSectorDetails(applicationId, pageId);
+        }
+
         [HttpGet("Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page")]
         public async Task<AssessorPage> GetFirstAssessorPage(Guid applicationId, int sequenceNumber, int sectionNumber)
         {
             return await GetAssessorPage(applicationId, sequenceNumber, sectionNumber, null);
         }
 
-        [HttpGet("Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}")]
-        public async Task<AssessorPage> GetAssessorPage(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId)
+        [HttpGet(
+            "Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}")]
+        public async Task<AssessorPage> GetAssessorPage(Guid applicationId, int sequenceNumber, int sectionNumber,
+            string pageId)
         {
-            AssessorPage page = null;
 
             if (_AssessorSequences.Contains(sequenceNumber))
             {
-                var qnaSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceNumber, sectionNumber);
-                var qnaPage = qnaSection?.QnAData.Pages.FirstOrDefault(p => p.PageId == pageId || string.IsNullOrEmpty(pageId));
-
-                if (qnaPage != null)
-                {
-                    page = qnaPage.ToAssessorPage(_assessorLookupService, applicationId, sequenceNumber, sectionNumber);
-
-                    var nextPageAction = await _qnaApiClient.SkipPageBySectionNo(page.ApplicationId, page.SequenceNumber, page.SectionNumber, page.PageId);
-
-                    if (nextPageAction != null && "NextPage".Equals(nextPageAction.NextAction, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        page.NextPageId = nextPageAction.NextActionId;
-                    }
-                }
+                return await _getAssessorPageService.GetAssessorPage(applicationId, sequenceNumber, sectionNumber,
+                    pageId);
             }
 
-            return page;
+            return null;
         }
 
 
-        [HttpGet("Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}/questions/{questionId}/download/{filename}")]
-        public async Task<FileStreamResult> DownloadFile(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string questionId, string filename)
+        [HttpGet(
+            "Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}/questions/{questionId}/download/{filename}")]
+        public async Task<FileStreamResult> DownloadFile(Guid applicationId, int sequenceNumber, int sectionNumber,
+            string pageId, string questionId, string filename)
         {
-            return await _qnaApiClient.DownloadSpecifiedFile(applicationId, sequenceNumber, sectionNumber, pageId, questionId, filename);
+            return await _qnaApiClient.DownloadSpecifiedFile(applicationId, sequenceNumber, sectionNumber, pageId,
+                questionId, filename);
         }
 
         [HttpPost("Assessor/SubmitPageOutcome")]
@@ -228,7 +279,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpPost("Assessor/GetAssessorReviewOutcomesPerSection")]
-        public async Task<List<PageReviewOutcome>> GetAssessorReviewOutcomesPerSection([FromBody] GetAssessorReviewOutcomesPerSectionRequest request)
+        public async Task<List<PageReviewOutcome>> GetAssessorReviewOutcomesPerSection(
+            [FromBody] GetAssessorReviewOutcomesPerSectionRequest request)
         {
             var assessorReviewOutcomes = await _mediator.Send(request);
 
@@ -236,7 +288,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpPost("Assessor/GetAllAssessorReviewOutcomes")]
-        public async Task<List<PageReviewOutcome>> GetAllAssessorReviewOutcomes([FromBody] GetAllAssessorReviewOutcomesRequest request)
+        public async Task<List<PageReviewOutcome>> GetAllAssessorReviewOutcomes(
+            [FromBody] GetAllAssessorReviewOutcomesRequest request)
         {
             var assessorReviewOutcomes = await _mediator.Send(request);
 
@@ -248,8 +301,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             await _mediator.Send(request);
         }
-    }
 
+    }
 
     public class AssignAssessorApplicationRequest
     {
