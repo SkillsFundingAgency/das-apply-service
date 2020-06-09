@@ -1126,9 +1126,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 ReferenceNumber = application?.ApplyData?.ApplyDetails?.ReferenceNumber,
                 FeedbackUrl = config.FeedbackUrl,
-                //StandardName = application?.ApplicationData?.StandardName,
-                //StandardReference = application?.ApplicationData?.StandardReference,
-                //StandardLevel = application?.ApplicationData?.StandardLevel
             });
         }
 
@@ -1141,7 +1138,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 ReferenceNumber = application?.ApplyData?.ApplyDetails?.ReferenceNumber,
                 FeedbackUrl = config.FeedbackUrl,
-                //StandardName = application?.ApplicationData?.StandardName
             });
         }
 
