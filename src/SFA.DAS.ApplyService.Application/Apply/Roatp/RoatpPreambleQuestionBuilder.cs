@@ -259,8 +259,8 @@
             public const string SafeguardingPolicyIncludesPreventDutyPolicy = "4037";
             public const string PreventDutyPolicy = "4038";
             public const string HealthAndSafetyPolicy = "4040";
-            public const string HealthAndSafetyOverallResponsibility = "4050";
-            public const string ActingAsASubcontractor = "4060";
+            public const string HealthAndSafetyOverallResponsibility = "4045";
+            public const string ActingAsASubcontractor = "4050";
         }
 
         public static class ReadinessToEngage
