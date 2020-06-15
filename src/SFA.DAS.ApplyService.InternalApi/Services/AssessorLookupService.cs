@@ -238,6 +238,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                 case RoatpPlanningApprenticeshipTrainingQuestionIdConstants.ApplicationFrameworks_MainEmployer:
                 case RoatpPlanningApprenticeshipTrainingQuestionIdConstants.ApplicationFrameworks_Supporting:
                     return "Does your organisation have a plan to transition from apprenticeship frameworks to apprenticeship standards?";
+                case RoatpDeliveringApprenticeshipTrainingQuestionIdConstants.OverallManagerResponsible:
+                    return "Full name";
+                case RoatpDeliveringApprenticeshipTrainingQuestionIdConstants.OverallManagerExperience:
+                    return "How much experience do they have in developing and delivering training?";
                 default:
                     return null;
             }

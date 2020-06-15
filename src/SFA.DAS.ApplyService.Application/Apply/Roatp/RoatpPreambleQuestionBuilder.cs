@@ -94,7 +94,9 @@
 
     public static class RoatpDeliveringApprenticeshipTrainingQuestionIdConstants
     {
-        public static string ManagementHierarchy = "DAT-720";
+        public const string ManagementHierarchy = "DAT-720";
+        public const string OverallManagerResponsible = "DAT-754.1";
+        public const string OverallManagerExperience = "DAT-754.2";
     }
 
     public static class RoatpPlanningApprenticeshipTrainingQuestionIdConstants
