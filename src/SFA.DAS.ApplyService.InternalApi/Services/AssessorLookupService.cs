@@ -144,7 +144,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.PersonResponsible:
                     return "Someone responsible for developing and delivering training";
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.DevelopAndDeliverTraining_Team:
-                    return "Who the team worked with to develop and deliver training";
+                    return "Who the team have worked with to develop and deliver training";
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.OverallManager_MainEmployer:
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.OverallManager_Supporting:
                     return "Overall manager for the team responsible for developing and delivering training";
