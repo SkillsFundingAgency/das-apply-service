@@ -155,7 +155,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HowTeamWorked_Employers:
                     return "How the team worked with employers to develop and deliver training";
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.DevelopAndDeliverTraining_Person:
-                    return "Who has this person has worked with to develop and deliver training?";
+                    return "Who the person has worked with to develop and deliver training";
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HowPersonWorked_Organisations:
                     return "How has this person worked with other organisations to develop and deliver training";
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HowPersonWorked_OrganisationsAndEmployers:
