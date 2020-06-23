@@ -94,7 +94,11 @@
 
     public static class RoatpDeliveringApprenticeshipTrainingQuestionIdConstants
     {
-        public static string ManagementHierarchy = "DAT-720";
+        public const string ManagementHierarchy = "DAT-720";
+        public const string OverallManagerResponsible_MainEmployer = "DAT-754.1";
+        public const string OverallManagerExperience_MainEmployer = "DAT-754.2";
+        public const string OverallManagerResponsible_Supporting = "DAT-759.1";
+        public const string OverallManagerExperience_Supporting = "DAT-759.2";
     }
 
     public static class RoatpPlanningApprenticeshipTrainingQuestionIdConstants
@@ -259,8 +263,8 @@
             public const string SafeguardingPolicyIncludesPreventDutyPolicy = "4037";
             public const string PreventDutyPolicy = "4038";
             public const string HealthAndSafetyPolicy = "4040";
-            public const string HealthAndSafetyOverallResponsibility = "4050";
-            public const string ActingAsASubcontractor = "4060";
+            public const string HealthAndSafetyOverallResponsibility = "4045";
+            public const string ActingAsASubcontractor = "4050";
         }
 
         public static class ReadinessToEngage

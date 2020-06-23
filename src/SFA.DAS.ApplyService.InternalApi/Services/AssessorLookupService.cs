@@ -144,7 +144,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.PersonResponsible:
                     return "Someone responsible for developing and delivering training";
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.DevelopAndDeliverTraining_Team:
-                    return "Who the team worked with to develop and deliver training";
+                    return "Who the team have worked with to develop and deliver training";
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.OverallManager_MainEmployer:
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.OverallManager_Supporting:
                     return "Overall manager for the team responsible for developing and delivering training";
@@ -155,7 +155,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HowTeamWorked_Employers:
                     return "How the team worked with employers to develop and deliver training";
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.DevelopAndDeliverTraining_Person:
-                    return "Who has this person has worked with to develop and deliver training?";
+                    return "Who the person has worked with to develop and deliver training";
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HowPersonWorked_Organisations:
                     return "How has this person worked with other organisations to develop and deliver training";
                 case RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.HowPersonWorked_OrganisationsAndEmployers:
@@ -238,6 +238,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                 case RoatpPlanningApprenticeshipTrainingQuestionIdConstants.ApplicationFrameworks_MainEmployer:
                 case RoatpPlanningApprenticeshipTrainingQuestionIdConstants.ApplicationFrameworks_Supporting:
                     return "Does your organisation have a plan to transition from apprenticeship frameworks to apprenticeship standards?";
+                case RoatpDeliveringApprenticeshipTrainingQuestionIdConstants.OverallManagerResponsible_MainEmployer:
+                case RoatpDeliveringApprenticeshipTrainingQuestionIdConstants.OverallManagerResponsible_Supporting:
+                    return "Full name";
+                case RoatpDeliveringApprenticeshipTrainingQuestionIdConstants.OverallManagerExperience_MainEmployer:
+                case RoatpDeliveringApprenticeshipTrainingQuestionIdConstants.OverallManagerExperience_Supporting:
+                    return "How much experience do they have in developing and delivering training?";
                 default:
                     return null;
             }
