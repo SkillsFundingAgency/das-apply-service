@@ -198,7 +198,7 @@ namespace SFA.DAS.ApplyService.Data
                             , ModerationStatus AS Status
 	                        FROM Apply apply
 	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
-	                        WHERE apply.DeletedAt IS NULL AND (Assessor1ReviewStatus = @approvedReviewStatus OR Assessor2ReviewStatus = @approvedReviewStatus) AND ISNULL(ModerationStatus, 'New')  <> @completedModerationStatus
+	                        WHERE apply.DeletedAt IS NULL AND (Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus) AND ISNULL(ModerationStatus, 'New')  <> @completedModerationStatus
                             ORDER BY JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn')",
                         new
                         {
@@ -216,7 +216,7 @@ namespace SFA.DAS.ApplyService.Data
                     .ExecuteScalarAsync<int>(
                         $@"SELECT COUNT(1)
 	                      FROM Apply apply
-	                      WHERE apply.DeletedAt IS NULL AND (Assessor1ReviewStatus = @approvedReviewStatus OR Assessor2ReviewStatus = @approvedReviewStatus) AND ISNULL(ModerationStatus, 'New') <> @completedModerationStatus",
+	                      WHERE apply.DeletedAt IS NULL AND (Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus) AND ISNULL(ModerationStatus, 'New') <> @completedModerationStatus",
                         new
                         {
                             approvedReviewStatus = AssessorReviewStatus.Approved,
