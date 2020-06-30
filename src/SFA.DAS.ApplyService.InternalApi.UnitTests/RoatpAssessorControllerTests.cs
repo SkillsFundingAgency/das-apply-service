@@ -56,6 +56,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
             _assessorRepository = new Mock<IAssessorRepository>();
             _lookupService = new Mock<IAssessorLookupService>();
+
             _getAssessorPageService = new Mock<IGetAssessorPageService>();
             _sectionStatuses = new List<PageReviewOutcome>();
             _controller = new RoatpAssessorController(_logger.Object, _mediator.Object, _qnaApiClient.Object, _assessorRepository.Object, _lookupService.Object, _getAssessorPageService.Object, Mock.Of<ISectorDetailsOrchestratorService>());

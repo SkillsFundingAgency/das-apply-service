@@ -187,6 +187,44 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<List<RoatpModerationApplicationSummary>> GetApplicationsInModeration()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection
+                    .QueryAsync<RoatpModerationApplicationSummary>(
+                        $@"SELECT 
+                            {ApplicationSummaryFields}
+                            , ModerationStatus AS Status
+	                        FROM Apply apply
+	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+	                        WHERE apply.DeletedAt IS NULL AND (Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus) AND ISNULL(ModerationStatus, 'New')  <> @completedModerationStatus
+                            ORDER BY JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn')",
+                        new
+                        {
+                            approvedReviewStatus = AssessorReviewStatus.Approved,
+                            completedModerationStatus = ModerationStatus.Complete
+                        })).ToList();
+            }
+        }
+
+        public async Task<int> GetApplicationsInModerationCount()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection
+                    .ExecuteScalarAsync<int>(
+                        $@"SELECT COUNT(1)
+	                      FROM Apply apply
+	                      WHERE apply.DeletedAt IS NULL AND (Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus) AND ISNULL(ModerationStatus, 'New') <> @completedModerationStatus",
+                        new
+                        {
+                            approvedReviewStatus = AssessorReviewStatus.Approved,
+                            completedModerationStatus = ModerationStatus.Complete
+                        }));
+            }
+        }
+
         public async Task SubmitAssessorPageOutcome(Guid applicationId,
                                                     int sequenceNumber,
                                                     int sectionNumber,
