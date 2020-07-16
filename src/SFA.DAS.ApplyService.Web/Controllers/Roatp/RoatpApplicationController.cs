@@ -1227,7 +1227,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     var applySection = sequence.Sections.FirstOrDefault(x => x.SectionNo == section.SectionId);
                     if (applySection != null)
                     {
-                        applySection.NotRequired = await SectionNotRequired(applicationSequence, _notRequiredOverrides, section.SectionId, roatpSequences);
+                        applySection.NotRequired = SectionNotRequired(applicationSequence, _notRequiredOverrides, section.SectionId, roatpSequences);
                     }
                 }
 
@@ -1411,8 +1411,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return (sectionCount == notRequiredCount);
         }
 
-        private async Task<bool> SectionNotRequired(ApplicationSequence sequence, List<NotRequiredOverrideConfiguration> notRequiredOverrides,
-                                                    int sectionId, IEnumerable<RoatpSequences> roatpSequences)
+        private bool SectionNotRequired(ApplicationSequence sequence, List<NotRequiredOverrideConfiguration> notRequiredOverrides, int sectionId, IEnumerable<RoatpSequences> roatpSequences)
         {
             var sequences = new List<ApplicationSequence>
             {

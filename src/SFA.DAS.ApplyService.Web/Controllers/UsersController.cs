@@ -84,7 +84,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
         
         [HttpGet]
-        public async Task<IActionResult> SignOut()
+        public IActionResult SignOut()
         {
             _contextAccessor.HttpContext.Session.Clear();
             foreach (var cookie in _contextAccessor.HttpContext.Request.Cookies.Keys)
@@ -156,7 +156,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ConfirmExistingAccount(ExistingAccountViewModel model)
+        public IActionResult ConfirmExistingAccount(ExistingAccountViewModel model)
         {
             if (!ModelState.IsValid)
             {

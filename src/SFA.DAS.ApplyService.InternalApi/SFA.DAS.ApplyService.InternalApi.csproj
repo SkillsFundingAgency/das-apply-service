@@ -8,6 +8,7 @@
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
       <OutputPath>bin\Debug\netcoreapp2.2</OutputPath>
       <DocumentationFile>bin\Debug\netcoreapp2.2\SFA.DAS.ApplyService.InternalApi.xml</DocumentationFile>
+      <NoWarn>1701;1702; 1591</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>

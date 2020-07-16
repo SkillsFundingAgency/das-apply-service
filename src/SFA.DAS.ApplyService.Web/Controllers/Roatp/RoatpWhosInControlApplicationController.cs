@@ -787,7 +787,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return await RemoveItemFromPscsList(
                 model,
                 RoatpWorkflowPageIds.WhosInControl.AddPartners,
-                RoatpYourOrganisationQuestionIdConstants.AddPartners,                
+                RoatpYourOrganisationQuestionIdConstants.AddPartners,
                 RoatpWorkflowQuestionTags.AddPartners, 
                 "ConfirmPartners",
                 model.BackAction);
@@ -806,7 +806,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpPost]
-        public async Task<IActionResult> CompletePeopleInControlSection(Guid applicationId)
+        public IActionResult CompletePeopleInControlSection(Guid applicationId)
         {
             // tech debt - this will be reworked by the changes to the QnA config JSON and method
             // for determining that application section completed is derived (APR-1008)

@@ -1,11 +1,9 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
-using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Web.Configuration;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 
@@ -23,16 +21,15 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
             _configuration = _configuration = configuration.Value;
         }
 
-        public async Task<string> GetIntroductionPageIdForSequence(int sequenceId,
+        public Task<string> GetIntroductionPageIdForSequence(int sequenceId,
             int providerTypeId)
         {
             var sequenceDescription = _configuration.FirstOrDefault(x => x.Id == sequenceId);
 
-            return sequenceDescription?.StartupPages
+            return Task.FromResult(sequenceDescription?.StartupPages
                 .FirstOrDefault(x => x.ProviderTypeId == providerTypeId)
-                ?.PageId;
+                ?.PageId);
         }
-
 
         public async Task<int> GetApplicationProviderTypeId(Guid applicationId)
         {
@@ -40,6 +37,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
           
             var providerTypeAnswer =
                 await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
+
             if (providerTypeAnswer != null && !String.IsNullOrWhiteSpace(providerTypeAnswer.Value))
             {
                 int.TryParse(providerTypeAnswer.Value, out providerTypeId);
