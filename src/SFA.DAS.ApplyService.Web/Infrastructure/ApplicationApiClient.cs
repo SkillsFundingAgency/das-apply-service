@@ -45,14 +45,14 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await Get<Domain.Entities.Apply>($"Application/{applicationId}");
         }
 
-        public async Task<List<Domain.Entities.Apply>> GetApplications(Guid userId, bool createdBy)
+        public async Task<List<Domain.Entities.Apply>> GetApplications(Guid signinId, bool createdBy)
         {
             if (!createdBy)
             {
-                return await Get<List<Domain.Entities.Apply>>($"Applications/{userId}/Organisation");
+                return await Get<List<Domain.Entities.Apply>>($"Applications/{signinId}/Organisation");
             }
 
-            return await Get<List<Domain.Entities.Apply>>($"Applications/{userId}");
+            return await Get<List<Domain.Entities.Apply>>($"Applications/{signinId}");
         }
 
         public async Task<IEnumerable<RoatpSequences>> GetRoatpSequences()
@@ -116,16 +116,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             await _httpClient.PostAsync($"/Import/Workflow", formDataContent);
 
             _logger.LogInformation($"API ImportWorkflow > After post to Internal API");
-        }
-
-        public async Task<string> GetApplicationStatus(Guid applicationId, int standardCode)
-        {
-            return await Get($"Application/{applicationId}/standard/{standardCode}/check-status");
-        }
-
-        public async Task<List<StandardCollation>> GetStandards()
-        {
-            return await Get<List<StandardCollation>>($"all-standards");
         }
 
         public async Task<List<Option>> GetQuestionDataFedOptions(string dataEndpoint)

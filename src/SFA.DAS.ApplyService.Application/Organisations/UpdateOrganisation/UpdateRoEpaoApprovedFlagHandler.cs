@@ -28,7 +28,9 @@ namespace SFA.DAS.ApplyService.Application.Organisations.UpdateOrganisation
                         request.EndPointAssessorOrganisationId;
                     existingOrganisation.RoEPAOApproved = request.RoEpaoApprovedFlag;
 
-                   return await _organisationRepository.UpdateOrganisation(existingOrganisation, request.ContactId);
+                   await _organisationRepository.UpdateOrganisation(existingOrganisation, request.ContactId);
+
+                   return existingOrganisation;
                 }
 
                 return null;

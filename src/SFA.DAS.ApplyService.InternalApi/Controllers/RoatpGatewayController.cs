@@ -7,15 +7,11 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Gateway;
 using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Services;
 using SFA.DAS.ApplyService.InternalApi.Types;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
-    /// <summary>
-    /// 
-    /// </summary>
     [Authorize]
     public class RoatpGatewayController: Controller
     {
@@ -23,10 +19,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         private readonly IGatewayApiChecksService _gatewayApiChecksService;
         private readonly ILogger<RoatpGatewayController> _logger;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="applyRepository"></param>
         public RoatpGatewayController(IApplyRepository applyRepository, ILogger<RoatpGatewayController> logger,  IGatewayApiChecksService gatewayApiChecksService) 
         {
             _applyRepository = applyRepository;
@@ -43,7 +35,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
         }
 
-         [Route("Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}")]
+        [HttpPost("Gateway/UpdateGatewayReviewStatusAndComment")]
+        public async Task<ActionResult<bool>> UpdateGatewayReviewStatusAndComment([FromBody] UpdateGatewayReviewStatusAndCommentRequest request)
+        {
+            return await _applyRepository.UpdateGatewayReviewStatusAndComment(request.ApplicationId, request.GatewayReviewStatus, request.GatewayReviewComment, request.UserName);
+        }
+
+        [Route("Gateway/Page/CommonDetails/{applicationId}/{pageId}/{userName}")]
          [HttpGet]
          public async Task<ActionResult<GatewayCommonDetails>> GetGatewayCommonDetails(Guid applicationId, string pageId,
              string userName)

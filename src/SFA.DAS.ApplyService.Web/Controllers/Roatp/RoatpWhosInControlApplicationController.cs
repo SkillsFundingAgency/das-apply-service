@@ -114,9 +114,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 }
             };
 
-            var whosInControlSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
-
-            var updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, answers);
+            var updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, answers);
 
             if (!updateResult.ValidationPassed)
             {
@@ -174,9 +172,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 }
             };
 
-            var yourOrganisationSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
-
-            var updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, yourOrganisationSection.Id, RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage, answers);
+            var updateResult = await _qnaApiClient.UpdatePageAnswers(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage, answers);
 
             if (!updateResult.ValidationPassed)
             {
@@ -242,7 +238,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 }
             };
 
-            var updateResult = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage, trusteeAnswers);
+            var updateResult = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage, trusteeAnswers);
 
             return RedirectToAction("TaskList", "RoatpApplication", new { model.ApplicationId });
         }
@@ -280,8 +276,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return View("~/Views/Roatp/WhosInControl/SoleTraderOrPartnership.cshtml", model);
             }
 
-            var whosInControlSection = await _qnaApiClient.GetSectionBySectionNo(model.ApplicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
-
             var organisationTypeAnswer = new List<Answer>
             {
                 new Answer
@@ -291,7 +285,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 }
             };
 
-            var updateResult = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.SoleTraderPartnership, organisationTypeAnswer);
+            var updateResult = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.SoleTraderPartnership, organisationTypeAnswer);
 
             if (!updateResult.ValidationPassed)
             {
@@ -349,8 +343,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return View("~/Views/Roatp/WhosInControl/PartnershipType.cshtml", model);
             }
 
-            var whosInControlSection = await _qnaApiClient.GetSectionBySectionNo(model.ApplicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
-
             var organisationTypeAnswer = new List<Answer>
             {
                 new Answer
@@ -360,7 +352,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 }
             };
 
-            var updateResult = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.PartnershipType, organisationTypeAnswer);
+            var updateResult = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.PartnershipType, organisationTypeAnswer);
             if(!updateResult.ValidationPassed)
             {
                 return RedirectToAction("PartnershipType", new { applicationId = model.ApplicationId });
@@ -591,8 +583,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return View("~/Views/Roatp/WhosInControl/AddSoleTradeDob.cshtml", model);
             }
 
-            var whosInControlSection = await _qnaApiClient.GetSectionBySectionNo(model.ApplicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl);
-
             var answerValue = $"{model.SoleTraderDobMonth},{model.SoleTraderDobYear}";
             var soleTradeDobAnswer = new List<Answer>
             {
@@ -603,7 +593,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 }
             };
 
-            var result = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, whosInControlSection.Id, RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob, soleTradeDobAnswer);
+            var result = await _qnaApiClient.UpdatePageAnswers(model.ApplicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob, soleTradeDobAnswer);
             
             return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId });
         }
@@ -797,7 +787,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return await RemoveItemFromPscsList(
                 model,
                 RoatpWorkflowPageIds.WhosInControl.AddPartners,
-                RoatpYourOrganisationQuestionIdConstants.AddPartners,                
+                RoatpYourOrganisationQuestionIdConstants.AddPartners,
                 RoatpWorkflowQuestionTags.AddPartners, 
                 "ConfirmPartners",
                 model.BackAction);
@@ -816,7 +806,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         }
 
         [HttpPost]
-        public async Task<IActionResult> CompletePeopleInControlSection(Guid applicationId)
+        public IActionResult CompletePeopleInControlSection(Guid applicationId)
         {
             // tech debt - this will be reworked by the changes to the QnA config JSON and method
             // for determining that application section completed is derived (APR-1008)
