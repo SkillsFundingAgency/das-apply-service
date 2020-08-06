@@ -84,7 +84,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
         
         [HttpGet]
-        public async Task<IActionResult> SignOut()
+        public IActionResult SignOut()
         {
             _contextAccessor.HttpContext.Session.Clear();
             foreach (var cookie in _contextAccessor.HttpContext.Request.Cookies.Keys)
@@ -131,21 +131,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var organisation = await _organisationApiClient.GetByUser(user.Id);
 
-            var selectedApplicationType = ApplicationTypes.EndpointAssessor;
-            if (organisation.OrganisationType == TrainingProviderOrganisationType)
-            {
-                selectedApplicationType = ApplicationTypes.RegisterTrainingProviders;
-            }           
-            else
-            {
-                var org = await _applicationApiClient.GetOrganisationByUserId(user.Id);
-
-                if (org != null)
-                {
-                    _logger.LogInformation($"Setting OrganisationName in Session: {org.Name}");
-                    _sessionService.Set("OrganisationName", $"{org.Name}");
-                }
-            }
+            var selectedApplicationType = ApplicationTypes.RegisterTrainingProviders;
             
             return RedirectToAction("Applications", "RoatpApplication", new { applicationType = selectedApplicationType });
 
@@ -170,7 +156,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ConfirmExistingAccount(ExistingAccountViewModel model)
+        public IActionResult ConfirmExistingAccount(ExistingAccountViewModel model)
         {
             if (!ModelState.IsValid)
             {

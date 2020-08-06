@@ -16,7 +16,6 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SFA.DAS.ApplyService.Application.Apply;
-using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Application.Email;
 using SFA.DAS.ApplyService.Application.Organisations;
 using SFA.DAS.ApplyService.Application.Interfaces;
@@ -97,47 +96,8 @@ namespace SFA.DAS.ApplyService.InternalApi
             
             services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
 
-            services.AddHttpClient<AssessorServiceApiClient>("AssessorServiceApiClient", config =>
-            {
-                config.BaseAddress = new Uri(_applyConfig.AssessorServiceApiAuthentication.ApiBaseAddress); //  "http://localhost:59022"
-                config.DefaultRequestHeaders.Add("Accept", "Application/json");
-            })
-            .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+            ConfigHttpClients(services);
 
-            services.AddHttpClient<ProviderRegisterApiClient>("ProviderRegisterApiClient", config =>
-            {
-                config.BaseAddress = new Uri(_applyConfig.ProviderRegisterApiAuthentication.ApiBaseAddress); //  "https://findapprenticeshiptraining-api.sfa.bis.gov.uk"
-                config.DefaultRequestHeaders.Add("Accept", "Application/json");
-            })
-            .SetHandlerLifetime(TimeSpan.FromMinutes(5));
-
-            services.AddHttpClient<ReferenceDataApiClient>("ReferenceDataApiClient", config =>
-            {
-                config.BaseAddress = new Uri(_applyConfig.ReferenceDataApiAuthentication.ApiBaseAddress); //  "https://at-refdata.apprenticeships.sfa.bis.gov.uk/api"
-                config.DefaultRequestHeaders.Add("Accept", "Application/json");
-            })
-            .SetHandlerLifetime(TimeSpan.FromMinutes(5));
-
-            services.AddHttpClient<CompaniesHouseApiClient>("CompaniesHouseApiClient", config =>
-            {
-                config.BaseAddress = new Uri(_applyConfig.CompaniesHouseApiAuthentication.ApiBaseAddress); //  "https://api.companieshouse.gov.uk"
-                config.DefaultRequestHeaders.Add("Accept", "Application/json");
-            })
-            .SetHandlerLifetime(TimeSpan.FromMinutes(5));
-
-            services.AddHttpClient<RoatpApiClient>("RoatpApiClient", config =>
-            {
-                config.BaseAddress = new Uri(_applyConfig.RoatpApiAuthentication.ApiBaseAddress);          // "https://providers-api.apprenticeships.education.gov.uk"
-                config.DefaultRequestHeaders.Add("Accept", "Application/json");
-            })
-            .SetHandlerLifetime(TimeSpan.FromMinutes(5));
-
-            services.AddHttpClient<InternalQnaApiClient>("InternalQnaApiClient", config =>
-                {
-                    config.BaseAddress = new Uri(_applyConfig.QnaApiAuthentication.ApiBaseAddress);          // "http://localhost:5554"
-                    config.DefaultRequestHeaders.Add("Accept", "Application/json");
-                })
-                .SetHandlerLifetime(TimeSpan.FromMinutes(5));
             services.Configure<RequestLocalizationOptions>(options =>
             {
                 options.DefaultRequestCulture = new RequestCulture("en-GB");
@@ -145,8 +105,7 @@ namespace SFA.DAS.ApplyService.InternalApi
                 options.SupportedUICultures = new List<CultureInfo> { new CultureInfo("en-GB") };
                 options.RequestCultureProviders.Clear();
             });
-            
-            
+
             IMvcBuilder mvcBuilder;
             if (_env.IsDevelopment())
                 mvcBuilder = services.AddMvc(opt => { opt.Filters.Add(new AllowAnonymousFilter()); });
@@ -215,11 +174,51 @@ namespace SFA.DAS.ApplyService.InternalApi
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
         }
-        
-        private void ConfigureDependencyInjection(IServiceCollection services)
+
+        private void ConfigHttpClients(IServiceCollection services)
         {
-            ServiceCollectionExtensions.RegisterAllTypes<IValidator>(services, new[] { typeof(IValidator).Assembly });
-            
+            var acceptHeaderName = "Accept";
+            var acceptHeaderValue = "application/json";
+            var handlerLifeTime = TimeSpan.FromMinutes(5);
+
+            services.AddHttpClient<ProviderRegisterApiClient, ProviderRegisterApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_applyConfig.ProviderRegisterApiAuthentication.ApiBaseAddress);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<ReferenceDataApiClient, ReferenceDataApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_applyConfig.ReferenceDataApiAuthentication.ApiBaseAddress);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<CompaniesHouseApiClient, CompaniesHouseApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_applyConfig.CompaniesHouseApiAuthentication.ApiBaseAddress);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_applyConfig.RoatpApiAuthentication.ApiBaseAddress);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+
+            services.AddHttpClient<IInternalQnaApiClient, InternalQnaApiClient>(config =>
+            {
+                config.BaseAddress = new Uri(_applyConfig.QnaApiAuthentication.ApiBaseAddress);
+                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
+            })
+            .SetHandlerLifetime(handlerLifeTime);
+        }
+
+        private void ConfigureDependencyInjection(IServiceCollection services)
+        {            
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
                 
             services.AddSingleton<IConfigurationService>(sp => new ConfigurationService(
@@ -228,28 +227,30 @@ namespace SFA.DAS.ApplyService.InternalApi
                  _configuration["ConfigurationStorageConnectionString"],
                  _version,
                  _serviceName));
-
-            services.AddTransient<IValidatorFactory, ValidatorFactory>();
             
-            services.AddTransient<IContactRepository,ContactRepository>();
-            services.AddTransient<IApplyRepository,ApplyRepository>();
-            services.AddTransient<IOrganisationRepository,OrganisationRepository>();
-            services.AddTransient<IDfeSignInService,DfeSignInService>();
+            services.AddTransient<IContactRepository, ContactRepository>();
+            services.AddTransient<IApplyRepository, ApplyRepository>();
+            services.AddTransient<IAssessorRepository, AssessorRepository>();
+            services.AddTransient<IOrganisationRepository, OrganisationRepository>();
+            services.AddTransient<IDfeSignInService, DfeSignInService>();
             
             services.AddTransient<IEmailService, EmailService.EmailService>();
             services.AddTransient<IEmailTemplateRepository, EmailTemplateRepository>();
 
             // NOTE: These are SOAP Services. Their client interfaces are contained within the generated Proxy code.
-            services.AddTransient<CharityCommissionService.ISearchCharitiesV1SoapClient,CharityCommissionService.SearchCharitiesV1SoapClient>();
-            services.AddTransient<CharityCommissionApiClient,CharityCommissionApiClient>();
+            services.AddTransient<CharityCommissionService.ISearchCharitiesV1SoapClient, CharityCommissionService.SearchCharitiesV1SoapClient>();
+            services.AddTransient<CharityCommissionApiClient, CharityCommissionApiClient>();
             // End of SOAP Services
 
-            services.AddTransient<IRoatpApiClient, RoatpApiClient>();
-            services.AddTransient<IInternalQnaApiClient, InternalQnaApiClient>();
             services.AddTransient<IQnaTokenService, QnaTokenService>();
             services.AddTransient<IRoatpTokenService, RoatpTokenService>();
             services.AddTransient<IGatewayApiChecksService, GatewayApiChecksService>();
             services.AddTransient<ICriminalComplianceChecksQuestionLookupService, CriminalComplianceChecksQuestionLookupService>();
+            services.AddTransient<IRegistrationDetailsService, RegistrationDetailsService>();
+            services.AddTransient<IAssessorLookupService, AssessorLookupService>();
+            services.AddTransient<IExtractAnswerValueService, ExtractAnswerValueService>();
+            services.AddTransient<IGetAssessorPageService, GetAssessorPageService>();
+            services.AddTransient<ISectorDetailsOrchestratorService, SectorDetailsOrchestratorService>();
 
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
         }

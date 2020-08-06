@@ -558,6 +558,22 @@
             model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.Completed);
         }
 
+
+        [Test]
+        public void Whos_in_control_section_status_shows_as_complete_if_companies_house_verified_and_not_confirmed_and_manual_entry_confirmed()
+        {
+            var model = GetTaskListViewModelWithSectionsUpToWhosInControlCompleted();
+
+            model.VerifiedCompaniesHouse = true;
+            model.VerifiedCharityCommission = false;
+            model.CompaniesHouseDataConfirmed = false;
+            model.CompaniesHouseManualEntry = true;
+            model.CharityCommissionDataConfirmed = false;
+            model.WhosInControlConfirmed = false;
+
+            model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.Completed);
+        }
+
         [Test]
         public void Whos_in_control_section_status_shows_as_in_progress_if_companies_house_and_charity_commission_verified_and_only_confirmed_company()
         {
@@ -599,6 +615,34 @@
             
             model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.Completed);
         }
+
+        [Test]
+        public void Whos_in_control_section_status_shows_as_completed_if_companies_house_and_charity_commission_verified_and_neither_confirmed_but_manual_entry_confirmed()
+        {
+            var model = GetTaskListViewModelWithSectionsUpToWhosInControlCompleted();
+
+            model.VerifiedCompaniesHouse = true;
+            model.VerifiedCharityCommission = true;
+            model.CompaniesHouseDataConfirmed = false;
+            model.CompaniesHouseManualEntry = true;
+            model.CharityCommissionDataConfirmed = false;
+            model.CharityCommissionManualEntry = true;
+            model.WhosInControlConfirmed = false;
+            model.WhosInControlStarted = false;
+
+            model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.Completed);
+        }
+
+        [Test]
+        public void Whos_in_control_section_status_shows_as_pending_if_not_verified_by_companies_house_or_charity_commission_and_whos_in_control_has_started_but_not_confirmed()
+        {
+            var model = GetTaskListViewModelWithSectionsUpToWhosInControlCompleted();
+
+            model.WhosInControlStarted = true;
+
+            model.WhosInControlSectionStatus.Should().Be(TaskListSectionStatus.InProgress);
+        }
+
 
         [Test]
         public void Whos_in_control_section_status_shows_as_next_if_not_verified_by_companies_house_or_charity_commission_and_whos_in_control_not_confirmed()

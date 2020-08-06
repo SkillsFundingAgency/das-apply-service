@@ -62,14 +62,18 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                     return TaskListSectionStatus.Blank;
                 }
 
+                var companyHouseVerified = CompaniesHouseDataConfirmed ||  CompaniesHouseManualEntry;
+                var charityCommissionVerified = CharityCommissionDataConfirmed || CharityCommissionManualEntry;
+
+
                 if (VerifiedCompaniesHouse && VerifiedCharityCommission)
                 {
-                    if ((CompaniesHouseDataConfirmed && !CharityCommissionDataConfirmed)
-                        || (!CompaniesHouseDataConfirmed && CharityCommissionDataConfirmed))
+                    if ((companyHouseVerified && !charityCommissionVerified)
+                        || (!companyHouseVerified && charityCommissionVerified))
                     {
                         return TaskListSectionStatus.InProgress;
                     }
-                    if (CompaniesHouseDataConfirmed && CharityCommissionDataConfirmed)
+                    if (companyHouseVerified && charityCommissionVerified)
                     {
                         return TaskListSectionStatus.Completed;
                     }
@@ -77,7 +81,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
                 if (VerifiedCompaniesHouse && !VerifiedCharityCommission)
                 {
-                    if (CompaniesHouseDataConfirmed)
+                    if (companyHouseVerified)
                     {
                         return TaskListSectionStatus.Completed;
                     }
@@ -85,7 +89,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
                 if (!VerifiedCompaniesHouse && VerifiedCharityCommission)
                 {
-                    if (CharityCommissionDataConfirmed)
+                    if (charityCommissionVerified)
                     {
                         return TaskListSectionStatus.Completed;
                     }
@@ -94,6 +98,11 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
                 if (WhosInControlConfirmed)
                 {
                     return TaskListSectionStatus.Completed;
+                }
+
+                if (WhosInControlStarted)
+                {
+                    return TaskListSectionStatus.InProgress;
                 }
 
                 return TaskListSectionStatus.Next;
@@ -312,6 +321,8 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public bool CompaniesHouseDataConfirmed { get; set; }
         public bool CharityCommissionDataConfirmed { get; set; }
         public bool WhosInControlConfirmed { get; set; }
+
+        public bool WhosInControlStarted { get; set; }
 
         public string WhosInControlStartPageId
         {

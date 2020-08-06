@@ -1,47 +1,59 @@
-﻿using System;
+﻿﻿using System;
+using System.Collections.Generic;
+using System.IO;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Infrastructure.ApiClients;
+using SFA.DAS.ApplyService.Infrastructure.Firewall;
 using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
+using SFA.DAS.ApplyService.Application.Apply;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 {
-    public class InternalQnaApiClient:IInternalQnaApiClient
+    public class InternalQnaApiClient : ApiClientBase<InternalQnaApiClient>, IInternalQnaApiClient
     {
-        private readonly ILogger<InternalQnaApiClient> _logger;
-        private readonly IQnaTokenService _tokenService;
-        private static readonly HttpClient _httpClient = new HttpClient();
-        private readonly string _environmentName;
-
-        protected readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
+        public InternalQnaApiClient(HttpClient httpClient, ILogger<InternalQnaApiClient> logger, IQnaTokenService tokenService) : base(httpClient, logger)
         {
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            NullValueHandling = NullValueHandling.Ignore
-        };
-
-        public InternalQnaApiClient(IConfigurationService configurationService, ILogger<InternalQnaApiClient> logger, IQnaTokenService tokenService)
-        {
-            _logger = logger;
-            _tokenService = tokenService;
-
-            if (_httpClient.BaseAddress == null)
-            {
-                _httpClient.BaseAddress = new Uri(configurationService.GetConfig().Result.QnaApiAuthentication.ApiBaseAddress);
-            }
-
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-
-            _environmentName = configurationService.GetEnvironmentName();
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenService.GetToken());
         }
+
+        public async Task<ApplicationSequence> GetSequenceBySequenceNo(Guid applicationId, int sequenceNo)
+        {
+            return await Get<ApplicationSequence>($"Applications/{applicationId}/Sequences/{sequenceNo}");
+        }
+
+        public async Task<IEnumerable<ApplicationSection>> GetSections(Guid applicationId, Guid sequenceId)
+        {
+            return await Get<List<ApplicationSection>>($"Applications/{applicationId}/Sequences/{sequenceId}/sections");
+        }
+
+        public async Task<IEnumerable<ApplicationSection>> GetAllApplicationSections(Guid applicationId)
+        {
+            return await Get<List<ApplicationSection>>($"Applications/{applicationId}/sections");
+        }
+
+        public async Task<ApplicationSection> GetSectionBySectionNo(Guid applicationId, int sequenceNo, int sectionNo)
+        {
+            return await Get<ApplicationSection>($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}");
+        }
+
+        public async Task<SkipPageResponse> SkipPageBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId)
+        {
+            return await Post<object, SkipPageResponse>($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}/skip", new object());
+        }
+
         public async Task<string> GetQuestionTag(Guid applicationId, string questionTag)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/applicationData/{questionTag}");
+            var response = await GetResponse($"Applications/{applicationId}/applicationData/{questionTag}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -60,14 +72,47 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
 
         public async Task<Page> GetPageBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId)
         {
-            var response = await _httpClient.GetAsync($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}");
-            return await response.Content.ReadAsAsync<Page>();
+            return await Get<Page>($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}");
         }
 
         public async Task<string> GetAnswerValue(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId)
         {
             var pageContainingQuestion = await GetPageBySectionNo(applicationId, sequenceNo, sectionNo, pageId);
 
+            return GetAnswerValue(questionId, pageContainingQuestion);
+        }
+
+        public async Task<string> GetAnswerValueFromActiveQuestion(Guid applicationId, int sequenceNo, int sectionNo, params PageAndQuestion[] possibleQuestions)
+        {
+            foreach (var question in possibleQuestions)
+            {
+                var pageContainingQuestion = await GetPageBySectionNo(applicationId, sequenceNo, sectionNo, question.PageId);
+
+                if (!pageContainingQuestion.Active)
+                {
+                    continue;
+                }
+
+                return GetAnswerValue(question.QuestionId, pageContainingQuestion);
+            }
+
+            return null;
+        }
+
+        public async Task<string> GetAnswerValueFromActiveQuestion(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId)
+        {
+            var pageContainingQuestion = await GetPageBySectionNo(applicationId, sequenceNo, sectionNo, pageId);
+
+            if (!pageContainingQuestion.Active)
+            {
+                return null;
+            }
+
+            return GetAnswerValue(questionId, pageContainingQuestion);
+        }
+
+        private static string GetAnswerValue(string questionId, Page pageContainingQuestion)
+        {
             if (pageContainingQuestion?.Questions != null)
             {
                 foreach (var question in pageContainingQuestion.Questions)
@@ -77,16 +122,18 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                         foreach (var pageOfAnswers in pageContainingQuestion.PageOfAnswers)
                         {
                             var pageAnswer = pageOfAnswers.Answers.FirstOrDefault(x => x.QuestionId == questionId);
-                            if(pageAnswer != null)
+                            if (pageAnswer != null)
                             {
-                                return pageAnswer.Value;
+                                {
+                                    return pageAnswer.Value;
+                                }
                             }
                         }
                     }
                     else // In case question/answer is buried in FurtherQuestions
                     {
                         var furtherQuestionAnswer = GetAnswerFromFurtherQuestions(question, pageContainingQuestion, questionId);
-                        if(furtherQuestionAnswer != null)
+                        if (furtherQuestionAnswer != null)
                         {
                             return furtherQuestionAnswer;
                         }
@@ -97,7 +144,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
             return null;
         }
 
-        private string GetAnswerFromFurtherQuestions(Question question, Page pageContainingQuestion, string questionId)
+        private static string GetAnswerFromFurtherQuestions(Question question, Page pageContainingQuestion, string questionId)
         {
             if (question?.Input?.Options != null)
             {
@@ -119,8 +166,64 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
                     }
                 }
             }
+            return null;
+        }
+
+        public async Task<FileStreamResult> GetDownloadFile(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId)
+        {
+            var response = await GetResponse($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}/questions/{questionId}/download");
+
+            var fileStream = await response.Content.ReadAsStreamAsync();
+            var result = new FileStreamResult(fileStream, response.Content.Headers.ContentType.MediaType);
+            result.FileDownloadName = response.Content.Headers.ContentDisposition.FileName;
+            return result;
+        }
+
+        public async Task<FileStreamResult> DownloadSpecifiedFile(Guid applicationId, int sequenceNo, int sectionNo, string pageId, string questionId, string filename)
+        {
+            var section = await GetSectionBySectionNo(applicationId, sequenceNo, sectionNo);
+
+            if (section != null)
+            {
+                var response = await GetResponse($"/applications/{section.ApplicationId}/sections/{section.Id}/pages/{pageId}/questions/{questionId}/download/{filename}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var fileStream = await response.Content.ReadAsStreamAsync();
+                    var result = new FileStreamResult(fileStream, response.Content.Headers.ContentType.MediaType);
+                    result.FileDownloadName = response.Content.Headers.ContentDisposition.FileName;
+                    return result;
+                }
+            }
 
             return null;
+        }
+
+        public async Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag, string questionId = null)
+        {
+            var answer = new Answer { QuestionId = questionId };
+
+            var questionTagData = await GetQuestionTag(applicationId, questionTag);
+            if (questionTagData != null)
+            {
+                answer.Value = questionTagData;
+            }
+
+            return answer;
+        }
+
+        public async Task<TabularData> GetTabularDataByTag(Guid applicationId, string questionTag)
+        {
+            var answer = await GetAnswerByTag(applicationId, questionTag);
+
+            if (answer?.Value == null)
+            {
+                return null;
+            }
+
+            var tabularData = JsonConvert.DeserializeObject<TabularData>(answer.Value);
+
+            return tabularData;
         }
     }
 }
