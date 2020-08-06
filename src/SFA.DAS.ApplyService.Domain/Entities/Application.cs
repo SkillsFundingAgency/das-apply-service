@@ -14,34 +14,15 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string ApplicationStatus { get; set; }
         public ApplicationData ApplicationData { get; set; }
     }
-
-    public class StandardApplicationData
-    {
-        public string StandardName { get; set; }
-        public int StandardCode { get; set; }
-        public string StandardReference { get; set; }
-        public int? StandardLevel { get; set; }
-        public Guid UserId { get; set; }
-        public string UserEmail { get; set; }
-    }
     
     public class ApplicationData
     {
         public string ReferenceNumber { get; set; }
-        public string StandardName { get; set; }
-        public int StandardCode { get; set; }
-        public string StandardReference { get; set; }
-        public int? StandardLevel { get; set; }
         public List<InitSubmission> InitSubmissions { get; set; }
         public int InitSubmissionsCount { get; set; }
         public DateTime? LatestInitSubmissionDate { get; set; }
         public DateTime? InitSubmissionFeedbackAddedDate { get; set; }
         public DateTime? InitSubmissionClosedDate { get; set; }
-        public List<StandardSubmission> StandardSubmissions { get; set; }
-        public int StandardSubmissionsCount { get; set; }
-        public DateTime? LatestStandardSubmissionDate { get; set; }
-        public DateTime? StandardSubmissionFeedbackAddedDate { get; set; }
-        public DateTime? StandardSubmissionClosedDate { get; set; }
     }
 
     public abstract class Submission
@@ -52,10 +33,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     }
 
     public class InitSubmission : Submission
-    {
-    }
-
-    public class StandardSubmission : Submission
     {
     }
 }
