@@ -519,7 +519,7 @@
         }
 
         [HttpGet]
-        public async Task<IActionResult> ConfirmChangeRoute(Guid applicationId)
+        public IActionResult ConfirmChangeRoute(Guid applicationId)
         {
             var model = new ConfirmChangeRouteViewModel { ApplicationId = applicationId };
             PopulateGetHelpWithQuestion(model, "ConfirmChangeRoute");
@@ -527,7 +527,7 @@
         }
 
         [HttpPost]
-        public async Task<IActionResult> SubmitConfirmChangeRoute(ConfirmChangeRouteViewModel model)
+        public IActionResult SubmitConfirmChangeRoute(ConfirmChangeRouteViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -690,7 +690,7 @@
 
         [Route("change-ukprn")]
         [HttpGet]
-        public async Task<IActionResult> ChangeUkprn(Guid applicationId)
+        public IActionResult ChangeUkprn(Guid applicationId)
         {
             var model = new ChangeUkprnViewModel { ApplicationId = applicationId };
 
