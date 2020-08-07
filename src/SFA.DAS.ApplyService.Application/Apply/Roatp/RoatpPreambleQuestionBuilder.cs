@@ -147,10 +147,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         }
         public static class Finish
         {
-            public static int ApplicationPermissionsAndChecks = 1;
-            public static int QualityStatement = 2;
-            public static int TermsAndConditions = 3;
-            public static int SubmitApplication = 4;
+            public const int ApplicationPermissionsAndChecks = 1;
+            public const int CommercialInConfidenceInformation = 2;
+            public const int TermsAndConditions = 3;
+            public const int SubmitApplication = 4;
         }
     }
 
