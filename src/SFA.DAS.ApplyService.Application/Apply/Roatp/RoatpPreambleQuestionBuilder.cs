@@ -1,5 +1,4 @@
-﻿
-namespace SFA.DAS.ApplyService.Application.Apply.Roatp
+﻿namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 {
     using System;
     using System.Collections.Generic;
@@ -47,7 +46,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string COAStage1Application = "COA-1";                  
     }
 
-    public class RoatpYourOrganisationQuestionIdConstants
+    public static class RoatpYourOrganisationQuestionIdConstants
     {
         public static string WebsiteManuallyEntered = "YO-41";
         public static string IcoNumber = "YO-30";
@@ -86,37 +85,47 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         public static string ContractFileName = "YO-360";
     }
 
-    public class RoatpCriminalComplianceChecksQuestionIdConstants
+    public static class RoatpCriminalComplianceChecksQuestionIdConstants
     {
         public static string CompositionCreditors = "CC-20";
         public static string OrganisationFailedToRepayFunds = "CC-21";
         public static string OrganisationContractTermination = "CC-22";
     }
 
-    public class RoatpDeliveringApprenticeshipTrainingQuestionIdConstants
+    public static class RoatpDeliveringApprenticeshipTrainingQuestionIdConstants
     {
-        public static string ManagementHierarchy = "DAT-720";
+        public const string ManagementHierarchy = "DAT-720";
+        public const string OverallManagerResponsible_MainEmployer = "DAT-754.1";
+        public const string OverallManagerExperience_MainEmployer = "DAT-754.2";
+        public const string OverallManagerResponsible_Supporting = "DAT-759.1";
+        public const string OverallManagerExperience_Supporting = "DAT-759.2";
+    }
+
+    public static class RoatpPlanningApprenticeshipTrainingQuestionIdConstants
+    {
+        public const string ApplicationFrameworks_MainEmployer = "PAT-50";
+        public const string ApplicationFrameworks_Supporting = "PAT-60";
     }
 
     public static class RoatpWorkflowSequenceIds
     {
-        public static int Preamble = 0;
-        public static int YourOrganisation = 1;
-        public static int FinancialEvidence = 2;
-        public static int CriminalComplianceChecks = 3;
-        public static int ProtectingYourApprentices = 4;
-        public static int ReadinessToEngage = 5;
-        public static int PlanningApprenticeshipTraining = 6;
-        public static int DeliveringApprenticeshipTraining = 7;
-        public static int EvaluatingApprenticeshipTraining = 8;
-        public static int Finish = 9;
-        public static int ConditionsOfAcceptance = 99;
+        public const int Preamble = 0;
+        public const int YourOrganisation = 1;
+        public const int FinancialEvidence = 2;
+        public const int CriminalComplianceChecks = 3;
+        public const int ProtectingYourApprentices = 4;
+        public const int ReadinessToEngage = 5;
+        public const int PlanningApprenticeshipTraining = 6;
+        public const int DeliveringApprenticeshipTraining = 7;
+        public const int EvaluatingApprenticeshipTraining = 8;
+        public const int Finish = 9;
+        public const int ConditionsOfAcceptance = 99;
     }
 
     public static class RoatpWorkflowSectionIds
     {
-        public static int Preamble = 1;
-        public static int ConditionsOfAcceptance = 1;
+        public const int Preamble = 1;
+        public const int ConditionsOfAcceptance = 1;
 
         public static class YourOrganisation
         {
@@ -129,22 +138,45 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
         public static class FinancialEvidence
         {
-            public static int WhatYouWillNeed = 1;
-            public static int YourOrganisationsFinancialEvidence = 2;
+            public const int WhatYouWillNeed = 1;
+            public const int YourOrganisationsFinancialEvidence = 2;
         }
 
         public static class CriminalComplianceChecks
         {
-            public static int WhatYouWillNeed = 1;
-            public static int ChecksOnYourOrganisation = 2;
-            public static int WhatYouWillNeed_CheckOnWhosInControl = 3;
-            public static int CheckOnWhosInControl = 4;
+            public const int WhatYouWillNeed = 1;
+            public const int ChecksOnYourOrganisation = 2;
+            public const int WhatYouWillNeed_CheckOnWhosInControl = 3;
+            public const int CheckOnWhosInControl = 4;
+        }
+
+        public static class ProtectingYourApprentices
+        {
+            public const int WhatYouWillNeed = 1;
+        }
+
+        public static class ReadinessToEngage
+        {
+            public const int WhatYouWillNeed = 1;
+        }
+
+        public static class PlanningApprenticeshipTraining
+        {
+            public const int WhatYouWillNeed = 1;
         }
 
         public static class DeliveringApprenticeshipTraining
         {
-            public static int ManagementHierarchy = 3;
+            public const int WhatYouWillNeed = 1;
+            public const int ManagementHierarchy = 3;
+            public const int YourSectorsAndEmployees = 6;
         }
+
+        public static class EvaluatingApprenticeshipTraining
+        {
+            public const int WhatYouWillNeed = 1;
+        }
+
         public static class Finish
         {
             public const int ApplicationPermissionsAndChecks = 1;
@@ -154,7 +186,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         }
     }
 
-    public static class RoatpWorkflowPageIds
+    public static partial class RoatpWorkflowPageIds
     {
         public static string Preamble = "1";
         public static string ProviderRoute = "2";
@@ -185,7 +217,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
               public static string AddManagementHierarchy = "7200";
         }
 
-        public class DescribeYourOrganisation
+        public static class DescribeYourOrganisation
         {
             public static string MainSupportingStartPage = "140";
             public static string EmployerStartPage = "150";
@@ -195,7 +227,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static string EducationalInstituteTypeEmployer = "161";
         }
 
-        public class ExperienceAndAccreditations
+        public static class ExperienceAndAccreditations
         { 
             public static string OfficeForStudents = "235";
             public static string InitialTeacherTraining = "240";
@@ -215,14 +247,83 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
             public static string SubcontractorContractFile = "360";
         }
 
-        public class CriminalComplianceChecks
+        public static class CriminalComplianceChecks
         {
             public static string CompositionCreditors = "3100";
             public static string OrganisationFailedToRepayFunds = "3110";
             public static string OrganisationContractTermination = "3120";
         }
 
-        public class Finish
+        public static class ProtectingYourApprentices
+        {
+            public const string ContinuityPlan = "4010";
+            public const string EqualityAndDiversityPolicy = "4020";
+            public const string SafeguardingPolicy = "4030";
+            public const string SafeguardingOverallResponsibility = "4035";
+            public const string SafeguardingPolicyIncludesPreventDutyPolicy = "4037";
+            public const string PreventDutyPolicy = "4038";
+            public const string HealthAndSafetyPolicy = "4040";
+            public const string HealthAndSafetyOverallResponsibility = "4045";
+            public const string ActingAsASubcontractor = "4050";
+        }
+
+        public static class ReadinessToEngage
+        {
+            public const string EngagedWithEmployers = "5100";
+            public const string RelationshipWithEmployers = "5110";
+            public const string RelationshipWithEmployersResponsible = "5120";
+            public const string PromoteApprenticeshipsToEmployers = "5130";
+            public const string ComplaintsPolicy = "5200";
+            public const string ComplaintsPolicyWebsite = "5210";
+            public const string ContractForServicesTemplate = "5300";
+            public const string CommitmentStatementTemplate = "5400";
+            public const string PriorLearningAssessment = "5500";
+            public const string PriorLearningQualifications = "5510";
+            public const string SubcontractorsUse = "5600";
+            public const string SubcontractorsDueDiligence = "5610";
+        }
+
+        public static class PlanningApprenticeshipTraining
+        {
+            public const string TypeOfApprenticeshipTraining_Main = "6020";
+            public const string TypeOfApprenticeshipTraining_Employer = "6022";
+            public const string TypeOfApprenticeshipTraining_Supporting = "6023";
+            public const string ApplicationStandards = "6030";
+            public const string ApplicationFrameworks_MainEmployer = "6050";
+            public const string ApplicationFrameworks_Supporting = "6060";
+            public const string OrganisationTransition_MainEmployer = "6052";
+            public const string OrganisationTransition_Supporting = "6062";
+            public const string OnlyDeliveringApprenticeshipFrameworks_MainEmployer = "6054";
+            public const string OnlyDeliveringApprenticeshipFrameworks_Supporting = "6064";
+            public const string ReadyToDeliverTraining = "6200";
+            public const string ReadyToDeliverTrainingResponsible = "6700";
+            public const string EngagingWithAwardingBodies = "6800";
+            public const string EngagingWithAssessmentOrganisations = "6900";
+            public const string EnsureApprenticesAreSupported = "6300";
+            public const string EnsureApprenticesAreSupportedHow = "6310";
+            public const string EnsureApprenticesAreSupportedOtherWays = "6320";
+            public const string ForecastingStarts = "6400";
+            public const string ReadyToDeliverAgainstStarts = "6410";
+            public const string RecruitNewStaff = "6420";
+            public const string RatioOfStaffToApprentices = "6430";
+            public const string OnTheJobTrainingTeachingMethods = "6500";
+            public const string OnTheJobTrainingTeachingRelevance = "6510";
+            public const string AddressWhereApprenticesWillBeTrained = "6600";
+        }
+
+        public static class EvaluatingApprenticeshipTraining
+        {
+            public const string QualityProcessEvaluating = "8100";
+            public const string QualityProcessImprovements = "8110";
+            public const string QualityProcessIncludesApprenticeshipTraining = "8200";
+            public const string QualityProcessQuality_MainEmployer = "8210";
+            public const string QualityProcessQuality_Supporting = "8220";
+            public const string QualityProcessReviewing = "8230";
+            public const string CollectApprenticeshipData = "8300";
+            public const string IndividualisedLearnerRecordData = "8310";
+        }
+
+        public static class Finish
         {
             public static string ApplicationPermissionsChecksShutterPage = "10005";
             public static string TermsConditionsCOAPart2ShutterPage = "10006";

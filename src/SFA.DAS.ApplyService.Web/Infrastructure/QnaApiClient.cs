@@ -289,13 +289,13 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
         }
 
-        public async Task<AddPageAnswerResponse> AddPageAnswerToMultipleAnswerPage(Guid applicationId, Guid sectionId, string pageId, List<Answer> answer)
+        public Task<AddPageAnswerResponse> AddPageAnswerToMultipleAnswerPage(Guid applicationId, Guid sectionId, string pageId, List<Answer> answer)
         {
             // Not used. May need in future. See how EPAO Assessor Service does it
             throw new NotImplementedException();
         }
 
-        public async Task<Page> RemovePageAnswerFromMultipleAnswerPage(Guid applicationId, Guid sectionId, string pageId, Guid answerId)
+        public Task<Page> RemovePageAnswerFromMultipleAnswerPage(Guid applicationId, Guid sectionId, string pageId, Guid answerId)
         {
             // Not used. May need in future. See how EPAO Assessor Service does it
             throw new NotImplementedException();

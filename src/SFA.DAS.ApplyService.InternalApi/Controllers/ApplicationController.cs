@@ -49,6 +49,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(new GetApplicationRequest(applicationId));
         }
 
+        [HttpGet("Application/{applicationId}/Contact")]
+        public async Task<ActionResult<Domain.Entities.Contact>> GetContactForApplication(Guid applicationId)
+        {
+            return await _mediator.Send(new GetContactForApplicationRequest(applicationId));
+        }
+
         [HttpGet("Applications/{signinId}")]
         public async Task<ActionResult<List<Domain.Entities.Apply>>> GetApplications(string signinId)
         {

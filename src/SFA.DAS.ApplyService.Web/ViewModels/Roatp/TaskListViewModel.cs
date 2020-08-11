@@ -79,9 +79,9 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public bool IntroductionPageNextSectionUnavailable(int sequenceId, int sectionId)
         {
             // Disable the other sequences if YourOrganisation sequence isn't complete
-            if (sequenceId != RoatpWorkflowSequenceIds.YourOrganisation)
+            if (sequenceId != RoatpWorkflowSequenceIds.YourOrganisation && !YourOrganisationSequenceCompleted)
             {
-                return !YourOrganisationSequenceCompleted;
+                return true;
             }
 
             // CriminalComplianceChecks has two intro pages...

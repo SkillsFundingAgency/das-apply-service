@@ -50,7 +50,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IPagesWithSectionsFlowService _pagesWithSectionsFlowService;
         private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
         private readonly IRoatpOrganisationVerificationService _organisationVerificationService;
-        private readonly INotRequiredOverridesService _notRequiredOverridesService;
         private readonly IRoatpTaskListWorkflowService _taskListWorkflowService;
 
         private const string InputClassUpperCase = "app-uppercase";
@@ -59,8 +58,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public RoatpApplicationController(IApplicationApiClient apiClient, ILogger<RoatpApplicationController> logger,
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
-            IQnaApiClient qnaApiClient, 
-            IProcessPageFlowService processPageFlowService,
+            IQnaApiClient qnaApiClient,
             IPagesWithSectionsFlowService pagesWithSectionsFlowService,
             IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
             IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks, 
@@ -68,7 +66,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             IRoatpApiClient roatpApiClient, ISubmitApplicationConfirmationEmailService submitApplicationEmailService,
             ITabularDataRepository tabularDataRepository, IRoatpTaskListWorkflowService roatpTaskListWorkflowService,
             IRoatpOrganisationVerificationService organisationVerificationService,
-            INotRequiredOverridesService notRequiredOverridesService,
             IRoatpTaskListWorkflowService taskListWorkflowService)
             :base(sessionService)
         {
@@ -90,7 +87,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _tabularDataRepository = tabularDataRepository;
             _roatpTaskListWorkflowService = roatpTaskListWorkflowService;
             _organisationVerificationService = organisationVerificationService;
-            _notRequiredOverridesService = notRequiredOverridesService;
             _taskListWorkflowService = taskListWorkflowService;
         }
 
@@ -1097,9 +1093,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 ReferenceNumber = application?.ApplyData?.ApplyDetails?.ReferenceNumber,
                 FeedbackUrl = config.FeedbackUrl,
-                //StandardName = application?.ApplicationData?.StandardName,
-                //StandardReference = application?.ApplicationData?.StandardReference,
-                //StandardLevel = application?.ApplicationData?.StandardLevel
             });
         }
 
@@ -1112,7 +1105,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 ReferenceNumber = application?.ApplyData?.ApplyDetails?.ReferenceNumber,
                 FeedbackUrl = config.FeedbackUrl,
-                //StandardName = application?.ApplicationData?.StandardName
             });
         }
 
@@ -1191,8 +1183,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var roatpSequences = await _apiClient.GetRoatpSequences();
 
-            var notRequiredOverrides = _notRequiredOverridesService.GetNotRequiredOverrides(model.ApplicationId);
-
             var organisationVerificationStatus = await _organisationVerificationService.GetOrganisationVerificationStatus(model.ApplicationId);
             var sequences = _roatpTaskListWorkflowService.GetApplicationSequences(model.ApplicationId);
 
@@ -1207,15 +1197,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     var applySection = sequence.Sections.FirstOrDefault(x => x.SectionNo == section.SectionId);
                     if (applySection != null)
                     {
-                        applySection.NotRequired = await SectionNotRequired(model.ApplicationId, applicationSequence, 
-                                                                            notRequiredOverrides, section.SectionId, 
+                        applySection.NotRequired = SectionNotRequired(model.ApplicationId, applicationSequence, section.SectionId, 
                                                                             roatpSequences, organisationVerificationStatus);
                     }
                 }
 
                 applicationSequence.Sections = sections.ToList();
                 sequence.NotRequired = SequenceNotRequired(model.ApplicationId, applicationSequence, sequences,
-                                                           notRequiredOverrides, organisationVerificationStatus);
+                                                           organisationVerificationStatus);
             }
             var providerRoutes = _roatpApiClient.GetApplicationRoutes().GetAwaiter().GetResult();
             var selectedProviderRoute = providerRoutes.FirstOrDefault(p => p.Id.ToString() == providerRoute.Value);
@@ -1332,7 +1321,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 {
                     var result = customValidation.Validate();
 
-                    if (result.IsValid == false)
+                    if (!result.IsValid)
                     {
                         ModelState.AddModelError(result.QuestionId, result.ErrorMessage);
                     }
@@ -1376,15 +1365,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private bool SequenceNotRequired(Guid applicationId, ApplicationSequence sequence, 
                                                 IEnumerable<ApplicationSequence> applicationSequences,
-                                                List<NotRequiredOverrideConfiguration> notRequiredOverrides, 
                                                 OrganisationVerificationStatus organisationVerificationStatus)
         {
             var sectionCount = sequence.Sections.Count;
             var notRequiredCount = 0;
-            var sequences = new List<ApplicationSequence>
-            {
-                sequence
-            };
 
             foreach (var section in sequence.Sections)
             {
@@ -1398,7 +1382,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
 
-        private async Task<bool> SectionNotRequired(Guid applicationId, ApplicationSequence sequence, List<NotRequiredOverrideConfiguration> notRequiredOverrides, 
+        private bool SectionNotRequired(Guid applicationId, ApplicationSequence sequence,
                                                     int sectionId, IEnumerable<RoatpSequences> roatpSequences, OrganisationVerificationStatus organisationVerificationStatus)
         {
             var sequences = new List<ApplicationSequence>
