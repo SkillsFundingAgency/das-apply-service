@@ -94,9 +94,9 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        private async Task UpdateOrganisation(Organisation organisation, SqlConnection connection)
+        private Task UpdateOrganisation(Organisation organisation, SqlConnection connection)
         {
-            connection.Execute(
+            return connection.ExecuteAsync(
                 "UPDATE [Organisations] " +
                 "SET [UpdatedAt] = GETUTCDATE(), [UpdatedBy] = @UpdatedBy, [Name] = @Name, " +
                 "[OrganisationType] = @OrganisationType, [OrganisationUKPRN] = @OrganisationUkprn, " +
