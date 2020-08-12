@@ -14,5 +14,6 @@ namespace SFA.DAS.ApplyService.Web.Configuration
         public string Controller { get; set; }
         public string Action { get; set; }
         public string LinkPageId { get; set; }
+        public string CssClasses { get; set; }
     }
 }
