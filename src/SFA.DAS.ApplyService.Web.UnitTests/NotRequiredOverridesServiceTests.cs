@@ -9,6 +9,7 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using System;
 using System.Collections.Generic;
+using SFA.DAS.ApplyService.Application.UnitTests;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests
 {
@@ -60,8 +61,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             };
             _apiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(applicationData);
 
-            List<NotRequiredOverrideConfiguration> nullConfig = null;
-            _sessionService.Setup(x => x.Get<List<NotRequiredOverrideConfiguration>>(_sessionKey)).Returns(nullConfig);
+            _sessionService.Setup(x => x.Get<List<NotRequiredOverrideConfiguration>>(_sessionKey)).ReturnsInOrder(null, configuration);
             _sessionService.Setup(x => x.Set(_sessionKey, configuration));
 
             _service = new NotRequiredOverridesService(_config.Object, _apiClient.Object, _sessionService.Object);
@@ -99,8 +99,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             };
             _apiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(applicationData);
 
-            List<NotRequiredOverrideConfiguration> nullConfig = null;
-            _sessionService.Setup(x => x.Get<List<NotRequiredOverrideConfiguration>>(_sessionKey)).Returns(nullConfig);
+            _sessionService.Setup(x => x.Get<List<NotRequiredOverrideConfiguration>>(_sessionKey)).ReturnsInOrder(null, configuration);
             _sessionService.Setup(x => x.Set(_sessionKey, configuration));
 
             _service = new NotRequiredOverridesService(_config.Object, _apiClient.Object, _sessionService.Object);
@@ -147,6 +146,42 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
 
             overrides[0].Conditions[0].Value.Should().Be("NotTest");
             overrides[0].AllConditionsMet.Should().BeFalse();
+        }
+
+        [Test]
+        public void RefreshNotRequiredOverrides_repopulates_the_session_cache_config()
+        {
+            var configuration = new List<NotRequiredOverrideConfiguration>
+            {
+                new NotRequiredOverrideConfiguration
+                {
+                    Conditions = new List<NotRequiredCondition>
+                    {
+                        new NotRequiredCondition
+                        {
+                            ConditionalCheckField = "Field1",
+                            MustEqual = "Test"
+                        }
+                    },
+                    SectionId = 1,
+                    SequenceId = 2
+                }
+            };
+
+            _config.Setup(x => x.Value).Returns(configuration);
+
+            var applicationData = new JObject
+            {
+                ["Field1"] = "Test"
+            };
+
+            _apiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(applicationData);
+
+            _service = new NotRequiredOverridesService(_config.Object, _apiClient.Object, _sessionService.Object);
+            _service.RefreshNotRequiredOverrides(_applicationId);
+
+            _sessionService.Verify(x => x.Remove(_sessionKey), Times.Once);
+            _sessionService.Verify(x => x.Set(_sessionKey, configuration), Times.Once);
         }
     }
 }

@@ -6,6 +6,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 {
     public interface INotRequiredOverridesService
     {
+        void RefreshNotRequiredOverrides(Guid applicationId);
         List<NotRequiredOverrideConfiguration> GetNotRequiredOverrides(Guid applicationId);
     }
 }
