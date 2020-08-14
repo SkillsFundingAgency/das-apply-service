@@ -638,7 +638,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         question.Input.Options = questionOptions;
                         question.Input.Type = question.Input.Type.Replace("DataFed_", "");
                     }
-                    if (question.Input.Type == "TabularData")
+                    if (question.Input.Type == QuestionType.TabularData)
                     {
                         var answer = await _qnaApiClient.GetAnswerByTag(applicationId, question.QuestionTag, question.QuestionId);
                         if (page.PageOfAnswers == null || page.PageOfAnswers.Count < 1)
@@ -711,7 +711,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
             }
 
-            var isFileUploadPage = page.Questions.Any(q => "FileUpload".Equals(q.Input.Type, StringComparison.InvariantCultureIgnoreCase));
+            var isFileUploadPage = page.Questions.Any(q => QuestionType.FileUpload.Equals(q.Input.Type, StringComparison.InvariantCultureIgnoreCase));
 
             bool validationPassed;
             List<KeyValuePair<string, string>> validationErrors;
@@ -826,7 +826,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private static IEnumerable<Question> PageContainsCheckBoxListQuestions(Page page)
         {
-            return page.Questions.Where(q => q.Input.Type == "CheckBoxList" || q.Input.Type == "ComplexCheckBoxList");
+            return page.Questions.Where(q => q.Input.Type == QuestionType.CheckboxList || q.Input.Type == QuestionType.ComplexCheckboxList);
         }
 
         private static string CheckBoxListHasInvalidSelections(IEnumerable<Question> checkBoxListQuestions, List<Answer> answers)
@@ -873,12 +873,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             #region FurtherQuestion_Processing
             // Get all questions that have FurtherQuestions in a ComplexRadio
-            var questionsWithFutherQuestions = page.Questions.Where(x => (x.Input.Type == "ComplexRadio" || x.Input.Type == "ComplexCheckBoxList") && x.Input.Options != null && x.Input.Options.Any(o => o.FurtherQuestions != null && o.FurtherQuestions.Any()));
+            var questionsWithFutherQuestions = page.Questions.Where(x => (x.Input.Type == QuestionType.ComplexRadio || x.Input.Type == QuestionType.ComplexCheckboxList)
+            && x.Input.Options != null && x.Input.Options.Any(o => o.FurtherQuestions != null && o.FurtherQuestions.Any()));
 
 
             foreach (var question in questionsWithFutherQuestions)
             {
-                if (question.Input.Type == "ComplexRadio")
+                if (question.Input.Type == QuestionType.ComplexRadio)
                 {
                     var answerForQuestion = answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
 
@@ -895,7 +896,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     }
                 }
 
-                if (question.Input.Type == "ComplexCheckBoxList")
+                if (question.Input.Type == QuestionType.ComplexCheckboxList)
                 {
                     var answerForQuestion = answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
 
@@ -921,7 +922,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             #endregion FurtherQuestion_Processing
 
             // Address inputs require special processing
-            if (page.Questions.Any(x => x.Input.Type == "Address"))
+            if (page.Questions.Any(x => x.Input.Type == QuestionType.Address))
             {
                 answers = ProcessPageVmQuestionsForAddress(page, answers);
             }
@@ -949,7 +950,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private static List<Answer> ProcessPageVmQuestionsForAddress(Page page, List<Answer> answers)
         {
 
-            if (page.Questions.Any(x => x.Input.Type == "Address"))
+            if (page.Questions.Any(x => x.Input.Type == QuestionType.Address))
             {
                 Dictionary<string, JObject> answerValueDictionary = new Dictionary<string, JObject>();
 
@@ -1325,7 +1326,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private bool IsFileUploadWithNonEmptyValue(Page page)
         {
-            if (page.PageOfAnswers == null || page.PageOfAnswers.Count == 0 || page.Questions == null || page.Questions.Count == 0 || page.Questions[0].Input.Type != "FileUpload")
+            if (page.PageOfAnswers == null || page.PageOfAnswers.Count == 0 || page.Questions == null || page.Questions.Count == 0 || page.Questions[0].Input.Type != QuestionType.FileUpload)
                 return false;
 
             var fileUploadAnswerValue = string.Empty;
