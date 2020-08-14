@@ -51,7 +51,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IPagesWithSectionsFlowService> _pagesWithSectionsFlowService;
         private Mock<IRoatpTaskListWorkflowService> _roatpTaskListWorkflowService;
         private Mock<IRoatpOrganisationVerificationService> _roatpOrganisationVerificationService;
-        private Mock<IRoatpTaskListWorkflowService> _taskListWorkflowService;
 
         [SetUp]
         public void Before_each_test()
@@ -82,7 +81,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _tabularDataRepository = new Mock<ITabularDataRepository>();
             _roatpTaskListWorkflowService = new Mock<IRoatpTaskListWorkflowService>();
             _roatpOrganisationVerificationService = new Mock<IRoatpOrganisationVerificationService>();
-            _taskListWorkflowService = new Mock<IRoatpTaskListWorkflowService>();
 
             _controller = new RoatpApplicationController(_apiClient.Object, _logger.Object, _sessionService.Object, _configService.Object,
                                                          _userService.Object, _usersApiClient.Object, _qnaApiClient.Object, 
@@ -91,8 +89,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                                                          _pageNavigationTrackingService.Object, _qnaLinks.Object, _customValidatorFactory.Object,
                                                          _roatpApiClient.Object,
                                                          _submitApplicationEmailService.Object, _tabularDataRepository.Object,
-                                                         _roatpTaskListWorkflowService.Object, _roatpOrganisationVerificationService.Object,
-                                                         _taskListWorkflowService.Object)
+                                                         _roatpTaskListWorkflowService.Object, _roatpOrganisationVerificationService.Object)
             {
                 ControllerContext = new ControllerContext()
                 {

@@ -12,7 +12,6 @@ using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
-using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
@@ -39,7 +38,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IUserService _userService;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IQuestionPropertyTokeniser _questionPropertyTokeniser;
-        private readonly List<TaskListConfiguration> _configuration;
         private readonly IPageNavigationTrackingService _pageNavigationTrackingService;
         private readonly List<QnaPageOverrideConfiguration> _pageOverrideConfiguration;
         private readonly List<QnaLinksConfiguration> _qnaLinks;
@@ -50,7 +48,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IPagesWithSectionsFlowService _pagesWithSectionsFlowService;
         private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
         private readonly IRoatpOrganisationVerificationService _organisationVerificationService;
-        private readonly IRoatpTaskListWorkflowService _taskListWorkflowService;
 
         private const string InputClassUpperCase = "app-uppercase";
         private const string NotApplicableAnswerText = "None of the above";
@@ -65,8 +62,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             ICustomValidatorFactory customValidatorFactory,  
             IRoatpApiClient roatpApiClient, ISubmitApplicationConfirmationEmailService submitApplicationEmailService,
             ITabularDataRepository tabularDataRepository, IRoatpTaskListWorkflowService roatpTaskListWorkflowService,
-            IRoatpOrganisationVerificationService organisationVerificationService,
-            IRoatpTaskListWorkflowService taskListWorkflowService)
+            IRoatpOrganisationVerificationService organisationVerificationService)
             :base(sessionService)
         {
             _apiClient = apiClient;
@@ -87,7 +83,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _tabularDataRepository = tabularDataRepository;
             _roatpTaskListWorkflowService = roatpTaskListWorkflowService;
             _organisationVerificationService = organisationVerificationService;
-            _taskListWorkflowService = taskListWorkflowService;
         }
 
         [HttpGet]
@@ -463,6 +458,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("Applications");
             }
 
+            _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId);
             var sequences = _roatpTaskListWorkflowService.GetApplicationSequences(applicationId);
 
             var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
@@ -521,19 +517,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return true;
-        }
-
-        private void PopulateAdditionalSequenceFields(IEnumerable<ApplicationSequence> sequences)
-        {
-            foreach (var sequence in sequences)
-            {
-                var selectedSequence = _configuration.FirstOrDefault(x => x.Id == sequence.SequenceId);
-                if (selectedSequence != null)
-                {
-                    sequence.Description = selectedSequence.Title;
-                    sequence.Sequential = selectedSequence.Sequential;
-                }
-            }
         }
 
         //TODO: Move this method to the API rather than pulling all of the application back over the wire then checking.
@@ -704,6 +687,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (validationPassed)
             {
+                // Any answer that is saved will affect the NotRequiredOverrides
+                _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId);
+
                 if (__formAction == "Add" && page.AllowMultipleAnswers)
                 {
                     return RedirectToAction("Page", new
@@ -1184,6 +1170,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var roatpSequences = await _apiClient.GetRoatpSequences();
 
             var organisationVerificationStatus = await _organisationVerificationService.GetOrganisationVerificationStatus(model.ApplicationId);
+
+            _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(model.ApplicationId);
             var sequences = _roatpTaskListWorkflowService.GetApplicationSequences(model.ApplicationId);
 
             foreach (var sequence in application.ApplyData.Sequences)
@@ -1372,7 +1360,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             foreach (var section in sequence.Sections)
             {
-                if (_taskListWorkflowService.SectionStatus(applicationId, sequence.SequenceId, section.SectionId, applicationSequences, organisationVerificationStatus) == TaskListSectionStatus.NotRequired) 
+                if (_roatpTaskListWorkflowService.SectionStatus(applicationId, sequence.SequenceId, section.SectionId, applicationSequences, organisationVerificationStatus) == TaskListSectionStatus.NotRequired) 
                 {
                     notRequiredCount++;
                 }
@@ -1390,7 +1378,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 sequence
             };
 
-            if (_taskListWorkflowService.SectionStatus(applicationId, sequence.SequenceId, sectionId, sequences, organisationVerificationStatus) == TaskListSectionStatus.NotRequired)
+            if (_roatpTaskListWorkflowService.SectionStatus(applicationId, sequence.SequenceId, sectionId, sequences, organisationVerificationStatus) == TaskListSectionStatus.NotRequired)
             {
                 return true;
             }
