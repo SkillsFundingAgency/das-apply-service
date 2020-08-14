@@ -13,6 +13,7 @@ namespace SFA.DAS.ApplyService.Web.Services
         IEnumerable<ApplicationSequence> GetApplicationSequences(Guid applicationId);
         string SectionQuestionsStatus(Guid applicationId, int sequenceId, int sectionId, IEnumerable<ApplicationSequence> applicationSequences);
 
+        void RefreshNotRequiredOverrides(Guid applicationId);
         bool SectionNotRequired(Guid applicationId, int sequenceId, int sectionId);
     }
 }

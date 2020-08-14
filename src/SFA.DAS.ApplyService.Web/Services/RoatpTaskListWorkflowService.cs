@@ -210,9 +210,17 @@ namespace SFA.DAS.ApplyService.Web.Services
             return filteredSequences.ToList();
         }
 
+        public void RefreshNotRequiredOverrides(Guid applicationId)
+        {
+            _notRequiredOverridesService.RefreshNotRequiredOverrides(applicationId);
+        }
+
         public bool SectionNotRequired(Guid applicationId, int sequenceId, int sectionId)
         {
             var notRequiredOverrides = _notRequiredOverridesService.GetNotRequiredOverrides(applicationId);
+
+            var filteredSections = notRequiredOverrides.Where(condition => sequenceId == condition.SequenceId &&
+                                                        sectionId == condition.SectionId).ToList();
 
             if (notRequiredOverrides.Any(condition =>
                                                         sequenceId == condition.SequenceId &&
