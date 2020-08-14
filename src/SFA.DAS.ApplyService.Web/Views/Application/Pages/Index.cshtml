@@ -8,9 +8,9 @@
 
 <partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
 
-@*
-<a class="govuk-back-link" asp-action="Back" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId" asp-route-redirectAction="TaskList">Back</a>
-*@
+
+    @*<a class="govuk-back-link" asp-action="Back" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@Model.PageId" asp-route-redirectAction="TaskList">Back</a>*@
+
 
 <main class="govuk-main-wrapper " id="main-content" role="main">
     <div class="govuk-grid-row">
@@ -271,7 +271,6 @@
                     @foreach (var linksConfiguration in Model.LinksConfiguration)
                     {
                         var pageId = Model.PageId;
-                        var first = true;
                         @foreach (var link in linksConfiguration.Links)
                         {
 
@@ -280,18 +279,19 @@
                                 pageId = link.LinkPageId;
                             }
 
-                            if (first && Model.SectionId != 1)
+                            if (!String.IsNullOrWhiteSpace(link.CssClasses))
                             {
 
-                                <a class="govuk-link das-inline-button-link govuk-link--no-visited-state" asp-action="@link.Action" asp-controller="@link.Controller" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@pageId">@link.Caption</a>
+                                <a class="govuk-link @link.CssClasses" asp-action="@link.Action" asp-controller="@link.Controller" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@pageId">@link.Caption</a>
 
                             }
                             else
                             {
-                                first = false;
-                                <p class="govuk-body">
+
+                                <p class="govuk-body govuk-!-margin-bottom-6">
                                     <a class="govuk-link" asp-action="@link.Action" asp-controller="@link.Controller" asp-route-applicationId="@Model.ApplicationId" asp-route-sequenceId="@Model.SequenceId" asp-route-sectionId="@Model.SectionId" asp-route-pageId="@pageId">@link.Caption</a>
                                 </p>
+
                             }
                         }
                     }
