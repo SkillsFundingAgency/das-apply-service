@@ -12,7 +12,6 @@ using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
-using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
@@ -39,16 +38,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IUserService _userService;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IQuestionPropertyTokeniser _questionPropertyTokeniser;
-        private readonly List<TaskListConfiguration> _configuration;
         private readonly IPageNavigationTrackingService _pageNavigationTrackingService;
         private readonly List<QnaPageOverrideConfiguration> _pageOverrideConfiguration;
         private readonly List<QnaLinksConfiguration> _qnaLinks;
-        private readonly List<NotRequiredOverrideConfiguration> _notRequiredOverrides;
         private readonly ICustomValidatorFactory _customValidatorFactory;
         private readonly IRoatpApiClient _roatpApiClient;
         private readonly ISubmitApplicationConfirmationEmailService _submitApplicationEmailService;
         private readonly ITabularDataRepository _tabularDataRepository;
         private readonly IPagesWithSectionsFlowService _pagesWithSectionsFlowService;
+        private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
+        private readonly IRoatpOrganisationVerificationService _organisationVerificationService;
 
         private const string InputClassUpperCase = "app-uppercase";
         private const string NotApplicableAnswerText = "None of the above";
@@ -56,13 +55,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public RoatpApplicationController(IApplicationApiClient apiClient, ILogger<RoatpApplicationController> logger,
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
-            IQnaApiClient qnaApiClient, IOptions<List<TaskListConfiguration>> configuration, IPagesWithSectionsFlowService pagesWithSectionsFlowService,
-            IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration,
-            IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks,
-            ICustomValidatorFactory customValidatorFactory, IOptions<List<NotRequiredOverrideConfiguration>> notRequiredOverrides,
+            IQnaApiClient qnaApiClient,
+            IPagesWithSectionsFlowService pagesWithSectionsFlowService,
+            IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
+            IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks, 
+            ICustomValidatorFactory customValidatorFactory,  
             IRoatpApiClient roatpApiClient, ISubmitApplicationConfirmationEmailService submitApplicationEmailService,
-            ITabularDataRepository tabularDataRepository)
-            : base(sessionService)
+            ITabularDataRepository tabularDataRepository, IRoatpTaskListWorkflowService roatpTaskListWorkflowService,
+            IRoatpOrganisationVerificationService organisationVerificationService)
+            :base(sessionService)
         {
             _apiClient = apiClient;
             _logger = logger;
@@ -72,16 +73,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _usersApiClient = usersApiClient;
             _qnaApiClient = qnaApiClient;
             _pagesWithSectionsFlowService = pagesWithSectionsFlowService;
-            _configuration = configuration.Value;
             _questionPropertyTokeniser = questionPropertyTokeniser;
             _pageNavigationTrackingService = pageNavigationTrackingService;
             _qnaLinks = qnaLinks.Value;
             _pageOverrideConfiguration = pageOverrideConfiguration.Value;
             _customValidatorFactory = customValidatorFactory;
-            _notRequiredOverrides = notRequiredOverrides.Value;
             _roatpApiClient = roatpApiClient;
             _submitApplicationEmailService = submitApplicationEmailService;
             _tabularDataRepository = tabularDataRepository;
+            _roatpTaskListWorkflowService = roatpTaskListWorkflowService;
+            _organisationVerificationService = organisationVerificationService;
         }
 
         [HttpGet]
@@ -457,116 +458,65 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("Applications");
             }
 
-            var sequences = await _qnaApiClient.GetSequences(applicationId);
-
-            PopulateAdditionalSequenceFields(sequences);
-
-            var filteredSequences = sequences.Where(x => x.SequenceId != RoatpWorkflowSequenceIds.Preamble && x.SequenceId != RoatpWorkflowSequenceIds.ConditionsOfAcceptance).OrderBy(y => y.SequenceId);
-            var sections = await _qnaApiClient.GetSections(applicationId);
-
-            foreach (var sequence in filteredSequences)
-            {
-                sequence.Sections = sections.Where(s => s.SequenceId == sequence.SequenceId).ToList();
-            }
+            _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId);
+            var sequences = _roatpTaskListWorkflowService.GetApplicationSequences(applicationId);
 
             var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
-
-            var preamblePage = await _qnaApiClient.GetPageBySectionNo(applicationId, RoatpWorkflowSequenceIds.Preamble, RoatpWorkflowSectionIds.Preamble, RoatpWorkflowPageIds.Preamble);
-            var verifiedCompaniesHouse = _qnaApiClient.GetAnswer(preamblePage, RoatpPreambleQuestionIdConstants.UkrlpVerificationCompany);
-            var companiesHouseManualEntry = _qnaApiClient.GetAnswer(preamblePage, RoatpPreambleQuestionIdConstants.CompaniesHouseManualEntryRequired);
-            var verifiedCharityCommission = _qnaApiClient.GetAnswer(preamblePage, RoatpPreambleQuestionIdConstants.UkrlpVerificationCharity);
-            var charityCommissionManualEntry = _qnaApiClient.GetAnswer(preamblePage, RoatpPreambleQuestionIdConstants.CharityCommissionTrusteeManualEntry);
-
             var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
 
-            var populatedNotRequiredOverrides = await PopulateNotRequiredOverridesWithApplicationData(applicationId, _notRequiredOverrides);
+            var organisationVerificationStatus = await _organisationVerificationService.GetOrganisationVerificationStatus(applicationId);
 
-            var companiesHouseDataConfirmed = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CompaniesHouseStartPage, RoatpYourOrganisationQuestionIdConstants.CompaniesHouseDetailsConfirmed);
-            var charityCommissionDataConfirmed = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.CharityCommissionStartPage, RoatpYourOrganisationQuestionIdConstants.CharityCommissionDetailsConfirmed);
+            var yourOrganisationSequence = sequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
 
-            var whosInControlConfirmed = false;
+            bool yourOrganisationSequenceCompleted = CheckYourOrganisationSequenceComplete(applicationId, sequences, organisationVerificationStatus, yourOrganisationSequence);
+            bool applicationSequencesCompleted = ApplicationSequencesCompleted(applicationId, sequences, organisationVerificationStatus);
 
-            var organisationType = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.SoleTraderPartnership, RoatpYourOrganisationQuestionIdConstants.SoleTradeOrPartnership);
-
-            var whosInControlStarted = organisationType != null && (organisationType.Value == RoatpOrganisationTypes.SoleTrader || organisationType.Value == RoatpOrganisationTypes.Partnership);
-
-            if (organisationType != null && organisationType.Value == RoatpOrganisationTypes.SoleTrader)
+            var model = new TaskListViewModel(_roatpTaskListWorkflowService, organisationVerificationStatus, applicationId)
             {
-                var soleTraderDateOfBirthAnswer = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.AddSoleTraderDob, RoatpYourOrganisationQuestionIdConstants.AddSoleTradeDob);
-                if (soleTraderDateOfBirthAnswer != null && !String.IsNullOrEmpty(soleTraderDateOfBirthAnswer.Value))
-                {
-                    whosInControlConfirmed = true;
-                }
-            }
-            else if (organisationType != null && organisationType.Value == RoatpOrganisationTypes.Partnership)
-            {
-                var partnersDetailsAnswer = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.AddPartners, RoatpYourOrganisationQuestionIdConstants.AddPartners);
-                if (partnersDetailsAnswer != null && !String.IsNullOrEmpty(partnersDetailsAnswer.Value))
-                {
-                    whosInControlConfirmed = true;
-                }
-            }
-
-            var pscsDetailsAnswer = await _qnaApiClient.GetAnswer(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl, RoatpWorkflowPageIds.WhosInControl.AddPeopleInControl, RoatpYourOrganisationQuestionIdConstants.AddPeopleInControl);
-            if (pscsDetailsAnswer != null && !String.IsNullOrEmpty(pscsDetailsAnswer.Value))
-            {
-                whosInControlConfirmed = true;
-            }
-
-            var model = new TaskListViewModel(_qnaApiClient)
-            {
-                ApplicationId = applicationId,
-                ApplicationSequences = filteredSequences,
-                NotRequiredOverrides = populatedNotRequiredOverrides,
                 UKPRN = organisationDetails.OrganisationUkprn?.ToString(),
                 OrganisationName = organisationDetails.Name,
                 TradingName = organisationDetails.OrganisationDetails?.TradingName,
-                VerifiedCompaniesHouse = (verifiedCompaniesHouse.Value == "TRUE"),
-                VerifiedCharityCommission = (verifiedCharityCommission.Value == "TRUE"),
-                CompaniesHouseManualEntry = (companiesHouseManualEntry.Value == "TRUE"),
-                CharityCommissionManualEntry = (charityCommissionManualEntry.Value == "TRUE"),
-                CompaniesHouseDataConfirmed = (companiesHouseDataConfirmed != null && companiesHouseDataConfirmed.Value == "Y"),
-                CharityCommissionDataConfirmed = (charityCommissionDataConfirmed != null && charityCommissionDataConfirmed.Value == "TRUE"),
-                WhosInControlStarted = whosInControlStarted,
-                WhosInControlConfirmed = whosInControlConfirmed,
-                ApplicationRouteId = providerRoute.Value
+                ApplicationRouteId = providerRoute.Value,
+                YourOrganisationSequenceCompleted = yourOrganisationSequenceCompleted,
+                ApplicationSequencesCompleted = applicationSequencesCompleted
             };
 
             return View("~/Views/Roatp/TaskList.cshtml", model);
         }
 
-        private async Task<List<NotRequiredOverrideConfiguration>> PopulateNotRequiredOverridesWithApplicationData(Guid applicationId, List<NotRequiredOverrideConfiguration> notRequiredOverrides)
+        private bool CheckYourOrganisationSequenceComplete(Guid applicationId, IEnumerable<ApplicationSequence> sequences, OrganisationVerificationStatus organisationVerificationStatus, ApplicationSequence yourOrganisationSequence)
         {
-            var applicationData = await _qnaApiClient.GetApplicationData(applicationId) as JObject;
-
-            if (applicationData == null)
+            var yourOrganisationSequenceComplete = true;
+            foreach (var section in yourOrganisationSequence.Sections)
             {
-                return notRequiredOverrides;
-            }
-
-            foreach (var overrideConfig in notRequiredOverrides)
-            {
-                foreach (var condition in overrideConfig.Conditions)
+                var sectionStatus = _roatpTaskListWorkflowService.SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation,
+                                                                                section.SectionId, sequences.ToList(), organisationVerificationStatus);
+                if (sectionStatus != TaskListSectionStatus.Completed)
                 {
-                    var applicationDataValue = applicationData[condition.ConditionalCheckField];
-                    condition.Value = applicationDataValue != null ? applicationDataValue.Value<string>() : string.Empty;
+                    yourOrganisationSequenceComplete = false;
+                    break;
                 }
             }
 
-            return notRequiredOverrides;
+            return yourOrganisationSequenceComplete;
         }
 
-        private void PopulateAdditionalSequenceFields(IEnumerable<ApplicationSequence> sequences)
+        private bool ApplicationSequencesCompleted(Guid applicationId, IEnumerable<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
         {
-            foreach (var sequence in sequences)
+            var nonFinishSequences = applicationSequences.Where(seq => seq.SequenceId != RoatpWorkflowSequenceIds.Finish).ToList();
+            foreach (var sequence in nonFinishSequences)
             {
-                var selectedSequence = _configuration.FirstOrDefault(x => x.Id == sequence.SequenceId);
-                if (selectedSequence != null)
+                foreach (var section in sequence.Sections)
                 {
-                    sequence.Description = selectedSequence.Title;
-                    sequence.Sequential = selectedSequence.Sequential;
+                    var sectionStatus = _roatpTaskListWorkflowService.SectionStatus(applicationId, sequence.SequenceId, section.SectionId, applicationSequences, organisationVerificationStatus);
+                    if (sectionStatus != TaskListSectionStatus.NotRequired && sectionStatus != TaskListSectionStatus.Completed)
+                    {
+                        return false;
+                    }
                 }
             }
+
+            return true;
         }
 
         //TODO: Move this method to the API rather than pulling all of the application back over the wire then checking.
@@ -737,6 +687,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (validationPassed)
             {
+                // Any answer that is saved will affect the NotRequiredOverrides
+                _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId);
+
                 if (__formAction == "Add" && page.AllowMultipleAnswers)
                 {
                     return RedirectToAction("Page", new
@@ -1217,6 +1170,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var roatpSequences = await _apiClient.GetRoatpSequences();
 
+            var organisationVerificationStatus = await _organisationVerificationService.GetOrganisationVerificationStatus(model.ApplicationId);
+
+            _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(model.ApplicationId);
+            var sequences = _roatpTaskListWorkflowService.GetApplicationSequences(model.ApplicationId);
+
             foreach (var sequence in application.ApplyData.Sequences)
             {
                 var applicationSequence = await _qnaApiClient.GetSequenceBySequenceNo(model.ApplicationId, sequence.SequenceNo);
@@ -1228,12 +1186,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     var applySection = sequence.Sections.FirstOrDefault(x => x.SectionNo == section.SectionId);
                     if (applySection != null)
                     {
-                        applySection.NotRequired = SectionNotRequired(applicationSequence, _notRequiredOverrides, section.SectionId, roatpSequences);
+                        applySection.NotRequired = SectionNotRequired(model.ApplicationId, applicationSequence, section.SectionId, 
+                                                                            roatpSequences, organisationVerificationStatus);
                     }
                 }
 
                 applicationSequence.Sections = sections.ToList();
-                sequence.NotRequired = SequenceNotRequired(applicationSequence, _notRequiredOverrides);
+                sequence.NotRequired = SequenceNotRequired(model.ApplicationId, applicationSequence, sequences,
+                                                           organisationVerificationStatus);
             }
             var providerRoutes = _roatpApiClient.GetApplicationRoutes().GetAwaiter().GetResult();
             var selectedProviderRoute = providerRoutes.FirstOrDefault(p => p.Id.ToString() == providerRoute.Value);
@@ -1350,7 +1310,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 {
                     var result = customValidation.Validate();
 
-                    if (result.IsValid == false)
+                    if (!result.IsValid)
                     {
                         ModelState.AddModelError(result.QuestionId, result.ErrorMessage);
                     }
@@ -1392,18 +1352,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return result;
         }
 
-        private static bool SequenceNotRequired(ApplicationSequence sequence, List<NotRequiredOverrideConfiguration> notRequiredOverrides)
+        private bool SequenceNotRequired(Guid applicationId, ApplicationSequence sequence, 
+                                                IEnumerable<ApplicationSequence> applicationSequences,
+                                                OrganisationVerificationStatus organisationVerificationStatus)
         {
             var sectionCount = sequence.Sections.Count;
             var notRequiredCount = 0;
-            var sequences = new List<ApplicationSequence>
-            {
-                sequence
-            };
 
             foreach (var section in sequence.Sections)
             {
-                if (RoatpTaskListWorkflowService.SectionStatus(sequences, notRequiredOverrides, sequence.SequenceId, section.SectionId) == TaskListSectionStatus.NotRequired)
+                if (_roatpTaskListWorkflowService.SectionStatus(applicationId, sequence.SequenceId, section.SectionId, applicationSequences, organisationVerificationStatus) == TaskListSectionStatus.NotRequired) 
                 {
                     notRequiredCount++;
                 }
@@ -1412,14 +1370,16 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return (sectionCount == notRequiredCount);
         }
 
-        private bool SectionNotRequired(ApplicationSequence sequence, List<NotRequiredOverrideConfiguration> notRequiredOverrides, int sectionId, IEnumerable<RoatpSequences> roatpSequences)
+
+        private bool SectionNotRequired(Guid applicationId, ApplicationSequence sequence,
+                                                    int sectionId, IEnumerable<RoatpSequences> roatpSequences, OrganisationVerificationStatus organisationVerificationStatus)
         {
             var sequences = new List<ApplicationSequence>
             {
                 sequence
             };
 
-            if (RoatpTaskListWorkflowService.SectionStatus(sequences, notRequiredOverrides, sequence.SequenceId, sectionId) == TaskListSectionStatus.NotRequired)
+            if (_roatpTaskListWorkflowService.SectionStatus(applicationId, sequence.SequenceId, sectionId, sequences, organisationVerificationStatus) == TaskListSectionStatus.NotRequired)
             {
                 return true;
             }

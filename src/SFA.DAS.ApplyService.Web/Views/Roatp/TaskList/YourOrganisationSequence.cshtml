@@ -45,7 +45,7 @@
                             Tell us who's in control
                         </a>
                     </span>
-                    <strong class="govuk-tag app-task-list__task-@Model.WhosInControlCss">@Model.WhosInControlSectionStatus</strong>
+                    <strong class="govuk-tag app-task-list__task-@Model.CssClass(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl)">@Model.SectionStatus(RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl)</strong>
                 }
                 else
                 {

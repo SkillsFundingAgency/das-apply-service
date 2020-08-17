@@ -259,6 +259,9 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<ITabularDataService, TabularDataService>();
             services.AddTransient<ITabularDataRepository, TabularDataRepository>();
             services.AddTransient<IUkprnWhitelistValidator, UkprnWhitelistValidator>();
+            services.AddTransient<IRoatpTaskListWorkflowService, RoatpTaskListWorkflowService>();
+            services.AddTransient<IRoatpOrganisationVerificationService, RoatpOrganisationVerificationService>();
+            services.AddTransient<INotRequiredOverridesService, NotRequiredOverridesService>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)
