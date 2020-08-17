@@ -1,5 +1,5 @@
 @model SFA.DAS.ApplyService.Web.ViewModels.PageViewModel
-
+@using SFA.DAS.ApplyService.Domain.Entities
 @{
     ViewBag.Title = (!ViewData.ModelState.IsValid ? "Error: " : "") + (@Model.Title ?? "Page not active");
 }
@@ -62,7 +62,7 @@
                 }
 
                 <h1 class="govuk-heading-xl">
-                    @if (Model?.DisplayType == "PagesWithSections")
+                    @if (Model?.DisplayType == PageDisplayType.PagesWithSections)
                     {
                         @Model.LinkTitle
                     }
@@ -136,33 +136,34 @@
                     {
                         <div class="govuk-form-group @(!ViewData.ModelState.IsValid ? "govuk-form-group--error" : "")">
                             <fieldset class="govuk-fieldset">
-                                @if (question.Type == "Checkbox" || question.Type == "Radio" || question.Type == "ComplexRadio" || question.Type == "CheckboxList" || question.Type == "ComplexCheckBoxList")
+                                @if (question.Type == QuestionType.Checkbox || question.Type == QuestionType.Radio || question.Type == QuestionType.ComplexRadio
+                               || question.Type == QuestionType.CheckboxList || question.Type == QuestionType.ComplexCheckboxList)
                                 {
-                                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-                                        @if (Model.PageContext != null)
-                                        {
-                                            <span class="govuk-caption-xl">
-                                                @Html.Raw(Model.PageContext)
-                                            </span>
-                                        }
-                                        <h1 class="govuk-fieldset__heading">
-                                            @Html.Raw(question.Label)
-                                        </h1>
-                                    </legend>
-                                }
-                                else
-                                {
+                                <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
                                     @if (Model.PageContext != null)
                                     {
                                         <span class="govuk-caption-xl">
                                             @Html.Raw(Model.PageContext)
                                         </span>
                                     }
-                                    <h2 class="govuk-label-wrapper">
-                                        <label class="govuk-label govuk-label--xl" for="@question.QuestionId">
-                                            @Html.Raw(question.Label)
-                                        </label>
-                                    </h2>
+                                    <h1 class="govuk-fieldset__heading">
+                                        @Html.Raw(question.Label)
+                                    </h1>
+                                </legend>
+                                }
+                                else
+                                {
+                                @if (Model.PageContext != null)
+                                {
+                                    <span class="govuk-caption-xl">
+                                        @Html.Raw(Model.PageContext)
+                                    </span>
+                                }
+                                <h2 class="govuk-label-wrapper">
+                                    <label class="govuk-label govuk-label--xl" for="@question.QuestionId">
+                                        @Html.Raw(question.Label)
+                                    </label>
+                                </h2>
                                 }
                                 <span class="govuk-hint">
                                     @Html.Raw(question.Hint)
