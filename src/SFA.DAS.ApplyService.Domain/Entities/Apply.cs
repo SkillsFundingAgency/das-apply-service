@@ -17,6 +17,11 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string FinancialReviewStatus { get; set; }
         public ApplyData ApplyData { get; set; }
         public FinancialReviewDetails FinancialGrade { get; set; }
+
+        public string Assessor1UserId { get; set; }
+        public string Assessor1ReviewStatus { get; set; }
+        public string Assessor2UserId { get; set; }
+        public string Assessor2ReviewStatus { get; set; }
     }
 
     public class ApplyData

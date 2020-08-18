@@ -1373,7 +1373,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             var model = new ConfirmChangeRouteViewModel { ApplicationId = Guid.NewGuid(), ConfirmChangeRoute = "Y" };
 
-            var result = _controller.SubmitConfirmChangeRoute(model).GetAwaiter().GetResult();
+            var result = _controller.SubmitConfirmChangeRoute(model);
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
@@ -1385,7 +1385,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         {
             var model = new ConfirmChangeRouteViewModel { ApplicationId = Guid.NewGuid(), ConfirmChangeRoute = "N" };
 
-            var result = _controller.SubmitConfirmChangeRoute(model).GetAwaiter().GetResult();
+            var result = _controller.SubmitConfirmChangeRoute(model);
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();

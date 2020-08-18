@@ -13,7 +13,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 {
     public class NotRequiredOverridesService : INotRequiredOverridesService
     {
-        private readonly IOptions<List<NotRequiredOverrideConfiguration>> _configuration;
+        private readonly List<NotRequiredOverrideConfiguration> _configuration;
         private readonly IApplicationApiClient _applicationApiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly ISessionService _sessionService;
@@ -24,58 +24,136 @@ namespace SFA.DAS.ApplyService.Web.Services
                                            IQnaApiClient qnaApiClient,
                                            ISessionService sessionService)
         {
-            _configuration = notRequiredOverrides;
+            _configuration = notRequiredOverrides.Value;
             _applicationApiClient = applicationApiClient;
             _qnaApiClient = qnaApiClient;
             _sessionService = sessionService;
         }
 
-        public async Task<List<NotRequiredOverrideConfiguration>> GetNotRequiredOverrides(Guid applicationId)
+        //MFCMFC in master
+         public void RefreshNotRequiredOverrides(Guid applicationId)
         {
-            var sessionKey = string.Format(NotRequiredConfigSessionKeyFormat, applicationId);
-            var configuration = _sessionService.Get<List<NotRequiredOverrideConfiguration>>(sessionKey);
-            if (configuration != null)
+            RemoveConfigurationFromCache(applicationId);
+            var configuration = CalculateNotRequiredOverrides(applicationId);
+            SaveConfigurationToCache(applicationId, configuration);
+        }
+        
+        //// MFCMFC Version from 1152
+        //public async Task<List<NotRequiredOverrideConfiguration>> GetNotRequiredOverrides(Guid applicationId)
+        //{
+        //    var sessionKey = string.Format(NotRequiredConfigSessionKeyFormat, applicationId);
+        //    var configuration = _sessionService.Get<List<NotRequiredOverrideConfiguration>>(sessionKey);
+        //    if (configuration != null)
+        //    {
+        //        return configuration;
+        //    }
+
+        //    var applicationNotRequiredOverrides = await _applicationApiClient.GetNotRequiredOverrides(applicationId);
+        //    if (applicationNotRequiredOverrides == null)
+        //    {
+        //        configuration = _configuration.Value;
+        //        PopulateNotRequiredOverridesWithApplicationData(applicationId, configuration);
+
+        //        applicationNotRequiredOverrides = new Application.Apply.Roatp.NotRequiredOverrideConfiguration
+        //        {
+        //            NotRequiredOverrides = Mapper.Map<List<NotRequiredOverride>>(configuration) 
+        //        };
+        //        await _applicationApiClient.UpdateNotRequiredOverrides(applicationId, applicationNotRequiredOverrides);
+        //        var sessionConfig = Mapper.Map<List<NotRequiredOverrideConfiguration>>(applicationNotRequiredOverrides.NotRequiredOverrides);
+        //        _sessionService.Set(sessionKey, sessionConfig);
+        //    }
+        //    return Mapper.Map<List<NotRequiredOverrideConfiguration>>(applicationNotRequiredOverrides.NotRequiredOverrides);
+        //}
+
+
+        //MFCMFC Version from master
+        public List<NotRequiredOverrideConfiguration> GetNotRequiredOverrides(Guid applicationId)
+        {
+            var configuration = RetrieveConfigurationFromCache(applicationId);
+
+            if (configuration == null)
             {
-                return configuration;
+                RefreshNotRequiredOverrides(applicationId);
+                configuration = RetrieveConfigurationFromCache(applicationId);
             }
 
-            var applicationNotRequiredOverrides = await _applicationApiClient.GetNotRequiredOverrides(applicationId);
-            if (applicationNotRequiredOverrides == null)
-            {
-                configuration = _configuration.Value;
-                PopulateNotRequiredOverridesWithApplicationData(applicationId, configuration);
-
-                applicationNotRequiredOverrides = new Application.Apply.Roatp.NotRequiredOverrideConfiguration
-                {
-                    NotRequiredOverrides = Mapper.Map<List<NotRequiredOverride>>(configuration) 
-                };
-                await _applicationApiClient.UpdateNotRequiredOverrides(applicationId, applicationNotRequiredOverrides);
-                var sessionConfig = Mapper.Map<List<NotRequiredOverrideConfiguration>>(applicationNotRequiredOverrides.NotRequiredOverrides);
-                _sessionService.Set(sessionKey, sessionConfig);
-            }
-            return Mapper.Map<List<NotRequiredOverrideConfiguration>>(applicationNotRequiredOverrides.NotRequiredOverrides);
+            return configuration;
         }
 
-        private void PopulateNotRequiredOverridesWithApplicationData(Guid applicationId, List<NotRequiredOverrideConfiguration> configuration)
+
+
+        //MFCMFC from 1152
+        //private void PopulateNotRequiredOverridesWithApplicationData(Guid applicationId, List<NotRequiredOverrideConfiguration> configuration)
+        //{
+        //    var applicationData = _qnaApiClient.GetApplicationData(applicationId).GetAwaiter().GetResult() as JObject;
+
+        //    if (applicationData == null)
+        //    {
+        //        return;
+        //    }
+
+        //    foreach (var overrideConfig in configuration)
+        //    {
+        //        foreach (var condition in overrideConfig.Conditions)
+        //        {
+        //            var applicationDataValue = applicationData[condition.ConditionalCheckField];
+        //            condition.Value = applicationDataValue != null ? applicationDataValue.Value<string>() : string.Empty;
+        //        }
+        //    }
+
+        //    var sessionKey = string.Format(NotRequiredConfigSessionKeyFormat, applicationId);
+        //    _sessionService.Set(sessionKey, _configuration);
+        //}
+
+
+        //MFCMFC from master
+        private List<NotRequiredOverrideConfiguration> CalculateNotRequiredOverrides(Guid applicationId)
         {
-            var applicationData =  _qnaApiClient.GetApplicationData(applicationId).GetAwaiter().GetResult() as JObject;
+            List<NotRequiredOverrideConfiguration> configuration = null;
 
-            if (applicationData == null)
-            {
-                return;
-            }
+            var applicationData = _qnaApiClient.GetApplicationData(applicationId).GetAwaiter().GetResult() as JObject;
 
-            foreach (var overrideConfig in configuration)
+            if (applicationData != null)
             {
-                foreach (var condition in overrideConfig.Conditions)
+                configuration = new List<NotRequiredOverrideConfiguration>(_configuration);
+
+                foreach (var overrideConfig in configuration)
                 {
-                    var applicationDataValue = applicationData[condition.ConditionalCheckField];
-                    condition.Value = applicationDataValue != null ? applicationDataValue.Value<string>() : string.Empty;
+                    foreach (var condition in overrideConfig.Conditions)
+                    {
+                        var applicationDataValue = applicationData[condition.ConditionalCheckField];
+                        condition.Value = applicationDataValue != null ? applicationDataValue.Value<string>() : string.Empty;
+                    }
                 }
             }
 
-            var sessionKey = string.Format(NotRequiredConfigSessionKeyFormat, applicationId);
-            _sessionService.Set(sessionKey, _configuration);
+            return configuration;
         }
+        
+        
+        #region cache function
+        private static string GetSessionKey(Guid applicationId)
+        {
+            return string.Format(NotRequiredConfigSessionKeyFormat, applicationId);
+        }
+
+        private List<NotRequiredOverrideConfiguration> RetrieveConfigurationFromCache(Guid applicationId)
+        {
+            var sessionKey = GetSessionKey(applicationId);
+            return _sessionService.Get<List<NotRequiredOverrideConfiguration>>(sessionKey);
+        }
+
+        private void SaveConfigurationToCache(Guid applicationId, List<NotRequiredOverrideConfiguration> configuration)
+        {
+            var sessionKey = GetSessionKey(applicationId);
+            _sessionService.Set(sessionKey, configuration);
+        }
+
+        private void RemoveConfigurationFromCache(Guid applicationId)
+        {
+            var sessionKey = GetSessionKey(applicationId);
+            _sessionService.Remove(sessionKey);
+        }
+        #endregion
     }
 }

@@ -118,16 +118,6 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             _logger.LogInformation($"API ImportWorkflow > After post to Internal API");
         }
 
-        public async Task<string> GetApplicationStatus(Guid applicationId, int standardCode)
-        {
-            return await Get($"Application/{applicationId}/standard/{standardCode}/check-status");
-        }
-
-        public async Task<List<StandardCollation>> GetStandards()
-        {
-            return await Get<List<StandardCollation>>($"all-standards");
-        }
-
         public async Task<List<Option>> GetQuestionDataFedOptions(string dataEndpoint)
         {
             return await Get<List<Option>>($"QuestionOptions/{dataEndpoint}");

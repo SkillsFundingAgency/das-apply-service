@@ -9,6 +9,7 @@ using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Ukrlp;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
+using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -47,7 +48,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             _logger.LogInformation($"RoatpGatewayOrganisationChecksController-GetIcoNumber - applicationId - '{applicationId}'");
             var page = await _qnaApiClient.GetPageBySectionNo(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails, RoatpWorkflowPageIds.YourOrganisationIcoNumber);
-            return Ok(page?.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpYourOrganisationQuestionIdConstants.IcoNumber).FirstOrDefault().Value);
+            var icoNumber = page?.PageOfAnswers.SelectMany(a => a.Answers).Where(a => a.QuestionId == RoatpYourOrganisationQuestionIdConstants.IcoNumber).FirstOrDefault().Value;
+
+            return Json(new IcoNumber { ApplicationId = applicationId, Value = icoNumber});
         }
     }
 }

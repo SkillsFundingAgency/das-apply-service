@@ -12,7 +12,6 @@ using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
-using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
@@ -39,7 +38,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IUserService _userService;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IQuestionPropertyTokeniser _questionPropertyTokeniser;
-        private readonly List<TaskListConfiguration> _configuration;
         private readonly IPageNavigationTrackingService _pageNavigationTrackingService;
         private readonly List<QnaPageOverrideConfiguration> _pageOverrideConfiguration;
         private readonly List<QnaLinksConfiguration> _qnaLinks;
@@ -50,8 +48,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IPagesWithSectionsFlowService _pagesWithSectionsFlowService;
         private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
         private readonly IRoatpOrganisationVerificationService _organisationVerificationService;
-        private readonly INotRequiredOverridesService _notRequiredOverridesService;
-        private readonly IRoatpTaskListWorkflowService _taskListWorkflowService;
 
         private const string InputClassUpperCase = "app-uppercase";
         private const string NotApplicableAnswerText = "None of the above";
@@ -59,17 +55,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         public RoatpApplicationController(IApplicationApiClient apiClient, ILogger<RoatpApplicationController> logger,
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
-            IQnaApiClient qnaApiClient, 
-            IProcessPageFlowService processPageFlowService,
+            IQnaApiClient qnaApiClient,
             IPagesWithSectionsFlowService pagesWithSectionsFlowService,
             IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
             IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks, 
             ICustomValidatorFactory customValidatorFactory,  
             IRoatpApiClient roatpApiClient, ISubmitApplicationConfirmationEmailService submitApplicationEmailService,
             ITabularDataRepository tabularDataRepository, IRoatpTaskListWorkflowService roatpTaskListWorkflowService,
-            IRoatpOrganisationVerificationService organisationVerificationService,
-            INotRequiredOverridesService notRequiredOverridesService,
-            IRoatpTaskListWorkflowService taskListWorkflowService)
+            IRoatpOrganisationVerificationService organisationVerificationService)
             :base(sessionService)
         {
             _apiClient = apiClient;
@@ -90,8 +83,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _tabularDataRepository = tabularDataRepository;
             _roatpTaskListWorkflowService = roatpTaskListWorkflowService;
             _organisationVerificationService = organisationVerificationService;
-            _notRequiredOverridesService = notRequiredOverridesService;
-            _taskListWorkflowService = taskListWorkflowService;
         }
 
         [HttpGet]
@@ -467,6 +458,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("Applications");
             }
 
+            _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId);
             var sequences = _roatpTaskListWorkflowService.GetApplicationSequences(applicationId);
 
             var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
@@ -525,19 +517,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return true;
-        }
-
-        private void PopulateAdditionalSequenceFields(IEnumerable<ApplicationSequence> sequences)
-        {
-            foreach (var sequence in sequences)
-            {
-                var selectedSequence = _configuration.FirstOrDefault(x => x.Id == sequence.SequenceId);
-                if (selectedSequence != null)
-                {
-                    sequence.Description = selectedSequence.Title;
-                    sequence.Sequential = selectedSequence.Sequential;
-                }
-            }
         }
 
         //TODO: Move this method to the API rather than pulling all of the application back over the wire then checking.
@@ -609,7 +588,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         question.Input.Options = questionOptions;
                         question.Input.Type = question.Input.Type.Replace("DataFed_", "");
                     }
-                    if (question.Input.Type == "TabularData")
+                    if (question.Input.Type == QuestionType.TabularData)
                     {
                         var answer = await _qnaApiClient.GetAnswerByTag(applicationId, question.QuestionTag, question.QuestionId);
                         if (page.PageOfAnswers == null || page.PageOfAnswers.Count < 1)
@@ -682,7 +661,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
             }
 
-            var isFileUploadPage = page.Questions.Any(q => "FileUpload".Equals(q.Input.Type, StringComparison.InvariantCultureIgnoreCase));
+            var isFileUploadPage = page.Questions.Any(q => QuestionType.FileUpload.Equals(q.Input.Type, StringComparison.InvariantCultureIgnoreCase));
 
             bool validationPassed;
             List<KeyValuePair<string, string>> validationErrors;
@@ -708,6 +687,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (validationPassed)
             {
+                // Any answer that is saved will affect the NotRequiredOverrides
+                _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId);
+
                 if (__formAction == "Add" && page.AllowMultipleAnswers)
                 {
                     return RedirectToAction("Page", new
@@ -797,7 +779,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private static IEnumerable<Question> PageContainsCheckBoxListQuestions(Page page)
         {
-            return page.Questions.Where(q => q.Input.Type == "CheckBoxList" || q.Input.Type == "ComplexCheckBoxList");
+            return page.Questions.Where(q => q.Input.Type == QuestionType.CheckboxList || q.Input.Type == QuestionType.ComplexCheckboxList);
         }
 
         private static string CheckBoxListHasInvalidSelections(IEnumerable<Question> checkBoxListQuestions, List<Answer> answers)
@@ -844,12 +826,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             #region FurtherQuestion_Processing
             // Get all questions that have FurtherQuestions in a ComplexRadio
-            var questionsWithFutherQuestions = page.Questions.Where(x => (x.Input.Type == "ComplexRadio" || x.Input.Type == "ComplexCheckBoxList") && x.Input.Options != null && x.Input.Options.Any(o => o.FurtherQuestions != null && o.FurtherQuestions.Any()));
+            var questionsWithFutherQuestions = page.Questions.Where(x => (x.Input.Type == QuestionType.ComplexRadio || x.Input.Type == QuestionType.ComplexCheckboxList)
+            && x.Input.Options != null && x.Input.Options.Any(o => o.FurtherQuestions != null && o.FurtherQuestions.Any()));
 
 
             foreach (var question in questionsWithFutherQuestions)
             {
-                if (question.Input.Type == "ComplexRadio")
+                if (question.Input.Type == QuestionType.ComplexRadio)
                 {
                     var answerForQuestion = answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
 
@@ -866,7 +849,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     }
                 }
 
-                if (question.Input.Type == "ComplexCheckBoxList")
+                if (question.Input.Type == QuestionType.ComplexCheckboxList)
                 {
                     var answerForQuestion = answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
 
@@ -892,7 +875,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             #endregion FurtherQuestion_Processing
 
             // Address inputs require special processing
-            if (page.Questions.Any(x => x.Input.Type == "Address"))
+            if (page.Questions.Any(x => x.Input.Type == QuestionType.Address))
             {
                 answers = ProcessPageVmQuestionsForAddress(page, answers);
             }
@@ -920,7 +903,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private static List<Answer> ProcessPageVmQuestionsForAddress(Page page, List<Answer> answers)
         {
 
-            if (page.Questions.Any(x => x.Input.Type == "Address"))
+            if (page.Questions.Any(x => x.Input.Type == QuestionType.Address))
             {
                 Dictionary<string, JObject> answerValueDictionary = new Dictionary<string, JObject>();
 
@@ -1097,9 +1080,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 ReferenceNumber = application?.ApplyData?.ApplyDetails?.ReferenceNumber,
                 FeedbackUrl = config.FeedbackUrl,
-                //StandardName = application?.ApplicationData?.StandardName,
-                //StandardReference = application?.ApplicationData?.StandardReference,
-                //StandardLevel = application?.ApplicationData?.StandardLevel
             });
         }
 
@@ -1112,7 +1092,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 ReferenceNumber = application?.ApplyData?.ApplyDetails?.ReferenceNumber,
                 FeedbackUrl = config.FeedbackUrl,
-                //StandardName = application?.ApplicationData?.StandardName
             });
         }
 
@@ -1191,9 +1170,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var roatpSequences = await _apiClient.GetRoatpSequences();
 
-            var notRequiredOverrides = await _notRequiredOverridesService.GetNotRequiredOverrides(model.ApplicationId);
+        
 
             var organisationVerificationStatus = await _organisationVerificationService.GetOrganisationVerificationStatus(model.ApplicationId);
+
+            _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(model.ApplicationId);
             var sequences = _roatpTaskListWorkflowService.GetApplicationSequences(model.ApplicationId);
 
             foreach (var sequence in application.ApplyData.Sequences)
@@ -1207,15 +1188,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     var applySection = sequence.Sections.FirstOrDefault(x => x.SectionNo == section.SectionId);
                     if (applySection != null)
                     {
-                        applySection.NotRequired = await SectionNotRequired(model.ApplicationId, applicationSequence, 
-                                                                            notRequiredOverrides, section.SectionId, 
+                        applySection.NotRequired = SectionNotRequired(model.ApplicationId, applicationSequence, section.SectionId, 
                                                                             roatpSequences, organisationVerificationStatus);
                     }
                 }
 
                 applicationSequence.Sections = sections.ToList();
                 sequence.NotRequired = SequenceNotRequired(model.ApplicationId, applicationSequence, sequences,
-                                                           notRequiredOverrides, organisationVerificationStatus);
+                                                           organisationVerificationStatus);
             }
             var providerRoutes = _roatpApiClient.GetApplicationRoutes().GetAwaiter().GetResult();
             var selectedProviderRoute = providerRoutes.FirstOrDefault(p => p.Id.ToString() == providerRoute.Value);
@@ -1308,7 +1288,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private bool IsFileUploadWithNonEmptyValue(Page page)
         {
-            if (page.PageOfAnswers == null || page.PageOfAnswers.Count == 0 || page.Questions == null || page.Questions.Count == 0 || page.Questions[0].Input.Type != "FileUpload")
+            if (page.PageOfAnswers == null || page.PageOfAnswers.Count == 0 || page.Questions == null || page.Questions.Count == 0 || page.Questions[0].Input.Type != QuestionType.FileUpload)
                 return false;
 
             var fileUploadAnswerValue = string.Empty;
@@ -1332,7 +1312,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 {
                     var result = customValidation.Validate();
 
-                    if (result.IsValid == false)
+                    if (!result.IsValid)
                     {
                         ModelState.AddModelError(result.QuestionId, result.ErrorMessage);
                     }
@@ -1376,19 +1356,14 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private bool SequenceNotRequired(Guid applicationId, ApplicationSequence sequence, 
                                                 IEnumerable<ApplicationSequence> applicationSequences,
-                                                List<NotRequiredOverrideConfiguration> notRequiredOverrides, 
                                                 OrganisationVerificationStatus organisationVerificationStatus)
         {
             var sectionCount = sequence.Sections.Count;
             var notRequiredCount = 0;
-            var sequences = new List<ApplicationSequence>
-            {
-                sequence
-            };
 
             foreach (var section in sequence.Sections)
             {
-                if (_taskListWorkflowService.SectionStatus(applicationId, sequence.SequenceId, section.SectionId, applicationSequences, organisationVerificationStatus) == TaskListSectionStatus.NotRequired) 
+                if (_roatpTaskListWorkflowService.SectionStatus(applicationId, sequence.SequenceId, section.SectionId, applicationSequences, organisationVerificationStatus) == TaskListSectionStatus.NotRequired) 
                 {
                     notRequiredCount++;
                 }
@@ -1398,7 +1373,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
 
-        private async Task<bool> SectionNotRequired(Guid applicationId, ApplicationSequence sequence, List<NotRequiredOverrideConfiguration> notRequiredOverrides, 
+        private bool SectionNotRequired(Guid applicationId, ApplicationSequence sequence,
                                                     int sectionId, IEnumerable<RoatpSequences> roatpSequences, OrganisationVerificationStatus organisationVerificationStatus)
         {
             var sequences = new List<ApplicationSequence>
@@ -1406,7 +1381,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 sequence
             };
 
-            if (_taskListWorkflowService.SectionStatus(applicationId, sequence.SequenceId, sectionId, sequences, organisationVerificationStatus) == TaskListSectionStatus.NotRequired)
+            if (_roatpTaskListWorkflowService.SectionStatus(applicationId, sequence.SequenceId, sectionId, sequences, organisationVerificationStatus) == TaskListSectionStatus.NotRequired)
             {
                 return true;
             }
