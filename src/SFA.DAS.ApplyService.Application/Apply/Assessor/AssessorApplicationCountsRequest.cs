@@ -3,9 +3,9 @@ using SFA.DAS.ApplyService.Domain.Apply;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
-    public class AssessorSummaryRequest : IRequest<RoatpAssessorSummary>
+    public class AssessorApplicationCountsRequest : IRequest<RoatpAssessorApplicationCounts>
     {
-        public AssessorSummaryRequest(string userId)
+        public AssessorApplicationCountsRequest(string userId)
         {
             UserId = userId;
         }

@@ -4,9 +4,9 @@ using System.Text;
 
 namespace SFA.DAS.ApplyService.Domain.Apply
 {
-    public class RoatpAssessorSummary
+    public class RoatpAssessorApplicationCounts
     {
-        public RoatpAssessorSummary(int newApplications, int inProgressApplications, int moderationApplications, int clarificationApplications)
+        public RoatpAssessorApplicationCounts(int newApplications, int inProgressApplications, int moderationApplications, int clarificationApplications)
         {
             NewApplications = newApplications;
             InProgressApplications = inProgressApplications;
