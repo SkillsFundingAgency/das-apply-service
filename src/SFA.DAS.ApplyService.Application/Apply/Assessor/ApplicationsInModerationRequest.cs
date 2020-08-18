@@ -6,8 +6,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
     public class ApplicationsInModerationRequest : IRequest<List<RoatpModerationApplicationSummary>>
     {
-        public ApplicationsInModerationRequest()
+        public ApplicationsInModerationRequest(string userId)
         {
+            UserId = userId;
         }
+
+        public string UserId { get; }
     }
 }

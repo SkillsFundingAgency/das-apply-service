@@ -25,10 +25,11 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.ApplicationsInMode
         [Test]
         public async Task Get_applications_in_moderation_returns_applications()
         {
+            var expectedUser = "sadjkffgdji";
             var expectedResult = new List<RoatpModerationApplicationSummary>();
             _repository.Setup(x => x.GetApplicationsInModeration()).ReturnsAsync(expectedResult);
 
-            var actualResult = await _handler.Handle(new ApplicationsInModerationRequest(), new CancellationToken());
+            var actualResult = await _handler.Handle(new ApplicationsInModerationRequest(expectedUser), new CancellationToken());
 
             Assert.AreSame(expectedResult, actualResult);
         }
