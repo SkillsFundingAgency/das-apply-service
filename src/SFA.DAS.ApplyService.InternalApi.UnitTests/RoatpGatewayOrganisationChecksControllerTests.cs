@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Ukrlp;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 {
@@ -95,10 +96,10 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                                                             RoatpWorkflowPageIds.YourOrganisationIcoNumber)).ReturnsAsync(returnedPage);
 
             var responseGetIcoNumber = _controller.GetIcoNumber(applicationId).GetAwaiter().GetResult().Result;
-            var response = responseGetIcoNumber as OkObjectResult;
-            var responseIcoNumber = response.Value as string;
+            var response = responseGetIcoNumber as JsonResult;
+            var responseIcoNumber = response.Value as IcoNumber;
 
-            Assert.AreEqual(expectedIcoNumber, responseIcoNumber);
+            Assert.AreEqual(expectedIcoNumber, responseIcoNumber.Value);
         }
     }
 }
