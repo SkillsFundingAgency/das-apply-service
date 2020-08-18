@@ -63,17 +63,17 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         }
 
         [Test]
-        public async Task Get_summary_returns_summary_for_the_user()
+        public async Task Get_application_counts_returns_expected_counts_for_the_user()
         {
             var expectedUser = "sadjkffgdji";
             var newApplications = 1;
             var inprogressApplications = 2;
             var moderationApplications = 3;
             var clarificationApplications = 4;
-            var expectedResult = new RoatpAssessorSummary(newApplications, inprogressApplications, moderationApplications, clarificationApplications);
-            _mediator.Setup(x => x.Send(It.Is<AssessorSummaryRequest>(y => y.UserId == expectedUser), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
+            var expectedResult = new RoatpAssessorApplicationCounts(newApplications, inprogressApplications, moderationApplications, clarificationApplications);
+            _mediator.Setup(x => x.Send(It.Is<AssessorApplicationCountsRequest>(y => y.UserId == expectedUser), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
 
-            var actualResult = await _controller.AssessorSummary(expectedUser);
+            var actualResult = await _controller.GetApplicationCounts(expectedUser);
 
             Assert.AreSame(expectedResult, actualResult);
         }
@@ -91,17 +91,6 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         }
 
         [Test]
-        public async Task Assign_application_sets_assessor_details()
-        {
-            var request = new AssignAssessorApplicationRequest { AssessorName = "sdfjfsdg", AssessorNumber = 1, AssessorUserId = "dsalkjfhjfdg" };
-            var applicationid = Guid.NewGuid();
-
-            await _controller.AssignApplication(applicationid, request);
-
-            _mediator.Verify(x => x.Send(It.Is<AssignAssessorRequest>(r => r.ApplicationId == applicationid && r.AssessorName == request.AssessorName && r.AssessorNumber == request.AssessorNumber && r.AssessorUserId == request.AssessorUserId), It.IsAny<CancellationToken>()), Times.Once);
-        }
-
-        [Test]
         public async Task Get_in_progress_applications_returns_in_progress_applications_for_the_user()
         {
             var expectedUser = "sadjkffgdji";
@@ -111,6 +100,29 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var actualResult = await _controller.InProgressApplications(expectedUser);
 
             Assert.AreSame(expectedResult, actualResult);
+        }
+
+        [Test]
+        public async Task Get_in_moderation_applications_returns_applications()
+        {
+            var expectedUser = "sadjkffgdji";
+            var expectedResult = new List<RoatpModerationApplicationSummary>();
+            _mediator.Setup(x => x.Send(It.Is<ApplicationsInModerationRequest>(y => y.UserId == expectedUser), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
+
+            var actualResult = await _controller.InModerationApplications(expectedUser);
+
+            Assert.AreSame(expectedResult, actualResult);
+        }
+
+        [Test]
+        public async Task Assign_application_sets_assessor_details()
+        {
+            var request = new AssignAssessorApplicationRequest { AssessorName = "sdfjfsdg", AssessorNumber = 1, AssessorUserId = "dsalkjfhjfdg" };
+            var applicationid = Guid.NewGuid();
+
+            await _controller.AssignApplication(applicationid, request);
+
+            _mediator.Verify(x => x.Send(It.Is<AssignAssessorRequest>(r => r.ApplicationId == applicationid && r.AssessorName == request.AssessorName && r.AssessorNumber == request.AssessorNumber && r.AssessorUserId == request.AssessorUserId), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Test]

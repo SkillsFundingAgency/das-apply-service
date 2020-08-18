@@ -54,9 +54,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet("Assessor/Applications/{userId}")]
-        public async Task<RoatpAssessorSummary> AssessorSummary(string userId)
+        public async Task<RoatpAssessorApplicationCounts> GetApplicationCounts(string userId)
         {
-            var summary = await _mediator.Send(new AssessorSummaryRequest(userId));
+            var summary = await _mediator.Send(new AssessorApplicationCountsRequest(userId));
 
             return summary;
         }
@@ -69,45 +69,22 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return applications;
         }
 
-        [HttpGet("Assessor/Applications/ChosenSectors/{applicationId}/user/{userId}")]
-        public async Task<List<Sector>> GetChosenSectors(Guid applicationId, string userId)
+        [HttpGet("Assessor/Applications/{userId}/InProgress")]
+        public async Task<List<RoatpAssessorApplicationSummary>> InProgressApplications(string userId)
         {
-            var qnaSection = await _qnaApiClient.GetSectionBySectionNo(
-                applicationId,
-                RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
-                RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees);
+            var applications = await _mediator.Send(new InProgressAssessorApplicationsRequest(userId));
 
-            var sectionStartingPages = qnaSection?.QnAData?.Pages.Where(x =>
-                x.DisplayType == SectionDisplayType.PagesWithSections
-                && x.PageId != RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ChooseYourOrganisationsSectors
-                && x.Active
-                && x.Complete
-                && !x.NotRequired);
-
-            var sectors = sectionStartingPages?.Select(page => new Sector { Title = page.LinkTitle, PageId = page.PageId })
-                .ToList();
-
-            if (sectors == null || !sectors.Any() || userId == null) return new List<Sector>();
-
-            var assessorType = await _assessorRepository.GetAssessorType(applicationId, userId);
-
-            var sectionStatuses = await _assessorRepository.GetAssessorReviewOutcomesPerSection(applicationId,
-                RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
-                RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees, (int)assessorType,
-                userId);
-
-            if (sectionStatuses == null || !sectionStatuses.Any()) return sectors;
-
-            foreach (var sector in sectors)
-            {
-                foreach (var sectorStatus in sectionStatuses.Where(sectorStatus => sector.PageId == sectorStatus.PageId))
-                {
-                    sector.Status = sectorStatus.Status;
-                }
-            }
-
-            return sectors;
+            return applications;
         }
+
+        [HttpGet("Assessor/Applications/{userId}/Moderation")]
+        public async Task<List<RoatpModerationApplicationSummary>> InModerationApplications(string userId)
+        {
+            var applications = await _mediator.Send(new ApplicationsInModerationRequest(userId));
+
+            return applications;
+        }
+
 
         [HttpPost("Assessor/Applications/{applicationId}/Assign")]
         public async Task AssignApplication(Guid applicationId, [FromBody] AssignAssessorApplicationRequest request)
@@ -116,13 +93,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 request.AssessorUserId, request.AssessorName));
         }
 
-        [HttpGet("Assessor/Applications/{userId}/InProgress")]
-        public async Task<List<RoatpAssessorApplicationSummary>> InProgressApplications(string userId)
-        {
-            var applications = await _mediator.Send(new InProgressAssessorApplicationsRequest(userId));
 
-            return applications;
-        }
 
         [HttpGet("Assessor/Applications/{applicationId}/Overview")]
         public async Task<List<AssessorSequence>> GetAssessorOverview(Guid applicationId)
@@ -226,6 +197,45 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return sections;
         }
 
+        [HttpGet("Assessor/Applications/ChosenSectors/{applicationId}/user/{userId}")]
+        public async Task<List<Sector>> GetChosenSectors(Guid applicationId, string userId)
+        {
+            var qnaSection = await _qnaApiClient.GetSectionBySectionNo(
+                applicationId,
+                RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
+                RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees);
+
+            var sectionStartingPages = qnaSection?.QnAData?.Pages.Where(x =>
+                x.DisplayType == SectionDisplayType.PagesWithSections
+                && x.PageId != RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ChooseYourOrganisationsSectors
+                && x.Active
+                && x.Complete
+                && !x.NotRequired);
+
+            var sectors = sectionStartingPages?.Select(page => new Sector { Title = page.LinkTitle, PageId = page.PageId })
+                .ToList();
+
+            if (sectors == null || !sectors.Any() || userId == null) return new List<Sector>();
+
+            var assessorType = await _assessorRepository.GetAssessorType(applicationId, userId);
+
+            var sectionStatuses = await _assessorRepository.GetAssessorReviewOutcomesPerSection(applicationId,
+                RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
+                RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees, (int)assessorType,
+                userId);
+
+            if (sectionStatuses == null || !sectionStatuses.Any()) return sectors;
+
+            foreach (var sector in sectors)
+            {
+                foreach (var sectorStatus in sectionStatuses.Where(sectorStatus => sector.PageId == sectorStatus.PageId))
+                {
+                    sector.Status = sectorStatus.Status;
+                }
+            }
+
+            return sectors;
+        }
 
         [HttpGet("Assessor/Applications/{applicationId}/SectorDetails/{pageId}")]
         public async Task<SectorDetails> GetSectorDetails(Guid applicationId, string pageId)

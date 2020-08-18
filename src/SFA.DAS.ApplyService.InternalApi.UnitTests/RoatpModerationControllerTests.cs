@@ -27,16 +27,6 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _controller = new RoatpModerationController(_logger.Object, _mediator.Object);
         }
 
-        [Test]
-        public async Task Get_in_moderation_applications_returns_applications()
-        {
-            var expectedUser = "sadjkffgdji";
-            var expectedResult = new List<RoatpModerationApplicationSummary>();
-            _mediator.Setup(x => x.Send(It.IsAny<ApplicationsInModerationRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
 
-            var actualResult = await _controller.InModerationApplications();
-
-            Assert.AreSame(expectedResult, actualResult);
-        }
     }
 }

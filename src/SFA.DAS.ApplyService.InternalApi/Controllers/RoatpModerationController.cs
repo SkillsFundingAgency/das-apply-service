@@ -21,13 +21,5 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             _logger = logger;
             _mediator = mediator;
         }
-
-        [HttpGet("Assessor/Applications/Moderation")]
-        public async Task<List<RoatpModerationApplicationSummary>> InModerationApplications()
-        {
-            var applications = await _mediator.Send(new ApplicationsInModerationRequest());
-
-            return applications;
-        }
     }
 }
