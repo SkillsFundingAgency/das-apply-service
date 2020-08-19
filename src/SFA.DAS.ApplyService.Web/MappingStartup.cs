@@ -19,6 +19,7 @@ namespace SFA.DAS.ApplyService.Web
                 cfg.AddProfile<RoatpCreateOrganisationRequestProfile>();
                 cfg.AddProfile<RoatpContactAddressProfile>();
                 cfg.AddProfile<NotRequiredOverridesProfile>();
+                cfg.AddProfile<NotRequiredOverrideConfigurationsProfile>();
                 cfg.AddProfile<NotRequiredConditionsProfile>();
             });
 

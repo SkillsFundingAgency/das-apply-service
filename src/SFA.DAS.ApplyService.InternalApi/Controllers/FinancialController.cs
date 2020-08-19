@@ -86,7 +86,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             {
                 if (financialSection != null)
                 {
-                    var pagesContainingQuestionsWithFileupload = financialSection.QnAData.Pages.Where(x => x.Questions.Any(y => y.Input.Type == "FileUpload")).ToList();
+                    var pagesContainingQuestionsWithFileupload = financialSection.QnAData.Pages.Where(x => x.Questions.Any(y => y.Input.Type == QuestionType.FileUpload)).ToList();
                     foreach (var uploadPage in pagesContainingQuestionsWithFileupload)
                     {
                         foreach (var uploadQuestion in uploadPage.Questions)

@@ -23,7 +23,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             _logger = logger;
         }
 
-        public async Task<string> GetClaim(string claimName)
+        public Task<string> GetClaim(string claimName)
         {
             // try to get claim.
             var claim = _contextAccessor.HttpContext.User.FindFirst(claimName);
@@ -33,7 +33,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 throw new ArgumentException($"Claim {claimName} not found.");
             }
 
-            return claim.Value;
+            return Task.FromResult(claim.Value);
         }
 
         public async Task<bool> ValidateUser(string user)
@@ -134,7 +134,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
                 Guid.TryParse(value, out signInId);
 
             }
-            catch (ArgumentException e)
+            catch (ArgumentException)
             {
                 //Ignore should have beem already logged in getclaim
             }

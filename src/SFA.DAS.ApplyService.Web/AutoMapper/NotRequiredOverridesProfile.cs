@@ -17,6 +17,19 @@ namespace SFA.DAS.ApplyService.Web.AutoMapper
         }
     }
 
+
+    public class NotRequiredOverrideConfigurationsProfile : Profile
+    {
+        public NotRequiredOverrideConfigurationsProfile()
+        {
+            CreateMap<NotRequiredOverride,NotRequiredOverrideConfiguration>()
+                .ForMember(dest => dest.SectionId, opt => opt.MapFrom(source => source.SectionId))
+                .ForMember(dest => dest.SequenceId, opt => opt.MapFrom(source => source.SequenceId))
+                .ForMember(dest => dest.Conditions, opt => opt.MapFrom(source => source.Conditions))
+                .ForAllOtherMembers(dest => dest.Ignore());
+        }
+    }
+
     public class NotRequiredConditionsProfile : Profile
     {
         public NotRequiredConditionsProfile()

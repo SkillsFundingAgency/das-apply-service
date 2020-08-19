@@ -65,7 +65,6 @@
     <Build Include="Tables\Contacts.sql" />
     <Build Include="Tables\Organisations.sql" />
     <Build Include="Tables\EmailTemplates.sql" />
-    <Build Include="Sequences\AppRefSequence.sql" />
     <Build Include="Sequences\RoatpAppReferenceSequence.sql" />
     <Build Include="Tables\Apply.sql" />
     <Build Include="Tables\ApplySnapshots.sql" />
