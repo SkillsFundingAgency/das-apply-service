@@ -168,7 +168,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             _sessionService.Setup(x => x.Get<List<NotRequiredOverrideConfiguration>>(_sessionKey)).Returns(configuration);
             _sessionService.Setup(x => x.Set(_sessionKey, configuration));
 
-            var overrides = _notRequiredOverridesService.GetNotRequiredOverrides(_applicationId); //MFCMFC .GetAwaiter().GetResult();
+            var overrides = _notRequiredOverridesService.GetNotRequiredOverrides(_applicationId); 
 
             overrides[0].Conditions[0].Value.Should().Be("NotTest");
             overrides[0].AllConditionsMet.Should().BeFalse();
