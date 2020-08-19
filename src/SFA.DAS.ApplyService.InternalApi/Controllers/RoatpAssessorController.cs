@@ -197,7 +197,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return sections;
         }
 
-        [HttpGet("Assessor/Applications/ChosenSectors/{applicationId}/user/{userId}")]
+        [HttpGet("Assessor/Applications/{applicationId}/ChosenSectors/user/{userId}")]
         public async Task<List<Sector>> GetChosenSectors(Guid applicationId, string userId)
         {
             var qnaSection = await _qnaApiClient.GetSectionBySectionNo(
