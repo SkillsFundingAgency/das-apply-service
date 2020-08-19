@@ -44,7 +44,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private Mock<ISectorDetailsOrchestratorService> _sectorDetailsOrchestratorService;
         private RoatpAssessorController _controller;
         private AssessorType _assessorType;
-        private List<PageReviewOutcome> _sectionStatuses;
+        private List<AssessorPageReviewOutcome> _sectionStatuses;
 
 
         [SetUp]
@@ -57,7 +57,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _lookupService = new Mock<IAssessorLookupService>();
 
             _getAssessorPageService = new Mock<IGetAssessorPageService>();
-            _sectionStatuses = new List<PageReviewOutcome>();
+            _sectionStatuses = new List<AssessorPageReviewOutcome>();
             _controller = new RoatpAssessorController(_logger.Object, _mediator.Object, _qnaApiClient.Object, _assessorRepository.Object, _lookupService.Object, _getAssessorPageService.Object, Mock.Of<ISectorDetailsOrchestratorService>());
         }
 
@@ -195,7 +195,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var applicationId = Guid.NewGuid();
             var request = new Controllers.GetPageReviewOutcomeRequest { SequenceNumber = 1, SectionNumber = 2, PageId = "30", AssessorType = 2, UserId = "4fs7f-userId-7gfhh" } ;
 
-            var expectedResult = new PageReviewOutcome();
+            var expectedResult = new AssessorPageReviewOutcome();
             _mediator.Setup(x => x.Send(It.Is<Application.Apply.Assessor.GetPageReviewOutcomeRequest>(r => r.ApplicationId == applicationId && r.SequenceNumber == request.SequenceNumber && r.SectionNumber == request.SectionNumber &&
                    r.PageId == request.PageId && r.AssessorType == request.AssessorType && r.UserId == request.UserId), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
 
@@ -210,7 +210,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var applicationId = Guid.NewGuid();
             var request = new Controllers.GetPageReviewOutcomesForSectionRequest { SequenceNumber = 1, SectionNumber = 2, AssessorType = 2, UserId = "4fs7f-userId-7gfhh" };
 
-            var expectedResult = new List<PageReviewOutcome>();
+            var expectedResult = new List<AssessorPageReviewOutcome>();
             _mediator.Setup(x => x.Send(It.Is<GetAssessorReviewOutcomesPerSectionRequest>(r => r.ApplicationId == applicationId && r.SequenceNumber == request.SequenceNumber && r.SectionNumber == request.SectionNumber &&
                    r.AssessorType == request.AssessorType && r.UserId == request.UserId), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
 
@@ -225,7 +225,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var applicationId = Guid.NewGuid();
             var request = new Controllers.GetAllPageReviewOutcomesRequest { AssessorType = 2, UserId = "4fs7f-userId-7gfhh" };
 
-            var expectedResult = new List<PageReviewOutcome>();
+            var expectedResult = new List<AssessorPageReviewOutcome>();
             _mediator.Setup(x => x.Send(It.Is<GetAllAssessorReviewOutcomesRequest>(r => r.ApplicationId == applicationId && 
                         r.AssessorType == request.AssessorType && r.UserId == request.UserId), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
 
@@ -394,23 +394,23 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             _assessorRepository.Setup(x => x.GetAssessorType(_applicationId, _userId)).ReturnsAsync(_assessorType);
 
-            _sectionStatuses = new List<PageReviewOutcome>();
+            _sectionStatuses = new List<AssessorPageReviewOutcome>();
             var page1Status = "Pass";
             var page2Status = "Fail";
-            _sectionStatuses.Add(new PageReviewOutcome
+            _sectionStatuses.Add(new AssessorPageReviewOutcome
             {
                 ApplicationId = _applicationId,
                 PageId = sector1PageId,
                 Status = page1Status
             });
-            _sectionStatuses.Add(new PageReviewOutcome
+            _sectionStatuses.Add(new AssessorPageReviewOutcome
             {
                 ApplicationId = _applicationId,
                 PageId = sector2PageId,
                 Status = page2Status
             });
 
-            _assessorRepository.Setup(x => x.GetAssessorReviewOutcomesPerSection(_applicationId,
+            _assessorRepository.Setup(x => x.GetAssessorPageReviewOutcomesForSection(_applicationId,
                 RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
                 RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees, (int) _assessorType,
                 _userId)).ReturnsAsync(_sectionStatuses);

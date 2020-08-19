@@ -10,6 +10,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.InternalApi.Types;
+using SFA.DAS.ApplyService.Domain.Apply.Assessor;
 
 namespace SFA.DAS.ApplyService.Data
 {
@@ -324,7 +325,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<PageReviewOutcome> GetPageReviewOutcome(Guid applicationId,
+        public async Task<AssessorPageReviewOutcome> GetAssessorPageReviewOutcome(Guid applicationId,
                                                                     int sequenceNumber,
                                                                     int sectionNumber,
                                                                     string pageId,
@@ -333,7 +334,7 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                var pageReviewOutcomeResults = await connection.QueryAsync<PageReviewOutcome>(@"IF (@assessorType = 1)
+                var pageReviewOutcomeResults = await connection.QueryAsync<AssessorPageReviewOutcome>(@"IF (@assessorType = 1)
 	                                                                BEGIN
 		                                                                SELECT [ApplicationId]
 			                                                                  ,[SequenceNumber]
@@ -373,7 +374,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<PageReviewOutcome>> GetAssessorReviewOutcomesPerSection(Guid applicationId,
+        public async Task<List<AssessorPageReviewOutcome>> GetAssessorPageReviewOutcomesForSection(Guid applicationId,
                                                             int sequenceNumber,
                                                             int sectionNumber,
                                                             int assessorType,
@@ -381,7 +382,7 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                var pageReviewOutcomeResults = await connection.QueryAsync<PageReviewOutcome>(@"IF (@assessorType = 1)
+                var pageReviewOutcomeResults = await connection.QueryAsync<AssessorPageReviewOutcome>(@"IF (@assessorType = 1)
 	                                                                BEGIN
 		                                                                SELECT [ApplicationId]
 			                                                                  ,[SequenceNumber]
@@ -419,13 +420,13 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<PageReviewOutcome>> GetAllAssessorReviewOutcomes(Guid applicationId,
+        public async Task<List<AssessorPageReviewOutcome>> GetAllAssessorPageReviewOutcomes(Guid applicationId,
                                                     int assessorType,
                                                     string userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                var pageReviewOutcomeResults = await connection.QueryAsync<PageReviewOutcome>(@"IF (@assessorType = 1)
+                var pageReviewOutcomeResults = await connection.QueryAsync<AssessorPageReviewOutcome>(@"IF (@assessorType = 1)
 	                                                                BEGIN
 		                                                                SELECT [ApplicationId]
 			                                                                  ,[SequenceNumber]

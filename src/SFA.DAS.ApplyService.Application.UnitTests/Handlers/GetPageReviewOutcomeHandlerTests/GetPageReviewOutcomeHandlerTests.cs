@@ -3,10 +3,8 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Assessor;
-using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Apply.Assessor;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -38,7 +36,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetPageReviewOutco
             var expectedStatus = "Fail";
             var expectedComment = "Very bad";
   
-            var expectedResult = new PageReviewOutcome 
+            var expectedResult = new AssessorPageReviewOutcome 
             {
                 ApplicationId = expectedApplicationId,
                 SequenceNumber = expectedSequenceNumber,
@@ -50,7 +48,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetPageReviewOutco
                 Comment = expectedComment
             };
 
-            _repository.Setup(x => x.GetPageReviewOutcome(expectedApplicationId, expectedSequenceNumber, expectedSectionNumber, 
+            _repository.Setup(x => x.GetAssessorPageReviewOutcome(expectedApplicationId, expectedSequenceNumber, expectedSectionNumber, 
                                                           expectedPageId, expectedAssessorType, expectedUserId)).ReturnsAsync(expectedResult);
 
             var actualResult = await _handler.Handle(new GetPageReviewOutcomeRequest(expectedApplicationId, expectedSequenceNumber, expectedSectionNumber,

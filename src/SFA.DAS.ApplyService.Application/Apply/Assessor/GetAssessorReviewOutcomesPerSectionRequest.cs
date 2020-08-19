@@ -1,12 +1,11 @@
 ﻿using MediatR;
-using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Apply.Assessor;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
-    public class GetAssessorReviewOutcomesPerSectionRequest : IRequest<List<PageReviewOutcome>>
+    public class GetAssessorReviewOutcomesPerSectionRequest : IRequest<List<AssessorPageReviewOutcome>>
     {
         public GetAssessorReviewOutcomesPerSectionRequest(Guid applicationId,
                                                                     int sequenceNumber,

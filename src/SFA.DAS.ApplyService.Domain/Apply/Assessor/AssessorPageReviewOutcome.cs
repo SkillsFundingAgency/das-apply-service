@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace SFA.DAS.ApplyService.Domain.Apply
+namespace SFA.DAS.ApplyService.Domain.Apply.Assessor
 {
-    public class PageReviewOutcome
+    public class AssessorPageReviewOutcome
     {
         public Guid ApplicationId { get; set; }
         public int SequenceNumber { get; set; }
