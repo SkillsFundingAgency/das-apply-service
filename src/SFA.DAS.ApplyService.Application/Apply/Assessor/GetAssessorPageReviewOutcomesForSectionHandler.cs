@@ -7,20 +7,20 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
-    public class GetAssessorReviewOutcomesPerSectionHandler : IRequestHandler<GetAssessorReviewOutcomesPerSectionRequest, List<AssessorPageReviewOutcome>>
+    public class GetAssessorPageReviewOutcomesForSectionHandler : IRequestHandler<GetAssessorPageReviewOutcomesForSectionRequest, List<AssessorPageReviewOutcome>>
     {
         private readonly IAssessorRepository _repository;
-        private readonly ILogger<GetAssessorReviewOutcomesPerSectionHandler> _logger;
+        private readonly ILogger<GetAssessorPageReviewOutcomesForSectionHandler> _logger;
 
-        public GetAssessorReviewOutcomesPerSectionHandler(IAssessorRepository repository, ILogger<GetAssessorReviewOutcomesPerSectionHandler> logger)
+        public GetAssessorPageReviewOutcomesForSectionHandler(IAssessorRepository repository, ILogger<GetAssessorPageReviewOutcomesForSectionHandler> logger)
         {
             _repository = repository;
             _logger = logger;
         }
 
-        public async Task<List<AssessorPageReviewOutcome>> Handle(GetAssessorReviewOutcomesPerSectionRequest request, CancellationToken cancellationToken)
+        public async Task<List<AssessorPageReviewOutcome>> Handle(GetAssessorPageReviewOutcomesForSectionRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"GetAssessorReviewOutcomesPerSection for ApplicationId '{request.ApplicationId}' - " +
+            _logger.LogInformation($"GetAssessorPageReviewOutcomesForSection for ApplicationId '{request.ApplicationId}' - " +
                                                     $"SequenceNumber '{request.SequenceNumber}' - SectionNumber '{request.SectionNumber}' - " +
                                                     $"AssessorType '{request.AssessorType}' - UserId '{request.UserId}'");
 

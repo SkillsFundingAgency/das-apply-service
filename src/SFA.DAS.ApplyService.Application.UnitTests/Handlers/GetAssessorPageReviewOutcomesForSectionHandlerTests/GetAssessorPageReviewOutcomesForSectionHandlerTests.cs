@@ -9,23 +9,23 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAllAssessorReviewOutcomesHandlerTests
+namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAssessorPageReviewOutcomesForSectionHandlerTests
 {
     [TestFixture]
-    public class GetAllAssessorReviewOutcomesHandlerTests
+    public class GetAssessorPageReviewOutcomesForSectionHandlerTests
     {
         protected Mock<IAssessorRepository> _repository;
-        protected GetAllAssessorReviewOutcomesHandler _handler;
+        protected GetAssessorPageReviewOutcomesForSectionHandler _handler;
 
         [SetUp]
         public void TestSetup()
         {
             _repository = new Mock<IAssessorRepository>();
-            _handler = new GetAllAssessorReviewOutcomesHandler(_repository.Object, Mock.Of<ILogger<GetAllAssessorReviewOutcomesHandler>>());
+            _handler = new GetAssessorPageReviewOutcomesForSectionHandler(_repository.Object, Mock.Of<ILogger<GetAssessorPageReviewOutcomesForSectionHandler>>());
         }
 
         [Test]
-        public async Task GetAllAssessorReviewOutcomesHandler_returns__List_of_PageReviewOutcome()
+        public async Task GetAssessorPageReviewOutcomesForSectionHandler_returns__List_of_PageReviewOutcome()
         {
             var expectedApplicationId = Guid.NewGuid();
             var expectedSequenceNumber = 1;
@@ -37,8 +37,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAllAssessorRevi
             var expectedStatus = "Fail";
             var expectedComment = "Very bad";
 
-            var expectedResult = new List<AssessorPageReviewOutcome>
-            {
+            var expectedResult = new List<AssessorPageReviewOutcome> 
+            { 
                 new AssessorPageReviewOutcome
                 {
                     ApplicationId = expectedApplicationId,
@@ -49,13 +49,14 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAllAssessorRevi
                     UserId = expectedUserId,
                     Status = expectedStatus,
                     Comment = expectedComment
-                }
+                } 
             };
 
-            _repository.Setup(x => x.GetAllAssessorPageReviewOutcomes(expectedApplicationId, expectedAssessorType, expectedUserId)).ReturnsAsync(expectedResult);
+            _repository.Setup(x => x.GetAssessorPageReviewOutcomesForSection(expectedApplicationId, expectedSequenceNumber, expectedSectionNumber,
+                                                          expectedAssessorType, expectedUserId)).ReturnsAsync(expectedResult);
 
-            var actualResult = await _handler.Handle(new GetAllAssessorReviewOutcomesRequest(expectedApplicationId, 
-                                                                                                    expectedAssessorType, expectedUserId), new CancellationToken());
+            var actualResult = await _handler.Handle(new GetAssessorPageReviewOutcomesForSectionRequest(expectedApplicationId, expectedSequenceNumber, expectedSectionNumber,
+                                                          expectedAssessorType, expectedUserId), new CancellationToken());
 
             Assert.AreSame(expectedResult, actualResult);
         }

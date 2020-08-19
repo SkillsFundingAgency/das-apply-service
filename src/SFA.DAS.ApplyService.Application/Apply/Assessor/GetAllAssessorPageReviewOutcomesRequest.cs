@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
-    public class GetAllAssessorReviewOutcomesRequest : IRequest<List<AssessorPageReviewOutcome>>
+    public class GetAllAssessorPageReviewOutcomesRequest : IRequest<List<AssessorPageReviewOutcome>>
     {
-        public GetAllAssessorReviewOutcomesRequest(Guid applicationId,
+        public GetAllAssessorPageReviewOutcomesRequest(Guid applicationId,
                                                         int assessorType,
                                                         string userId)
         {

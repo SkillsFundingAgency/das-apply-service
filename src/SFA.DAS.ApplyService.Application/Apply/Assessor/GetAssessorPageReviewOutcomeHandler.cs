@@ -6,20 +6,20 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
-    public class GetPageReviewOutcomeHandler : IRequestHandler<GetPageReviewOutcomeRequest, AssessorPageReviewOutcome>
+    public class GetAssessorPageReviewOutcomeHandler : IRequestHandler<GetAssessorPageReviewOutcomeRequest, AssessorPageReviewOutcome>
     {
         private readonly IAssessorRepository _repository;
-        private readonly ILogger<GetPageReviewOutcomeHandler> _logger;
+        private readonly ILogger<GetAssessorPageReviewOutcomeHandler> _logger;
 
-        public GetPageReviewOutcomeHandler(IAssessorRepository repository, ILogger<GetPageReviewOutcomeHandler> logger)
+        public GetAssessorPageReviewOutcomeHandler(IAssessorRepository repository, ILogger<GetAssessorPageReviewOutcomeHandler> logger)
         {
             _repository = repository;
             _logger = logger;
         }
 
-        public async Task<AssessorPageReviewOutcome> Handle(GetPageReviewOutcomeRequest request, CancellationToken cancellationToken)
+        public async Task<AssessorPageReviewOutcome> Handle(GetAssessorPageReviewOutcomeRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"GetPageReviewOutcome for ApplicationId '{request.ApplicationId}' - " +
+            _logger.LogInformation($"GetAssessorPageReviewOutcome for ApplicationId '{request.ApplicationId}' - " +
                                                     $"SequenceNumber '{request.SequenceNumber}' - SectionNumber '{request.SectionNumber}' - PageId '{request.PageId}' - " +
                                                     $"AssessorType '{request.AssessorType}' - UserId '{request.UserId}'");
 

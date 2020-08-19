@@ -7,20 +7,20 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
-    public class GetAllAssessorReviewOutcomesHandler : IRequestHandler<GetAllAssessorReviewOutcomesRequest, List<AssessorPageReviewOutcome>>
+    public class GetAllAssessorPageReviewOutcomesHandler : IRequestHandler<GetAllAssessorPageReviewOutcomesRequest, List<AssessorPageReviewOutcome>>
     {
         private readonly IAssessorRepository _repository;
-        private readonly ILogger<GetAllAssessorReviewOutcomesHandler> _logger;
+        private readonly ILogger<GetAllAssessorPageReviewOutcomesHandler> _logger;
 
-        public GetAllAssessorReviewOutcomesHandler(IAssessorRepository repository, ILogger<GetAllAssessorReviewOutcomesHandler> logger)
+        public GetAllAssessorPageReviewOutcomesHandler(IAssessorRepository repository, ILogger<GetAllAssessorPageReviewOutcomesHandler> logger)
         {
             _repository = repository;
             _logger = logger;
         }
 
-        public async Task<List<AssessorPageReviewOutcome>> Handle(GetAllAssessorReviewOutcomesRequest request, CancellationToken cancellationToken)
+        public async Task<List<AssessorPageReviewOutcome>> Handle(GetAllAssessorPageReviewOutcomesRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"GetAllAssessorReviewOutcomes for ApplicationId '{request.ApplicationId}' - " +
+            _logger.LogInformation($"GetAllAssessorPageReviewOutcomes for ApplicationId '{request.ApplicationId}' - " +
                                                     $"AssessorType '{request.AssessorType}' - UserId '{request.UserId}'");
 
             var assessorPageReviewOutcomes = await _repository.GetAllAssessorPageReviewOutcomes(request.ApplicationId,

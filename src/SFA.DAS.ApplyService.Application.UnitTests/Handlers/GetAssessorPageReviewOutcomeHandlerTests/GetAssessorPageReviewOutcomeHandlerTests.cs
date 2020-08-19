@@ -8,23 +8,23 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetPageReviewOutcomeHandlerTests
+namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAssessorPageReviewOutcomeHandlerTests
 {
     [TestFixture]
-    public class GetPageReviewOutcomeHandlerTests
+    public class GetAssessorPageReviewOutcomeHandlerTests
     {
         protected Mock<IAssessorRepository> _repository;
-        protected GetPageReviewOutcomeHandler _handler;
+        protected GetAssessorPageReviewOutcomeHandler _handler;
 
         [SetUp]
         public void TestSetup()
         {
             _repository = new Mock<IAssessorRepository>();
-            _handler = new GetPageReviewOutcomeHandler(_repository.Object, Mock.Of<ILogger<GetPageReviewOutcomeHandler>>());
+            _handler = new GetAssessorPageReviewOutcomeHandler(_repository.Object, Mock.Of<ILogger<GetAssessorPageReviewOutcomeHandler>>());
         }
 
         [Test]
-        public async Task GetPageReviewOutcomeHandler_returns__PageReviewOutcome()
+        public async Task GetAssessorPageReviewOutcomeHandler_returns__PageReviewOutcome()
         {
             var expectedApplicationId = Guid.NewGuid();
             var expectedSequenceNumber = 1;
@@ -51,7 +51,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetPageReviewOutco
             _repository.Setup(x => x.GetAssessorPageReviewOutcome(expectedApplicationId, expectedSequenceNumber, expectedSectionNumber, 
                                                           expectedPageId, expectedAssessorType, expectedUserId)).ReturnsAsync(expectedResult);
 
-            var actualResult = await _handler.Handle(new GetPageReviewOutcomeRequest(expectedApplicationId, expectedSequenceNumber, expectedSectionNumber,
+            var actualResult = await _handler.Handle(new GetAssessorPageReviewOutcomeRequest(expectedApplicationId, expectedSequenceNumber, expectedSectionNumber,
                                                           expectedPageId, expectedAssessorType, expectedUserId), new CancellationToken());
 
             Assert.AreSame(expectedResult, actualResult);

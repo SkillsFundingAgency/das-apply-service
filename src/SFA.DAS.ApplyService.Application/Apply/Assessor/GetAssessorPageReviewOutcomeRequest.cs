@@ -4,9 +4,9 @@ using System;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
-    public class GetPageReviewOutcomeRequest : IRequest<AssessorPageReviewOutcome>
+    public class GetAssessorPageReviewOutcomeRequest : IRequest<AssessorPageReviewOutcome>
     {
-        public GetPageReviewOutcomeRequest(Guid applicationId,
+        public GetAssessorPageReviewOutcomeRequest(Guid applicationId,
                                                     int sequenceNumber,
                                                     int sectionNumber,
                                                     string pageId,

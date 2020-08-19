@@ -279,7 +279,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("Assessor/Applications/{applicationId}/GetPageReviewOutcome")]
         public async Task<AssessorPageReviewOutcome> GetPageReviewOutcome(Guid applicationId, [FromBody] Controllers.GetPageReviewOutcomeRequest request)
         {
-            var pageReviewOutcome = await _mediator.Send(new Application.Apply.Assessor.GetPageReviewOutcomeRequest(applicationId, request.SequenceNumber, request.SectionNumber, request.PageId, request.AssessorType, request.UserId));
+            var pageReviewOutcome = await _mediator.Send(new Application.Apply.Assessor.GetAssessorPageReviewOutcomeRequest(applicationId, request.SequenceNumber, request.SectionNumber, request.PageId, request.AssessorType, request.UserId));
 
             return pageReviewOutcome;
         }
@@ -287,7 +287,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("Assessor/Applications/{applicationId}/GetPageReviewOutcomesForSection")]
         public async Task<List<AssessorPageReviewOutcome>> GetPageReviewOutcomesForSection(Guid applicationId, [FromBody] Controllers.GetPageReviewOutcomesForSectionRequest request)
         {
-            var assessorReviewOutcomes = await _mediator.Send(new GetAssessorReviewOutcomesPerSectionRequest(applicationId, request.SequenceNumber, request.SectionNumber, request.AssessorType, request.UserId));
+            var assessorReviewOutcomes = await _mediator.Send(new GetAssessorPageReviewOutcomesForSectionRequest(applicationId, request.SequenceNumber, request.SectionNumber, request.AssessorType, request.UserId));
 
             return assessorReviewOutcomes;
         }
@@ -295,7 +295,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("Assessor/Applications/{applicationId}/GetAllPageReviewOutcomes")]
         public async Task<List<AssessorPageReviewOutcome>> GetAllPageReviewOutcomes(Guid applicationId, [FromBody] Controllers.GetAllPageReviewOutcomesRequest request)
         {
-            var assessorReviewOutcomes = await _mediator.Send(new GetAllAssessorReviewOutcomesRequest(applicationId, request.AssessorType, request.UserId));
+            var assessorReviewOutcomes = await _mediator.Send(new GetAllAssessorPageReviewOutcomesRequest(applicationId, request.AssessorType, request.UserId));
 
             return assessorReviewOutcomes;
         }
