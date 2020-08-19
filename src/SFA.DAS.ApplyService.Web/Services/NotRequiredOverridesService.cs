@@ -4,6 +4,9 @@ using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using AutoMapper;
+using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using NotRequiredOverrideConfiguration = SFA.DAS.ApplyService.Web.Configuration.NotRequiredOverrideConfiguration;
 
 namespace SFA.DAS.ApplyService.Web.Services
@@ -31,6 +34,11 @@ namespace SFA.DAS.ApplyService.Web.Services
         {
             RemoveConfigurationFromCache(applicationId);
             var configuration = CalculateNotRequiredOverrides(applicationId);
+            var applicationNotRequiredOverrides = new Application.Apply.Roatp.NotRequiredOverrideConfiguration
+            {
+                NotRequiredOverrides = Mapper.Map<List<NotRequiredOverride>>(configuration)
+            };
+            _applicationApiClient.UpdateNotRequiredOverrides(applicationId, applicationNotRequiredOverrides);
             SaveConfigurationToCache(applicationId, configuration);
         }
          
@@ -42,6 +50,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             {
                 RefreshNotRequiredOverrides(applicationId);
                 configuration = RetrieveConfigurationFromCache(applicationId);
+               
             }
 
             return configuration;
@@ -53,17 +62,28 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             var applicationData = _qnaApiClient.GetApplicationData(applicationId).GetAwaiter().GetResult() as JObject;
 
-            if (applicationData != null)
+
+            if (applicationData == null) return configuration;
+
+            var applicationNotRequiredOverrides = _applicationApiClient.GetNotRequiredOverrides(applicationId).Result;
+
+            if (applicationNotRequiredOverrides == null)
             {
                 configuration = new List<NotRequiredOverrideConfiguration>(_configuration);
 
-                foreach (var overrideConfig in configuration)
+            }
+            else
+            {
+                var appDataNotRequiredOverrides = applicationNotRequiredOverrides.NotRequiredOverrides.ToList();
+                configuration = Mapper.Map<List<NotRequiredOverrideConfiguration>>(appDataNotRequiredOverrides);
+            }
+
+            foreach (var overrideConfig in configuration)
+            {
+                foreach (var condition in overrideConfig.Conditions)
                 {
-                    foreach (var condition in overrideConfig.Conditions)
-                    {
-                        var applicationDataValue = applicationData[condition.ConditionalCheckField];
-                        condition.Value = applicationDataValue != null ? applicationDataValue.Value<string>() : string.Empty;
-                    }
+                    var applicationDataValue = applicationData[condition.ConditionalCheckField];
+                    condition.Value = applicationDataValue != null ? applicationDataValue.Value<string>() : string.Empty;
                 }
             }
 
