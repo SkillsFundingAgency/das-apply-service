@@ -83,7 +83,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             };
             _qnaApiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(applicationData);
 
-            List<NotRequiredOverrideConfiguration> nullConfig = null;
+            _sessionService.Setup(x => x.Get<List<NotRequiredOverrideConfiguration>>(_sessionKey)).ReturnsInOrder(null, configuration);
             _sessionService.Setup(x => x.Get<List<NotRequiredOverrideConfiguration>>(_sessionKey)).ReturnsInOrder(null, configuration);
             _sessionService.Setup(x => x.Set(_sessionKey, configuration));
 
@@ -125,7 +125,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             };
             _qnaApiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(applicationData);
 
-            List<NotRequiredOverrideConfiguration> nullConfig = null;
+            _sessionService.Setup(x => x.Get<List<NotRequiredOverrideConfiguration>>(_sessionKey)).ReturnsInOrder(null, configuration);
             _sessionService.Setup(x => x.Get<List<NotRequiredOverrideConfiguration>>(_sessionKey)).ReturnsInOrder(null, configuration);
             _sessionService.Setup(x => x.Set(_sessionKey, configuration));
 

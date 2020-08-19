@@ -1171,7 +1171,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var roatpSequences = await _apiClient.GetRoatpSequences();
 
         
-
             var organisationVerificationStatus = await _organisationVerificationService.GetOrganisationVerificationStatus(model.ApplicationId);
 
             _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(model.ApplicationId);

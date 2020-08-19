@@ -70,7 +70,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<Organisation> GetOrganisationForApplication(Guid applicationId);
 
         Task<NotRequiredOverrideConfiguration> GetNotRequiredOverrides(Guid applicationId);
-
         Task<bool> SaveNotRequiredOverrides(Guid applicationId, NotRequiredOverrideConfiguration notRequiredOverrides);
        
         Task<List<ApplicationOversightDetails>> GetOversightsPending();
