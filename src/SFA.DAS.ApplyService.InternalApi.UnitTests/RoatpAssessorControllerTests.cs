@@ -19,7 +19,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using NPOI.OpenXmlFormats.Dml;
 using SFA.DAS.ApplyService.Domain.Apply.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
@@ -117,7 +116,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         [Test]
         public async Task Assign_application_sets_assessor_details()
         {
-            var request = new AssignAssessorApplicationRequest { AssessorName = "sdfjfsdg", AssessorNumber = 1, AssessorUserId = "dsalkjfhjfdg" };
+            var request = new Controllers.AssignAssessorCommand { AssessorName = "sdfjfsdg", AssessorNumber = 1, AssessorUserId = "dsalkjfhjfdg" };
             var applicationid = Guid.NewGuid();
 
             await _controller.AssignApplication(applicationid, request);
@@ -182,7 +181,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task SubmitPageReviewOutcome_calls_mediator()
         {
             var applicationId = Guid.NewGuid();
-            var request = new SubmitPageOutcomeApplicationRequest { SequenceNumber = 1, SectionNumber = 2, PageId = "30", AssessorType = 2, UserId = "4fs7f-userId-7gfhh", Status = "Fail", Comment = "Very bad" };
+            var request = new Controllers.SubmitPageReviewOutcomeCommand { SequenceNumber = 1, SectionNumber = 2, PageId = "30", AssessorType = 2, UserId = "4fs7f-userId-7gfhh", Status = "Fail", Comment = "Very bad" };
 
             await _controller.SubmitPageReviewOutcome(applicationId, request);
 
@@ -194,10 +193,10 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task GetPageReviewOutcome_returns_expected_PageReviewOutcome()
         {
             var applicationId = Guid.NewGuid();
-            var request = new GetPageReviewOutcomeApplicationRequest { SequenceNumber = 1, SectionNumber = 2, PageId = "30", AssessorType = 2, UserId = "4fs7f-userId-7gfhh" } ;
+            var request = new Controllers.GetPageReviewOutcomeRequest { SequenceNumber = 1, SectionNumber = 2, PageId = "30", AssessorType = 2, UserId = "4fs7f-userId-7gfhh" } ;
 
             var expectedResult = new PageReviewOutcome();
-            _mediator.Setup(x => x.Send(It.Is<GetPageReviewOutcomeRequest>(r => r.ApplicationId == applicationId && r.SequenceNumber == request.SequenceNumber && r.SectionNumber == request.SectionNumber &&
+            _mediator.Setup(x => x.Send(It.Is<Application.Apply.Assessor.GetPageReviewOutcomeRequest>(r => r.ApplicationId == applicationId && r.SequenceNumber == request.SequenceNumber && r.SectionNumber == request.SectionNumber &&
                    r.PageId == request.PageId && r.AssessorType == request.AssessorType && r.UserId == request.UserId), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
 
             var actualResult = await _controller.GetPageReviewOutcome(applicationId, request);
@@ -209,7 +208,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task GetPageReviewOutcomesForSection_returns_expected_list_of_PageReviewOutcome()
         {
             var applicationId = Guid.NewGuid();
-            var request = new GetPageReviewOutcomesForSectionApplicationRequest { SequenceNumber = 1, SectionNumber = 2, AssessorType = 2, UserId = "4fs7f-userId-7gfhh" };
+            var request = new Controllers.GetPageReviewOutcomesForSectionRequest { SequenceNumber = 1, SectionNumber = 2, AssessorType = 2, UserId = "4fs7f-userId-7gfhh" };
 
             var expectedResult = new List<PageReviewOutcome>();
             _mediator.Setup(x => x.Send(It.Is<GetAssessorReviewOutcomesPerSectionRequest>(r => r.ApplicationId == applicationId && r.SequenceNumber == request.SequenceNumber && r.SectionNumber == request.SectionNumber &&
@@ -224,7 +223,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task GetAllPageReviewOutcomes_returns_expected_list_of_PageReviewOutcome()
         {
             var applicationId = Guid.NewGuid();
-            var request = new GetAllPageReviewOutcomesApplicationRequest { AssessorType = 2, UserId = "4fs7f-userId-7gfhh" };
+            var request = new Controllers.GetAllPageReviewOutcomesRequest { AssessorType = 2, UserId = "4fs7f-userId-7gfhh" };
 
             var expectedResult = new List<PageReviewOutcome>();
             _mediator.Setup(x => x.Send(It.Is<GetAllAssessorReviewOutcomesRequest>(r => r.ApplicationId == applicationId && 
@@ -446,7 +445,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task UpdateAssessorReviewStatus_calls_mediator()
         {
             var applicationId = Guid.NewGuid();
-            var request = new UpdateAssessorReviewStatusApplicationRequest { AssessorType = 1, UserId = "4fs7f-userId-7gfhh", Status = AssessorReviewStatus.Approved };
+            var request = new Controllers.UpdateAssessorReviewStatusCommand { AssessorType = 1, UserId = "4fs7f-userId-7gfhh", Status = AssessorReviewStatus.Approved };
 
             await _controller.UpdateAssessorReviewStatus(applicationId, request);
 
