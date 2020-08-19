@@ -77,7 +77,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return applications;
         }
 
-        [HttpGet("Assessor/Applications/{userId}/Moderation")]
+        [HttpGet("Assessor/Applications/{userId}/InModeration")]
         public async Task<List<RoatpModerationApplicationSummary>> InModerationApplications(string userId)
         {
             var applications = await _mediator.Send(new ApplicationsInModerationRequest(userId));
@@ -249,12 +249,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await GetAssessorPage(applicationId, sequenceNumber, sectionNumber, null);
         }
 
-        [HttpGet(
-            "Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}")]
+        [HttpGet("Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}")]
         public async Task<AssessorPage> GetAssessorPage(Guid applicationId, int sequenceNumber, int sectionNumber,
             string pageId)
         {
-
             if (_AssessorSequences.Contains(sequenceNumber))
             {
                 return await _getAssessorPageService.GetAssessorPage(applicationId, sequenceNumber, sectionNumber,
@@ -264,52 +262,48 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return null;
         }
 
-
-        [HttpGet(
-            "Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}/questions/{questionId}/download/{filename}")]
+        [HttpGet("Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}/questions/{questionId}/download/{filename}")]
         public async Task<FileStreamResult> DownloadFile(Guid applicationId, int sequenceNumber, int sectionNumber,
             string pageId, string questionId, string filename)
         {
-            return await _qnaApiClient.DownloadSpecifiedFile(applicationId, sequenceNumber, sectionNumber, pageId,
-                questionId, filename);
+            return await _qnaApiClient.DownloadSpecifiedFile(applicationId, sequenceNumber, sectionNumber, pageId, questionId, filename);
         }
 
-        [HttpPost("Assessor/SubmitPageOutcome")]
-        public async Task SubmitAssessorPageOutcome([FromBody] SubmitAssessorPageOutcomeRequest request)
+
+        [HttpPost("Assessor/Applications/{applicationId}/SubmitPageReviewOutcome")]
+        public async Task SubmitPageReviewOutcome(Guid applicationId, [FromBody] SubmitPageOutcomeApplicationRequest request)
         {
-            await _mediator.Send(request);
+            await _mediator.Send(new SubmitAssessorPageOutcomeRequest(applicationId, request.SequenceNumber, request.SectionNumber, request.PageId, request.AssessorType, request.UserId, request.Status, request.Comment));
         }
 
-        [HttpPost("Assessor/GetPageReviewOutcome")]
-        public async Task<PageReviewOutcome> GetPageReviewOutcome([FromBody] GetPageReviewOutcomeRequest request)
+        [HttpPost("Assessor/Applications/{applicationId}/GetPageReviewOutcome")]
+        public async Task<PageReviewOutcome> GetPageReviewOutcome(Guid applicationId, [FromBody] GetPageReviewOutcomeApplicationRequest request)
         {
-            var pageReviewOutcome = await _mediator.Send(request);
+            var pageReviewOutcome = await _mediator.Send(new GetPageReviewOutcomeRequest(applicationId, request.SequenceNumber, request.SectionNumber, request.PageId, request.AssessorType, request.UserId));
 
             return pageReviewOutcome;
         }
 
-        [HttpPost("Assessor/GetAssessorReviewOutcomesPerSection")]
-        public async Task<List<PageReviewOutcome>> GetAssessorReviewOutcomesPerSection(
-            [FromBody] GetAssessorReviewOutcomesPerSectionRequest request)
+        [HttpPost("Assessor/Applications/{applicationId}/GetPageReviewOutcomesForSection")]
+        public async Task<List<PageReviewOutcome>> GetPageReviewOutcomesForSection(Guid applicationId, [FromBody] GetPageReviewOutcomesForSectionApplicationRequest request)
         {
-            var assessorReviewOutcomes = await _mediator.Send(request);
+            var assessorReviewOutcomes = await _mediator.Send(new GetAssessorReviewOutcomesPerSectionRequest(applicationId, request.SequenceNumber, request.SectionNumber, request.AssessorType, request.UserId));
 
             return assessorReviewOutcomes;
         }
 
-        [HttpPost("Assessor/GetAllAssessorReviewOutcomes")]
-        public async Task<List<PageReviewOutcome>> GetAllAssessorReviewOutcomes(
-            [FromBody] GetAllAssessorReviewOutcomesRequest request)
+        [HttpPost("Assessor/Applications/{applicationId}/GetAllPageReviewOutcomes")]
+        public async Task<List<PageReviewOutcome>> GetAllPageReviewOutcomes(Guid applicationId, [FromBody] GetAllPageReviewOutcomesApplicationRequest request)
         {
-            var assessorReviewOutcomes = await _mediator.Send(request);
+            var assessorReviewOutcomes = await _mediator.Send(new GetAllAssessorReviewOutcomesRequest(applicationId, request.AssessorType, request.UserId));
 
             return assessorReviewOutcomes;
         }
 
-        [HttpPost("Assessor/UpdateAssessorReviewStatus")]
-        public async Task UpdateAssessorReviewStatus([FromBody] UpdateAssessorReviewStatusRequest request)
+        [HttpPost("Assessor/Applications/{applicationId}/UpdateAssessorReviewStatus")]
+        public async Task UpdateAssessorReviewStatus(Guid applicationId, [FromBody] UpdateAssessorReviewStatusApplicationRequest request)
         {
-            await _mediator.Send(request);
+            await _mediator.Send(new UpdateAssessorReviewStatusRequest(applicationId, request.AssessorType, request.UserId, request.Status));
         }
 
     }
@@ -321,5 +315,44 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public string AssessorName { get; set; }
     }
 
+    public class SubmitPageOutcomeApplicationRequest
+    {
+        public int SequenceNumber { get; set; }
+        public int SectionNumber { get; set; }
+        public string PageId { get; set; }
+        public int AssessorType { get; set; }
+        public string UserId { get; set; }
+        public string Status { get; set; }
+        public string Comment { get; set; }
+    }
 
+    public class GetPageReviewOutcomeApplicationRequest
+    {
+        public int SequenceNumber { get; set; }
+        public int SectionNumber { get; set; }
+        public string PageId { get; set; }
+        public int AssessorType { get; set; }
+        public string UserId { get; set; }
+    }
+
+    public class GetPageReviewOutcomesForSectionApplicationRequest
+    {
+        public int SequenceNumber { get; set; }
+        public int SectionNumber { get; set; }
+        public int AssessorType { get; set; }
+        public string UserId { get; set; }
+    }
+
+    public class GetAllPageReviewOutcomesApplicationRequest
+    {
+        public int AssessorType { get; set; }
+        public string UserId { get; set; }
+    }
+
+    public class UpdateAssessorReviewStatusApplicationRequest
+    {
+        public int AssessorType { get; set; }
+        public string UserId { get; set; }
+        public string Status { get; set; }
+    }
 }
