@@ -10,6 +10,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Apply.Assessor;
+using SFA.DAS.ApplyService.Domain.Apply.Moderator;
 
 namespace SFA.DAS.ApplyService.Data
 {
@@ -486,5 +487,82 @@ namespace SFA.DAS.ApplyService.Data
 					new { applicationId, assessorNumber, userId, status });
             }
 		}
-	}
+
+
+
+        public async Task<ModeratorPageReviewOutcome> GetModeratorPageReviewOutcome(Guid applicationId,
+                                                            int sequenceNumber,
+                                                            int sectionNumber,
+                                                            string pageId,
+                                                            string userId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var pageReviewOutcomeResults = await connection.QueryAsync<ModeratorPageReviewOutcome>(
+                                                                @"SELECT [ApplicationId]
+			                                                            ,[SequenceNumber]
+			                                                            ,[SectionNumber]
+			                                                            ,[PageId]
+			                                                            ,[ModeratorUserId] AS UserId
+			                                                            ,[ModeratorReviewStatus] AS [Status]
+			                                                            ,[ModeratorReviewComment] AS Comment
+		                                                            FROM [dbo].[ModeratorPageReviewOutcome]
+		                                                            WHERE [ApplicationId] = @applicationId AND
+				                                                        [SequenceNumber] = @sequenceNumber AND
+				                                                        [SectionNumber] = @sectionNumber AND
+				                                                        [PageId] = @pageId AND
+				                                                        [ModeratorUserId] = @userId",
+                    new { applicationId, sequenceNumber, sectionNumber, pageId, userId });
+
+                return pageReviewOutcomeResults.FirstOrDefault();
+            }
+        }
+
+        public async Task<List<ModeratorPageReviewOutcome>> GetModeratorPageReviewOutcomesForSection(Guid applicationId,
+                                                            int sequenceNumber,
+                                                            int sectionNumber,
+                                                            string userId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var pageReviewOutcomeResults = await connection.QueryAsync<ModeratorPageReviewOutcome>(
+                                                                @"SELECT [ApplicationId]
+			                                                            ,[SequenceNumber]
+			                                                            ,[SectionNumber]
+			                                                            ,[PageId]
+			                                                            ,[ModeratorUserId] AS UserId
+			                                                            ,[ModeratorReviewStatus] AS [Status]
+			                                                            ,[ModeratorReviewComment] AS Comment
+		                                                            FROM [dbo].[ModeratorPageReviewOutcome]
+		                                                            WHERE [ApplicationId] = @applicationId AND
+				                                                        [SequenceNumber] = @sequenceNumber AND
+				                                                        [SectionNumber] = @sectionNumber AND
+				                                                        [ModeratorUserId] = @userId",
+                    new { applicationId, sequenceNumber, sectionNumber,  userId });
+
+                return pageReviewOutcomeResults.ToList();
+            }
+        }
+
+        public async Task<List<ModeratorPageReviewOutcome>> GetAllModeratorPageReviewOutcomes(Guid applicationId, string userId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var pageReviewOutcomeResults = await connection.QueryAsync<ModeratorPageReviewOutcome>(
+                                                                @"SELECT [ApplicationId]
+			                                                            ,[SequenceNumber]
+			                                                            ,[SectionNumber]
+			                                                            ,[PageId]
+			                                                            ,[ModeratorUserId] AS UserId
+			                                                            ,[ModeratorReviewStatus] AS [Status]
+			                                                            ,[ModeratorReviewComment] AS Comment
+		                                                            FROM [dbo].[ModeratorPageReviewOutcome]
+		                                                            WHERE [ApplicationId] = @applicationId AND
+				                                                        [ModeratorUserId] = @userId",
+                    new { applicationId, userId });
+
+                return pageReviewOutcomeResults.ToList();
+            }
+        }
+    }
 }
