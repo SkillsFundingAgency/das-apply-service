@@ -55,12 +55,12 @@ namespace SFA.DAS.ApplyService.Data
             _config = configurationService.GetConfig().Result;
         }
 
-        public async Task<List<RoatpAssessorApplicationSummary>> GetNewAssessorApplications(string userId)
+        public async Task<List<AssessorApplicationSummary>> GetNewAssessorApplications(string userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection
-                    .QueryAsync<RoatpAssessorApplicationSummary>(
+                    .QueryAsync<AssessorApplicationSummary>(
                         $@"SELECT 
                             {ApplicationSummaryFields}
 	                       FROM Apply apply
@@ -124,12 +124,12 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<RoatpAssessorApplicationSummary>> GetInProgressAssessorApplications(string userId)
+        public async Task<List<AssessorApplicationSummary>> GetInProgressAssessorApplications(string userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection
-                    .QueryAsync<RoatpAssessorApplicationSummary>(
+                    .QueryAsync<AssessorApplicationSummary>(
                         $@"SELECT 
                             {ApplicationSummaryFields}
 	                        FROM Apply apply
@@ -163,12 +163,12 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<RoatpModerationApplicationSummary>> GetApplicationsInModeration()
+        public async Task<List<ModerationApplicationSummary>> GetApplicationsInModeration()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection
-                    .QueryAsync<RoatpModerationApplicationSummary>(
+                    .QueryAsync<ModerationApplicationSummary>(
                         $@"SELECT 
                             {ApplicationSummaryFields}
                             , ModerationStatus AS Status

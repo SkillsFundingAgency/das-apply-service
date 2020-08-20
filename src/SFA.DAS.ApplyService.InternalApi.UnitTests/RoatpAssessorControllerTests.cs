@@ -65,7 +65,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var inprogressApplications = 2;
             var moderationApplications = 3;
             var clarificationApplications = 4;
-            var expectedResult = new RoatpAssessorApplicationCounts(newApplications, inprogressApplications, moderationApplications, clarificationApplications);
+            var expectedResult = new AssessorApplicationCounts(newApplications, inprogressApplications, moderationApplications, clarificationApplications);
             _mediator.Setup(x => x.Send(It.Is<AssessorApplicationCountsRequest>(y => y.UserId == expectedUser), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
 
             var actualResult = await _controller.GetApplicationCounts(expectedUser);
@@ -77,7 +77,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task Get_new_applications_returns_new_applications_for_the_user()
         {
             var expectedUser = "sadjkffgdji";
-            var expectedResult = new List<RoatpAssessorApplicationSummary>();
+            var expectedResult = new List<AssessorApplicationSummary>();
             _mediator.Setup(x => x.Send(It.Is<NewAssessorApplicationsRequest>(y => y.UserId == expectedUser), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
 
             var actualResult = await _controller.NewApplications(expectedUser);
@@ -89,7 +89,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task Get_in_progress_applications_returns_in_progress_applications_for_the_user()
         {
             var expectedUser = "sadjkffgdji";
-            var expectedResult = new List<RoatpAssessorApplicationSummary>();
+            var expectedResult = new List<AssessorApplicationSummary>();
             _mediator.Setup(x => x.Send(It.Is<InProgressAssessorApplicationsRequest>(y => y.UserId == expectedUser), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
 
             var actualResult = await _controller.InProgressApplications(expectedUser);
@@ -101,7 +101,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task Get_in_moderation_applications_returns_applications()
         {
             var expectedUser = "sadjkffgdji";
-            var expectedResult = new List<RoatpModerationApplicationSummary>();
+            var expectedResult = new List<ModerationApplicationSummary>();
             _mediator.Setup(x => x.Send(It.Is<ApplicationsInModerationRequest>(y => y.UserId == expectedUser), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
 
             var actualResult = await _controller.InModerationApplications(expectedUser);

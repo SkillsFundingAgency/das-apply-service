@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SFA.DAS.ApplyService.Domain.Apply
+﻿namespace SFA.DAS.ApplyService.Domain.Apply.Assessor
 {
-    public class RoatpAssessorApplicationCounts
+    public class AssessorApplicationCounts
     {
-        public RoatpAssessorApplicationCounts(int newApplications, int inProgressApplications, int moderationApplications, int clarificationApplications)
+        public AssessorApplicationCounts(int newApplications, int inProgressApplications, int moderationApplications, int clarificationApplications)
         {
             NewApplications = newApplications;
             InProgressApplications = inProgressApplications;

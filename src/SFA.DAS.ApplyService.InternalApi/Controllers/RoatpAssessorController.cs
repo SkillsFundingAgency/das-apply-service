@@ -52,7 +52,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet("Assessor/Applications/{userId}")]
-        public async Task<RoatpAssessorApplicationCounts> GetApplicationCounts(string userId)
+        public async Task<AssessorApplicationCounts> GetApplicationCounts(string userId)
         {
             var summary = await _mediator.Send(new AssessorApplicationCountsRequest(userId));
 
@@ -60,7 +60,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet("Assessor/Applications/{userId}/New")]
-        public async Task<List<RoatpAssessorApplicationSummary>> NewApplications(string userId)
+        public async Task<List<AssessorApplicationSummary>> NewApplications(string userId)
         {
             var applications = await _mediator.Send(new NewAssessorApplicationsRequest(userId));
 
@@ -68,7 +68,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet("Assessor/Applications/{userId}/InProgress")]
-        public async Task<List<RoatpAssessorApplicationSummary>> InProgressApplications(string userId)
+        public async Task<List<AssessorApplicationSummary>> InProgressApplications(string userId)
         {
             var applications = await _mediator.Send(new InProgressAssessorApplicationsRequest(userId));
 
@@ -76,7 +76,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet("Assessor/Applications/{userId}/InModeration")]
-        public async Task<List<RoatpModerationApplicationSummary>> InModerationApplications(string userId)
+        public async Task<List<ModerationApplicationSummary>> InModerationApplications(string userId)
         {
             var applications = await _mediator.Send(new ApplicationsInModerationRequest(userId));
 

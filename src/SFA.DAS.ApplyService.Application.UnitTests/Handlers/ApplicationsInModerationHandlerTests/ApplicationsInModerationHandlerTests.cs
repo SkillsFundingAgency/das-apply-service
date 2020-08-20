@@ -5,7 +5,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Assessor;
-using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Apply.Assessor;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.ApplicationsInModerationHandlerTests
 {
@@ -26,7 +26,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.ApplicationsInMode
         public async Task Get_applications_in_moderation_returns_applications()
         {
             var expectedUser = "sadjkffgdji";
-            var expectedResult = new List<RoatpModerationApplicationSummary>();
+            var expectedResult = new List<ModerationApplicationSummary>();
             _repository.Setup(x => x.GetApplicationsInModeration()).ReturnsAsync(expectedResult);
 
             var actualResult = await _handler.Handle(new ApplicationsInModerationRequest(expectedUser), new CancellationToken());

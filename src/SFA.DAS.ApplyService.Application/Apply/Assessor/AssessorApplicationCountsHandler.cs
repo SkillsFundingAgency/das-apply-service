@@ -1,11 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Apply.Assessor;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
-    public class AssessorApplicationCountsHandler : IRequestHandler<AssessorApplicationCountsRequest, RoatpAssessorApplicationCounts>
+    public class AssessorApplicationCountsHandler : IRequestHandler<AssessorApplicationCountsRequest, AssessorApplicationCounts>
     {
         private readonly IAssessorRepository _repository;
 
@@ -14,7 +14,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
             _repository = repository;
         }
 
-        public async Task<RoatpAssessorApplicationCounts> Handle(AssessorApplicationCountsRequest request, CancellationToken cancellationToken)
+        public async Task<AssessorApplicationCounts> Handle(AssessorApplicationCountsRequest request, CancellationToken cancellationToken)
         {
             var newApplicationCount = _repository.GetNewAssessorApplicationsCount(request.UserId);
             var inProgressApplicationCount = _repository.GetInProgressAssessorApplicationsCount(request.UserId);
@@ -22,7 +22,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 
             await Task.WhenAll(newApplicationCount, inProgressApplicationCount, inModerationApplicationCount);
 
-            return new RoatpAssessorApplicationCounts(newApplicationCount.Result, inProgressApplicationCount.Result, inModerationApplicationCount.Result, 0);
+            return new AssessorApplicationCounts(newApplicationCount.Result, inProgressApplicationCount.Result, inModerationApplicationCount.Result, 0);
         }
     }
 }

@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Apply.Assessor;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
-    public class AssessorApplicationCountsRequest : IRequest<RoatpAssessorApplicationCounts>
+    public class AssessorApplicationCountsRequest : IRequest<AssessorApplicationCounts>
     {
         public AssessorApplicationCountsRequest(string userId)
         {
