@@ -381,7 +381,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 }
             };
 
-            var sectors = new List<Sector>();
+            var sectors = new List<AssessorSector>();
             _qnaApiClient.Setup(x => x.GetSectionBySectionNo(_applicationId, 
                 RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
                 RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees)).ReturnsAsync(section);
@@ -409,10 +409,10 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             
             var listOfSectors = await _controller.GetChosenSectors(_applicationId, request);
 
-            var expectedListOfSectors = new List<Sector>
+            var expectedListOfSectors = new List<AssessorSector>
             {
-                new Sector {PageId = sector1PageId, Title = sector1Title, Status = page1Status},
-                new Sector {PageId = sector2PageId, Title = sector2Title, Status = page2Status}
+                new AssessorSector {PageId = sector1PageId, Title = sector1Title, Status = page1Status},
+                new AssessorSector {PageId = sector2PageId, Title = sector2Title, Status = page2Status}
             };
 
             Assert.AreEqual(JsonConvert.SerializeObject(expectedListOfSectors), JsonConvert.SerializeObject(listOfSectors));

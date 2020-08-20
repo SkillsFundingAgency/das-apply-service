@@ -93,7 +93,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         [Test]
         public async Task Get_sector_details_for_matching_pageId()
         {
-            var sectorDetails = new SectorDetails {ApprovedByAwardingBodies = "yes"};
+            var sectorDetails = new AssessorSectorDetails {ApprovedByAwardingBodies = "yes"};
 
             _lookupService.Setup(x => x.GetSectorQuestionIdsForSectorPageId(_pageId)).Returns(_sectorQuestionIds);
             _sectorDetailsOrchestratorService.Setup(x => x.GetSectorDetails(_applicationId, _pageId)).ReturnsAsync(sectorDetails);

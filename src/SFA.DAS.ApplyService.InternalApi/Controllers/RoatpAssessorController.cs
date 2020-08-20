@@ -196,7 +196,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpPost("Assessor/Applications/{applicationId}/ChosenSectors")]
-        public async Task<List<Sector>> GetChosenSectors(Guid applicationId, [FromBody] Controllers.GetChosenSectorsRequest request)
+        public async Task<List<AssessorSector>> GetChosenSectors(Guid applicationId, [FromBody] Controllers.GetChosenSectorsRequest request)
         {
             var qnaSection = await _qnaApiClient.GetSectionBySectionNo(
                 applicationId,
@@ -210,10 +210,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 && x.Complete
                 && !x.NotRequired);
 
-            var sectors = sectionStartingPages?.Select(page => new Sector { Title = page.LinkTitle, PageId = page.PageId })
+            var sectors = sectionStartingPages?.Select(page => new AssessorSector { Title = page.LinkTitle, PageId = page.PageId })
                 .ToList();
 
-            if (sectors == null || !sectors.Any()) return new List<Sector>();
+            if (sectors == null || !sectors.Any()) return new List<AssessorSector>();
 
             var sectionStatusesRequest = new GetAssessorPageReviewOutcomesForSectionRequest(applicationId, RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining, RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees, request.UserId);
 
@@ -233,7 +233,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
         [HttpGet("Assessor/Applications/{applicationId}/SectorDetails/{pageId}")]
-        public async Task<SectorDetails> GetSectorDetails(Guid applicationId, string pageId)
+        public async Task<AssessorSectorDetails> GetSectorDetails(Guid applicationId, string pageId)
         {
             return await _sectorDetailsOrchestratorService.GetSectorDetails(applicationId, pageId);
         }
