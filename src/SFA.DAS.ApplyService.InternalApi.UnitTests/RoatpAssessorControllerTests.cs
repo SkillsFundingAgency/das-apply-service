@@ -402,7 +402,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 Status = page2Status
             });
 
-            var request = new Controllers.GetChosenSectorsRequest { UserId = _userId };
+            var request = new Controllers.GetSectorsRequest { UserId = _userId };
 
             _mediator.Setup(x => x.Send(It.Is<GetAssessorPageReviewOutcomesForSectionRequest>(y => y.ApplicationId == _applicationId && y.SequenceNumber == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining
             && y.SectionNumber == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees && y.UserId == request.UserId), It.IsAny<CancellationToken>())).ReturnsAsync(_sectionStatuses);
