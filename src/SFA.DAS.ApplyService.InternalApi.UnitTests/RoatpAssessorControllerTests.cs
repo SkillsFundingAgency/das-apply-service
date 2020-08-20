@@ -20,7 +20,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Domain.Apply.Assessor;
-using SFA.DAS.ApplyService.InternalApi.Types;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests
@@ -178,7 +177,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task SubmitPageReviewOutcome_calls_mediator()
         {
             var applicationId = Guid.NewGuid();
-            var request = new Controllers.SubmitPageReviewOutcomeCommand { SequenceNumber = 1, SectionNumber = 2, PageId = "30", UserId = "4fs7f-userId-7gfhh", Status = "Fail", Comment = "Very bad" };
+            var request = new Controllers.SubmitPageReviewOutcomeCommand { SequenceNumber = 1, SectionNumber = 2, PageId = "30", UserId = _userId, Status = "Fail", Comment = "Very bad" };
 
             await _controller.SubmitPageReviewOutcome(applicationId, request);
 
@@ -190,7 +189,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task GetPageReviewOutcome_returns_expected_PageReviewOutcome()
         {
             var applicationId = Guid.NewGuid();
-            var request = new Controllers.GetPageReviewOutcomeRequest { SequenceNumber = 1, SectionNumber = 2, PageId = "30", UserId = "4fs7f-userId-7gfhh" } ;
+            var request = new Controllers.GetPageReviewOutcomeRequest { SequenceNumber = 1, SectionNumber = 2, PageId = "30", UserId = _userId } ;
 
             var expectedResult = new AssessorPageReviewOutcome();
             _mediator.Setup(x => x.Send(It.Is<Application.Apply.Assessor.GetAssessorPageReviewOutcomeRequest>(r => r.ApplicationId == applicationId && r.SequenceNumber == request.SequenceNumber && r.SectionNumber == request.SectionNumber &&
@@ -205,7 +204,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task GetPageReviewOutcomesForSection_returns_expected_list_of_PageReviewOutcome()
         {
             var applicationId = Guid.NewGuid();
-            var request = new Controllers.GetPageReviewOutcomesForSectionRequest { SequenceNumber = 1, SectionNumber = 2, UserId = "4fs7f-userId-7gfhh" };
+            var request = new Controllers.GetPageReviewOutcomesForSectionRequest { SequenceNumber = 1, SectionNumber = 2, UserId = _userId };
 
             var expectedResult = new List<AssessorPageReviewOutcome>();
             _mediator.Setup(x => x.Send(It.Is<GetAssessorPageReviewOutcomesForSectionRequest>(r => r.ApplicationId == applicationId && r.SequenceNumber == request.SequenceNumber && r.SectionNumber == request.SectionNumber &&
@@ -220,7 +219,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task GetAllPageReviewOutcomes_returns_expected_list_of_PageReviewOutcome()
         {
             var applicationId = Guid.NewGuid();
-            var request = new Controllers.GetAllPageReviewOutcomesRequest { UserId = "4fs7f-userId-7gfhh" };
+            var request = new Controllers.GetAllPageReviewOutcomesRequest { UserId = _userId };
 
             var expectedResult = new List<AssessorPageReviewOutcome>();
             _mediator.Setup(x => x.Send(It.Is<GetAllAssessorPageReviewOutcomesRequest>(r => r.ApplicationId == applicationId && 
@@ -403,10 +402,11 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 Status = page2Status
             });
 
-            _mediator.Setup(x => x.Send(It.Is<GetAssessorPageReviewOutcomesForSectionRequest>(y => y.ApplicationId == _applicationId && y.SequenceNumber == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining
-            && y.SectionNumber == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees && y.UserId == _userId), It.IsAny<CancellationToken>())).ReturnsAsync(_sectionStatuses);
+            var request = new Controllers.GetChosenSectorsRequest { UserId = _userId };
 
-            var request = new Controllers.GetChosenSectorsRequest { UserId = "4fs7f-userId-7gfhh" };
+            _mediator.Setup(x => x.Send(It.Is<GetAssessorPageReviewOutcomesForSectionRequest>(y => y.ApplicationId == _applicationId && y.SequenceNumber == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining
+            && y.SectionNumber == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees && y.UserId == request.UserId), It.IsAny<CancellationToken>())).ReturnsAsync(_sectionStatuses);
+            
             var listOfSectors = await _controller.GetChosenSectors(_applicationId, request);
 
             var expectedListOfSectors = new List<Sector>
@@ -437,7 +437,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task UpdateAssessorReviewStatus_calls_mediator()
         {
             var applicationId = Guid.NewGuid();
-            var request = new Controllers.UpdateAssessorReviewStatusCommand { UserId = "4fs7f-userId-7gfhh", Status = AssessorReviewStatus.Approved };
+            var request = new Controllers.UpdateAssessorReviewStatusCommand { UserId = _userId, Status = AssessorReviewStatus.Approved };
 
             await _controller.UpdateAssessorReviewStatus(applicationId, request);
 
