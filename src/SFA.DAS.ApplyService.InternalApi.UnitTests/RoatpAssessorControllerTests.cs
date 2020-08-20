@@ -296,7 +296,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         }
 
         [Test]
-        public async Task GetChosenSectors_for_application()
+        public async Task GetSectors_for_application()
         {
 
             var sector1PageId = "Sector1PageId";
@@ -407,7 +407,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _mediator.Setup(x => x.Send(It.Is<GetAssessorPageReviewOutcomesForSectionRequest>(y => y.ApplicationId == _applicationId && y.SequenceNumber == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining
             && y.SectionNumber == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees && y.UserId == request.UserId), It.IsAny<CancellationToken>())).ReturnsAsync(_sectionStatuses);
             
-            var listOfSectors = await _controller.GetChosenSectors(_applicationId, request);
+            var listOfSectors = await _controller.GetSectors(_applicationId, request);
 
             var expectedListOfSectors = new List<AssessorSector>
             {
