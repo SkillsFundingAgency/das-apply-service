@@ -1,13 +1,13 @@
 ﻿@using SFA.DAS.ApplyService.Web.ViewModels.Roatp
 @model SFA.DAS.ApplyService.Domain.Entities.ApplicationSection
-
+@using SFA.DAS.ApplyService.Domain.Entities
 @{
     ViewBag.Title = @Model.Title;
     Layout = "_Layout";
     var pageTitle = "";
     var isSamePage = false;
     var nextPageTitle = "";
-    var pagesToCheck = Model.QnAData.Pages.Where(p => p.Active && !p.NotRequired && p.DisplayType!=null && p.DisplayType == "PagesWithSections").ToList();
+    var pagesToCheck = Model.QnAData.Pages.Where(p => p.Active && !p.NotRequired && p.DisplayType!=null && p.DisplayType == PageDisplayType.PagesWithSections).ToList();
     var pageId = pagesToCheck?.FirstOrDefault()?.PageId;
 }
 

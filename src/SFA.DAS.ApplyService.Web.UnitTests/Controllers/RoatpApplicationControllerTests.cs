@@ -24,7 +24,6 @@ using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -41,18 +40,17 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IConfigurationService> _configService;
         private Mock<IUserService> _userService;
         private Mock<IQnaApiClient> _qnaApiClient;
-        private Mock<IProcessPageFlowService> _processPageFlowService;
         private Mock<IQuestionPropertyTokeniser> _questionPropertyTokeniser;
-        private Mock<IOptions<List<TaskListConfiguration>>> _configuration;
         private Mock<IPageNavigationTrackingService> _pageNavigationTrackingService;
         private Mock<IOptions<List<QnaPageOverrideConfiguration>>> _pageOverrideConfiguration;
         private Mock<IOptions<List<QnaLinksConfiguration>>> _qnaLinks;
-        private Mock<IOptions<List<NotRequiredOverrideConfiguration>>> _notRequiredOverrides;
         private Mock<ICustomValidatorFactory> _customValidatorFactory;
         private Mock<IRoatpApiClient> _roatpApiClient;
         private Mock<ISubmitApplicationConfirmationEmailService> _submitApplicationEmailService;
         private Mock<ITabularDataRepository> _tabularDataRepository;
         private Mock<IPagesWithSectionsFlowService> _pagesWithSectionsFlowService;
+        private Mock<IRoatpTaskListWorkflowService> _roatpTaskListWorkflowService;
+        private Mock<IRoatpOrganisationVerificationService> _roatpOrganisationVerificationService;
 
         [SetUp]
         public void Before_each_test()
@@ -71,27 +69,27 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _configService = new Mock<IConfigurationService>();
             _userService = new Mock<IUserService>();
             _qnaApiClient = new Mock<IQnaApiClient>();
-            _processPageFlowService = new Mock<IProcessPageFlowService>();
             _pagesWithSectionsFlowService = new Mock<IPagesWithSectionsFlowService>();
 
             _questionPropertyTokeniser = new Mock<IQuestionPropertyTokeniser>();
-            _configuration = new Mock<IOptions<List<TaskListConfiguration>>>();
             _pageNavigationTrackingService = new Mock<IPageNavigationTrackingService>();
             _pageOverrideConfiguration = new Mock<IOptions<List<QnaPageOverrideConfiguration>>>();
             _qnaLinks = new Mock<IOptions<List<QnaLinksConfiguration>>>();
-            _notRequiredOverrides = new Mock<IOptions<List<NotRequiredOverrideConfiguration>>>();
             _customValidatorFactory = new Mock<ICustomValidatorFactory>();
             _roatpApiClient = new Mock<IRoatpApiClient>();
             _submitApplicationEmailService = new Mock<ISubmitApplicationConfirmationEmailService>();
             _tabularDataRepository = new Mock<ITabularDataRepository>();
+            _roatpTaskListWorkflowService = new Mock<IRoatpTaskListWorkflowService>();
+            _roatpOrganisationVerificationService = new Mock<IRoatpOrganisationVerificationService>();
 
             _controller = new RoatpApplicationController(_apiClient.Object, _logger.Object, _sessionService.Object, _configService.Object,
-                                                         _userService.Object, _usersApiClient.Object, _qnaApiClient.Object, _configuration.Object,
-                                                         _processPageFlowService.Object, _pagesWithSectionsFlowService.Object,
+                                                         _userService.Object, _usersApiClient.Object, _qnaApiClient.Object, 
+                                                          _pagesWithSectionsFlowService.Object,
                                                          _questionPropertyTokeniser.Object, _pageOverrideConfiguration.Object,
                                                          _pageNavigationTrackingService.Object, _qnaLinks.Object, _customValidatorFactory.Object,
-                                                         _notRequiredOverrides.Object, _roatpApiClient.Object,
-                                                         _submitApplicationEmailService.Object, _tabularDataRepository.Object)
+                                                         _roatpApiClient.Object,
+                                                         _submitApplicationEmailService.Object, _tabularDataRepository.Object,
+                                                         _roatpTaskListWorkflowService.Object, _roatpOrganisationVerificationService.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
@@ -159,14 +157,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _apiClient.Setup(x => x.StartApplication(It.IsAny<StartApplicationRequest>())).ReturnsAsync(applicationId).Verifiable();
 
-            var providerRouteSection = new ApplicationSection
-            {
-                ApplicationId = applicationId,
-                SectionId = 1
-            };
-
-            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(providerRouteSection);
-
             var result = _controller.Applications().GetAwaiter().GetResult();
 
             var redirectResult = result as RedirectToActionResult;
@@ -217,6 +207,28 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
             redirectResult.ActionName.Should().Be("ApplicationSubmitted");
+        }
+
+        [Test]
+        public void Applications_shows_enter_ukprn_page_if_application_cancelled()
+        {
+            var submittedApp = new Domain.Entities.Apply
+            {
+                ApplicationStatus = ApplicationStatus.Cancelled
+            };
+            var applications = new List<Domain.Entities.Apply>
+            {
+                submittedApp
+            };
+
+            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
+
+            var result = _controller.Applications().GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("EnterApplicationUkprn");
+            redirectResult.ControllerName.Should().Be("RoatpApplicationPreamble");
         }
 
         [Test]

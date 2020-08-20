@@ -17,6 +17,11 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string FinancialReviewStatus { get; set; }
         public ApplyData ApplyData { get; set; }
         public FinancialReviewDetails FinancialGrade { get; set; }
+
+        public string Assessor1UserId { get; set; }
+        public string Assessor1ReviewStatus { get; set; }
+        public string Assessor2UserId { get; set; }
+        public string Assessor2ReviewStatus { get; set; }
     }
 
     public class ApplyData
@@ -127,8 +132,10 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Draft = "Draft";
         public const string New = "New";
         public const string InProgress = "In Progress";
-        public const string Approved = "Approved";
-        public const string Declined = "Declined";
+        public const string ClarificationSent = "Clarification sent";
+        public const string Resubmitted = "Re-submitted";
+        public const string Fail = "Fail";
+        public const string Pass = "Pass";
     }
 
     public static class AssessorReviewStatus
@@ -148,9 +155,11 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string New = "New";
         public const string InProgress = "In Progress";
 
-        public const string Approved = "Approved";
-        public const string Declined = "Declined";
-        public const string Clarification = "Clarification";
+        public const string ClarificationSent = "Clarification Sent";
+        public const string Resubmitted = "Resubmitted";
+
+        public const string Pass = "Pass";
+        public const string Fail = "Fail";
         public const string Exempt = "Exempt";
     }
 
@@ -159,5 +168,12 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string New = "";
         public const string InProgress = "In Progress";
         public const string Evaluated = "Evaluated";
+    }
+
+    public static class OversightReviewStatus
+    {
+        public const string New = "New";
+        public const string Successful = "Successful";
+        public const string Unsuccessful = "Unsuccessful";
     }
 }

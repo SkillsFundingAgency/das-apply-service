@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
+        <ProjectGuid>{EAD0B0D6-40F4-4560-BA63-A9E7427E3CCF}</ProjectGuid>
         <TargetFramework>netcoreapp2.2</TargetFramework>
         <OutputType>Library</OutputType>
     </PropertyGroup>
@@ -28,6 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\SFA.DAS.ApplyService.Application.UnitTests\SFA.DAS.ApplyService.Application.UnitTests.csproj" />
       <ProjectReference Include="..\SFA.DAS.ApplyService.Application\SFA.DAS.ApplyService.Application.csproj" />
       <ProjectReference Include="..\SFA.DAS.ApplyService.Domain\SFA.DAS.ApplyService.Domain.csproj" />
       <ProjectReference Include="..\SFA.DAS.ApplyService.Web\SFA.DAS.ApplyService.Web.csproj" />

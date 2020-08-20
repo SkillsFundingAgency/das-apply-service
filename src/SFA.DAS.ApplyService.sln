@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.136
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30002.166
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.ApplyService.Web", "SFA.DAS.ApplyService.Web\SFA.DAS.ApplyService.Web.csproj", "{BC878D49-EE14-408B-B507-0307B961CEF0}"
 EndProject
@@ -42,6 +42,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.ApplyService.Web.UnitTests", "SFA.DAS.ApplyService.Web.UnitTests\SFA.DAS.ApplyService.Web.UnitTests.csproj", "{EAD0B0D6-40F4-4560-BA63-A9E7427E3CCF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SFA.DAS.ApplyService.Web.IntegrationTests", "SFA.DAS.ApplyService.Web.IntegrationTests\SFA.DAS.ApplyService.Web.IntegrationTests.csproj", "{1F7E8D8A-E6AE-40EB-AB77-52176FD6FFC4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SFA.DAS.ApplyService.Infrastructure", "SFA.DAS.ApplyService.Infrastructure\SFA.DAS.ApplyService.Infrastructure.csproj", "{7FFA630A-F08B-458D-8483-D6681DEC46D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -118,6 +120,10 @@ Global
 		{1F7E8D8A-E6AE-40EB-AB77-52176FD6FFC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F7E8D8A-E6AE-40EB-AB77-52176FD6FFC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F7E8D8A-E6AE-40EB-AB77-52176FD6FFC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FFA630A-F08B-458D-8483-D6681DEC46D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FFA630A-F08B-458D-8483-D6681DEC46D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FFA630A-F08B-458D-8483-D6681DEC46D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FFA630A-F08B-458D-8483-D6681DEC46D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

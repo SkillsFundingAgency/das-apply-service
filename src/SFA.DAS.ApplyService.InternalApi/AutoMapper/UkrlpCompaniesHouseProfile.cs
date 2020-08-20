@@ -14,7 +14,7 @@ namespace SFA.DAS.ApplyService.InternalApi.AutoMapper
                 .ForMember(dest => dest.IncorporationDate, opt => opt.MapFrom(source => source.IncorporatedOn))
                 .ForMember(dest => dest.Directors,
                     opt => opt.MapFrom(source => source.Officers.Where(x => x.Role.ToLower() == "director")))
-                .ForMember(dest => dest.PersonsSignificationControl,
+                .ForMember(dest => dest.PersonsWithSignificantControl,
                     opt => opt.MapFrom(source => source.PeopleWithSignificantControl))
                 .ForMember(dest => dest.CompanyTypeDescriptions, opt => opt.Ignore())
                 .ForMember(dest => dest.ManualEntryRequired, opt => opt.Ignore());
