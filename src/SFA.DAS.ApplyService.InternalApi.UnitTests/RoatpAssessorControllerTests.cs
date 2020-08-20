@@ -41,7 +41,6 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private Mock<IGetAssessorPageService> _getAssessorPageService;
         private Mock<ISectorDetailsOrchestratorService> _sectorDetailsOrchestratorService;
         private RoatpAssessorController _controller;
-        private List<AssessorPageReviewOutcome> _sectionStatuses;
 
 
         [SetUp]
@@ -53,7 +52,6 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _lookupService = new Mock<IAssessorLookupService>();
             _sectorDetailsOrchestratorService = new Mock<ISectorDetailsOrchestratorService>();
             _getAssessorPageService = new Mock<IGetAssessorPageService>();
-            _sectionStatuses = new List<AssessorPageReviewOutcome>();
             _controller = new RoatpAssessorController(_logger.Object, _mediator.Object, _qnaApiClient.Object, _lookupService.Object, _getAssessorPageService.Object, _sectorDetailsOrchestratorService.Object);
         }
 
@@ -298,11 +296,12 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         [Test]
         public async Task GetSectors_for_application()
         {
-
             var sector1PageId = "Sector1PageId";
             var sector2PageId = "Sector2PageId";
             var sector1Title = "Sector 1 Title";
             var sector2Title = "Sector 2 Title";
+            var sector1Status = "Pass";
+            var sector2Status = "Fail";
 
             var pageSector1Page1 = new Page
             {
@@ -385,20 +384,18 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
                 RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees)).ReturnsAsync(section);
 
-            _sectionStatuses = new List<AssessorPageReviewOutcome>();
-            var page1Status = "Pass";
-            var page2Status = "Fail";
+            var _sectionStatuses = new List<AssessorPageReviewOutcome>();
             _sectionStatuses.Add(new AssessorPageReviewOutcome
             {
                 ApplicationId = _applicationId,
                 PageId = sector1PageId,
-                Status = page1Status
+                Status = sector1Status
             });
             _sectionStatuses.Add(new AssessorPageReviewOutcome
             {
                 ApplicationId = _applicationId,
                 PageId = sector2PageId,
-                Status = page2Status
+                Status = sector2Status
             });
 
             var request = new RoatpAssessorController.GetSectorsRequest { UserId = _userId };
@@ -410,8 +407,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             var expectedListOfSectors = new List<AssessorSector>
             {
-                new AssessorSector {PageId = sector1PageId, Title = sector1Title, Status = page1Status},
-                new AssessorSector {PageId = sector2PageId, Title = sector2Title, Status = page2Status}
+                new AssessorSector {PageId = sector1PageId, Title = sector1Title, Status = sector1Status},
+                new AssessorSector {PageId = sector2PageId, Title = sector2Title, Status = sector2Status}
             };
 
             Assert.AreEqual(JsonConvert.SerializeObject(expectedListOfSectors), JsonConvert.SerializeObject(listOfSectors));
