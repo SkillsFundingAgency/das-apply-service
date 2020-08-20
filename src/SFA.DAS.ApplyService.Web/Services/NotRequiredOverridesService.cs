@@ -63,27 +63,30 @@ namespace SFA.DAS.ApplyService.Web.Services
             var applicationData = _qnaApiClient.GetApplicationData(applicationId).GetAwaiter().GetResult() as JObject;
 
 
-            if (applicationData == null) return configuration;
-
-            var applicationNotRequiredOverrides = _applicationApiClient.GetNotRequiredOverrides(applicationId).Result;
-
-            if (applicationNotRequiredOverrides == null)
+            if (applicationData != null)
             {
-                configuration = new List<NotRequiredOverrideConfiguration>(_configuration);
+                var applicationNotRequiredOverrides =
+                    _applicationApiClient.GetNotRequiredOverrides(applicationId).Result;
 
-            }
-            else
-            {
-                var appDataNotRequiredOverrides = applicationNotRequiredOverrides.NotRequiredOverrides.ToList();
-                configuration = Mapper.Map<List<NotRequiredOverrideConfiguration>>(appDataNotRequiredOverrides);
-            }
-
-            foreach (var overrideConfig in configuration)
-            {
-                foreach (var condition in overrideConfig.Conditions)
+                if (applicationNotRequiredOverrides == null)
                 {
-                    var applicationDataValue = applicationData[condition.ConditionalCheckField];
-                    condition.Value = applicationDataValue != null ? applicationDataValue.Value<string>() : string.Empty;
+                    configuration = new List<NotRequiredOverrideConfiguration>(_configuration);
+                }
+                else
+                {
+                    var appDataNotRequiredOverrides = applicationNotRequiredOverrides.NotRequiredOverrides.ToList();
+                    configuration = Mapper.Map<List<NotRequiredOverrideConfiguration>>(appDataNotRequiredOverrides);
+                }
+
+                foreach (var overrideConfig in configuration)
+                {
+                    foreach (var condition in overrideConfig.Conditions)
+                    {
+                        var applicationDataValue = applicationData[condition.ConditionalCheckField];
+                        condition.Value = applicationDataValue != null
+                            ? applicationDataValue.Value<string>()
+                            : string.Empty;
+                    }
                 }
             }
 

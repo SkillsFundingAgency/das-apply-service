@@ -14,6 +14,7 @@ using AutoMapper;
 using SFA.DAS.ApplyService.Web.AutoMapper;
 using NotRequiredOverrideConfiguration = SFA.DAS.ApplyService.Web.Configuration.NotRequiredOverrideConfiguration;
 using NotRequiredCondition = SFA.DAS.ApplyService.Web.Configuration.NotRequiredCondition;
+using System.Linq.Expressions;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests
 {
@@ -135,6 +136,65 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             overrides[0].Conditions[0].Value.Should().Be("Test");
             overrides[0].AllConditionsMet.Should().BeTrue();
         }
+
+        [Test]
+        public void Not_required_overrides_populated_with_answers_from_applicationData()
+        {
+            Application.Apply.Roatp.NotRequiredOverrideConfiguration applyDataConfig = new Application.Apply.Roatp.NotRequiredOverrideConfiguration
+            {
+                NotRequiredOverrides = new List<NotRequiredOverride>{ 
+                    new NotRequiredOverride { 
+                        SectionId = 1,
+                        SequenceId = 2,
+                        Conditions = new List<Application.Apply.Roatp.NotRequiredCondition>
+                        {
+                             new Application.Apply.Roatp.NotRequiredCondition
+                            {
+                                ConditionalCheckField = "Field2",
+                                MustEqual = "Test2"
+                            }
+                        }
+                }
+                }
+            };
+            _applicationApiClient.Setup(x => x.GetNotRequiredOverrides(_applicationId)).ReturnsAsync(applyDataConfig);
+
+            var configuration = new List<NotRequiredOverrideConfiguration>
+            {
+                new NotRequiredOverrideConfiguration
+                {
+                    Conditions = new List<NotRequiredCondition>
+                    {
+                        new NotRequiredCondition
+                        {
+                            ConditionalCheckField = "Field2",
+                            MustEqual = "Test2"
+                        }
+                    },
+                    SectionId = 1,
+                    SequenceId = 2
+                }
+            };
+
+
+            _notRequiredOverrideConfiguration.Setup(x => x.Value).Returns(configuration);
+
+            var applicationData = new JObject
+            {
+                ["Field1"] = "Test"
+            };
+            _qnaApiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(applicationData);
+
+            _sessionService.Setup(x => x.Get<List<NotRequiredOverrideConfiguration>>(_sessionKey)).ReturnsInOrder(null, configuration);
+            _sessionService.Setup(x => x.Set(_sessionKey, configuration));
+
+            _notRequiredOverridesService = new NotRequiredOverridesService(_notRequiredOverrideConfiguration.Object, _applicationApiClient.Object, _qnaApiClient.Object, _sessionService.Object);
+            var overrides = _notRequiredOverridesService.GetNotRequiredOverrides(_applicationId);
+
+            overrides[0].Conditions[0].MustEqual.Should().Be("Test2");
+            _applicationApiClient.Verify(x => x.UpdateNotRequiredOverrides(_applicationId, It.IsAny<Application.Apply.Roatp.NotRequiredOverrideConfiguration>()), Times.Once);
+        }
+
 
         [Test]
         public void Not_required_overrides_retrieved_from_session_cache_if_already_looked_up_previously()
