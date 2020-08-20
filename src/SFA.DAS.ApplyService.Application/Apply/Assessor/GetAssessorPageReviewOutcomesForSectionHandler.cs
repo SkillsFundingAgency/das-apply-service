@@ -22,12 +22,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
         {
             _logger.LogInformation($"GetAssessorPageReviewOutcomesForSection for ApplicationId '{request.ApplicationId}' - " +
                                                     $"SequenceNumber '{request.SequenceNumber}' - SectionNumber '{request.SectionNumber}' - " +
-                                                    $"AssessorType '{request.AssessorType}' - UserId '{request.UserId}'");
+                                                    $"UserId '{request.UserId}'");
 
             var assessorPageReviewOutcomes = await _repository.GetAssessorPageReviewOutcomesForSection(request.ApplicationId,
                                                         request.SequenceNumber,
                                                         request.SectionNumber,
-                                                        request.AssessorType,
                                                         request.UserId);
 
             return assessorPageReviewOutcomes;

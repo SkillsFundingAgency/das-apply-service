@@ -20,12 +20,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 
         public async Task<List<AssessorPageReviewOutcome>> Handle(GetAllAssessorPageReviewOutcomesRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"GetAllAssessorPageReviewOutcomes for ApplicationId '{request.ApplicationId}' - " +
-                                                    $"AssessorType '{request.AssessorType}' - UserId '{request.UserId}'");
+            _logger.LogInformation($"GetAllAssessorPageReviewOutcomes for ApplicationId '{request.ApplicationId}' - UserId '{request.UserId}'");
 
-            var assessorPageReviewOutcomes = await _repository.GetAllAssessorPageReviewOutcomes(request.ApplicationId,
-                                                                                        request.AssessorType,
-                                                                                        request.UserId);
+            var assessorPageReviewOutcomes = await _repository.GetAllAssessorPageReviewOutcomes(request.ApplicationId, request.UserId);
 
             return assessorPageReviewOutcomes;
         }

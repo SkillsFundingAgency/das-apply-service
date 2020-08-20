@@ -26,13 +26,12 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.UpdateAssessorRevi
         public async Task UpdateAssessorReviewStatus_is_stored()
         {
             var applicationId = Guid.NewGuid();
-            var assessorType = 1;
             var userId = "4fs7f-userId-7gfhh";
             var status = "Approved";
 
-            await _handler.Handle(new UpdateAssessorReviewStatusRequest(applicationId, assessorType, userId, status), new CancellationToken());
+            await _handler.Handle(new UpdateAssessorReviewStatusRequest(applicationId, userId, status), new CancellationToken());
 
-            _repository.Verify(x => x.UpdateAssessorReviewStatus(applicationId, assessorType, userId, status), Times.Once);
+            _repository.Verify(x => x.UpdateAssessorReviewStatus(applicationId, userId, status), Times.Once);
         }
     }
 }

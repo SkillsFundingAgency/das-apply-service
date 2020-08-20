@@ -31,9 +31,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAllAssessorPage
             var expectedSequenceNumber = 1;
             var expectedSectionNumber = 2;
             var expectedPageId = "30";
-            var expectedAssessorType = 2;
             var expectedUserId = "4fs7f-userId-7gfhh";
-
             var expectedStatus = "Fail";
             var expectedComment = "Very bad";
 
@@ -45,17 +43,15 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAllAssessorPage
                     SequenceNumber = expectedSequenceNumber,
                     SectionNumber = expectedSectionNumber,
                     PageId = expectedPageId,
-                    AssessorType = expectedAssessorType,
                     UserId = expectedUserId,
                     Status = expectedStatus,
                     Comment = expectedComment
                 }
             };
 
-            _repository.Setup(x => x.GetAllAssessorPageReviewOutcomes(expectedApplicationId, expectedAssessorType, expectedUserId)).ReturnsAsync(expectedResult);
+            _repository.Setup(x => x.GetAllAssessorPageReviewOutcomes(expectedApplicationId, expectedUserId)).ReturnsAsync(expectedResult);
 
-            var actualResult = await _handler.Handle(new GetAllAssessorPageReviewOutcomesRequest(expectedApplicationId, 
-                                                                                                    expectedAssessorType, expectedUserId), new CancellationToken());
+            var actualResult = await _handler.Handle(new GetAllAssessorPageReviewOutcomesRequest(expectedApplicationId, expectedUserId), new CancellationToken());
 
             Assert.AreSame(expectedResult, actualResult);
         }
