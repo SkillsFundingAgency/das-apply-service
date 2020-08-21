@@ -30,7 +30,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             _sessionService = sessionService;
         }
 
-         public void RefreshNotRequiredOverrides(Guid applicationId)
+        public void RefreshNotRequiredOverrides(Guid applicationId)
         {
             RemoveConfigurationFromCache(applicationId);
             var configuration = CalculateNotRequiredOverrides(applicationId);
@@ -41,7 +41,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             _applicationApiClient.UpdateNotRequiredOverrides(applicationId, applicationNotRequiredOverrides);
             SaveConfigurationToCache(applicationId, configuration);
         }
-         
+
         public List<NotRequiredOverrideConfiguration> GetNotRequiredOverrides(Guid applicationId)
         {
             var configuration = RetrieveConfigurationFromCache(applicationId);
@@ -50,7 +50,6 @@ namespace SFA.DAS.ApplyService.Web.Services
             {
                 RefreshNotRequiredOverrides(applicationId);
                 configuration = RetrieveConfigurationFromCache(applicationId);
-               
             }
 
             return configuration;
@@ -61,7 +60,6 @@ namespace SFA.DAS.ApplyService.Web.Services
             List<NotRequiredOverrideConfiguration> configuration = null;
 
             var applicationData = _qnaApiClient.GetApplicationData(applicationId).GetAwaiter().GetResult() as JObject;
-
 
             if (applicationData != null)
             {
@@ -83,17 +81,14 @@ namespace SFA.DAS.ApplyService.Web.Services
                     foreach (var condition in overrideConfig.Conditions)
                     {
                         var applicationDataValue = applicationData[condition.ConditionalCheckField];
-                        condition.Value = applicationDataValue != null
-                            ? applicationDataValue.Value<string>()
-                            : string.Empty;
+                        condition.Value = applicationDataValue != null ? applicationDataValue.Value<string>() : string.Empty;
                     }
                 }
             }
 
             return configuration;
         }
-        
-        
+
         #region cache function
         private static string GetSessionKey(Guid applicationId)
         {
