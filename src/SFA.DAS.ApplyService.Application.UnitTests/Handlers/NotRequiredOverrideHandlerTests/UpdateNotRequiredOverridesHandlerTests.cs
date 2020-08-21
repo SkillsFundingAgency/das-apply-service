@@ -7,6 +7,8 @@ using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.NotRequiredOverrideHandlerTests
 {
@@ -31,7 +33,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.NotRequiredOverrid
         }
         
         [Test]
-        public void Handler_returns_config_if_persisted()
+        public async Task Handler_returns_config_if_persisted()
         {
             var config = new NotRequiredOverrideConfiguration
             {
@@ -56,7 +58,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.NotRequiredOverrid
 
             _repository.Setup(x => x.SaveNotRequiredOverrides(_applicationId, config)).ReturnsAsync(true);
 
-            var result = _handler.Handle(new UpdateNotRequiredOverridesRequest(_applicationId, config), new System.Threading.CancellationToken()).GetAwaiter().GetResult();
+            var result = await _handler.Handle(new UpdateNotRequiredOverridesRequest(_applicationId, config), new CancellationToken());
 
             result.Should().BeTrue();
         }

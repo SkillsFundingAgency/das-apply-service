@@ -7,6 +7,8 @@ using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.NotRequiredOverrideHandlerTests
 {
@@ -31,18 +33,18 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.NotRequiredOverrid
         }
 
         [Test]
-        public void Handler_returns_null_if_config_not_persisted()
+        public async Task Handler_returns_null_if_config_not_persisted()
         {
             NotRequiredOverrideConfiguration nullConfig = null;
             _repository.Setup(x => x.GetNotRequiredOverrides(_applicationId)).ReturnsAsync(nullConfig);
 
-            var result = _handler.Handle(new GetNotRequiredOverridesRequest(_applicationId), new System.Threading.CancellationToken()).GetAwaiter().GetResult();
+            var result = await _handler.Handle(new GetNotRequiredOverridesRequest(_applicationId), new CancellationToken());
 
             result.Should().BeNull();
         }
 
         [Test]
-        public void Handler_returns_config_if_persisted()
+        public async Task Handler_returns_config_if_persisted()
         {
             var config = new NotRequiredOverrideConfiguration
             {
@@ -67,7 +69,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.NotRequiredOverrid
 
             _repository.Setup(x => x.GetNotRequiredOverrides(_applicationId)).ReturnsAsync(config);
 
-            var result = _handler.Handle(new GetNotRequiredOverridesRequest(_applicationId), new System.Threading.CancellationToken()).GetAwaiter().GetResult();
+            var result = await _handler.Handle(new GetNotRequiredOverridesRequest(_applicationId), new CancellationToken());
 
             result.Should().NotBeNull();
             result.NotRequiredOverrides.Count().Should().Be(1);
