@@ -202,9 +202,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return moderatorReviewOutcomes;
         }
 
-        // TODO: Copy tests from AssessorController to ModerationController
-
-
 
         public class GetPageReviewOutcomeRequest
         {
