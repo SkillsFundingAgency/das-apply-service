@@ -24,6 +24,7 @@ using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -224,6 +225,19 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
 
             var result = _controller.Applications().GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("EnterApplicationUkprn");
+            redirectResult.ControllerName.Should().Be("RoatpApplicationPreamble");
+        }
+
+        [Test]
+        public async Task Applications_shows_enter_ukprn_page_if_no_active_applications()
+        {
+            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(new List<Apply>());
+
+            var result = await _controller.Applications();
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
