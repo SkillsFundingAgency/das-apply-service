@@ -22,7 +22,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
         {
             _logger.LogInformation($"GetModeratorAssessorPageReviewOutcomes for ApplicationId '{request.ApplicationId}' - UserId '{request.UserId}'");
 
-            var moderatorPageReviewOutcomes = await _repository.GetAllModeratorPageReviewOutcomes(request.ApplicationId, request.UserId);
+            var moderatorPageReviewOutcomes = await _repository.GetAllModeratorPageReviewOutcomes(request.ApplicationId);
 
             return moderatorPageReviewOutcomes;
         }

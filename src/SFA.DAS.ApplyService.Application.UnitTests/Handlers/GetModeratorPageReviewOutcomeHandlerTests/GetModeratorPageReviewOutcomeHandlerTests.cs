@@ -47,7 +47,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetModeratorPageRe
             };
 
             _repository.Setup(x => x.GetModeratorPageReviewOutcome(expectedApplicationId, expectedSequenceNumber, expectedSectionNumber, 
-                                                          expectedPageId, expectedUserId)).ReturnsAsync(expectedResult);
+                                                          expectedPageId)).ReturnsAsync(expectedResult);
 
             var actualResult = await _handler.Handle(new GetModeratorPageReviewOutcomeRequest(expectedApplicationId, expectedSequenceNumber, expectedSectionNumber,
                                                           expectedPageId, expectedUserId), new CancellationToken());

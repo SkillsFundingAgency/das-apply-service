@@ -26,8 +26,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
 
             var moderatorPageReviewOutcomes = await _repository.GetModeratorPageReviewOutcomesForSection(request.ApplicationId,
                                                         request.SequenceNumber,
-                                                        request.SectionNumber,
-                                                        request.UserId);
+                                                        request.SectionNumber);
 
             return moderatorPageReviewOutcomes;
         }

@@ -50,8 +50,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetModeratorPageRe
                 } 
             };
 
-            _repository.Setup(x => x.GetModeratorPageReviewOutcomesForSection(expectedApplicationId, expectedSequenceNumber, expectedSectionNumber,
-                                                          expectedUserId)).ReturnsAsync(expectedResult);
+            _repository.Setup(x => x.GetModeratorPageReviewOutcomesForSection(expectedApplicationId, expectedSequenceNumber, expectedSectionNumber)).ReturnsAsync(expectedResult);
 
             var actualResult = await _handler.Handle(new GetModeratorPageReviewOutcomesForSectionRequest(expectedApplicationId, expectedSequenceNumber, expectedSectionNumber,
                                                           expectedUserId), new CancellationToken());

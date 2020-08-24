@@ -493,8 +493,7 @@ namespace SFA.DAS.ApplyService.Data
         public async Task<ModeratorPageReviewOutcome> GetModeratorPageReviewOutcome(Guid applicationId,
                                                             int sequenceNumber,
                                                             int sectionNumber,
-                                                            string pageId,
-                                                            string userId)
+                                                            string pageId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
@@ -510,9 +509,8 @@ namespace SFA.DAS.ApplyService.Data
 		                                                            WHERE [ApplicationId] = @applicationId AND
 				                                                        [SequenceNumber] = @sequenceNumber AND
 				                                                        [SectionNumber] = @sectionNumber AND
-				                                                        [PageId] = @pageId AND
-				                                                        [ModeratorUserId] = @userId",
-                    new { applicationId, sequenceNumber, sectionNumber, pageId, userId });
+				                                                        [PageId] = @pageId",
+                    new { applicationId, sequenceNumber, sectionNumber, pageId });
 
                 return pageReviewOutcomeResults.FirstOrDefault();
             }
@@ -520,8 +518,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<List<ModeratorPageReviewOutcome>> GetModeratorPageReviewOutcomesForSection(Guid applicationId,
                                                             int sequenceNumber,
-                                                            int sectionNumber,
-                                                            string userId)
+                                                            int sectionNumber)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
@@ -536,15 +533,14 @@ namespace SFA.DAS.ApplyService.Data
 		                                                            FROM [dbo].[ModeratorPageReviewOutcome]
 		                                                            WHERE [ApplicationId] = @applicationId AND
 				                                                        [SequenceNumber] = @sequenceNumber AND
-				                                                        [SectionNumber] = @sectionNumber AND
-				                                                        [ModeratorUserId] = @userId",
-                    new { applicationId, sequenceNumber, sectionNumber,  userId });
+				                                                        [SectionNumber] = @sectionNumber",
+                    new { applicationId, sequenceNumber, sectionNumber });
 
                 return pageReviewOutcomeResults.ToList();
             }
         }
 
-        public async Task<List<ModeratorPageReviewOutcome>> GetAllModeratorPageReviewOutcomes(Guid applicationId, string userId)
+        public async Task<List<ModeratorPageReviewOutcome>> GetAllModeratorPageReviewOutcomes(Guid applicationId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
@@ -557,9 +553,8 @@ namespace SFA.DAS.ApplyService.Data
 			                                                            ,[ModeratorReviewStatus] AS [Status]
 			                                                            ,[ModeratorReviewComment] AS Comment
 		                                                            FROM [dbo].[ModeratorPageReviewOutcome]
-		                                                            WHERE [ApplicationId] = @applicationId AND
-				                                                        [ModeratorUserId] = @userId",
-                    new { applicationId, userId });
+		                                                            WHERE [ApplicationId] = @applicationId",
+                    new { applicationId });
 
                 return pageReviewOutcomeResults.ToList();
             }
