@@ -910,7 +910,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 CompaniesHouseDataConfirmed = false,
                 CompaniesHouseManualEntry = true,
                 CharityCommissionDataConfirmed = false,
-                WhosInControlConfirmed = false
+                WhosInControlConfirmed = true
             };
 
             var applicationSequences = GenerateSectionsCompletedUpToWhosInControl();
@@ -919,6 +919,50 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                                    applicationSequences, organisationVerificationStatus);
 
             status.Should().Be(TaskListSectionStatus.Completed);
+        }
+
+        [Test]
+        public void Whos_in_control_section_status_shows_as_next_if_companies_house_verified_and_not_confirmed_and_who_is_in_control_is_false()
+        {
+            var organisationVerificationStatus = new OrganisationVerificationStatus
+            {
+                VerifiedCompaniesHouse = true,
+                VerifiedCharityCommission = false,
+                CompaniesHouseDataConfirmed = false,
+                CompaniesHouseManualEntry = true,
+                CharityCommissionDataConfirmed = false,
+                WhosInControlConfirmed = false
+            };
+
+            var applicationSequences = GenerateSectionsCompletedUpToWhosInControl();
+
+            var status = _service.SectionStatus(Guid.NewGuid(), RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
+                applicationSequences, organisationVerificationStatus);
+
+            status.Should().Be(TaskListSectionStatus.Next);
+        }
+
+
+        [Test]
+        public void Whos_in_control_section_status_shows_as_next_if_charity_commission_verified_and_not_confirmed_and_who_is_in_control_is_false()
+        {
+            var organisationVerificationStatus = new OrganisationVerificationStatus
+            {
+                VerifiedCompaniesHouse = true,
+                VerifiedCharityCommission = false,
+                CompaniesHouseDataConfirmed = false,
+                CompaniesHouseManualEntry = false,
+                CharityCommissionManualEntry = true,
+                CharityCommissionDataConfirmed = false,
+                WhosInControlConfirmed = false
+            };
+
+            var applicationSequences = GenerateSectionsCompletedUpToWhosInControl();
+
+            var status = _service.SectionStatus(Guid.NewGuid(), RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.WhosInControl,
+                applicationSequences, organisationVerificationStatus);
+
+            status.Should().Be(TaskListSectionStatus.Next);
         }
 
         [Test]
@@ -932,7 +976,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 CompaniesHouseManualEntry = true,
                 CharityCommissionDataConfirmed = false,
                 CharityCommissionManualEntry = true,
-                WhosInControlConfirmed = false
+                WhosInControlConfirmed = true
             };
 
             var applicationSequences = GenerateSectionsCompletedUpToWhosInControl();

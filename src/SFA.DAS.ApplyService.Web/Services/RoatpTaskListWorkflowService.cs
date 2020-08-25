@@ -304,17 +304,14 @@ namespace SFA.DAS.ApplyService.Web.Services
                 }
 
 
-                if (organisationVerificationStatus.CompaniesHouseManualEntry &&
-                    !organisationVerificationStatus.WhosInControlConfirmed)
+                if ((organisationVerificationStatus.CompaniesHouseManualEntry || organisationVerificationStatus.CharityCommissionManualEntry) 
+                    && !organisationVerificationStatus.CharityCommissionDataConfirmed
+                    && !organisationVerificationStatus.CompaniesHouseDataConfirmed
+                    && !organisationVerificationStatus.WhosInControlConfirmed)
                     return TaskListSectionStatus.Next;
 
-                if (organisationVerificationStatus.CharityCommissionManualEntry &&
-                    !organisationVerificationStatus.WhosInControlConfirmed)
-                    return TaskListSectionStatus.Next;
-
-
-            var companiesHouseVerified = organisationVerificationStatus.CompaniesHouseDataConfirmed 
-                                         || organisationVerificationStatus.CompaniesHouseManualEntry;
+                var companiesHouseVerified = organisationVerificationStatus.CompaniesHouseDataConfirmed 
+                                             || organisationVerificationStatus.CompaniesHouseManualEntry;
                 var charityCommissionVerified = organisationVerificationStatus.CharityCommissionDataConfirmed 
                                               || organisationVerificationStatus.CharityCommissionManualEntry;
 
