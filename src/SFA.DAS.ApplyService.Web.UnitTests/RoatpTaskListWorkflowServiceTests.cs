@@ -948,8 +948,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         {
             var organisationVerificationStatus = new OrganisationVerificationStatus
             {
-                VerifiedCompaniesHouse = true,
-                VerifiedCharityCommission = false,
+                VerifiedCompaniesHouse = false,
+                VerifiedCharityCommission = true,
                 CompaniesHouseDataConfirmed = false,
                 CompaniesHouseManualEntry = false,
                 CharityCommissionManualEntry = true,
