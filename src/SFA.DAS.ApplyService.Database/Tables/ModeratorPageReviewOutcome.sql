@@ -7,6 +7,7 @@
 	[ModeratorUserId] NVARCHAR(256) NULL,     
 	[ModeratorReviewStatus] NVARCHAR(20) NULL, 
     [ModeratorReviewComment] NVARCHAR(MAX) NULL,
+	[ExternalComment] NVARCHAR(MAX) NULL,
 	[CreatedAt] DATETIME2 NOT NULL, 
     [CreatedBy] NVARCHAR(256) NOT NULL, 
     [UpdatedAt] DATETIME2 NULL, 

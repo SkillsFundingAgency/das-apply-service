@@ -505,6 +505,7 @@ namespace SFA.DAS.ApplyService.Data
 			                                                            ,[ModeratorUserId] AS UserId
 			                                                            ,[ModeratorReviewStatus] AS [Status]
 			                                                            ,[ModeratorReviewComment] AS Comment
+                                                                        ,[ExternalComment]
 		                                                            FROM [dbo].[ModeratorPageReviewOutcome]
 		                                                            WHERE [ApplicationId] = @applicationId AND
 				                                                        [SequenceNumber] = @sequenceNumber AND
@@ -530,6 +531,7 @@ namespace SFA.DAS.ApplyService.Data
 			                                                            ,[ModeratorUserId] AS UserId
 			                                                            ,[ModeratorReviewStatus] AS [Status]
 			                                                            ,[ModeratorReviewComment] AS Comment
+                                                                        ,[ExternalComment]
 		                                                            FROM [dbo].[ModeratorPageReviewOutcome]
 		                                                            WHERE [ApplicationId] = @applicationId AND
 				                                                        [SequenceNumber] = @sequenceNumber AND
@@ -552,6 +554,7 @@ namespace SFA.DAS.ApplyService.Data
 			                                                            ,[ModeratorUserId] AS UserId
 			                                                            ,[ModeratorReviewStatus] AS [Status]
 			                                                            ,[ModeratorReviewComment] AS Comment
+                                                                        ,[ExternalComment]
 		                                                            FROM [dbo].[ModeratorPageReviewOutcome]
 		                                                            WHERE [ApplicationId] = @applicationId",
                     new { applicationId });
