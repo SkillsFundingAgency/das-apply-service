@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using MediatR;
+﻿using MediatR;
 using SFA.DAS.ApplyService.Domain.Apply.Assessor;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
-    public class NewAssessorApplicationsRequest : IRequest<List<AssessorApplicationSummary>>
+    public class AssessorApplicationCountsRequest : IRequest<AssessorApplicationCounts>
     {
-        public NewAssessorApplicationsRequest(string userId)
+        public AssessorApplicationCountsRequest(string userId)
         {
             UserId = userId;
         }

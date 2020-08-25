@@ -5,7 +5,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Assessor;
-using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Apply.Assessor;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.NewAssessorApplicationsHandlerTests
 {
@@ -26,7 +26,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.NewAssessorApplica
         public async Task Get_new_applications_returns_new_applications_for_the_user()
         {
             var expectedUser = "sadjkffgdji";
-            var expectedResult = new List<RoatpAssessorApplicationSummary>();
+            var expectedResult = new List<AssessorApplicationSummary>();
             _repository.Setup(x => x.GetNewAssessorApplications(expectedUser)).ReturnsAsync(expectedResult);
 
             var actualResult = await _handler.Handle(new NewAssessorApplicationsRequest(expectedUser), new CancellationToken());

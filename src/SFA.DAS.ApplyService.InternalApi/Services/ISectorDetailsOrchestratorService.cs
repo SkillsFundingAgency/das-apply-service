@@ -6,7 +6,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
 {
     public interface ISectorDetailsOrchestratorService
     {
-        Task<SectorDetails> GetSectorDetails(Guid applicationId, string pageId);
+        Task<AssessorSectorDetails> GetSectorDetails(Guid applicationId, string pageId);
     }
 }
 

@@ -5,7 +5,7 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Assessor;
-using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Apply.Assessor;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.InProgressAssessorApplicationsHandlerTests
 {
@@ -26,7 +26,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.InProgressAssessor
         public async Task Get_in_progress_applications_returns_in_progress_applications_for_the_user()
         {
             var expectedUser = "sadjkffgdji";
-            var expectedResult = new List<RoatpAssessorApplicationSummary>();
+            var expectedResult = new List<AssessorApplicationSummary>();
             _repository.Setup(x => x.GetInProgressAssessorApplications(expectedUser)).ReturnsAsync(expectedResult);
 
             var actualResult = await _handler.Handle(new InProgressAssessorApplicationsRequest(expectedUser), new CancellationToken());
