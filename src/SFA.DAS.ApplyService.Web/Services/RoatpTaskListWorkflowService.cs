@@ -310,8 +310,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                     && !organisationVerificationStatus.WhosInControlConfirmed)
                     return TaskListSectionStatus.Next;
 
-                var companiesHouseVerified = organisationVerificationStatus.CompaniesHouseDataConfirmed 
-                                             || organisationVerificationStatus.CompaniesHouseManualEntry;
+                var companiesHouseVerified = organisationVerificationStatus.CompaniesHouseDataConfirmed || organisationVerificationStatus.CompaniesHouseManualEntry;
                 var charityCommissionVerified = organisationVerificationStatus.CharityCommissionDataConfirmed 
                                               || organisationVerificationStatus.CharityCommissionManualEntry;
 
