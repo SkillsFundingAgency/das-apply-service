@@ -23,14 +23,12 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
         {
             _logger.LogInformation($"SubmitAssessorPageOutcome for ApplicationId '{request.ApplicationId}' - " +
                                                     $"SequenceNumber '{request.SequenceNumber}' - SectionNumber '{request.SectionNumber}' - PageId '{request.PageId}' - " +
-                                                    $"AssessorType '{request.AssessorType}' - UserId '{request.UserId}' - " +
-                                                    $"Status '{request.Status}' - Comment '{request.Comment}'");
+                                                    $"UserId '{request.UserId}' - Status '{request.Status}' - Comment '{request.Comment}'");
 
             await _repository.SubmitAssessorPageOutcome(request.ApplicationId, 
                                                         request.SequenceNumber, 
                                                         request.SectionNumber, 
-                                                        request.PageId, 
-                                                        request.AssessorType, 
+                                                        request.PageId,  
                                                         request.UserId, 
                                                         request.Status, 
                                                         request.Comment);

@@ -47,6 +47,8 @@ namespace SFA.DAS.ApplyService.InternalApi
 
                 cfg.AddProfile<UkrlpCharityCommissionProfile>();
                 cfg.AddProfile<UkrlpCompaniesHouseProfile>();
+                cfg.AddProfile<UkrlpDirectorInformationProfile>();
+                cfg.AddProfile<UkrlpPersonSignificantControlInformationProfile>();
             });
 
             Mapper.AssertConfigurationIsValid();

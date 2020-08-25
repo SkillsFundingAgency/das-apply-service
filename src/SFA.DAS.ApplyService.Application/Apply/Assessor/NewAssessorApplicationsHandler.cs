@@ -2,11 +2,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Apply.Assessor;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
-    public class NewAssessorApplicationsHandler : IRequestHandler<NewAssessorApplicationsRequest, List<RoatpAssessorApplicationSummary>>
+    public class NewAssessorApplicationsHandler : IRequestHandler<NewAssessorApplicationsRequest, List<AssessorApplicationSummary>>
     {
         private readonly IAssessorRepository _repository;
 
@@ -15,7 +15,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
             _repository = repository;
         }
 
-        public async Task<List<RoatpAssessorApplicationSummary>> Handle(NewAssessorApplicationsRequest request, CancellationToken cancellationToken)
+        public async Task<List<AssessorApplicationSummary>> Handle(NewAssessorApplicationsRequest request, CancellationToken cancellationToken)
         {
             return await _repository.GetNewAssessorApplications(request.UserId);
         }
