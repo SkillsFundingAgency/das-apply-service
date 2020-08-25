@@ -20,9 +20,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             _extractAnswerValueService = extractAnswerValueService;
         }
 
-        public async Task<SectorDetails> GetSectorDetails(Guid applicationId, string pageId)
+        public async Task<AssessorSectorDetails> GetSectorDetails(Guid applicationId, string pageId)
         {
-            var sectorDetails = new SectorDetails();
+            var sectorDetails = new AssessorSectorDetails();
 
             sectorDetails.SectorName = _assessorLookupService.GetSectorNameForPage(pageId);
             var sectorPageIds = _assessorLookupService.GetSectorQuestionIdsForSectorPageId(pageId);
@@ -70,7 +70,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
         }
 
         private void HydrateSectorDetailsWithFullNameJobRoleTimeInRole(AssessorPage page1NameRoleExperience,
-         SectorDetails sectorDetails, SectorQuestionIds sectorPageIds)
+         AssessorSectorDetails sectorDetails, SectorQuestionIds sectorPageIds)
         {
             if (page1NameRoleExperience?.Answers == null || !page1NameRoleExperience.Answers.Any()) return;
             sectorDetails.FullName =
@@ -84,7 +84,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                     sectorPageIds.TimeInRole);
         }
 
-        private void HydrateSectorDetailsWithQualificationsAwardingBodiesAndTradeMemberships(SectorDetails sectorDetails,
+        private void HydrateSectorDetailsWithQualificationsAwardingBodiesAndTradeMemberships(AssessorSectorDetails sectorDetails,
           AssessorPage page2ExperienceQualificationsMemberships, SectorQuestionIds sectorPageIds)
         {
             if (page2ExperienceQualificationsMemberships?.Answers == null || !page2ExperienceQualificationsMemberships.Answers.Any()) return;
@@ -125,7 +125,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
                     sectorPageIds.TradeMemberships);
         }
 
-        private void HydrateSectorDetailsWhatTypeOfTrainingDelivered(SectorDetails sectorDetails,
+        private void HydrateSectorDetailsWhatTypeOfTrainingDelivered(AssessorSectorDetails sectorDetails,
             AssessorPage page3TypeOfTraining, SectorQuestionIds sectorPageIds)
         {
             if (page3TypeOfTraining?.Answers == null || !page3TypeOfTraining.Answers.Any()) return;
@@ -134,7 +134,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
         }
 
         private void HydrateSectorDetailsWithHowTrainingIsDeliveredDetails(AssessorPage page4HowDeliveredAndDuration,
-            SectorQuestionIds sectorPageIds, SectorDetails sectorDetails)
+            SectorQuestionIds sectorPageIds, AssessorSectorDetails sectorDetails)
         {
             if (page4HowDeliveredAndDuration?.Answers == null || !page4HowDeliveredAndDuration.Answers.Any()) return;
             var howHaveTheyDelivered =

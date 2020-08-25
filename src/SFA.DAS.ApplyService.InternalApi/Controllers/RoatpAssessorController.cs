@@ -6,13 +6,11 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Apply.Assessor;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
-using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.InternalApi.Services;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Domain.Apply.Assessor;
@@ -34,13 +32,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         private readonly ILogger<RoatpAssessorController> _logger;
         private readonly IMediator _mediator;
         private readonly IInternalQnaApiClient _qnaApiClient;
-        private readonly IAssessorRepository _assessorRepository;
         private readonly IAssessorLookupService _assessorLookupService;
         private readonly IGetAssessorPageService _getAssessorPageService;
         private readonly ISectorDetailsOrchestratorService _sectorDetailsOrchestratorService;
 
         public RoatpAssessorController(ILogger<RoatpAssessorController> logger, IMediator mediator,
-            IInternalQnaApiClient qnaApiClient, IAssessorRepository assessorRepository, IAssessorLookupService assessorLookupService,
+            IInternalQnaApiClient qnaApiClient, IAssessorLookupService assessorLookupService,
             IGetAssessorPageService getAssessorPageService,
             ISectorDetailsOrchestratorService sectorDetailsOrchestratorService)
         {
@@ -50,79 +47,49 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             _assessorLookupService = assessorLookupService;
             _getAssessorPageService = getAssessorPageService;
             _sectorDetailsOrchestratorService = sectorDetailsOrchestratorService;
-            _assessorRepository = assessorRepository;
         }
 
         [HttpGet("Assessor/Applications/{userId}")]
-        public async Task<RoatpAssessorSummary> AssessorSummary(string userId)
+        public async Task<AssessorApplicationCounts> GetApplicationCounts(string userId)
         {
-            var summary = await _mediator.Send(new AssessorSummaryRequest(userId));
+            var summary = await _mediator.Send(new AssessorApplicationCountsRequest(userId));
 
             return summary;
         }
 
         [HttpGet("Assessor/Applications/{userId}/New")]
-        public async Task<List<RoatpAssessorApplicationSummary>> NewApplications(string userId)
+        public async Task<List<AssessorApplicationSummary>> NewApplications(string userId)
         {
             var applications = await _mediator.Send(new NewAssessorApplicationsRequest(userId));
 
             return applications;
         }
 
-        [HttpGet("Assessor/Applications/ChosenSectors/{applicationId}/user/{userId}")]
-        public async Task<List<Sector>> GetChosenSectors(Guid applicationId, string userId)
-        {
-            var qnaSection = await _qnaApiClient.GetSectionBySectionNo(
-                applicationId,
-                RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
-                RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees);
-
-            var sectionStartingPages = qnaSection?.QnAData?.Pages.Where(x =>
-                x.DisplayType == SectionDisplayType.PagesWithSections
-                && x.PageId != RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ChooseYourOrganisationsSectors
-                && x.Active
-                && x.Complete
-                && !x.NotRequired);
-
-            var sectors = sectionStartingPages?.Select(page => new Sector { Title = page.LinkTitle, PageId = page.PageId })
-                .ToList();
-
-            if (sectors == null || !sectors.Any() || userId == null) return new List<Sector>();
-
-            var assessorType = await _assessorRepository.GetAssessorType(applicationId, userId);
-
-            var sectionStatuses = await _assessorRepository.GetAssessorReviewOutcomesPerSection(applicationId,
-                RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
-                RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees, (int)assessorType,
-                userId);
-
-            if (sectionStatuses == null || !sectionStatuses.Any()) return sectors;
-
-            foreach (var sector in sectors)
-            {
-                foreach (var sectorStatus in sectionStatuses.Where(sectorStatus => sector.PageId == sectorStatus.PageId))
-                {
-                    sector.Status = sectorStatus.Status;
-                }
-            }
-
-            return sectors;
-        }
-
-        [HttpPost("Assessor/Applications/{applicationId}/Assign")]
-        public async Task AssignApplication(Guid applicationId, [FromBody] AssignAssessorApplicationRequest request)
-        {
-            await _mediator.Send(new AssignAssessorRequest(applicationId, request.AssessorNumber,
-                request.AssessorUserId, request.AssessorName));
-        }
-
         [HttpGet("Assessor/Applications/{userId}/InProgress")]
-        public async Task<List<RoatpAssessorApplicationSummary>> InProgressApplications(string userId)
+        public async Task<List<AssessorApplicationSummary>> InProgressApplications(string userId)
         {
             var applications = await _mediator.Send(new InProgressAssessorApplicationsRequest(userId));
 
             return applications;
         }
+
+        [HttpGet("Assessor/Applications/{userId}/InModeration")]
+        public async Task<List<ModerationApplicationSummary>> InModerationApplications(string userId)
+        {
+            var applications = await _mediator.Send(new ApplicationsInModerationRequest(userId));
+
+            return applications;
+        }
+
+
+        [HttpPost("Assessor/Applications/{applicationId}/Assign")]
+        public async Task AssignApplication(Guid applicationId, [FromBody] AssignAssessorCommand request)
+        {
+            await _mediator.Send(new AssignAssessorRequest(applicationId, request.AssessorNumber,
+                request.AssessorUserId, request.AssessorName));
+        }
+
+
 
         [HttpGet("Assessor/Applications/{applicationId}/Overview")]
         public async Task<List<AssessorSequence>> GetAssessorOverview(Guid applicationId)
@@ -165,7 +132,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                         .Select(sec =>
                         {
                             return new AssessorSection
-                                {SectionNumber = sec.SectionId, LinkTitle = sec.Title, Status = string.Empty};
+                            { SectionNumber = sec.SectionId, LinkTitle = sec.Title, Status = string.Empty };
                         })
                         .OrderBy(sec => sec.SectionNumber).ToList()
                 };
@@ -226,9 +193,45 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return sections;
         }
 
+        [HttpPost("Assessor/Applications/{applicationId}/Sectors")]
+        public async Task<List<AssessorSector>> GetSectors(Guid applicationId, [FromBody] GetSectorsRequest request)
+        {
+            var qnaSection = await _qnaApiClient.GetSectionBySectionNo(
+                applicationId,
+                RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
+                RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees);
+
+            var sectionStartingPages = qnaSection?.QnAData?.Pages.Where(x =>
+                x.DisplayType == SectionDisplayType.PagesWithSections
+                && x.PageId != RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ChooseYourOrganisationsSectors
+                && x.Active
+                && x.Complete
+                && !x.NotRequired);
+
+            var sectors = sectionStartingPages?.Select(page => new AssessorSector { Title = page.LinkTitle, PageId = page.PageId })
+                .ToList();
+
+            if (sectors == null || !sectors.Any()) return new List<AssessorSector>();
+
+            var sectionStatusesRequest = new GetAssessorPageReviewOutcomesForSectionRequest(applicationId, RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining, RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees, request.UserId);
+
+            var sectionStatuses = await _mediator.Send(sectionStatusesRequest);
+
+            if (sectionStatuses == null || !sectionStatuses.Any()) return sectors;
+
+            foreach (var sector in sectors)
+            {
+                foreach (var sectorStatus in sectionStatuses.Where(sectorStatus => sector.PageId == sectorStatus.PageId))
+                {
+                    sector.Status = sectorStatus.Status;
+                }
+            }
+
+            return sectors;
+        }
 
         [HttpGet("Assessor/Applications/{applicationId}/SectorDetails/{pageId}")]
-        public async Task<SectorDetails> GetSectorDetails(Guid applicationId, string pageId)
+        public async Task<AssessorSectorDetails> GetSectorDetails(Guid applicationId, string pageId)
         {
             return await _sectorDetailsOrchestratorService.GetSectorDetails(applicationId, pageId);
         }
@@ -239,12 +242,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await GetAssessorPage(applicationId, sequenceNumber, sectionNumber, null);
         }
 
-        [HttpGet(
-            "Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}")]
+        [HttpGet("Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}")]
         public async Task<AssessorPage> GetAssessorPage(Guid applicationId, int sequenceNumber, int sectionNumber,
             string pageId)
         {
-
             if (_AssessorSequences.Contains(sequenceNumber))
             {
                 return await _getAssessorPageService.GetAssessorPage(applicationId, sequenceNumber, sectionNumber,
@@ -254,62 +255,97 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return null;
         }
 
-
-        [HttpGet(
-            "Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}/questions/{questionId}/download/{filename}")]
+        [HttpGet("Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}/questions/{questionId}/download/{filename}")]
         public async Task<FileStreamResult> DownloadFile(Guid applicationId, int sequenceNumber, int sectionNumber,
             string pageId, string questionId, string filename)
         {
-            return await _qnaApiClient.DownloadSpecifiedFile(applicationId, sequenceNumber, sectionNumber, pageId,
-                questionId, filename);
+            return await _qnaApiClient.DownloadSpecifiedFile(applicationId, sequenceNumber, sectionNumber, pageId, questionId, filename);
         }
 
-        [HttpPost("Assessor/SubmitPageOutcome")]
-        public async Task SubmitAssessorPageOutcome([FromBody] SubmitAssessorPageOutcomeRequest request)
+
+        [HttpPost("Assessor/Applications/{applicationId}/SubmitPageReviewOutcome")]
+        public async Task SubmitPageReviewOutcome(Guid applicationId, [FromBody] SubmitPageReviewOutcomeCommand request)
         {
-            await _mediator.Send(request);
+            await _mediator.Send(new SubmitAssessorPageOutcomeRequest(applicationId, request.SequenceNumber, request.SectionNumber, request.PageId, request.UserId, request.Status, request.Comment));
         }
 
-        [HttpPost("Assessor/GetPageReviewOutcome")]
-        public async Task<PageReviewOutcome> GetPageReviewOutcome([FromBody] GetPageReviewOutcomeRequest request)
+        [HttpPost("Assessor/Applications/{applicationId}/GetPageReviewOutcome")]
+        public async Task<AssessorPageReviewOutcome> GetPageReviewOutcome(Guid applicationId, [FromBody] GetPageReviewOutcomeRequest request)
         {
-            var pageReviewOutcome = await _mediator.Send(request);
+            var pageReviewOutcome = await _mediator.Send(new GetAssessorPageReviewOutcomeRequest(applicationId, request.SequenceNumber, request.SectionNumber, request.PageId, request.UserId));
 
             return pageReviewOutcome;
         }
 
-        [HttpPost("Assessor/GetAssessorReviewOutcomesPerSection")]
-        public async Task<List<PageReviewOutcome>> GetAssessorReviewOutcomesPerSection(
-            [FromBody] GetAssessorReviewOutcomesPerSectionRequest request)
+        [HttpPost("Assessor/Applications/{applicationId}/GetPageReviewOutcomesForSection")]
+        public async Task<List<AssessorPageReviewOutcome>> GetPageReviewOutcomesForSection(Guid applicationId, [FromBody] GetPageReviewOutcomesForSectionRequest request)
         {
-            var assessorReviewOutcomes = await _mediator.Send(request);
+            var assessorReviewOutcomes = await _mediator.Send(new GetAssessorPageReviewOutcomesForSectionRequest(applicationId, request.SequenceNumber, request.SectionNumber, request.UserId));
 
             return assessorReviewOutcomes;
         }
 
-        [HttpPost("Assessor/GetAllAssessorReviewOutcomes")]
-        public async Task<List<PageReviewOutcome>> GetAllAssessorReviewOutcomes(
-            [FromBody] GetAllAssessorReviewOutcomesRequest request)
+        [HttpPost("Assessor/Applications/{applicationId}/GetAllPageReviewOutcomes")]
+        public async Task<List<AssessorPageReviewOutcome>> GetAllPageReviewOutcomes(Guid applicationId, [FromBody] GetAllPageReviewOutcomesRequest request)
         {
-            var assessorReviewOutcomes = await _mediator.Send(request);
+            var assessorReviewOutcomes = await _mediator.Send(new GetAllAssessorPageReviewOutcomesRequest(applicationId, request.UserId));
 
             return assessorReviewOutcomes;
         }
 
-        [HttpPost("Assessor/UpdateAssessorReviewStatus")]
-        public async Task UpdateAssessorReviewStatus([FromBody] UpdateAssessorReviewStatusRequest request)
+        [HttpPost("Assessor/Applications/{applicationId}/UpdateAssessorReviewStatus")]
+        public async Task UpdateAssessorReviewStatus(Guid applicationId, [FromBody] UpdateAssessorReviewStatusCommand request)
         {
-            await _mediator.Send(request);
+            await _mediator.Send(new UpdateAssessorReviewStatusRequest(applicationId, request.UserId, request.Status));
         }
 
+
+        public class AssignAssessorCommand
+        {
+            public int AssessorNumber { get; set; }
+            public string AssessorUserId { get; set; }
+            public string AssessorName { get; set; }
+        }
+
+        public class SubmitPageReviewOutcomeCommand
+        {
+            public int SequenceNumber { get; set; }
+            public int SectionNumber { get; set; }
+            public string PageId { get; set; }
+            public string UserId { get; set; }
+            public string Status { get; set; }
+            public string Comment { get; set; }
+        }
+
+        public class GetPageReviewOutcomeRequest
+        {
+            public int SequenceNumber { get; set; }
+            public int SectionNumber { get; set; }
+            public string PageId { get; set; }
+            public string UserId { get; set; }
+        }
+
+        public class GetPageReviewOutcomesForSectionRequest
+        {
+            public int SequenceNumber { get; set; }
+            public int SectionNumber { get; set; }
+            public string UserId { get; set; }
+        }
+
+        public class GetAllPageReviewOutcomesRequest
+        {
+            public string UserId { get; set; }
+        }
+
+        public class UpdateAssessorReviewStatusCommand
+        {
+            public string UserId { get; set; }
+            public string Status { get; set; }
+        }
+
+        public class GetSectorsRequest
+        {
+            public string UserId { get; set; }
+        }
     }
-
-    public class AssignAssessorApplicationRequest
-    {
-        public int AssessorNumber { get; set; }
-        public string AssessorUserId { get; set; }
-        public string AssessorName { get; set; }
-    }
-
-
 }

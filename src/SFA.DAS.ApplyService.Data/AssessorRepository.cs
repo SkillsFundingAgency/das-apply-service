@@ -9,7 +9,8 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using SFA.DAS.ApplyService.InternalApi.Types;
+using SFA.DAS.ApplyService.Domain.Apply.Assessor;
+using SFA.DAS.ApplyService.Domain.Apply.Moderator;
 
 namespace SFA.DAS.ApplyService.Data
 {
@@ -55,18 +56,18 @@ namespace SFA.DAS.ApplyService.Data
             _config = configurationService.GetConfig().Result;
         }
 
-        public async Task<List<RoatpAssessorApplicationSummary>> GetNewAssessorApplications(string userId)
+        public async Task<List<AssessorApplicationSummary>> GetNewAssessorApplications(string userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection
-                    .QueryAsync<RoatpAssessorApplicationSummary>(
+                    .QueryAsync<AssessorApplicationSummary>(
                         $@"SELECT 
                             {ApplicationSummaryFields}
 	                       FROM Apply apply
 	                       INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                       WHERE {NewApplicationsWhereClause}
-                           ORDER BY JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn')",
+                           ORDER BY CONVERT(char(10), JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn')) ASC, org.Name ASC",
                         new
                         {
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
@@ -124,48 +125,24 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<RoatpAssessorApplicationSummary>> GetInProgressAssessorApplications(string userId)
+        public async Task<List<AssessorApplicationSummary>> GetInProgressAssessorApplications(string userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection
-                    .QueryAsync<RoatpAssessorApplicationSummary>(
+                    .QueryAsync<AssessorApplicationSummary>(
                         $@"SELECT 
                             {ApplicationSummaryFields}
 	                        FROM Apply apply
 	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                        WHERE {InProgressApplicationsWhereClause}
-                            ORDER BY JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn')",
+                            ORDER BY CONVERT(char(10), JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn')) ASC, org.Name ASC",
                         new
                         {
                             gatewayReviewStatusApproved = GatewayReviewStatus.Pass,
                             inProgressReviewStatus = AssessorReviewStatus.InProgress,
                             userId = userId
                         })).ToList();
-            }
-        }
-
-        public async Task<AssessorType> GetAssessorType(Guid applicationId, string userId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                var assessorTypeValue = await connection
-                    .ExecuteScalarAsync<int>(
-                        $@"select max(assessorType) assessorType from ( 
-                            SELECT 1 assessorType FROM [Apply] where Assessor1UserId = @userId
-                                union
-                            select 2
-                              FROM [Apply] where Assessor2UserId = @userId
-                                union 
-                            select 0
-                        ) as assessorTypeValues",
-                        new
-                        {
-                            inProgressReviewStatus = AssessorReviewStatus.InProgress,
-                            userId = userId
-                        });
-
-                return (AssessorType) assessorTypeValue;
             }
         }
 
@@ -187,19 +164,19 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<List<RoatpModerationApplicationSummary>> GetApplicationsInModeration()
+        public async Task<List<ModerationApplicationSummary>> GetApplicationsInModeration()
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 return (await connection
-                    .QueryAsync<RoatpModerationApplicationSummary>(
+                    .QueryAsync<ModerationApplicationSummary>(
                         $@"SELECT 
                             {ApplicationSummaryFields}
                             , ModerationStatus AS Status
 	                        FROM Apply apply
 	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                        WHERE apply.DeletedAt IS NULL AND (Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus) AND ISNULL(ModerationStatus, 'New')  <> @completedModerationStatus
-                            ORDER BY JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn')",
+                            ORDER BY CONVERT(char(10), JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn')) ASC, org.Name ASC",
                         new
                         {
                             approvedReviewStatus = AssessorReviewStatus.Approved,
@@ -225,20 +202,40 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        private async Task<int> GetAssessorNumber(Guid applicationId, string userId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return await connection.ExecuteScalarAsync<int>(
+                        $@"SELECT
+                                CASE WHEN (Assessor1UserId = @userId) THEN 1
+                                     WHEN (Assessor2UserId = @userId) THEN 2
+                                     ELSE 0
+                                END
+                           FROM [Apply]
+                           WHERE [ApplicationId] = @applicationId",
+                        new
+                        {
+                            userId = userId,
+                            applicationId = applicationId
+                        });
+            }
+        }
+
         public async Task SubmitAssessorPageOutcome(Guid applicationId,
                                                     int sequenceNumber,
                                                     int sectionNumber,
                                                     string pageId,
-                                                    int assessorType,
                                                     string userId,
                                                     string status,
                                                     string comment)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
+                var assessorNumber = await GetAssessorNumber(applicationId, userId);
 
                 await connection.ExecuteAsync(
-                    @"IF (@assessorType = 1)
+                    @"IF (@assessorNumber = 1)
                         BEGIN
                             IF NOT EXISTS (SELECT * FROM [AssessorPageReviewOutcome]
 							                        WHERE [ApplicationId] = @applicationId AND
@@ -279,7 +276,7 @@ namespace SFA.DAS.ApplyService.Data
 					                        [PageId] = @pageId
 		                        END                                                         
                         END
-                      IF (@assessorType = 2)
+                      IF (@assessorNumber = 2)
                         BEGIN
                              IF NOT EXISTS (SELECT * FROM [AssessorPageReviewOutcome]
 							                        WHERE [ApplicationId] = @applicationId AND
@@ -320,26 +317,28 @@ namespace SFA.DAS.ApplyService.Data
 					                        [PageId] = @pageId
 		                        END                   
                         END",
-                    new { applicationId, sequenceNumber, sectionNumber, pageId, assessorType, userId, status, comment });
+                    new { applicationId, sequenceNumber, sectionNumber, pageId, assessorNumber, userId, status, comment });
             }
         }
 
-        public async Task<PageReviewOutcome> GetPageReviewOutcome(Guid applicationId,
+        public async Task<AssessorPageReviewOutcome> GetAssessorPageReviewOutcome(Guid applicationId,
                                                                     int sequenceNumber,
                                                                     int sectionNumber,
                                                                     string pageId,
-                                                                    int assessorType,
                                                                     string userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                var pageReviewOutcomeResults = await connection.QueryAsync<PageReviewOutcome>(@"IF (@assessorType = 1)
+                var assessorNumber = await GetAssessorNumber(applicationId, userId);
+
+                var pageReviewOutcomeResults = await connection.QueryAsync<AssessorPageReviewOutcome>(
+                                                                @"IF (@assessorNumber = 1)
 	                                                                BEGIN
 		                                                                SELECT [ApplicationId]
 			                                                                  ,[SequenceNumber]
 			                                                                  ,[SectionNumber]
 			                                                                  ,[PageId]
-			                                                                  ,@assessorType AS AssessorType
+			                                                                  ,@assessorNumber AS AssessorNumber
 			                                                                  ,[Assessor1UserId] AS UserId
 			                                                                  ,[Assessor1ReviewStatus] AS [Status]
 			                                                                  ,[Assessor1ReviewComment] AS Comment
@@ -350,13 +349,13 @@ namespace SFA.DAS.ApplyService.Data
 				                                                                [PageId] = @pageId AND
 				                                                                [Assessor1UserId] = @userId                                                        
 	                                                                END
-                                                                IF (@assessorType = 2)
+                                                                IF (@assessorNumber = 2)
 	                                                                BEGIN
 		                                                                SELECT [ApplicationId]
 			                                                                  ,[SequenceNumber]
 			                                                                  ,[SectionNumber]
 			                                                                  ,[PageId]
-			                                                                  ,@assessorType AS AssessorType
+			                                                                  ,@assessorNumber AS AssessorNumber
 			                                                                  ,[Assessor2UserId] AS UserId
 			                                                                  ,[Assessor2ReviewStatus] AS [Status]
 			                                                                  ,[Assessor2ReviewComment] AS Comment
@@ -367,27 +366,29 @@ namespace SFA.DAS.ApplyService.Data
 				                                                                [PageId] = @pageId AND
 				                                                                [Assessor2UserId] = @userId                      
 	                                                                END",
-                    new { applicationId, sequenceNumber, sectionNumber, pageId, assessorType, userId });
+                    new { applicationId, sequenceNumber, sectionNumber, pageId, assessorNumber, userId });
 
                 return pageReviewOutcomeResults.FirstOrDefault();
             }
         }
 
-        public async Task<List<PageReviewOutcome>> GetAssessorReviewOutcomesPerSection(Guid applicationId,
+        public async Task<List<AssessorPageReviewOutcome>> GetAssessorPageReviewOutcomesForSection(Guid applicationId,
                                                             int sequenceNumber,
                                                             int sectionNumber,
-                                                            int assessorType,
                                                             string userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                var pageReviewOutcomeResults = await connection.QueryAsync<PageReviewOutcome>(@"IF (@assessorType = 1)
+                var assessorNumber = await GetAssessorNumber(applicationId, userId);
+
+                var pageReviewOutcomeResults = await connection.QueryAsync<AssessorPageReviewOutcome>(
+                                                                @"IF (@assessorNumber = 1)
 	                                                                BEGIN
 		                                                                SELECT [ApplicationId]
 			                                                                  ,[SequenceNumber]
 			                                                                  ,[SectionNumber]
 			                                                                  ,[PageId]
-			                                                                  ,@assessorType AS AssessorType
+			                                                                  ,@assessorNumber AS AssessorNumber
 			                                                                  ,[Assessor1UserId] AS UserId
 			                                                                  ,[Assessor1ReviewStatus] AS [Status]
 			                                                                  ,[Assessor1ReviewComment] AS Comment
@@ -397,13 +398,13 @@ namespace SFA.DAS.ApplyService.Data
 				                                                                [SectionNumber] = @sectionNumber AND
 				                                                                [Assessor1UserId] = @userId                                                        
 	                                                                END
-                                                                IF (@assessorType = 2)
+                                                                IF (@assessorNumber = 2)
 	                                                                BEGIN
 		                                                                SELECT [ApplicationId]
 			                                                                  ,[SequenceNumber]
 			                                                                  ,[SectionNumber]
 			                                                                  ,[PageId]
-			                                                                  ,@assessorType AS AssessorType
+			                                                                  ,@assessorNumber AS AssessorNumber
 			                                                                  ,[Assessor2UserId] AS UserId
 			                                                                  ,[Assessor2ReviewStatus] AS [Status]
 			                                                                  ,[Assessor2ReviewComment] AS Comment
@@ -413,25 +414,26 @@ namespace SFA.DAS.ApplyService.Data
 				                                                                [SectionNumber] = @sectionNumber AND
 				                                                                [Assessor2UserId] = @userId                      
 	                                                                END",
-                    new { applicationId, sequenceNumber, sectionNumber, assessorType, userId });
+                    new { applicationId, sequenceNumber, sectionNumber, assessorNumber, userId });
 
                 return pageReviewOutcomeResults.ToList();
             }
         }
 
-        public async Task<List<PageReviewOutcome>> GetAllAssessorReviewOutcomes(Guid applicationId,
-                                                    int assessorType,
-                                                    string userId)
+        public async Task<List<AssessorPageReviewOutcome>> GetAllAssessorPageReviewOutcomes(Guid applicationId, string userId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                var pageReviewOutcomeResults = await connection.QueryAsync<PageReviewOutcome>(@"IF (@assessorType = 1)
+                var assessorNumber = await GetAssessorNumber(applicationId, userId);
+
+                var pageReviewOutcomeResults = await connection.QueryAsync<AssessorPageReviewOutcome>(
+                                                                @"IF (@assessorNumber = 1)
 	                                                                BEGIN
 		                                                                SELECT [ApplicationId]
 			                                                                  ,[SequenceNumber]
 			                                                                  ,[SectionNumber]
 			                                                                  ,[PageId]
-			                                                                  ,@assessorType AS AssessorType
+			                                                                  ,@assessorNumber AS AssessorNumber
 			                                                                  ,[Assessor1UserId] AS UserId
 			                                                                  ,[Assessor1ReviewStatus] AS [Status]
 			                                                                  ,[Assessor1ReviewComment] AS Comment
@@ -439,13 +441,13 @@ namespace SFA.DAS.ApplyService.Data
 		                                                                  WHERE [ApplicationId] = @applicationId AND
 				                                                                [Assessor1UserId] = @userId                                                        
 	                                                                END
-                                                                IF (@assessorType = 2)
+                                                                IF (@assessorNumber = 2)
 	                                                                BEGIN
 		                                                                SELECT [ApplicationId]
 			                                                                  ,[SequenceNumber]
 			                                                                  ,[SectionNumber]
 			                                                                  ,[PageId]
-			                                                                  ,@assessorType AS AssessorType
+			                                                                  ,@assessorNumber AS AssessorNumber
 			                                                                  ,[Assessor2UserId] AS UserId
 			                                                                  ,[Assessor2ReviewStatus] AS [Status]
 			                                                                  ,[Assessor2ReviewComment] AS Comment
@@ -453,18 +455,20 @@ namespace SFA.DAS.ApplyService.Data
 		                                                                  WHERE [ApplicationId] = @applicationId AND
 				                                                                [Assessor2UserId] = @userId                      
 	                                                                END",
-                    new { applicationId, assessorType, userId });
+                    new { applicationId, assessorNumber, userId });
 
                 return pageReviewOutcomeResults.ToList();
             }
         }
 
-		public async Task UpdateAssessorReviewStatus(Guid applicationId, int assessorType, string userId, string status)
+		public async Task UpdateAssessorReviewStatus(Guid applicationId, string userId, string status)
 		{
 			using (var connection = new SqlConnection(_config.SqlConnectionString))
 			{
-				await connection.ExecuteAsync(
-                    @"IF (@assessorType = 1)
+                var assessorNumber = await GetAssessorNumber(applicationId, userId);
+
+                await connection.ExecuteAsync(
+                    @"IF (@assessorNumber = 1)
                         BEGIN
 		                    UPDATE [Apply]
 			                        SET Assessor1ReviewStatus = @status
@@ -472,7 +476,7 @@ namespace SFA.DAS.ApplyService.Data
 				                        , UpdatedBy = @userId
 			                        WHERE ApplicationId = @applicationId AND DeletedAt IS NULL AND Assessor1UserId = @userId
                         END
-                      IF (@assessorType = 2)
+                      IF (@assessorNumber = 2)
                         BEGIN
 		                    UPDATE [Apply]
 			                        SET Assessor2ReviewStatus = @status
@@ -480,8 +484,83 @@ namespace SFA.DAS.ApplyService.Data
 				                        , UpdatedBy = @userId
 			                        WHERE ApplicationId = @applicationId AND DeletedAt IS NULL AND Assessor2UserId = @userId                
                         END",
-					new { applicationId, assessorType, userId, status });
+					new { applicationId, assessorNumber, userId, status });
             }
 		}
-	}
+
+
+
+        public async Task<ModeratorPageReviewOutcome> GetModeratorPageReviewOutcome(Guid applicationId,
+                                                            int sequenceNumber,
+                                                            int sectionNumber,
+                                                            string pageId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var pageReviewOutcomeResults = await connection.QueryAsync<ModeratorPageReviewOutcome>(
+                                                                @"SELECT [ApplicationId]
+			                                                            ,[SequenceNumber]
+			                                                            ,[SectionNumber]
+			                                                            ,[PageId]
+			                                                            ,[ModeratorUserId] AS UserId
+			                                                            ,[ModeratorReviewStatus] AS [Status]
+			                                                            ,[ModeratorReviewComment] AS Comment
+                                                                        ,[ExternalComment]
+		                                                            FROM [dbo].[ModeratorPageReviewOutcome]
+		                                                            WHERE [ApplicationId] = @applicationId AND
+				                                                        [SequenceNumber] = @sequenceNumber AND
+				                                                        [SectionNumber] = @sectionNumber AND
+				                                                        [PageId] = @pageId",
+                    new { applicationId, sequenceNumber, sectionNumber, pageId });
+
+                return pageReviewOutcomeResults.FirstOrDefault();
+            }
+        }
+
+        public async Task<List<ModeratorPageReviewOutcome>> GetModeratorPageReviewOutcomesForSection(Guid applicationId,
+                                                            int sequenceNumber,
+                                                            int sectionNumber)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var pageReviewOutcomeResults = await connection.QueryAsync<ModeratorPageReviewOutcome>(
+                                                                @"SELECT [ApplicationId]
+			                                                            ,[SequenceNumber]
+			                                                            ,[SectionNumber]
+			                                                            ,[PageId]
+			                                                            ,[ModeratorUserId] AS UserId
+			                                                            ,[ModeratorReviewStatus] AS [Status]
+			                                                            ,[ModeratorReviewComment] AS Comment
+                                                                        ,[ExternalComment]
+		                                                            FROM [dbo].[ModeratorPageReviewOutcome]
+		                                                            WHERE [ApplicationId] = @applicationId AND
+				                                                        [SequenceNumber] = @sequenceNumber AND
+				                                                        [SectionNumber] = @sectionNumber",
+                    new { applicationId, sequenceNumber, sectionNumber });
+
+                return pageReviewOutcomeResults.ToList();
+            }
+        }
+
+        public async Task<List<ModeratorPageReviewOutcome>> GetAllModeratorPageReviewOutcomes(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var pageReviewOutcomeResults = await connection.QueryAsync<ModeratorPageReviewOutcome>(
+                                                                @"SELECT [ApplicationId]
+			                                                            ,[SequenceNumber]
+			                                                            ,[SectionNumber]
+			                                                            ,[PageId]
+			                                                            ,[ModeratorUserId] AS UserId
+			                                                            ,[ModeratorReviewStatus] AS [Status]
+			                                                            ,[ModeratorReviewComment] AS Comment
+                                                                        ,[ExternalComment]
+		                                                            FROM [dbo].[ModeratorPageReviewOutcome]
+		                                                            WHERE [ApplicationId] = @applicationId",
+                    new { applicationId });
+
+                return pageReviewOutcomeResults.ToList();
+            }
+        }
+    }
 }
