@@ -1,7 +1,5 @@
 ﻿using MediatR;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 {
@@ -11,7 +9,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
                                                         int sequenceNumber,
                                                         int sectionNumber,
                                                         string pageId,
-                                                        int assessorType,
                                                         string userId,
                                                         string status,
                                                         string comment)
@@ -20,7 +17,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
             SequenceNumber = sequenceNumber;
             SectionNumber = sectionNumber;
             PageId = pageId;
-            AssessorType = assessorType;
             UserId = userId;
             Status = status;
             Comment = comment;
@@ -30,7 +26,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
         public int SequenceNumber { get; }
         public int SectionNumber { get; }
         public string PageId { get; }
-        public int AssessorType { get; }
         public string UserId { get; }
         public string Status { get; }
         public string Comment { get; }
