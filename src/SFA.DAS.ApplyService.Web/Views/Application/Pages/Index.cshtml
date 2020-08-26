@@ -200,7 +200,11 @@
                                     @{
                                         var questionType = question.Type.Replace("DataFed_", "");
                                     }
-
+                                    
+                                @if (question.Type == QuestionType.FileUpload)
+                                {
+                                    <p class="govuk-body">Upload a file</p>
+                                }                                   
                                     <partial name="@($"~/Views/QuestionPartials/_{question.Type}.cshtml")" for="@question" />
 
                                 </fieldset>
