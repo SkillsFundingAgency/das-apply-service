@@ -1,6 +1,6 @@
 ﻿namespace SFA.DAS.ApplyService.InternalApi.Types.Assessor
 {
-    public class SectorDetails
+    public class AssessorSectorDetails
     {
         public string SectorName { get; set; }
         public string FullName { get; set; }

@@ -131,6 +131,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var applicationType = ApplicationTypes.RegisterTrainingProviders;
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
 
+            if(applicationDetails is null)
+            {
+                return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
+            }
+
             _logger.LogInformation($"Application Details:: Ukprn: [{applicationDetails?.UKPRN}], ProviderName: [{applicationDetails?.UkrlpLookupDetails?.ProviderName}], RouteId: [{applicationDetails?.ApplicationRoute?.Id}]");
             var providerRoute = applicationDetails.ApplicationRoute.Id;
 
