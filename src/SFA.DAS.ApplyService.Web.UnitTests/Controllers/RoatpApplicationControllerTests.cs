@@ -232,6 +232,19 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
+        public async Task Applications_shows_enter_ukprn_page_if_no_active_applications()
+        {
+            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(new List<Apply>());
+
+            var result = await _controller.Applications();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("EnterApplicationUkprn");
+            redirectResult.ControllerName.Should().Be("RoatpApplicationPreamble");
+        }
+
+        [Test]
         public void Submit_application_presents_confirmation_page_with_legal_name()
         {
             var organisationNameAnswer = new Answer
