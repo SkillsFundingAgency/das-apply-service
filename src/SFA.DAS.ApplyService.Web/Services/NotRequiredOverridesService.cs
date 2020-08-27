@@ -5,6 +5,7 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using NotRequiredOverrideConfiguration = SFA.DAS.ApplyService.Web.Configuration.NotRequiredOverrideConfiguration;
@@ -30,15 +31,15 @@ namespace SFA.DAS.ApplyService.Web.Services
             _sessionService = sessionService;
         }
 
-        public void RefreshNotRequiredOverrides(Guid applicationId)
+        public async Task RefreshNotRequiredOverrides(Guid applicationId)
         {
             RemoveConfigurationFromCache(applicationId);
-            var configuration = CalculateNotRequiredOverrides(applicationId);
+            var configuration = await CalculateNotRequiredOverrides(applicationId);
             var applicationNotRequiredOverrides = new Application.Apply.Roatp.NotRequiredOverrideConfiguration
             {
                 NotRequiredOverrides = Mapper.Map<List<NotRequiredOverride>>(configuration)
             };
-            _applicationApiClient.UpdateNotRequiredOverrides(applicationId, applicationNotRequiredOverrides);
+            _applicationApiClient.UpdateNotRequiredOverrides(applicationId, applicationNotRequiredOverrides).GetAwaiter().GetResult();
             SaveConfigurationToCache(applicationId, configuration);
         }
 
@@ -55,7 +56,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             return configuration;
         }
 
-        private List<NotRequiredOverrideConfiguration> CalculateNotRequiredOverrides(Guid applicationId)
+        private async Task<List<NotRequiredOverrideConfiguration>> CalculateNotRequiredOverrides(Guid applicationId)
         {
             List<NotRequiredOverrideConfiguration> configuration = null;
 
@@ -63,8 +64,8 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             if (applicationData != null)
             {
-                var applicationNotRequiredOverrides =
-                    _applicationApiClient.GetNotRequiredOverrides(applicationId).Result;
+                var applicationNotRequiredOverrides =await _applicationApiClient.GetNotRequiredOverrides(applicationId);
+                    
 
                 if (applicationNotRequiredOverrides == null)
                 {
