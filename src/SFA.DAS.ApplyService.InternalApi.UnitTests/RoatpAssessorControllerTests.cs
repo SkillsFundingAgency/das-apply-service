@@ -247,7 +247,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _firstPageId)).ReturnsAsync(new SkipPageResponse { NextAction = "NextPage", NextActionId = _lastPageId });
             _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _lastPageId)).ReturnsAsync(new SkipPageResponse { NextAction = "ReturnToSection" });
             _getAssessorPageService
-                .Setup(x => x.GetAssessorPage(section.ApplicationId, section.SequenceId, section.SectionId,
+                .Setup(x => x.GetPage(section.ApplicationId, section.SequenceId, section.SectionId,
                     null)).ReturnsAsync(new AssessorPage { PageId = _firstPageId, NextPageId = _lastPageId});
             var actualPage = await _controller.GetFirstAssessorPage(_applicationId, _sequenceId, _sectionId);
 
@@ -275,7 +275,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _firstPageId)).ReturnsAsync(new SkipPageResponse { NextAction = "NextPage", NextActionId = _lastPageId });
             _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _lastPageId)).ReturnsAsync(new SkipPageResponse { NextAction = "ReturnToSection" });
             _getAssessorPageService
-                .Setup(x => x.GetAssessorPage(section.ApplicationId, section.SequenceId, section.SectionId,
+                .Setup(x => x.GetPage(section.ApplicationId, section.SequenceId, section.SectionId,
                     _lastPageId)).ReturnsAsync(new AssessorPage{PageId = _lastPageId});
             var actualPage = await _controller.GetAssessorPage(_applicationId, _sequenceId, _sectionId, _lastPageId);
 

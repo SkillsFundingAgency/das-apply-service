@@ -248,7 +248,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             if (_AssessorSequences.Contains(sequenceNumber))
             {
-                return await _getAssessorPageService.GetAssessorPage(applicationId, sequenceNumber, sectionNumber,
+                return await _getAssessorPageService.GetPage(applicationId, sequenceNumber, sectionNumber,
                     pageId);
             }
 

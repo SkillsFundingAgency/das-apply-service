@@ -18,7 +18,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             _assessorLookupService = assessorLookupService;
         }
 
-        public async Task<AssessorPage> GetAssessorPage(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId)
+        public async Task<AssessorPage> GetPage(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId)
         {
             AssessorPage page = null;
 

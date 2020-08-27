@@ -36,15 +36,15 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services
             _lookupService = new Mock<IAssessorLookupService>();
             _extractAnswerValueService = new Mock<IExtractAnswerValueService>();
             _sectorQuestionIds = new SectorQuestionIds();
-            _getAssessorPageService.Setup(x => x.GetAssessorPage(_applicationId, _sequenceId, _sectionId, _firstPageId))
+            _getAssessorPageService.Setup(x => x.GetPage(_applicationId, _sequenceId, _sectionId, _firstPageId))
                 .ReturnsAsync(new AssessorPage { PageId = _firstPageId, Answers = new List<AssessorAnswer> { new AssessorAnswer() }, NextPageId = _secondPageId});
-            _getAssessorPageService.Setup(x => x.GetAssessorPage(_applicationId, _sequenceId, _sectionId, _secondPageId))
+            _getAssessorPageService.Setup(x => x.GetPage(_applicationId, _sequenceId, _sectionId, _secondPageId))
                 .ReturnsAsync(new AssessorPage { PageId = _secondPageId, Answers = new List<AssessorAnswer> { new AssessorAnswer() }, NextPageId = _thirdPageId });
 
-            _getAssessorPageService.Setup(x => x.GetAssessorPage(_applicationId, _sequenceId, _sectionId, _thirdPageId))
+            _getAssessorPageService.Setup(x => x.GetPage(_applicationId, _sequenceId, _sectionId, _thirdPageId))
                 .ReturnsAsync(new AssessorPage { PageId = _thirdPageId, Answers = new List<AssessorAnswer> { new AssessorAnswer() }, NextPageId = _fourthPageId });
 
-            _getAssessorPageService.Setup(x => x.GetAssessorPage(_applicationId, _sequenceId, _sectionId, _fourthPageId))
+            _getAssessorPageService.Setup(x => x.GetPage(_applicationId, _sequenceId, _sectionId, _fourthPageId))
                 .ReturnsAsync(new AssessorPage { PageId = _fourthPageId, Answers = new List<AssessorAnswer> { new AssessorAnswer() } });
             _lookupService.Setup(x => x.GetSectorQuestionIdsForSectorPageId(_firstPageId)).Returns(_sectorQuestionIds);
             _extractAnswerValueService

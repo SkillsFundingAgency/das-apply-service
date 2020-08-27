@@ -6,6 +6,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
 {
     public interface IGetAssessorPageService
     {
-        Task<AssessorPage> GetAssessorPage(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId);
+        Task<AssessorPage> GetPage(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId);
     }
 }

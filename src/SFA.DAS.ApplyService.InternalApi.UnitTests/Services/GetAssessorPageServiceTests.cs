@@ -12,23 +12,25 @@ using SFA.DAS.ApplyService.InternalApi.Services;
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services
 {
     [TestFixture]
-    public class GetAssessorPageServiceTexts
+    public class GetAssessorPageServiceTests
     {
-        private  Mock<IInternalQnaApiClient> _qnaApiClient;
-        private  AssessorLookupService _assessorLookupService;
-        private Guid _applicationId = Guid.NewGuid();
-        private int _sequenceNumber = 5;
-        private int _sectionNumber = 99;
-        private string _pageId = "PageId";
-        private string _nextPageId = "NextPageId";
-        private string _bodyText = "some body text";
+        private Mock<IInternalQnaApiClient> _qnaApiClient;
+        private AssessorLookupService _assessorLookupService;
         private GetAssessorPageService _service;
+
+        private readonly Guid _applicationId = Guid.NewGuid();
+        private const int _sequenceNumber = 5;
+        private const int _sectionNumber = 99;
+        private const string _pageId = "PageId";
+        private const string _nextPageId = "NextPageId";
+        private const string _bodyText = "some body text";
 
         [SetUp]
         public void TestSetup()
         {
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
             _assessorLookupService = new AssessorLookupService();
+            _service = new GetAssessorPageService(_qnaApiClient.Object, _assessorLookupService);
         }
 
         [Test]
@@ -48,7 +50,6 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services
                 }
             };
 
-
             var skip = new SkipPageResponse {NextAction = "NextPage",NextActionId = _nextPageId};
 
             _qnaApiClient.Setup(x => x.GetSectionBySectionNo(_applicationId, _sequenceNumber,
@@ -57,8 +58,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services
             _qnaApiClient.Setup(x => x.SkipPageBySectionNo(_applicationId, _sequenceNumber,
                 _sectionNumber, _pageId)).ReturnsAsync(skip).Verifiable();
 
-            _service = new GetAssessorPageService(_qnaApiClient.Object,_assessorLookupService);
-            var returnedAssessorPage = await _service.GetAssessorPage(_applicationId, _sequenceNumber, _sectionNumber, _pageId);
+            var returnedAssessorPage = await _service.GetPage(_applicationId, _sequenceNumber, _sectionNumber, _pageId);
 
             Assert.AreEqual(_nextPageId,returnedAssessorPage.NextPageId);
             Assert.AreEqual(_bodyText,returnedAssessorPage.BodyText);
