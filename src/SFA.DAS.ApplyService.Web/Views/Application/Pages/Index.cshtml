@@ -203,7 +203,7 @@
                                     
                                 @if (question.Type == QuestionType.FileUpload)
                                 {
-                                    <p class="govuk-body">Upload a file</p>
+                                    <p class="govuk-body govuk-!-margin-bottom-1">Upload a file</p>
                                 }                                   
                                     <partial name="@($"~/Views/QuestionPartials/_{question.Type}.cshtml")" for="@question" />
 
