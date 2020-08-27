@@ -31,10 +31,10 @@ namespace SFA.DAS.ApplyService.Web.Services
             _sessionService = sessionService;
         }
 
-        public async Task RefreshNotRequiredOverrides(Guid applicationId)
+        public void RefreshNotRequiredOverrides(Guid applicationId)
         {
             RemoveConfigurationFromCache(applicationId);
-            var configuration = await CalculateNotRequiredOverrides(applicationId);
+            var configuration =  CalculateNotRequiredOverrides(applicationId).GetAwaiter().GetResult();
             var applicationNotRequiredOverrides = new Application.Apply.Roatp.NotRequiredOverrideConfiguration
             {
                 NotRequiredOverrides = Mapper.Map<List<NotRequiredOverride>>(configuration)
@@ -64,9 +64,8 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             if (applicationData != null)
             {
-                var applicationNotRequiredOverrides =await _applicationApiClient.GetNotRequiredOverrides(applicationId);
-                    
-
+                var applicationNotRequiredOverrides = _applicationApiClient.GetNotRequiredOverrides(applicationId).GetAwaiter().GetResult();
+                
                 if (applicationNotRequiredOverrides == null)
                 {
                     configuration = new List<NotRequiredOverrideConfiguration>(_configuration);

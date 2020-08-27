@@ -7,7 +7,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 {
     public interface INotRequiredOverridesService
     {
-        Task RefreshNotRequiredOverrides(Guid applicationId);
+        void RefreshNotRequiredOverrides(Guid applicationId);
         List<NotRequiredOverrideConfiguration> GetNotRequiredOverrides(Guid applicationId);
     }
 }
