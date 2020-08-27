@@ -33,13 +33,18 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         private readonly IMediator _mediator;
         private readonly IInternalQnaApiClient _qnaApiClient;
         private readonly IAssessorLookupService _assessorLookupService;
+        private readonly IGetAssessorPageService _getAssessorPageService;
+        private readonly ISectorDetailsOrchestratorService _sectorDetailsOrchestratorService;
 
-        public RoatpModerationController(ILogger<RoatpModerationController> logger, IMediator mediator, IInternalQnaApiClient qnaApiClient, IAssessorLookupService assessorLookupService)
+        public RoatpModerationController(ILogger<RoatpModerationController> logger, IMediator mediator, IInternalQnaApiClient qnaApiClient, IAssessorLookupService assessorLookupService,
+            IGetAssessorPageService getAssessorPageService, ISectorDetailsOrchestratorService sectorDetailsOrchestratorService)
         {
             _logger = logger;
             _mediator = mediator;
             _qnaApiClient = qnaApiClient;
             _assessorLookupService = assessorLookupService;
+            _getAssessorPageService = getAssessorPageService;
+            _sectorDetailsOrchestratorService = sectorDetailsOrchestratorService;
         }
 
         [HttpGet("Moderator/Applications/{applicationId}/Overview")]
@@ -178,6 +183,43 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return sectors;
         }
 
+        [HttpGet("Moderator/Applications/{applicationId}/SectorDetails/{pageId}")]
+        public async Task<Types.Assessor.AssessorSectorDetails> GetSectorDetails(Guid applicationId, string pageId)
+        {
+            return await _sectorDetailsOrchestratorService.GetSectorDetails(applicationId, pageId);
+        }
+
+        [HttpGet("Moderator/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page")]
+        public async Task<Types.Assessor.AssessorPage> GetFirstModeratorPage(Guid applicationId, int sequenceNumber, int sectionNumber)
+        {
+            return await GetModeratorPage(applicationId, sequenceNumber, sectionNumber, null);
+        }
+
+        [HttpGet("Moderator/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}")]
+        public async Task<Types.Assessor.AssessorPage> GetModeratorPage(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId)
+        {
+            if (_ModeratorSequences.Contains(sequenceNumber))
+            {
+                return await _getAssessorPageService.GetPage(applicationId, sequenceNumber, sectionNumber, pageId);
+            }
+
+            return null;
+        }
+
+        [HttpGet("Moderator/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}/BlindAssessmentOutcome")]
+        public async Task<BlindAssessmentOutcome> GetBlindAssessmentOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId)
+        {
+            var blindAssessmentOutcome = await _mediator.Send(new GetBlindAssessmentOutcomeRequest(applicationId, sequenceNumber, sectionNumber, pageId));
+
+            return blindAssessmentOutcome;
+        }
+
+        [HttpPost("Moderator/Applications/{applicationId}/SubmitPageReviewOutcome")]
+        public async Task SubmitPageReviewOutcome(Guid applicationId, [FromBody] SubmitPageReviewOutcomeCommand request)
+        {
+            await _mediator.Send(new SubmitModeratorPageOutcomeRequest(applicationId, request.SequenceNumber, request.SectionNumber, request.PageId, request.UserId, request.Status, request.Comment, request.ExternalComment));
+        }
+
         [HttpPost("Moderator/Applications/{applicationId}/GetPageReviewOutcome")]
         public async Task<ModeratorPageReviewOutcome> GetPageReviewOutcome(Guid applicationId, [FromBody] GetPageReviewOutcomeRequest request)
         {
@@ -202,6 +244,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return moderatorReviewOutcomes;
         }
 
+        public class SubmitPageReviewOutcomeCommand
+        {
+            public int SequenceNumber { get; set; }
+            public int SectionNumber { get; set; }
+            public string PageId { get; set; }
+            public string UserId { get; set; }
+            public string Status { get; set; }
+            public string Comment { get; set; }
+            public string ExternalComment { get; set; }
+        }
 
         public class GetPageReviewOutcomeRequest
         {

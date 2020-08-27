@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Application.Apply.Moderator;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
@@ -12,6 +13,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Services;
+using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Types.Moderator;
 using System;
 using System.Collections.Generic;
@@ -25,12 +27,18 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
     public class RoatpModerationControllerTests
     {
         private readonly Guid _applicationId = Guid.NewGuid();
+        private readonly int _sequenceId = RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining;
+        private readonly int _sectionId = RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy;
+        private readonly string _firstPageId = "1";
+        private readonly string _lastPageId = "999";
         private readonly string _userId = "user id";
 
         private Mock<ILogger<RoatpModerationController>> _logger;
         private Mock<IMediator> _mediator;
         private Mock<IInternalQnaApiClient> _qnaApiClient;
         private Mock<IAssessorLookupService> _assessorLookupService;
+        private Mock<IGetAssessorPageService> _getAssessorPageService;
+        private Mock<ISectorDetailsOrchestratorService> _sectorDetailsOrchestratorService;
 
         private RoatpModerationController _controller;
 
@@ -41,8 +49,10 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _mediator = new Mock<IMediator>();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
             _assessorLookupService = new Mock<IAssessorLookupService>();
+            _sectorDetailsOrchestratorService = new Mock<ISectorDetailsOrchestratorService>();
+            _getAssessorPageService = new Mock<IGetAssessorPageService>();
 
-            _controller = new RoatpModerationController(_logger.Object, _mediator.Object, _qnaApiClient.Object, _assessorLookupService.Object);
+            _controller = new RoatpModerationController(_logger.Object, _mediator.Object, _qnaApiClient.Object, _assessorLookupService.Object, _getAssessorPageService.Object, _sectorDetailsOrchestratorService.Object);
         }
 
         [Test]
@@ -99,6 +109,35 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         }
 
         [Test]
+        public async Task GetBlindAssessmentOutcome_returns_expected_BlindAssessmentOutcome()
+        {
+            var applicationId = Guid.NewGuid();
+            var sequenceNumber = 1;
+            var sectionNumber = 2;
+            var pageId = "30";
+
+            var expectedResult = new BlindAssessmentOutcome();
+            _mediator.Setup(x => x.Send(It.Is<GetBlindAssessmentOutcomeRequest>(r => r.ApplicationId == applicationId && r.SequenceNumber == sequenceNumber && r.SectionNumber == sectionNumber &&
+                   r.PageId == pageId), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
+
+            var actualResult = await _controller.GetBlindAssessmentOutcome(applicationId, sequenceNumber, sectionNumber, pageId);
+
+            Assert.AreSame(expectedResult, actualResult);
+        }
+
+        [Test]
+        public async Task SubmitPageReviewOutcome_calls_mediator()
+        {
+            var applicationId = Guid.NewGuid();
+            var request = new RoatpModerationController.SubmitPageReviewOutcomeCommand { SequenceNumber = 1, SectionNumber = 2, PageId = "30", UserId = _userId, Status = "Fail", Comment = "Very bad", ExternalComment = "Not good" };
+
+            await _controller.SubmitPageReviewOutcome(applicationId, request);
+
+            _mediator.Verify(x => x.Send(It.Is<SubmitModeratorPageOutcomeRequest>(r => r.ApplicationId == applicationId && r.SequenceNumber == request.SequenceNumber && r.SectionNumber == request.SectionNumber &&
+                   r.PageId == request.PageId && r.UserId == request.UserId && r.Status == request.Status && r.Comment == request.Comment && r.ExternalComment == request.ExternalComment), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Test]
         public async Task GetPageReviewOutcome_returns_expected_PageReviewOutcome()
         {
             var applicationId = Guid.NewGuid();
@@ -141,6 +180,71 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             var actualResult = await _controller.GetAllPageReviewOutcomes(applicationId, request);
 
             Assert.AreSame(expectedResult, actualResult);
+        }
+
+        [Test]
+        public async Task GetFirstModeratorPage_gets_first_page_in_section()
+        {
+            var section = new ApplicationSection
+            {
+                ApplicationId = _applicationId,
+                SequenceId = _sequenceId,
+                SectionId = _sectionId,
+                QnAData = new QnAData
+                {
+                    Pages = new List<Page> { GenerateQnAPage(_firstPageId), GenerateQnAPage(_lastPageId) }
+                }
+            };
+
+            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId)).ReturnsAsync(section);
+
+            _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _firstPageId)).ReturnsAsync(new SkipPageResponse { NextAction = "NextPage", NextActionId = _lastPageId });
+            _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _lastPageId)).ReturnsAsync(new SkipPageResponse { NextAction = "ReturnToSection" });
+            _getAssessorPageService
+                .Setup(x => x.GetPage(section.ApplicationId, section.SequenceId, section.SectionId,
+                    null)).ReturnsAsync(new AssessorPage { PageId = _firstPageId, NextPageId = _lastPageId });
+            var actualPage = await _controller.GetFirstModeratorPage(_applicationId, _sequenceId, _sectionId);
+
+            Assert.That(actualPage, Is.Not.Null);
+            Assert.That(actualPage.PageId, Is.EqualTo(_firstPageId));
+            Assert.That(actualPage.NextPageId, Is.EqualTo(_lastPageId));
+        }
+
+        [Test]
+        public async Task GetModeratorPage_when_last_page_gets_expected_page()
+        {
+            var section = new ApplicationSection
+            {
+                ApplicationId = _applicationId,
+                SequenceId = _sequenceId,
+                SectionId = _sectionId,
+                QnAData = new QnAData
+                {
+                    Pages = new List<Page> { GenerateQnAPage(_firstPageId), GenerateQnAPage(_lastPageId) }
+                }
+            };
+
+            _qnaApiClient.Setup(x => x.GetSectionBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId)).ReturnsAsync(section);
+
+            _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _firstPageId)).ReturnsAsync(new SkipPageResponse { NextAction = "NextPage", NextActionId = _lastPageId });
+            _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _lastPageId)).ReturnsAsync(new SkipPageResponse { NextAction = "ReturnToSection" });
+            _getAssessorPageService
+                .Setup(x => x.GetPage(section.ApplicationId, section.SequenceId, section.SectionId,
+                    _lastPageId)).ReturnsAsync(new AssessorPage { PageId = _lastPageId });
+            var actualPage = await _controller.GetModeratorPage(_applicationId, _sequenceId, _sectionId, _lastPageId);
+
+            Assert.That(actualPage, Is.Not.Null);
+            Assert.That(actualPage.PageId, Is.EqualTo(_lastPageId));
+            Assert.That(actualPage.NextPageId, Is.Null);
+        }
+
+        [Test]
+        public async Task GetFirstAssessorPage_returns_null_if_invalid_sequence()
+        {
+            var invalidSequenceId = int.MinValue;
+
+            var actualPage = await _controller.GetFirstModeratorPage(_applicationId, invalidSequenceId, _sectionId);
+            Assert.That(actualPage, Is.Null);
         }
 
         [Test]
@@ -262,6 +366,26 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             };
 
             Assert.AreEqual(JsonConvert.SerializeObject(expectedListOfSectors), JsonConvert.SerializeObject(listOfSectors));
+        }
+
+
+
+        private static Page GenerateQnAPage(string pageId)
+        {
+            return new Page
+            {
+                PageId = pageId,
+                Questions = new List<Question>
+                {
+                    new Question
+                    {
+                        QuestionId = $"Q{pageId}",
+                        QuestionBodyText = "QuestionBodyText",
+                        Input = new Input { Type = "TextArea" }
+                    }
+                },
+                PageOfAnswers = new List<PageOfAnswers> { new PageOfAnswers { Answers = new List<Answer> { new Answer { QuestionId = $"Q{pageId}", Value = "Value" } } } }
+            };
         }
     }
 }
