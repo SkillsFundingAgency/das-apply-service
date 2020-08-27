@@ -111,6 +111,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             switch (application.ApplicationStatus)
             {
+                case ApplicationStatus.New:
+                case ApplicationStatus.InProgress:
+                    return RedirectToAction("TaskList", new { applicationId = application.ApplicationId });
                 case ApplicationStatus.Cancelled:
                     return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
                 case ApplicationStatus.Approved:
@@ -120,6 +123,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 case ApplicationStatus.FeedbackAdded:
                     return View("~/Views/Application/FeedbackIntro.cshtml", application.ApplicationId);
                 case ApplicationStatus.Submitted:
+                case ApplicationStatus.GatewayAssessed:
+                case ApplicationStatus.Resubmitted:
                     return RedirectToAction("ApplicationSubmitted", new { applicationId = application.ApplicationId });
                 default:
                     return RedirectToAction("TaskList", new { applicationId = application.ApplicationId });
@@ -130,6 +135,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             var applicationType = ApplicationTypes.RegisterTrainingProviders;
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+
+            if(applicationDetails is null)
+            {
+                return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
+            }
 
             _logger.LogInformation($"Application Details:: Ukprn: [{applicationDetails?.UKPRN}], ProviderName: [{applicationDetails?.UkrlpLookupDetails?.ProviderName}], RouteId: [{applicationDetails?.ApplicationRoute?.Id}]");
             var providerRoute = applicationDetails.ApplicationRoute.Id;

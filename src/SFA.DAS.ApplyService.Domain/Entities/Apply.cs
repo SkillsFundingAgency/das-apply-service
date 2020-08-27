@@ -114,6 +114,17 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Rejected = "Rejected";	
         public const string Approved = "Approved";	
         public const string Cancelled = "Cancelled";
+
+        // Below are other statuses mentioned in the most recent status documentation
+        // Please check the flow in RoatpApplicationController, under the line ' switch (application.ApplicationStatus)' if you add new statuses
+        // GWResubmitted
+        //PMOModerationInProgress
+        //PMOModerationAssessed
+        //OversightInProgress - probably not needed
+        // Withdrawn
+        // Reopened
+        // GWFeedbackAdded
+        // InAssessment
     }
 
     public static class ApplicationReviewStatus
