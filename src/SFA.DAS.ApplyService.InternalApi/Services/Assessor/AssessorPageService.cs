@@ -5,14 +5,14 @@ using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Mappers;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 
-namespace SFA.DAS.ApplyService.InternalApi.Services
+namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
 {
-    public class GetAssessorPageService: IGetAssessorPageService
+    public class AssessorPageService: IAssessorPageService
     {
         private readonly IInternalQnaApiClient _qnaApiClient;
         private readonly IAssessorLookupService _assessorLookupService;
 
-        public GetAssessorPageService(IInternalQnaApiClient qnaApiClient, IAssessorLookupService assessorLookupService)
+        public AssessorPageService(IInternalQnaApiClient qnaApiClient, IAssessorLookupService assessorLookupService)
         {
             _qnaApiClient = qnaApiClient;
             _assessorLookupService = assessorLookupService;

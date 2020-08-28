@@ -11,9 +11,9 @@ using SFA.DAS.ApplyService.Application.Apply.Assessor;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
-using SFA.DAS.ApplyService.InternalApi.Services;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Domain.Apply.Assessor;
+using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -32,21 +32,20 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         private readonly ILogger<RoatpAssessorController> _logger;
         private readonly IMediator _mediator;
         private readonly IInternalQnaApiClient _qnaApiClient;
-        private readonly IAssessorLookupService _assessorLookupService;
-        private readonly IGetAssessorPageService _getAssessorPageService;
-        private readonly ISectorDetailsOrchestratorService _sectorDetailsOrchestratorService;
+        private readonly IAssessorLookupService _lookupService;
+        private readonly IAssessorPageService _pageService;
+        private readonly IAssessorSectorDetailsService _sectorDetailsService;
 
         public RoatpAssessorController(ILogger<RoatpAssessorController> logger, IMediator mediator,
             IInternalQnaApiClient qnaApiClient, IAssessorLookupService assessorLookupService,
-            IGetAssessorPageService getAssessorPageService,
-            ISectorDetailsOrchestratorService sectorDetailsOrchestratorService)
+            IAssessorPageService assessorPageService, IAssessorSectorDetailsService assessorSectorDetailsService)
         {
             _logger = logger;
             _mediator = mediator;
             _qnaApiClient = qnaApiClient;
-            _assessorLookupService = assessorLookupService;
-            _getAssessorPageService = getAssessorPageService;
-            _sectorDetailsOrchestratorService = sectorDetailsOrchestratorService;
+            _lookupService = assessorLookupService;
+            _pageService = assessorPageService;
+            _sectorDetailsService = assessorSectorDetailsService;
         }
 
         [HttpGet("Assessor/Applications/{userId}")]
@@ -126,7 +125,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 sequence = new AssessorSequence
                 {
                     SequenceNumber = sequenceNumber,
-                    SequenceTitle = _assessorLookupService.GetTitleForSequence(sequenceNumber),
+                    SequenceTitle = _lookupService.GetTitleForSequence(sequenceNumber),
                     Sections = qnaSections.Where(sec =>
                             sec.SequenceId == sequenceNumber && !sectionsToExclude.Contains(sec.SectionId))
                         .Select(sec =>
@@ -233,7 +232,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("Assessor/Applications/{applicationId}/SectorDetails/{pageId}")]
         public async Task<AssessorSectorDetails> GetSectorDetails(Guid applicationId, string pageId)
         {
-            return await _sectorDetailsOrchestratorService.GetSectorDetails(applicationId, pageId);
+            return await _sectorDetailsService.GetSectorDetails(applicationId, pageId);
         }
 
         [HttpGet("Assessor/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page")]
@@ -248,7 +247,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             if (_AssessorSequences.Contains(sequenceNumber))
             {
-                return await _getAssessorPageService.GetPage(applicationId, sequenceNumber, sectionNumber,
+                return await _pageService.GetPage(applicationId, sequenceNumber, sectionNumber,
                     pageId);
             }
 

@@ -5,17 +5,17 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Sectors;
-using SFA.DAS.ApplyService.InternalApi.Services;
+using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services
 {
     [TestFixture]
-    public class SectorDetailsOrchestratorServiceTests
+    public class AssessorSectorDetailsServiceTests
     {
-        private SectorDetailsOrchestratorService _service;
-        private Mock<IGetAssessorPageService> _getAssessorPageService;
-        private Mock<IAssessorLookupService> _lookupService;
+        private AssessorSectorDetailsService _service;
+        private Mock<IAssessorPageService> _assessorPageService;
+        private Mock<IAssessorLookupService> _assessorLookupService;
         private Mock<IExtractAnswerValueService> _extractAnswerValueService;
         private SectorQuestionIds _sectorQuestionIds;
 
@@ -32,26 +32,26 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services
         [SetUp]
         public void TestSetup()
         {
-            _getAssessorPageService = new Mock<IGetAssessorPageService>();
-            _lookupService = new Mock<IAssessorLookupService>();
+            _assessorPageService = new Mock<IAssessorPageService>();
+            _assessorLookupService = new Mock<IAssessorLookupService>();
             _extractAnswerValueService = new Mock<IExtractAnswerValueService>();
             _sectorQuestionIds = new SectorQuestionIds();
-            _getAssessorPageService.Setup(x => x.GetPage(_applicationId, _sequenceId, _sectionId, _firstPageId))
+            _assessorPageService.Setup(x => x.GetPage(_applicationId, _sequenceId, _sectionId, _firstPageId))
                 .ReturnsAsync(new AssessorPage { PageId = _firstPageId, Answers = new List<AssessorAnswer> { new AssessorAnswer() }, NextPageId = _secondPageId});
-            _getAssessorPageService.Setup(x => x.GetPage(_applicationId, _sequenceId, _sectionId, _secondPageId))
+            _assessorPageService.Setup(x => x.GetPage(_applicationId, _sequenceId, _sectionId, _secondPageId))
                 .ReturnsAsync(new AssessorPage { PageId = _secondPageId, Answers = new List<AssessorAnswer> { new AssessorAnswer() }, NextPageId = _thirdPageId });
 
-            _getAssessorPageService.Setup(x => x.GetPage(_applicationId, _sequenceId, _sectionId, _thirdPageId))
+            _assessorPageService.Setup(x => x.GetPage(_applicationId, _sequenceId, _sectionId, _thirdPageId))
                 .ReturnsAsync(new AssessorPage { PageId = _thirdPageId, Answers = new List<AssessorAnswer> { new AssessorAnswer() }, NextPageId = _fourthPageId });
 
-            _getAssessorPageService.Setup(x => x.GetPage(_applicationId, _sequenceId, _sectionId, _fourthPageId))
+            _assessorPageService.Setup(x => x.GetPage(_applicationId, _sequenceId, _sectionId, _fourthPageId))
                 .ReturnsAsync(new AssessorPage { PageId = _fourthPageId, Answers = new List<AssessorAnswer> { new AssessorAnswer() } });
-            _lookupService.Setup(x => x.GetSectorQuestionIdsForSectorPageId(_firstPageId)).Returns(_sectorQuestionIds);
+            _assessorLookupService.Setup(x => x.GetSectorQuestionIdsForSectorPageId(_firstPageId)).Returns(_sectorQuestionIds);
             _extractAnswerValueService
                 .Setup(a => a.ExtractAnswerValueFromQuestionId(It.IsAny<List<AssessorAnswer>>(), _sectorQuestionIds.FullName))
                 .Returns(string.Empty);
 
-            _service = new SectorDetailsOrchestratorService(_lookupService.Object,_getAssessorPageService.Object,_extractAnswerValueService.Object);
+            _service = new AssessorSectorDetailsService(_assessorLookupService.Object,_assessorPageService.Object,_extractAnswerValueService.Object);
         }
 
         [Test]
@@ -146,7 +146,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services
 
             var typeOfTraining = "type of training";
 
-            _lookupService.Setup(x => x.GetSectorQuestionIdsForSectorPageId(_firstPageId)).Returns(_sectorQuestionIds);
+            _assessorLookupService.Setup(x => x.GetSectorQuestionIdsForSectorPageId(_firstPageId)).Returns(_sectorQuestionIds);
 
             _extractAnswerValueService
                 .Setup(a => a.ExtractAnswerValueFromQuestionId(It.IsAny<List<AssessorAnswer>>(),
@@ -167,7 +167,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services
             var howHaveTheyDelivered = "delivery mechanism";
             var experienceOfDelivering = "experience of delivering";
             var typicalDuration = "typical duration";
-            _lookupService.Setup(x => x.GetSectorQuestionIdsForSectorPageId(_firstPageId)).Returns(_sectorQuestionIds);
+            _assessorLookupService.Setup(x => x.GetSectorQuestionIdsForSectorPageId(_firstPageId)).Returns(_sectorQuestionIds);
 
             _extractAnswerValueService
                 .Setup(a => a.ExtractAnswerValueFromQuestionId(It.IsAny<List<AssessorAnswer>>(), _sectorQuestionIds.HowHaveTheyDeliveredTraining))
@@ -199,7 +199,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services
             var typicalDuration = "typical duration";
             var otherHowHaveTheyDelivered = "delivery mechanism other";
 
-            _lookupService.Setup(x => x.GetSectorQuestionIdsForSectorPageId(_firstPageId)).Returns(_sectorQuestionIds);
+            _assessorLookupService.Setup(x => x.GetSectorQuestionIdsForSectorPageId(_firstPageId)).Returns(_sectorQuestionIds);
 
             _extractAnswerValueService
                 .Setup(a => a.ExtractAnswerValueFromQuestionId(It.IsAny<List<AssessorAnswer>>(), _sectorQuestionIds.HowHaveTheyDeliveredTraining))

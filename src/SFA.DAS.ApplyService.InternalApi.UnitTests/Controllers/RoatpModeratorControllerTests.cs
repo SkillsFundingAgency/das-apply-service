@@ -12,7 +12,7 @@ using SFA.DAS.ApplyService.Domain.Apply.Moderator;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
-using SFA.DAS.ApplyService.InternalApi.Services;
+using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Types.Moderator;
 using System;
@@ -21,10 +21,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.ApplyService.InternalApi.UnitTests
+namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
 {
     [TestFixture]
-    public class RoatpModerationControllerTests
+    public class RoatpModeratorControllerTests
     {
         private readonly Guid _applicationId = Guid.NewGuid();
         private readonly int _sequenceId = RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining;
@@ -33,26 +33,26 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private readonly string _lastPageId = "999";
         private readonly string _userId = "user id";
 
-        private Mock<ILogger<RoatpModerationController>> _logger;
+        private Mock<ILogger<RoatpModeratorController>> _logger;
         private Mock<IMediator> _mediator;
         private Mock<IInternalQnaApiClient> _qnaApiClient;
         private Mock<IAssessorLookupService> _assessorLookupService;
-        private Mock<IGetAssessorPageService> _getAssessorPageService;
-        private Mock<ISectorDetailsOrchestratorService> _sectorDetailsOrchestratorService;
+        private Mock<IAssessorPageService> _getAssessorPageService;
+        private Mock<IAssessorSectorDetailsService> _sectorDetailsOrchestratorService;
 
-        private RoatpModerationController _controller;
+        private RoatpModeratorController _controller;
 
         [SetUp]
         public void TestSetup()
         {
-            _logger = new Mock<ILogger<RoatpModerationController>>();
+            _logger = new Mock<ILogger<RoatpModeratorController>>();
             _mediator = new Mock<IMediator>();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
             _assessorLookupService = new Mock<IAssessorLookupService>();
-            _sectorDetailsOrchestratorService = new Mock<ISectorDetailsOrchestratorService>();
-            _getAssessorPageService = new Mock<IGetAssessorPageService>();
+            _sectorDetailsOrchestratorService = new Mock<IAssessorSectorDetailsService>();
+            _getAssessorPageService = new Mock<IAssessorPageService>();
 
-            _controller = new RoatpModerationController(_logger.Object, _mediator.Object, _qnaApiClient.Object, _assessorLookupService.Object, _getAssessorPageService.Object, _sectorDetailsOrchestratorService.Object);
+            _controller = new RoatpModeratorController(_logger.Object, _mediator.Object, _qnaApiClient.Object, _assessorLookupService.Object, _getAssessorPageService.Object, _sectorDetailsOrchestratorService.Object);
         }
 
         [Test]
@@ -129,7 +129,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task SubmitPageReviewOutcome_calls_mediator()
         {
             var applicationId = Guid.NewGuid();
-            var request = new RoatpModerationController.SubmitPageReviewOutcomeCommand { SequenceNumber = 1, SectionNumber = 2, PageId = "30", UserId = _userId, Status = "Fail", Comment = "Very bad", ExternalComment = "Not good" };
+            var request = new RoatpModeratorController.SubmitPageReviewOutcomeCommand { SequenceNumber = 1, SectionNumber = 2, PageId = "30", UserId = _userId, Status = "Fail", Comment = "Very bad", ExternalComment = "Not good" };
 
             await _controller.SubmitPageReviewOutcome(applicationId, request);
 
@@ -141,7 +141,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task GetPageReviewOutcome_returns_expected_PageReviewOutcome()
         {
             var applicationId = Guid.NewGuid();
-            var request = new RoatpModerationController.GetPageReviewOutcomeRequest { SequenceNumber = 1, SectionNumber = 2, PageId = "30", UserId = _userId };
+            var request = new RoatpModeratorController.GetPageReviewOutcomeRequest { SequenceNumber = 1, SectionNumber = 2, PageId = "30", UserId = _userId };
 
             var expectedResult = new ModeratorPageReviewOutcome();
             _mediator.Setup(x => x.Send(It.Is<GetModeratorPageReviewOutcomeRequest>(r => r.ApplicationId == applicationId && r.SequenceNumber == request.SequenceNumber && r.SectionNumber == request.SectionNumber &&
@@ -156,7 +156,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task GetPageReviewOutcomesForSection_returns_expected_list_of_PageReviewOutcome()
         {
             var applicationId = Guid.NewGuid();
-            var request = new RoatpModerationController.GetPageReviewOutcomesForSectionRequest { SequenceNumber = 1, SectionNumber = 2, UserId = _userId };
+            var request = new RoatpModeratorController.GetPageReviewOutcomesForSectionRequest { SequenceNumber = 1, SectionNumber = 2, UserId = _userId };
 
             var expectedResult = new List<ModeratorPageReviewOutcome>();
             _mediator.Setup(x => x.Send(It.Is<GetModeratorPageReviewOutcomesForSectionRequest>(r => r.ApplicationId == applicationId && r.SequenceNumber == request.SequenceNumber && r.SectionNumber == request.SectionNumber &&
@@ -171,7 +171,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public async Task GetAllPageReviewOutcomes_returns_expected_list_of_PageReviewOutcome()
         {
             var applicationId = Guid.NewGuid();
-            var request = new RoatpModerationController.GetAllPageReviewOutcomesRequest { UserId = _userId };
+            var request = new RoatpModeratorController.GetAllPageReviewOutcomesRequest { UserId = _userId };
 
             var expectedResult = new List<ModeratorPageReviewOutcome>();
             _mediator.Setup(x => x.Send(It.Is<GetAllModeratorPageReviewOutcomesRequest>(r => r.ApplicationId == applicationId &&
@@ -352,7 +352,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                 Status = sector2Status
             });
 
-            var request = new RoatpModerationController.GetSectorsRequest { UserId = _userId };
+            var request = new RoatpModeratorController.GetSectorsRequest { UserId = _userId };
 
             _mediator.Setup(x => x.Send(It.Is<GetModeratorPageReviewOutcomesForSectionRequest>(y => y.ApplicationId == _applicationId && y.SequenceNumber == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining
             && y.SectionNumber == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees && y.UserId == request.UserId), It.IsAny<CancellationToken>())).ReturnsAsync(_sectionStatuses);

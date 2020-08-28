@@ -39,6 +39,7 @@ namespace SFA.DAS.ApplyService.InternalApi
     using SFA.DAS.ApplyService.Domain.Roatp;
     using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
     using SFA.DAS.ApplyService.InternalApi.Services;
+    using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
     using Swashbuckle.AspNetCore.Swagger;
     using System.IO;
 
@@ -249,8 +250,8 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IRegistrationDetailsService, RegistrationDetailsService>();
             services.AddTransient<IAssessorLookupService, AssessorLookupService>();
             services.AddTransient<IExtractAnswerValueService, ExtractAnswerValueService>();
-            services.AddTransient<IGetAssessorPageService, GetAssessorPageService>();
-            services.AddTransient<ISectorDetailsOrchestratorService, SectorDetailsOrchestratorService>();
+            services.AddTransient<IAssessorPageService, AssessorPageService>();
+            services.AddTransient<IAssessorSectorDetailsService, AssessorSectorDetailsService>();
 
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
         }

@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 
-namespace SFA.DAS.ApplyService.InternalApi.Services
+namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
 {
-    public interface IGetAssessorPageService
+    public interface IAssessorPageService
     {
         Task<AssessorPage> GetPage(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId);
     }

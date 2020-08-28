@@ -7,16 +7,16 @@ using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
-using SFA.DAS.ApplyService.InternalApi.Services;
+using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
 
-namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services
+namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
 {
     [TestFixture]
-    public class GetAssessorPageServiceTests
+    public class AssessorPageServiceTests
     {
         private Mock<IInternalQnaApiClient> _qnaApiClient;
         private AssessorLookupService _assessorLookupService;
-        private GetAssessorPageService _service;
+        private AssessorPageService _assessorPageService;
 
         private readonly Guid _applicationId = Guid.NewGuid();
         private const int _sequenceNumber = 5;
@@ -30,7 +30,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services
         {
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
             _assessorLookupService = new AssessorLookupService();
-            _service = new GetAssessorPageService(_qnaApiClient.Object, _assessorLookupService);
+            _assessorPageService = new AssessorPageService(_qnaApiClient.Object, _assessorLookupService);
         }
 
         [Test]
@@ -58,7 +58,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services
             _qnaApiClient.Setup(x => x.SkipPageBySectionNo(_applicationId, _sequenceNumber,
                 _sectionNumber, _pageId)).ReturnsAsync(skip).Verifiable();
 
-            var returnedAssessorPage = await _service.GetPage(_applicationId, _sequenceNumber, _sectionNumber, _pageId);
+            var returnedAssessorPage = await _assessorPageService.GetPage(_applicationId, _sequenceNumber, _sectionNumber, _pageId);
 
             Assert.AreEqual(_nextPageId,returnedAssessorPage.NextPageId);
             Assert.AreEqual(_bodyText,returnedAssessorPage.BodyText);

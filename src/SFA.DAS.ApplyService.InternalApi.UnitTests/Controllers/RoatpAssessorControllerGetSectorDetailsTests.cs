@@ -6,7 +6,6 @@ using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
-using SFA.DAS.ApplyService.InternalApi.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,11 +13,12 @@ using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Sectors;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
+using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
 
-namespace SFA.DAS.ApplyService.InternalApi.UnitTests
+namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
 {
     [TestFixture]
-    public class RoatpModerationControllerGetSectorDetailsTests
+    public class RoatpAssessorControllerGetSectorDetailsTests
     {
         private readonly Guid _applicationId = Guid.NewGuid();
         private readonly int _sequenceId = RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining;
@@ -33,22 +33,22 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
         private readonly string _pageId = "57610";
 
-        private Mock<ILogger<RoatpModerationController>> _logger;
+        private Mock<ILogger<RoatpAssessorController>> _logger;
         private Mock<IMediator> _mediator;
         private Mock<IInternalQnaApiClient> _qnaApiClient;
         private Mock<IAssessorLookupService> _lookupService;
-        private RoatpModerationController _controller;
-        private Mock<ISectorDetailsOrchestratorService> _sectorDetailsOrchestratorService;
+        private RoatpAssessorController _controller;
+        private Mock<IAssessorSectorDetailsService> _sectorDetailsOrchestratorService;
         private SectorQuestionIds _sectorQuestionIds;
 
         [SetUp]
         public void TestSetup()
         {
             _mediator = new Mock<IMediator>();
-            _logger = new Mock<ILogger<RoatpModerationController>>();
+            _logger = new Mock<ILogger<RoatpAssessorController>>();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
             _lookupService = new Mock<IAssessorLookupService>();
-            _sectorDetailsOrchestratorService = new Mock<ISectorDetailsOrchestratorService>();
+            _sectorDetailsOrchestratorService = new Mock<IAssessorSectorDetailsService>();
 
               var section = new ApplicationSection
             {
@@ -69,8 +69,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _firstPageId)).ReturnsAsync(new SkipPageResponse { NextAction = "NextPage", NextActionId = _secondPage });
             _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _secondPage)).ReturnsAsync(new SkipPageResponse { NextAction = "NextPage", NextActionId = _thirdPage });
             _qnaApiClient.Setup(x => x.SkipPageBySectionNo(section.ApplicationId, section.SequenceId, section.SectionId, _thirdPage)).ReturnsAsync(new SkipPageResponse { NextAction = "NextPage", NextActionId = _fourthPage });
-            _controller = new RoatpModerationController(_logger.Object, _mediator.Object, 
-                _qnaApiClient.Object, _lookupService.Object, Mock.Of<IGetAssessorPageService>(), _sectorDetailsOrchestratorService.Object);
+            _controller = new RoatpAssessorController(_logger.Object, _mediator.Object, 
+                _qnaApiClient.Object, _lookupService.Object, Mock.Of<IAssessorPageService>(), _sectorDetailsOrchestratorService.Object);
         }
 
         [Test]

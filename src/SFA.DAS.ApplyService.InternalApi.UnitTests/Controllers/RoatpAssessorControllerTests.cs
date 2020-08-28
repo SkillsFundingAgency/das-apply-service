@@ -11,7 +11,6 @@ using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
-using SFA.DAS.ApplyService.InternalApi.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,8 +20,9 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Domain.Apply.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
+using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
 
-namespace SFA.DAS.ApplyService.InternalApi.UnitTests
+namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
 {
     [TestFixture]
     public class RoatpAssessorControllerTests
@@ -38,8 +38,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         private Mock<IMediator> _mediator;
         private Mock<IInternalQnaApiClient> _qnaApiClient;
         private Mock<IAssessorLookupService> _lookupService;
-        private Mock<IGetAssessorPageService> _getAssessorPageService;
-        private Mock<ISectorDetailsOrchestratorService> _sectorDetailsOrchestratorService;
+        private Mock<IAssessorPageService> _getAssessorPageService;
+        private Mock<IAssessorSectorDetailsService> _sectorDetailsOrchestratorService;
         private RoatpAssessorController _controller;
 
 
@@ -50,8 +50,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
             _logger = new Mock<ILogger<RoatpAssessorController>>();
             _qnaApiClient = new Mock<IInternalQnaApiClient>();
             _lookupService = new Mock<IAssessorLookupService>();
-            _sectorDetailsOrchestratorService = new Mock<ISectorDetailsOrchestratorService>();
-            _getAssessorPageService = new Mock<IGetAssessorPageService>();
+            _sectorDetailsOrchestratorService = new Mock<IAssessorSectorDetailsService>();
+            _getAssessorPageService = new Mock<IAssessorPageService>();
             _controller = new RoatpAssessorController(_logger.Object, _mediator.Object, _qnaApiClient.Object, _lookupService.Object, _getAssessorPageService.Object, _sectorDetailsOrchestratorService.Object);
         }
 

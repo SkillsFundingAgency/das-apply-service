@@ -12,13 +12,13 @@ using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply.Moderator;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
-using SFA.DAS.ApplyService.InternalApi.Services;
+using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Types.Moderator;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
     [Authorize]
-    public class RoatpModerationController : Controller
+    public class RoatpModeratorController : Controller
     {
         private static readonly List<int> _ModeratorSequences = new List<int>
         {
@@ -29,15 +29,15 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             RoatpWorkflowSequenceIds.EvaluatingApprenticeshipTraining
         };
 
-        private readonly ILogger<RoatpModerationController> _logger;
+        private readonly ILogger<RoatpModeratorController> _logger;
         private readonly IMediator _mediator;
         private readonly IInternalQnaApiClient _qnaApiClient;
         private readonly IAssessorLookupService _assessorLookupService;
-        private readonly IGetAssessorPageService _getAssessorPageService;
-        private readonly ISectorDetailsOrchestratorService _sectorDetailsOrchestratorService;
+        private readonly IAssessorPageService _getAssessorPageService;
+        private readonly IAssessorSectorDetailsService _sectorDetailsOrchestratorService;
 
-        public RoatpModerationController(ILogger<RoatpModerationController> logger, IMediator mediator, IInternalQnaApiClient qnaApiClient, IAssessorLookupService assessorLookupService,
-            IGetAssessorPageService getAssessorPageService, ISectorDetailsOrchestratorService sectorDetailsOrchestratorService)
+        public RoatpModeratorController(ILogger<RoatpModeratorController> logger, IMediator mediator, IInternalQnaApiClient qnaApiClient, IAssessorLookupService assessorLookupService,
+            IAssessorPageService getAssessorPageService, IAssessorSectorDetailsService sectorDetailsOrchestratorService)
         {
             _logger = logger;
             _mediator = mediator;
