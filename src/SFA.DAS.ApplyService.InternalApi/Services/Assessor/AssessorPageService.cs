@@ -7,14 +7,16 @@ using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 
 namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
 {
-    public class AssessorPageService: IAssessorPageService
+    public class AssessorPageService : IAssessorPageService
     {
         private readonly IInternalQnaApiClient _qnaApiClient;
+        private readonly IAssessorSequenceService _assessorSequenceService;
         private readonly IAssessorLookupService _assessorLookupService;
 
-        public AssessorPageService(IInternalQnaApiClient qnaApiClient, IAssessorLookupService assessorLookupService)
+        public AssessorPageService(IInternalQnaApiClient qnaApiClient, IAssessorSequenceService assessorSequenceService, IAssessorLookupService assessorLookupService)
         {
             _qnaApiClient = qnaApiClient;
+            _assessorSequenceService = assessorSequenceService;
             _assessorLookupService = assessorLookupService;
         }
 
@@ -22,25 +24,24 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
         {
             AssessorPage page = null;
 
-            var qnaSection =
-                await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceNumber, sectionNumber);
-            var qnaPage =
-                qnaSection?.QnAData.Pages.FirstOrDefault(p => p.PageId == pageId || string.IsNullOrEmpty(pageId));
-
-            if (qnaPage != null)
+            if (_assessorSequenceService.IsValidSequenceNumber(sequenceNumber))
             {
-                page = qnaPage.ToAssessorPage(_assessorLookupService, applicationId, sequenceNumber, sectionNumber);
+                var qnaSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceNumber, sectionNumber);
+                var qnaPage = qnaSection?.QnAData.Pages.FirstOrDefault(p => p.PageId == pageId || string.IsNullOrEmpty(pageId));
 
-                var nextPageAction = await _qnaApiClient.SkipPageBySectionNo(page.ApplicationId,
-                    page.SequenceNumber, page.SectionNumber, page.PageId);
-
-                if (nextPageAction != null && "NextPage".Equals(nextPageAction.NextAction,
-                        StringComparison.InvariantCultureIgnoreCase))
+                if (qnaPage != null)
                 {
-                    page.NextPageId = nextPageAction.NextActionId;
+                    page = qnaPage.ToAssessorPage(_assessorLookupService, applicationId, sequenceNumber, sectionNumber);
+
+                    var nextPageAction = await _qnaApiClient.SkipPageBySectionNo(page.ApplicationId, page.SequenceNumber, page.SectionNumber, page.PageId);
+
+                    if (nextPageAction != null && "NextPage".Equals(nextPageAction.NextAction, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        page.NextPageId = nextPageAction.NextActionId;
+                    }
                 }
             }
-            
+
             return page;
         }
     }
