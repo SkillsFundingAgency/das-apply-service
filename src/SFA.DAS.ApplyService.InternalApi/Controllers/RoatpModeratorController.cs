@@ -9,7 +9,6 @@ using SFA.DAS.ApplyService.Application.Apply.Moderator;
 using SFA.DAS.ApplyService.Domain.Apply.Moderator;
 using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
-using SFA.DAS.ApplyService.InternalApi.Types.Moderator;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {

@@ -2,11 +2,8 @@
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
-using SFA.DAS.ApplyService.Application.Apply.Assessor;
 using SFA.DAS.ApplyService.Application.Apply.Moderator;
-using SFA.DAS.ApplyService.Domain.Apply.Assessor;
-using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.InternalApi.Types.Moderator;
+using SFA.DAS.ApplyService.Domain.Apply.Moderator;
 using System;
 using System.Threading;
 using System.Threading.Tasks;

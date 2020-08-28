@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SFA.DAS.ApplyService.InternalApi.Types.Moderator
+namespace SFA.DAS.ApplyService.Domain.Apply.Moderator
 {
     public class BlindAssessmentOutcome
     {

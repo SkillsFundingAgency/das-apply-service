@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using SFA.DAS.ApplyService.InternalApi.Types.Moderator;
+using SFA.DAS.ApplyService.Domain.Apply.Moderator;
 using System;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Moderator

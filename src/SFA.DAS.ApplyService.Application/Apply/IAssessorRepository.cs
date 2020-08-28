@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Apply.Assessor;
 using SFA.DAS.ApplyService.Domain.Apply.Moderator;
-using SFA.DAS.ApplyService.InternalApi.Types.Moderator;
 
 namespace SFA.DAS.ApplyService.Application.Apply
 {

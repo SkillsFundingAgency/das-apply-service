@@ -7,7 +7,6 @@ using SFA.DAS.ApplyService.Domain.Apply.Moderator;
 using SFA.DAS.ApplyService.InternalApi.Controllers;
 using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
-using SFA.DAS.ApplyService.InternalApi.Types.Moderator;
 using System;
 using System.Collections.Generic;
 using System.Threading;

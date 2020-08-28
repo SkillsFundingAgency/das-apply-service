@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.InternalApi.Types.Moderator;
+using SFA.DAS.ApplyService.Domain.Apply.Moderator;
 using System.Threading;
 using System.Threading.Tasks;
 
