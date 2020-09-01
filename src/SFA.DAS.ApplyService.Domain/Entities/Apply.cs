@@ -11,12 +11,23 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     {
         public Guid ApplicationId { get; set; }
         public Guid OrganisationId { get; set; }
+
         public string ApplicationStatus { get; set; }
         public string AssessorReviewStatus { get; set; }
         public string GatewayReviewStatus { get; set; }
         public string FinancialReviewStatus { get; set; }
+        public string ModerationStatus { get; set; }
+        public string OversightStatus { get; set; }
+
         public ApplyData ApplyData { get; set; }
         public FinancialReviewDetails FinancialGrade { get; set; }
+
+        public string Assessor1UserId { get; set; }
+        public string Assessor1Name{ get; set; }
+        public string Assessor1ReviewStatus { get; set; }
+        public string Assessor2UserId { get; set; }
+        public string Assessor2Name { get; set; }
+        public string Assessor2ReviewStatus { get; set; }
     }
 
     public class ApplyData
@@ -103,6 +114,17 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Rejected = "Rejected";	
         public const string Approved = "Approved";	
         public const string Cancelled = "Cancelled";
+
+        // Below are other statuses mentioned in the most recent status documentation
+        // Please check the flow in RoatpApplicationController, under the line ' switch (application.ApplicationStatus)' if you add new statuses
+        // GWResubmitted
+        //PMOModerationInProgress
+        //PMOModerationAssessed
+        //OversightInProgress - probably not needed
+        // Withdrawn
+        // Reopened
+        // GWFeedbackAdded
+        // InAssessment
     }
 
     public static class ApplicationReviewStatus

@@ -18,6 +18,7 @@ using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.InternalApi.IntegrationTests
 {
+    // NOTE: I Don't think these have ever worked!
     [TestFixture]
     public class WhenCallingInviteUser
     {

@@ -1,5 +1,6 @@
 ﻿@using SFA.DAS.ApplyService.Application.Apply.Roatp
-@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.TaskListViewModel
+@using SFA.DAS.ApplyService.Web.ViewModels.Roatp
+@model TaskListViewModel
 
 @{
     var applicationSequence = Model.ApplicationSequences
@@ -53,7 +54,7 @@
                         <span class="app-task-list__task-name">
                             @Html.Raw(section.Title)
                         </span>
-                        @if (Model.SectionStatus(section.SequenceId, section.SectionId).ToLower() == "not required")
+                        @if (Model.SectionStatus(section.SequenceId, section.SectionId) == TaskListSectionStatus.NotRequired)
                         {
                             <strong class="govuk-tag app-task-list__task-@Model.CssClass(section.SequenceId, section.SectionId)" id="status_@sequenceSection"> @Model.SectionStatus(section.SequenceId, section.SectionId)</strong>
                         }

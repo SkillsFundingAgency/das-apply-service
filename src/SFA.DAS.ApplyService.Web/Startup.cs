@@ -14,7 +14,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Logging;
-using SFA.DAS.ApplyService.Application.Apply.Validation;
 using SFA.DAS.ApplyService.Application.Interfaces;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.DfeSignIn;
@@ -180,13 +179,6 @@ namespace SFA.DAS.ApplyService.Web
             })
             .SetHandlerLifetime(handlerLifeTime);
 
-            services.AddHttpClient<OrganisationSearchApiClient, OrganisationSearchApiClient>(config =>
-            {
-                config.BaseAddress = new Uri(_configService.InternalApi.Uri);
-                config.DefaultRequestHeaders.Add(acceptHeaderName, acceptHeaderValue);
-            })
-            .SetHandlerLifetime(handlerLifeTime);
-
             services.AddHttpClient<IRoatpApiClient, RoatpApiClient>(config =>
             {
                 config.BaseAddress = new Uri(_configService.InternalApi.Uri);
@@ -218,8 +210,6 @@ namespace SFA.DAS.ApplyService.Web
 
         private void ConfigureDependencyInjection(IServiceCollection services)
         {
-            services.RegisterAllTypes<IValidator>(new[] { typeof(IValidator).Assembly });
-
             services.AddTransient<ITokenService, TokenService>();
 
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
@@ -269,6 +259,9 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<ITabularDataService, TabularDataService>();
             services.AddTransient<ITabularDataRepository, TabularDataRepository>();
             services.AddTransient<IUkprnWhitelistValidator, UkprnWhitelistValidator>();
+            services.AddTransient<IRoatpTaskListWorkflowService, RoatpTaskListWorkflowService>();
+            services.AddTransient<IRoatpOrganisationVerificationService, RoatpOrganisationVerificationService>();
+            services.AddTransient<INotRequiredOverridesService, NotRequiredOverridesService>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)
