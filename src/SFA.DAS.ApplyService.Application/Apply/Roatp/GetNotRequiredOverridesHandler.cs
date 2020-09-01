@@ -23,9 +23,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
         {
             _logger.LogDebug($"Getting not required overrides from handler for applicationId {request.ApplicationId}");
             var configuration = await _applyRepository.GetNotRequiredOverrides(request.ApplicationId);
-            var result = await Task.FromResult(configuration);
-            _logger.LogDebug($"not required overrides configuration returned for applicationId {request.ApplicationId}, result count [{result?.NotRequiredOverrides.Count()}]");
-            return result;
+            _logger.LogDebug($"not required overrides configuration returned for applicationId {request.ApplicationId}, result count [{configuration?.NotRequiredOverrides.Count()}]");
+            return configuration;
         }
     }
 }
