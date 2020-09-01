@@ -18,9 +18,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
 
         public async Task<Unit> Handle(SubmitModeratorPageOutcomeRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"SubmitModeratorPageOutcome for ApplicationId '{request.ApplicationId}' - " +
-                                                    $"SequenceNumber '{request.SequenceNumber}' - SectionNumber '{request.SectionNumber}' - PageId '{request.PageId}' - " +
-                                                    $"UserId '{request.UserId}' - Status '{request.Status}' - Comment '{request.Comment}' - ExternalComment '{request.ExternalComment}'");
+            _logger.LogInformation($"SubmitModeratorPageOutcome for ApplicationId '{request.ApplicationId}' - PageId '{request.PageId}' - Status '{request.Status}'");
 
             await _repository.SubmitModeratorPageOutcome(request.ApplicationId, 
                                                         request.SequenceNumber, 

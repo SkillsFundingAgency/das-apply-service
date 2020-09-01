@@ -19,9 +19,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
 
         public async Task<BlindAssessmentOutcome> Handle(GetBlindAssessmentOutcomeRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"GetBlindAssessmentOutcome for ApplicationId '{request.ApplicationId}' - " +
-                                                    $"SequenceNumber '{request.SequenceNumber}' - SectionNumber '{request.SectionNumber}' - " +
-                                                    $"PageId '{request.PageId}'");
+            _logger.LogInformation($"GetBlindAssessmentOutcome for ApplicationId '{request.ApplicationId}' - PageId '{request.PageId}'");
 
             var blindAssessmentOutcome = await _repository.GetBlindAssessmentOutcome(request.ApplicationId,
                                                         request.SequenceNumber,

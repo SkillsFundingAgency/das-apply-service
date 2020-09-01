@@ -20,7 +20,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
 
         public async Task<List<ModeratorPageReviewOutcome>> Handle(GetAllModeratorPageReviewOutcomesRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"GetModeratorAssessorPageReviewOutcomes for ApplicationId '{request.ApplicationId}' - UserId '{request.UserId}'");
+            _logger.LogInformation($"GetModeratorAssessorPageReviewOutcomes for ApplicationId '{request.ApplicationId}'");
 
             var moderatorPageReviewOutcomes = await _repository.GetAllModeratorPageReviewOutcomes(request.ApplicationId);
 
