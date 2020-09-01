@@ -22,9 +22,11 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
 
         public async Task<AssessorSectorDetails> GetSectorDetails(Guid applicationId, string pageId)
         {
-            var sectorDetails = new AssessorSectorDetails();
+            var sectorDetails = new AssessorSectorDetails
+            {
+                SectorName = _lookupService.GetSectorNameForPage(pageId)
+            };
 
-            sectorDetails.SectorName = _lookupService.GetSectorNameForPage(pageId);
             var sectorPageIds = _lookupService.GetSectorQuestionIdsForSectorPageId(pageId);
 
             if (sectorPageIds == null)

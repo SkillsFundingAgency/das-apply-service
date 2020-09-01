@@ -27,7 +27,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             IAssessorSequenceService assessorSequenceService, IAssessorPageService assessorPageService,
             IAssessorSectorService assessorSectorService, IAssessorSectorDetailsService assessorSectorDetailsService)
         {
-            // TOOD: Don't forget unit tests
             _mediator = mediator;
             _qnaApiClient = qnaApiClient;
             _sequenceService = assessorSequenceService;

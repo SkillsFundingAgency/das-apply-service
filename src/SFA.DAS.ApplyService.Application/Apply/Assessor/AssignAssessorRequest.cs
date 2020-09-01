@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using MediatR;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Assessor
