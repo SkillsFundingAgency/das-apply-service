@@ -15,6 +15,9 @@ using SFA.DAS.ApplyService.Web.AutoMapper;
 using NotRequiredOverrideConfiguration = SFA.DAS.ApplyService.Web.Configuration.NotRequiredOverrideConfiguration;
 using NotRequiredCondition = SFA.DAS.ApplyService.Web.Configuration.NotRequiredCondition;
 using System.Linq.Expressions;
+using Castle.Core.Logging;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests
 {
@@ -49,7 +52,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             _applicationId = Guid.NewGuid();
             _sessionKey = string.Format("NotRequiredConfiguration_{0}", _applicationId);
             
-            _notRequiredOverridesService = new NotRequiredOverridesService(_notRequiredOverrideConfiguration.Object, _applicationApiClient.Object, _qnaApiClient.Object, _sessionService.Object);
+            _notRequiredOverridesService = new NotRequiredOverridesService(_notRequiredOverrideConfiguration.Object, _applicationApiClient.Object, _qnaApiClient.Object, _sessionService.Object, Mock.Of<ILogger<NotRequiredOverridesService>>());
         }
 
         [Test]
@@ -88,7 +91,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             _sessionService.Setup(x => x.Get<List<NotRequiredOverrideConfiguration>>(_sessionKey)).ReturnsInOrder(null, configuration);
             _sessionService.Setup(x => x.Set(_sessionKey, configuration));
 
-            _notRequiredOverridesService = new NotRequiredOverridesService(_notRequiredOverrideConfiguration.Object, _applicationApiClient.Object, _qnaApiClient.Object, _sessionService.Object);
+            _notRequiredOverridesService = new NotRequiredOverridesService(_notRequiredOverrideConfiguration.Object, _applicationApiClient.Object, _qnaApiClient.Object, _sessionService.Object, Mock.Of<ILogger<NotRequiredOverridesService>>());
             var overrides = _notRequiredOverridesService.GetNotRequiredOverrides(_applicationId);
 
             overrides[0].Conditions[0].Value.Should().BeEmpty();
@@ -130,7 +133,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             _sessionService.Setup(x => x.Get<List<NotRequiredOverrideConfiguration>>(_sessionKey)).ReturnsInOrder(null, configuration);
             _sessionService.Setup(x => x.Set(_sessionKey, configuration));
 
-            _notRequiredOverridesService = new NotRequiredOverridesService(_notRequiredOverrideConfiguration.Object, _applicationApiClient.Object, _qnaApiClient.Object, _sessionService.Object);
+            _notRequiredOverridesService = new NotRequiredOverridesService(_notRequiredOverrideConfiguration.Object, _applicationApiClient.Object, _qnaApiClient.Object, _sessionService.Object, Mock.Of<ILogger<NotRequiredOverridesService>>());
             var overrides = _notRequiredOverridesService.GetNotRequiredOverrides(_applicationId);
 
             overrides[0].Conditions[0].Value.Should().Be("Test");
@@ -188,7 +191,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             _sessionService.Setup(x => x.Get<List<NotRequiredOverrideConfiguration>>(_sessionKey)).ReturnsInOrder(null, configuration);
             _sessionService.Setup(x => x.Set(_sessionKey, configuration));
 
-            _notRequiredOverridesService = new NotRequiredOverridesService(_notRequiredOverrideConfiguration.Object, _applicationApiClient.Object, _qnaApiClient.Object, _sessionService.Object);
+            _notRequiredOverridesService = new NotRequiredOverridesService(_notRequiredOverrideConfiguration.Object, _applicationApiClient.Object, _qnaApiClient.Object, _sessionService.Object, Mock.Of<ILogger<NotRequiredOverridesService>>());
             var overrides = _notRequiredOverridesService.GetNotRequiredOverrides(_applicationId);
 
             overrides[0].Conditions[0].MustEqual.Should().Be("Test2");
@@ -263,7 +266,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
 
             _qnaApiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(applicationData);
 
-            _notRequiredOverridesService = new NotRequiredOverridesService(_notRequiredOverrideConfiguration.Object, _applicationApiClient.Object, _qnaApiClient.Object, _sessionService.Object);
+            _notRequiredOverridesService = new NotRequiredOverridesService(_notRequiredOverrideConfiguration.Object, _applicationApiClient.Object, _qnaApiClient.Object, _sessionService.Object, Mock.Of<ILogger<NotRequiredOverridesService>>());
             _notRequiredOverridesService.RefreshNotRequiredOverrides(_applicationId);
 
             _sessionService.Verify(x => x.Remove(_sessionKey), Times.Once);
