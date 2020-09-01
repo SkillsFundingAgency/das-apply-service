@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,8 +21,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
         public async Task<NotRequiredOverrideConfiguration> Handle(GetNotRequiredOverridesRequest request, CancellationToken cancellationToken)
         {
+            _logger.LogDebug($"Getting not required overrides from handler for applicationId {request.ApplicationId}");
             var configuration = await _applyRepository.GetNotRequiredOverrides(request.ApplicationId);
-            return await Task.FromResult(configuration);
+            var result = await Task.FromResult(configuration);
+            _logger.LogDebug($"not required overrides configuration returned for applicatiId {request.ApplicationId}, result count [{result?.NotRequiredOverrides.Count()}]");
+            return result;
         }
     }
 }

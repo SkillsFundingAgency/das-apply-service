@@ -85,9 +85,9 @@ namespace SFA.DAS.ApplyService.Web.Services
                 {
                     _logger.LogDebug("overrides from application api for {applicationId} is not null");
                     var appDataNotRequiredOverrides = applicationNotRequiredOverrides.NotRequiredOverrides.ToList();
-                    _logger.LogDebug($"overrides from application api for {{applicationId}}, Details [{appDataNotRequiredOverrides}]");
+                    _logger.LogDebug($"overrides from application api for {{applicationId}}, Count: {applicationNotRequiredOverrides?.NotRequiredOverrides.Count()}");
                     configuration = Mapper.Map<List<NotRequiredOverrideConfiguration>>(appDataNotRequiredOverrides);
-                    _logger.LogDebug($"overrides from application api for {{applicationId}} mapped to configuration, Details [{configuration}]");
+                    _logger.LogDebug($"overrides from application api for {{applicationId}} mapped to configuration, Count [{configuration?.Count}]");
                 }
 
                 foreach (var overrideConfig in configuration)
