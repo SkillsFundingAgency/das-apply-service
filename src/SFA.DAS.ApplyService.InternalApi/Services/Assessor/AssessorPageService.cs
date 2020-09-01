@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Mappers;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
@@ -35,7 +36,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
 
                     var nextPageAction = await _qnaApiClient.SkipPageBySectionNo(page.ApplicationId, page.SequenceNumber, page.SectionNumber, page.PageId);
 
-                    if (nextPageAction != null && "NextPage".Equals(nextPageAction.NextAction, StringComparison.InvariantCultureIgnoreCase))
+                    if (nextPageAction != null && NextAction.NextPage.Equals(nextPageAction.NextAction, StringComparison.InvariantCultureIgnoreCase))
                     {
                         page.NextPageId = nextPageAction.NextActionId;
                     }
