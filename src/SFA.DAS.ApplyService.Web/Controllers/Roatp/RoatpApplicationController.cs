@@ -703,7 +703,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 {
                     _logger.LogDebug($"Error updating not required overrides for applicationId {applicationId} : [{e.Message}]");
                 }
-                _logger.LogDebug($"Successfully refreshed the NotRequiredOverrides for applicationId {applicastionId}");
+                _logger.LogDebug($"Successfully refreshed the NotRequiredOverrides for applicationId {applicationId}");
 
 
                 if (__formAction == "Add" && page.AllowMultipleAnswers)
