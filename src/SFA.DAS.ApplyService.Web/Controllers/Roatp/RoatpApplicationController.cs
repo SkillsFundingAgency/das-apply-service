@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -693,7 +694,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             if (validationPassed)
             {
                 // Any answer that is saved will affect the NotRequiredOverrides
-                _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId);
+                _logger.LogDebug($"Validation passed, refreshing the NotRequiredOverrides for applicationID : {applicationId}");
+                try
+                {
+                    _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId);
+                }
+                catch(Exception e)
+                {
+                    _logger.LogDebug($"Error updating not required overrides for applicationId {applicationId} : [{e.Message}]");
+                }
+                _logger.LogDebug($"Successfully refreshed the NotRequiredOverrides for applicationId {applicastionId}");
+
 
                 if (__formAction == "Add" && page.AllowMultipleAnswers)
                 {
