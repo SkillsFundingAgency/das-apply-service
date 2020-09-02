@@ -5,7 +5,6 @@
     ViewBag.Title = @Model.Title;
     Layout = "_Layout";
     var pageTitle = "";
-    var isSamePage = false;
     var nextPageTitle = "";
     var pagesToCheck = Model.QnAData.Pages.Where(p => p.Active && !p.NotRequired && p.DisplayType!=null && p.DisplayType == PageDisplayType.PagesWithSections).ToList();
     var pageId = pagesToCheck?.FirstOrDefault()?.PageId;
@@ -33,7 +32,6 @@
                             @for (var i = 0; i < pagesToCheck.Count; i++)
                             {
                                 var pg = pagesToCheck[i];
-                                isSamePage = pageTitle == pg.Title;
                                 pageTitle = pg.Title;
                                 nextPageTitle = "";
 
