@@ -67,6 +67,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _mediator.Send(new GetApplicationsRequest(Guid.Parse(signinId), false));
         }
 
+        [HttpGet("Application/{applicationId}/Contact/{signinId}")]
+        public async Task<ActionResult<Domain.Entities.Apply>> GetOrganisationApplicationForUser(Guid applicationId, string signinId)
+        {
+            return await _mediator.Send(new GetApplicationByUserRequest(applicationId, Guid.Parse(signinId)));
+        }
+
         [HttpGet("/Applications/Existing/{ukprn}")]
         public async Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatus(string ukprn)
         {
