@@ -45,7 +45,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await Get<Domain.Entities.Apply>($"Application/{applicationId}");
         }
 
-        public async Task<Apply> GetApplicationByUser(Guid applicationId, Guid signinId)
+        public async Task<Apply> GetApplicationByUserId(Guid applicationId, Guid signinId)
         {
             return await Get<Domain.Entities.Apply>($"Application/{applicationId}/Contact/{ signinId}");
         }

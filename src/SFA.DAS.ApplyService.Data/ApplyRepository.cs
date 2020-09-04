@@ -59,7 +59,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task<Apply> GetApplicationByUser(Guid applicationId, Guid signinId)
+        public async Task<Apply> GetApplicationByUserId(Guid applicationId, Guid signinId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {

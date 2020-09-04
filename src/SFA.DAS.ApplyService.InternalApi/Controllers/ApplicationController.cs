@@ -70,7 +70,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpGet("Application/{applicationId}/Contact/{signinId}")]
         public async Task<ActionResult<Domain.Entities.Apply>> GetOrganisationApplicationForUser(Guid applicationId, string signinId)
         {
-            return await _mediator.Send(new GetApplicationByUserRequest(applicationId, Guid.Parse(signinId)));
+            return await _mediator.Send(new GetApplicationByUserIdRequest(applicationId, Guid.Parse(signinId)));
         }
 
         [HttpGet("/Applications/Existing/{ukprn}")]

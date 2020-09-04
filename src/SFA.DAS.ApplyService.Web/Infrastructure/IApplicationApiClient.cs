@@ -25,7 +25,7 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         Task<Domain.Entities.Apply> GetApplication(Guid applicationId);
         Task<List<Domain.Entities.Apply>> GetApplications(Guid signinId, bool createdBy);
-        Task<Apply> GetApplicationByUser(Guid applicationId, Guid signinId);
+        Task<Apply> GetApplicationByUserId(Guid applicationId, Guid signinId);
 
         Task<IEnumerable<RoatpSequences>> GetRoatpSequences();
 
