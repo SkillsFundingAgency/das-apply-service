@@ -42,16 +42,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
-                        FullName = "DAT-7610_1",
-                        JobRole = "DAT-7610_2",
-                        TimeInRole = "DAT-7610_3",
+                        FullName = "DAT-7610-1",
+                        JobRole = "DAT-7610-2",
+                        TimeInRole = "DAT-7610-3",
                         ExperienceOfDelivering = "DAT-76111",
                         DoTheyHaveQualifications = "DAT-76112",
                         AwardingBodies = "DAT-76113",
                         TradeMemberships = "DAT-76114",
                         WhatTypeOfTrainingDelivered = "DAT-76121",
                         HowHaveTheyDeliveredTraining = "DAT-76131",
-                        HowHaveTheyDeliveredTrainingOther = "DAT-76131_1",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76131-1",
                         ExperienceOfDeliveringTraining = "DAT-76132",
                         TypicalDurationOfTraining = "DAT-76133"
                     };
@@ -68,16 +68,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
-                        FullName = "DAT-7615_1",
-                        JobRole = "DAT-7615_2",
-                        TimeInRole = "DAT-7615_3",
+                        FullName = "DAT-7615-1",
+                        JobRole = "DAT-7615-2",
+                        TimeInRole = "DAT-7615-3",
                         ExperienceOfDelivering = "DAT-76161",
                         DoTheyHaveQualifications = "DAT-76162",
                         AwardingBodies = "DAT-76163",
                         TradeMemberships = "DAT-76164",
                         WhatTypeOfTrainingDelivered = "DAT-76171",
                         HowHaveTheyDeliveredTraining = "DAT-76181",
-                        HowHaveTheyDeliveredTrainingOther = "DAT-76181_1",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76181-1",
                         ExperienceOfDeliveringTraining = "DAT-76182",
                         TypicalDurationOfTraining = "DAT-76183"
                     };
@@ -94,16 +94,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
-                        FullName = "DAT-7620_1",
-                        JobRole = "DAT-7620_2",
-                        TimeInRole = "DAT-7620_3",
+                        FullName = "DAT-7620-1",
+                        JobRole = "DAT-7620-2",
+                        TimeInRole = "DAT-7620-3",
                         ExperienceOfDelivering = "DAT-76211",
                         DoTheyHaveQualifications = "DAT-76212",
                         AwardingBodies = "DAT-76213",
                         TradeMemberships = "DAT-76214",
                         WhatTypeOfTrainingDelivered = "DAT-76221",
                         HowHaveTheyDeliveredTraining = "DAT-76231",
-                        HowHaveTheyDeliveredTrainingOther = "DAT-76231_1",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76231-1",
                         ExperienceOfDeliveringTraining = "DAT-76232",
                         TypicalDurationOfTraining = "DAT-76233"
                     };
@@ -120,16 +120,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
-                        FullName = "DAT-7625_1",
-                        JobRole = "DAT-7625_2",
-                        TimeInRole = "DAT-7625_3",
+                        FullName = "DAT-7625-1",
+                        JobRole = "DAT-7625-2",
+                        TimeInRole = "DAT-7625-3",
                         ExperienceOfDelivering = "DAT-76261",
                         DoTheyHaveQualifications = "DAT-76262",
                         AwardingBodies = "DAT-76263",
                         TradeMemberships = "DAT-76264",
                         WhatTypeOfTrainingDelivered = "DAT-76271",
                         HowHaveTheyDeliveredTraining = "DAT-76281",
-                        HowHaveTheyDeliveredTrainingOther = "DAT-76281_1",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76281-1",
                         ExperienceOfDeliveringTraining = "DAT-76282",
                         TypicalDurationOfTraining = "DAT-76283"
                     };
@@ -146,16 +146,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
-                        FullName = "DAT-7630_1",
-                        JobRole = "DAT-7630_2",
-                        TimeInRole = "DAT-7630_3",
+                        FullName = "DAT-7630-1",
+                        JobRole = "DAT-7630-2",
+                        TimeInRole = "DAT-7630-3",
                         ExperienceOfDelivering = "DAT-76311",
                         DoTheyHaveQualifications = "DAT-76312",
                         AwardingBodies = "DAT-76313",
                         TradeMemberships = "DAT-76314",
                         WhatTypeOfTrainingDelivered = "DAT-76321",
                         HowHaveTheyDeliveredTraining = "DAT-76331",
-                        HowHaveTheyDeliveredTrainingOther = "DAT-76331_1",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76331-1",
                         ExperienceOfDeliveringTraining = "DAT-76332",
                         TypicalDurationOfTraining = "DAT-76333"
                     };
@@ -172,16 +172,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
-                        FullName = "DAT-7635_1",
-                        JobRole = "DAT-7635_2",
-                        TimeInRole = "DAT-7635_3",
+                        FullName = "DAT-7635-1",
+                        JobRole = "DAT-7635-2",
+                        TimeInRole = "DAT-7635-3",
                         ExperienceOfDelivering = "DAT-76361",
                         DoTheyHaveQualifications = "DAT-76362",
                         AwardingBodies = "DAT-76363",
                         TradeMemberships = "DAT-76364",
                         WhatTypeOfTrainingDelivered = "DAT-76371",
                         HowHaveTheyDeliveredTraining = "DAT-76381",
-                        HowHaveTheyDeliveredTrainingOther = "DAT-76381_1",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76381-1",
                         ExperienceOfDeliveringTraining = "DAT-76382",
                         TypicalDurationOfTraining = "DAT-76383"
                     };
@@ -198,16 +198,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
-                        FullName = "DAT-7640_1",
-                        JobRole = "DAT-7640_2",
-                        TimeInRole = "DAT-7640_3",
+                        FullName = "DAT-7640-1",
+                        JobRole = "DAT-7640-2",
+                        TimeInRole = "DAT-7640-3",
                         ExperienceOfDelivering = "DAT-76411",
                         DoTheyHaveQualifications = "DAT-76412",
                         AwardingBodies = "DAT-76413",
                         TradeMemberships = "DAT-76414",
                         WhatTypeOfTrainingDelivered = "DAT-76421",
                         HowHaveTheyDeliveredTraining = "DAT-76431",
-                        HowHaveTheyDeliveredTrainingOther = "DAT-76431_1",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76431-1",
                         ExperienceOfDeliveringTraining = "DAT-76432",
                         TypicalDurationOfTraining = "DAT-76433"
                     };
@@ -224,16 +224,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
-                        FullName = "DAT-7645_1",
-                        JobRole = "DAT-7645_2",
-                        TimeInRole = "DAT-7645_3",
+                        FullName = "DAT-7645-1",
+                        JobRole = "DAT-7645-2",
+                        TimeInRole = "DAT-7645-3",
                         ExperienceOfDelivering = "DAT-76461",
                         DoTheyHaveQualifications = "DAT-76462",
                         AwardingBodies = "DAT-76463",
                         TradeMemberships = "DAT-76464",
                         WhatTypeOfTrainingDelivered = "DAT-76471",
                         HowHaveTheyDeliveredTraining = "DAT-76481",
-                        HowHaveTheyDeliveredTrainingOther = "DAT-761481_1",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-761481-1",
                         ExperienceOfDeliveringTraining = "DAT-76482",
                         TypicalDurationOfTraining = "DAT-76483"
                     };
@@ -250,16 +250,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
-                        FullName = "DAT-7650_1",
-                        JobRole = "DAT-7650_2",
-                        TimeInRole = "DAT-7650_3",
+                        FullName = "DAT-7650-1",
+                        JobRole = "DAT-7650-2",
+                        TimeInRole = "DAT-7650-3",
                         ExperienceOfDelivering = "DAT-76511",
                         DoTheyHaveQualifications = "DAT-76512",
                         AwardingBodies = "DAT-76513",
                         TradeMemberships = "DAT-76514",
                         WhatTypeOfTrainingDelivered = "DAT-76521",
                         HowHaveTheyDeliveredTraining = "DAT-76531",
-                        HowHaveTheyDeliveredTrainingOther = "DAT-76531_1",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76531-1",
                         ExperienceOfDeliveringTraining = "DAT-76532",
                         TypicalDurationOfTraining = "DAT-76533"
                     };
@@ -276,16 +276,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
-                        FullName = "DAT-7655_1",
-                        JobRole = "DAT-7655_2",
-                        TimeInRole = "DAT-7655_3",
+                        FullName = "DAT-7655-1",
+                        JobRole = "DAT-7655-2",
+                        TimeInRole = "DAT-7655-3",
                         ExperienceOfDelivering = "DAT-76561",
                         DoTheyHaveQualifications = "DAT-76562",
                         AwardingBodies = "DAT-76563",
                         TradeMemberships = "DAT-76564",
                         WhatTypeOfTrainingDelivered = "DAT-76571",
                         HowHaveTheyDeliveredTraining = "DAT-76581",
-                        HowHaveTheyDeliveredTrainingOther = "DAT-76581_1",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76581-1",
                         ExperienceOfDeliveringTraining = "DAT-76582",
                         TypicalDurationOfTraining = "DAT-76583"
                     };
@@ -302,16 +302,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
-                        FullName = "DAT-7660_1",
-                        JobRole = "DAT-7660_2",
-                        TimeInRole = "DAT-7660_3",
+                        FullName = "DAT-7660-1",
+                        JobRole = "DAT-7660-2",
+                        TimeInRole = "DAT-7660-3",
                         ExperienceOfDelivering = "DAT-76611",
                         DoTheyHaveQualifications = "DAT-76612",
                         AwardingBodies = "DAT-76613",
                         TradeMemberships = "DAT-76614",
                         WhatTypeOfTrainingDelivered = "DAT-76621",
                         HowHaveTheyDeliveredTraining = "DAT-76631",
-                        HowHaveTheyDeliveredTrainingOther = "DAT-76631_1",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76631-1",
                         ExperienceOfDeliveringTraining = "DAT-76632",
                         TypicalDurationOfTraining = "DAT-76633"
                     };
@@ -328,16 +328,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
-                        FullName = "DAT-7665_1",
-                        JobRole = "DAT-7665_2",
-                        TimeInRole = "DAT-7665_3",
+                        FullName = "DAT-7665-1",
+                        JobRole = "DAT-7665-2",
+                        TimeInRole = "DAT-7665-3",
                         ExperienceOfDelivering = "DAT-76661",
                         DoTheyHaveQualifications = "DAT-76662",
                         AwardingBodies = "DAT-76663",
                         TradeMemberships = "DAT-76664",
                         WhatTypeOfTrainingDelivered = "DAT-76671",
                         HowHaveTheyDeliveredTraining = "DAT-76681",
-                        HowHaveTheyDeliveredTrainingOther = "DAT-76681_1",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76681-1",
                         ExperienceOfDeliveringTraining = "DAT-76682",
                         TypicalDurationOfTraining = "DAT-76683"
                     };
@@ -354,16 +354,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
-                        FullName = "DAT-7670_1",
-                        JobRole = "DAT-7670_2",
-                        TimeInRole = "DAT-7670_3",
+                        FullName = "DAT-7670-1",
+                        JobRole = "DAT-7670-2",
+                        TimeInRole = "DAT-7670-3",
                         ExperienceOfDelivering = "DAT-76711",
                         DoTheyHaveQualifications = "DAT-76712",
                         AwardingBodies = "DAT-76713",
                         TradeMemberships = "DAT-76714",
                         WhatTypeOfTrainingDelivered = "DAT-76721",
                         HowHaveTheyDeliveredTraining = "DAT-76731",
-                        HowHaveTheyDeliveredTrainingOther = "DAT-76731_1",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76731-1",
                         ExperienceOfDeliveringTraining = "DAT-76732",
                         TypicalDurationOfTraining = "DAT-76733"
                     };
@@ -380,16 +380,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
-                        FullName = "DAT-7675_1",
-                        JobRole = "DAT-7675_2",
-                        TimeInRole = "DAT-7675_3",
+                        FullName = "DAT-7675-1",
+                        JobRole = "DAT-7675-2",
+                        TimeInRole = "DAT-7675-3",
                         ExperienceOfDelivering = "DAT-76761",
                         DoTheyHaveQualifications = "DAT-76762",
                         AwardingBodies = "DAT-76763",
                         TradeMemberships = "DAT-76764",
                         WhatTypeOfTrainingDelivered = "DAT-76771",
                         HowHaveTheyDeliveredTraining = "DAT-76781",
-                        HowHaveTheyDeliveredTrainingOther = "DAT-76781_1",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76781-1",
                         ExperienceOfDeliveringTraining = "DAT-76782",
                         TypicalDurationOfTraining = "DAT-76783"
                     };
@@ -406,16 +406,16 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
                 public static SectorQuestionIds SectorQuestionIds =>
                     new SectorQuestionIds
                     {
-                        FullName = "DAT-7680_1",
-                        JobRole = "DAT-7680_2",
-                        TimeInRole = "DAT-7680_3",
+                        FullName = "DAT-7680-1",
+                        JobRole = "DAT-7680-2",
+                        TimeInRole = "DAT-7680-3",
                         ExperienceOfDelivering = "DAT-76811",
                         DoTheyHaveQualifications = "DAT-76812",
                         AwardingBodies = "DAT-76813",
                         TradeMemberships = "DAT-76814",
                         WhatTypeOfTrainingDelivered = "DAT-76821",
                         HowHaveTheyDeliveredTraining = "DAT-76831",
-                        HowHaveTheyDeliveredTrainingOther = "DAT-76831_1",
+                        HowHaveTheyDeliveredTrainingOther = "DAT-76831-1",
                         ExperienceOfDeliveringTraining = "DAT-76832",
                         TypicalDurationOfTraining = "DAT-76833"
                     };

@@ -63,7 +63,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                                     {
                                         new Question
                                         {
-                                            QuestionId = "CC-22_1",
+                                            QuestionId = "CC-22-1",
                                             Input = new Input
                                             {
                                                 Type = "Text"

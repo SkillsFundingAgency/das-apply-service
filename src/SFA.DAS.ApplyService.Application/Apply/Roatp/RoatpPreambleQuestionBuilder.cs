@@ -95,10 +95,10 @@
     public static class RoatpDeliveringApprenticeshipTrainingQuestionIdConstants
     {
         public const string ManagementHierarchy = "DAT-720";
-        public const string OverallManagerResponsible_MainEmployer = "DAT-754_1";
-        public const string OverallManagerExperience_MainEmployer = "DAT-754_2";
-        public const string OverallManagerResponsible_Supporting = "DAT-759_1";
-        public const string OverallManagerExperience_Supporting = "DAT-759_2";
+        public const string OverallManagerResponsible_MainEmployer = "DAT-754-1";
+        public const string OverallManagerExperience_MainEmployer = "DAT-754-2";
+        public const string OverallManagerResponsible_Supporting = "DAT-759-1";
+        public const string OverallManagerExperience_Supporting = "DAT-759-2";
     }
 
     public static class RoatpPlanningApprenticeshipTrainingQuestionIdConstants
