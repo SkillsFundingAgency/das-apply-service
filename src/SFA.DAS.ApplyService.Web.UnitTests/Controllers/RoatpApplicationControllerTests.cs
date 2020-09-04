@@ -361,6 +361,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             };
 
             _apiClient.Setup(x => x.GetOrganisationByUserId(It.IsAny<Guid>())).ReturnsAsync(organisationDetails);
+
             _apiClient.Setup(x => x.GetApplicationByUserId(It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(application);
 
             var providerRouteAnswer = new Answer
