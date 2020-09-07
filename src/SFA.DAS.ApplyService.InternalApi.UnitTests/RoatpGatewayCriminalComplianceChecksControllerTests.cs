@@ -63,7 +63,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                                     {
                                         new Question
                                         {
-                                            QuestionId = "CC-22.1",
+                                            QuestionId = "CC-22-1",
                                             Input = new Input
                                             {
                                                 Type = "Text"
@@ -121,7 +121,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
         public void Get_question_details_retrieves_question_details_and_answer_with_further_question()
         {
             _qnaPageWithQuestion.PageOfAnswers[0].Answers[0].Value = "Yes";
-            _qnaPageWithQuestion.PageOfAnswers[0].Answers.Add(new Answer { QuestionId = "CC-22.1", Value = "Lorem ipsum" });
+            _qnaPageWithQuestion.PageOfAnswers[0].Answers.Add(new Answer { QuestionId = "CC-22-1", Value = "Lorem ipsum" });
 
             var result = _controller.GetCriminalComplianceQuestionDetails(_applicationId, _gatewayPageId).GetAwaiter().GetResult();
 
