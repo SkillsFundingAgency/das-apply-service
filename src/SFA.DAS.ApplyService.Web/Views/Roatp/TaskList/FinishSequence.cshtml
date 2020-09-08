@@ -46,7 +46,9 @@
                     else
                     {
                         <li class="app-task-list__item">
-                            @Html.Raw(section.Title)
+                            <span class="app-task-list__task-name">
+                                @Html.Raw(section.Title)
+                            </span>
                         </li>
                     }
                 }
@@ -80,7 +82,9 @@
             else
             {
                 <li class="app-task-list__item">
-                    Submit application
+                    <span class="app-task-list__task-name">
+                        Submit application
+                    </span>
                 </li>
             }
         </ul>
