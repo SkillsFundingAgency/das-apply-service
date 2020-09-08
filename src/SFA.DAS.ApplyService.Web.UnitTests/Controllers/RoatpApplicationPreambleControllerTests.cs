@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
@@ -45,7 +46,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IApplicationApiClient> _applicationApiClient;
         private Mock<IQnaApiClient> _qnaApiClient;
         private Mock<IUkprnWhitelistValidator> _ukprnWhitelistValidator;
-
+        private Mock<IResetRouteQuestionsService> _resetRoutQuestionsService;
         private RoatpApplicationPreambleController _controller;
 
         private CompaniesHouseSummary _activeCompany;
@@ -54,6 +55,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Contact _user;
         private ApplicationDetails _applicationDetails;
         private CreateOrganisationRequest _expectedRequest;
+
 
         [SetUp]
         public void Before_each_test()
@@ -69,6 +71,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _applicationApiClient = new Mock<IApplicationApiClient>();
             _qnaApiClient = new Mock<IQnaApiClient>();
             _ukprnWhitelistValidator = new Mock<IUkprnWhitelistValidator>();
+            _resetRoutQuestionsService = new Mock<IResetRouteQuestionsService>();
 
             _controller = new RoatpApplicationPreambleController(_logger.Object, _roatpApiClient.Object,
                 _ukrlpApiClient.Object,
@@ -78,7 +81,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                 _usersApiClient.Object,
                 _applicationApiClient.Object,
                 _qnaApiClient.Object,
-                _ukprnWhitelistValidator.Object);
+                _ukprnWhitelistValidator.Object, _resetRoutQuestionsService.Object);
 
             _activeCompany = new CompaniesHouseSummary
             {
@@ -1561,7 +1564,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             model.ApplicationId.Should().Be(applicationId);
             model.ApplicationRouteId.Should().Be(applyApplicationRouteId);
             model.ApplicationRoutes.Count().Should().Be(3);
-        }
+          }
 
         [Test]
         public void Provider_changing_route_mid_application_currently_active_on_the_register_is_only_offered_other_provider_routes()
@@ -1663,6 +1666,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ControllerName.Should().BeNull();
 
             _qnaApiClient.VerifyAll();
+            _resetRoutQuestionsService.Verify(x=>x.ResetRouteQuestions(model.ApplicationId,model.ApplicationRouteId));
         }
         
         [Test]
@@ -1707,7 +1711,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
             redirectResult.ActionName.Should().Be("IneligibleNonLevy");
-        }
+         }
 
         [Test]
         public void Provider_changing_route_to_employer_is_directed_to_terms_and_conditions_with_route_changed_if_levy_paying()
