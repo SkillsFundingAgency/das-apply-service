@@ -30,11 +30,17 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
                     await ResetSection14TasksForEmployerTags(applicationId, section14Id.Value);
                     await _qnaApiClient.ResetPageAnswers(applicationId, section62Id.Value, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Employer);
                     await _qnaApiClient.ResetPageAnswers(applicationId, section62Id.Value, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Supporting);
+                    await _qnaApiClient.ResetPageAnswers(applicationId, section62Id.Value, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_Supporting);
+                    await _qnaApiClient.ResetPageAnswers(applicationId, section62Id.Value, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_Supporting);
+                    await _qnaApiClient.ResetPageAnswers(applicationId, section62Id.Value, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnlyDeliveringApprenticeshipFrameworks_Supporting);
                     break;
                 case ApplicationRoute.SupportingProviderApplicationRoute:
                     await ResetSection14TasksForEmployerTags(applicationId, section14Id.Value);
                     await _qnaApiClient.ResetPageAnswers(applicationId, section62Id.Value, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Main);
                     await _qnaApiClient.ResetPageAnswers(applicationId, section62Id.Value, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Employer);
+                    await _qnaApiClient.ResetPageAnswers(applicationId, section62Id.Value, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_MainEmployer);
+                    await _qnaApiClient.ResetPageAnswers(applicationId, section62Id.Value, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_MainEmployer); 
+                    await _qnaApiClient.ResetPageAnswers(applicationId, section62Id.Value, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnlyDeliveringApprenticeshipFrameworks_MainEmployer);
                     break;
                 case ApplicationRoute.EmployerProviderApplicationRoute:
                     await _qnaApiClient.ResetPageAnswers(applicationId, section14Id.Value, RoatpWorkflowPageIds.DescribeYourOrganisation.MainSupportingStartPage);
@@ -45,6 +51,9 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
                     await _qnaApiClient.ResetPageAnswers(applicationId, section14Id.Value, RoatpWorkflowPageIds.DescribeYourOrganisation.FundedESFAMainSupporting);
                     await _qnaApiClient.ResetPageAnswers(applicationId, section62Id.Value, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Main);
                     await _qnaApiClient.ResetPageAnswers(applicationId, section62Id.Value, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Supporting);
+                    await _qnaApiClient.ResetPageAnswers(applicationId, section62Id.Value, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_Supporting);
+                    await _qnaApiClient.ResetPageAnswers(applicationId, section62Id.Value, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_Supporting);
+                    await _qnaApiClient.ResetPageAnswers(applicationId, section62Id.Value, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnlyDeliveringApprenticeshipFrameworks_Supporting);
                     break;
             }
         

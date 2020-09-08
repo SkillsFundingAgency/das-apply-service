@@ -65,6 +65,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section14Id, RoatpWorkflowPageIds.DescribeYourOrganisation.FundedESFAEmployer));
             _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section62Id, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Employer));
             _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section62Id,  RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Supporting));
+
+            _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section62Id, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_Supporting));
+            _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section62Id, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_Supporting));
+            _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section62Id, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnlyDeliveringApprenticeshipFrameworks_Supporting));
             _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section62Id, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Main), Times.Never);
             _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section14Id, RoatpWorkflowPageIds.DescribeYourOrganisation.MainSupportingStartPage), Times.Never);
             _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section14Id, RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteTypeMainSupporting), Times.Never);
@@ -91,6 +95,10 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section14Id, RoatpWorkflowPageIds.DescribeYourOrganisation.FundedESFAEmployer));
             _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section62Id, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Employer));
             _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section62Id, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Main));
+            _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section62Id, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_MainEmployer));
+            _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section62Id, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_MainEmployer));
+            _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section62Id, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnlyDeliveringApprenticeshipFrameworks_MainEmployer));
+
             _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section62Id, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Supporting),Times.Never);
             _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section14Id, RoatpWorkflowPageIds.DescribeYourOrganisation.MainSupportingStartPage), Times.Never);
             _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section14Id, RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteTypeMainSupporting), Times.Never);
@@ -116,6 +124,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section14Id, RoatpWorkflowPageIds.DescribeYourOrganisation.FundedESFAMainSupporting));
             _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section62Id, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Main));
             _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section62Id, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Supporting));
+
+            _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section62Id, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_Supporting));
+            _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section62Id, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OrganisationTransition_Supporting));
+            _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section62Id, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnlyDeliveringApprenticeshipFrameworks_Supporting));
+
             _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section62Id, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Employer),Times.Never);
             _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section14Id, RoatpWorkflowPageIds.DescribeYourOrganisation.EmployerStartPage), Times.Never);
             _qnaApiClient.Verify(x => x.ResetPageAnswers(_applicationId, _section14Id, RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteTypeEmployer), Times.Never);
