@@ -32,13 +32,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
                     await _qnaApiClient.ResetPageAnswers(applicationId, section62Id.Value, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Supporting);
                     break;
                 case ApplicationRoute.SupportingProviderApplicationRoute:
-                    // reset all employer-based tags
                     await ResetSection14TasksForEmployerTags(applicationId, section14Id.Value);
                     await _qnaApiClient.ResetPageAnswers(applicationId, section62Id.Value, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Main);
                     await _qnaApiClient.ResetPageAnswers(applicationId, section62Id.Value, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Employer);
                     break;
                 case ApplicationRoute.EmployerProviderApplicationRoute:
-                    // reset all main or supporting-based tags
                     await _qnaApiClient.ResetPageAnswers(applicationId, section14Id.Value, RoatpWorkflowPageIds.DescribeYourOrganisation.MainSupportingStartPage);
                     await _qnaApiClient.ResetPageAnswers(applicationId, section14Id.Value, RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteTypeMainSupporting);
                     await _qnaApiClient.ResetPageAnswers(applicationId, section14Id.Value, RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyTypeMainSupporting);

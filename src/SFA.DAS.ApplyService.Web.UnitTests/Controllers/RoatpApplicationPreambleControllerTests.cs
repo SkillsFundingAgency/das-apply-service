@@ -1711,7 +1711,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();
             redirectResult.ActionName.Should().Be("IneligibleNonLevy");
-         }
+        }
 
         [Test]
         public void Provider_changing_route_to_employer_is_directed_to_terms_and_conditions_with_route_changed_if_levy_paying()
