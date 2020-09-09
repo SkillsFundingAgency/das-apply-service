@@ -5,8 +5,11 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Azure.Services.AppAuthentication;
 using SFA.DAS.ApplyService.Application.Users;
 using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Data.Helpers;
 using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Data
@@ -14,10 +17,16 @@ namespace SFA.DAS.ApplyService.Data
     public class ContactRepository : IContactRepository
     {
         private readonly IApplyConfig _config;
-        
-        public ContactRepository(IConfigurationService configurationService)
+        private readonly AzureServiceTokenProvider _azureServiceTokenProvider;
+
+
+        public ContactRepository(IConfigurationService configurationService, IHostingEnvironment hostingEnvironment)
         {
             _config = configurationService.GetConfig().Result;
+            if (hostingEnvironment.EnvironmentName != "Development")
+            {
+                _azureServiceTokenProvider = new AzureServiceTokenProvider();
+            }
         }
         
         public async Task<Contact> CreateContact(string email, string givenName, string familyName, string signInType)
@@ -63,7 +72,7 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task<Contact> GetContact(string email)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            using (var connection = ManagedIdentitySqlConnection.GetSqlConnection(_config.SqlConnectionString, _azureServiceTokenProvider))
             {
                 return await connection.QuerySingleOrDefaultAsync<Contact>("SELECT * FROM Contacts WHERE Email = @email",
                     new {email});
