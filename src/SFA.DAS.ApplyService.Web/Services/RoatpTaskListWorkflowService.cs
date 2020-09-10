@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using MoreLinq;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
@@ -205,9 +206,9 @@ namespace SFA.DAS.ApplyService.Web.Services
             return filteredSequences.ToList();
         }
 
-        public void RefreshNotRequiredOverrides(Guid applicationId)
+        public async Task RefreshNotRequiredOverrides(Guid applicationId)
         {
-            _notRequiredOverridesService.RefreshNotRequiredOverrides(applicationId);
+            await _notRequiredOverridesService.RefreshNotRequiredOverrides(applicationId);
         }
 
         public bool SectionNotRequired(Guid applicationId, int sequenceId, int sectionId)
