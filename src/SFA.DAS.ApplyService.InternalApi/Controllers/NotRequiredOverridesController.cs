@@ -1,11 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Application.Apply.Roatp;
+using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -13,24 +13,24 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     public class NotRequiredOverridesController : Controller
     {
         private readonly IMediator _mediator;
-        private readonly ILogger<NotRequiredOverridesController> _logger;
 
-        public NotRequiredOverridesController(IMediator mediator, ILogger<NotRequiredOverridesController> logger)
+        public NotRequiredOverridesController(IMediator mediator)
         {
             _mediator = mediator;
-            _logger = logger;
         }
 
         [HttpGet("NotRequiredOverrides/{applicationId}")]
         public async Task<IActionResult> GetNotRequiredOverrides(Guid applicationId)
         {
-            return Ok(await _mediator.Send(new GetNotRequiredOverridesRequest(applicationId)));
+            var notRequiredOverrides = await _mediator.Send(new GetNotRequiredOverridesRequest(applicationId));
+            return Ok(notRequiredOverrides);
         }
 
         [HttpPost("NotRequiredOverrides/{applicationId}")]
-        public async Task<IActionResult> SaveNotRequiredOverrides(Guid applicationId, [FromBody] NotRequiredOverrideConfiguration notRequiredOverrides)
+        public async Task<IActionResult> SaveNotRequiredOverrides(Guid applicationId, [FromBody] IEnumerable<NotRequiredOverride> notRequiredOverrides)
         {
-            return Ok(await _mediator.Send(new UpdateNotRequiredOverridesRequest(applicationId, notRequiredOverrides)));
+            var updateResult = await _mediator.Send(new UpdateNotRequiredOverridesRequest(applicationId, notRequiredOverrides));
+            return Ok(updateResult);
         }
     }
 }

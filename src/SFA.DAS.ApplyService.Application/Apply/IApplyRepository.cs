@@ -69,8 +69,8 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<Contact> GetContactForApplication(Guid applicationId);
         Task<Organisation> GetOrganisationForApplication(Guid applicationId);
 
-        Task<NotRequiredOverrideConfiguration> GetNotRequiredOverrides(Guid applicationId);
-        Task<bool> SaveNotRequiredOverrides(Guid applicationId, NotRequiredOverrideConfiguration notRequiredOverrides);
+        Task<List<NotRequiredOverride>> GetNotRequiredOverrides(Guid applicationId);
+        Task<bool> UpdateNotRequiredOverrides(Guid applicationId, IEnumerable<NotRequiredOverride> notRequiredOverrides);
        
         Task<List<ApplicationOversightDetails>> GetOversightsPending();
         Task<List<ApplicationOversightDetails>> GetOversightsCompleted();

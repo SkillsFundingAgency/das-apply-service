@@ -1,106 +1,91 @@
-﻿using Microsoft.Extensions.Options;
+﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
-using SFA.DAS.ApplyService.Session;
-using SFA.DAS.ApplyService.Web.Infrastructure;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Application.Apply.Roatp;
-using NotRequiredOverrideConfiguration = SFA.DAS.ApplyService.Web.Configuration.NotRequiredOverrideConfiguration;
+using SFA.DAS.ApplyService.Domain.Entities;
+using SFA.DAS.ApplyService.Session;
+using SFA.DAS.ApplyService.Web.Infrastructure;
 
 namespace SFA.DAS.ApplyService.Web.Services
 {
     public class NotRequiredOverridesService : INotRequiredOverridesService
     {
-        private readonly List<NotRequiredOverrideConfiguration> _configuration;
+        private readonly List<Configuration.NotRequiredOverride> _configuration;
         private readonly IApplicationApiClient _applicationApiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly ISessionService _sessionService;
-        private readonly ILogger<NotRequiredOverridesService> _logger;
 
         private const string NotRequiredConfigSessionKeyFormat = "NotRequiredConfiguration_{0}";
         
-        public NotRequiredOverridesService(IOptions<List<NotRequiredOverrideConfiguration>> notRequiredOverrides, 
+        public NotRequiredOverridesService(IOptions<List<Configuration.NotRequiredOverride>> notRequiredOverrides, 
                                            IApplicationApiClient applicationApiClient,
                                            IQnaApiClient qnaApiClient,
-                                           ISessionService sessionService, ILogger<NotRequiredOverridesService> logger)
+                                           ISessionService sessionService)
         {
             _configuration = notRequiredOverrides.Value;
             _applicationApiClient = applicationApiClient;
             _qnaApiClient = qnaApiClient;
             _sessionService = sessionService;
-            _logger = logger;
         }
 
-        public void RefreshNotRequiredOverrides(Guid applicationId)
+        public async Task RefreshNotRequiredOverrides(Guid applicationId)
         {
             RemoveConfigurationFromCache(applicationId);
-            var configuration =  CalculateNotRequiredOverrides(applicationId);
-            _logger.LogDebug($"Mapping NotRequiredOverrides for Application Id [{applicationId}]");
-            var applicationNotRequiredOverrides = new Application.Apply.Roatp.NotRequiredOverrideConfiguration
+
+            var notRequiredOverrides = await CalculateNotRequiredOverrides(applicationId);
+
+            if (await _applicationApiClient.UpdateNotRequiredOverrides(applicationId, notRequiredOverrides))
             {
-                NotRequiredOverrides = Mapper.Map<List<NotRequiredOverride>>(configuration)
-            };
-
-            _logger.LogDebug($"Successfully mapped NotRequiredOverrides for Application Id [{applicationId}], Number of overrides: {applicationNotRequiredOverrides?.NotRequiredOverrides.Count()}");
-
-            var updatedOverrides= _applicationApiClient.UpdateNotRequiredOverrides(applicationId, applicationNotRequiredOverrides).GetAwaiter().GetResult();
-            _logger.LogDebug($"Updated Overrides for Application Id [{applicationId}], Result: {updatedOverrides}");
-            SaveConfigurationToCache(applicationId, configuration);
+                SaveConfigurationToCache(applicationId, notRequiredOverrides);
+            }
         }
 
-        public List<NotRequiredOverrideConfiguration> GetNotRequiredOverrides(Guid applicationId)
+        public async Task<List<NotRequiredOverride>> GetNotRequiredOverrides(Guid applicationId)
         {
-            var configuration = RetrieveConfigurationFromCache(applicationId);
+            var notRequiredOverrides = RetrieveConfigurationFromCache(applicationId);
 
-            if (configuration == null)
+            if (notRequiredOverrides is null)
             {
-                RefreshNotRequiredOverrides(applicationId);
-                configuration = RetrieveConfigurationFromCache(applicationId);
+                await RefreshNotRequiredOverrides(applicationId);
+                notRequiredOverrides = RetrieveConfigurationFromCache(applicationId);
             }
 
-            return configuration;
+            return notRequiredOverrides;
         }
 
-        private List<NotRequiredOverrideConfiguration> CalculateNotRequiredOverrides(Guid applicationId)
+        private async Task<List<NotRequiredOverride>> CalculateNotRequiredOverrides(Guid applicationId)
         {
-            List<NotRequiredOverrideConfiguration> configuration = null;
+            List<NotRequiredOverride> notRequiredOverrides = null;
 
-            var applicationData = _qnaApiClient.GetApplicationData(applicationId).GetAwaiter().GetResult() as JObject;
+            var qnaApplicationData = await _qnaApiClient.GetApplicationData(applicationId) as JObject;
 
-            if (applicationData != null)
+            if (qnaApplicationData != null)
             {
-                _logger.LogDebug("Attempting to get overrides from application api for {applicationId}");
-                var applicationNotRequiredOverrides = _applicationApiClient.GetNotRequiredOverrides(applicationId).GetAwaiter().GetResult();
+                var applicationNotRequiredOverrides = await _applicationApiClient.GetNotRequiredOverrides(applicationId);
                 
-                if (applicationNotRequiredOverrides == null)
+                if (applicationNotRequiredOverrides is null)
                 {
-                    _logger.LogDebug("overrides from application api for {applicationId} is NULL");
-                    configuration = new List<NotRequiredOverrideConfiguration>(_configuration);
+                    notRequiredOverrides = Mapper.Map<List<NotRequiredOverride>>(_configuration);
                 }
                 else
                 {
-                    _logger.LogDebug("overrides from application api for {applicationId} is not null");
-                    var appDataNotRequiredOverrides = applicationNotRequiredOverrides.NotRequiredOverrides.ToList();
-                    _logger.LogDebug($"overrides from application api for {{applicationId}}, Count: {applicationNotRequiredOverrides?.NotRequiredOverrides.Count()}");
-                    configuration = Mapper.Map<List<NotRequiredOverrideConfiguration>>(appDataNotRequiredOverrides);
-                    _logger.LogDebug($"overrides from application api for {{applicationId}} mapped to configuration, Count [{configuration?.Count}]");
+                    notRequiredOverrides = new List<NotRequiredOverride>(applicationNotRequiredOverrides);
                 }
 
-                foreach (var overrideConfig in configuration)
+                foreach (var notRequiredOverride in notRequiredOverrides)
                 {
-                    foreach (var condition in overrideConfig.Conditions)
+                    foreach (var condition in notRequiredOverride.Conditions)
                     {
-                        var applicationDataValue = applicationData[condition.ConditionalCheckField];
+                        var applicationDataValue = qnaApplicationData[condition.ConditionalCheckField];
                         condition.Value = applicationDataValue != null ? applicationDataValue.Value<string>() : string.Empty;
                     }
                 }
             }
 
-            return configuration;
+            return notRequiredOverrides;
         }
 
         #region cache function
@@ -109,13 +94,13 @@ namespace SFA.DAS.ApplyService.Web.Services
             return string.Format(NotRequiredConfigSessionKeyFormat, applicationId);
         }
 
-        private List<NotRequiredOverrideConfiguration> RetrieveConfigurationFromCache(Guid applicationId)
+        private List<NotRequiredOverride> RetrieveConfigurationFromCache(Guid applicationId)
         {
             var sessionKey = GetSessionKey(applicationId);
-            return _sessionService.Get<List<NotRequiredOverrideConfiguration>>(sessionKey);
+            return _sessionService.Get<List<NotRequiredOverride>>(sessionKey);
         }
 
-        private void SaveConfigurationToCache(Guid applicationId, List<NotRequiredOverrideConfiguration> configuration)
+        private void SaveConfigurationToCache(Guid applicationId, List<NotRequiredOverride> configuration)
         {
             var sessionKey = GetSessionKey(applicationId);
             _sessionService.Set(sessionKey, configuration);

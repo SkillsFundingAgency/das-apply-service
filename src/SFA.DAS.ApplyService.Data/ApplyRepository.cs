@@ -1,8 +1,6 @@
 using Dapper;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using SFA.DAS.ApplyService.Application.Apply;
-using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data.DapperTypeHandlers;
 using SFA.DAS.ApplyService.Domain.Apply;
@@ -928,27 +926,32 @@ namespace SFA.DAS.ApplyService.Data
             return await Task.FromResult(true);
         }
 
-        public async Task<NotRequiredOverrideConfiguration> GetNotRequiredOverrides(Guid applicationId)
+        public async Task<List<NotRequiredOverride>> GetNotRequiredOverrides(Guid applicationId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                var notRequiredOverrides = await connection.QuerySingleOrDefaultAsync<NotRequiredOverrideConfiguration>(@"SELECT NotRequiredOverrides FROM Apply WHERE ApplicationId = @applicationId",
+                var notRequiredOverrideConfiguration = await connection.QuerySingleAsync<NotRequiredOverrideConfiguration>(@"SELECT NotRequiredOverrides FROM Apply WHERE ApplicationId = @applicationId",
                      new { applicationId });
 
-                return notRequiredOverrides;
+                return notRequiredOverrideConfiguration?.NotRequiredOverrides.ToList();
             }
         }
 
-        public async Task<bool> SaveNotRequiredOverrides(Guid applicationId, NotRequiredOverrideConfiguration notRequiredOverrides)
+        public async Task<bool> UpdateNotRequiredOverrides(Guid applicationId, IEnumerable<NotRequiredOverride> notRequiredOverrides)
         {
+            var notRequiredOverrideConfiguration = new NotRequiredOverrideConfiguration
+            {
+                NotRequiredOverrides = notRequiredOverrides
+            };
+
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"UPDATE Apply SET NotRequiredOverrides = @notRequiredOverrides
+                await connection.ExecuteAsync(@"UPDATE Apply SET NotRequiredOverrides = @notRequiredOverrideConfiguration
                                                 WHERE ApplicationId = @applicationId",
                 new
                 {
                     applicationId,
-                    notRequiredOverrides
+                    notRequiredOverrideConfiguration
                 });
             }
             

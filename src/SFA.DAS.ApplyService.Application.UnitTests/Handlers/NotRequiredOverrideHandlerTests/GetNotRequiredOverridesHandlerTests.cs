@@ -1,12 +1,11 @@
 ﻿using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
+using SFA.DAS.ApplyService.Domain.Entities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,40 +14,37 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.NotRequiredOverrid
     [TestFixture]
     public class GetNotRequiredOverridesHandlerTests
     {
+        private readonly Guid _applicationId = Guid.NewGuid();
+
         private Mock<IApplyRepository> _repository;
-        private Mock<ILogger<GetNotRequiredOverridesHandler>> _logger;
 
         private GetNotRequiredOverridesHandler _handler;
-
-        private Guid _applicationId;
 
         [SetUp]
         public void Before_each_test()
         {
-            _applicationId = Guid.NewGuid();
             _repository = new Mock<IApplyRepository>();
-            _logger = new Mock<ILogger<GetNotRequiredOverridesHandler>>();
 
-            _handler = new GetNotRequiredOverridesHandler(_repository.Object, _logger.Object);
+            _handler = new GetNotRequiredOverridesHandler(_repository.Object);
         }
 
         [Test]
-        public async Task Handler_returns_null_if_config_not_persisted()
+        public async Task Handler_returns_null_if_NotRequiredOverrides_not_persisted()
         {
-            NotRequiredOverrideConfiguration nullConfig = null;
-            _repository.Setup(x => x.GetNotRequiredOverrides(_applicationId)).ReturnsAsync(nullConfig);
+            List<NotRequiredOverride> notRequiredOverrides = null;
+
+            _repository.Setup(x => x.GetNotRequiredOverrides(_applicationId)).ReturnsAsync(notRequiredOverrides);
 
             var result = await _handler.Handle(new GetNotRequiredOverridesRequest(_applicationId), new CancellationToken());
 
+            _repository.Verify(x => x.GetNotRequiredOverrides(_applicationId), Times.Once);
             result.Should().BeNull();
         }
 
         [Test]
-        public async Task Handler_returns_config_if_persisted()
+        public async Task Handler_returns_NotRequiredOverrides_if_persisted()
         {
-            var config = new NotRequiredOverrideConfiguration
-            {
-                NotRequiredOverrides = new List<NotRequiredOverride> 
+            var notRequiredOverrides = new List<NotRequiredOverride>
                 {
                     new NotRequiredOverride
                     {
@@ -64,15 +60,15 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.NotRequiredOverrid
                         SectionId = 1,
                         SequenceId = 4
                     }
-                }
-            };
+                };
 
-            _repository.Setup(x => x.GetNotRequiredOverrides(_applicationId)).ReturnsAsync(config);
+            _repository.Setup(x => x.GetNotRequiredOverrides(_applicationId)).ReturnsAsync(notRequiredOverrides);
 
             var result = await _handler.Handle(new GetNotRequiredOverridesRequest(_applicationId), new CancellationToken());
 
+            _repository.Verify(x => x.GetNotRequiredOverrides(_applicationId), Times.Once);
             result.Should().NotBeNull();
-            result.NotRequiredOverrides.Count().Should().Be(1);
+            result.Count.Should().Be(1);
         }
     }
 }

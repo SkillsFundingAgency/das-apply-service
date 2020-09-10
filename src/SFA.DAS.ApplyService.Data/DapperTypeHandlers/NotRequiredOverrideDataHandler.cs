@@ -1,7 +1,7 @@
 ﻿using Dapper;
 using Newtonsoft.Json;
-using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using System.Data;
+using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Data.DapperTypeHandlers
 {

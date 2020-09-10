@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
@@ -13,8 +12,8 @@ using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
 using System.Collections.Generic;
-using NotRequiredCondition = SFA.DAS.ApplyService.Web.Configuration.NotRequiredCondition;
-using NotRequiredOverrideConfiguration = SFA.DAS.ApplyService.Web.Configuration.NotRequiredOverrideConfiguration;
+using NotRequiredOverride = SFA.DAS.ApplyService.Domain.Entities.NotRequiredOverride;
+using NotRequiredCondition = SFA.DAS.ApplyService.Domain.Entities.NotRequiredCondition;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests
 {
@@ -25,7 +24,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         private Mock<IQnaApiClient> _qnaApiClient;
         private Mock<INotRequiredOverridesService> _notRequiredOverridesService;
         private Mock<IOptions<List<TaskListConfiguration>>> _configuration;
-        private Mock<ILogger<RoatpTaskListWorkflowService>> _logger;
         private Guid _applicationId;
 
         [SetUp]
@@ -34,8 +32,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             _applicationId = Guid.NewGuid();
             _qnaApiClient = new Mock<IQnaApiClient>();
             _notRequiredOverridesService = new Mock<INotRequiredOverridesService>(); 
-            _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverrides(It.IsAny<Guid>())).Returns(new List<NotRequiredOverrideConfiguration>());
+            _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverrides(It.IsAny<Guid>())).ReturnsAsync(new List<NotRequiredOverride>());
             _configuration = new Mock<IOptions<List<TaskListConfiguration>>>();
+
             var config = new List<TaskListConfiguration>
             {
                 new TaskListConfiguration
@@ -94,10 +93,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                 }
             };
             _configuration.Setup(x => x.Value).Returns(config);
-            _logger = new Mock<ILogger<RoatpTaskListWorkflowService>>();
 
-            _service = new RoatpTaskListWorkflowService(_qnaApiClient.Object, _notRequiredOverridesService.Object,
-                                                        _configuration.Object, _logger.Object);
+            _service = new RoatpTaskListWorkflowService(_qnaApiClient.Object, _notRequiredOverridesService.Object, _configuration.Object);
         }
 
         [Test]
@@ -131,7 +128,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             var expectedResult = string.Empty;
             var sequenceId = 1;
             var sectionId = 0;
-            var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = 1 } };
+            var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = Guid.NewGuid(), SequenceId = 1 } };
             var organisationVerificationStatus = new OrganisationVerificationStatus();
             var actualResult = _service.SectionStatus(_applicationId, sequenceId, sectionId, applicationSequences, organisationVerificationStatus);
             Assert.AreEqual(expectedResult, actualResult);
@@ -143,7 +140,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             var expectedResult = string.Empty;
             var sequenceId = 1;
             var sectionId = 3;
-            var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = 1, Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = 2 } } } };
+            var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = Guid.NewGuid(), SequenceId = 1, Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = 2 } } } };
             var organisationVerificationStatus = new OrganisationVerificationStatus(); 
             var actualResult = _service.SectionStatus(_applicationId, sequenceId, sectionId, applicationSequences, organisationVerificationStatus);
             Assert.AreEqual(expectedResult, actualResult);
@@ -156,7 +153,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             var sequenceId = 1;
             var sectionId = 2;
             var expectedResult = string.Empty;
-            var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = 1,
+            var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = Guid.NewGuid(), SequenceId = 1,
                 Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = sectionId,
                                                                                     QnAData = new QnAData {Pages = new List<Page>()}} } } };
             var organisationVerificationStatus = new OrganisationVerificationStatus();
@@ -172,9 +169,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             var sectionId = 2;
             var applicationRouteId = "3";
             var expectedResult = "not required";
-            var notRequiredOverrides = new List<NotRequiredOverrideConfiguration>
+            var notRequiredOverrides = new List<NotRequiredOverride>
             {
-                new NotRequiredOverrideConfiguration
+                new NotRequiredOverride
                 {
                     Conditions = new List<NotRequiredCondition>
                     {
@@ -189,9 +186,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                     SectionId = sectionId
                 }
             };
-            _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverrides(_applicationId)).Returns(notRequiredOverrides);
+            _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverrides(_applicationId)).ReturnsAsync(notRequiredOverrides);
 
-            var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = sequenceId,
+            var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = Guid.NewGuid(), SequenceId = sequenceId,
                     Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = sectionId,
                         QnAData = new QnAData {Pages = new List<Page>()}} } } };
             var organisationVerificationStatus = new OrganisationVerificationStatus();
@@ -209,9 +206,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             var applicationRouteId = "3";
             var orgType = "HEI";
             var expectedResult = "not required";
-            var notRequiredOverrides = new List<NotRequiredOverrideConfiguration>
+            var notRequiredOverrides = new List<NotRequiredOverride>
             {
-                new NotRequiredOverrideConfiguration
+                new NotRequiredOverride
                 {
                     Conditions = new List<NotRequiredCondition>
                     {
@@ -232,9 +229,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                     SectionId = sectionId
                 }
             };
-            _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverrides(_applicationId)).Returns(notRequiredOverrides);
+            _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverrides(_applicationId)).ReturnsAsync(notRequiredOverrides);
 
-            var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = sequenceId,
+            var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = Guid.NewGuid(), SequenceId = sequenceId,
                     Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = sectionId,
                         QnAData = new QnAData {Pages = new List<Page>()}} } } };
             var organisationVerificationStatus = new OrganisationVerificationStatus();
@@ -252,9 +249,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             var applicationRouteId = "3";
             var orgType = "HEI";
 
-            var notRequiredOverrides = new List<NotRequiredOverrideConfiguration>
+            var notRequiredOverrides = new List<NotRequiredOverride>
             {
-                new NotRequiredOverrideConfiguration
+                new NotRequiredOverride
                 {
                     Conditions = new List<NotRequiredCondition>
                     {
@@ -275,9 +272,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                     SectionId = sectionId
                 }
             };
-            _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverrides(_applicationId)).Returns(notRequiredOverrides);
+            _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverrides(_applicationId)).ReturnsAsync(notRequiredOverrides);
 
-            var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = sequenceId,
+            var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = Guid.NewGuid(), SequenceId = sequenceId,
                     Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = sectionId,
                         QnAData = new QnAData {Pages = new List<Page>()}} } } };
             var organisationVerificationStatus = new OrganisationVerificationStatus();
@@ -603,7 +600,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             };
 
             var firstSectionStatus = _service.SectionStatus(Guid.NewGuid(), sequenceId: 1, sectionId: 1, applicationSequences, new OrganisationVerificationStatus());
-            var secondSectionStatus = _service.SectionStatus(Guid.NewGuid(), sequenceId: 1, sectionId: 2, applicationSequences, new OrganisationVerificationStatus()); ;
+            var secondSectionStatus = _service.SectionStatus(Guid.NewGuid(), sequenceId: 1, sectionId: 2, applicationSequences, new OrganisationVerificationStatus());
             var thirdSectionStatus = _service.SectionStatus(Guid.NewGuid(), sequenceId: 1, sectionId: 3, applicationSequences, new OrganisationVerificationStatus());
 
             firstSectionStatus.Should().Be(TaskListSectionStatus.Next);

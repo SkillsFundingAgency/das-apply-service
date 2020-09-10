@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MoreLinq;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
-using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Web.Configuration;
@@ -22,15 +19,13 @@ namespace SFA.DAS.ApplyService.Web.Services
         private readonly IQnaApiClient _qnaApiClient;
         private readonly INotRequiredOverridesService _notRequiredOverridesService;
         private readonly List<TaskListConfiguration> _configuration;
-        private readonly ILogger<RoatpTaskListWorkflowService> _logger;
         
         public RoatpTaskListWorkflowService(IQnaApiClient qnaApiClient, INotRequiredOverridesService notRequiredOverridesService, 
-                                            IOptions<List<TaskListConfiguration>> configuration, ILogger<RoatpTaskListWorkflowService> logger)
+                                            IOptions<List<TaskListConfiguration>> configuration)
         {
             _qnaApiClient = qnaApiClient;
             _notRequiredOverridesService = notRequiredOverridesService;
             _configuration = configuration.Value;
-            _logger = logger;
         }
 
         public string SectionQuestionsStatus(Guid applicationId, int sequenceId, int sectionId, IEnumerable<ApplicationSequence> applicationSequences)
@@ -151,7 +146,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             }
             var finishSequence = applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.Finish);
 
-            var notRequiredOverrides = _notRequiredOverridesService.GetNotRequiredOverrides(applicationId);
+            var notRequiredOverrides = _notRequiredOverridesService.GetNotRequiredOverrides(applicationId).GetAwaiter().GetResult();
 
             if (notRequiredOverrides != null && notRequiredOverrides.Any(condition =>
                                                             condition.AllConditionsMet &&
@@ -217,7 +212,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         public bool SectionNotRequired(Guid applicationId, int sequenceId, int sectionId)
         {
-            var notRequiredOverrides = _notRequiredOverridesService.GetNotRequiredOverrides(applicationId);
+            var notRequiredOverrides = _notRequiredOverridesService.GetNotRequiredOverrides(applicationId).GetAwaiter().GetResult();
 
             if (notRequiredOverrides.Any(condition =>
                                                         sequenceId == condition.SequenceId &&

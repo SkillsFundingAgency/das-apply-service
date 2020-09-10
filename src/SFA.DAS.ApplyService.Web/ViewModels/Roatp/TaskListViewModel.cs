@@ -1,21 +1,15 @@
-﻿
-namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
+﻿namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using Domain.Entities;
     using SFA.DAS.ApplyService.Application.Apply.Roatp;
     using SFA.DAS.ApplyService.Domain.Roatp;
-    using SFA.DAS.ApplyService.Web.Configuration;
     using SFA.DAS.ApplyService.Web.Services;
-    using NotRequiredOverrideConfiguration = Configuration.NotRequiredOverrideConfiguration;
 
     public class TaskListViewModel : ApplicationSummaryViewModel
     {
         private readonly IRoatpTaskListWorkflowService _taskListWorkflowService;
-
-        public List<NotRequiredOverrideConfiguration> NotRequiredOverrides { get; set; }
     
         public int IntroductionSectionId => 1;
         public int Sequence1Id => 1;

@@ -1,22 +1,17 @@
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using SFA.DAS.ApplyService.Application.Apply;
+using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.InternalApi.Types;
-
-using StartQnaApplicationResponse = SFA.DAS.ApplyService.Application.Apply.StartQnaApplicationResponse;
+using SFA.DAS.ApplyService.Domain.Roatp;
 
 namespace SFA.DAS.ApplyService.Web.Infrastructure
 {
-    using SFA.DAS.ApplyService.Application.Apply.Roatp;
-    using SFA.DAS.ApplyService.Domain.Roatp;
-
     public interface IApplicationApiClient
     {
         Task<Guid> StartApplication(StartApplicationRequest startApplicationRequest);
@@ -27,6 +22,10 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<List<Domain.Entities.Apply>> GetApplications(Guid signinId, bool createdBy);
 
         Task<IEnumerable<RoatpSequences>> GetRoatpSequences();
+
+        Task<IEnumerable<NotRequiredOverride>> GetNotRequiredOverrides(Guid applicationId);
+
+        Task<bool> UpdateNotRequiredOverrides(Guid applicationId, IEnumerable<NotRequiredOverride> notRequiredOverrides);
 
 
         Task<ApplicationSequence> GetSequence(Guid applicationId, Guid userId);
@@ -50,9 +49,5 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
         Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatus(string ukprn);
 
         Task<bool> UpdateApplicationStatus(Guid applicationId, string applicationStatus);
-
-        Task<NotRequiredOverrideConfiguration> GetNotRequiredOverrides(Guid applicationId);
-
-        Task<bool> UpdateNotRequiredOverrides(Guid applicationId, NotRequiredOverrideConfiguration notRequiredOverrides);
     }
 }
