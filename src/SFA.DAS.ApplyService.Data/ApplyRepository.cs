@@ -932,10 +932,10 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                var applyDataResults = await connection.QueryAsync<NotRequiredOverrideConfiguration>(@"SELECT NotRequiredOverrides FROM Apply WHERE ApplicationId = @applicationId",
-                    new { applicationId });
+                var notRequiredOverrides = await connection.QuerySingleOrDefaultAsync<NotRequiredOverrideConfiguration>(@"SELECT NotRequiredOverrides FROM Apply WHERE ApplicationId = @applicationId",
+                     new { applicationId });
 
-                return applyDataResults.FirstOrDefault();
+                return notRequiredOverrides;
             }
         }
 
@@ -952,7 +952,7 @@ namespace SFA.DAS.ApplyService.Data
                 });
             }
             
-            return await Task.FromResult(true);
+            return true;
         }
 
         public async Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, DateTime applicationDeterminedDate, string updatedBy)

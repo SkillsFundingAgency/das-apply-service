@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,9 +19,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Roatp
 
         public async Task<bool> Handle(UpdateNotRequiredOverridesRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogDebug($"Saving not required overrides in api handler for applicationid [{request.ApplicationId}], count {request.NotRequiredOverrides?.NotRequiredOverrides.Count()}");
+            _logger.LogInformation($"Updating NotRequiredOverrides for applicationId {request.ApplicationId} | Count [{request.NotRequiredOverrides?.NotRequiredOverrides.Count()}]");
             var result = await _applyRepository.SaveNotRequiredOverrides(request.ApplicationId, request.NotRequiredOverrides);
-            _logger.LogDebug($"result of saving required overrides in api handler for applicationid [{request.ApplicationId}], result {result}");
+            _logger.LogInformation($"Result of updating NotRequiredOverrides for applicationId {request.ApplicationId} | Result {result}");
 
             return result;
         }

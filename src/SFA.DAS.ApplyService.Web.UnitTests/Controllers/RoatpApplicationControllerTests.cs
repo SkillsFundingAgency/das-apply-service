@@ -26,7 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using NotRequiredOverrideConfiguration = SFA.DAS.ApplyService.Web.Configuration.NotRequiredOverrideConfiguration;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {

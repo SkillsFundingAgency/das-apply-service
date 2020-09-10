@@ -155,14 +155,12 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
 
         public async Task<NotRequiredOverrideConfiguration> GetNotRequiredOverrides(Guid applicationId)
         {
-            return await(await _httpClient.GetAsync($"NotRequiredOverrides/{applicationId}")).Content
-                .ReadAsAsync<NotRequiredOverrideConfiguration>();
+            return await Get<NotRequiredOverrideConfiguration>($"/NotRequiredOverrides/{applicationId}");
         }
 
         public async Task<bool> UpdateNotRequiredOverrides(Guid applicationId, NotRequiredOverrideConfiguration notRequiredOverrides)
         {
-            var httpResponse = await _httpClient.PostAsJsonAsync($"/NotRequiredOverrides/{applicationId}", notRequiredOverrides);
-            return await httpResponse.Content.ReadAsAsync<bool>();
+            return await Post<NotRequiredOverrideConfiguration, bool>($"/NotRequiredOverrides/{applicationId}", notRequiredOverrides);
         }
     }
 }

@@ -14,9 +14,6 @@ using AutoMapper;
 using SFA.DAS.ApplyService.Web.AutoMapper;
 using NotRequiredOverrideConfiguration = SFA.DAS.ApplyService.Web.Configuration.NotRequiredOverrideConfiguration;
 using NotRequiredCondition = SFA.DAS.ApplyService.Web.Configuration.NotRequiredCondition;
-using System.Linq.Expressions;
-using Castle.Core.Logging;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests
@@ -65,9 +62,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             {
                 new NotRequiredOverrideConfiguration
                 {
-                    Conditions = new List<Configuration.NotRequiredCondition>
+                    Conditions = new List<NotRequiredCondition>
                     {
-                        new Configuration.NotRequiredCondition
+                        new NotRequiredCondition
                         {
                             ConditionalCheckField = "Field2",
                             MustEqual = "Value"
@@ -108,9 +105,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             {
                 new NotRequiredOverrideConfiguration
                 {
-                    Conditions = new List<Configuration.NotRequiredCondition>
+                    Conditions = new List<NotRequiredCondition>
                     {
-                        new Configuration.NotRequiredCondition
+                        new NotRequiredCondition
                         {
                             ConditionalCheckField = "Field1",
                             MustEqual = "Test"
@@ -206,9 +203,9 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             {
                 new NotRequiredOverrideConfiguration
                 {
-                    Conditions = new List<Configuration.NotRequiredCondition>
+                    Conditions = new List<NotRequiredCondition>
                     {
-                        new Configuration.NotRequiredCondition
+                        new NotRequiredCondition
                         {
                             ConditionalCheckField = "Field1",
                             MustEqual = "Test",
