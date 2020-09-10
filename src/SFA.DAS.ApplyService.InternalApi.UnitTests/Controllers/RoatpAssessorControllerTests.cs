@@ -33,6 +33,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
         private Mock<IAssessorPageService> _pageService;
         private Mock<IAssessorSectorService> _sectorService;  
         private Mock<IAssessorSectorDetailsService> _sectorDetailsService;
+        private Mock<IAssessorReviewCreationService> _assessorReviewCreationService;
 
         private RoatpAssessorController _controller;
 
@@ -46,8 +47,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
             _pageService = new Mock<IAssessorPageService>();
             _sectorService = new Mock<IAssessorSectorService>();
             _sectorDetailsService = new Mock<IAssessorSectorDetailsService>();
-            
-            _controller = new RoatpAssessorController(_mediator.Object, _qnaApiClient.Object, _sequenceService.Object, _pageService.Object, _sectorService.Object, _sectorDetailsService.Object);
+            _assessorReviewCreationService = new Mock<IAssessorReviewCreationService>();
+
+            _controller = new RoatpAssessorController(_mediator.Object, _qnaApiClient.Object, _sequenceService.Object, _pageService.Object, _sectorService.Object, _sectorDetailsService.Object, _assessorReviewCreationService.Object);
         }
 
         [Test]
@@ -113,6 +115,20 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
             await _controller.AssignApplication(applicationid, request);
 
             _mediator.Verify(x => x.Send(It.Is<AssignAssessorRequest>(r => r.ApplicationId == applicationid && r.AssessorName == request.AssessorName && r.AssessorNumber == request.AssessorNumber && r.AssessorUserId == request.AssessorUserId), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+
+        [Test]
+        public async Task AssignApplication_creates_review_outcomes()
+        {
+            var request = new RoatpAssessorController.AssignAssessorCommand { AssessorName = "sdfjfsdg", AssessorNumber = 1, AssessorUserId = _userId };
+            var applicationid = Guid.NewGuid();
+
+            await _controller.AssignApplication(applicationid, request);
+
+            _assessorReviewCreationService.Verify(x => x.CreateEmptyReview(It.Is<Guid>(r => r == applicationid),
+                                                           It.Is<string>(u => u == request.AssessorUserId),
+                                                           It.Is<int>(n => n == request.AssessorNumber)), Times.Once());
         }
 
         [Test]

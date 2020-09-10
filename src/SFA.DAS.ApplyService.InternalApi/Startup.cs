@@ -254,6 +254,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IAssessorPageService, AssessorPageService>();
             services.AddTransient<IAssessorSectorService, AssessorSectorService>();
             services.AddTransient<IAssessorSectorDetailsService, AssessorSectorDetailsService>();
+            services.AddTransient<IAssessorReviewCreationService, AssessorReviewCreationService>();
 
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
         }

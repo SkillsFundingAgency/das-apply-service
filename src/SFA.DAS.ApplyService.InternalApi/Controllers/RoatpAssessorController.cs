@@ -22,10 +22,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         private readonly IAssessorPageService _pageService;
         private readonly IAssessorSectorService _sectorService;
         private readonly IAssessorSectorDetailsService _sectorDetailsService;
+        private readonly IAssessorReviewCreationService _assessorReviewCreationService;
 
         public RoatpAssessorController(IMediator mediator, IInternalQnaApiClient qnaApiClient,
             IAssessorSequenceService assessorSequenceService, IAssessorPageService assessorPageService,
-            IAssessorSectorService assessorSectorService, IAssessorSectorDetailsService assessorSectorDetailsService)
+            IAssessorSectorService assessorSectorService, IAssessorSectorDetailsService assessorSectorDetailsService,
+            IAssessorReviewCreationService assessorReviewCreationService)
         {
             _mediator = mediator;
             _qnaApiClient = qnaApiClient;
@@ -33,6 +35,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             _pageService = assessorPageService;
             _sectorService = assessorSectorService;
             _sectorDetailsService = assessorSectorDetailsService;
+            _assessorReviewCreationService = assessorReviewCreationService;
         }
 
         [HttpGet("Assessor/Applications/{userId}")]
@@ -73,6 +76,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         {
             await _mediator.Send(new AssignAssessorRequest(applicationId, request.AssessorNumber,
                 request.AssessorUserId, request.AssessorName));
+
+            await _assessorReviewCreationService.CreateEmptyReview(applicationId, request.AssessorUserId, request.AssessorNumber);
         }
 
 
