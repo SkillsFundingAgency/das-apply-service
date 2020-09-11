@@ -631,7 +631,7 @@ namespace SFA.DAS.ApplyService.Data
 			                    SET [ModeratorUserId] = @userId
                                     ,[ModeratorReviewStatus] = @status
 				                    ,[ModeratorReviewComment] = @comment
-                                    ,[ExternalComment] = @externalcomment
+                                    ,[ExternalComment] = @externalComment
 				                    ,[UpdatedAt] = GETUTCDATE()
 				                    ,[UpdatedBy] = @userId
 			                WHERE [ApplicationId] = @applicationId AND
