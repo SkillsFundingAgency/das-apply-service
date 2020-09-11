@@ -210,6 +210,71 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
+        public void Applications_shows_confirmation_page_if_application_Gateway_Assessed()
+        {
+            var submittedApp = new Domain.Entities.Apply
+            {
+                ApplicationStatus = ApplicationStatus.GatewayAssessed
+            };
+            var applications = new List<Domain.Entities.Apply>
+            {
+                submittedApp
+            };
+
+            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
+
+            var result = _controller.Applications().GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("ApplicationSubmitted");
+        }
+
+
+        [Test]
+        public void Applications_shows_confirmation_page_if_application_new()
+        {
+            var submittedApp = new Domain.Entities.Apply
+            {
+                ApplicationStatus = ApplicationStatus.New
+            };
+            var applications = new List<Domain.Entities.Apply>
+            {
+                submittedApp
+            };
+
+            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
+
+            var result = _controller.Applications().GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("TaskList");
+        }
+
+        [Test]
+        public void Applications_shows_confirmation_page_if_application_resubmitted()
+        {
+            var submittedApp = new Domain.Entities.Apply
+            {
+                ApplicationStatus = ApplicationStatus.Resubmitted
+            };
+            var applications = new List<Domain.Entities.Apply>
+            {
+                submittedApp
+            };
+
+            _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(applications);
+
+            var result = _controller.Applications().GetAwaiter().GetResult();
+
+            var redirectResult = result as RedirectToActionResult;
+            redirectResult.Should().NotBeNull();
+            redirectResult.ActionName.Should().Be("ApplicationSubmitted");
+        }
+
+
+        [Test]
         public void Applications_shows_enter_ukprn_page_if_application_cancelled()
         {
             var submittedApp = new Domain.Entities.Apply
