@@ -172,7 +172,7 @@ namespace SFA.DAS.ApplyService.Data
                     .QueryAsync<ModerationApplicationSummary>(
                         $@"SELECT 
                             {ApplicationSummaryFields}
-                            , ModerationStatus AS Status
+                            , ModerationStatus
 	                        FROM Apply apply
 	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                        WHERE apply.DeletedAt IS NULL AND (Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus) AND ISNULL(ModerationStatus, 'New')  <> @completedModerationStatus
@@ -488,7 +488,36 @@ namespace SFA.DAS.ApplyService.Data
             }
 		}
 
+        public async Task<BlindAssessmentOutcome> GetBlindAssessmentOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var blindAssessmentOutcomeResults = await connection.QueryAsync<BlindAssessmentOutcome>(
+                                                                @"SELECT outcome.[ApplicationId]
+			                                                            ,outcome.[SequenceNumber]
+			                                                            ,outcome.[SectionNumber]
+			                                                            ,outcome.[PageId]
+                                                                        ,apply.[Assessor1Name]
+			                                                            ,outcome.[Assessor1UserId]
+			                                                            ,outcome.[Assessor1ReviewStatus]
+			                                                            ,outcome.[Assessor1ReviewComment]
+                                                                        ,apply.[Assessor2Name]
+                                                                        ,outcome.[Assessor2UserId]
+			                                                            ,outcome.[Assessor2ReviewStatus]
+			                                                            ,outcome.[Assessor2ReviewComment]
+		                                                            FROM [dbo].[AssessorPageReviewOutcome] outcome
+                                                                    INNER JOIN [dbo].[Apply] apply ON outcome.ApplicationId = apply.ApplicationId
+		                                                            WHERE outcome.[ApplicationId] = @applicationId AND
+				                                                          outcome.[SequenceNumber] = @sequenceNumber AND
+				                                                          outcome.[SectionNumber] = @sectionNumber AND
+				                                                          outcome.[PageId] = @pageId AND
+                                                                          outcome.[Assessor1UserId] = apply.[Assessor1UserId] AND
+                                                                          outcome.[Assessor2UserId] = apply.[Assessor2UserId]",
+                    new { applicationId, sequenceNumber, sectionNumber, pageId });
 
+                return blindAssessmentOutcomeResults.FirstOrDefault();
+            }
+        }
 
         public async Task<ModeratorPageReviewOutcome> GetModeratorPageReviewOutcome(Guid applicationId,
                                                             int sequenceNumber,
@@ -560,6 +589,67 @@ namespace SFA.DAS.ApplyService.Data
                     new { applicationId });
 
                 return pageReviewOutcomeResults.ToList();
+            }
+        }
+
+        public async Task SubmitModeratorPageOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId,
+                                                    string userId, string status, string comment, string externalComment)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(
+                    @"IF NOT EXISTS (SELECT * FROM [ModeratorPageReviewOutcome]
+							         WHERE [ApplicationId] = @applicationId AND
+									        [SequenceNumber] = @sequenceNumber AND
+									        [SectionNumber] = @sectionNumber AND
+									        [PageId] = @pageId)
+		                BEGIN
+			                INSERT INTO [dbo].[ModeratorPageReviewOutcome]
+					                    ([ApplicationId]
+					                    ,[SequenceNumber]
+					                    ,[SectionNumber]
+					                    ,[PageId]
+					                    ,[ModeratorUserId]
+					                    ,[ModeratorReviewStatus]
+					                    ,[ModeratorReviewComment]
+                                        ,[ExternalComment]
+					                    ,[CreatedBy])
+				                    VALUES
+					                    (@applicationId
+					                    ,@sequenceNumber
+					                    ,@sectionNumber
+					                    ,@pageId
+					                    ,@userId
+					                    ,@status
+					                    ,@comment
+                                        ,@externalComment
+					                    ,@userId)                     
+		                END
+                      ELSE
+		                BEGIN
+			                UPDATE [ModeratorPageReviewOutcome]
+			                    SET [ModeratorUserId] = @userId
+                                    ,[ModeratorReviewStatus] = @status
+				                    ,[ModeratorReviewComment] = @comment
+                                    ,[ExternalComment] = @externalComment
+				                    ,[UpdatedAt] = GETUTCDATE()
+				                    ,[UpdatedBy] = @userId
+			                WHERE [ApplicationId] = @applicationId AND
+					                [SequenceNumber] = @sequenceNumber AND
+					                [SectionNumber] = @sectionNumber AND
+					                [PageId] = @pageId
+		                END",
+                    new { applicationId, sequenceNumber, sectionNumber, pageId, userId, status, comment, externalComment });
+
+                // APR-1633 - Update Moderation Status from 'New' to 'In Moderation'
+                await connection.ExecuteAsync(
+                    @"UPDATE [Apply]
+			            SET ModerationStatus = @inModerationStatus
+                            , UpdatedAt = GETUTCDATE()
+				            , UpdatedBy = @userId
+			            WHERE ApplicationId = @applicationId AND DeletedAt IS NULL
+                              AND ModerationStatus = @newStatus",
+                    new { applicationId, userId, inModerationStatus = ModerationStatus.InModeration, newStatus = ModerationStatus.New });
             }
         }
     }

@@ -437,7 +437,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 var nextActionResult = await _qnaApiClient.SkipPageBySectionNo(applicationId, sequenceId, sectionId, pageId);
 
-                if (nextActionResult?.NextAction == "NextPage")
+                if (NextAction.NextPage.Equals(nextActionResult?.NextAction, StringComparison.InvariantCultureIgnoreCase))
                 {
 
                     return RedirectToAction("Page", new
@@ -717,12 +717,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     return RedirectToAction("Feedback", new { applicationId });
                 }
 
-                if ("ReturnToSection".Equals(nextAction, StringComparison.InvariantCultureIgnoreCase) && (page.DisplayType == SectionDisplayType.PagesWithSections || page.DisplayType == "OtherPagesInPagesWithSections"))
+                if (NextAction.ReturnToSection.Equals(nextAction, StringComparison.InvariantCultureIgnoreCase) && (page.DisplayType == SectionDisplayType.PagesWithSections || page.DisplayType == "OtherPagesInPagesWithSections"))
                 {
                     return await Section(applicationId, sequenceNo, sectionNo);
                 }
 
-                if (string.IsNullOrEmpty(nextActionId) || !"NextPage".Equals(nextAction, StringComparison.InvariantCultureIgnoreCase))
+                if (string.IsNullOrEmpty(nextActionId) || !NextAction.NextPage.Equals(nextAction, StringComparison.InvariantCultureIgnoreCase))
                 {
                     return await TaskList(applicationId);
                 }
