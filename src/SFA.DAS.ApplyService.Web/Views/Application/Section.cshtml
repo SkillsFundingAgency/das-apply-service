@@ -23,7 +23,7 @@ else
             else
             {
                 <h1 class="govuk-heading-xl">@Model.Title</h1>
-                <ul class="app-task-list">
+                <ol class="app-task-list">
                     <li>
                         <ul class="app-task-list__items app-task-list__items--no-number">
                             @foreach (var pg in Model.QnAData.Pages.Where(p => p.Active && !p.NotRequired))
@@ -51,7 +51,7 @@ else
                             }
                         </ul>
                     </li>
-                </ul>
+                </ol>
                 <a asp-action="Sequence" asp-controller="Application" asp-route-applicationId="@Model.ApplicationId" class="govuk-button">Return to application overview</a>
             }
         </div>

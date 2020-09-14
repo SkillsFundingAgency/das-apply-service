@@ -57,7 +57,6 @@
                         @if (Model.SectionStatus(section.SequenceId, section.SectionId) == TaskListSectionStatus.NotRequired)
                         {
                             <strong class="govuk-tag app-task-list__task-@Model.CssClass(section.SequenceId, section.SectionId)" id="status_@sequenceSection"> @Model.SectionStatus(section.SequenceId, section.SectionId)</strong>
-
                         }
                     </li>
                 }
