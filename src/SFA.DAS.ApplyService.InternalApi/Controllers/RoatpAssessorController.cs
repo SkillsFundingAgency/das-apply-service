@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Application.Apply.Assessor;
+using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 using SFA.DAS.ApplyService.Domain.Apply.Assessor;
@@ -74,10 +75,16 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("Assessor/Applications/{applicationId}/Assign")]
         public async Task AssignApplication(Guid applicationId, [FromBody] AssignAssessorCommand request)
         {
+            var application = await _mediator.Send(new GetApplicationRequest(applicationId));
+
             await _mediator.Send(new AssignAssessorRequest(applicationId, request.AssessorNumber,
                 request.AssessorUserId, request.AssessorName));
 
-            await _assessorReviewCreationService.CreateEmptyReview(applicationId, request.AssessorUserId, request.AssessorNumber);
+            if (string.IsNullOrWhiteSpace(application.Assessor1ReviewStatus) &&
+                string.IsNullOrWhiteSpace(application.Assessor2ReviewStatus))
+            {
+                await _assessorReviewCreationService.CreateEmptyReview(applicationId, request.AssessorUserId, request.AssessorNumber);
+            }
         }
 
 

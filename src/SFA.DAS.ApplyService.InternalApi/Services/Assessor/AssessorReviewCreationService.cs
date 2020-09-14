@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.ApplyService.Application.Apply.Assessor;
+using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;

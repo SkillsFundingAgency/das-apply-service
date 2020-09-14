@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Application.Apply.GetApplications;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
 {
@@ -111,6 +112,8 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
         {
             var request = new RoatpAssessorController.AssignAssessorCommand { AssessorName = "sdfjfsdg", AssessorNumber = 1, AssessorUserId = _userId };
             var applicationid = Guid.NewGuid();
+            _mediator.Setup(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => new Apply());
 
             await _controller.AssignApplication(applicationid, request);
 
@@ -119,16 +122,32 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
 
 
         [Test]
-        public async Task AssignApplication_creates_review_outcomes()
+        public async Task AssignApplication_creates_review_outcomes_first_time()
         {
             var request = new RoatpAssessorController.AssignAssessorCommand { AssessorName = "sdfjfsdg", AssessorNumber = 1, AssessorUserId = _userId };
             var applicationid = Guid.NewGuid();
+            _mediator.Setup(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => new Apply());
 
             await _controller.AssignApplication(applicationid, request);
 
             _assessorReviewCreationService.Verify(x => x.CreateEmptyReview(It.Is<Guid>(r => r == applicationid),
                                                            It.Is<string>(u => u == request.AssessorUserId),
                                                            It.Is<int>(n => n == request.AssessorNumber)), Times.Once());
+        }
+
+        [Test]
+        public async Task AssignApplication_does_not_create_review_outcomes_second_time()
+        {
+            var request = new RoatpAssessorController.AssignAssessorCommand { AssessorName = "sdfjfsdg", AssessorNumber = 1, AssessorUserId = _userId };
+            var applicationid = Guid.NewGuid();
+            _mediator.Setup(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => new Apply{ Assessor1ReviewStatus = "In progress"});
+
+            await _controller.AssignApplication(applicationid, request);
+
+            _assessorReviewCreationService.Verify(x => x.CreateEmptyReview(It.IsAny<Guid>(),It.IsAny<string>(),
+                It.IsAny<int>()), Times.Never());
         }
 
         [Test]
