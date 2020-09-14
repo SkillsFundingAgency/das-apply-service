@@ -689,7 +689,7 @@ namespace SFA.DAS.ApplyService.Data
                     string.Empty,
                     string.Empty,
                     DateTime.UtcNow,
-                    string.Empty
+                    outcome.UserId
                 );
             }
 
