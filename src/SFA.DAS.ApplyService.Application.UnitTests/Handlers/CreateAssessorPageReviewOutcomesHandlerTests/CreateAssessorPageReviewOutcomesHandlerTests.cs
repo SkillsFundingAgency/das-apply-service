@@ -59,11 +59,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateAssessorPage
 
             await _handler.Handle(request, new CancellationToken());
 
-            foreach (var outcome in request.AssessorPageReviewOutcomes)
-            {
-                _repository.Verify(x => x.SubmitAssessorPageOutcome(outcome.ApplicationId, outcome.SequenceNumber, outcome.SectionNumber, outcome.PageId, outcome.UserId, outcome.Status, outcome.Comment), Times.Once);
-            }
-            
+            _repository.Verify(x => x.CreateAssessorPageOutcomes(request.AssessorPageReviewOutcomes), Times.Once);
         }
     }
 }

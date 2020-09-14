@@ -6,6 +6,7 @@ using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -650,6 +651,57 @@ namespace SFA.DAS.ApplyService.Data
 			            WHERE ApplicationId = @applicationId AND DeletedAt IS NULL
                               AND ModerationStatus = @newStatus",
                     new { applicationId, userId, inModerationStatus = ModerationStatus.InModeration, newStatus = ModerationStatus.New });
+            }
+        }
+
+        public async Task CreateAssessorPageOutcomes(List<AssessorPageReviewOutcome> assessorPageReviewOutcomes)
+        {
+            var applicationId = assessorPageReviewOutcomes.First().ApplicationId;
+            var userId = assessorPageReviewOutcomes.First().UserId;
+            var assessorNumber = await GetAssessorNumber(applicationId, userId);
+
+            var dataTable = new DataTable();
+            dataTable.Columns.Add("Id", typeof(Guid));
+            dataTable.Columns.Add("ApplicationId", typeof(Guid));
+            dataTable.Columns.Add("SequenceNumber", typeof(int));
+            dataTable.Columns.Add("SectionNumber", typeof(int));
+            dataTable.Columns.Add("PageId", typeof(string));
+            dataTable.Columns.Add("Assessor1UserId", typeof(string));
+            dataTable.Columns.Add("Assessor1ReviewStatus", typeof(string));
+            dataTable.Columns.Add("Assessor1ReviewComment", typeof(string));
+            dataTable.Columns.Add("Assessor2UserId", typeof(string));
+            dataTable.Columns.Add("Assessor2ReviewStatus", typeof(string));
+            dataTable.Columns.Add("Assessor2ReviewComment", typeof(string));
+            dataTable.Columns.Add("CreatedAt", typeof(DateTime));
+            dataTable.Columns.Add("CreatedBy", typeof(string));
+
+            foreach (var outcome in assessorPageReviewOutcomes)
+            {
+                dataTable.Rows.Add(Guid.NewGuid(),
+                    outcome.ApplicationId,
+                    outcome.SequenceNumber,
+                    outcome.SectionNumber,
+                    outcome.PageId,
+                    assessorNumber == 1 ? outcome.UserId : string.Empty,
+                    string.Empty,
+                    string.Empty,
+                    assessorNumber == 2 ? outcome.UserId : string.Empty,
+                    string.Empty,
+                    string.Empty,
+                    DateTime.UtcNow,
+                    string.Empty
+                );
+            }
+
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.OpenAsync();
+                using (var bulkCopy = new SqlBulkCopy(connection, SqlBulkCopyOptions.Default, null))
+                {
+                    bulkCopy.DestinationTableName = "AssessorPageReviewOutcome";
+                    await bulkCopy.WriteToServerAsync(dataTable);
+                }
+                connection.Close();
             }
         }
     }

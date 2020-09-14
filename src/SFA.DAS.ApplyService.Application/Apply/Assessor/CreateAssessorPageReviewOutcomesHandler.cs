@@ -20,18 +20,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
         public async Task<Unit> Handle(CreateAssessorPageReviewOutcomesRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"CreateAssessorPageReviewOutcomes for ApplicationId '{request.AssessorPageReviewOutcomes.First().ApplicationId}'");
-
-            foreach (var outcome in request.AssessorPageReviewOutcomes)
-            {
-                await _repository.SubmitAssessorPageOutcome(outcome.ApplicationId,
-                    outcome.SequenceNumber,
-                    outcome.SectionNumber,
-                    outcome.PageId,
-                    outcome.UserId,
-                    outcome.Status,
-                    outcome.Comment);
-            }
-
+            await _repository.CreateAssessorPageOutcomes(request.AssessorPageReviewOutcomes);
             return Unit.Value;
         }
     }
