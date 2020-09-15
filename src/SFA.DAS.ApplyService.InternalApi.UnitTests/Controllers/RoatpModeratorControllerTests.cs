@@ -72,12 +72,12 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
         [Test]
         public async Task SubmitPageReviewOutcome_calls_mediator()
         {
-            var request = new RoatpModeratorController.SubmitPageReviewOutcomeCommand { SequenceNumber = _sequenceNumber, SectionNumber = _sectionNumber, PageId = _pageId, UserId = _userId, Status = "Fail", Comment = "Very bad" };
+            var request = new RoatpModeratorController.SubmitPageReviewOutcomeCommand { SequenceNumber = _sequenceNumber, SectionNumber = _sectionNumber, PageId = _pageId, UserId = _userId, Status = "Fail", Comment = "Very bad", ExternalComment = "Not good" };
 
             await _controller.SubmitPageReviewOutcome(_applicationId, request);
 
             _mediator.Verify(x => x.Send(It.Is<SubmitModeratorPageOutcomeRequest>(r => r.ApplicationId == _applicationId && r.SequenceNumber == request.SequenceNumber && r.SectionNumber == request.SectionNumber &&
-                   r.PageId == request.PageId && r.UserId == request.UserId && r.Status == request.Status && r.Comment == request.Comment), It.IsAny<CancellationToken>()), Times.Once);
+                   r.PageId == request.PageId && r.UserId == request.UserId && r.Status == request.Status && r.Comment == request.Comment && r.ExternalComment == request.ExternalComment), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Test]
