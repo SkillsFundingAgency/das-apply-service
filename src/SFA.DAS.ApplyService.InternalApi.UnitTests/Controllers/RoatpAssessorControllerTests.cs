@@ -16,6 +16,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Application.Apply.GetApplications;
+using SFA.DAS.ApplyService.InternalApi.Services.Moderator;
 
 namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
 {
@@ -35,6 +36,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
         private Mock<IAssessorSectorService> _sectorService;  
         private Mock<IAssessorSectorDetailsService> _sectorDetailsService;
         private Mock<IAssessorReviewCreationService> _assessorReviewCreationService;
+        private Mock<IModeratorReviewCreationService> _moderatorReviewCreationService;
 
         private RoatpAssessorController _controller;
 
@@ -49,8 +51,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
             _sectorService = new Mock<IAssessorSectorService>();
             _sectorDetailsService = new Mock<IAssessorSectorDetailsService>();
             _assessorReviewCreationService = new Mock<IAssessorReviewCreationService>();
+            _moderatorReviewCreationService = new Mock<IModeratorReviewCreationService>();
 
-            _controller = new RoatpAssessorController(_mediator.Object, _qnaApiClient.Object, _sequenceService.Object, _pageService.Object, _sectorService.Object, _sectorDetailsService.Object, _assessorReviewCreationService.Object);
+            _controller = new RoatpAssessorController(_mediator.Object, _qnaApiClient.Object, _sequenceService.Object, _pageService.Object, _sectorService.Object, _sectorDetailsService.Object, _assessorReviewCreationService.Object, _moderatorReviewCreationService.Object);
         }
 
         [Test]
@@ -289,11 +292,33 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
         [Test]
         public async Task UpdateAssessorReviewStatus_calls_mediator()
         {
+            _mediator.Setup(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => new Apply());
+            
             var request = new RoatpAssessorController.UpdateAssessorReviewStatusCommand { UserId = _userId, Status = AssessorReviewStatus.Approved };
 
             await _controller.UpdateAssessorReviewStatus(_applicationId, request);
 
             _mediator.Verify(x => x.Send(It.Is<UpdateAssessorReviewStatusRequest>(r => r.ApplicationId == _applicationId && r.UserId == request.UserId && r.Status == request.Status), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [TestCase("Approved", "Approved", true)]
+        [TestCase("", "Approved", false)]
+        [TestCase("Approved", "", false)]
+        [TestCase("Rejected", "Approved", true)]
+        public async Task UpdateAssessorReviewStatus_creates_review_outcomes_on_second_approver_review(string assessor1ReviewStatus, string assessor2ReviewStatus, bool expectModeratorReviewCreation)
+        {
+            _mediator.Setup(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => new Apply
+                {
+                    Assessor1ReviewStatus = assessor1ReviewStatus, Assessor2ReviewStatus = assessor2ReviewStatus
+                });
+
+            var request = new RoatpAssessorController.UpdateAssessorReviewStatusCommand { UserId = _userId, Status = AssessorReviewStatus.Approved };
+
+            await _controller.UpdateAssessorReviewStatus(_applicationId, request);
+
+            _moderatorReviewCreationService.Verify(x => x.CreateEmptyReview(_applicationId, _userId), Times.Exactly(expectModeratorReviewCreation ? 1 : 0));
         }
     }
 }

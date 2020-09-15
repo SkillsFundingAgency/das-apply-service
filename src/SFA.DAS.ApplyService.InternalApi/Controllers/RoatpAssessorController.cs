@@ -11,6 +11,7 @@ using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 using SFA.DAS.ApplyService.Domain.Apply.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
+using SFA.DAS.ApplyService.InternalApi.Services.Moderator;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -24,11 +25,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         private readonly IAssessorSectorService _sectorService;
         private readonly IAssessorSectorDetailsService _sectorDetailsService;
         private readonly IAssessorReviewCreationService _assessorReviewCreationService;
+        private readonly IModeratorReviewCreationService _moderatorReviewCreationService;
 
         public RoatpAssessorController(IMediator mediator, IInternalQnaApiClient qnaApiClient,
             IAssessorSequenceService assessorSequenceService, IAssessorPageService assessorPageService,
             IAssessorSectorService assessorSectorService, IAssessorSectorDetailsService assessorSectorDetailsService,
-            IAssessorReviewCreationService assessorReviewCreationService)
+            IAssessorReviewCreationService assessorReviewCreationService, IModeratorReviewCreationService moderatorReviewCreationService)
         {
             _mediator = mediator;
             _qnaApiClient = qnaApiClient;
@@ -37,6 +39,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             _sectorService = assessorSectorService;
             _sectorDetailsService = assessorSectorDetailsService;
             _assessorReviewCreationService = assessorReviewCreationService;
+            _moderatorReviewCreationService = moderatorReviewCreationService;
         }
 
         [HttpGet("Assessor/Applications/{userId}")]
@@ -86,8 +89,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 await _assessorReviewCreationService.CreateEmptyReview(applicationId, request.AssessorUserId, request.AssessorNumber);
             }
         }
-
-
 
         [HttpGet("Assessor/Applications/{applicationId}/Overview")]
         public async Task<List<AssessorSequence>> GetAssessorOverview(Guid applicationId)
@@ -165,6 +166,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public async Task UpdateAssessorReviewStatus(Guid applicationId, [FromBody] UpdateAssessorReviewStatusCommand request)
         {
             await _mediator.Send(new UpdateAssessorReviewStatusRequest(applicationId, request.UserId, request.Status));
+
+            var application = await _mediator.Send(new GetApplicationRequest(applicationId));
+
+            if(!string.IsNullOrWhiteSpace(application.Assessor1ReviewStatus) && !string.IsNullOrWhiteSpace(application.Assessor2ReviewStatus))
+            { 
+                await _moderatorReviewCreationService.CreateEmptyReview(applicationId, request.UserId);
+            }
         }
 
 

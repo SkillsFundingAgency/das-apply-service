@@ -2,22 +2,23 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MediatR;
-using SFA.DAS.ApplyService.Application.Apply.Assessor;
+using SFA.DAS.ApplyService.Application.Apply.Moderator;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
-using SFA.DAS.ApplyService.Domain.Apply.Assessor;
+using SFA.DAS.ApplyService.Domain.Apply.Moderator;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
+using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 
-namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
+namespace SFA.DAS.ApplyService.InternalApi.Services.Moderator
 {
-    public class AssessorReviewCreationService : IAssessorReviewCreationService
+    public class ModeratorReviewCreationService : IModeratorReviewCreationService
     {
         private readonly IAssessorSequenceService _sequenceService;
         private readonly IAssessorSectorService _sectorService;
         private readonly IInternalQnaApiClient _qnaApiClient;
         private readonly IMediator _mediator;
 
-        public AssessorReviewCreationService(IAssessorSequenceService sequenceService, IAssessorSectorService sectorService, IInternalQnaApiClient qnaApiClient, IMediator mediator)
+        public ModeratorReviewCreationService(IAssessorSequenceService sequenceService, IAssessorSectorService sectorService, IInternalQnaApiClient qnaApiClient, IMediator mediator)
         {
             _sequenceService = sequenceService;
             _sectorService = sectorService;
@@ -25,10 +26,10 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
             _mediator = mediator;
         }
 
-        public async Task CreateEmptyReview(Guid applicationId, string assessorUserId, int assessorNumber)
+        public async Task CreateEmptyReview(Guid applicationId, string moderatorUserId)
         {
             var sequences = await _sequenceService.GetSequences(applicationId);
-            var result = new List<AssessorPageReviewOutcome>();
+            var result = new List<ModeratorPageReviewOutcome>();
 
             foreach (var sequence in sequences)
             {
@@ -36,35 +37,35 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
                 {
                     if (sequence.SequenceNumber == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining && section.SectionNumber == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees)
                     {
-                        var sectors = await _sectorService.GetSectorsForAssessor(applicationId, assessorUserId);
-                        result.AddRange(GetSectorsSectionReviewOutcomes(applicationId, sequence.SequenceNumber, section.SectionNumber, sectors, assessorUserId, assessorNumber));
+                        var sectors = await _sectorService.GetSectorsForModerator(applicationId, moderatorUserId);
+                        result.AddRange(GetSectorsSectionReviewOutcomes(applicationId, sequence.SequenceNumber, section.SectionNumber, sectors, moderatorUserId));
                     }
                     else
                     {
-                        result.AddRange(await GetSectionReviewOutcomes(applicationId, sequence.SequenceNumber, section.SectionNumber, assessorUserId, assessorNumber));
+                        result.AddRange(await GetSectionReviewOutcomes(applicationId, sequence.SequenceNumber, section.SectionNumber, moderatorUserId));
                     }
                 }
             }
 
-            await _mediator.Send(new CreateAssessorPageReviewOutcomesRequest
+            await _mediator.Send(new CreateModeratorPageReviewOutcomesRequest
             {
-                AssessorPageReviewOutcomes = result
+                ModeratorPageReviewOutcomes = result
             });
         }
 
-        private async Task<List<AssessorPageReviewOutcome>> GetSectionReviewOutcomes(Guid applicationId, int sequenceNumber, int sectionNumber, string assessorUserId, int assessorNumber)
+        private async Task<List<ModeratorPageReviewOutcome>> GetSectionReviewOutcomes(Guid applicationId, int sequenceNumber, int sectionNumber, string assessorUserId)
         {
-            var result = new List<AssessorPageReviewOutcome>();
+            var result = new List<ModeratorPageReviewOutcome>();
             var section = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceNumber, sectionNumber);
             var pages = section.QnAData.Pages;
 
             foreach (var page in pages)
             {
-                result.Add(new AssessorPageReviewOutcome
+                result.Add(new ModeratorPageReviewOutcome
                 {
                     ApplicationId = applicationId,
-                    AssessorNumber = assessorNumber,
                     Comment = string.Empty,
+                    ExternalComment = string.Empty,
                     PageId = page.PageId,
                     SectionNumber = sectionNumber,
                     SequenceNumber = sequenceNumber,
@@ -76,17 +77,17 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
             return result;
         }
 
-        private List<AssessorPageReviewOutcome> GetSectorsSectionReviewOutcomes(Guid applicationId, int sequenceNumber, int sectionNumber, List<AssessorSector> selectedSectors, string assessorUserId, int assessorNumber)
+        private List<ModeratorPageReviewOutcome> GetSectorsSectionReviewOutcomes(Guid applicationId, int sequenceNumber, int sectionNumber, List<AssessorSector> selectedSectors, string assessorUserId)
         {
-            var result = new List<AssessorPageReviewOutcome>();
+            var result = new List<ModeratorPageReviewOutcome>();
 
             foreach (var sector in selectedSectors)
             {
-                result.Add(new AssessorPageReviewOutcome
+                result.Add(new ModeratorPageReviewOutcome
                 {
                     ApplicationId = applicationId,
-                    AssessorNumber = assessorNumber,
                     Comment = string.Empty,
+                    ExternalComment = string.Empty,
                     PageId = sector.PageId,
                     SectionNumber = sectionNumber,
                     SequenceNumber = sequenceNumber,
