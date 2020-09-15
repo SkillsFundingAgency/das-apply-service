@@ -1,7 +1,7 @@
 ﻿using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Sectors;
 
-namespace SFA.DAS.ApplyService.InternalApi.Services
+namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
 {
     public class AssessorLookupService : IAssessorLookupService
     {

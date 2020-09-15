@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 
-namespace SFA.DAS.ApplyService.InternalApi.Services
+namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
 {
     public interface IExtractAnswerValueService
     {

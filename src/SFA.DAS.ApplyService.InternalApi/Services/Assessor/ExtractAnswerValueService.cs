@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 
-namespace SFA.DAS.ApplyService.InternalApi.Services
+namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
 {
     public class ExtractAnswerValueService: IExtractAnswerValueService
     {
