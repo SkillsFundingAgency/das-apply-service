@@ -17,7 +17,13 @@
         "sharedFrontEndAppServicePlan": {
             "type": "string"
         },
+        "sharedFrontEndSubnetResourceId": {
+            "type": "string"
+        },
         "sharedBackEndAppServicePlan": {
+            "type": "string"
+        },
+        "sharedBackEndSubnetResourceId": {
             "type": "string"
         },
         "configurationStorageConnectionString": {
@@ -168,6 +174,9 @@
                     "appServicePlanResourceGroup": {
                         "value": "[parameters('sharedAppServicePlanResourceGroup')]"
                     },
+                    "subnetResourceId": {
+                        "value": "[parameters('sharedFrontEndSubnetResourceId')]"
+                    },
                     "appServiceAppSettings": {
                         "value": [
                             {
@@ -228,6 +237,9 @@
                     },
                     "appServicePlanResourceGroup": {
                         "value": "[parameters('SharedAppServicePlanResourceGroup')]"
+                    },
+                    "subnetResourceId": {
+                        "value": "[parameters('sharedBackEndSubnetResourceId')]"
                     },
                     "appServiceAppSettings": {
                         "value": [
