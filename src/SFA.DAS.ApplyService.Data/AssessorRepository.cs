@@ -491,36 +491,28 @@ namespace SFA.DAS.ApplyService.Data
         public async Task CreateEmptyAssessorReview(Guid applicationId, string userId, List<AssessorPageReviewOutcome> pageReviewOutcomes)
         {
             var assessorNumber = await GetAssessorNumber(applicationId, userId);
+            var createdAtDateTime = DateTime.UtcNow;
 
             var dataTable = new DataTable();
-            dataTable.Columns.Add("Id", typeof(Guid));
             dataTable.Columns.Add("ApplicationId", typeof(Guid));
             dataTable.Columns.Add("SequenceNumber", typeof(int));
             dataTable.Columns.Add("SectionNumber", typeof(int));
             dataTable.Columns.Add("PageId", typeof(string));
             dataTable.Columns.Add("Assessor1UserId", typeof(string));
-            dataTable.Columns.Add("Assessor1ReviewStatus", typeof(string));
-            dataTable.Columns.Add("Assessor1ReviewComment", typeof(string));
             dataTable.Columns.Add("Assessor2UserId", typeof(string));
-            dataTable.Columns.Add("Assessor2ReviewStatus", typeof(string));
-            dataTable.Columns.Add("Assessor2ReviewComment", typeof(string));
             dataTable.Columns.Add("CreatedAt", typeof(DateTime));
             dataTable.Columns.Add("CreatedBy", typeof(string));
 
             foreach (var outcome in pageReviewOutcomes)
             {
-                dataTable.Rows.Add(Guid.NewGuid(),
+                dataTable.Rows.Add(
                     applicationId,
                     outcome.SequenceNumber,
                     outcome.SectionNumber,
                     outcome.PageId,
                     assessorNumber == 1 ? userId : null,
-                    null,
-                    null,
                     assessorNumber == 2 ? userId : null,
-                    null,
-                    null,
-                    DateTime.UtcNow,
+                    createdAtDateTime,
                     userId
                 );
             }
@@ -528,9 +520,14 @@ namespace SFA.DAS.ApplyService.Data
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.OpenAsync();
-                using (var bulkCopy = new SqlBulkCopy(connection, SqlBulkCopyOptions.Default, null))
+                using (var bulkCopy = new SqlBulkCopy(connection))
                 {
                     bulkCopy.DestinationTableName = "AssessorPageReviewOutcome";
+                    foreach (DataColumn col in dataTable.Columns)
+                    {
+                        bulkCopy.ColumnMappings.Add(col.ColumnName, col.ColumnName);
+                    }
+
                     await bulkCopy.WriteToServerAsync(dataTable);
                 }
                 connection.Close();

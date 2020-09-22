@@ -185,31 +185,26 @@ namespace SFA.DAS.ApplyService.Data
 
         public async Task CreateEmptyModeratorReview(Guid applicationId, string userId, List<ModeratorPageReviewOutcome> pageReviewOutcomes)
         {
+            var createdAtDateTime = DateTime.UtcNow;
+
             var dataTable = new DataTable();
-            dataTable.Columns.Add("Id", typeof(Guid));
             dataTable.Columns.Add("ApplicationId", typeof(Guid));
             dataTable.Columns.Add("SequenceNumber", typeof(int));
             dataTable.Columns.Add("SectionNumber", typeof(int));
             dataTable.Columns.Add("PageId", typeof(string));
             dataTable.Columns.Add("ModeratorUserId", typeof(string));
-            dataTable.Columns.Add("ModeratorReviewStatus", typeof(string));
-            dataTable.Columns.Add("ModeratorReviewComment", typeof(string));
-            dataTable.Columns.Add("ExternalComment", typeof(string));
             dataTable.Columns.Add("CreatedAt", typeof(DateTime));
             dataTable.Columns.Add("CreatedBy", typeof(string));
 
             foreach (var outcome in pageReviewOutcomes)
             {
-                dataTable.Rows.Add(Guid.NewGuid(),
+                dataTable.Rows.Add(
                     applicationId,
                     outcome.SequenceNumber,
                     outcome.SectionNumber,
                     outcome.PageId,
                     userId,
-                    null,
-                    null,
-                    null,
-                    DateTime.UtcNow,
+                    createdAtDateTime,
                     userId
                 );
             }
@@ -220,6 +215,11 @@ namespace SFA.DAS.ApplyService.Data
                 using (var bulkCopy = new SqlBulkCopy(connection, SqlBulkCopyOptions.Default, null))
                 {
                     bulkCopy.DestinationTableName = "ModeratorPageReviewOutcome";
+                    foreach (DataColumn col in dataTable.Columns)
+                    {
+                        bulkCopy.ColumnMappings.Add(col.ColumnName, col.ColumnName);
+                    }
+
                     await bulkCopy.WriteToServerAsync(dataTable);
                 }
                 connection.Close();
