@@ -516,12 +516,12 @@ namespace SFA.DAS.ApplyService.Data
                     outcome.SequenceNumber,
                     outcome.SectionNumber,
                     outcome.PageId,
-                    assessorNumber == 1 ? outcome.UserId : string.Empty,
-                    string.Empty,
-                    string.Empty,
-                    assessorNumber == 2 ? outcome.UserId : string.Empty,
-                    string.Empty,
-                    string.Empty,
+                    assessorNumber == 1 ? outcome.UserId : null,
+                    null,
+                    null,
+                    assessorNumber == 2 ? outcome.UserId : null,
+                    null,
+                    null,
                     DateTime.UtcNow,
                     outcome.UserId
                 );

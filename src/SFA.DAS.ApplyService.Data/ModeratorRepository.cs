@@ -206,9 +206,9 @@ namespace SFA.DAS.ApplyService.Data
                     outcome.SectionNumber,
                     outcome.PageId,
                     outcome.UserId,
-                    string.Empty,
-                    string.Empty,
-                    string.Empty,
+                    null,
+                    null,
+                    null,
                     DateTime.UtcNow,
                     outcome.UserId
                 );
