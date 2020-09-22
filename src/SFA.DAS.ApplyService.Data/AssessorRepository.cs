@@ -488,10 +488,8 @@ namespace SFA.DAS.ApplyService.Data
             }
 		}
 
-        public async Task CreateAssessorPageOutcomes(List<AssessorPageReviewOutcome> assessorPageReviewOutcomes)
+        public async Task CreateEmptyAssessorReview(Guid applicationId, string userId, List<AssessorPageReviewOutcome> pageReviewOutcomes)
         {
-            var applicationId = assessorPageReviewOutcomes.First().ApplicationId;
-            var userId = assessorPageReviewOutcomes.First().UserId;
             var assessorNumber = await GetAssessorNumber(applicationId, userId);
 
             var dataTable = new DataTable();
@@ -509,21 +507,21 @@ namespace SFA.DAS.ApplyService.Data
             dataTable.Columns.Add("CreatedAt", typeof(DateTime));
             dataTable.Columns.Add("CreatedBy", typeof(string));
 
-            foreach (var outcome in assessorPageReviewOutcomes)
+            foreach (var outcome in pageReviewOutcomes)
             {
                 dataTable.Rows.Add(Guid.NewGuid(),
-                    outcome.ApplicationId,
+                    applicationId,
                     outcome.SequenceNumber,
                     outcome.SectionNumber,
                     outcome.PageId,
-                    assessorNumber == 1 ? outcome.UserId : null,
+                    assessorNumber == 1 ? userId : null,
                     null,
                     null,
-                    assessorNumber == 2 ? outcome.UserId : null,
+                    assessorNumber == 2 ? userId : null,
                     null,
                     null,
                     DateTime.UtcNow,
-                    outcome.UserId
+                    userId
                 );
             }
 

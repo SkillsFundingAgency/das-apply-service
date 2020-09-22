@@ -20,6 +20,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<List<AssessorPageReviewOutcome>> GetAssessorPageReviewOutcomesForSection(Guid applicationId, int sequenceNumber, int sectionNumber, string userId);
         Task<List<AssessorPageReviewOutcome>> GetAllAssessorPageReviewOutcomes(Guid applicationId, string userId);
         Task UpdateAssessorReviewStatus(Guid applicationId, string userId, string status);
-        Task CreateAssessorPageOutcomes(List<AssessorPageReviewOutcome> assessorPageReviewOutcomes);
+        Task CreateEmptyAssessorReview(Guid applicationId, string userId, List<AssessorPageReviewOutcome> pageReviewOutcomes);
     }
 }

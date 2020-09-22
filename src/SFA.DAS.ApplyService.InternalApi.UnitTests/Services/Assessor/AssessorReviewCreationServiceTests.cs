@@ -108,9 +108,9 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
             var expectedNumberOfOutcomes = _qnaApplicationSection.QnAData.Pages.Count + _sectors.Count;
 
             _mediator.Verify(x =>
-                    x.Send(It.Is<CreateAssessorPageReviewOutcomesRequest>(r =>
-                            r.AssessorPageReviewOutcomes.Count == expectedNumberOfOutcomes &&
-                            r.AssessorPageReviewOutcomes.TrueForAll(y =>
+                    x.Send(It.Is<CreateEmptyAssessorReviewRequest>(r =>
+                            r.PageReviewOutcomes.Count == expectedNumberOfOutcomes &&
+                            r.PageReviewOutcomes.TrueForAll(y =>
                                 _sectors.Exists(s => s.PageId == y.PageId) ||
                                 _qnaApplicationSection.QnAData.Pages.Exists(p => p.PageId == y.PageId))),
                         It.IsAny<CancellationToken>()),
