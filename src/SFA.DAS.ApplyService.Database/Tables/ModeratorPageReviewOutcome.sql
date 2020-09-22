@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[ModeratorPageReviewOutcome](
-	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWSEQUENTIALID(),
+	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
 	[ApplicationId] [uniqueidentifier] NOT NULL,
 	[SequenceNumber] [int] NOT NULL,
 	[SectionNumber] [int] NOT NULL,
