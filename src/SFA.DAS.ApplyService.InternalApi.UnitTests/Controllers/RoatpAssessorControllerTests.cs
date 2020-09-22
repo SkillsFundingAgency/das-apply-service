@@ -302,11 +302,15 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
             _mediator.Verify(x => x.Send(It.Is<UpdateAssessorReviewStatusRequest>(r => r.ApplicationId == _applicationId && r.UserId == request.UserId && r.Status == request.Status), It.IsAny<CancellationToken>()), Times.Once);
         }
 
-        [TestCase("Approved", "Approved", true)]
-        [TestCase("", "Approved", false)]
-        [TestCase("Approved", "", false)]
-        [TestCase("Rejected", "Approved", true)]
-        public async Task UpdateAssessorReviewStatus_creates_review_outcomes_on_second_approver_review(string assessor1ReviewStatus, string assessor2ReviewStatus, bool expectModeratorReviewCreation)
+        [TestCase(AssessorReviewStatus.Approved, AssessorReviewStatus.Approved, true)]
+        [TestCase(AssessorReviewStatus.Declined, AssessorReviewStatus.Declined, false)]
+        [TestCase(AssessorReviewStatus.Approved, AssessorReviewStatus.Draft, false)]
+        [TestCase(AssessorReviewStatus.Approved , AssessorReviewStatus.InProgress, false)]
+        [TestCase(AssessorReviewStatus.Approved, AssessorReviewStatus.Declined, false)]
+        [TestCase(AssessorReviewStatus.Draft, AssessorReviewStatus.Approved, false)]
+        [TestCase(AssessorReviewStatus.InProgress, AssessorReviewStatus.Approved, false)]
+        [TestCase(AssessorReviewStatus.Declined, AssessorReviewStatus.Approved, false)]
+        public async Task UpdateAssessorReviewStatus_creates_moderator_review_outcomes_when_both_assessors_have_approved(string assessor1ReviewStatus, string assessor2ReviewStatus, bool expectModeratorReviewCreation)
         {
             _mediator.Setup(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => new Apply

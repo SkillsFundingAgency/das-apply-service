@@ -12,6 +12,7 @@ using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 using SFA.DAS.ApplyService.Domain.Apply.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Services.Moderator;
+using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -169,7 +170,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             var application = await _mediator.Send(new GetApplicationRequest(applicationId));
 
-            if(!string.IsNullOrWhiteSpace(application.Assessor1ReviewStatus) && !string.IsNullOrWhiteSpace(application.Assessor2ReviewStatus))
+            if(application.Assessor1ReviewStatus == AssessorReviewStatus.Approved && application.Assessor2ReviewStatus == AssessorReviewStatus.Approved)
             { 
                 await _moderatorReviewCreationService.CreateEmptyReview(applicationId, request.UserId);
             }
