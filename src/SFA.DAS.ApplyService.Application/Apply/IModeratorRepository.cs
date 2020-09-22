@@ -12,6 +12,6 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<ModeratorPageReviewOutcome> GetModeratorPageReviewOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId);
         Task<List<ModeratorPageReviewOutcome>> GetModeratorPageReviewOutcomesForSection(Guid applicationId, int sequenceNumber, int sectionNumber);
         Task<List<ModeratorPageReviewOutcome>> GetAllModeratorPageReviewOutcomes(Guid applicationId);
-        Task CreateModeratorPageOutcomes(List<ModeratorPageReviewOutcome> assessorPageReviewOutcomes);
+        Task CreateEmptyModeratorReview(Guid applicationId, string userId, List<ModeratorPageReviewOutcome> pageReviewOutcomes);
     }
 }

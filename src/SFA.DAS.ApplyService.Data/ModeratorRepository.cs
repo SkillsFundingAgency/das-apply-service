@@ -183,7 +183,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task CreateModeratorPageOutcomes(List<ModeratorPageReviewOutcome> assessorPageReviewOutcomes)
+        public async Task CreateEmptyModeratorReview(Guid applicationId, string userId, List<ModeratorPageReviewOutcome> pageReviewOutcomes)
         {
             var dataTable = new DataTable();
             dataTable.Columns.Add("Id", typeof(Guid));
@@ -198,19 +198,19 @@ namespace SFA.DAS.ApplyService.Data
             dataTable.Columns.Add("CreatedAt", typeof(DateTime));
             dataTable.Columns.Add("CreatedBy", typeof(string));
 
-            foreach (var outcome in assessorPageReviewOutcomes)
+            foreach (var outcome in pageReviewOutcomes)
             {
                 dataTable.Rows.Add(Guid.NewGuid(),
-                    outcome.ApplicationId,
+                    applicationId,
                     outcome.SequenceNumber,
                     outcome.SectionNumber,
                     outcome.PageId,
-                    outcome.UserId,
+                    userId,
                     null,
                     null,
                     null,
                     DateTime.UtcNow,
-                    outcome.UserId
+                    userId
                 );
             }
 

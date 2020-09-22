@@ -28,8 +28,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Moderator
 
         public async Task CreateEmptyReview(Guid applicationId, string moderatorUserId)
         {
+            var reviewOutcomes = new List<ModeratorPageReviewOutcome>();
+
             var sequences = await _sequenceService.GetSequences(applicationId);
-            var result = new List<ModeratorPageReviewOutcome>();
 
             foreach (var sequence in sequences)
             {
@@ -38,65 +39,63 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Moderator
                     if (sequence.SequenceNumber == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining && section.SectionNumber == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees)
                     {
                         var sectors = await _sectorService.GetSectorsForModerator(applicationId, moderatorUserId);
-                        result.AddRange(GetSectorsSectionReviewOutcomes(applicationId, sequence.SequenceNumber, section.SectionNumber, sectors, moderatorUserId));
+                        reviewOutcomes.AddRange(GeneratorSectorsReviewOutcomes(applicationId, sequence.SequenceNumber, section.SectionNumber, sectors, moderatorUserId));
                     }
                     else
                     {
-                        result.AddRange(await GetSectionReviewOutcomes(applicationId, sequence.SequenceNumber, section.SectionNumber, moderatorUserId));
+                        reviewOutcomes.AddRange(await GeneratorSectionReviewOutcomes(applicationId, sequence.SequenceNumber, section.SectionNumber, moderatorUserId));
                     }
                 }
             }
 
-            await _mediator.Send(new CreateModeratorPageReviewOutcomesRequest
-            {
-                ModeratorPageReviewOutcomes = result
-            });
+            await _mediator.Send(new CreateEmptyModeratorReviewRequest(applicationId, moderatorUserId, reviewOutcomes));
         }
 
-        private async Task<List<ModeratorPageReviewOutcome>> GetSectionReviewOutcomes(Guid applicationId, int sequenceNumber, int sectionNumber, string assessorUserId)
+        private async Task<List<ModeratorPageReviewOutcome>> GeneratorSectionReviewOutcomes(Guid applicationId, int sequenceNumber, int sectionNumber, string moderatorUserId)
         {
-            var result = new List<ModeratorPageReviewOutcome>();
+            var sectionReviewOutcomes = new List<ModeratorPageReviewOutcome>();
+
             var section = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceNumber, sectionNumber);
             var pages = section.QnAData.Pages;
 
             foreach (var page in pages)
             {
-                result.Add(new ModeratorPageReviewOutcome
+                sectionReviewOutcomes.Add(new ModeratorPageReviewOutcome
                 {
                     ApplicationId = applicationId,
-                    Comment = string.Empty,
-                    ExternalComment = string.Empty,
-                    PageId = page.PageId,
-                    SectionNumber = sectionNumber,
                     SequenceNumber = sequenceNumber,
-                    Status = string.Empty,
-                    UserId = assessorUserId
+                    SectionNumber = sectionNumber,
+                    PageId = page.PageId,
+                    UserId = moderatorUserId,
+                    Status = null,
+                    Comment = null,
+                    ExternalComment = null
                 });
             }
 
-            return result;
+            return sectionReviewOutcomes;
         }
 
-        private List<ModeratorPageReviewOutcome> GetSectorsSectionReviewOutcomes(Guid applicationId, int sequenceNumber, int sectionNumber, List<AssessorSector> selectedSectors, string assessorUserId)
+        private List<ModeratorPageReviewOutcome> GeneratorSectorsReviewOutcomes(Guid applicationId, int sequenceNumber, int sectionNumber, List<AssessorSector> selectedSectors, string moderatorUserId)
         {
-            var result = new List<ModeratorPageReviewOutcome>();
+            var sectorReviewOutcomes = new List<ModeratorPageReviewOutcome>();
 
             foreach (var sector in selectedSectors)
             {
-                result.Add(new ModeratorPageReviewOutcome
+                sectorReviewOutcomes.Add(new ModeratorPageReviewOutcome
                 {
                     ApplicationId = applicationId,
-                    Comment = string.Empty,
-                    ExternalComment = string.Empty,
-                    PageId = sector.PageId,
-                    SectionNumber = sectionNumber,
                     SequenceNumber = sequenceNumber,
-                    Status = string.Empty,
-                    UserId = assessorUserId
+                    SectionNumber = sectionNumber,
+                    PageId = sector.PageId,
+                    UserId = moderatorUserId,
+                    Status = null,
+                    Comment = null,
+                    ExternalComment = null
                 });
             }
 
-            return result;
+            return sectorReviewOutcomes;
         }
     }
 }
