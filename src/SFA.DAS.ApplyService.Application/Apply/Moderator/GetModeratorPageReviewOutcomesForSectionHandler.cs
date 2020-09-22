@@ -9,10 +9,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
 {
     public class GetModeratorPageReviewOutcomesForSectionHandler : IRequestHandler<GetModeratorPageReviewOutcomesForSectionRequest, List<ModeratorPageReviewOutcome>>
     {
-        private readonly IAssessorRepository _repository;
+        private readonly IModeratorRepository _repository;
         private readonly ILogger<GetModeratorPageReviewOutcomesForSectionHandler> _logger;
 
-        public GetModeratorPageReviewOutcomesForSectionHandler(IAssessorRepository repository, ILogger<GetModeratorPageReviewOutcomesForSectionHandler> logger)
+        public GetModeratorPageReviewOutcomesForSectionHandler(IModeratorRepository repository, ILogger<GetModeratorPageReviewOutcomesForSectionHandler> logger)
         {
             _repository = repository;
             _logger = logger;
