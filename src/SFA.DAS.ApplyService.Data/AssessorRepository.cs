@@ -520,7 +520,7 @@ namespace SFA.DAS.ApplyService.Data
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.OpenAsync();
-                using (var bulkCopy = new SqlBulkCopy(connection))
+                using (var bulkCopy = new SqlBulkCopy(connection, SqlBulkCopyOptions.Default, null))
                 {
                     bulkCopy.DestinationTableName = "AssessorPageReviewOutcome";
                     foreach (DataColumn col in dataTable.Columns)
