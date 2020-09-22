@@ -145,7 +145,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
             var request = new RoatpAssessorController.AssignAssessorCommand { AssessorName = "sdfjfsdg", AssessorNumber = 1, AssessorUserId = _userId };
             var applicationid = Guid.NewGuid();
             _mediator.Setup(x => x.Send(It.IsAny<GetApplicationRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(() => new Apply{ Assessor1ReviewStatus = "In progress"});
+                .ReturnsAsync(() => new Apply{ Assessor1ReviewStatus = AssessorReviewStatus.InProgress});
 
             await _controller.AssignApplication(applicationid, request);
 
