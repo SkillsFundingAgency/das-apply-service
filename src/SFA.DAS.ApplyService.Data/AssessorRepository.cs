@@ -222,100 +222,41 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task SubmitAssessorPageOutcome(Guid applicationId,
-                                                    int sequenceNumber,
-                                                    int sectionNumber,
-                                                    string pageId,
-                                                    string userId,
-                                                    string status,
-                                                    string comment)
+        public async Task SubmitAssessorPageOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId,
+                                                    string userId, string status, string comment)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 var assessorNumber = await GetAssessorNumber(applicationId, userId);
 
+                // NOTE: CreateEmptyAssessorReview should have been called before getting to this point.
+                // This is so that all PageReviewOutcomes are initialized for the Assessor
                 await connection.ExecuteAsync(
                     @"IF (@assessorNumber = 1)
-                        BEGIN
-                            IF NOT EXISTS (SELECT * FROM [AssessorPageReviewOutcome]
-							                        WHERE [ApplicationId] = @applicationId AND
-									                        [SequenceNumber] = @sequenceNumber AND
-									                        [SectionNumber] = @sectionNumber AND
-									                        [PageId] = @pageId)
-		                        BEGIN
-			                        INSERT INTO [dbo].[AssessorPageReviewOutcome]
-					                           ([ApplicationId]
-					                           ,[SequenceNumber]
-					                           ,[SectionNumber]
-					                           ,[PageId]
-					                           ,[Assessor1UserId]
-					                           ,[Assessor1ReviewStatus]
-					                           ,[Assessor1ReviewComment]
-					                           ,[CreatedBy])
-				                         VALUES
-					                           (@applicationId
-					                           ,@sequenceNumber
-					                           ,@sectionNumber
-					                           ,@pageId
-					                           ,@userId
-					                           ,@status
-					                           ,@comment
-					                           ,@userId)                     
-		                        END
-                             ELSE
-		                        BEGIN
-			                        UPDATE [AssessorPageReviewOutcome]
-			                           SET [Assessor1UserId] = @userId
-                                          ,[Assessor1ReviewStatus] = @status
-				                          ,[Assessor1ReviewComment] = @comment
-				                          ,[UpdatedAt] = GETUTCDATE()
-				                          ,[UpdatedBy] = @userId
-			                        WHERE [ApplicationId] = @applicationId AND
-					                        [SequenceNumber] = @sequenceNumber AND
-					                        [SectionNumber] = @sectionNumber AND
-					                        [PageId] = @pageId
-		                        END                                                         
-                        END
+		                BEGIN
+			                UPDATE [AssessorPageReviewOutcome]
+			                   SET [Assessor1UserId] = @userId
+                                   , [Assessor1ReviewStatus] = @status
+				                   , [Assessor1ReviewComment] = @comment
+				                   , [UpdatedAt] = GETUTCDATE()
+				                   , [UpdatedBy] = @userId
+			                WHERE [ApplicationId] = @applicationId AND
+					              [SequenceNumber] = @sequenceNumber AND
+					              [SectionNumber] = @sectionNumber AND
+					              [PageId] = @pageId
+		                END                                                         
                       IF (@assessorNumber = 2)
                         BEGIN
-                             IF NOT EXISTS (SELECT * FROM [AssessorPageReviewOutcome]
-							                        WHERE [ApplicationId] = @applicationId AND
-									                        [SequenceNumber] = @sequenceNumber AND
-									                        [SectionNumber] = @sectionNumber AND
-									                        [PageId] = @pageId)
-		                        BEGIN
-			                        INSERT INTO [dbo].[AssessorPageReviewOutcome]
-					                           ([ApplicationId]
-					                           ,[SequenceNumber]
-					                           ,[SectionNumber]
-					                           ,[PageId]
-					                           ,[Assessor2UserId]
-					                           ,[Assessor2ReviewStatus]
-					                           ,[Assessor2ReviewComment]
-					                           ,[CreatedBy])
-				                         VALUES
-					                           (@applicationId
-					                           ,@sequenceNumber
-					                           ,@sectionNumber
-					                           ,@pageId
-					                           ,@userId
-					                           ,@status
-					                           ,@comment
-					                           ,@userId)                     
-		                        END
-                             ELSE
-		                        BEGIN
-			                        UPDATE [AssessorPageReviewOutcome]
-			                           SET [Assessor2UserId] = @userId
-                                          ,[Assessor2ReviewStatus] = @status
-				                          ,[Assessor2ReviewComment] = @comment
-				                          ,[UpdatedAt] = GETUTCDATE()
-				                          ,[UpdatedBy] = @userId
-			                        WHERE [ApplicationId] = @applicationId AND
-					                        [SequenceNumber] = @sequenceNumber AND
-					                        [SectionNumber] = @sectionNumber AND
-					                        [PageId] = @pageId
-		                        END                   
+			                UPDATE [AssessorPageReviewOutcome]
+			                   SET [Assessor2UserId] = @userId
+                                   , [Assessor2ReviewStatus] = @status
+				                   , [Assessor2ReviewComment] = @comment
+				                   , [UpdatedAt] = GETUTCDATE()
+				                   , [UpdatedBy] = @userId
+			                WHERE [ApplicationId] = @applicationId AND
+					              [SequenceNumber] = @sequenceNumber AND
+					              [SectionNumber] = @sectionNumber AND
+					              [PageId] = @pageId                 
                         END",
                     new { applicationId, sequenceNumber, sectionNumber, pageId, assessorNumber, userId, status, comment });
             }

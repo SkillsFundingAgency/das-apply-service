@@ -127,48 +127,20 @@ namespace SFA.DAS.ApplyService.Data
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
+                // NOTE: CreateEmptyModeratorReview should have been called before getting to this point.
+                // This is so that all PageReviewOutcomes are initialized for the Moderator
                 await connection.ExecuteAsync(
-                    @"IF NOT EXISTS (SELECT * FROM [ModeratorPageReviewOutcome]
-							         WHERE [ApplicationId] = @applicationId AND
-									        [SequenceNumber] = @sequenceNumber AND
-									        [SectionNumber] = @sectionNumber AND
-									        [PageId] = @pageId)
-		                BEGIN
-			                INSERT INTO [dbo].[ModeratorPageReviewOutcome]
-					                    ([ApplicationId]
-					                    ,[SequenceNumber]
-					                    ,[SectionNumber]
-					                    ,[PageId]
-					                    ,[ModeratorUserId]
-					                    ,[ModeratorReviewStatus]
-					                    ,[ModeratorReviewComment]
-                                        ,[ExternalComment]
-					                    ,[CreatedBy])
-				                    VALUES
-					                    (@applicationId
-					                    ,@sequenceNumber
-					                    ,@sectionNumber
-					                    ,@pageId
-					                    ,@userId
-					                    ,@status
-					                    ,@comment
-                                        ,@externalComment
-					                    ,@userId)                     
-		                END
-                      ELSE
-		                BEGIN
-			                UPDATE [ModeratorPageReviewOutcome]
-			                    SET [ModeratorUserId] = @userId
-                                    ,[ModeratorReviewStatus] = @status
-				                    ,[ModeratorReviewComment] = @comment
-                                    ,[ExternalComment] = @externalComment
-				                    ,[UpdatedAt] = GETUTCDATE()
-				                    ,[UpdatedBy] = @userId
-			                WHERE [ApplicationId] = @applicationId AND
-					                [SequenceNumber] = @sequenceNumber AND
-					                [SectionNumber] = @sectionNumber AND
-					                [PageId] = @pageId
-		                END",
+                    @"UPDATE [ModeratorPageReviewOutcome]
+			            SET [ModeratorUserId] = @userId
+                            , [ModeratorReviewStatus] = @status
+				            , [ModeratorReviewComment] = @comment
+                            , [ExternalComment] = @externalComment
+				            , [UpdatedAt] = GETUTCDATE()
+				            , [UpdatedBy] = @userId
+			            WHERE [ApplicationId] = @applicationId AND
+					          [SequenceNumber] = @sequenceNumber AND
+					          [SectionNumber] = @sectionNumber AND
+					          [PageId] = @pageId",
                     new { applicationId, sequenceNumber, sectionNumber, pageId, userId, status, comment, externalComment });
 
                 // APR-1633 - Update Moderation Status from 'New' to 'In Moderation'
