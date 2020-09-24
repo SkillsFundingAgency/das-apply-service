@@ -57,13 +57,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             ISessionService sessionService, IConfigurationService configService, IUserService userService, IUsersApiClient usersApiClient,
             IQnaApiClient qnaApiClient,
             IPagesWithSectionsFlowService pagesWithSectionsFlowService,
-            IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration,
-            IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks,
-            ICustomValidatorFactory customValidatorFactory,
+            IQuestionPropertyTokeniser questionPropertyTokeniser, IOptions<List<QnaPageOverrideConfiguration>> pageOverrideConfiguration, 
+            IPageNavigationTrackingService pageNavigationTrackingService, IOptions<List<QnaLinksConfiguration>> qnaLinks, 
+            ICustomValidatorFactory customValidatorFactory,  
             IRoatpApiClient roatpApiClient, ISubmitApplicationConfirmationEmailService submitApplicationEmailService,
             ITabularDataRepository tabularDataRepository, IRoatpTaskListWorkflowService roatpTaskListWorkflowService,
             IRoatpOrganisationVerificationService organisationVerificationService)
-            : base(sessionService)
+            :base(sessionService)
         {
             _apiClient = apiClient;
             _logger = logger;
@@ -136,7 +136,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var applicationType = ApplicationTypes.RegisterTrainingProviders;
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
 
-            if (applicationDetails is null)
+            if(applicationDetails is null)
             {
                 return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
             }
@@ -264,7 +264,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return RedirectToAction("TaskList", new { applicationId });
             }
-
+            
             var section = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
 
             if (section?.DisplayType == SectionDisplayType.PagesWithSections)
@@ -318,7 +318,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             else
             {
                 var page = selectedSection.GetPage(pageId);
-
+                
                 if (page == null || page.Questions == null)
                 {
                     return await TaskList(applicationId);
@@ -427,7 +427,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             // when the model state has no errors the page will be displayed with the last valid values which were saved
             var page = selectedSection.GetPage(pageId);
-
+            
             if (page == null)
             {
                 return RedirectToAction("TaskList", new { applicationId = applicationId });
@@ -1196,7 +1196,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     var applySection = sequence.Sections.FirstOrDefault(x => x.SectionNo == section.SectionId);
                     if (applySection != null)
                     {
-                        applySection.NotRequired = SectionNotRequired(model.ApplicationId, applicationSequence, section.SectionId,
+                        applySection.NotRequired = SectionNotRequired(model.ApplicationId, applicationSequence, section.SectionId, 
                                                                             roatpSequences, organisationVerificationStatus);
                     }
                 }
@@ -1363,7 +1363,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return result;
         }
 
-        private bool SequenceNotRequired(Guid applicationId, ApplicationSequence sequence,
+        private bool SequenceNotRequired(Guid applicationId, ApplicationSequence sequence, 
                                                 IEnumerable<ApplicationSequence> applicationSequences,
                                                 OrganisationVerificationStatus organisationVerificationStatus)
         {
@@ -1372,7 +1372,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             foreach (var section in sequence.Sections)
             {
-                if (_roatpTaskListWorkflowService.SectionStatus(applicationId, sequence.SequenceId, section.SectionId, applicationSequences, organisationVerificationStatus) == TaskListSectionStatus.NotRequired)
+                if (_roatpTaskListWorkflowService.SectionStatus(applicationId, sequence.SequenceId, section.SectionId, applicationSequences, organisationVerificationStatus) == TaskListSectionStatus.NotRequired) 
                 {
                     notRequiredCount++;
                 }
