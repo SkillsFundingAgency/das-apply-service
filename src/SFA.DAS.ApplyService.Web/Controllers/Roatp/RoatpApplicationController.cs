@@ -554,11 +554,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                             {
                                 if (!string.IsNullOrWhiteSpace(pageId))
                                 {
-                                    var page = await _qnaApiClient.GetPage(applicationId, section.SectionId, pageId);
-                                    if (page != null && page.Active)
-                                    {
-                                        canUpdate = true;
-                                    }
+                                    canUpdate = await _qnaApiClient.CanUpdatePage(applicationId, section.SectionId, pageId);
                                 }
                                 else
                                 {
