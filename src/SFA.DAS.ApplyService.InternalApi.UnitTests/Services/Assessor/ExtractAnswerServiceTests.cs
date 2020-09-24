@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
-using SFA.DAS.ApplyService.InternalApi.Services;
+using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 
-namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services
+namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
 {
     [TestFixture]
     public class ExtractAnswerValueServiceTests
     {
         private ExtractAnswerValueService _extractService;
         private List<AssessorAnswer> _answers;
-        private string _questionId = "111";
-        private string _value = "value returned";
+        private readonly string _questionId = "111";
+        private readonly string _value = "value returned";
         private AssessorPage _assessorPage = new AssessorPage();
 
         [SetUp]

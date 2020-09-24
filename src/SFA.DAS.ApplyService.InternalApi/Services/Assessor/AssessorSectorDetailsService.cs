@@ -5,27 +5,29 @@ using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Sectors;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 
-namespace SFA.DAS.ApplyService.InternalApi.Services
+namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
 {
-    public class SectorDetailsOrchestratorService: ISectorDetailsOrchestratorService
+    public class AssessorSectorDetailsService: IAssessorSectorDetailsService
     {
-        private readonly IAssessorLookupService _assessorLookupService;
-        private readonly IGetAssessorPageService _getAssessorPageService;
+        private readonly IAssessorLookupService _lookupService;
+        private readonly IAssessorPageService _pageService;
         private readonly IExtractAnswerValueService _extractAnswerValueService;
 
-        public SectorDetailsOrchestratorService(IAssessorLookupService assessorLookupService, IGetAssessorPageService getAssessorPageService, IExtractAnswerValueService extractAnswerValueService)
+        public AssessorSectorDetailsService(IAssessorLookupService assessorLookupService, IAssessorPageService assessorPageService, IExtractAnswerValueService extractAnswerValueService)
         {
-            _assessorLookupService = assessorLookupService;
-            _getAssessorPageService = getAssessorPageService;
+            _lookupService = assessorLookupService;
+            _pageService = assessorPageService;
             _extractAnswerValueService = extractAnswerValueService;
         }
 
         public async Task<AssessorSectorDetails> GetSectorDetails(Guid applicationId, string pageId)
         {
-            var sectorDetails = new AssessorSectorDetails();
+            var sectorDetails = new AssessorSectorDetails
+            {
+                SectorName = _lookupService.GetSectorNameForPage(pageId)
+            };
 
-            sectorDetails.SectorName = _assessorLookupService.GetSectorNameForPage(pageId);
-            var sectorPageIds = _assessorLookupService.GetSectorQuestionIdsForSectorPageId(pageId);
+            var sectorPageIds = _lookupService.GetSectorQuestionIdsForSectorPageId(pageId);
 
             if (sectorPageIds == null)
                 return null;
@@ -35,7 +37,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
             var page2ExperienceQualificationsMemberships = new AssessorPage();
             var page3TypeOfTraining = new AssessorPage();
 
-            var page1NameRoleExperience = await _getAssessorPageService.GetAssessorPage(applicationId, sequenceNumber, sectionNumber, pageId);
+            var page1NameRoleExperience = await _pageService.GetPage(applicationId, sequenceNumber, sectionNumber, pageId);
 
             if (page1NameRoleExperience == null)
                 return null;
@@ -44,7 +46,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
 
             if (!string.IsNullOrEmpty(page1NameRoleExperience.NextPageId))
             {
-                page2ExperienceQualificationsMemberships = await _getAssessorPageService.GetAssessorPage(applicationId, sequenceNumber,
+                page2ExperienceQualificationsMemberships = await _pageService.GetPage(applicationId, sequenceNumber,
                     sectionNumber, page1NameRoleExperience.NextPageId);
 
                 HydrateSectorDetailsWithQualificationsAwardingBodiesAndTradeMemberships(sectorDetails, page2ExperienceQualificationsMemberships, sectorPageIds);
@@ -52,7 +54,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
 
             if (!string.IsNullOrEmpty(page2ExperienceQualificationsMemberships.NextPageId))
             {
-                page3TypeOfTraining = await _getAssessorPageService.GetAssessorPage(applicationId, sequenceNumber, sectionNumber,
+                page3TypeOfTraining = await _pageService.GetPage(applicationId, sequenceNumber, sectionNumber,
                     page2ExperienceQualificationsMemberships.NextPageId);
 
                 HydrateSectorDetailsWhatTypeOfTrainingDelivered(sectorDetails, page3TypeOfTraining, sectorPageIds);
@@ -60,7 +62,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
 
             if (!string.IsNullOrEmpty(page3TypeOfTraining.NextPageId))
             {
-                var page4HowDeliveredAndDuration = await _getAssessorPageService.GetAssessorPage(applicationId, sequenceNumber, sectionNumber,
+                var page4HowDeliveredAndDuration = await _pageService.GetPage(applicationId, sequenceNumber, sectionNumber,
                     page3TypeOfTraining.NextPageId);
 
                 HydrateSectorDetailsWithHowTrainingIsDeliveredDetails(page4HowDeliveredAndDuration, sectorPageIds, sectorDetails);

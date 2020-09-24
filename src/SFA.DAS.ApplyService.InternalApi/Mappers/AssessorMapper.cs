@@ -1,5 +1,5 @@
 ﻿using SFA.DAS.ApplyService.Domain.Apply;
-using SFA.DAS.ApplyService.InternalApi.Services;
+using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 using System;
 using System.Collections.Generic;

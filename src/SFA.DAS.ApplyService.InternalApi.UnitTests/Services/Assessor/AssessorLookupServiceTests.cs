@@ -1,8 +1,8 @@
 ﻿using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
-using SFA.DAS.ApplyService.InternalApi.Services;
+using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
 
-namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services
+namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
 {
     [TestFixture]
     public class AssessorLookupServiceTests
