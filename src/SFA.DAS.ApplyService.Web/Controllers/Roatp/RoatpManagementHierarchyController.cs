@@ -284,11 +284,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         [HttpPost]
         public async Task<IActionResult> CompleteManagementHierarchySection(Guid applicationId)
-        {
-            //var applicationSequences = await _qnaApiClient.GetSequences(applicationId);
-            //var deliveringApprenticeshipTrainingSequence =
-            //    applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining);
-           
+        {           
             return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
         }
 
