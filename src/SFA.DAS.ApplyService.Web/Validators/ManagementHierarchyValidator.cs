@@ -16,14 +16,14 @@ namespace SFA.DAS.ApplyService.Web.Validators
         public const string TimeInRoleError = "Enter a year and month";
         public const string TimeInRoleMonthsTooBigError = "Enter 11 or less for month";
         public const string TimeInRoleYearsTooBigError = "Enter 99 or less for year";
-        public const string IsPartOfOtherOrgThatGetsFundingError = "Tell us if this person is part of another organisation that receives funding directly from ESFA or as a subcontractor";
-        public const string OtherOrgNameError = "Enter the organisation's name";
-        public const string OtherOrgNameLengthError = "Enter the organisation's name using 750 characters or less";
+        public const string IsPartOfOtherOrgThatGetsFundingError = "Tell us if this person is part of any other organisations";
+        public const string OtherOrgNameError = "Enter the names of all these organisations";
+        public const string OtherOrgNameLengthError = "Enter the names of all these organisations using 750 characters or less";
 
         public static List<ValidationErrorDetail> Validate(AddEditManagementHierarchyViewModel model)
         {
             var errorMessages = new List<ValidationErrorDetail>();
-                        
+
             EvaluateFullName(model, errorMessages);
             EvaluateJobRole(model, errorMessages);
             EvaluateTimeInRole(model, errorMessages);
@@ -43,7 +43,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
                         Field = "IsPartOfOtherOrgThatGetsFunding"
                     });
             }
-            else if (model.IsPartOfOtherOrgThatGetsFunding == "Yes") 
+            else if (model.IsPartOfOtherOrgThatGetsFunding == "Yes")
             {
                 if (string.IsNullOrEmpty(model.OtherOrgName))
                 {
@@ -54,7 +54,7 @@ namespace SFA.DAS.ApplyService.Web.Validators
                             Field = "IsPartOfOtherOrgThatGetsFunding"
                         });
                 }
-                else if (model.OtherOrgName.Length>750)
+                else if (model.OtherOrgName.Length > 750)
                 {
                     errorMessages.Add(
                         new ValidationErrorDetail

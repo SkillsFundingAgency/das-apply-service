@@ -3,13 +3,16 @@
 
 @{
     bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
+
     var nameError = showErrors && Model.ErrorMessages.FirstOrDefault(x => x.Field == "FullName") != null ? "govuk-input--error" : "";
     var showNameError = !String.IsNullOrEmpty(nameError);
+
     var jobRoleError = showErrors && Model.ErrorMessages.FirstOrDefault(x => x.Field == "JobRole") != null ? "govuk-input--error" : "";
     var showJobRoleError = !String.IsNullOrEmpty(jobRoleError);
 
     var timeInRoleError = showErrors && Model.ErrorMessages.FirstOrDefault(x => x.Field == "TimeInRole") != null ? "govuk-input--error" : "";
     var showTimeInRoleError = !String.IsNullOrEmpty(timeInRoleError);
+    
     var isPartOfOtherOrgError = showErrors && Model.ErrorMessages.FirstOrDefault(x => x.Field == "IsPartOfOtherOrgThatGetsFunding") != null ? "govuk-input--error" : "";
     var showIsPartOfOtherOrgError = !String.IsNullOrEmpty(isPartOfOtherOrgError);
  
@@ -23,12 +26,12 @@
     <label for="FullName" class="govuk-label">Full name</label>
     @if (showErrors)
     {
-        <span class="govuk-error-message">
             @foreach(var nameErrorMessage in errorMessages.Where(x => x.Field == "FullName"))
             {
-                @Html.Raw(nameErrorMessage.ErrorMessage) <br />
+                <span class="govuk-error-message">
+                    @Html.Raw(nameErrorMessage.ErrorMessage)
+                </span>
             }
-        </span>
     }
     <input type="text" class="govuk-input @nameError" asp-for="FullName" sfa-validation-for="PersonName" sfa-validationerror-class="form-control-error" />
 </div>
@@ -37,12 +40,12 @@
     <label for="JobRole" class="govuk-label">Job role</label>
     @if (showErrors)
     {
-        <span class="govuk-error-message">
             @foreach(var jobRoleErrorMessage in errorMessages.Where(x => x.Field == "JobRole"))
             {
-                @Html.Raw(jobRoleErrorMessage.ErrorMessage)  <br />
+                <span class="govuk-error-message">
+                    @Html.Raw(jobRoleErrorMessage.ErrorMessage)
+                </span>
             }
-        </span>
     }
     <input type="text" class="govuk-input @jobRoleError" asp-for="JobRole" sfa-validation-for="PersonJobRole" sfa-validationerror-class="form-control-error" />
 </div>
@@ -54,12 +57,12 @@
     </span>
     @if (showErrors)
     {
-        <span class="govuk-error-message">
             @foreach (var timeInRoleMonthsMessage in errorMessages.Where(x => x.Field == "TimeInRole"))
             {
-                @Html.Raw(timeInRoleMonthsMessage.ErrorMessage) <br />
+                <span class="govuk-error-message">
+                    @Html.Raw(timeInRoleMonthsMessage.ErrorMessage)
+                </span>
             }
-        </span>
     }
     <div class="govuk-date-input" id="timeInRole">
         <div class="govuk-date-input__item">
@@ -91,7 +94,7 @@
 </div>
 
 <div class="govuk-form-group  @((showIsPartOfOtherOrgError) ? "govuk-form-group--error" : "")" sfa-validation-for="IsPartOfOtherOrgThatGetsFunding" sfa-validationerror-class="form-group-error">
-    <p class="govuk-label">Is this person part of another organisation that receives funding directly from ESFA or as a subcontractor?</p>
+    <p class="govuk-label">Is this person part of any other organisations?</p>
     @if (showErrors)
     {
         <span class="govuk-error-message">
@@ -114,12 +117,17 @@
             <label class="govuk-label govuk-radios__label" for="IsPartOfOtherOrgThatGetsFunding">Yes</label>
         </div>
         <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-IsPartOfOtherOrgThatGetsFunding">
-            <div class="govuk-form-group">
-                <label class="govuk-label" for="IsPartOfOtherOrgThatGetsFunding_1">Enter the organisation's name</label>
-                <span id="OtherOrgName-hint" class="govuk-hint govuk-radios__hint">
-
-                </span>
-                <textarea class="govuk-textarea " id="OtherOrgName" name="OtherOrgName" rows="5">@Model.OtherOrgName</textarea>
+            <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="750">
+                <div class="govuk-form-group">
+                    <label class="govuk-label" for="IsPartOfOtherOrgThatGetsFunding_1">Enter the names of all these organisations</label>
+                    <span id="OtherOrgName-hint" class="govuk-hint">
+                        You also need to include which of these organisations may receive funding directly from ESFA or as a subcontractor.
+                    </span>
+                    <textarea class="govuk-textarea govuk-js-character-count" id="OtherOrgName" name="OtherOrgName" rows="5" aria-describedby="with-hint-info OtherOrgName-hint">@Model.OtherOrgName</textarea>
+                    <div id="OtherOrgName-info" class="govuk-hint govuk-character-count__message" aria-live="polite">
+                        You can enter up to 750 characters
+                    </div>
+                </div>
             </div>
         </div>
         <div class="govuk-radios__item">
