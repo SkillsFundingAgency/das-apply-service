@@ -93,12 +93,15 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task UpdateAssessor1(Guid applicationId, string userId, string userName)
+        public async Task AssignAssessor1(Guid applicationId, string userId, string userName)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"UPDATE Apply SET Assessor1UserId = @userId, Assessor1Name = @userName, Assessor1ReviewStatus = @inProgressReviewStatus
-                                                Where ApplicationId = @applicationId",
+                await connection.ExecuteAsync(@"UPDATE Apply
+                                                SET Assessor1UserId = @userId,
+                                                    Assessor1Name = @userName,
+                                                    Assessor1ReviewStatus = @inProgressReviewStatus
+                                                WHERE ApplicationId = @applicationId",
                     new
                     {
                         applicationId,
@@ -106,21 +109,54 @@ namespace SFA.DAS.ApplyService.Data
                         userName,
                         inProgressReviewStatus = AssessorReviewStatus.InProgress
                     });
+
+                // must clear down all existing page reviews as the assessor has changed
+                await connection.ExecuteAsync(@"UPDATE AssessorPageReviewOutcome
+                                                SET Assessor1UserId = @userId,
+                                                    Assessor1ReviewStatus = NULL,
+                                                    Assessor1ReviewComment = NULL,
+                                                    UpdatedAt = @updatedAt,
+                                                    UpdatedBy = @userId
+                                                WHERE ApplicationId = @applicationId",
+                    new
+                    {
+                        applicationId,
+                        userId,
+                        updatedAt = DateTime.UtcNow
+                    });
             }
         }
 
-        public async Task UpdateAssessor2(Guid applicationId, string userId, string userName)
+        public async Task AssignAssessor2(Guid applicationId, string userId, string userName)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"UPDATE Apply SET Assessor2UserId = @userId, Assessor2Name = @userName, Assessor2ReviewStatus = @inProgressReviewStatus
-                                                Where ApplicationId = @applicationId",
+                await connection.ExecuteAsync(@"UPDATE Apply
+                                                SET Assessor2UserId = @userId,
+                                                    Assessor2Name = @userName,
+                                                    Assessor2ReviewStatus = @inProgressReviewStatus
+                                                WHERE ApplicationId = @applicationId",
                     new
                     {
                         applicationId,
                         userId,
                         userName,
                         inProgressReviewStatus = AssessorReviewStatus.InProgress
+                    });
+
+                // must clear down all existing page reviews as the assessor has changed
+                await connection.ExecuteAsync(@"UPDATE AssessorPageReviewOutcome
+                                                SET Assessor2UserId = @userId,
+                                                    Assessor2ReviewStatus = NULL,
+                                                    Assessor2ReviewComment = NULL,
+                                                    UpdatedAt = @updatedAt,
+                                                    UpdatedBy = @userId
+                                                WHERE ApplicationId = @applicationId",
+                    new
+                    {
+                        applicationId,
+                        userId,
+                        updatedAt = DateTime.UtcNow
                     });
             }
         }
