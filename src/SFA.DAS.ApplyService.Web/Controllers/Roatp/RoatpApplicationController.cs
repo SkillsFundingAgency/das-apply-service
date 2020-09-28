@@ -1251,7 +1251,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 OrganisationName = applicationData.OrganisationName,
                 TradingName = applicationData.TradingName,
                 ApplicationRouteId = applicationData.ProviderRoute.ToString(),
-                ApplicationReference = applicationData.ReferenceNumber
+                ApplicationReference = applicationData.ReferenceNumber,
+                EmailAddress = User.GetEmail()
             };
 
             return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);

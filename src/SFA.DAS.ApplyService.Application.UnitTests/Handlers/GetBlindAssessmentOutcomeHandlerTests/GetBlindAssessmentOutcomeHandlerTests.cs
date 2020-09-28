@@ -13,13 +13,13 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetBlindAssessment
     [TestFixture]
     public class GetBlindAssessmentOutcomeHandlerTests
     {
-        protected Mock<IAssessorRepository> _repository;
+        protected Mock<IModeratorRepository> _repository;
         protected GetBlindAssessmentOutcomeHandler _handler;
 
         [SetUp]
         public void TestSetup()
         {
-            _repository = new Mock<IAssessorRepository>();
+            _repository = new Mock<IModeratorRepository>();
             _handler = new GetBlindAssessmentOutcomeHandler(_repository.Object, Mock.Of<ILogger<GetBlindAssessmentOutcomeHandler>>());
         }
 
