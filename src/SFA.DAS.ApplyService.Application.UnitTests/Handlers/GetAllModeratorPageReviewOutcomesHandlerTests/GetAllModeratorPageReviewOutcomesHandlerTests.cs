@@ -14,13 +14,13 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAllModeratorPag
     [TestFixture]
     public class GetAllModeratorPageReviewOutcomesHandlerTests
     {
-        protected Mock<IAssessorRepository> _repository;
+        protected Mock<IModeratorRepository> _repository;
         protected GetAllModeratorPageReviewOutcomesHandler _handler;
 
         [SetUp]
         public void TestSetup()
         {
-            _repository = new Mock<IAssessorRepository>();
+            _repository = new Mock<IModeratorRepository>();
             _handler = new GetAllModeratorPageReviewOutcomesHandler(_repository.Object, Mock.Of<ILogger<GetAllModeratorPageReviewOutcomesHandler>>());
         }
 

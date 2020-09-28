@@ -1,7 +1,7 @@
 ﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.ApplicationSummaryViewModel
 
 @{
-    ViewBag.Title = "Application submitted";
+    ViewBag.Title = "Application complete";
     Layout = "_Layout";
 }
 
@@ -20,7 +20,7 @@
 
             <div class="govuk-panel govuk-panel--confirmation">
                 <h1 class="govuk-panel__title">
-                    Application submitted
+                    Application complete
                 </h1>
                 <div class="govuk-panel__body">
                     Your reference number<br>
@@ -34,41 +34,54 @@
 
             <h2 class="govuk-heading-m">What happens next</h2>
             <p class="govuk-body">
-                We have sent your application to the following RoATP application assessment teams:
+                There are 3 RoATP assessment teams that will assess your application.
+            </p>                
+            <p class="govuk-body">
+                They are:
             </p>                
             <ul class="govuk-list govuk-list--bullet">
                 <li>
-                    gateway team - they assess your organisation, the people involved in your organisation and criminal and compliance checks
+                    the gateway team - they assess your organisation, the people in your organisation and criminal and compliance checks
                 </li>
                 <li>
-                    financial health assessment team - they assess your organisation's financial evidence
+                    the financial health assessment team - they assess your organisation's financial evidence
                 </li>
                 <li>
-                    assessor team - they assess the remaining application answers, policies and processes
+                    the assessor team - they assess how ready your organisation is in protecting apprentices, planning, delivering and evaluating apprenticeship training
                 </li>
             </ul>
             <p class="govuk-body">
-                If your application answers are unclear, we may ask for further information. You must reply within 5 working days or we may withdraw your application.
+                You'll need to allow at least 12 weeks for them to assess your application.
             </p>
             <p class="govuk-body">
-                You will need to allow at least 12 weeks for us to process your application. It may take longer because this is a private beta service. We will send you an email when there's an update with your application.
+                Once they've assessed your application, your organisation will receive an overall outcome, a financial health grade and next steps.
             </p>
             <p class="govuk-body">
-                Once your application has been assessed, your organisation will receive an outcome, a financial health grade and next steps.
-            </p>
-
-            <p class="govuk-body">
-                Find out more about how your organisation is assessed for <a href="https://www.gov.uk/government/publications/esfa-financial-health-assessment" target="_blank" class="govuk-link">financial health (opens in a new window or tab)</a>.
+                If your answers or file uploads are unclear, we may ask for clarification. You must reply within 5 working days or we may fail your application.
             </p>
             <p class="govuk-body">
-                If you want to know more about how the teams currently assess applications, how outcomes and financial health grades are given and next steps you can <a href="https://www.gov.uk/guidance/application-guidance-for-the-register-of-apprenticeship-training-providers-version-3-august-2019" target="_blank" class="govuk-link">read 'section 7 what happens next' (opens in a new window or tab)</a>. Some processes may differ, as the guidance is based on the current Bravo service.
+                We will send all communication about this application to <span class="govuk-!-font-weight-bold">@Model.EmailAddress</span>.
             </p>
             <p class="govuk-body">
-                If you have any questions, want to make a change or withdraw your application, email <a href="mailto:roatp.support@education.gov.uk" class="govuk-link">roatp.support@education.gov.uk</a>.
+                If you have any questions, want to make a change or withdraw your application, email <a href="mailto:helpdesk@manage-apprenticeships.service.gov.uk" class="govuk-link">helpdesk@manage-apprenticeships.service.gov.uk</a> or call 08000 150 600.
             </p>
-
             <p class="govuk-body">
-                <a href="https://www.smartsurvey.co.uk/s/UDD7V/" target="_blank" class="govuk-link">What did you think of this service?</a> (takes 30 seconds)
+                For more information, you can <a href="https://help.apprenticeships.education.gov.uk/hc/en-gb" class="govuk-link" target="_blank" rel="noreferrer noopener">read our help articles for training providers (opens in a new window or tab)</a>.
+            </p>
+            <p class="govuk-body">
+                As a new apprenticeship training provider, your organisation may receive an inspection by Ofsted within the first 3 years of receiving funding from ESFA.
+            </p>
+            <p class="govuk-body">To prepare for this, evaluate your organisation against:</p>
+            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-9">
+                <li>
+                    the <a href="https://www.gov.uk/government/publications/education-inspection-framework" class="govuk-link" target="_blank" rel="noreferrer noopener">Education Inspection Framework (opens in a new window or tab)</a>
+                </li>
+                <li>
+                    the <a href="https://www.gov.uk/government/publications/further-education-and-skills-inspection-handbook-eif" class="govuk-link" target="_blank" rel="noreferrer noopener">Further Education and Skills Inspection Handbook (opens in a new window or tab)</a>
+                </li>
+            </ul>
+            <p class="govuk-body">
+                <a href="https://www.smartsurvey.co.uk/s/UDD7V/" class="govuk-link" target="_blank" rel="noreferrer noopener">What did you think of this service?</a> (takes 30 seconds)
             </p>
         </div>
     </div>
