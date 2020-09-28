@@ -8,10 +8,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
 {
     public class GetBlindAssessmentOutcomeHandler : IRequestHandler<GetBlindAssessmentOutcomeRequest, BlindAssessmentOutcome>
     {
-        private readonly IAssessorRepository _repository;
+        private readonly IModeratorRepository _repository;
         private readonly ILogger<GetBlindAssessmentOutcomeHandler> _logger;
 
-        public GetBlindAssessmentOutcomeHandler(IAssessorRepository repository, ILogger<GetBlindAssessmentOutcomeHandler> logger)
+        public GetBlindAssessmentOutcomeHandler(IModeratorRepository repository, ILogger<GetBlindAssessmentOutcomeHandler> logger)
         {
             _repository = repository;
             _logger = logger;

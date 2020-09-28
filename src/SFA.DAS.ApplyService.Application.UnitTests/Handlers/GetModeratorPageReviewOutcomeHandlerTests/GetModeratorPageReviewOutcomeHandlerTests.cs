@@ -13,13 +13,13 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetModeratorPageRe
     [TestFixture]
     public class GetModeratorPageReviewOutcomeHandlerTests
     {
-        protected Mock<IAssessorRepository> _repository;
+        protected Mock<IModeratorRepository> _repository;
         protected GetModeratorPageReviewOutcomeHandler _handler;
 
         [SetUp]
         public void TestSetup()
         {
-            _repository = new Mock<IAssessorRepository>();
+            _repository = new Mock<IModeratorRepository>();
             _handler = new GetModeratorPageReviewOutcomeHandler(_repository.Object, Mock.Of<ILogger<GetModeratorPageReviewOutcomeHandler>>());
         }
 
