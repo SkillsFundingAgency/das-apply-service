@@ -27,7 +27,9 @@
             <tr class="govuk-table__row">
                 @foreach (var title in Model.ManagementHierarchyData.HeadingTitles.Take(numberOfTitles))
                 {
-                    <th class="govuk-table__header" scope="col">@Html.Raw(title)</th>
+                    <th class="govuk-table__header" scope="col">
+                        @title
+                    </th>
                 }
                 <th class="govuk-table__header" scope="col"></th>
                 <th class="govuk-table__header" scope="col"></th>

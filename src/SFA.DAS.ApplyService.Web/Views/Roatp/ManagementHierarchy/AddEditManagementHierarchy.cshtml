@@ -29,7 +29,7 @@
             @foreach(var nameErrorMessage in errorMessages.Where(x => x.Field == "FullName"))
             {
                 <span class="govuk-error-message">
-                    @Html.Raw(nameErrorMessage.ErrorMessage)
+                    @nameErrorMessage.ErrorMessage
                 </span>
             }
     }
@@ -43,7 +43,7 @@
             @foreach(var jobRoleErrorMessage in errorMessages.Where(x => x.Field == "JobRole"))
             {
                 <span class="govuk-error-message">
-                    @Html.Raw(jobRoleErrorMessage.ErrorMessage)
+                    @jobRoleErrorMessage.ErrorMessage
                 </span>
             }
     }
@@ -60,7 +60,7 @@
             @foreach (var timeInRoleMonthsMessage in errorMessages.Where(x => x.Field == "TimeInRole"))
             {
                 <span class="govuk-error-message">
-                    @Html.Raw(timeInRoleMonthsMessage.ErrorMessage)
+                    @timeInRoleMonthsMessage.ErrorMessage
                 </span>
             }
     }
@@ -97,12 +97,12 @@
     <p class="govuk-label">Is this person part of any other organisations?</p>
     @if (showErrors)
     {
-        <span class="govuk-error-message">
             @foreach(var errorMessage in errorMessages.Where(x => x.Field == "IsPartOfOtherOrgThatGetsFunding"))
             {
-                @Html.Raw(errorMessage.ErrorMessage)  <br />
+                <span class="govuk-error-message">
+                    @errorMessage.ErrorMessage
+                </span>
             }
-        </span>
     }
     <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
         <div class="govuk-radios__item">
