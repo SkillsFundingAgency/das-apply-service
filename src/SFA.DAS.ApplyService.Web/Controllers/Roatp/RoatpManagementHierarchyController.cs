@@ -80,12 +80,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 return View("~/Views/Roatp/ManagementHierarchy/AddManagementHierarchy.cshtml", model);
             }
 
-            var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
-            var yourOrganisationSequence =
-                applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining);
-            var yourOrganisationSections = await _qnaApiClient.GetSections(model.ApplicationId, yourOrganisationSequence.Id);
-            var managementHierarchySection =
-                yourOrganisationSections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy);
+            var managementHierarchySection = await _qnaApiClient.GetSectionBySectionNo(model.ApplicationId, RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining, RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy);
 
             var managementHierarchyData = await _tabularDataRepository.GetTabularDataAnswer(model.ApplicationId, RoatpWorkflowQuestionTags.AddManagementHierarchy);
 
@@ -179,16 +174,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             managementHierarchyData.DataRows.RemoveAt(model.Index);
 
-            var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
-            var sequence =
-                applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining);
-            var sections = await _qnaApiClient.GetSections(model.ApplicationId, sequence.Id);
-            var section =
-                sections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy);
+            var managementHierarchySection = await _qnaApiClient.GetSectionBySectionNo(model.ApplicationId, RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining, RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy);
 
             var result = await _tabularDataRepository.SaveTabularDataAnswer(
                 model.ApplicationId,
-                section.Id,
+                managementHierarchySection.Id,
                 pageId,
                 questionId,
                 managementHierarchyData);
@@ -261,16 +251,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                     }
                 };
 
-                var applicationSequences = await _qnaApiClient.GetSequences(model.ApplicationId);
-                var sequence =
-                    applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining);
-                var sections = await _qnaApiClient.GetSections(model.ApplicationId, sequence.Id);
-                var section =
-                    sections.FirstOrDefault(x => x.SectionId == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy);
+                var managementHierarchySection = await _qnaApiClient.GetSectionBySectionNo(model.ApplicationId, RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining, RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy);
 
                 var result = await _tabularDataRepository.EditTabularDataRecord(
                     model.ApplicationId,
-                    section.Id,
+                    managementHierarchySection.Id,
                     RoatpWorkflowPageIds.ManagementHierarchy.AddManagementHierarchy,
                     RoatpDeliveringApprenticeshipTrainingQuestionIdConstants.ManagementHierarchy,
                     RoatpWorkflowQuestionTags.AddManagementHierarchy,
@@ -299,11 +284,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         [HttpPost]
         public async Task<IActionResult> CompleteManagementHierarchySection(Guid applicationId)
-        {
-            var applicationSequences = await _qnaApiClient.GetSequences(applicationId);
-            var deliveringApprenticeshipTrainingSequence =
-                applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining);
-           
+        {           
             return RedirectToAction("TaskList", "RoatpApplication", new { applicationId });
         }
 
