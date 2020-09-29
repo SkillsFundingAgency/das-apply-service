@@ -7,10 +7,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
 {
     public class SubmitModeratorPageOutcomeHandler : IRequestHandler<SubmitModeratorPageOutcomeRequest>
     {
-        private readonly IAssessorRepository _repository;
+        private readonly IModeratorRepository _repository;
         private readonly ILogger<SubmitModeratorPageOutcomeHandler> _logger;
 
-        public SubmitModeratorPageOutcomeHandler(IAssessorRepository repository, ILogger<SubmitModeratorPageOutcomeHandler> logger)
+        public SubmitModeratorPageOutcomeHandler(IModeratorRepository repository, ILogger<SubmitModeratorPageOutcomeHandler> logger)
         {
             _repository = repository;
             _logger = logger;
