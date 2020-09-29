@@ -25,6 +25,7 @@ using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Data;
 using SFA.DAS.ApplyService.DfeSignIn;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
+using SFA.DAS.ApplyService.InternalApi.Services.Moderator;
 using CharityCommissionApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.CharityCommissionApiClient;
 using CompaniesHouseApiClient = SFA.DAS.ApplyService.InternalApi.Infrastructure.CompaniesHouseApiClient;
 using IQnaTokenService = SFA.DAS.ApplyService.InternalApi.Infrastructure.IQnaTokenService;
@@ -233,6 +234,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IApplyRepository, ApplyRepository>();
             services.AddTransient<IAssessorRepository, AssessorRepository>();
             services.AddTransient<IOrganisationRepository, OrganisationRepository>();
+            services.AddTransient<IModeratorRepository, ModeratorRepository>();
             services.AddTransient<IDfeSignInService, DfeSignInService>();
             
             services.AddTransient<IEmailService, EmailService.EmailService>();
@@ -254,6 +256,8 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IAssessorPageService, AssessorPageService>();
             services.AddTransient<IAssessorSectorService, AssessorSectorService>();
             services.AddTransient<IAssessorSectorDetailsService, AssessorSectorDetailsService>();
+            services.AddTransient<IAssessorReviewCreationService, AssessorReviewCreationService>();
+            services.AddTransient<IModeratorReviewCreationService, ModeratorReviewCreationService>();
 
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
         }

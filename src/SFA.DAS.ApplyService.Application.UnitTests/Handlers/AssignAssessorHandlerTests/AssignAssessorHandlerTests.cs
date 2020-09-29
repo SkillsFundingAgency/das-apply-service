@@ -32,7 +32,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.AssignAssessorHand
             
             await _handler.Handle(new AssignAssessorRequest(applicationId, assessorNumber, expectedUserId, expectedUserName), new CancellationToken());
 
-            _repository.Verify(x => x.UpdateAssessor1(applicationId, expectedUserId,expectedUserName), Times.Once);
+            _repository.Verify(x => x.AssignAssessor1(applicationId, expectedUserId,expectedUserName), Times.Once);
         }
 
         [Test]
@@ -45,7 +45,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.AssignAssessorHand
 
             await _handler.Handle(new AssignAssessorRequest(applicationId, assessorNumber, expectedUserId, expectedUserName), new CancellationToken());
 
-            _repository.Verify(x => x.UpdateAssessor2(applicationId, expectedUserId, expectedUserName), Times.Once);
+            _repository.Verify(x => x.AssignAssessor2(applicationId, expectedUserId, expectedUserName), Times.Once);
         }
     }
 }
