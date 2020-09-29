@@ -55,7 +55,7 @@
                     @if (showErrors)
                     {
                         <span class="govuk-error-message">
-                            @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "Confirmation")?.ErrorMessage)
+                            @Model.ErrorMessages.FirstOrDefault(x => x.Field == "Confirmation")?.ErrorMessage
                         </span>
                     }
                     <fieldset class="govuk-fieldset">
