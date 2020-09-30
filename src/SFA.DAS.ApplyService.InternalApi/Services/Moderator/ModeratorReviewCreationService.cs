@@ -71,8 +71,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Moderator
                     PageId = page.PageId,
                     UserId = moderatorUserId,
                     Status = null,
-                    Comment = null,
-                    ExternalComment = null
+                    Comment = null
                 });
             }
 
@@ -93,8 +92,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Moderator
                     PageId = sector.PageId,
                     UserId = moderatorUserId,
                     Status = null,
-                    Comment = null,
-                    ExternalComment = null
+                    Comment = null
                 });
             }
 

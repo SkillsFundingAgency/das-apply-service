@@ -11,8 +11,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
                                                         string pageId,
                                                         string userId,
                                                         string status,
-                                                        string comment,
-                                                        string externalComment)
+                                                        string comment)
         {
             ApplicationId = applicationId;
             SequenceNumber = sequenceNumber;
@@ -21,7 +20,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
             UserId = userId;
             Status = status;
             Comment = comment;
-            ExternalComment = externalComment;
         }
 
         public Guid ApplicationId { get; }
@@ -31,6 +29,5 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
         public string UserId { get; }
         public string Status { get; }
         public string Comment { get; }
-        public string ExternalComment { get; }
     }
 }

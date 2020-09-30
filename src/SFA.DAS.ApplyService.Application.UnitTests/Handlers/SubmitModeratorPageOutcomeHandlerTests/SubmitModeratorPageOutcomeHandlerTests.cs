@@ -32,11 +32,10 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.SubmitModeratorPag
             var userId = "4fs7f-userId-7gfhh";
             var status = "Fail";
             var comment = "Very bad";
-            var externalComment = "Not good";
 
-            await _handler.Handle(new SubmitModeratorPageOutcomeRequest(applicationId, sequenceNumber, sectionNumber, pageId, userId, status, comment, externalComment), new CancellationToken());
+            await _handler.Handle(new SubmitModeratorPageOutcomeRequest(applicationId, sequenceNumber, sectionNumber, pageId, userId, status, comment), new CancellationToken());
 
-            _repository.Verify(x => x.SubmitModeratorPageOutcome(applicationId, sequenceNumber, sectionNumber, pageId, userId, status, comment, externalComment), Times.Once);
+            _repository.Verify(x => x.SubmitModeratorPageOutcome(applicationId, sequenceNumber, sectionNumber, pageId, userId, status, comment), Times.Once);
         }
     }
 }
