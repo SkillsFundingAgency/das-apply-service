@@ -17,14 +17,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Moderator
     {
         private readonly IAssessorSequenceService _sequenceService;
         private readonly IAssessorSectorService _sectorService;
-        private readonly IInternalQnaApiClient _qnaApiClient;
         private readonly IMediator _mediator;
 
-        public ModeratorReviewCreationService(IAssessorSequenceService sequenceService, IAssessorSectorService sectorService, IInternalQnaApiClient qnaApiClient, IMediator mediator)
+        public ModeratorReviewCreationService(IAssessorSequenceService sequenceService, IAssessorSectorService sectorService, IMediator mediator)
         {
             _sequenceService = sequenceService;
             _sectorService = sectorService;
-            _qnaApiClient = qnaApiClient;
             _mediator = mediator;
         }
 
@@ -39,14 +37,15 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Moderator
                 var sectionsToBeReviewed = sequence.Sections.Where(sec => sec.Status != AssessorReviewStatus.NotRequired);
                 foreach (var section in sectionsToBeReviewed)
                 {
-                    if (sequence.SequenceNumber == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining && section.SectionNumber == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees)
+                    if (section.SequenceNumber == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining && section.SectionNumber == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees)
                     {
-                        var sectors = await _sectorService.GetSectorsForModerator(applicationId, moderatorUserId);
-                        reviewOutcomes.AddRange(GeneratorSectorsReviewOutcomes(applicationId, sequence.SequenceNumber, section.SectionNumber, sectors, moderatorUserId));
+                        var sectors = _sectorService.GetSectorsForEmptyReview(section);
+                        reviewOutcomes.AddRange(GeneratorSectorsReviewOutcomes(applicationId, section, sectors, moderatorUserId));
                     }
                     else
                     {
-                        reviewOutcomes.AddRange(await GeneratorSectionReviewOutcomes(applicationId, sequence.SequenceNumber, section.SectionNumber, moderatorUserId));
+                        var sectionReviewOutcomes = GenerateSectionReviewOutcomes(applicationId, section, moderatorUserId);
+                        reviewOutcomes.AddRange(sectionReviewOutcomes);
                     }
                 }
             }
@@ -54,31 +53,31 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Moderator
             await _mediator.Send(new CreateEmptyModeratorReviewRequest(applicationId, moderatorUserId, reviewOutcomes));
         }
 
-        private async Task<List<ModeratorPageReviewOutcome>> GeneratorSectionReviewOutcomes(Guid applicationId, int sequenceNumber, int sectionNumber, string moderatorUserId)
+        private List<ModeratorPageReviewOutcome> GenerateSectionReviewOutcomes(Guid applicationId, AssessorSection section, string moderatorUserId)
         {
             var sectionReviewOutcomes = new List<ModeratorPageReviewOutcome>();
 
-            var section = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceNumber, sectionNumber);
-            var pages = section.QnAData.Pages;
-
-            foreach (var page in pages)
+            if (section.Pages != null)
             {
-                sectionReviewOutcomes.Add(new ModeratorPageReviewOutcome
+                foreach (var page in section.Pages)
                 {
-                    ApplicationId = applicationId,
-                    SequenceNumber = sequenceNumber,
-                    SectionNumber = sectionNumber,
-                    PageId = page.PageId,
-                    UserId = moderatorUserId,
-                    Status = null,
-                    Comment = null
-                });
+                    sectionReviewOutcomes.Add(new ModeratorPageReviewOutcome
+                    {
+                        ApplicationId = applicationId,
+                        SequenceNumber = section.SequenceNumber,
+                        SectionNumber = section.SectionNumber,
+                        PageId = page.PageId,
+                        UserId = moderatorUserId,
+                        Status = null,
+                        Comment = null
+                    });
+                }
             }
 
             return sectionReviewOutcomes;
         }
 
-        private List<ModeratorPageReviewOutcome> GeneratorSectorsReviewOutcomes(Guid applicationId, int sequenceNumber, int sectionNumber, List<AssessorSector> selectedSectors, string moderatorUserId)
+        private List<ModeratorPageReviewOutcome> GeneratorSectorsReviewOutcomes(Guid applicationId, AssessorSection section, List<AssessorSector> selectedSectors, string moderatorUserId)
         {
             var sectorReviewOutcomes = new List<ModeratorPageReviewOutcome>();
 
@@ -87,8 +86,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Moderator
                 sectorReviewOutcomes.Add(new ModeratorPageReviewOutcome
                 {
                     ApplicationId = applicationId,
-                    SequenceNumber = sequenceNumber,
-                    SectionNumber = sectionNumber,
+                    SequenceNumber = section.SequenceNumber,
+                    SectionNumber = section.SectionNumber,
                     PageId = sector.PageId,
                     UserId = moderatorUserId,
                     Status = null,
