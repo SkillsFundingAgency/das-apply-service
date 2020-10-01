@@ -10,6 +10,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
         Task<List<AssessorSector>> GetSectorsForAssessor(Guid applicationId, string userId);
         Task<List<AssessorSector>> GetSectorsForModerator(Guid applicationId, string userId);
 
-        List<AssessorSector> GetSectorsForEmptyReview(AssessorSection section); // unit tests?
+        List<AssessorSector> GetSectorsForEmptyReview(AssessorSection section);
     }
 }
