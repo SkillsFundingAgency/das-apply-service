@@ -33,7 +33,6 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetModeratorPageRe
             var expectedUserId = "4fs7f-userId-7gfhh";
             var expectedStatus = "Fail";
             var expectedComment = "Very bad";
-            var expectedExtneralComment = "External very bad";
 
             var expectedResult = new ModeratorPageReviewOutcome
             {
@@ -43,8 +42,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetModeratorPageRe
                 PageId = expectedPageId,
                 UserId = expectedUserId,
                 Status = expectedStatus,
-                Comment = expectedComment,
-                ExternalComment = expectedExtneralComment
+                Comment = expectedComment
             };
 
             _repository.Setup(x => x.GetModeratorPageReviewOutcome(expectedApplicationId, expectedSequenceNumber, expectedSectionNumber, 

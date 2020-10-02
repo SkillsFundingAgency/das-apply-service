@@ -67,7 +67,6 @@ namespace SFA.DAS.ApplyService.Data
 			                                                            ,[ModeratorUserId] AS UserId
 			                                                            ,[ModeratorReviewStatus] AS [Status]
 			                                                            ,[ModeratorReviewComment] AS Comment
-                                                                        ,[ExternalComment]
 		                                                            FROM [dbo].[ModeratorPageReviewOutcome]
 		                                                            WHERE [ApplicationId] = @applicationId AND
 				                                                        [SequenceNumber] = @sequenceNumber AND
@@ -91,7 +90,6 @@ namespace SFA.DAS.ApplyService.Data
 			                                                            ,[ModeratorUserId] AS UserId
 			                                                            ,[ModeratorReviewStatus] AS [Status]
 			                                                            ,[ModeratorReviewComment] AS Comment
-                                                                        ,[ExternalComment]
 		                                                            FROM [dbo].[ModeratorPageReviewOutcome]
 		                                                            WHERE [ApplicationId] = @applicationId AND
 				                                                        [SequenceNumber] = @sequenceNumber AND
@@ -114,7 +112,6 @@ namespace SFA.DAS.ApplyService.Data
 			                                                            ,[ModeratorUserId] AS UserId
 			                                                            ,[ModeratorReviewStatus] AS [Status]
 			                                                            ,[ModeratorReviewComment] AS Comment
-                                                                        ,[ExternalComment]
 		                                                            FROM [dbo].[ModeratorPageReviewOutcome]
 		                                                            WHERE [ApplicationId] = @applicationId",
                     new { applicationId });
@@ -123,7 +120,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task SubmitModeratorPageOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string userId, string status, string comment, string externalComment)
+        public async Task SubmitModeratorPageOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string userId, string status, string comment)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
@@ -134,14 +131,13 @@ namespace SFA.DAS.ApplyService.Data
 			            SET [ModeratorUserId] = @userId
                             , [ModeratorReviewStatus] = @status
 				            , [ModeratorReviewComment] = @comment
-                            , [ExternalComment] = @externalComment
 				            , [UpdatedAt] = GETUTCDATE()
 				            , [UpdatedBy] = @userId
 			            WHERE [ApplicationId] = @applicationId AND
 					          [SequenceNumber] = @sequenceNumber AND
 					          [SectionNumber] = @sectionNumber AND
 					          [PageId] = @pageId",
-                    new { applicationId, sequenceNumber, sectionNumber, pageId, userId, status, comment, externalComment });
+                    new { applicationId, sequenceNumber, sectionNumber, pageId, userId, status, comment });
 
                 // APR-1633 - Update Moderation Status from 'New' to 'In Moderation'
                 await connection.ExecuteAsync(

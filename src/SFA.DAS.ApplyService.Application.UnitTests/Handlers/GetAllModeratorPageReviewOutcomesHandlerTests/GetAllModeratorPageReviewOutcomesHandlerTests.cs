@@ -34,7 +34,6 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAllModeratorPag
             var expectedUserId = "4fs7f-userId-7gfhh";
             var expectedStatus = "Fail";
             var expectedComment = "Very bad";
-            var expectedExtneralComment = "Extneral very bad";
 
             var expectedResult = new List<ModeratorPageReviewOutcome>
             {
@@ -46,8 +45,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAllModeratorPag
                     PageId = expectedPageId,
                     UserId = expectedUserId,
                     Status = expectedStatus,
-                    Comment = expectedComment,
-                    ExternalComment = expectedExtneralComment
+                    Comment = expectedComment
                 }
             };
 
