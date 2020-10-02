@@ -18,5 +18,5 @@
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
-CREATE INDEX [IX_ModeratorPageReviewOutcome_ApplicationId] ON [ModeratorPageReviewOutcome] ([ApplicationId])
+CREATE UNIQUE INDEX [UX_ModeratorPageReviewOutcome_ApplicationId] ON [ModeratorPageReviewOutcome] ([ApplicationId], [PageId]) INCLUDE ([SequenceNumber], [SectionNumber])
 GO

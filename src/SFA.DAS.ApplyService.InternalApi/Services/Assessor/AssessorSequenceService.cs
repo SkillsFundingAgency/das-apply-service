@@ -79,7 +79,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
                     SequenceTitle = _lookupService.GetTitleForSequence(sequenceNumber),
                     Sections = qnaSections.Select(sec =>
                                     {
-                                        return new AssessorSection { SectionNumber = sec.SectionId, LinkTitle = sec.Title, Status = string.Empty };
+                                        return new AssessorSection { SequenceNumber = sec.SequenceId, SectionNumber = sec.SectionId, LinkTitle = sec.Title, Status = string.Empty, Pages = sec.QnAData?.Pages };
                                     })
                                     .OrderBy(sec => sec.SectionNumber).ToList()
                 };

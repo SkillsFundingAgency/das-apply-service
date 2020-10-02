@@ -10,6 +10,7 @@ using SFA.DAS.ApplyService.Domain.Apply.Moderator;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
+using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -83,6 +84,47 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
             Assert.AreEqual(result[0].Status, PassStatus);
             Assert.AreEqual(result[1].PageId, ManagementHierarchyPageId);
             Assert.AreEqual(result[1].Status, PassStatus);
+        }
+
+        [Test]
+        public void GetSectorsForEmptyReview_when_not_sectors_section_returns_no_sectors()
+        {
+            var managementHierarchySection = new AssessorSection
+            {
+                LinkTitle = "Management Hierarchy Section",
+                SectionNumber = RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy,
+                SequenceNumber = RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
+                Pages = new List<Page>
+                            {
+                                new Page{ PageId = Guid.NewGuid().ToString(), Active = true, Complete = true  },
+                                new Page{ PageId = Guid.NewGuid().ToString(), Active = true, Complete = true  }
+                            }
+            };
+
+            var result = _assessorSectorService.GetSectorsForEmptyReview(managementHierarchySection);
+            CollectionAssert.IsEmpty(result);
+        }
+
+        [Test]
+        public void GetSectorsForEmptyReview_when_sectors_section_returns_expected_result()
+        {
+            var startingPageId = Guid.NewGuid().ToString();
+
+            var sectorsSection = new AssessorSection
+            {
+                LinkTitle = "Sectors Section",
+                SectionNumber = RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees,
+                SequenceNumber = RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
+                Pages = new List<Page>
+                            {
+                                new Page{ PageId = startingPageId, DisplayType = SectionDisplayType.PagesWithSections, LinkTitle = "First Sector Starting Page", Active = true, Complete = true },
+                                new Page{ PageId = Guid.NewGuid().ToString(), DisplayType = SectionDisplayType.Questions, LinkTitle = "First Sector Question Page", Active = true, Complete = true }
+                            }
+            };
+
+            var result = _assessorSectorService.GetSectorsForEmptyReview(sectorsSection);
+            CollectionAssert.IsNotEmpty(result);
+            Assert.AreEqual(result[0].PageId, startingPageId);
         }
 
         private static ApplicationSection GenerateStatingSection(Guid applicationId, int sequenceNumber, int sectionNumber)

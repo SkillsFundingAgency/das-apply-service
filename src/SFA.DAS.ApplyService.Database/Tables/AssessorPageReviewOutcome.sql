@@ -21,5 +21,5 @@
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
-CREATE INDEX [IX_AssessorPageReviewOutcome_ApplicationId] ON [AssessorPageReviewOutcome] ([ApplicationId])
+CREATE UNIQUE INDEX [UX_AssessorPageReviewOutcome] ON [AssessorPageReviewOutcome] ([ApplicationId], [PageId]) INCLUDE ([SequenceNumber], [SectionNumber])
 GO
