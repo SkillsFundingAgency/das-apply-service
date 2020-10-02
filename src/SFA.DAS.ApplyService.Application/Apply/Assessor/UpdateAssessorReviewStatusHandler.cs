@@ -18,7 +18,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 
         public async Task<Unit> Handle(UpdateAssessorReviewStatusRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"UpdateAssessorReviewStatus for ApplicationId '{request.ApplicationId}' - UserId '{request.UserId} - Status '{request.Status}'");
+            _logger.LogInformation($"UpdateAssessorReviewStatus for ApplicationId '{request.ApplicationId}' - Status '{request.Status}'");
 
             await _repository.UpdateAssessorReviewStatus(request.ApplicationId, request.UserId, request.Status);
 

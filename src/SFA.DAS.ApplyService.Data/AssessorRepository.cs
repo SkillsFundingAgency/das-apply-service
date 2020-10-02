@@ -6,11 +6,11 @@ using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Apply.Assessor;
-using SFA.DAS.ApplyService.Domain.Apply.Moderator;
 
 namespace SFA.DAS.ApplyService.Data
 {
@@ -53,7 +53,7 @@ namespace SFA.DAS.ApplyService.Data
         public AssessorRepository(IConfigurationService configurationService, ILogger<AssessorRepository> logger)
         {
             _logger = logger;
-            _config = configurationService.GetConfig().Result;
+            _config = configurationService.GetConfig().GetAwaiter().GetResult();
         }
 
         public async Task<List<AssessorApplicationSummary>> GetNewAssessorApplications(string userId)
@@ -93,12 +93,15 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task UpdateAssessor1(Guid applicationId, string userId, string userName)
+        public async Task AssignAssessor1(Guid applicationId, string userId, string userName)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"UPDATE Apply SET Assessor1UserId = @userId, Assessor1Name = @userName, Assessor1ReviewStatus = @inProgressReviewStatus
-                                                Where ApplicationId = @applicationId",
+                await connection.ExecuteAsync(@"UPDATE Apply
+                                                SET Assessor1UserId = @userId,
+                                                    Assessor1Name = @userName,
+                                                    Assessor1ReviewStatus = @inProgressReviewStatus
+                                                WHERE ApplicationId = @applicationId",
                     new
                     {
                         applicationId,
@@ -106,21 +109,54 @@ namespace SFA.DAS.ApplyService.Data
                         userName,
                         inProgressReviewStatus = AssessorReviewStatus.InProgress
                     });
+
+                // must clear down all existing page reviews as the assessor has changed
+                await connection.ExecuteAsync(@"UPDATE AssessorPageReviewOutcome
+                                                SET Assessor1UserId = @userId,
+                                                    Assessor1ReviewStatus = NULL,
+                                                    Assessor1ReviewComment = NULL,
+                                                    UpdatedAt = @updatedAt,
+                                                    UpdatedBy = @userId
+                                                WHERE ApplicationId = @applicationId",
+                    new
+                    {
+                        applicationId,
+                        userId,
+                        updatedAt = DateTime.UtcNow
+                    });
             }
         }
 
-        public async Task UpdateAssessor2(Guid applicationId, string userId, string userName)
+        public async Task AssignAssessor2(Guid applicationId, string userId, string userName)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                await connection.ExecuteAsync(@"UPDATE Apply SET Assessor2UserId = @userId, Assessor2Name = @userName, Assessor2ReviewStatus = @inProgressReviewStatus
-                                                Where ApplicationId = @applicationId",
+                await connection.ExecuteAsync(@"UPDATE Apply
+                                                SET Assessor2UserId = @userId,
+                                                    Assessor2Name = @userName,
+                                                    Assessor2ReviewStatus = @inProgressReviewStatus
+                                                WHERE ApplicationId = @applicationId",
                     new
                     {
                         applicationId,
                         userId,
                         userName,
                         inProgressReviewStatus = AssessorReviewStatus.InProgress
+                    });
+
+                // must clear down all existing page reviews as the assessor has changed
+                await connection.ExecuteAsync(@"UPDATE AssessorPageReviewOutcome
+                                                SET Assessor2UserId = @userId,
+                                                    Assessor2ReviewStatus = NULL,
+                                                    Assessor2ReviewComment = NULL,
+                                                    UpdatedAt = @updatedAt,
+                                                    UpdatedBy = @userId
+                                                WHERE ApplicationId = @applicationId",
+                    new
+                    {
+                        applicationId,
+                        userId,
+                        updatedAt = DateTime.UtcNow
                     });
             }
         }
@@ -172,7 +208,7 @@ namespace SFA.DAS.ApplyService.Data
                     .QueryAsync<ModerationApplicationSummary>(
                         $@"SELECT 
                             {ApplicationSummaryFields}
-                            , ModerationStatus AS Status
+                            , ModerationStatus
 	                        FROM Apply apply
 	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                        WHERE apply.DeletedAt IS NULL AND (Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus) AND ISNULL(ModerationStatus, 'New')  <> @completedModerationStatus
@@ -222,100 +258,41 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task SubmitAssessorPageOutcome(Guid applicationId,
-                                                    int sequenceNumber,
-                                                    int sectionNumber,
-                                                    string pageId,
-                                                    string userId,
-                                                    string status,
-                                                    string comment)
+        public async Task SubmitAssessorPageOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId,
+                                                    string userId, string status, string comment)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 var assessorNumber = await GetAssessorNumber(applicationId, userId);
 
+                // NOTE: CreateEmptyAssessorReview should have been called before getting to this point.
+                // This is so that all PageReviewOutcomes are initialized for the Assessor
                 await connection.ExecuteAsync(
                     @"IF (@assessorNumber = 1)
-                        BEGIN
-                            IF NOT EXISTS (SELECT * FROM [AssessorPageReviewOutcome]
-							                        WHERE [ApplicationId] = @applicationId AND
-									                        [SequenceNumber] = @sequenceNumber AND
-									                        [SectionNumber] = @sectionNumber AND
-									                        [PageId] = @pageId)
-		                        BEGIN
-			                        INSERT INTO [dbo].[AssessorPageReviewOutcome]
-					                           ([ApplicationId]
-					                           ,[SequenceNumber]
-					                           ,[SectionNumber]
-					                           ,[PageId]
-					                           ,[Assessor1UserId]
-					                           ,[Assessor1ReviewStatus]
-					                           ,[Assessor1ReviewComment]
-					                           ,[CreatedBy])
-				                         VALUES
-					                           (@applicationId
-					                           ,@sequenceNumber
-					                           ,@sectionNumber
-					                           ,@pageId
-					                           ,@userId
-					                           ,@status
-					                           ,@comment
-					                           ,@userId)                     
-		                        END
-                             ELSE
-		                        BEGIN
-			                        UPDATE [AssessorPageReviewOutcome]
-			                           SET [Assessor1UserId] = @userId
-                                          ,[Assessor1ReviewStatus] = @status
-				                          ,[Assessor1ReviewComment] = @comment
-				                          ,[UpdatedAt] = GETUTCDATE()
-				                          ,[UpdatedBy] = @userId
-			                        WHERE [ApplicationId] = @applicationId AND
-					                        [SequenceNumber] = @sequenceNumber AND
-					                        [SectionNumber] = @sectionNumber AND
-					                        [PageId] = @pageId
-		                        END                                                         
-                        END
+		                BEGIN
+			                UPDATE [AssessorPageReviewOutcome]
+			                   SET [Assessor1UserId] = @userId
+                                   , [Assessor1ReviewStatus] = @status
+				                   , [Assessor1ReviewComment] = @comment
+				                   , [UpdatedAt] = GETUTCDATE()
+				                   , [UpdatedBy] = @userId
+			                WHERE [ApplicationId] = @applicationId AND
+					              [SequenceNumber] = @sequenceNumber AND
+					              [SectionNumber] = @sectionNumber AND
+					              [PageId] = @pageId
+		                END                                                         
                       IF (@assessorNumber = 2)
                         BEGIN
-                             IF NOT EXISTS (SELECT * FROM [AssessorPageReviewOutcome]
-							                        WHERE [ApplicationId] = @applicationId AND
-									                        [SequenceNumber] = @sequenceNumber AND
-									                        [SectionNumber] = @sectionNumber AND
-									                        [PageId] = @pageId)
-		                        BEGIN
-			                        INSERT INTO [dbo].[AssessorPageReviewOutcome]
-					                           ([ApplicationId]
-					                           ,[SequenceNumber]
-					                           ,[SectionNumber]
-					                           ,[PageId]
-					                           ,[Assessor2UserId]
-					                           ,[Assessor2ReviewStatus]
-					                           ,[Assessor2ReviewComment]
-					                           ,[CreatedBy])
-				                         VALUES
-					                           (@applicationId
-					                           ,@sequenceNumber
-					                           ,@sectionNumber
-					                           ,@pageId
-					                           ,@userId
-					                           ,@status
-					                           ,@comment
-					                           ,@userId)                     
-		                        END
-                             ELSE
-		                        BEGIN
-			                        UPDATE [AssessorPageReviewOutcome]
-			                           SET [Assessor2UserId] = @userId
-                                          ,[Assessor2ReviewStatus] = @status
-				                          ,[Assessor2ReviewComment] = @comment
-				                          ,[UpdatedAt] = GETUTCDATE()
-				                          ,[UpdatedBy] = @userId
-			                        WHERE [ApplicationId] = @applicationId AND
-					                        [SequenceNumber] = @sequenceNumber AND
-					                        [SectionNumber] = @sectionNumber AND
-					                        [PageId] = @pageId
-		                        END                   
+			                UPDATE [AssessorPageReviewOutcome]
+			                   SET [Assessor2UserId] = @userId
+                                   , [Assessor2ReviewStatus] = @status
+				                   , [Assessor2ReviewComment] = @comment
+				                   , [UpdatedAt] = GETUTCDATE()
+				                   , [UpdatedBy] = @userId
+			                WHERE [ApplicationId] = @applicationId AND
+					              [SequenceNumber] = @sequenceNumber AND
+					              [SectionNumber] = @sectionNumber AND
+					              [PageId] = @pageId                 
                         END",
                     new { applicationId, sequenceNumber, sectionNumber, pageId, assessorNumber, userId, status, comment });
             }
@@ -488,78 +465,49 @@ namespace SFA.DAS.ApplyService.Data
             }
 		}
 
-
-
-        public async Task<ModeratorPageReviewOutcome> GetModeratorPageReviewOutcome(Guid applicationId,
-                                                            int sequenceNumber,
-                                                            int sectionNumber,
-                                                            string pageId)
+        public async Task CreateEmptyAssessorReview(Guid applicationId, string userId, List<AssessorPageReviewOutcome> pageReviewOutcomes)
         {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                var pageReviewOutcomeResults = await connection.QueryAsync<ModeratorPageReviewOutcome>(
-                                                                @"SELECT [ApplicationId]
-			                                                            ,[SequenceNumber]
-			                                                            ,[SectionNumber]
-			                                                            ,[PageId]
-			                                                            ,[ModeratorUserId] AS UserId
-			                                                            ,[ModeratorReviewStatus] AS [Status]
-			                                                            ,[ModeratorReviewComment] AS Comment
-                                                                        ,[ExternalComment]
-		                                                            FROM [dbo].[ModeratorPageReviewOutcome]
-		                                                            WHERE [ApplicationId] = @applicationId AND
-				                                                        [SequenceNumber] = @sequenceNumber AND
-				                                                        [SectionNumber] = @sectionNumber AND
-				                                                        [PageId] = @pageId",
-                    new { applicationId, sequenceNumber, sectionNumber, pageId });
+            var assessorNumber = await GetAssessorNumber(applicationId, userId);
+            var createdAtDateTime = DateTime.UtcNow;
 
-                return pageReviewOutcomeResults.FirstOrDefault();
+            var dataTable = new DataTable();
+            dataTable.Columns.Add("ApplicationId", typeof(Guid));
+            dataTable.Columns.Add("SequenceNumber", typeof(int));
+            dataTable.Columns.Add("SectionNumber", typeof(int));
+            dataTable.Columns.Add("PageId", typeof(string));
+            dataTable.Columns.Add("Assessor1UserId", typeof(string));
+            dataTable.Columns.Add("Assessor2UserId", typeof(string));
+            dataTable.Columns.Add("CreatedAt", typeof(DateTime));
+            dataTable.Columns.Add("CreatedBy", typeof(string));
+
+            foreach (var outcome in pageReviewOutcomes)
+            {
+                dataTable.Rows.Add(
+                    applicationId,
+                    outcome.SequenceNumber,
+                    outcome.SectionNumber,
+                    outcome.PageId,
+                    assessorNumber == 1 ? userId : null,
+                    assessorNumber == 2 ? userId : null,
+                    createdAtDateTime,
+                    userId
+                );
             }
-        }
 
-        public async Task<List<ModeratorPageReviewOutcome>> GetModeratorPageReviewOutcomesForSection(Guid applicationId,
-                                                            int sequenceNumber,
-                                                            int sectionNumber)
-        {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
-                var pageReviewOutcomeResults = await connection.QueryAsync<ModeratorPageReviewOutcome>(
-                                                                @"SELECT [ApplicationId]
-			                                                            ,[SequenceNumber]
-			                                                            ,[SectionNumber]
-			                                                            ,[PageId]
-			                                                            ,[ModeratorUserId] AS UserId
-			                                                            ,[ModeratorReviewStatus] AS [Status]
-			                                                            ,[ModeratorReviewComment] AS Comment
-                                                                        ,[ExternalComment]
-		                                                            FROM [dbo].[ModeratorPageReviewOutcome]
-		                                                            WHERE [ApplicationId] = @applicationId AND
-				                                                        [SequenceNumber] = @sequenceNumber AND
-				                                                        [SectionNumber] = @sectionNumber",
-                    new { applicationId, sequenceNumber, sectionNumber });
+                await connection.OpenAsync();
+                using (var bulkCopy = new SqlBulkCopy(connection, SqlBulkCopyOptions.Default, null))
+                {
+                    bulkCopy.DestinationTableName = "AssessorPageReviewOutcome";
+                    foreach (DataColumn col in dataTable.Columns)
+                    {
+                        bulkCopy.ColumnMappings.Add(col.ColumnName, col.ColumnName);
+                    }
 
-                return pageReviewOutcomeResults.ToList();
-            }
-        }
-
-        public async Task<List<ModeratorPageReviewOutcome>> GetAllModeratorPageReviewOutcomes(Guid applicationId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                var pageReviewOutcomeResults = await connection.QueryAsync<ModeratorPageReviewOutcome>(
-                                                                @"SELECT [ApplicationId]
-			                                                            ,[SequenceNumber]
-			                                                            ,[SectionNumber]
-			                                                            ,[PageId]
-			                                                            ,[ModeratorUserId] AS UserId
-			                                                            ,[ModeratorReviewStatus] AS [Status]
-			                                                            ,[ModeratorReviewComment] AS Comment
-                                                                        ,[ExternalComment]
-		                                                            FROM [dbo].[ModeratorPageReviewOutcome]
-		                                                            WHERE [ApplicationId] = @applicationId",
-                    new { applicationId });
-
-                return pageReviewOutcomeResults.ToList();
+                    await bulkCopy.WriteToServerAsync(dataTable);
+                }
+                connection.Close();
             }
         }
     }

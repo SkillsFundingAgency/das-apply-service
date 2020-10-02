@@ -21,7 +21,7 @@
         <div class="govuk-grid-column-two-thirds">
             @if (Model.ErrorMessages != null && Model.ErrorMessages.Count > 0)
             {
-                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
                     <h2 class="govuk-error-summary__title" id="error-summary-title">
                         There is a problem
                     </h2>
@@ -29,7 +29,11 @@
                         <ul class="govuk-list govuk-error-summary__list">
                             @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
                             {
-                                <li><a sfa-validation-for="@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
+                                <li>
+                                    <a href="#@errorMessage.Field">
+                                        @errorMessage.ErrorMessage
+                                    </a>
+                                </li>
                             }
                         </ul>
                     </div>

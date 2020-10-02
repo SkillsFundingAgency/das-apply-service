@@ -3,8 +3,8 @@ namespace SFA.DAS.ApplyService.Domain.Entities
 {
     public static class PageDisplayType
     {
-        public static string Pages = "Pages";
-        public static string PagesWithSections = "PagesWithSections";
-        public static string OtherPagesInPagesWithSections = "OtherPagesInPagesWithSections";
+        public const string Pages = "Pages";
+        public const string PagesWithSections = "PagesWithSections";
+        public const string OtherPagesInPagesWithSections = "OtherPagesInPagesWithSections";
     }
 }
