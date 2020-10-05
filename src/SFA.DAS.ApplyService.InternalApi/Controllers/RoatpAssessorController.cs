@@ -75,6 +75,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return applications;
         }
 
+        [HttpGet("Assessor/Applications/{userId}/InClarification")]
+        public async Task<List<ClarificationApplicationSummary>> InClarificationApplications(string userId)
+        {
+            var applications = await _mediator.Send(new ApplicationsInClarificationRequest(userId));
+
+            return applications;
+        }
+
 
         [HttpPost("Assessor/Applications/{applicationId}/Assign")]
         public async Task AssignApplication(Guid applicationId, [FromBody] AssignAssessorCommand request)

@@ -109,6 +109,18 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
             Assert.AreSame(expectedResult, actualResult);
         }
 
+        [Test]
+        public async Task Get_InClarificationApplications_returns_applications_for_the_user()
+        {
+            var expectedResult = new List<ClarificationApplicationSummary>();
+            _mediator.Setup(x => x.Send(It.Is<ApplicationsInClarificationRequest>(y => y.UserId == _userId), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
+
+            var actualResult = await _controller.InClarificationApplications(_userId);
+
+            _mediator.Verify(x => x.Send(It.Is<ApplicationsInClarificationRequest>(y => y.UserId == _userId), It.IsAny<CancellationToken>()), Times.Once);
+            Assert.AreSame(expectedResult, actualResult);
+        }
+
 
         [Test]
         public async Task AssignApplication_sets_assessor_details()
