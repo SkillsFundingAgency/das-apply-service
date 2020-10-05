@@ -59,6 +59,16 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
+        public async Task<Apply> GetApplicationByUserId(Guid applicationId, Guid signinId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection.QuerySingleOrDefaultAsync<Apply>(@"SELECT top 1 a.* FROM Contacts c
+                                                    INNER JOIN Apply a ON a.OrganisationId = c.ApplyOrganisationID
+                                                    WHERE c.SigninId = @signinId and a.ApplicationId = @ApplicationId", new { signinId, applicationId }));
+            }
+        }
+
         public async Task<List<Apply>> GetUserApplications(Guid signinId)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))

@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Application.Apply;
 
 namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
@@ -34,5 +32,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Infrastructure
         Task<Answer> GetAnswerByTag(Guid applicationId, string questionTag, string questionId = null);
 
         Task<TabularData> GetTabularDataByTag(Guid applicationId, string questionTag);
+
     }
 }

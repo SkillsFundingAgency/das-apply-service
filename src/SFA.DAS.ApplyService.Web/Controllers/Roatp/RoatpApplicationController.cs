@@ -534,8 +534,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             bool canUpdate = false;
 
-            var applications = await _apiClient.GetApplications(await _userService.GetSignInId(), false);
-            var application = applications?.FirstOrDefault(app => app.ApplicationId == applicationId);
+            var application = await _apiClient.GetApplicationByUserId(applicationId, await _userService.GetSignInId());
 
             var validApplicationStatuses = new string[] { ApplicationStatus.InProgress, ApplicationStatus.FeedbackAdded };
 
@@ -555,11 +554,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                             {
                                 if (!string.IsNullOrWhiteSpace(pageId))
                                 {
-                                    var page = await _qnaApiClient.GetPage(applicationId, section.SectionId, pageId);
-                                    if (page != null && page.Active)
-                                    {
-                                        canUpdate = true;
-                                    }
+                                    canUpdate = await _qnaApiClient.CanUpdatePage(applicationId, section.SectionId, pageId);
                                 }
                                 else
                                 {
