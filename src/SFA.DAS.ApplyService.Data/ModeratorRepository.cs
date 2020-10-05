@@ -147,7 +147,7 @@ namespace SFA.DAS.ApplyService.Data
 				            , UpdatedBy = @userId
 			            WHERE ApplicationId = @applicationId AND DeletedAt IS NULL
                               AND ModerationStatus = @newStatus",
-                    new { applicationId, userId, inModerationStatus = ModerationStatus.InModeration, newStatus = ModerationStatus.New });
+                    new { applicationId, userId, inModerationStatus = ModerationStatus.InProgress, newStatus = ModerationStatus.New });
             }
         }
 
