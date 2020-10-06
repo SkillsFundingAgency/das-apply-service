@@ -259,11 +259,8 @@ namespace SFA.DAS.ApplyService.Data
                         $@"SELECT 
                             {ApplicationSummaryFields}
                             , ModerationStatus As ClarificationStatus
-                            , 'Unknown' As ModeratorName
-                            , GETUTCDATE() As ClarificationRequestedDate
-                            -- TODO: REPLACE WITH BELOW SQL AT LATER DATE
-                            --, ModeratorName,
-                            --, JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ClarificationRequestedOn') AS ClarificationRequestedDate
+                            , ModeratorName,
+                            , JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ClarificationRequestedOn') AS ClarificationRequestedDate
 	                        FROM Apply apply
 	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                        WHERE {InClarificationApplicationsWhereClause}

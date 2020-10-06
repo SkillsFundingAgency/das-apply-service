@@ -28,6 +28,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string Assessor2UserId { get; set; }
         public string Assessor2Name { get; set; }
         public string Assessor2ReviewStatus { get; set; }
+        public string ModeratorName { get; set; }
     }
 
     public class ApplyData
@@ -39,15 +40,15 @@ namespace SFA.DAS.ApplyService.Domain.Entities
 
     public class ApplyDetails
     {
-        // NOTE THIS IS A SIMILAR COPY OF RoatpApplicationData
         public string ReferenceNumber { get; set; }
         public string UKPRN { get; set; }
         public string OrganisationName { get; set; }
         public string TradingName { get; set; }
-        public int ProviderRoute { get; set; } // was string - ApplicationRouteId
+        public int ProviderRoute { get; set; }
         public string ProviderRouteName { get; set; }
         public DateTime? ApplicationSubmittedOn { get; set; }
         public Guid? ApplicationSubmittedBy { get; set; }
+        public DateTime? ClarificationRequestedDate { get; set; }
     }
 
 
