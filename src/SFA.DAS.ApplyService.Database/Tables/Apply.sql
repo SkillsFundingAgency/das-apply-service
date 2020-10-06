@@ -24,6 +24,7 @@
     [Assessor1ReviewStatus] NVARCHAR(20) NULL, 
     [Assessor2ReviewStatus] NVARCHAR(20) NULL,
     [NotRequiredOverrides] NVARCHAR(MAX) NULL, 
+    [ModeratorName] NVARCHAR(256) NULL,
     [ModerationStatus] NVARCHAR(20) NOT NULL DEFAULT 'New', 
     [OversightStatus] NVARCHAR(20) NOT NULL DEFAULT 'New', 
     [ApplicationDeterminedDate] DATETIME2 NULL
