@@ -259,11 +259,11 @@ namespace SFA.DAS.ApplyService.Data
                         $@"SELECT 
                             {ApplicationSummaryFields}
                             , ModeratorName
-                            , JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ClarificationRequestedOn') AS ClarificationRequestedDate
+                            , JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ModeratorClarificationRequestedOn') AS ClarificationRequestedDate
 	                        FROM Apply apply
 	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                        WHERE {InClarificationApplicationsWhereClause}
-                            ORDER BY CONVERT(char(10), JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ClarificationRequestedOn')) ASC, org.Name ASC",
+                            ORDER BY CONVERT(char(10), JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ModeratorClarificationRequestedOn')) ASC, org.Name ASC",
                         new
                         {
                             approvedReviewStatus = AssessorReviewStatus.Approved,
