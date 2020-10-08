@@ -15,6 +15,8 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<int> GetApplicationsInModerationCount();
         Task<List<ClarificationApplicationSummary>> GetApplicationsInClarification();
         Task<int> GetApplicationsInClarificationCount();
+        Task<List<ClosedApplicationSummary>> GetClosedApplications();
+        Task<int> GetClosedApplicationsCount();
         Task AssignAssessor1(Guid applicationId, string userId, string userName);
         Task AssignAssessor2(Guid applicationId, string userId, string userName);
         Task SubmitAssessorPageOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string userId, string status, string comment);
