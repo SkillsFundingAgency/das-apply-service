@@ -231,6 +231,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IQnaTokenService, QnaTokenService>();
             services.AddTransient<IQnaApiClient, QnaApiClient>();
             services.AddTransient<IProcessPageFlowService, ProcessPageFlowService>();
+            services.AddTransient<IResetRouteQuestionsService, ResetRouteQuestionsService>();
             services.AddTransient<IPagesWithSectionsFlowService, PagesWithSectionsFlowService>();
             services.AddTransient<IQuestionPropertyTokeniser, QuestionPropertyTokeniser>();
             services.AddTransient<IPageNavigationTrackingService, PageNavigationTrackingService>();
