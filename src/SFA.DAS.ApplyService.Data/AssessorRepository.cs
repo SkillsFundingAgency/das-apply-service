@@ -258,12 +258,12 @@ namespace SFA.DAS.ApplyService.Data
                     .QueryAsync<ClarificationApplicationSummary>(
                         $@"SELECT 
                             {ApplicationSummaryFields}
-                            , ModeratorName
-                            , JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ModeratorClarificationRequestedOn') AS ClarificationRequestedDate
+                            , JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName') AS ModeratorName
+                            , JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ClarificationRequestedOn') AS ClarificationRequestedOn
 	                        FROM Apply apply
 	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                        WHERE {InClarificationApplicationsWhereClause}
-                            ORDER BY CONVERT(char(10), JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ModeratorClarificationRequestedOn')) ASC, org.Name ASC",
+                            ORDER BY CONVERT(char(10), JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ClarificationRequestedOn')) ASC, org.Name ASC",
                         new
                         {
                             approvedReviewStatus = AssessorReviewStatus.Approved,
