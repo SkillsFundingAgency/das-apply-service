@@ -8,10 +8,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
 {
     public class GetModeratorPageReviewOutcomeHandler : IRequestHandler<GetModeratorPageReviewOutcomeRequest, ModeratorPageReviewOutcome>
     {
-        private readonly IAssessorRepository _repository;
+        private readonly IModeratorRepository _repository;
         private readonly ILogger<GetModeratorPageReviewOutcomeHandler> _logger;
 
-        public GetModeratorPageReviewOutcomeHandler(IAssessorRepository repository, ILogger<GetModeratorPageReviewOutcomeHandler> logger)
+        public GetModeratorPageReviewOutcomeHandler(IModeratorRepository repository, ILogger<GetModeratorPageReviewOutcomeHandler> logger)
         {
             _repository = repository;
             _logger = logger;
@@ -19,9 +19,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
 
         public async Task<ModeratorPageReviewOutcome> Handle(GetModeratorPageReviewOutcomeRequest request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"GetModeratorPageReviewOutcome for ApplicationId '{request.ApplicationId}' - " +
-                                                    $"SequenceNumber '{request.SequenceNumber}' - SectionNumber '{request.SectionNumber}' - " +
-                                                    $"PageId '{request.PageId}' - - UserId '{request.UserId}'");
+            _logger.LogInformation($"GetModeratorPageReviewOutcome for ApplicationId '{request.ApplicationId}' - PageId '{request.PageId}'");
 
             var pagePageReviewOutcome = await _repository.GetModeratorPageReviewOutcome(request.ApplicationId,
                                                         request.SequenceNumber,

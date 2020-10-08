@@ -9,10 +9,10 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
 {
     public class GetModeratorPageReviewOutcomesForSectionHandler : IRequestHandler<GetModeratorPageReviewOutcomesForSectionRequest, List<ModeratorPageReviewOutcome>>
     {
-        private readonly IAssessorRepository _repository;
+        private readonly IModeratorRepository _repository;
         private readonly ILogger<GetModeratorPageReviewOutcomesForSectionHandler> _logger;
 
-        public GetModeratorPageReviewOutcomesForSectionHandler(IAssessorRepository repository, ILogger<GetModeratorPageReviewOutcomesForSectionHandler> logger)
+        public GetModeratorPageReviewOutcomesForSectionHandler(IModeratorRepository repository, ILogger<GetModeratorPageReviewOutcomesForSectionHandler> logger)
         {
             _repository = repository;
             _logger = logger;
@@ -21,8 +21,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
         public async Task<List<ModeratorPageReviewOutcome>> Handle(GetModeratorPageReviewOutcomesForSectionRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"GetModeratorPageReviewOutcomesForSection for ApplicationId '{request.ApplicationId}' - " +
-                                                    $"SequenceNumber '{request.SequenceNumber}' - SectionNumber '{request.SectionNumber}' - " +
-                                                    $"UserId '{request.UserId}'");
+                                                    $"SequenceNumber '{request.SequenceNumber}' - SectionNumber '{request.SectionNumber}'");
 
             var moderatorPageReviewOutcomes = await _repository.GetModeratorPageReviewOutcomesForSection(request.ApplicationId,
                                                         request.SequenceNumber,

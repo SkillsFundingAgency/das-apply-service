@@ -265,6 +265,20 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
         }
 
+        public async Task<bool> CanUpdatePage(Guid applicationId, Guid sectionId, string pageId)
+        {
+            var response = await _httpClient.GetAsync($"Applications/{applicationId}/sections/{sectionId}/pages/{pageId}/canupdate");
+
+            return await response.Content.ReadAsAsync<bool>();
+        }
+
+        public async Task<bool> CanUpdatePageBySectionNo(Guid applicationId, int sequenceNo, int sectionNo, string pageId)
+        {
+            var response = await _httpClient.GetAsync($"Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}/canupdate");
+
+            return await response.Content.ReadAsAsync<bool>();
+        }
+
         public async Task<ResetPageAnswersResponse> ResetPageAnswers(Guid applicationId, Guid sectionId, string pageId)
         {
 

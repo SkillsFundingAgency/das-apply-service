@@ -1,5 +1,4 @@
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
-using SFA.DAS.ApplyService.Application.Apply.Submit;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
@@ -14,7 +13,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<Guid> StartApplication(Guid applicationId, ApplyData applyData, Guid organisationId, Guid createdBy);
 
         Task<Domain.Entities.Apply> GetApplication(Guid applicationId);
-
+        Task<Domain.Entities.Apply> GetApplicationByUserId(Guid applicationId, Guid signinId);
         Task<List<Domain.Entities.Apply>> GetUserApplications(Guid signinId);
         Task<List<Domain.Entities.Apply>> GetOrganisationApplications(Guid signinId);
 

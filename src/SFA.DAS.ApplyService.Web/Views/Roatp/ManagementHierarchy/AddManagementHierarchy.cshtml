@@ -2,7 +2,7 @@
 @model SFA.DAS.ApplyService.Web.ViewModels.Roatp.AddEditManagementHierarchyViewModel
 
 @{
-    ViewBag.Title = "Who is in your organisation''s management hierarchy for apprenticeships?";
+    ViewBag.Title = "Who is in your organisation's management hierarchy for apprenticeships?";
     Layout = "_Layout";
 }
 
@@ -29,7 +29,23 @@
                     <ul class="govuk-list govuk-error-summary__list">
                         @foreach (var errorMessage in Model.ErrorMessages.DistinctBy(x => x.ErrorMessage))
                             {
-                        <li><a href="#@errorMessage.Field">@errorMessage.ErrorMessage</a></li>
+
+                                var errorMessageField = errorMessage.Field;
+
+                                if (errorMessageField == "TimeInRole")
+                                {
+                                    errorMessageField = "TimeInRoleYears";
+                                }
+
+                                if (
+                                    errorMessage.ErrorMessage == "Enter the names of all these organisations using 750 characters or less" ||
+                                    errorMessage.ErrorMessage == "Enter the names of all these organisations"
+                                )
+                                {
+                                    errorMessageField = "OtherOrgName";
+                                }
+
+                                <li><a href="#@errorMessageField">@errorMessage.ErrorMessage</a></li>
                             }
                     </ul>
                 </div>

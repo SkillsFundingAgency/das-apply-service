@@ -437,7 +437,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 var nextActionResult = await _qnaApiClient.SkipPageBySectionNo(applicationId, sequenceId, sectionId, pageId);
 
-                if (nextActionResult?.NextAction == "NextPage")
+                if (NextAction.NextPage.Equals(nextActionResult?.NextAction, StringComparison.InvariantCultureIgnoreCase))
                 {
 
                     return RedirectToAction("Page", new
@@ -534,8 +534,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             bool canUpdate = false;
 
-            var applications = await _apiClient.GetApplications(await _userService.GetSignInId(), false);
-            var application = applications?.FirstOrDefault(app => app.ApplicationId == applicationId);
+            var application = await _apiClient.GetApplicationByUserId(applicationId, await _userService.GetSignInId());
 
             var validApplicationStatuses = new string[] { ApplicationStatus.InProgress, ApplicationStatus.FeedbackAdded };
 
@@ -555,11 +554,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                             {
                                 if (!string.IsNullOrWhiteSpace(pageId))
                                 {
-                                    var page = await _qnaApiClient.GetPage(applicationId, section.SectionId, pageId);
-                                    if (page != null && page.Active)
-                                    {
-                                        canUpdate = true;
-                                    }
+                                    canUpdate = await _qnaApiClient.CanUpdatePage(applicationId, section.SectionId, pageId);
                                 }
                                 else
                                 {
@@ -717,12 +712,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     return RedirectToAction("Feedback", new { applicationId });
                 }
 
-                if ("ReturnToSection".Equals(nextAction, StringComparison.InvariantCultureIgnoreCase) && (page.DisplayType == SectionDisplayType.PagesWithSections || page.DisplayType == "OtherPagesInPagesWithSections"))
+                if (NextAction.ReturnToSection.Equals(nextAction, StringComparison.InvariantCultureIgnoreCase) && (page.DisplayType == SectionDisplayType.PagesWithSections || page.DisplayType == "OtherPagesInPagesWithSections"))
                 {
                     return await Section(applicationId, sequenceNo, sectionNo);
                 }
 
-                if (string.IsNullOrEmpty(nextActionId) || !"NextPage".Equals(nextAction, StringComparison.InvariantCultureIgnoreCase))
+                if (string.IsNullOrEmpty(nextActionId) || !NextAction.NextPage.Equals(nextAction, StringComparison.InvariantCultureIgnoreCase))
                 {
                     return await TaskList(applicationId);
                 }
@@ -1251,7 +1246,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 OrganisationName = applicationData.OrganisationName,
                 TradingName = applicationData.TradingName,
                 ApplicationRouteId = applicationData.ProviderRoute.ToString(),
-                ApplicationReference = applicationData.ReferenceNumber
+                ApplicationReference = applicationData.ReferenceNumber,
+                EmailAddress = User.GetEmail()
             };
 
             return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);

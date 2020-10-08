@@ -22,11 +22,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
 
             if (request.AssessorNumber == 1)
             {
-                await _assessorRepository.UpdateAssessor1(request.ApplicationId, request.AssessorUserId, request.AssessorName);
+                await _assessorRepository.AssignAssessor1(request.ApplicationId, request.AssessorUserId, request.AssessorName);
             }
             else
             {
-                await _assessorRepository.UpdateAssessor2(request.ApplicationId, request.AssessorUserId, request.AssessorName);
+                await _assessorRepository.AssignAssessor2(request.ApplicationId, request.AssessorUserId, request.AssessorName);
             }
 
             return Unit.Value;

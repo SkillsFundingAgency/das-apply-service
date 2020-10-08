@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[ModeratorPageReviewOutcome](
-	[Id] [uniqueidentifier] NOT NULL,
+	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
 	[ApplicationId] [uniqueidentifier] NOT NULL,
 	[SequenceNumber] [int] NOT NULL,
 	[SectionNumber] [int] NOT NULL,
@@ -7,8 +7,7 @@
 	[ModeratorUserId] NVARCHAR(256) NULL,     
 	[ModeratorReviewStatus] NVARCHAR(20) NULL, 
     [ModeratorReviewComment] NVARCHAR(MAX) NULL,
-	[ExternalComment] NVARCHAR(MAX) NULL,
-	[CreatedAt] DATETIME2 NOT NULL, 
+	[CreatedAt] DATETIME2 NOT NULL DEFAULT GETUTCDATE(), 
     [CreatedBy] NVARCHAR(256) NOT NULL, 
     [UpdatedAt] DATETIME2 NULL, 
     [UpdatedBy] NVARCHAR(256) NULL, 
@@ -19,11 +18,5 @@
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].ModeratorPageReviewOutcome ADD  DEFAULT (newid()) FOR [Id]
-GO
-
-ALTER TABLE [dbo].ModeratorPageReviewOutcome ADD DEFAULT (getutcdate()) FOR [CreatedAt]
-GO
-
-CREATE INDEX [IX_ModeratorPageReviewOutcome_ApplicationId] ON [ModeratorPageReviewOutcome] ([ApplicationId])
+CREATE UNIQUE INDEX [UX_ModeratorPageReviewOutcome_ApplicationId] ON [ModeratorPageReviewOutcome] ([ApplicationId], [PageId]) INCLUDE ([SequenceNumber], [SectionNumber])
 GO

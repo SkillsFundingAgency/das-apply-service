@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[AssessorPageReviewOutcome](
-	[Id] [uniqueidentifier] NOT NULL,
+	[Id] [uniqueidentifier] NOT NULL DEFAULT NEWID(),
 	[ApplicationId] [uniqueidentifier] NOT NULL,
 	[SequenceNumber] [int] NOT NULL,
 	[SectionNumber] [int] NOT NULL,
@@ -10,7 +10,7 @@
 	[Assessor2UserId] NVARCHAR(256) NULL, 
 	[Assessor2ReviewStatus] NVARCHAR(20) NULL,
 	[Assessor2ReviewComment] NVARCHAR(MAX) NULL,
-	[CreatedAt] DATETIME2 NOT NULL, 
+	[CreatedAt] DATETIME2 NOT NULL DEFAULT GETUTCDATE(), 
     [CreatedBy] NVARCHAR(256) NOT NULL, 
     [UpdatedAt] DATETIME2 NULL, 
     [UpdatedBy] NVARCHAR(256) NULL, 
@@ -21,11 +21,5 @@
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].AssessorPageReviewOutcome ADD  DEFAULT (newid()) FOR [Id]
-GO
-
-ALTER TABLE [dbo].AssessorPageReviewOutcome ADD DEFAULT (getutcdate()) FOR [CreatedAt]
-GO
-
-CREATE INDEX [IX_AssessorPageReviewOutcome_ApplicationId] ON [AssessorPageReviewOutcome] ([ApplicationId])
+CREATE UNIQUE INDEX [UX_AssessorPageReviewOutcome] ON [AssessorPageReviewOutcome] ([ApplicationId], [PageId]) INCLUDE ([SequenceNumber], [SectionNumber])
 GO

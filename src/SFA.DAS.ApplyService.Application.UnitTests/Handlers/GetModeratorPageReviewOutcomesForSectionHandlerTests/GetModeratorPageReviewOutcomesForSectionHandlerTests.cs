@@ -14,13 +14,13 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetModeratorPageRe
     [TestFixture]
     public class GetModeratorPageReviewOutcomesForSectionHandlerTests
     {
-        protected Mock<IAssessorRepository> _repository;
+        protected Mock<IModeratorRepository> _repository;
         protected GetModeratorPageReviewOutcomesForSectionHandler _handler;
 
         [SetUp]
         public void TestSetup()
         {
-            _repository = new Mock<IAssessorRepository>();
+            _repository = new Mock<IModeratorRepository>();
             _handler = new GetModeratorPageReviewOutcomesForSectionHandler(_repository.Object, Mock.Of<ILogger<GetModeratorPageReviewOutcomesForSectionHandler>>());
         }
 
@@ -34,7 +34,6 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetModeratorPageRe
             var expectedUserId = "4fs7f-userId-7gfhh";
             var expectedStatus = "Fail";
             var expectedComment = "Very bad";
-            var expectedExtneralComment = "External very bad";
 
             var expectedResult = new List<ModeratorPageReviewOutcome> 
             { 
@@ -46,8 +45,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetModeratorPageRe
                     PageId = expectedPageId,
                     UserId = expectedUserId,
                     Status = expectedStatus,
-                    Comment = expectedComment,
-                    ExternalComment = expectedExtneralComment
+                    Comment = expectedComment
                 } 
             };
 

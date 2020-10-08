@@ -2,6 +2,6 @@
 {
     public class ModerationApplicationSummary : AssessorApplicationSummary
     {
-        public string Status { get; set; }
+        public string ModerationStatus { get; set; }
     }
 }

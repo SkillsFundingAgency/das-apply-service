@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
@@ -36,21 +35,18 @@ namespace SFA.DAS.ApplyService.Web.Services
         {
             string previousPageId = string.Empty;
 
-            var sequences = await _qnaApiClient.GetSequences(applicationId);
-            var selectedSequence = sequences.Single(x => x.SequenceId == sequenceId);
-            var sections = await _qnaApiClient.GetSections(applicationId, selectedSequence.Id);
-            var currentSection = sections.Single(x => x.SectionId == sectionId);
+            var currentSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceId, sectionId);
 
             var firstPageInSection = currentSection.QnAData.Pages[0];
             if (pageId == firstPageInSection.PageId)
             {
-                return await Task.FromResult<string>(null);
+                return null;
             }
 
             var applicationPageHistory = _sessionService.Get<Stack<string>>(ApplicationHistoryKey);
             if (applicationPageHistory == null)
             {
-                return await Task.FromResult<string>(null);
+                return null;
             }
 
             while (applicationPageHistory.Count > 0)
@@ -64,10 +60,10 @@ namespace SFA.DAS.ApplyService.Web.Services
             }
             if (previousPageId == pageId)
             {
-                return await Task.FromResult<string>(null);
+                return null;
             }
 
-            return await Task.FromResult(previousPageId);
+            return previousPageId;
         }
     }
 }
