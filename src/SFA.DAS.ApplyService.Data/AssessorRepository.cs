@@ -230,10 +230,11 @@ namespace SFA.DAS.ApplyService.Data
                     .ExecuteScalarAsync<int>(
                         $@"SELECT COUNT(1)
 	                      FROM Apply apply
-	                      WHERE apply.DeletedAt IS NULL AND (Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus) AND ISNULL(ModerationStatus, 'New')  in (@ModerationStatusInProgress)",
+	                      WHERE apply.DeletedAt IS NULL AND (Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus) AND ISNULL(ModerationStatus, 'New')  IN (@newModerationStatus, @inProgressModerationStatus)",
                         new
                         {
                             approvedReviewStatus = AssessorReviewStatus.Approved,
+                            newModerationStatus = ModerationStatus.New,
                             ModerationStatusInProgress = ModerationStatus.InProgress
                         }));
             }
