@@ -35,6 +35,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public List<ApplySequence> Sequences { get; set; }
         public ApplyDetails ApplyDetails { get; set; }
         public ApplyGatewayDetails GatewayReviewDetails { get; set; }
+        public ModeratorReviewDetails ModeratorReviewDetails { get; set; }
     }
 
     public class ApplyDetails
@@ -44,10 +45,11 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string UKPRN { get; set; }
         public string OrganisationName { get; set; }
         public string TradingName { get; set; }
-        public int ProviderRoute { get; set; } // was string - ApplicationRouteId
+        public int ProviderRoute { get; set; } 
         public string ProviderRouteName { get; set; }
         public DateTime? ApplicationSubmittedOn { get; set; }
         public Guid? ApplicationSubmittedBy { get; set; }
+        public DateTime? ClarificationRequestedOn { get; set; }
     }
 
 
@@ -102,7 +104,15 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     {
         public string Filename { get; set; }
     }
-  
+
+    public class ModeratorReviewDetails
+    {
+        public string ModeratorName { get; set; }
+        public string ModeratorUserId { get; set; }
+        public DateTime? OutcomeDateTime { get; set; }
+        public DateTime? ClarificationRequestedOn { get; set; }
+    }
+
     public class ApplicationStatus	
     {
         public const string New = "New";

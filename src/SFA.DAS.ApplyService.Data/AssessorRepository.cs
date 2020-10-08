@@ -211,12 +211,13 @@ namespace SFA.DAS.ApplyService.Data
                             , ModerationStatus
 	                        FROM Apply apply
 	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
-	                        WHERE apply.DeletedAt IS NULL AND (Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus) AND ISNULL(ModerationStatus, 'New')  <> @completedModerationStatus
+	                        WHERE apply.DeletedAt IS NULL AND (Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus) AND ISNULL(ModerationStatus, 'New')  IN (@newModerationStatus, @inProgressModerationStatus)
                             ORDER BY CONVERT(char(10), JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ApplicationSubmittedOn')) ASC, org.Name ASC",
                         new
                         {
                             approvedReviewStatus = AssessorReviewStatus.Approved,
-                            completedModerationStatus = ModerationStatus.Complete
+                            newModerationStatus = ModerationStatus.New,
+                            inProgressModerationStatus = ModerationStatus.InProgress
                         })).ToList();
             }
         }
@@ -229,11 +230,11 @@ namespace SFA.DAS.ApplyService.Data
                     .ExecuteScalarAsync<int>(
                         $@"SELECT COUNT(1)
 	                      FROM Apply apply
-	                      WHERE apply.DeletedAt IS NULL AND (Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus) AND ISNULL(ModerationStatus, 'New') <> @completedModerationStatus",
+	                      WHERE apply.DeletedAt IS NULL AND (Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus) AND ISNULL(ModerationStatus, 'New')  in (@ModerationStatusInProgress)",
                         new
                         {
                             approvedReviewStatus = AssessorReviewStatus.Approved,
-                            completedModerationStatus = ModerationStatus.Complete
+                            ModerationStatusInProgress = ModerationStatus.InProgress
                         }));
             }
         }
