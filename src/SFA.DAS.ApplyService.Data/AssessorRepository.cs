@@ -235,7 +235,7 @@ namespace SFA.DAS.ApplyService.Data
                         {
                             approvedReviewStatus = AssessorReviewStatus.Approved,
                             newModerationStatus = ModerationStatus.New,
-                            ModerationStatusInProgress = ModerationStatus.InProgress
+                            inProgressModerationStatus = ModerationStatus.InProgress
                         }));
             }
         }

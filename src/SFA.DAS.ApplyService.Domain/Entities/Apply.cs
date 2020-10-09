@@ -49,7 +49,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string ProviderRouteName { get; set; }
         public DateTime? ApplicationSubmittedOn { get; set; }
         public Guid? ApplicationSubmittedBy { get; set; }
-        public DateTime? ClarificationRequestedOn { get; set; }
     }
 
 
@@ -98,6 +97,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public DateTime? GradedDateTime { get; set; }
         public string Comments { get; set; }
         public List<FinancialEvidence> FinancialEvidences { get; set; }
+        public DateTime? ClarificationRequestedOn { get; set; }
     }
 
     public class FinancialEvidence
@@ -151,7 +151,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     {
         public const string Pass = "Pass";
         public const string Fail = "Fail";
-        public const string InProgress = "In progress";
+        public const string InProgress = "In progress"; // TECH DEBT: Correct capitalization
     }
 
     public static class GatewayReviewStatus
@@ -159,8 +159,8 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Draft = "Draft";
         public const string New = "New";
         public const string InProgress = "In Progress";
-        public const string ClarificationSent = "Clarification sent";
-        public const string Resubmitted = "Re-submitted";
+        public const string ClarificationSent = "Clarification sent"; // TECH DEBT: Correct capitalization
+        public const string Resubmitted = "Re-submitted"; // TECH DEBT: Correct to "Resubmitted"
         public const string Fail = "Fail";
         public const string Pass = "Pass";
     }
