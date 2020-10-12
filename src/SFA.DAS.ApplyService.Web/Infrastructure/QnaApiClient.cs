@@ -303,6 +303,32 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             }
         }
 
+        public async Task<ResetPageAnswersResponse> ResetPageAnswersBySequenceAndSectionNumber(Guid applicationId, int sequenceNo,
+            int sectionNo, string pageId)
+        {
+            var response = await _httpClient.PostAsJsonAsync(
+                $"/Applications/{applicationId}/sequences/{sequenceNo}/sections/{sectionNo}/pages/{pageId}/reset",
+                new { });
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonConvert.DeserializeObject<ResetPageAnswersResponse>(json);
+            }
+            else
+            {
+                var apiError = GetApiErrorFromJson(json);
+                var apiErrorMessage = apiError?.Message ?? json;
+                var errorMessage =
+                    $"Error Resetting Page Answers into QnA. Application: {applicationId} | SequenceNo: {sequenceNo}| SectionNo: {sectionNo} | PageId: {pageId} | StatusCode : {response.StatusCode} | Response: {apiErrorMessage}";
+
+                _logger.LogError(errorMessage);
+
+                return new ResetPageAnswersResponse {ValidationPassed = false, ValidationErrors = null};
+            }
+        }
+
         public Task<AddPageAnswerResponse> AddPageAnswerToMultipleAnswerPage(Guid applicationId, Guid sectionId, string pageId, List<Answer> answer)
         {
             // Not used. May need in future. See how EPAO Assessor Service does it

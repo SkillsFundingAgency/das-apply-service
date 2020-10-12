@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
+﻿using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
+
+namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
     using System;
     using System.Linq;
@@ -36,6 +38,7 @@
         private readonly IApplicationApiClient _applicationApiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IUkprnWhitelistValidator _ukprnWhitelistValidator;
+        private readonly IResetRouteQuestionsService _resetRouteQuestionsService;
 
         private const string GetHelpSubmittedForPageFormatString = "Roatp_GetHelpSubmitted_{0}";
 
@@ -51,7 +54,8 @@
                                                   IUsersApiClient usersApiClient,
                                                   IApplicationApiClient applicationApiClient,
                                                   IQnaApiClient qnaApiClient,
-                                                  IUkprnWhitelistValidator ukprnWhitelistValidator)
+                                                  IUkprnWhitelistValidator ukprnWhitelistValidator, 
+                                                  IResetRouteQuestionsService resetRouteQuestionsService)
             : base(sessionService)
         {
             _logger = logger;
@@ -65,6 +69,7 @@
             _applicationApiClient = applicationApiClient;
             _qnaApiClient = qnaApiClient;
             _ukprnWhitelistValidator = ukprnWhitelistValidator;
+            _resetRouteQuestionsService = resetRouteQuestionsService;
         }
 
         [Route("terms-conditions-making-application")]
@@ -604,8 +609,9 @@
                     ProviderRoute = model.ApplicationRouteId,
                     ProviderRouteName = selectedProviderRoute?.RouteName
                 });
+                
+                await _resetRouteQuestionsService.ResetRouteQuestions(model.ApplicationId, model.ApplicationRouteId);
             }
-
             return RedirectToAction("TermsAndConditions", new { applicationId = model.ApplicationId, applicationRouteId = model.ApplicationRouteId });
         }
 
