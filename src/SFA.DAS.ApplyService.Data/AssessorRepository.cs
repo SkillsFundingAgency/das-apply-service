@@ -304,6 +304,7 @@ namespace SFA.DAS.ApplyService.Data
                     .QueryAsync<ClosedApplicationSummary>(
                         $@"SELECT 
                             {ApplicationSummaryFields}
+                            , JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName') AS ModeratorName
                             , ModerationStatus As OutcomeStatus
                             , JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDateTime') AS OutcomeDate
 	                        FROM Apply apply
