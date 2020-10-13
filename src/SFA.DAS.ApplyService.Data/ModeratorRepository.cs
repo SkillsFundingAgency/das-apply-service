@@ -8,8 +8,10 @@ using Dapper;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Data.DapperTypeHandlers;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Apply.Moderator;
+using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Data
 {
@@ -22,6 +24,9 @@ namespace SFA.DAS.ApplyService.Data
         {
             _logger = logger;
             _config = configurationService.GetConfig().GetAwaiter().GetResult();
+
+            SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
+            SqlMapper.AddTypeHandler(typeof(ModeratorReviewDetails), new ModeratorReviewDetailsDataHandler());
         }
 
         public async Task<BlindAssessmentOutcome> GetBlindAssessmentOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId)
@@ -191,6 +196,28 @@ namespace SFA.DAS.ApplyService.Data
                     await bulkCopy.WriteToServerAsync(dataTable);
                 }
                 connection.Close();
+            }
+        }
+
+        public async Task<bool> SubmitModeratorOutcome(Guid applicationId, ApplyData applyData, string userId,string status)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var rowsAffected = await connection.ExecuteAsync(@"UPDATE Apply
+                                                SET ModerationStatus = @status, 
+                                                    ApplyData = @applyData,
+                                                    UpdatedBy = @userId, 
+                                                    UpdatedAt = GETUTCDATE() 
+                                                WHERE  (Apply.ApplicationId = @applicationId)",
+                    new
+                    {
+                        applicationId,
+                        status,
+                        applyData,
+                        userId
+                    });
+
+                return rowsAffected > 0;
             }
         }
     }

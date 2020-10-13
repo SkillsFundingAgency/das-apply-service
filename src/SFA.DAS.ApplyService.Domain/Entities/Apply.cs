@@ -111,6 +111,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string ModeratorUserId { get; set; }
         public DateTime? OutcomeDateTime { get; set; }
         public DateTime? ClarificationRequestedOn { get; set; }
+        public string ModeratorComments { get; set; }
     }
 
     public class ApplicationStatus	
