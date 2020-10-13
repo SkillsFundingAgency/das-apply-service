@@ -106,7 +106,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
 
         [HttpPost("Moderator/Applications/{applicationId}/SubmitOutcome")]
-        public async Task SubmitPageReviewOutcome(Guid applicationId, [FromBody] SubmitOutcomeCommand request)
+        public async Task SubmitPageReviewOutcome(Guid applicationId, [FromBody] SubmitModeratorOutcomeCommand request)
         {
             await _mediator.Send(new SubmitModeratorOutcomeRequest(applicationId, request.UserId, request.UserName, request.Status, request.Comment));
         }
@@ -122,7 +122,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             public string Comment { get; set; }
         }
 
-        public class SubmitOutcomeCommand
+        public class SubmitModeratorOutcomeCommand
         {
             public string UserId { get; set; }
             public string UserName { get; set; }

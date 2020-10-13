@@ -38,7 +38,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
             _logger.LogInformation($"submitting moderator outcome for ApplicationId: {request.ApplicationId}");
             return await _moderatorRepository.SubmitModeratorOutcome(request.ApplicationId, applyData,
                 request.UserId, request.Status);
-            
         }
     }
 }

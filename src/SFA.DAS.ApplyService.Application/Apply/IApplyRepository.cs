@@ -72,7 +72,5 @@ namespace SFA.DAS.ApplyService.Application.Apply
 
         Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, DateTime applicationDeterminedDate, string updatedBy);
         Task<ApplicationOversightDetails> GetOversightDetails(Guid applicationId);
-
-       
     }
 }
