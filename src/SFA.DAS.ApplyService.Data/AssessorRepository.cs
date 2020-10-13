@@ -305,11 +305,11 @@ namespace SFA.DAS.ApplyService.Data
                         $@"SELECT 
                             {ApplicationSummaryFields}
                             , ModerationStatus As OutcomeStatus
-                            , JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDate') AS OutcomeDate
+                            , JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDateTime') AS OutcomeDate
 	                        FROM Apply apply
 	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                        WHERE {ClosedApplicationsWhereClause}
-                            ORDER BY CONVERT(char(10), JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDate')) ASC, org.Name ASC",
+                            ORDER BY CONVERT(char(10), JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDateTime')) ASC, org.Name ASC",
                         new
                         {
                             approvedReviewStatus = AssessorReviewStatus.Approved,
