@@ -268,7 +268,7 @@ namespace SFA.DAS.ApplyService.Data
 	                        FROM Apply apply
 	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                        WHERE {InClarificationApplicationsWhereClause}
-                            ORDER BY CONVERT(char(10), JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ClarificationRequestedOn')) ASC, org.Name ASC",
+                            ORDER BY CONVERT(char(10), JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ClarificationRequestedOn')) ASC, org.Name ASC",
                         new
                         {
                             approvedReviewStatus = AssessorReviewStatus.Approved,
