@@ -26,7 +26,6 @@ namespace SFA.DAS.ApplyService.Data
             _config = configurationService.GetConfig().GetAwaiter().GetResult();
 
             SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
-            SqlMapper.AddTypeHandler(typeof(ModeratorReviewDetails), new ModeratorReviewDetailsDataHandler());
         }
 
         public async Task<BlindAssessmentOutcome> GetBlindAssessmentOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId)

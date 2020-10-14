@@ -25,7 +25,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
 
             var applyData = await _repository.GetApplyData(request.ApplicationId);
 
-            var moderatorReviewDetails = applyData?.ModeratorReviewDetails ?? new ModeratorReviewDetails();
+            var moderatorReviewDetails = applyData.ModeratorReviewDetails ?? new ModeratorReviewDetails();
 
             moderatorReviewDetails.ModeratorComments = request.Comment;
             moderatorReviewDetails.ModeratorName = request.UserName;
