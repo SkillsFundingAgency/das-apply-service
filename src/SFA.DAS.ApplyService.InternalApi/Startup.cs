@@ -41,6 +41,7 @@ namespace SFA.DAS.ApplyService.InternalApi
     using SFA.DAS.ApplyService.InternalApi.Models.Roatp;
     using SFA.DAS.ApplyService.InternalApi.Services;
     using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
+    using SFA.DAS.ApplyService.InternalApi.Services.Files;
     using Swashbuckle.AspNetCore.Swagger;
     using System.IO;
 
@@ -258,6 +259,10 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IAssessorSectorDetailsService, AssessorSectorDetailsService>();
             services.AddTransient<IAssessorReviewCreationService, AssessorReviewCreationService>();
             services.AddTransient<IModeratorReviewCreationService, ModeratorReviewCreationService>();
+
+            services.AddTransient<IFileEncryptionService, FileEncryptionService>();
+            services.AddTransient<IFileUploadService, FileUploadService>();
+            services.AddTransient<IFileDownloadService, FileDownloadService>();
 
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
         }
