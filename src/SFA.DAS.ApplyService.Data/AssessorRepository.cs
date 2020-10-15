@@ -60,6 +60,11 @@ namespace SFA.DAS.ApplyService.Data
                             AND Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus
                             AND ModerationStatus = @clarificationSentModerationStatus";
 
+        private const string ClosedApplicationsWhereClause = @"
+                            apply.DeletedAt IS NULL
+                            AND Assessor1ReviewStatus = @approvedReviewStatus AND Assessor2ReviewStatus = @approvedReviewStatus
+                            AND ModerationStatus IN (@passModerationStatus, @failModerationStatus)";
+
         public AssessorRepository(IConfigurationService configurationService, ILogger<AssessorRepository> logger)
         {
             _logger = logger;
@@ -263,7 +268,7 @@ namespace SFA.DAS.ApplyService.Data
 	                        FROM Apply apply
 	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
 	                        WHERE {InClarificationApplicationsWhereClause}
-                            ORDER BY CONVERT(char(10), JSON_VALUE(apply.ApplyData, '$.ApplyDetails.ClarificationRequestedOn')) ASC, org.Name ASC",
+                            ORDER BY CONVERT(char(10), JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ClarificationRequestedOn')) ASC, org.Name ASC",
                         new
                         {
                             approvedReviewStatus = AssessorReviewStatus.Approved,
@@ -287,6 +292,48 @@ namespace SFA.DAS.ApplyService.Data
                             approvedReviewStatus = AssessorReviewStatus.Approved,
                             newModerationStatus = ModerationStatus.New,
                             clarificationSentModerationStatus = ModerationStatus.ClarificationSent
+                        }));
+            }
+        }
+
+        public async Task<List<ClosedApplicationSummary>> GetClosedApplications()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection
+                    .QueryAsync<ClosedApplicationSummary>(
+                        $@"SELECT 
+                            {ApplicationSummaryFields}
+                            , JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName') AS ModeratorName
+                            , ModerationStatus As OutcomeStatus
+                            , JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDateTime') AS OutcomeDate
+	                        FROM Apply apply
+	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
+	                        WHERE {ClosedApplicationsWhereClause}
+                            ORDER BY CONVERT(char(10), JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.OutcomeDateTime')) ASC, org.Name ASC",
+                        new
+                        {
+                            approvedReviewStatus = AssessorReviewStatus.Approved,
+                            passModerationStatus = ModerationStatus.Pass,
+                            failModerationStatus = ModerationStatus.Fail
+                        })).ToList();
+            }
+        }
+
+        public async Task<int> GetClosedApplicationsCount()
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                return (await connection
+                    .ExecuteScalarAsync<int>(
+                        $@"SELECT COUNT(1)
+	                      FROM Apply apply
+	                      WHERE {ClosedApplicationsWhereClause}",
+                        new
+                        {
+                            approvedReviewStatus = AssessorReviewStatus.Approved,
+                            passModerationStatus = ModerationStatus.Pass,
+                            failModerationStatus = ModerationStatus.Fail
                         }));
             }
         }

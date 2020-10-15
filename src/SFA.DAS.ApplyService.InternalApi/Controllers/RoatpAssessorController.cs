@@ -83,6 +83,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return applications;
         }
 
+        [HttpGet("Assessor/Applications/{userId}/Closed")]
+        public async Task<List<ClosedApplicationSummary>> ClosedApplications(string userId)
+        {
+            var applications = await _mediator.Send(new ClosedAssessorApplicationsRequest(userId));
+
+            return applications;
+        }
+
 
         [HttpPost("Assessor/Applications/{applicationId}/Assign")]
         public async Task AssignApplication(Guid applicationId, [FromBody] AssignAssessorCommand request)

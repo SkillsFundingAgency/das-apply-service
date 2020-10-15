@@ -20,10 +20,11 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
             var inProgressApplicationCount = _repository.GetInProgressAssessorApplicationsCount(request.UserId);
             var inModerationApplicationCount = _repository.GetApplicationsInModerationCount();
             var inClarificationApplicationCount = _repository.GetApplicationsInClarificationCount();
+            var closedApplicationCount = _repository.GetClosedApplicationsCount();
 
-            await Task.WhenAll(newApplicationCount, inProgressApplicationCount, inModerationApplicationCount, inClarificationApplicationCount);
+            await Task.WhenAll(newApplicationCount, inProgressApplicationCount, inModerationApplicationCount, inClarificationApplicationCount, closedApplicationCount);
 
-            return new AssessorApplicationCounts(newApplicationCount.Result, inProgressApplicationCount.Result, inModerationApplicationCount.Result, inClarificationApplicationCount.Result);
+            return new AssessorApplicationCounts(newApplicationCount.Result, inProgressApplicationCount.Result, inModerationApplicationCount.Result, inClarificationApplicationCount.Result, closedApplicationCount.Result);
         }
     }
 }
