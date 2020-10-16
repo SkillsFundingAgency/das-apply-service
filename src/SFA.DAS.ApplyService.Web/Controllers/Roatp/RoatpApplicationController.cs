@@ -469,7 +469,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             await _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId);
-            var sequences = _roatpTaskListWorkflowService.GetApplicationSequences(applicationId);
+            var sequences = await _roatpTaskListWorkflowService.GetApplicationSequences(applicationId);
 
             var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
             var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
@@ -1178,7 +1178,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var organisationVerificationStatus = await _organisationVerificationService.GetOrganisationVerificationStatus(model.ApplicationId);
 
             await _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(model.ApplicationId);
-            var sequences = _roatpTaskListWorkflowService.GetApplicationSequences(model.ApplicationId);
+            var sequences = await _roatpTaskListWorkflowService.GetApplicationSequences(model.ApplicationId);
 
             foreach (var sequence in application.ApplyData.Sequences)
             {

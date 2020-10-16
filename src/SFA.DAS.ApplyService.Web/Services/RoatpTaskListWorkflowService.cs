@@ -189,9 +189,10 @@ namespace SFA.DAS.ApplyService.Web.Services
             return TaskListSectionStatus.Next;
         }
 
-        public IEnumerable<ApplicationSequence> GetApplicationSequences(Guid applicationId)
+        public async Task<IEnumerable<ApplicationSequence>> GetApplicationSequences(Guid applicationId)
         {
-            var sequences = _qnaApiClient.GetSequences(applicationId).GetAwaiter().GetResult();
+            var sequences = await _qnaApiClient.GetSequences(applicationId);
+            var sections = await _qnaApiClient.GetSections(applicationId);
 
             PopulateAdditionalSequenceFields(sequences);
 
@@ -199,8 +200,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             foreach (var sequence in filteredSequences)
             {
-                var sections = _qnaApiClient.GetSections(applicationId, sequence.Id).GetAwaiter().GetResult();
-                sequence.Sections = sections.ToList();
+                sequence.Sections = new List<ApplicationSection>(sections.Where(sec => sec.SequenceId == sequence.SequenceId));
             }
 
             return filteredSequences.ToList();

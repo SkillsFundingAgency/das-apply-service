@@ -29,7 +29,7 @@
             _taskListWorkflowService = taskListWorkflowService;
             OrganisationVerificationStatus = organisationVerificationStatus;
             ApplicationId = applicationId;
-            ApplicationSequences = _taskListWorkflowService.GetApplicationSequences(ApplicationId);
+            ApplicationSequences = _taskListWorkflowService.GetApplicationSequences(ApplicationId).GetAwaiter().GetResult();
         }
 
         public string CssClass(int sequenceId, int sectionId)
