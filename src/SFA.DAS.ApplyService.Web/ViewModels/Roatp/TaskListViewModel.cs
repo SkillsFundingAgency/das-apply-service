@@ -68,7 +68,7 @@
 
         public bool SectionNotRequired(int sequenceId, int sectionId)
         {
-            return _taskListWorkflowService.SectionNotRequired(ApplicationId, sequenceId, sectionId);
+            return _taskListWorkflowService.SectionNotRequired(ApplicationId, sequenceId, sectionId).GetAwaiter().GetResult();
         }
 
         public bool IntroductionPageNextSectionUnavailable(int sequenceId, int sectionId)

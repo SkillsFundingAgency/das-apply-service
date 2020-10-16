@@ -15,6 +15,6 @@ namespace SFA.DAS.ApplyService.Web.Services
         string SectionQuestionsStatus(Guid applicationId, int sequenceId, int sectionId, IEnumerable<ApplicationSequence> applicationSequences);
 
         Task RefreshNotRequiredOverrides(Guid applicationId);
-        bool SectionNotRequired(Guid applicationId, int sequenceId, int sectionId);
+        Task<bool> SectionNotRequired(Guid applicationId, int sequenceId, int sectionId);
     }
 }
