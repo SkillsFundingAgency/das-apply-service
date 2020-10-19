@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Moderator
@@ -30,8 +31,9 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
             moderatorReviewDetails.ModeratorComments = request.Comment;
             moderatorReviewDetails.ModeratorName = request.UserName;
             moderatorReviewDetails.ModeratorUserId = request.UserId;
-            moderatorReviewDetails.OutcomeDateTime = DateTime.Now;
-
+            moderatorReviewDetails.OutcomeDateTime = DateTime.UtcNow;
+            if (request.Status == ModerationStatus.ClarificationSent)
+                moderatorReviewDetails.ClarificationRequestedOn = DateTime.UtcNow;
 
             applyData.ModeratorReviewDetails = moderatorReviewDetails;
 
