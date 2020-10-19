@@ -1,12 +1,13 @@
-﻿using SFA.DAS.ApplyService.Web.Configuration;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Web.Services
 {
     public interface INotRequiredOverridesService
     {
-        void RefreshNotRequiredOverrides(Guid applicationId);
-        List<NotRequiredOverrideConfiguration> GetNotRequiredOverrides(Guid applicationId);
+        Task RefreshNotRequiredOverrides(Guid applicationId);
+        Task<List<NotRequiredOverride>> GetNotRequiredOverrides(Guid applicationId);
     }
 }

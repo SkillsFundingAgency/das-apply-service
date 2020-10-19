@@ -29,6 +29,7 @@ namespace SFA.DAS.ApplyService.Data
             SqlMapper.AddTypeHandler(typeof(QnAData), new QnADataHandler());
             SqlMapper.AddTypeHandler(typeof(ApplicationData), new ApplicationDataHandler());
             SqlMapper.AddTypeHandler(typeof(FinancialReviewDetails), new FinancialReviewDetailsDataHandler());
+            SqlMapper.AddTypeHandler(typeof(NotRequiredOverrideConfiguration), new NotRequiredOverrideDataHandler());
         }
 
         public async Task<Guid> StartApplication(Guid applicationId, ApplyData applyData, Guid organisationId, Guid createdBy)
@@ -933,6 +934,38 @@ namespace SFA.DAS.ApplyService.Data
             }
 
             return await Task.FromResult(true);
+        }
+
+        public async Task<List<NotRequiredOverride>> GetNotRequiredOverrides(Guid applicationId)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var notRequiredOverrideConfiguration = await connection.QuerySingleAsync<NotRequiredOverrideConfiguration>(@"SELECT NotRequiredOverrides FROM Apply WHERE ApplicationId = @applicationId",
+                     new { applicationId });
+
+                return notRequiredOverrideConfiguration?.NotRequiredOverrides.ToList();
+            }
+        }
+
+        public async Task<bool> UpdateNotRequiredOverrides(Guid applicationId, IEnumerable<NotRequiredOverride> notRequiredOverrides)
+        {
+            var notRequiredOverrideConfiguration = new NotRequiredOverrideConfiguration
+            {
+                NotRequiredOverrides = notRequiredOverrides
+            };
+
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(@"UPDATE Apply SET NotRequiredOverrides = @notRequiredOverrideConfiguration
+                                                WHERE ApplicationId = @applicationId",
+                new
+                {
+                    applicationId,
+                    notRequiredOverrideConfiguration
+                });
+            }
+            
+            return true;
         }
 
         public async Task<bool> UpdateOversightReviewStatus(Guid applicationId, string oversightStatus, DateTime applicationDeterminedDate, string updatedBy)

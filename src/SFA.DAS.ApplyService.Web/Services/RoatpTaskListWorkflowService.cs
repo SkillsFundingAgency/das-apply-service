@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MoreLinq;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
-using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Web.Configuration;
@@ -22,20 +20,18 @@ namespace SFA.DAS.ApplyService.Web.Services
         private readonly IQnaApiClient _qnaApiClient;
         private readonly INotRequiredOverridesService _notRequiredOverridesService;
         private readonly List<TaskListConfiguration> _configuration;
-        private readonly ILogger<RoatpTaskListWorkflowService> _logger;
         
         public RoatpTaskListWorkflowService(IQnaApiClient qnaApiClient, INotRequiredOverridesService notRequiredOverridesService, 
-                                            IOptions<List<TaskListConfiguration>> configuration, ILogger<RoatpTaskListWorkflowService> logger)
+                                            IOptions<List<TaskListConfiguration>> configuration)
         {
             _qnaApiClient = qnaApiClient;
             _notRequiredOverridesService = notRequiredOverridesService;
             _configuration = configuration.Value;
-            _logger = logger;
         }
 
         public string SectionQuestionsStatus(Guid applicationId, int sequenceId, int sectionId, IEnumerable<ApplicationSequence> applicationSequences)
         {
-            var sequence = applicationSequences?.FirstOrDefault(x => (int)x.SequenceId == sequenceId);
+            var sequence = applicationSequences?.FirstOrDefault(x => x.SequenceId == sequenceId);
 
             var section = sequence?.Sections?.FirstOrDefault(x => x.SectionId == sectionId);
 
@@ -54,7 +50,7 @@ namespace SFA.DAS.ApplyService.Web.Services
         public string SectionStatus(Guid applicationId, int sequenceId, int sectionId, 
                                     IEnumerable<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
         {
-            if (SectionNotRequired(applicationId, sequenceId, sectionId))
+            if (SectionNotRequired(applicationId, sequenceId, sectionId).GetAwaiter().GetResult())
             {
                 return TaskListSectionStatus.NotRequired;
             }
@@ -65,7 +61,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 return WhosInControlSectionStatus(applicationId, applicationSequences, organisationVerificationStatus);
             }
 
-            var sequence = applicationSequences?.FirstOrDefault(x => (int)x.SequenceId == sequenceId);
+            var sequence = applicationSequences?.FirstOrDefault(x => x.SequenceId == sequenceId);
 
             var section = sequence?.Sections?.FirstOrDefault(x => x.SectionId == sectionId);
                                    
@@ -132,7 +128,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 if (previousSectionsCompletedCount == 0)
                     return false;                               
 
-                var previousSectionQuestionsCount = previousSection.QnAData.Pages.Where(p => p.NotRequired == false).SelectMany(x => x.Questions)
+                var previousSectionQuestionsCount = previousSection.QnAData.Pages.Where(p => !p.NotRequired).SelectMany(x => x.Questions)
                     .DistinctBy(q => q.QuestionId).Count();
                 if (previousSectionsCompletedCount < previousSectionQuestionsCount)
                 {
@@ -151,7 +147,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             }
             var finishSequence = applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.Finish);
 
-            var notRequiredOverrides = _notRequiredOverridesService.GetNotRequiredOverrides(applicationId);
+            var notRequiredOverrides = _notRequiredOverridesService.GetNotRequiredOverrides(applicationId).GetAwaiter().GetResult();
 
             if (notRequiredOverrides != null && notRequiredOverrides.Any(condition =>
                                                             condition.AllConditionsMet &&
@@ -163,7 +159,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             var finishSection = _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpWorkflowSequenceIds.Finish, sectionId).GetAwaiter().GetResult();
 
-            var sectionPages = finishSection.QnAData.Pages.Count();
+            var sectionPages = finishSection.QnAData.Pages.Count;
             var completedCount = 0;
             var pagesWithAnswers = 0;
             foreach (var page in finishSection.QnAData.Pages)
@@ -193,9 +189,10 @@ namespace SFA.DAS.ApplyService.Web.Services
             return TaskListSectionStatus.Next;
         }
 
-        public IEnumerable<ApplicationSequence> GetApplicationSequences(Guid applicationId)
+        public async Task<IEnumerable<ApplicationSequence>> GetApplicationSequences(Guid applicationId)
         {
-            var sequences = _qnaApiClient.GetSequences(applicationId).GetAwaiter().GetResult();
+            var sequences = await _qnaApiClient.GetSequences(applicationId);
+            var sections = await _qnaApiClient.GetSections(applicationId);
 
             PopulateAdditionalSequenceFields(sequences);
 
@@ -203,24 +200,20 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             foreach (var sequence in filteredSequences)
             {
-                var sections = _qnaApiClient.GetSections(applicationId, sequence.Id).GetAwaiter().GetResult();
-                sequence.Sections = sections.ToList();
+                sequence.Sections = new List<ApplicationSection>(sections.Where(sec => sec.SequenceId == sequence.SequenceId));
             }
 
             return filteredSequences.ToList();
         }
 
-        public void RefreshNotRequiredOverrides(Guid applicationId)
+        public async Task RefreshNotRequiredOverrides(Guid applicationId)
         {
-            _notRequiredOverridesService.RefreshNotRequiredOverrides(applicationId);
+            await _notRequiredOverridesService.RefreshNotRequiredOverrides(applicationId);
         }
 
-        public bool SectionNotRequired(Guid applicationId, int sequenceId, int sectionId)
+        public async Task<bool> SectionNotRequired(Guid applicationId, int sequenceId, int sectionId)
         {
-            var notRequiredOverrides = _notRequiredOverridesService.GetNotRequiredOverrides(applicationId);
-
-            var filteredSections = notRequiredOverrides.Where(condition => sequenceId == condition.SequenceId &&
-                                                        sectionId == condition.SectionId).ToList();
+            var notRequiredOverrides = await _notRequiredOverridesService.GetNotRequiredOverrides(applicationId);
 
             if (notRequiredOverrides.Any(condition =>
                                                         sequenceId == condition.SequenceId &&
@@ -273,18 +266,15 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         private static string GetSectionText(int completedCount, ApplicationSection section,  bool sequential)
         {
-            var pagesCompleted = section.QnAData.Pages.Count(x => x.Complete);
-            var pagesActive = section.QnAData.Pages.Count(x => x.Active);
-
-            if ((section.PagesComplete == section.PagesActive && section.PagesActive > 0))
+            if (section.PagesComplete == section.PagesActive && section.PagesActive > 0)
+            {
                 return TaskListSectionStatus.Completed;
-
-            if (sequential && completedCount == 0)
+            }
+            else if (sequential && completedCount == 0)
             {
                 return TaskListSectionStatus.Next;
             }
-
-            if (completedCount > 0)
+            else if (completedCount > 0)
             {
                 return TaskListSectionStatus.InProgress;
             }
@@ -355,8 +345,5 @@ namespace SFA.DAS.ApplyService.Web.Services
                 return TaskListSectionStatus.Next;
             
         }
-       
-        
-
     }
 }

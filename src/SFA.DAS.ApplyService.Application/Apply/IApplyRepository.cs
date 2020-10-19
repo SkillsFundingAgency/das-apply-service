@@ -1,3 +1,4 @@
+using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
@@ -67,6 +68,9 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<Contact> GetContactForApplication(Guid applicationId);
         Task<Organisation> GetOrganisationForApplication(Guid applicationId);
 
+        Task<List<NotRequiredOverride>> GetNotRequiredOverrides(Guid applicationId);
+        Task<bool> UpdateNotRequiredOverrides(Guid applicationId, IEnumerable<NotRequiredOverride> notRequiredOverrides);
+       
         Task<List<ApplicationOversightDetails>> GetOversightsPending();
         Task<List<ApplicationOversightDetails>> GetOversightsCompleted();
 

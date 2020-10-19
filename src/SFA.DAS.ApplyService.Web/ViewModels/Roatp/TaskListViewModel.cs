@@ -1,20 +1,15 @@
-﻿
-namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
+﻿namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using Domain.Entities;
     using SFA.DAS.ApplyService.Application.Apply.Roatp;
     using SFA.DAS.ApplyService.Domain.Roatp;
-    using SFA.DAS.ApplyService.Web.Configuration;
     using SFA.DAS.ApplyService.Web.Services;
 
     public class TaskListViewModel : ApplicationSummaryViewModel
     {
         private readonly IRoatpTaskListWorkflowService _taskListWorkflowService;
-
-        public List<NotRequiredOverrideConfiguration> NotRequiredOverrides { get; set; }
     
         public int IntroductionSectionId => 1;
         public int Sequence1Id => 1;
@@ -34,7 +29,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             _taskListWorkflowService = taskListWorkflowService;
             OrganisationVerificationStatus = organisationVerificationStatus;
             ApplicationId = applicationId;
-            ApplicationSequences = _taskListWorkflowService.GetApplicationSequences(ApplicationId);
         }
 
         public string CssClass(int sequenceId, int sectionId)
@@ -73,7 +67,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 
         public bool SectionNotRequired(int sequenceId, int sectionId)
         {
-            return _taskListWorkflowService.SectionNotRequired(ApplicationId, sequenceId, sectionId);
+            return _taskListWorkflowService.SectionNotRequired(ApplicationId, sequenceId, sectionId).GetAwaiter().GetResult();
         }
 
         public bool IntroductionPageNextSectionUnavailable(int sequenceId, int sectionId)

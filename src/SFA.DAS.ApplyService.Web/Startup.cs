@@ -86,7 +86,7 @@ namespace SFA.DAS.ApplyService.Web
             services.Configure<List<QnaPageOverrideConfiguration>>(_configuration.GetSection("QnaPageOverrides"));
             services.Configure<List<QnaLinksConfiguration>>(_configuration.GetSection("QnaLinks"));
             services.Configure<List<CustomValidationConfiguration>>(_configuration.GetSection("CustomValidations"));
-            services.Configure<List<NotRequiredOverrideConfiguration>>(_configuration.GetSection("NotRequiredOverrides"));
+            services.Configure<List<NotRequiredOverride>>(_configuration.GetSection("NotRequiredOverrides"));
 
             if (_env.IsDevelopment())
             {

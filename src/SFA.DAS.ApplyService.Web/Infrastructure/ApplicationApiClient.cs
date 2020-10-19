@@ -65,6 +65,17 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure
             return await Get<List<RoatpSequences>>($"roatp-sequences");
         }
 
+        public async Task<IEnumerable<NotRequiredOverride>> GetNotRequiredOverrides(Guid applicationId)
+        {
+            return await Get<List<NotRequiredOverride>>($"/NotRequiredOverrides/{applicationId}");
+        }
+
+        public async Task<bool> UpdateNotRequiredOverrides(Guid applicationId, IEnumerable<NotRequiredOverride> notRequiredOverrides)
+        {
+            return await Post<IEnumerable<NotRequiredOverride>, bool>($"/NotRequiredOverrides/{applicationId}", notRequiredOverrides);
+        }
+
+
 
         // NOTE: This is old stuff or things which are not migrated over yet       
         public async Task<ApplicationSequence> GetSequence(Guid applicationId, Guid userId)

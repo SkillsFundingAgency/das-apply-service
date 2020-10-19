@@ -468,8 +468,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("Applications");
             }
 
-            _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId);
-            var sequences = _roatpTaskListWorkflowService.GetApplicationSequences(applicationId);
+            await _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId);
+            var sequences = (await _roatpTaskListWorkflowService.GetApplicationSequences(applicationId)).ToList();
 
             var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
             var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
@@ -488,7 +488,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 TradingName = organisationDetails.OrganisationDetails?.TradingName,
                 ApplicationRouteId = providerRoute.Value,
                 YourOrganisationSequenceCompleted = yourOrganisationSequenceCompleted,
-                ApplicationSequencesCompleted = applicationSequencesCompleted
+                ApplicationSequencesCompleted = applicationSequencesCompleted,
+                ApplicationSequences = sequences
             };
 
             return View("~/Views/Roatp/TaskList.cshtml", model);
@@ -693,7 +694,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             if (validationPassed)
             {
                 // Any answer that is saved will affect the NotRequiredOverrides
-                _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId);
+                await _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId);
 
                 if (__formAction == "Add" && page.AllowMultipleAnswers)
                 {
@@ -1177,8 +1178,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var organisationVerificationStatus = await _organisationVerificationService.GetOrganisationVerificationStatus(model.ApplicationId);
 
-            _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(model.ApplicationId);
-            var sequences = _roatpTaskListWorkflowService.GetApplicationSequences(model.ApplicationId);
+            await _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(model.ApplicationId);
+            var sequences = await _roatpTaskListWorkflowService.GetApplicationSequences(model.ApplicationId);
 
             foreach (var sequence in application.ApplyData.Sequences)
             {
