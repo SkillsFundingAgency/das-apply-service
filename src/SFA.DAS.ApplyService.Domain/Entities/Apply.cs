@@ -40,7 +40,6 @@ namespace SFA.DAS.ApplyService.Domain.Entities
 
     public class ApplyDetails
     {
-        // NOTE THIS IS A SIMILAR COPY OF RoatpApplicationData
         public string ReferenceNumber { get; set; }
         public string UKPRN { get; set; }
         public string OrganisationName { get; set; }
