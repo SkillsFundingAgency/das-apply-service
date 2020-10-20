@@ -34,6 +34,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAllClarificatio
             var expectedUserId = "4fs7f-userId-7gfhh";
             var expectedStatus = "Fail";
             var expectedComment = "Very bad";
+            var expectedResponse = "A good response";
 
             var expectedResult = new List<ClarificationPageReviewOutcome>
             {
@@ -48,7 +49,8 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetAllClarificatio
                     ModeratorReviewComment = expectedComment,
                     UserId = expectedUserId,
                     Status = expectedStatus,
-                    Comment = expectedComment
+                    Comment = expectedComment,
+                    ClarificationResponse = expectedResponse
                 }
             };
 

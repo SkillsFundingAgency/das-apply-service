@@ -37,6 +37,7 @@ namespace SFA.DAS.ApplyService.Data
                                                                               ELSE [ClarificationStatus]
                                                                          END AS [Status]
 			                                                            ,[ClarificationComment] AS Comment
+			                                                            ,[ClarificationResponse] AS ClarificationResponse
 		                                                            FROM [dbo].[ModeratorPageReviewOutcome]
 		                                                            WHERE [ApplicationId] = @applicationId",
                     new { applicationId, passModeratorStatus = ModerationStatus.Pass });

@@ -14,5 +14,6 @@ namespace SFA.DAS.ApplyService.Domain.Apply.Clarification
         public string UserId { get; set; }
         public string Status { get; set; }
         public string Comment { get; set; }
+        public string ClarificationResponse { get; set; }
     }
 }
