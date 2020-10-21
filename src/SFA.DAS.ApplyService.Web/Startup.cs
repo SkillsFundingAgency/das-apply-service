@@ -263,6 +263,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IRoatpTaskListWorkflowService, RoatpTaskListWorkflowService>();
             services.AddTransient<IRoatpOrganisationVerificationService, RoatpOrganisationVerificationService>();
             services.AddTransient<INotRequiredOverridesService, NotRequiredOverridesService>();
+            services.AddTransient<ITaskListService, TaskListService>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)

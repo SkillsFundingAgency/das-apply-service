@@ -48,6 +48,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IPagesWithSectionsFlowService _pagesWithSectionsFlowService;
         private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
         private readonly IRoatpOrganisationVerificationService _organisationVerificationService;
+        private readonly ITaskListService _taskListService;
 
         private const string InputClassUpperCase = "app-uppercase";
         private const string NotApplicableAnswerText = "None of the above";
@@ -62,7 +63,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             ICustomValidatorFactory customValidatorFactory,  
             IRoatpApiClient roatpApiClient, ISubmitApplicationConfirmationEmailService submitApplicationEmailService,
             ITabularDataRepository tabularDataRepository, IRoatpTaskListWorkflowService roatpTaskListWorkflowService,
-            IRoatpOrganisationVerificationService organisationVerificationService)
+            IRoatpOrganisationVerificationService organisationVerificationService, ITaskListService taskListService)
             :base(sessionService)
         {
             _apiClient = apiClient;
@@ -83,6 +84,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _tabularDataRepository = tabularDataRepository;
             _roatpTaskListWorkflowService = roatpTaskListWorkflowService;
             _organisationVerificationService = organisationVerificationService;
+            _taskListService = taskListService;
         }
 
         [HttpGet]
@@ -456,6 +458,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             }
 
             return await SaveAnswersGiven(applicationId, selectedSection.Id, selectedSection.SectionId, selectedSection.SequenceId, pageId, page, redirectAction, string.Empty);
+        }
+
+        [Route("apply-training-provider-tasklist2")]
+        [HttpGet]
+        public async Task<IActionResult> TaskList2(Guid applicationId)
+        {
+            //todo: can access page?
+            var viewModel = _taskListService.GetTaskList2ViewModel(applicationId);
+            return View("~/Views/Roatp/TaskList2.cshtml", viewModel);
         }
 
         [Route("apply-training-provider-tasklist")]

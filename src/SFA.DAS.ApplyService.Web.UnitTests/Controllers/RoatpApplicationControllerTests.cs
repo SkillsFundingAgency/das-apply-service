@@ -89,7 +89,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                                                          _pageNavigationTrackingService.Object, _qnaLinks.Object, _customValidatorFactory.Object,
                                                          _roatpApiClient.Object,
                                                          _submitApplicationEmailService.Object, _tabularDataRepository.Object,
-                                                         _roatpTaskListWorkflowService.Object, _roatpOrganisationVerificationService.Object)
+                                                         _roatpTaskListWorkflowService.Object, _roatpOrganisationVerificationService.Object, Mock.Of<ITaskListService>())
             {
                 ControllerContext = new ControllerContext()
                 {
