@@ -1,4 +1,5 @@
-﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.TaskList2ViewModel
+﻿@using SFA.DAS.ApplyService.Web.ViewModels.Roatp
+@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.TaskList2ViewModel
 
 @{
     ViewBag.Title = "Application overview";
@@ -11,7 +12,43 @@
 <main class="govuk-main-wrapper " id="main-content" role="main">
 
     <partial name="TaskList/ApplicationSummary.cshtml" model="@Model.ApplicationSummaryViewModel" />
+    
+    <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+    <ol class="app-task-list">
+    
+        @foreach (var sequence in Model.Sequences)
+        {
 
+            <li>
+                <h2 class="app-task-list__section">
+                    @Html.Raw(sequence.Id). @Html.Raw(sequence.Description)
+                </h2>
+                
+                <ul class="app-task-list__items">
+                    @foreach (var section in sequence.Sections)
+                    {
+
+                        var sequenceSection = sequence.Id + "_" + section.Id;
+
+                        <li class="app-task-list__item">
+                            @Html.Raw(section.Title)
+                            @if (section.IsNotRequired)
+                            {
+                                <strong class="govuk-tag app-task-list__task-notrequired" id="status_@sequenceSection"> @Html.Raw(TaskListSectionStatus.NotRequired)</strong>
+
+                            }
+                        </li>
+                    }
+                </ul>
+            </li>
+
+        }
+
+
+    </ol>
+    </div>
+    </div>
     
 </main>
 

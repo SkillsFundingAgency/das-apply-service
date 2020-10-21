@@ -46,7 +46,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             var organisationVerificationStatus = await _organisationVerificationService.GetOrganisationVerificationStatus(applicationId);
 
             _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId);
-            var sequences = _roatpTaskListWorkflowService.GetApplicationSequences(applicationId);
+            var sequences = _roatpTaskListWorkflowService.GetApplicationSequences(applicationId).ToList(); //this method is not async
 
             var yourOrganisationSequence = sequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
 
@@ -55,6 +55,31 @@ namespace SFA.DAS.ApplyService.Web.Services
 
 
 
+
+            //new stuff below!
+
+
+            foreach (var sequence in sequences)
+            {
+                var sequenceVm = new TaskList2ViewModel.Sequence
+                {
+                    Id = sequence.SequenceId,
+                    Description = sequence.Description
+                };
+
+                result.Sequences.Add(sequenceVm);
+
+                foreach (var section in sequence.Sections.OrderBy(x => x.SectionId))
+                {
+                    sequenceVm.Sections.Add(new TaskList2ViewModel.Section
+                    {
+                        Id = section.SectionId,
+                        Title = section.Title,
+                        IsNotRequired = _roatpTaskListWorkflowService.SectionNotRequired(applicationId, sequence.SequenceId, section.SectionId)
+                    });
+                }
+
+            }
 
 
             return result;
