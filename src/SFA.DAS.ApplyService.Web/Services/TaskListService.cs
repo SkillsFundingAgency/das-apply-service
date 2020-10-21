@@ -30,26 +30,19 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         public async Task<TaskList2ViewModel> GetTaskList2ViewModel(Guid applicationId, Guid userId)
         {
-            var result = new TaskList2ViewModel
-            {
-                ApplicationId = applicationId
-            };
+            var organisationDetailsTask = _apiClient.GetOrganisationByUserId(userId);
+            var providerRouteTask = _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
+            var organisationVerificationStatusTask = _organisationVerificationService.GetOrganisationVerificationStatus(applicationId);
 
-            var organisationDetails = await _apiClient.GetOrganisationByUserId(userId);
-            var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
+            Task.WaitAll(organisationDetailsTask, providerRouteTask, organisationVerificationStatusTask);
 
-            result.ApplicationSummaryViewModel = new ApplicationSummaryViewModel
-            {
-                UKPRN = organisationDetails.OrganisationUkprn?.ToString(),
-                OrganisationName = organisationDetails.Name,
-                TradingName = organisationDetails.OrganisationDetails?.TradingName,
-                ApplicationRouteId = providerRoute.Value,
-            };
+            var organisationDetails = await organisationDetailsTask;
+            var providerRoute = await providerRouteTask;
+            var organisationVerificationStatus = await organisationVerificationStatusTask;
 
-            var organisationVerificationStatus = await _organisationVerificationService.GetOrganisationVerificationStatus(applicationId);
 
-            _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId);
-            var sequences = _roatpTaskListWorkflowService.GetApplicationSequences(applicationId).ToList(); //this method is not async
+            _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId); //this method is not async
+            var sequences = (await _roatpTaskListWorkflowService.GetApplicationSequencesAsync(applicationId)).ToList();
 
             var yourOrganisationSequence = sequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
 
@@ -57,13 +50,23 @@ namespace SFA.DAS.ApplyService.Web.Services
             var applicationSequencesCompleted = ApplicationSequencesCompleted(applicationId, sequences, organisationVerificationStatus);
 
 
+            var result = new TaskList2ViewModel
+            {
+                ApplicationId = applicationId,
+                ApplicationSummaryViewModel = new ApplicationSummaryViewModel
+                {
+                    UKPRN = organisationDetails.OrganisationUkprn?.ToString(),
+                    OrganisationName = organisationDetails.Name,
+                    TradingName = organisationDetails.OrganisationDetails?.TradingName,
+                    ApplicationRouteId = providerRoute.Value,
+                },
+                ShowSubmission = yourOrganisationSequenceCompleted,
+                AllowSubmission = applicationSequencesCompleted &&
+                                  _roatpTaskListWorkflowService.PreviousSectionCompleted(applicationId, RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.SubmitApplication, sequences, organisationVerificationStatus)
+            };
 
 
             //new stuff below!
-            result.ShowSubmission = yourOrganisationSequenceCompleted;
-            result.AllowSubmission = applicationSequencesCompleted && _roatpTaskListWorkflowService.PreviousSectionCompleted(applicationId,
-                RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.SubmitApplication, sequences,
-                organisationVerificationStatus);
 
 
             foreach (var sequence in sequences)

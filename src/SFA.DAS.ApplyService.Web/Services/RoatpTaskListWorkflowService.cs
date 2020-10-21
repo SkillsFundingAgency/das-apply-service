@@ -210,6 +210,23 @@ namespace SFA.DAS.ApplyService.Web.Services
             return filteredSequences.ToList();
         }
 
+        public async Task<IEnumerable<ApplicationSequence>> GetApplicationSequencesAsync(Guid applicationId)
+        {
+            var sequences = (await _qnaApiClient.GetSequences(applicationId)).ToList();
+
+            PopulateAdditionalSequenceFields(sequences);
+
+            var filteredSequences = sequences.Where(x => x.SequenceId != RoatpWorkflowSequenceIds.Preamble && x.SequenceId != RoatpWorkflowSequenceIds.ConditionsOfAcceptance).OrderBy(y => y.SequenceId).ToList();
+
+            foreach (var sequence in filteredSequences)
+            {
+                var sections = await _qnaApiClient.GetSections(applicationId, sequence.Id);
+                sequence.Sections = sections.ToList();
+            }
+
+            return filteredSequences.ToList();
+        }
+
         public void RefreshNotRequiredOverrides(Guid applicationId)
         {
             _notRequiredOverridesService.RefreshNotRequiredOverrides(applicationId);

@@ -464,7 +464,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> TaskList2(Guid applicationId)
         {
-            //todo: can access page?
+            //todo: consider moving a simplified version of this into the service
+            var canUpdate = await CanUpdateApplication(applicationId);
+            if (!canUpdate)
+            {
+                return RedirectToAction("Applications");
+            }
+
             var viewModel = await _taskListService.GetTaskList2ViewModel(applicationId, User.GetUserId());
             return View("~/Views/Roatp/TaskList2.cshtml", viewModel);
         }
