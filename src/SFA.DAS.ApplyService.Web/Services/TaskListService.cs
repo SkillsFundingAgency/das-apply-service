@@ -15,7 +15,7 @@ namespace SFA.DAS.ApplyService.Web.Services
         private readonly IApplicationApiClient _apiClient;
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IRoatpOrganisationVerificationService _organisationVerificationService;
-        private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService; //todo: consider removing this dependency, and copying the methods we need
+        private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
 
         public TaskListService(IApplicationApiClient apiClient,
             IQnaApiClient qnaApiClient,

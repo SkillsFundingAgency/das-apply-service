@@ -212,16 +212,21 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         public async Task<IEnumerable<ApplicationSequence>> GetApplicationSequencesAsync(Guid applicationId)
         {
-            var sequences = (await _qnaApiClient.GetSequences(applicationId)).ToList();
+            var sequencesTask = _qnaApiClient.GetSequences(applicationId);
+            var sectionsTask = _qnaApiClient.GetSections(applicationId);
+
+            Task.WaitAll(sequencesTask, sectionsTask);
+
+            var sequences = await sequencesTask;
+            var sections = await sectionsTask;
 
             PopulateAdditionalSequenceFields(sequences);
 
-            var filteredSequences = sequences.Where(x => x.SequenceId != RoatpWorkflowSequenceIds.Preamble && x.SequenceId != RoatpWorkflowSequenceIds.ConditionsOfAcceptance).OrderBy(y => y.SequenceId).ToList();
+            var filteredSequences = sequences.Where(x => x.SequenceId != RoatpWorkflowSequenceIds.Preamble && x.SequenceId != RoatpWorkflowSequenceIds.ConditionsOfAcceptance).OrderBy(y => y.SequenceId);
 
             foreach (var sequence in filteredSequences)
             {
-                var sections = await _qnaApiClient.GetSections(applicationId, sequence.Id);
-                sequence.Sections = sections.ToList();
+                sequence.Sections = new List<ApplicationSection>(sections.Where(sec => sec.SequenceId == sequence.SequenceId));
             }
 
             return filteredSequences.ToList();
