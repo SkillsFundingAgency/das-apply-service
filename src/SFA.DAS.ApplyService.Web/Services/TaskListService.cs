@@ -60,6 +60,10 @@ namespace SFA.DAS.ApplyService.Web.Services
 
 
             //new stuff below!
+            result.ShowSubmission = yourOrganisationSequenceCompleted;
+            result.AllowSubmission = applicationSequencesCompleted && _roatpTaskListWorkflowService.PreviousSectionCompleted(applicationId,
+                RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.SubmitApplication, sequences,
+                organisationVerificationStatus);
 
 
             foreach (var sequence in sequences)
@@ -80,25 +84,39 @@ namespace SFA.DAS.ApplyService.Web.Services
                         Title = section.Title,
                         IsNotRequired = _roatpTaskListWorkflowService.SectionNotRequired(applicationId,
                             sequence.SequenceId, section.SectionId),
-                        Status = _roatpTaskListWorkflowService.SectionStatus(applicationId, sequence.SequenceId,
-                            section.SectionId, sequences, organisationVerificationStatus),
-                        IntroductionPageNextSectionUnavailable = IntroductionPageNextSectionUnavailable(sequence.SequenceId, section.SectionId, yourOrganisationSequenceCompleted, applicationId, sequences)
+                        Status = sequence.SequenceId == RoatpWorkflowSequenceIds.Finish
+                                ? _roatpTaskListWorkflowService.FinishSectionStatus(applicationId, section.SectionId, sequences, applicationSequencesCompleted)
+                                : _roatpTaskListWorkflowService.SectionStatus(applicationId, sequence.SequenceId, section.SectionId, sequences, organisationVerificationStatus),
+                        IsLocked = GetIsLocked(sequence.SequenceId, section.SectionId, yourOrganisationSequenceCompleted, applicationId, sequences, organisationVerificationStatus, applicationSequencesCompleted)
                     });
                 }
-
             }
-
 
             return result;
         }
 
 
-        private bool IntroductionPageNextSectionUnavailable(int sequenceId, int sectionId, bool yourOrganisationSequenceCompleted, Guid applicationId, List<ApplicationSequence> sequences)
+        private bool GetIsLocked(int sequenceId, int sectionId, bool yourOrganisationSequenceCompleted, Guid applicationId, List<ApplicationSequence> sequences, OrganisationVerificationStatus organisationVerificationStatus, bool applicationSequencesCompleted)
         {
             // Disable the other sequences if YourOrganisation sequence isn't complete
             if (sequenceId != RoatpWorkflowSequenceIds.YourOrganisation && !yourOrganisationSequenceCompleted)
             {
                 return true;
+            }
+
+            //Within Your Organisation, sections are locked until the previous one is completed
+            if (sequenceId == RoatpWorkflowSequenceIds.YourOrganisation && sectionId != 1)
+            {
+                return !_roatpTaskListWorkflowService.PreviousSectionCompleted(applicationId, sequenceId, sectionId,
+                    sequences, organisationVerificationStatus);
+            }
+
+            //Entire Finish section is locked until all app sequences are completed, and sections are locked until previous one is completed
+            if (sequenceId == RoatpWorkflowSequenceIds.Finish)
+            {
+                return !applicationSequencesCompleted || !_roatpTaskListWorkflowService.PreviousSectionCompleted(
+                           applicationId, sequenceId, sectionId,
+                           sequences, organisationVerificationStatus);
             }
 
             // CriminalComplianceChecks has two intro pages...

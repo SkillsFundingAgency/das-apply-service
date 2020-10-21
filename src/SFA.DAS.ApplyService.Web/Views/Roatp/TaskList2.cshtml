@@ -1,4 +1,5 @@
-﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.TaskList2ViewModel
+﻿@using SFA.DAS.ApplyService.Application.Apply.Roatp
+@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.TaskList2ViewModel
 
 @{
     ViewBag.Title = "Application overview";
@@ -31,20 +32,37 @@
 
                     <li class="app-task-list__item">
 
-                        @if (!seqSection.IntroductionPageNextSectionUnavailable && !seqSection.IsNotRequired)
+                        @if (!seqSection.IsLocked)
                         {
                             <span class="app-task-list__task-name">
-                                <a class="govuk-link"
-                                   asp-action="Section"
-                                   asp-controller="RoatpApplication"
-                                   asp-route-applicationId="@(Model.ApplicationId)"
-                                   asp-route-sequenceId="@sequence.Id"
-                                   asp-route-sectionId="@seqSection.Id">
-                                    @Html.Raw(seqSection.Title)
-                                </a>
+
+                                @if (sequence.Id == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining && seqSection.Id == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy)
+                                {
+                                    <a class="govuk-link" asp-action="StartPage" asp-controller="RoatpManagementHierarchy" asp-route-applicationId="@Model.ApplicationId">
+                                        @Html.Raw(seqSection.Title)
+                                    </a>
+                                }
+                                else if (sequence.Id == RoatpWorkflowSequenceIds.YourOrganisation && seqSection.Id == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl)
+                                {
+                                    <a class="govuk-link" asp-action="StartPage" asp-controller="RoatpWhosInControlApplication" asp-route-applicationId="@Model.ApplicationId">
+                                        Tell us who's in control
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a class="govuk-link"
+                                       asp-action="Section"
+                                       asp-controller="RoatpApplication"
+                                       asp-route-applicationId="@(Model.ApplicationId)"
+                                       asp-route-sequenceId="@sequence.Id"
+                                       asp-route-sectionId="@seqSection.Id">
+                                        @Html.Raw(seqSection.Title)
+                                    </a>
+
+                                }
+
                             </span>
-                            
-                            <strong class="govuk-tag app-task-list__task-@seqSection.StatusCssClass" id="status_@sequenceSection"> @seqSection.Status</strong>
+
                         }
                         else
                         {
@@ -52,13 +70,44 @@
                                 @Html.Raw(seqSection.Title)
                             </span>
                         }
+                        <strong class="govuk-tag app-task-list__task-@seqSection.StatusCssClass" id="status_@sequenceSection"> @seqSection.Status</strong>
                     </li>
+
+                        @if (sequence.Id == RoatpWorkflowSequenceIds.Finish && seqSection.Id == RoatpWorkflowSectionIds.Finish.TermsAndConditions)
+                         {
+                            @if (Model.ShowSubmission)
+                             {
+                                 @if (Model.AllowSubmission)
+                                  {
+                                      <li class="app-task-list__item">
+                                          <span class="app-task-list__task-name">
+                                              <a class="govuk-link" asp-action="SubmitApplication" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId">
+                                                  Submit application
+                                              </a>
+                                          </span>
+                                          <strong class="govuk-tag app-task-list__task-next" id="completed">
+                                              @Html.Raw("Next")
+                                          </strong>
+
+                                      </li>
+                                 }
+                                  else
+                                  {
+                                      <li class="app-task-list__item">
+                                          <span class="app-task-list__task-name">
+                                              Submit application
+                                          </span>
+                                      </li>
+                                  }
+                             }
+
+
+                         }
                     }
+
                 </ul>
             </li>
-
         }
-
 
     </ol>
     </div>
