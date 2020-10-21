@@ -465,7 +465,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public async Task<IActionResult> TaskList2(Guid applicationId)
         {
             //todo: can access page?
-            var viewModel = _taskListService.GetTaskList2ViewModel(applicationId);
+            var viewModel = await _taskListService.GetTaskList2ViewModel(applicationId, User.GetUserId());
             return View("~/Views/Roatp/TaskList2.cshtml", viewModel);
         }
 
