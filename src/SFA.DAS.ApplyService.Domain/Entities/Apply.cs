@@ -44,7 +44,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string UKPRN { get; set; }
         public string OrganisationName { get; set; }
         public string TradingName { get; set; }
-        public int ProviderRoute { get; set; }
+        public int ProviderRoute { get; set; } 
         public string ProviderRouteName { get; set; }
         public DateTime? ApplicationSubmittedOn { get; set; }
         public Guid? ApplicationSubmittedBy { get; set; }
@@ -110,6 +110,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string ModeratorUserId { get; set; }
         public DateTime? OutcomeDateTime { get; set; }
         public DateTime? ClarificationRequestedOn { get; set; }
+        public string ModeratorComments { get; set; }
     }
 
     public class ApplicationStatus	
@@ -158,8 +159,8 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Draft = "Draft";
         public const string New = "New";
         public const string InProgress = "In Progress";
-        public const string ClarificationSent = "Clarification sent";  // TECH DEBT: Correct capitalization
-        public const string Resubmitted = "Re-submitted";  // TECH DEBT: Correct to "Resubmitted"
+        public const string ClarificationSent = "Clarification sent"; // TECH DEBT: Correct capitalization
+        public const string Resubmitted = "Re-submitted"; // TECH DEBT: Correct to "Resubmitted"
         public const string Fail = "Fail";
         public const string Pass = "Pass";
     }
