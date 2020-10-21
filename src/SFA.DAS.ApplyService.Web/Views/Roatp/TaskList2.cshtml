@@ -1,10 +1,8 @@
-﻿@using SFA.DAS.ApplyService.Web.ViewModels.Roatp
-@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.TaskList2ViewModel
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.TaskList2ViewModel
 
 @{
     ViewBag.Title = "Application overview";
     Layout = "_Layout";
-
 }
 
 <partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
@@ -26,19 +24,35 @@
                 </h2>
                 
                 <ul class="app-task-list__items">
-                    @foreach (var section in sequence.Sections)
+                    @foreach (var seqSection in sequence.Sections)
                     {
 
-                        var sequenceSection = sequence.Id + "_" + section.Id;
+                        var sequenceSection = sequence.Id + "_" + seqSection.Id;
 
-                        <li class="app-task-list__item">
-                            @Html.Raw(section.Title)
-                            @if (section.IsNotRequired)
-                            {
-                                <strong class="govuk-tag app-task-list__task-notrequired" id="status_@sequenceSection"> @Html.Raw(TaskListSectionStatus.NotRequired)</strong>
+                    <li class="app-task-list__item">
 
-                            }
-                        </li>
+                        @if (!seqSection.IntroductionPageNextSectionUnavailable && !seqSection.IsNotRequired)
+                        {
+                            <span class="app-task-list__task-name">
+                                <a class="govuk-link"
+                                   asp-action="Section"
+                                   asp-controller="RoatpApplication"
+                                   asp-route-applicationId="@(Model.ApplicationId)"
+                                   asp-route-sequenceId="@sequence.Id"
+                                   asp-route-sectionId="@seqSection.Id">
+                                    @Html.Raw(seqSection.Title)
+                                </a>
+                            </span>
+                            
+                            <strong class="govuk-tag app-task-list__task-@seqSection.StatusCssClass" id="status_@sequenceSection"> @seqSection.Status</strong>
+                        }
+                        else
+                        {
+                            <span class="app-task-list__task-name">
+                                @Html.Raw(seqSection.Title)
+                            </span>
+                        }
+                    </li>
                     }
                 </ul>
             </li>

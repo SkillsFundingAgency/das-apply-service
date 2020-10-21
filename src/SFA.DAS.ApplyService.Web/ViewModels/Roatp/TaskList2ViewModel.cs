@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using StackExchange.Redis;
 
 namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
@@ -35,6 +36,9 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             public int Id { get; set; }
             public string Title { get; set; }
             public bool IsNotRequired { get; set; }
+            public string Status { get; set; }
+            public string StatusCssClass => Status == TaskListSectionStatus.Blank ? "hidden" : Status.Replace(" ", "").ToLower();
+            public bool IntroductionPageNextSectionUnavailable { get; set; }
         }
 
     }

@@ -30,7 +30,10 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         public async Task<TaskList2ViewModel> GetTaskList2ViewModel(Guid applicationId, Guid userId)
         {
-            var result = new TaskList2ViewModel();
+            var result = new TaskList2ViewModel
+            {
+                ApplicationId = applicationId
+            };
 
             var organisationDetails = await _apiClient.GetOrganisationByUserId(userId);
             var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
@@ -75,7 +78,11 @@ namespace SFA.DAS.ApplyService.Web.Services
                     {
                         Id = section.SectionId,
                         Title = section.Title,
-                        IsNotRequired = _roatpTaskListWorkflowService.SectionNotRequired(applicationId, sequence.SequenceId, section.SectionId)
+                        IsNotRequired = _roatpTaskListWorkflowService.SectionNotRequired(applicationId,
+                            sequence.SequenceId, section.SectionId),
+                        Status = _roatpTaskListWorkflowService.SectionStatus(applicationId, sequence.SequenceId,
+                            section.SectionId, sequences, organisationVerificationStatus),
+                        IntroductionPageNextSectionUnavailable = IntroductionPageNextSectionUnavailable(sequence.SequenceId, section.SectionId, yourOrganisationSequenceCompleted, applicationId, sequences)
                     });
                 }
 
@@ -83,6 +90,36 @@ namespace SFA.DAS.ApplyService.Web.Services
 
 
             return result;
+        }
+
+
+        private bool IntroductionPageNextSectionUnavailable(int sequenceId, int sectionId, bool yourOrganisationSequenceCompleted, Guid applicationId, List<ApplicationSequence> sequences)
+        {
+            // Disable the other sequences if YourOrganisation sequence isn't complete
+            if (sequenceId != RoatpWorkflowSequenceIds.YourOrganisation && !yourOrganisationSequenceCompleted)
+            {
+                return true;
+            }
+
+            // CriminalComplianceChecks has two intro pages...
+            if (sequenceId == RoatpWorkflowSequenceIds.CriminalComplianceChecks)
+            {
+                var SecondCriminialIntroductionSectionId = 3;
+                if (sectionId > SecondCriminialIntroductionSectionId)
+                {
+                    var statusOfSecondIntroductionPage = _roatpTaskListWorkflowService.SectionQuestionsStatus(applicationId, sequenceId, sectionId, sequences);
+                    if (statusOfSecondIntroductionPage != TaskListSectionStatus.Completed)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            var statusOfIntroductionPage = _roatpTaskListWorkflowService.SectionQuestionsStatus(applicationId, sequenceId, 1, sequences);
+            if (sequenceId > 1 && sectionId != 1 && statusOfIntroductionPage != TaskListSectionStatus.Completed)
+                return true;
+
+            return false;
         }
 
 
