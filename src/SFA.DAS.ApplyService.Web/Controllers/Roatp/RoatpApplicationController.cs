@@ -460,9 +460,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return await SaveAnswersGiven(applicationId, selectedSection.Id, selectedSection.SectionId, selectedSection.SequenceId, pageId, page, redirectAction, string.Empty);
         }
 
-        [Route("apply-training-provider-tasklist2")]
+        [Route("apply-training-provider-tasklist")]
         [HttpGet]
-        public async Task<IActionResult> TaskList2(Guid applicationId)
+        public async Task<IActionResult> TaskList(Guid applicationId)
         {
             var canUpdate = await CanUpdateApplication(applicationId);
             if (!canUpdate)
@@ -474,9 +474,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return View("~/Views/Roatp/TaskList2.cshtml", viewModel);
         }
 
-        [Route("apply-training-provider-tasklist")]
+        [Route("apply-training-provider-tasklist-old")]
         [HttpGet]
-        public async Task<IActionResult> TaskList(Guid applicationId)
+        public async Task<IActionResult> TaskListOld(Guid applicationId)
         {
             var canUpdate = await CanUpdateApplication(applicationId);
             if (!canUpdate)
