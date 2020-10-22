@@ -95,7 +95,6 @@ namespace SFA.DAS.ApplyService.Web.Services
             return result;
         }
 
-
         private bool GetIsLocked(int sequenceId, int sectionId, bool yourOrganisationSequenceCompleted, Guid applicationId, List<ApplicationSequence> sequences, OrganisationVerificationStatus organisationVerificationStatus, bool applicationSequencesCompleted)
         {
             // Disable the other sequences if YourOrganisation sequence isn't complete
