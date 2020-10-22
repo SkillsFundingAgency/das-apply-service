@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -9,7 +10,6 @@ using SFA.DAS.ApplyService.Application.Apply.Assessor;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 
@@ -21,11 +21,10 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
         private AssessorReviewCreationService _assessorReviewCreationService;
         private Mock<IAssessorSequenceService> _assessorSequenceService;
         private Mock<IAssessorSectorService> _assessorSectorService;
-        private Mock<IInternalQnaApiClient> _internalQnaApiClient;
         private Mock<IMediator> _mediator;
+
         private List<AssessorSequence> _sequences;
         private List<AssessorSector> _sectors;
-        private ApplicationSection _qnaApplicationSection;
 
         private Guid _applicationId;
         private string _assessorUserId;
@@ -39,18 +38,32 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
             _assessorNumber = 1;
 
             _assessorSequenceService = new Mock<IAssessorSequenceService>();
-            _internalQnaApiClient = new Mock<IInternalQnaApiClient>();
             _mediator = new Mock<IMediator>();
             _assessorSectorService = new Mock<IAssessorSectorService>();
 
-            _sectors = new List<AssessorSector>
+            var sectorsSection = new AssessorSection
             {
-                new AssessorSector{ PageId = Guid.NewGuid().ToString() },
-                new AssessorSector{ PageId = Guid.NewGuid().ToString() },
-                new AssessorSector{ PageId = Guid.NewGuid().ToString() }
+                LinkTitle = "Sectors Section",
+                SectionNumber = RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees,
+                SequenceNumber = RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
+                Pages = new List<Page>
+                            {
+                                new Page{ PageId = Guid.NewGuid().ToString(), DisplayType = SectionDisplayType.PagesWithSections, LinkTitle = "First Sector Starting Page", Active = true, Complete = true },
+                                new Page{ PageId = Guid.NewGuid().ToString(), DisplayType = SectionDisplayType.Questions, LinkTitle = "First Sector Question Page", Active = true, Complete = true }
+                            }
             };
 
-            _assessorSectorService.Setup(x => x.GetSectorsForAssessor(_applicationId, _assessorUserId)).ReturnsAsync(_sectors);
+            var managementHierarchySection = new AssessorSection
+            {
+                LinkTitle = "Management Hierarchy Section",
+                SectionNumber = RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy,
+                SequenceNumber = RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
+                Pages = new List<Page>
+                            {
+                                new Page{ PageId = Guid.NewGuid().ToString(), Active = true, Complete = true  },
+                                new Page{ PageId = Guid.NewGuid().ToString(), Active = true, Complete = true  }
+                            }
+            };
 
             _sequences = new List<AssessorSequence>
             {
@@ -58,46 +71,24 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
                 {
                     Id = Guid.NewGuid(),
                     SequenceNumber = RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
-                    SequenceTitle = "Test Sequence",
+                    SequenceTitle = "Delivering Apprenticeship Training Sequence",
                     Sections = new List<AssessorSection>
                     {
-                        new AssessorSection
-                        {
-                            Id = Guid.NewGuid(),
-                            LinkTitle = "Test Section",
-                            SectionNumber = 1
-                        },
-                        new AssessorSection
-                        {
-                            Id = Guid.NewGuid(),
-                            LinkTitle = "Test Sectors Section",
-                            SectionNumber = RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees
-                        }
+                        sectorsSection,
+                        managementHierarchySection
                     }
                 }
             };
 
-            _assessorSequenceService.Setup(x => x.GetSequences(_applicationId)).ReturnsAsync(() => _sequences);
+            _assessorSequenceService.Setup(x => x.GetSequences(_applicationId)).ReturnsAsync(_sequences);
 
-            _qnaApplicationSection = new ApplicationSection
-            {
-                QnAData = new QnAData
-                {
-                    Pages = new List<Page>
-                    {
-                        new Page{PageId = Guid.NewGuid().ToString()},
-                        new Page{PageId = Guid.NewGuid().ToString()}
-                    }
-                }
-            };
+            _sectors = sectorsSection.Pages.Where(pg => pg.DisplayType == SectionDisplayType.PagesWithSections && pg.Active && pg.Complete)
+                                               .Select(pg => new AssessorSector { PageId = pg.PageId, Title = pg.LinkTitle })
+                                               .ToList();
 
-            _internalQnaApiClient.Setup(x =>
-                    x.GetSectionBySectionNo(_applicationId, RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining,
-                        1))
-                .ReturnsAsync(() => _qnaApplicationSection);
+            _assessorSectorService.Setup(x => x.GetSectorsForEmptyReview(sectorsSection)).Returns(_sectors);
 
-            _assessorReviewCreationService = new AssessorReviewCreationService(_assessorSequenceService.Object,
-            _assessorSectorService.Object, _internalQnaApiClient.Object, _mediator.Object);
+            _assessorReviewCreationService = new AssessorReviewCreationService(_assessorSequenceService.Object, _assessorSectorService.Object, _mediator.Object);
         }
 
         [Test]
@@ -105,14 +96,18 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
         {
             await _assessorReviewCreationService.CreateEmptyReview(_applicationId, _assessorUserId, _assessorNumber);
 
-            var expectedNumberOfOutcomes = _qnaApplicationSection.QnAData.Pages.Count + _sectors.Count;
+            var allSections = _sequences.SelectMany(seq => seq.Sections);
+            var allSectionsExclusingSectors = allSections.Where(sec => sec.SequenceNumber != RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining || sec.SectionNumber != RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees);
+            var sectionPages = allSectionsExclusingSectors.SelectMany(sec => sec.Pages).ToList();
+
+            var expectedNumberOfOutcomes = sectionPages.Count + _sectors.Count;
 
             _mediator.Verify(x =>
                     x.Send(It.Is<CreateEmptyAssessorReviewRequest>(r =>
                             r.PageReviewOutcomes.Count == expectedNumberOfOutcomes &&
                             r.PageReviewOutcomes.TrueForAll(y =>
                                 _sectors.Exists(s => s.PageId == y.PageId) ||
-                                _qnaApplicationSection.QnAData.Pages.Exists(p => p.PageId == y.PageId))),
+                                sectionPages.Exists(p => p.PageId == y.PageId))),
                         It.IsAny<CancellationToken>()),
                 Times.Once);
         }

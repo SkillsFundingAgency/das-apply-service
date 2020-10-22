@@ -77,7 +77,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("Moderator/Applications/{applicationId}/SubmitPageReviewOutcome")]
         public async Task SubmitPageReviewOutcome(Guid applicationId, [FromBody] SubmitPageReviewOutcomeCommand request)
         {
-            await _mediator.Send(new SubmitModeratorPageOutcomeRequest(applicationId, request.SequenceNumber, request.SectionNumber, request.PageId, request.UserId, request.Status, request.Comment, request.ExternalComment));
+            await _mediator.Send(new SubmitModeratorPageOutcomeRequest(applicationId, request.SequenceNumber, request.SectionNumber, request.PageId, request.UserId, request.Status, request.Comment));
         }
 
         [HttpPost("Moderator/Applications/{applicationId}/GetPageReviewOutcome")]
@@ -104,6 +104,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return moderatorReviewOutcomes;
         }
 
+
+        [HttpPost("Moderator/Applications/{applicationId}/SubmitOutcome")]
+        public async Task SubmitPageReviewOutcome(Guid applicationId, [FromBody] SubmitModeratorOutcomeCommand request)
+        {
+            await _mediator.Send(new SubmitModeratorOutcomeRequest(applicationId, request.UserId, request.UserName, request.Status, request.Comment));
+        }
+
+
         public class SubmitPageReviewOutcomeCommand
         {
             public int SequenceNumber { get; set; }
@@ -112,7 +120,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             public string UserId { get; set; }
             public string Status { get; set; }
             public string Comment { get; set; }
-            public string ExternalComment { get; set; }
+        }
+
+        public class SubmitModeratorOutcomeCommand
+        {
+            public string UserId { get; set; }
+            public string UserName { get; set; }
+            public string Status { get; set; }
+            public string Comment { get; set; }
         }
 
         public class GetPageReviewOutcomeRequest

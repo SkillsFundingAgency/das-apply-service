@@ -21,13 +21,14 @@
         </div>
     </div>
 
-    <table class="govuk-table">
-
+    <table class="govuk-table govuk-!-margin-bottom-3">
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
                 @foreach (var title in Model.ManagementHierarchyData.HeadingTitles.Take(numberOfTitles))
                 {
-                    <th class="govuk-table__header" scope="col">@Html.Raw(title)</th>
+                    <th class="govuk-table__header" scope="col">
+                        @title
+                    </th>
                 }
                 <th class="govuk-table__header" scope="col"></th>
                 <th class="govuk-table__header" scope="col"></th>
@@ -51,11 +52,12 @@
             }
         </tbody>
     </table>
+    
     @if (Model.ManagementHierarchyData.DataRows.Count < ConfirmPartnersViewModel.MaximumNumberOfPartners)
     {
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <p class="govuk-body">
+                <p class="govuk-body govuk-!-margin-bottom-8">
                     <a class="govuk-link" asp-action="AddManagementHierarchy" asp-controller="RoatpManagementHierarchy" asp-route-applicationId="@Model.ApplicationId">Add another person</a>
                 </p>
             </div>

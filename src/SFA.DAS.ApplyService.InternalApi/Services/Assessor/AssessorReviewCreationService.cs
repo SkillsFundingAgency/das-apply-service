@@ -7,7 +7,6 @@ using SFA.DAS.ApplyService.Application.Apply.Assessor;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply.Assessor;
 using SFA.DAS.ApplyService.Domain.Entities;
-using SFA.DAS.ApplyService.InternalApi.Infrastructure;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 
 namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
@@ -16,14 +15,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
     {
         private readonly IAssessorSequenceService _sequenceService;
         private readonly IAssessorSectorService _sectorService;
-        private readonly IInternalQnaApiClient _qnaApiClient;
         private readonly IMediator _mediator;
 
-        public AssessorReviewCreationService(IAssessorSequenceService sequenceService, IAssessorSectorService sectorService, IInternalQnaApiClient qnaApiClient, IMediator mediator)
+        public AssessorReviewCreationService(IAssessorSequenceService sequenceService, IAssessorSectorService sectorService, IMediator mediator)
         {
             _sequenceService = sequenceService;
             _sectorService = sectorService;
-            _qnaApiClient = qnaApiClient;
             _mediator = mediator;
         }
 
@@ -38,14 +35,15 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
                 var sectionsToBeReviewed = sequence.Sections.Where(sec => sec.Status != AssessorReviewStatus.NotRequired);
                 foreach (var section in sectionsToBeReviewed)
                 {
-                    if (sequence.SequenceNumber == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining && section.SectionNumber == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees)
+                    if (section.SequenceNumber == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining && section.SectionNumber == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees)
                     {
-                        var sectors = await _sectorService.GetSectorsForAssessor(applicationId, assessorUserId);
-                        reviewOutcomes.AddRange(GenerateSectorsReviewOutcomes(applicationId, sequence.SequenceNumber, section.SectionNumber, sectors, assessorUserId, assessorNumber));
+                        var sectors = _sectorService.GetSectorsForEmptyReview(section);
+                        reviewOutcomes.AddRange(GenerateSectorsReviewOutcomes(applicationId, section, sectors, assessorUserId, assessorNumber));
                     }
                     else
                     {
-                        reviewOutcomes.AddRange(await GenerateSectionReviewOutcomes(applicationId, sequence.SequenceNumber, section.SectionNumber, assessorUserId, assessorNumber));
+                        var sectionReviewOutcomes = GenerateSectionReviewOutcomes(applicationId, section, assessorUserId, assessorNumber);
+                        reviewOutcomes.AddRange(sectionReviewOutcomes);
                     }
                 }
             }
@@ -53,32 +51,32 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
             await _mediator.Send(new CreateEmptyAssessorReviewRequest(applicationId, assessorUserId, reviewOutcomes));
         }
 
-        private async Task<List<AssessorPageReviewOutcome>> GenerateSectionReviewOutcomes(Guid applicationId, int sequenceNumber, int sectionNumber, string assessorUserId, int assessorNumber)
+        private List<AssessorPageReviewOutcome> GenerateSectionReviewOutcomes(Guid applicationId, AssessorSection section, string assessorUserId, int assessorNumber)
         {
             var sectionReviewOutcomes = new List<AssessorPageReviewOutcome>();
 
-            var section = await _qnaApiClient.GetSectionBySectionNo(applicationId, sequenceNumber, sectionNumber);
-            var pages = section.QnAData.Pages;
-
-            foreach (var page in pages)
+            if (section.Pages != null)
             {
-                sectionReviewOutcomes.Add(new AssessorPageReviewOutcome
+                foreach (var page in section.Pages)
                 {
-                    ApplicationId = applicationId,
-                    SequenceNumber = sequenceNumber,
-                    SectionNumber = sectionNumber,
-                    PageId = page.PageId,
-                    UserId = assessorUserId,
-                    AssessorNumber = assessorNumber,
-                    Status = null,
-                    Comment = null
-                });
+                    sectionReviewOutcomes.Add(new AssessorPageReviewOutcome
+                    {
+                        ApplicationId = applicationId,
+                        SequenceNumber = section.SequenceNumber,
+                        SectionNumber = section.SectionNumber,
+                        PageId = page.PageId,
+                        UserId = assessorUserId,
+                        AssessorNumber = assessorNumber,
+                        Status = null,
+                        Comment = null
+                    });
+                }
             }
 
             return sectionReviewOutcomes;
         }
 
-        private List<AssessorPageReviewOutcome> GenerateSectorsReviewOutcomes(Guid applicationId, int sequenceNumber, int sectionNumber, List<AssessorSector> selectedSectors, string assessorUserId, int assessorNumber)
+        private List<AssessorPageReviewOutcome> GenerateSectorsReviewOutcomes(Guid applicationId, AssessorSection section, List<AssessorSector> selectedSectors, string assessorUserId, int assessorNumber)
         {
             var sectorReviewOutcomes = new List<AssessorPageReviewOutcome>();
 
@@ -87,8 +85,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
                 sectorReviewOutcomes.Add(new AssessorPageReviewOutcome
                 {
                     ApplicationId = applicationId,
-                    SequenceNumber = sequenceNumber,
-                    SectionNumber = sectionNumber,
+                    SequenceNumber = section.SequenceNumber,
+                    SectionNumber = section.SectionNumber,
                     PageId = sector.PageId,
                     UserId = assessorUserId,
                     AssessorNumber = assessorNumber,

@@ -26,8 +26,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
                                                         request.PageId,  
                                                         request.UserId, 
                                                         request.Status, 
-                                                        request.Comment,
-                                                        request.ExternalComment);
+                                                        request.Comment);
 
             return Unit.Value;
         }

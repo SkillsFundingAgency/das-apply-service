@@ -8,8 +8,10 @@ using Dapper;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Configuration;
+using SFA.DAS.ApplyService.Data.DapperTypeHandlers;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Apply.Moderator;
+using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Data
 {
@@ -22,6 +24,8 @@ namespace SFA.DAS.ApplyService.Data
         {
             _logger = logger;
             _config = configurationService.GetConfig().GetAwaiter().GetResult();
+
+            SqlMapper.AddTypeHandler(typeof(ApplyData), new ApplyDataHandler());
         }
 
         public async Task<BlindAssessmentOutcome> GetBlindAssessmentOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId)
@@ -67,7 +71,6 @@ namespace SFA.DAS.ApplyService.Data
 			                                                            ,[ModeratorUserId] AS UserId
 			                                                            ,[ModeratorReviewStatus] AS [Status]
 			                                                            ,[ModeratorReviewComment] AS Comment
-                                                                        ,[ExternalComment]
 		                                                            FROM [dbo].[ModeratorPageReviewOutcome]
 		                                                            WHERE [ApplicationId] = @applicationId AND
 				                                                        [SequenceNumber] = @sequenceNumber AND
@@ -91,7 +94,6 @@ namespace SFA.DAS.ApplyService.Data
 			                                                            ,[ModeratorUserId] AS UserId
 			                                                            ,[ModeratorReviewStatus] AS [Status]
 			                                                            ,[ModeratorReviewComment] AS Comment
-                                                                        ,[ExternalComment]
 		                                                            FROM [dbo].[ModeratorPageReviewOutcome]
 		                                                            WHERE [ApplicationId] = @applicationId AND
 				                                                        [SequenceNumber] = @sequenceNumber AND
@@ -114,7 +116,6 @@ namespace SFA.DAS.ApplyService.Data
 			                                                            ,[ModeratorUserId] AS UserId
 			                                                            ,[ModeratorReviewStatus] AS [Status]
 			                                                            ,[ModeratorReviewComment] AS Comment
-                                                                        ,[ExternalComment]
 		                                                            FROM [dbo].[ModeratorPageReviewOutcome]
 		                                                            WHERE [ApplicationId] = @applicationId",
                     new { applicationId });
@@ -123,7 +124,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task SubmitModeratorPageOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string userId, string status, string comment, string externalComment)
+        public async Task SubmitModeratorPageOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string userId, string status, string comment)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
@@ -134,14 +135,13 @@ namespace SFA.DAS.ApplyService.Data
 			            SET [ModeratorUserId] = @userId
                             , [ModeratorReviewStatus] = @status
 				            , [ModeratorReviewComment] = @comment
-                            , [ExternalComment] = @externalComment
 				            , [UpdatedAt] = GETUTCDATE()
 				            , [UpdatedBy] = @userId
 			            WHERE [ApplicationId] = @applicationId AND
 					          [SequenceNumber] = @sequenceNumber AND
 					          [SectionNumber] = @sectionNumber AND
 					          [PageId] = @pageId",
-                    new { applicationId, sequenceNumber, sectionNumber, pageId, userId, status, comment, externalComment });
+                    new { applicationId, sequenceNumber, sectionNumber, pageId, userId, status, comment });
 
                 // APR-1633 - Update Moderation Status from 'New' to 'In Moderation'
                 await connection.ExecuteAsync(
@@ -151,7 +151,7 @@ namespace SFA.DAS.ApplyService.Data
 				            , UpdatedBy = @userId
 			            WHERE ApplicationId = @applicationId AND DeletedAt IS NULL
                               AND ModerationStatus = @newStatus",
-                    new { applicationId, userId, inModerationStatus = ModerationStatus.InModeration, newStatus = ModerationStatus.New });
+                    new { applicationId, userId, inModerationStatus = ModerationStatus.InProgress, newStatus = ModerationStatus.New });
             }
         }
 
@@ -195,6 +195,28 @@ namespace SFA.DAS.ApplyService.Data
                     await bulkCopy.WriteToServerAsync(dataTable);
                 }
                 connection.Close();
+            }
+        }
+
+        public async Task<bool> SubmitModeratorOutcome(Guid applicationId, ApplyData applyData, string userId,string status)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                var rowsAffected = await connection.ExecuteAsync(@"UPDATE Apply
+                                                SET ModerationStatus = @status, 
+                                                    ApplyData = @applyData,
+                                                    UpdatedBy = @userId, 
+                                                    UpdatedAt = GETUTCDATE() 
+                                                WHERE  (Apply.ApplicationId = @applicationId)",
+                    new
+                    {
+                        applicationId,
+                        status,
+                        applyData,
+                        userId
+                    });
+
+                return rowsAffected > 0;
             }
         }
     }

@@ -35,16 +35,16 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public List<ApplySequence> Sequences { get; set; }
         public ApplyDetails ApplyDetails { get; set; }
         public ApplyGatewayDetails GatewayReviewDetails { get; set; }
+        public ModeratorReviewDetails ModeratorReviewDetails { get; set; }
     }
 
     public class ApplyDetails
     {
-        // NOTE THIS IS A SIMILAR COPY OF RoatpApplicationData
         public string ReferenceNumber { get; set; }
         public string UKPRN { get; set; }
         public string OrganisationName { get; set; }
         public string TradingName { get; set; }
-        public int ProviderRoute { get; set; } // was string - ApplicationRouteId
+        public int ProviderRoute { get; set; } 
         public string ProviderRouteName { get; set; }
         public DateTime? ApplicationSubmittedOn { get; set; }
         public Guid? ApplicationSubmittedBy { get; set; }
@@ -96,13 +96,23 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public DateTime? GradedDateTime { get; set; }
         public string Comments { get; set; }
         public List<FinancialEvidence> FinancialEvidences { get; set; }
+        public DateTime? ClarificationRequestedOn { get; set; }
     }
 
     public class FinancialEvidence
     {
         public string Filename { get; set; }
     }
-  
+
+    public class ModeratorReviewDetails
+    {
+        public string ModeratorName { get; set; }
+        public string ModeratorUserId { get; set; }
+        public DateTime? OutcomeDateTime { get; set; }
+        public DateTime? ClarificationRequestedOn { get; set; }
+        public string ModeratorComments { get; set; }
+    }
+
     public class ApplicationStatus	
     {
         public const string New = "New";
@@ -141,7 +151,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
     {
         public const string Pass = "Pass";
         public const string Fail = "Fail";
-        public const string InProgress = "In progress";
+        public const string InProgress = "In progress"; // TECH DEBT: Correct capitalization
     }
 
     public static class GatewayReviewStatus
@@ -149,8 +159,8 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public const string Draft = "Draft";
         public const string New = "New";
         public const string InProgress = "In Progress";
-        public const string ClarificationSent = "Clarification sent";
-        public const string Resubmitted = "Re-submitted";
+        public const string ClarificationSent = "Clarification sent"; // TECH DEBT: Correct capitalization
+        public const string Resubmitted = "Re-submitted"; // TECH DEBT: Correct to "Resubmitted"
         public const string Fail = "Fail";
         public const string Pass = "Pass";
     }
