@@ -464,7 +464,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> TaskList2(Guid applicationId)
         {
-            //todo: consider moving a simplified version of this into the service
             var canUpdate = await CanUpdateApplication(applicationId);
             if (!canUpdate)
             {

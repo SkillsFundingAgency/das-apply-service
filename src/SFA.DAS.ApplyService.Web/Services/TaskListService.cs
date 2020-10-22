@@ -21,7 +21,8 @@ namespace SFA.DAS.ApplyService.Web.Services
         public TaskListService(IApplicationApiClient apiClient,
             IQnaApiClient qnaApiClient,
             IRoatpOrganisationVerificationService organisationVerificationService,
-            IRoatpTaskListWorkflowService roatpTaskListWorkflowService, INotRequiredOverridesService notRequiredOverridesService)
+            IRoatpTaskListWorkflowService roatpTaskListWorkflowService,
+            INotRequiredOverridesService notRequiredOverridesService)
         {
             _apiClient = apiClient;
             _qnaApiClient = qnaApiClient;
@@ -36,17 +37,16 @@ namespace SFA.DAS.ApplyService.Web.Services
             var providerRouteTask = _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
             var organisationVerificationStatusTask = _organisationVerificationService.GetOrganisationVerificationStatus(applicationId);
             var refreshNotRequiredOverridesTask = _notRequiredOverridesService.RefreshNotRequiredOverridesAsync(applicationId);
+            var sequencesTask = _roatpTaskListWorkflowService.GetApplicationSequencesAsync(applicationId);
 
-            await Task.WhenAll(organisationDetailsTask, providerRouteTask, organisationVerificationStatusTask, refreshNotRequiredOverridesTask);
+            await Task.WhenAll(organisationDetailsTask, providerRouteTask, organisationVerificationStatusTask, refreshNotRequiredOverridesTask, sequencesTask);
 
             var organisationDetails = await organisationDetailsTask;
             var providerRoute = await providerRouteTask;
             var organisationVerificationStatus = await organisationVerificationStatusTask;
-            
-            var sequences = (await _roatpTaskListWorkflowService.GetApplicationSequencesAsync(applicationId)).ToList();
+            var sequences = (await sequencesTask).ToList();
 
             var yourOrganisationSequence = sequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
-
             var yourOrganisationSequenceCompleted = CheckYourOrganisationSequenceComplete(applicationId, sequences, organisationVerificationStatus, yourOrganisationSequence);
             var applicationSequencesCompleted = ApplicationSequencesCompleted(applicationId, sequences, organisationVerificationStatus);
 
@@ -65,10 +65,6 @@ namespace SFA.DAS.ApplyService.Web.Services
                 AllowSubmission = applicationSequencesCompleted &&
                                   _roatpTaskListWorkflowService.PreviousSectionCompleted(applicationId, RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.SubmitApplication, sequences, organisationVerificationStatus)
             };
-
-
-            //new stuff below!
-
 
             foreach (var sequence in sequences)
             {
