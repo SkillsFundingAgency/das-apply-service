@@ -125,7 +125,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 var SecondCriminialIntroductionSectionId = 3;
                 if (sectionId > SecondCriminialIntroductionSectionId)
                 {
-                    var statusOfSecondIntroductionPage = _roatpTaskListWorkflowService.SectionQuestionsStatus(applicationId, sequenceId, sectionId, sequences);
+                    var statusOfSecondIntroductionPage = _roatpTaskListWorkflowService.SectionQuestionsStatus(applicationId, RoatpWorkflowSequenceIds.CriminalComplianceChecks, SecondCriminialIntroductionSectionId, sequences);
                     if (statusOfSecondIntroductionPage != TaskListSectionStatus.Completed)
                     {
                         return true;

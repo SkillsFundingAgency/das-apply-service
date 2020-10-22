@@ -70,7 +70,11 @@
                                 @Html.Raw(seqSection.Title)
                             </span>
                         }
-                        <strong class="govuk-tag app-task-list__task-@seqSection.StatusCssClass" id="status_@sequenceSection"> @seqSection.Status</strong>
+                        
+                        @if (!seqSection.IsLocked || seqSection.IsNotRequired)
+                        {
+                            <strong class="govuk-tag app-task-list__task-@seqSection.StatusCssClass" id="status_@sequenceSection"> @seqSection.Status</strong>
+                        }
                     </li>
 
                         @if (sequence.Id == RoatpWorkflowSequenceIds.Finish && seqSection.Id == RoatpWorkflowSectionIds.Finish.TermsAndConditions)
