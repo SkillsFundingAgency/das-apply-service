@@ -32,7 +32,7 @@
 
                     <li class="app-task-list__item">
 
-                        @if (!seqSection.IsLocked)
+                        @if (!seqSection.IsLocked && !seqSection.IsNotRequired)
                         {
                             <span class="app-task-list__task-name">
 

@@ -215,7 +215,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             var sequencesTask = _qnaApiClient.GetSequences(applicationId);
             var sectionsTask = _qnaApiClient.GetSections(applicationId);
 
-            Task.WaitAll(sequencesTask, sectionsTask);
+            await Task.WhenAll(sequencesTask, sectionsTask);
 
             var sequences = await sequencesTask;
             var sections = await sectionsTask;

@@ -16,16 +16,18 @@ namespace SFA.DAS.ApplyService.Web.Services
         private readonly IQnaApiClient _qnaApiClient;
         private readonly IRoatpOrganisationVerificationService _organisationVerificationService;
         private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
+        private readonly INotRequiredOverridesService _notRequiredOverridesService;
 
         public TaskListService(IApplicationApiClient apiClient,
             IQnaApiClient qnaApiClient,
             IRoatpOrganisationVerificationService organisationVerificationService,
-            IRoatpTaskListWorkflowService roatpTaskListWorkflowService)
+            IRoatpTaskListWorkflowService roatpTaskListWorkflowService, INotRequiredOverridesService notRequiredOverridesService)
         {
             _apiClient = apiClient;
             _qnaApiClient = qnaApiClient;
             _organisationVerificationService = organisationVerificationService;
             _roatpTaskListWorkflowService = roatpTaskListWorkflowService;
+            _notRequiredOverridesService = notRequiredOverridesService;
         }
 
         public async Task<TaskList2ViewModel> GetTaskList2ViewModel(Guid applicationId, Guid userId)
@@ -33,15 +35,14 @@ namespace SFA.DAS.ApplyService.Web.Services
             var organisationDetailsTask = _apiClient.GetOrganisationByUserId(userId);
             var providerRouteTask = _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
             var organisationVerificationStatusTask = _organisationVerificationService.GetOrganisationVerificationStatus(applicationId);
+            var refreshNotRequiredOverridesTask = _notRequiredOverridesService.RefreshNotRequiredOverridesAsync(applicationId);
 
-            Task.WaitAll(organisationDetailsTask, providerRouteTask, organisationVerificationStatusTask);
+            await Task.WhenAll(organisationDetailsTask, providerRouteTask, organisationVerificationStatusTask, refreshNotRequiredOverridesTask);
 
             var organisationDetails = await organisationDetailsTask;
             var providerRoute = await providerRouteTask;
             var organisationVerificationStatus = await organisationVerificationStatusTask;
-
-
-            _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId); //this method is not async
+            
             var sequences = (await _roatpTaskListWorkflowService.GetApplicationSequencesAsync(applicationId)).ToList();
 
             var yourOrganisationSequence = sequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
