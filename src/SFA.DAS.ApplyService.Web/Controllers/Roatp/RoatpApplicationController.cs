@@ -470,8 +470,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("Applications");
             }
 
-            var viewModel = await _taskListService.GetTaskList2ViewModel(applicationId, User.GetUserId());
-            return View("~/Views/Roatp/TaskList2.cshtml", viewModel);
+            var viewModel = await _taskListService.GetTaskListViewModel(applicationId, User.GetUserId());
+            return View("~/Views/Roatp/TaskList.cshtml", viewModel);
         }
 
 

@@ -31,7 +31,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             _notRequiredOverridesService = notRequiredOverridesService;
         }
 
-        public async Task<TaskList2ViewModel> GetTaskList2ViewModel(Guid applicationId, Guid userId)
+        public async Task<TaskListViewModel> GetTaskListViewModel(Guid applicationId, Guid userId)
         {
             var organisationDetailsTask = _apiClient.GetOrganisationByUserId(userId);
             var providerRouteTask = _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
@@ -51,7 +51,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             var applicationSequencesCompleted = ApplicationSequencesCompleted(applicationId, sequences, organisationVerificationStatus);
 
 
-            var result = new TaskList2ViewModel
+            var result = new TaskListViewModel
             {
                 ApplicationId = applicationId,
                 ApplicationSummaryViewModel = new ApplicationSummaryViewModel
@@ -68,7 +68,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             foreach (var sequence in sequences)
             {
-                var sequenceVm = new TaskList2ViewModel.Sequence
+                var sequenceVm = new TaskListViewModel.Sequence
                 {
                     Id = sequence.SequenceId,
                     Description = sequence.Description
@@ -78,7 +78,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
                 foreach (var section in sequence.Sections.OrderBy(x => x.SectionId))
                 {
-                    sequenceVm.Sections.Add(new TaskList2ViewModel.Section
+                    sequenceVm.Sections.Add(new TaskListViewModel.Section
                     {
                         Id = section.SectionId,
                         Title = section.Title,
@@ -180,6 +180,6 @@ namespace SFA.DAS.ApplyService.Web.Services
 
     public interface ITaskListService
     {
-        Task<TaskList2ViewModel> GetTaskList2ViewModel(Guid applicationId, Guid userId);
+        Task<TaskListViewModel> GetTaskListViewModel(Guid applicationId, Guid userId);
     }
 }
