@@ -6,11 +6,12 @@ using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Web.Infrastructure;
+using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 
-namespace SFA.DAS.ApplyService.Web.Services
+namespace SFA.DAS.ApplyService.Web.Orchestrators
 {
-    public class TaskListService : ITaskListService
+    public class TaskListOrchestrator : ITaskListOrchestrator
     {
         private readonly IApplicationApiClient _apiClient;
         private readonly IQnaApiClient _qnaApiClient;
@@ -18,7 +19,7 @@ namespace SFA.DAS.ApplyService.Web.Services
         private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
         private readonly INotRequiredOverridesService _notRequiredOverridesService;
 
-        public TaskListService(IApplicationApiClient apiClient,
+        public TaskListOrchestrator(IApplicationApiClient apiClient,
             IQnaApiClient qnaApiClient,
             IRoatpOrganisationVerificationService organisationVerificationService,
             IRoatpTaskListWorkflowService roatpTaskListWorkflowService,
@@ -139,8 +140,6 @@ namespace SFA.DAS.ApplyService.Web.Services
             return false;
         }
 
-
-
         private bool CheckYourOrganisationSequenceComplete(Guid applicationId, IEnumerable<ApplicationSequence> sequences, OrganisationVerificationStatus organisationVerificationStatus, ApplicationSequence yourOrganisationSequence)
         {
             var yourOrganisationSequenceComplete = true;
@@ -175,11 +174,5 @@ namespace SFA.DAS.ApplyService.Web.Services
 
             return true;
         }
-
-    }
-
-    public interface ITaskListService
-    {
-        Task<TaskListViewModel> GetTaskListViewModel(Guid applicationId, Guid userId);
     }
 }

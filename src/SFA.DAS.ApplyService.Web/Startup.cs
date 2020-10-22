@@ -23,6 +23,7 @@ using SFA.DAS.ApplyService.Web;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
 using SFA.DAS.ApplyService.Web.Infrastructure.Services;
+using SFA.DAS.ApplyService.Web.Orchestrators;
 using StructureMap;
 using StackExchange.Redis;
 
@@ -263,7 +264,7 @@ namespace SFA.DAS.ApplyService.Web
             services.AddTransient<IRoatpTaskListWorkflowService, RoatpTaskListWorkflowService>();
             services.AddTransient<IRoatpOrganisationVerificationService, RoatpOrganisationVerificationService>();
             services.AddTransient<INotRequiredOverridesService, NotRequiredOverridesService>();
-            services.AddTransient<ITaskListService, TaskListService>();
+            services.AddTransient<ITaskListOrchestrator, TaskListOrchestrator>();
         }
 
         protected virtual void ConfigureAuth(IServiceCollection services)

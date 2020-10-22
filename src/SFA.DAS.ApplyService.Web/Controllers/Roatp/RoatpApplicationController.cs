@@ -15,6 +15,7 @@ using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
+using SFA.DAS.ApplyService.Web.Orchestrators;
 using SFA.DAS.ApplyService.Web.ViewModels;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
@@ -48,7 +49,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IPagesWithSectionsFlowService _pagesWithSectionsFlowService;
         private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
         private readonly IRoatpOrganisationVerificationService _organisationVerificationService;
-        private readonly ITaskListService _taskListService;
+        private readonly ITaskListOrchestrator _taskListOrchestrator;
 
         private const string InputClassUpperCase = "app-uppercase";
         private const string NotApplicableAnswerText = "None of the above";
@@ -63,7 +64,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             ICustomValidatorFactory customValidatorFactory,  
             IRoatpApiClient roatpApiClient, ISubmitApplicationConfirmationEmailService submitApplicationEmailService,
             ITabularDataRepository tabularDataRepository, IRoatpTaskListWorkflowService roatpTaskListWorkflowService,
-            IRoatpOrganisationVerificationService organisationVerificationService, ITaskListService taskListService)
+            IRoatpOrganisationVerificationService organisationVerificationService, ITaskListOrchestrator taskListOrchestrator)
             :base(sessionService)
         {
             _apiClient = apiClient;
@@ -84,7 +85,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _tabularDataRepository = tabularDataRepository;
             _roatpTaskListWorkflowService = roatpTaskListWorkflowService;
             _organisationVerificationService = organisationVerificationService;
-            _taskListService = taskListService;
+            _taskListOrchestrator = taskListOrchestrator;
         }
 
         [HttpGet]
@@ -470,7 +471,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("Applications");
             }
 
-            var viewModel = await _taskListService.GetTaskListViewModel(applicationId, User.GetUserId());
+            var viewModel = await _taskListOrchestrator.GetTaskListViewModel(applicationId, User.GetUserId());
             return View("~/Views/Roatp/TaskList.cshtml", viewModel);
         }
 

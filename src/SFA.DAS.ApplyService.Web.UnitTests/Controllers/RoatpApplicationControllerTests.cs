@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Web.Orchestrators;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 {
@@ -89,7 +90,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                                                          _pageNavigationTrackingService.Object, _qnaLinks.Object, _customValidatorFactory.Object,
                                                          _roatpApiClient.Object,
                                                          _submitApplicationEmailService.Object, _tabularDataRepository.Object,
-                                                         _roatpTaskListWorkflowService.Object, _roatpOrganisationVerificationService.Object, Mock.Of<ITaskListService>())
+                                                         _roatpTaskListWorkflowService.Object, _roatpOrganisationVerificationService.Object, Mock.Of<ITaskListOrchestrator>())
             {
                 ControllerContext = new ControllerContext()
                 {
