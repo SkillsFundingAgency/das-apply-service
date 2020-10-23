@@ -262,9 +262,7 @@ namespace SFA.DAS.ApplyService.InternalApi
             services.AddTransient<IModeratorReviewCreationService, ModeratorReviewCreationService>();
 
             services.AddTransient<IFileEncryptionService, FileEncryptionService>();
-            services.AddTransient<IFileUploadService, FileUploadService>();
-            services.AddTransient<IFileDownloadService, FileDownloadService>();
-            services.AddTransient<IFileDeleteService, FileDeleteService>();
+            services.AddTransient<IFileStorageService, FileStorageService>();
 
             services.AddMediatR(typeof(CreateAccountHandler).GetTypeInfo().Assembly);
         }
