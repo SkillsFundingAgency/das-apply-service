@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -163,36 +164,45 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (qnaResponse != null)
             {
-                var allQnaSequences = await _qnaApiClient.GetSequences(qnaResponse.ApplicationId);
-                var allQnaSections = await _qnaApiClient.GetSections(qnaResponse.ApplicationId);
+                var allQnaSequencesTask = _qnaApiClient.GetSequences(qnaResponse.ApplicationId);
+                var allQnaSectionsTask = _qnaApiClient.GetSections(qnaResponse.ApplicationId);
 
-                var startApplicationRequest = BuildStartApplicationRequest(qnaResponse.ApplicationId, user.Id, providerRoute, allQnaSequences, allQnaSections);
+                await Task.WhenAll(allQnaSequencesTask, allQnaSectionsTask);
+
+                var allQnaSequences = await allQnaSequencesTask;
+                var allQnaSections = await allQnaSectionsTask;
+
+                var startApplicationRequest = await BuildStartApplicationRequest(qnaResponse.ApplicationId, user.Id, providerRoute, allQnaSequences, allQnaSections);
 
                 var applicationId = await _apiClient.StartApplication(startApplicationRequest);
                 _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking response from StartApplication POST: applicationId: [{applicationId}]");
 
+                var saveInformationTasks = new List<Task>();
+
                 if (applicationId != Guid.Empty)
                 {
-                    await SavePreambleInformation(applicationId, applicationDetails);
+                    saveInformationTasks.Add(SavePreambleInformation(applicationId, applicationDetails));
 
                     if (applicationDetails.UkrlpLookupDetails.VerifiedByCompaniesHouse)
                     {
-                        await SaveCompaniesHouseInformation(applicationId, applicationDetails);
+                        saveInformationTasks.Add(SaveCompaniesHouseInformation(applicationId, applicationDetails));
                     }
 
                     if (applicationDetails.UkrlpLookupDetails.VerifiedbyCharityCommission)
                     {
-                        await SaveCharityCommissionInformation(applicationId, applicationDetails);
+                        saveInformationTasks.Add(SaveCharityCommissionInformation(applicationId, applicationDetails));
                     }
+
+                    await Task.WhenAll(saveInformationTasks);
                 }
             }
 
             return RedirectToAction("Applications", new { applicationType });
         }
 
-        private Application.Apply.Start.StartApplicationRequest BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
+        private async Task<Application.Apply.Start.StartApplicationRequest> BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
         {
-            var providerRoutes = _roatpApiClient.GetApplicationRoutes().GetAwaiter().GetResult();
+            var providerRoutes = await _roatpApiClient.GetApplicationRoutes();
             var selectedProviderRoute = providerRoutes.FirstOrDefault(p => p.Id == providerRoute);
 
             return new Application.Apply.Start.StartApplicationRequest
@@ -1050,6 +1060,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private async Task UpdateQuestionsWithinQnA(Guid applicationId, List<PreambleAnswer> questions)
         {
+            var updateTasks = new List<Task>();
+
             if (questions != null)
             {
                 // Many answers for a particular page could have been added, so we need to group them up
@@ -1065,10 +1077,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     {
                         var pageId = answers[0].PageId;
 
-                        await _qnaApiClient.UpdatePageAnswers(applicationId, answers[0].SequenceId, answers[0].SectionId, pageId, answers.ToList<Answer>());
+                        updateTasks.Add(_qnaApiClient.UpdatePageAnswers(applicationId, answers[0].SequenceId, answers[0].SectionId, pageId, answers.ToList<Answer>()));
                     }
                 }
             }
+
+            await Task.WhenAll(updateTasks);
         }
 
         [HttpGet]
