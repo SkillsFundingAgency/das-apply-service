@@ -15,7 +15,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public List<Sequence> Sequences { get; set; }
 
 
-        public int ApplicationRouteId { get; set; }
+        public string ApplicationRouteId { get; set; }
 
         public string DescribeOrganisationStartPageId
         {
@@ -23,7 +23,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
             {
                 var describeOrganisationStartPageId = RoatpWorkflowPageIds.DescribeYourOrganisation.MainSupportingStartPage;
 
-                if (ApplicationRouteId == EmployerApplicationRouteId)
+                if (ApplicationRouteId == "2")
                 {
                     describeOrganisationStartPageId = RoatpWorkflowPageIds.DescribeYourOrganisation.EmployerStartPage;
                 }
