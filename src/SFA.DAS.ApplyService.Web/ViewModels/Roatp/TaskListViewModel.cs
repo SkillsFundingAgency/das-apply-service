@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SFA.DAS.ApplyService.Application.Apply.Roatp;
 
 namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
 {
@@ -12,6 +13,24 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public bool AllowSubmission { get; set; }
 
         public List<Sequence> Sequences { get; set; }
+
+
+        public int ApplicationRouteId { get; set; }
+
+        public string DescribeOrganisationStartPageId
+        {
+            get
+            {
+                var describeOrganisationStartPageId = RoatpWorkflowPageIds.DescribeYourOrganisation.MainSupportingStartPage;
+
+                if (ApplicationRouteId == EmployerApplicationRouteId)
+                {
+                    describeOrganisationStartPageId = RoatpWorkflowPageIds.DescribeYourOrganisation.EmployerStartPage;
+                }
+
+                return describeOrganisationStartPageId;
+            }
+        }
 
         public TaskListViewModel()
         {
