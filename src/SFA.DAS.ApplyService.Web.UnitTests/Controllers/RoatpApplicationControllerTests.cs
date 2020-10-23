@@ -52,6 +52,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IPagesWithSectionsFlowService> _pagesWithSectionsFlowService;
         private Mock<IRoatpTaskListWorkflowService> _roatpTaskListWorkflowService;
         private Mock<IRoatpOrganisationVerificationService> _roatpOrganisationVerificationService;
+        private Mock<ITaskListOrchestrator> _taskListOrchestrator;
 
         [SetUp]
         public void Before_each_test()
@@ -82,6 +83,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _tabularDataRepository = new Mock<ITabularDataRepository>();
             _roatpTaskListWorkflowService = new Mock<IRoatpTaskListWorkflowService>();
             _roatpOrganisationVerificationService = new Mock<IRoatpOrganisationVerificationService>();
+            _taskListOrchestrator = new Mock<ITaskListOrchestrator>();
 
             _controller = new RoatpApplicationController(_apiClient.Object, _logger.Object, _sessionService.Object, _configService.Object,
                                                          _userService.Object, _usersApiClient.Object, _qnaApiClient.Object, 
@@ -90,7 +92,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                                                          _pageNavigationTrackingService.Object, _qnaLinks.Object, _customValidatorFactory.Object,
                                                          _roatpApiClient.Object,
                                                          _submitApplicationEmailService.Object, _tabularDataRepository.Object,
-                                                         _roatpTaskListWorkflowService.Object, _roatpOrganisationVerificationService.Object, Mock.Of<ITaskListOrchestrator>())
+                                                         _roatpTaskListWorkflowService.Object, _roatpOrganisationVerificationService.Object, _taskListOrchestrator.Object)
             {
                 ControllerContext = new ControllerContext()
                 {
@@ -385,6 +387,34 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             redirectResult.ActionName.Should().Be("ApplicationSubmitted");
 
             _submitApplicationEmailService.VerifyAll();
+        }
+
+        [Test]
+        public async Task TaskList_shows_tasklist_view_for_application()
+        {
+            var applicationId = Guid.NewGuid();
+            var userId = Guid.NewGuid();
+
+            _userService.Setup(x => x.GetSignInId()).ReturnsAsync(() => userId);
+
+            var inProgressApp = new Domain.Entities.Apply
+            {
+                ApplicationStatus = ApplicationStatus.InProgress,
+                ApplyData = new ApplyData()
+            };
+
+            _apiClient.Setup(x => x.GetApplicationByUserId(applicationId, userId)).ReturnsAsync(() => inProgressApp);
+
+
+            _taskListOrchestrator.Setup(x => x.GetTaskListViewModel(applicationId, userId))
+                .ReturnsAsync(() => new TaskListViewModel());
+
+            var result = await _controller.TaskList(applicationId);
+
+            Assert.IsInstanceOf<ViewResult>(result);
+            var viewResult = (ViewResult) result;
+            Assert.AreEqual("~/Views/Roatp/TaskList.cshtml", viewResult.ViewName);
+
         }
     }
 }

@@ -481,7 +481,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             bool canUpdate = false;
 
-            var application = await _apiClient.GetApplicationByUserId(applicationId, await _userService.GetSignInId());
+            var signInId = await _userService.GetSignInId();
+            var application = await _apiClient.GetApplicationByUserId(applicationId, signInId);
 
             var validApplicationStatuses = new string[] { ApplicationStatus.InProgress, ApplicationStatus.FeedbackAdded };
 
