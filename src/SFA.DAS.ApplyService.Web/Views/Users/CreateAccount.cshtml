@@ -1,7 +1,7 @@
 @model SFA.DAS.ApplyService.Web.ViewModels.CreateAccountViewModel
 @{
-  var isError = !ViewData.ModelState.IsValid;
-  ViewBag.Title = (isError ? "Error: " : "") + "Get set up as a user";
+    var isError = !ViewData.ModelState.IsValid;
+    ViewBag.Title = (isError ? "Error: " : "") + "Get set up as a user";
 }
 
 <a class="govuk-back-link" asp-controller="Home" asp-action="Index">Back</a>
@@ -26,7 +26,7 @@
                         </div>
                     </div>
                 }
-            
+                                                                            
                 <h1 class="govuk-heading-xl">Create an account</h1>
 
                 <div class="govuk-form-group" sfa-validation-for="GivenName" sfa-validationerror-class="govuk-form-group--error">
@@ -35,73 +35,77 @@
                     </label>
                     @if (isError)
                     {
-                      <span class="govuk-error-message" asp-validation-for="GivenName"></span>
+                        <span class="govuk-error-message" asp-validation-for="GivenName"></span>
                     }
-                    <input 
-                        class="govuk-input govuk-!-width-two-thirds"
-                        id="GivenName"
-                        name="GivenName"
-                        type="text"
-                        asp-for="GivenName"
-                        sfa-validation-for="GivenName"
-                        sfa-validationerror-class="govuk-input--error"
-                        autocomplete="given-name"
-                        spellcheck="false"
-                        maxlength="10000"
-                    />
-                </div>
+                        <input 
+    class="govuk-input govuk-!-width-two-thirds"
+    id="GivenName"
+    name="GivenName"
+    type="text"
+    asp-for="GivenName"
+    sfa-validation-for="GivenName"
+    sfa-validationerror-class="govuk-input--error"
+    autocomplete="given-name"
+    spellcheck="false"
+    maxlength="10000"
+                        />
+                    </div>
 
-                <div class="govuk-form-group" sfa-validation-for="FamilyName" sfa-validationerror-class="govuk-form-group--error">
-                    <label class="govuk-label govuk-label--m" for="FamilyName">
-                        Last name
-                    </label>
-                    @if (isError)
+                    <div class="govuk-form-group" sfa-validation-for="FamilyName" sfa-validationerror-class="govuk-form-group--error">
+                        <label class="govuk-label govuk-label--m" for="FamilyName">
+                            Last name
+                        </label>
+                        @if (isError)
                     {
-                      <span class="govuk-error-message" asp-validation-for="FamilyName"></span>
+                        <span class="govuk-error-message" asp-validation-for="FamilyName"></span>
                     }
-                    <input
-                        class="govuk-input govuk-!-width-two-thirds"
-                        id="FamilyName"
-                        name="FamilyName"
-                        type="text"
-                        asp-for="FamilyName"
-                        sfa-validation-for="FamilyName"
-                        sfa-validationerror-class="govuk-input--error"
-                        autocomplete="family-name"
-                        spellcheck="false"
-                        maxlength="10000"
-                    />
-                </div>
+                        <input
+    class="govuk-input govuk-!-width-two-thirds"
+    id="FamilyName"
+    name="FamilyName"
+    type="text"
+    asp-for="FamilyName"
+    sfa-validation-for="FamilyName"
+    sfa-validationerror-class="govuk-input--error"
+    autocomplete="family-name"
+    spellcheck="false"
+    maxlength="10000"
+                        />
+                    </div>
 
-                <div class="govuk-form-group" sfa-validation-for="Email" sfa-validationerror-class="govuk-form-group--error">
-                    <label class="govuk-label govuk-label--m" for="Email">
-                        Email address
-                    </label>
-                    <span id="email-hint" class="govuk-hint">
-                        We'll use this to send you a confirmation email
-                    </span>
-                    @if (isError)
+                    <div class="govuk-form-group" sfa-validation-for="Email" sfa-validationerror-class="govuk-form-group--error">
+                        <label class="govuk-label govuk-label--m" for="Email">
+                            Email address
+                        </label>
+                        <span id="email-hint" class="govuk-hint">
+                            <p class="govuk-body das-body--hint govuk-!-margin-bottom-2">We'll use this email address:</p>
+                            <ul class="govuk-list das-list--hint govuk-list--bullet">
+                                <li>to send you a confirmation email about your account</li>
+                                <li>for all communication to do with your RoATP application</li>
+                            </ul>
+                        </span>
+                        @if (isError)
                     {
-                      <span class="govuk-error-message" asp-validation-for="Email"></span>
+                        <span class="govuk-error-message" asp-validation-for="Email"></span>
                     }
-                    <input
-                        class="govuk-input"
-                        id="Email"
-                        name="Email"
-                        type="text"
-                        asp-for="Email"
-                        aria-describedby="email-hint"
-                        sfa-validation-for="Email"
-                        sfa-validationerror-class="govuk-input--error"
-                        maxlength="320"
-                    />
-                </div>
+                        <input
+    class="govuk-input"
+    id="Email"
+    name="Email"
+    type="text"
+    asp-for="Email"
+    aria-describedby="email-hint"
+    sfa-validation-for="Email"
+    sfa-validationerror-class="govuk-input--error"
+    maxlength="320"
+                        />
+                    </div>
 
-                <button type="submit" class="govuk-button">
-                    Confirm
-                </button>
+                    <button type="submit" class="govuk-button">
+                        Confirm
+                    </button>
 
-            </form>
+                </form>
+            </div>
         </div>
-    </div>
-</main>
+    </main>

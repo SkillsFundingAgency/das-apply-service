@@ -1245,3 +1245,8 @@
     line-height: 1.15;
   }
 }
+
+.das-body--hint,
+.das-list--hint {
+  color: #6f777b;
+}
