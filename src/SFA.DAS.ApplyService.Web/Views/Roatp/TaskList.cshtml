@@ -21,7 +21,8 @@
 
             <li>
                 <h2 class="app-task-list__section">
-                    @Html.Raw(sequence.Id). @Html.Raw(sequence.Description)
+                    <span class="app-task-list__section-number">@Html.Raw(sequence.Id). </span>
+                    @Html.Raw(sequence.Description)
                 </h2>
                 
                 <ul class="app-task-list__items">
@@ -35,8 +36,30 @@
                         @if (!seqSection.IsLocked && !seqSection.IsNotRequired)
                         {
                             <span class="app-task-list__task-name">
-
-                                @if (sequence.Id == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining && seqSection.Id == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy)
+                                
+                                @if (sequence.Id == RoatpWorkflowSequenceIds.YourOrganisation && seqSection.Id == RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed)
+                                {
+                                    <a class="govuk-link" asp-action="WhatYouWillNeed" asp-controller="RoatpYourOrganisationApplication" asp-route-applicationId="@Model.ApplicationId">
+                                        Introduction and what you'll need <span class="govuk-visually-hidden"> for your organisation</span>
+                                    </a>
+                                }
+                                else if (sequence.Id == RoatpWorkflowSequenceIds.YourOrganisation && seqSection.Id == RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation)
+                                {
+                                    <a class="govuk-link" asp-action="Page" asp-controller="RoatpApplication" asp-route-applicationId="@Model.ApplicationId"
+                                        asp-route-sequenceId="@RoatpWorkflowSequenceIds.YourOrganisation"
+                                        asp-route-sectionId="@RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation"
+                                        asp-route-pageId="@Model.DescribeOrganisationStartPageId"
+                                        asp-route-redirectAction="TaskList">
+                                        Describe your organisation
+                                    </a>
+                                }
+                                else if (sequence.Id == RoatpWorkflowSequenceIds.YourOrganisation && seqSection.Id == RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations)
+                                {
+                                    <a class="govuk-link" asp-action="ExperienceAccreditation" asp-controller="RoatpYourOrganisationApplication" asp-route-applicationId="@Model.ApplicationId">
+                                        Experience and accreditation
+                                    </a>
+                                }
+                                else if (sequence.Id == RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining && seqSection.Id == RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy)
                                 {
                                     <a class="govuk-link" asp-action="StartPage" asp-controller="RoatpManagementHierarchy" asp-route-applicationId="@Model.ApplicationId">
                                         @Html.Raw(seqSection.Title)

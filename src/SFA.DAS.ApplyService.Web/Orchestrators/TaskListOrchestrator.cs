@@ -57,6 +57,7 @@ namespace SFA.DAS.ApplyService.Web.Orchestrators
                 ApplicationId = applicationId,
                 ApplicationSummaryViewModel = new ApplicationSummaryViewModel
                 {
+                    ApplicationId = applicationId,
                     UKPRN = organisationDetails.OrganisationUkprn?.ToString(),
                     OrganisationName = organisationDetails.Name,
                     TradingName = organisationDetails.OrganisationDetails?.TradingName,
