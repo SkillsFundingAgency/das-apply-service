@@ -194,24 +194,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             return TaskListSectionStatus.Next;
         }
 
-        public IEnumerable<ApplicationSequence> GetApplicationSequences(Guid applicationId)
-        {
-            var sequences = _qnaApiClient.GetSequences(applicationId).GetAwaiter().GetResult();
-
-            PopulateAdditionalSequenceFields(sequences);
-
-            var filteredSequences = sequences.Where(x => x.SequenceId != RoatpWorkflowSequenceIds.Preamble && x.SequenceId != RoatpWorkflowSequenceIds.ConditionsOfAcceptance).OrderBy(y => y.SequenceId);
-
-            foreach (var sequence in filteredSequences)
-            {
-                var sections = _qnaApiClient.GetSections(applicationId, sequence.Id).GetAwaiter().GetResult();
-                sequence.Sections = sections.ToList();
-            }
-
-            return filteredSequences.ToList();
-        }
-
-        public async Task<IEnumerable<ApplicationSequence>> GetApplicationSequencesAsync(Guid applicationId)
+        public async Task<IEnumerable<ApplicationSequence>> GetApplicationSequences(Guid applicationId)
         {
             var sequencesTask = _qnaApiClient.GetSequences(applicationId);
             var sectionsTask = _qnaApiClient.GetSections(applicationId);

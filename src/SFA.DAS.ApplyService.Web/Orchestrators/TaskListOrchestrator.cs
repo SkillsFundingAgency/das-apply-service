@@ -38,7 +38,7 @@ namespace SFA.DAS.ApplyService.Web.Orchestrators
             var providerRouteTask = _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
             var organisationVerificationStatusTask = _organisationVerificationService.GetOrganisationVerificationStatus(applicationId);
             var refreshNotRequiredOverridesTask = _notRequiredOverridesService.RefreshNotRequiredOverridesAsync(applicationId);
-            var sequencesTask = _roatpTaskListWorkflowService.GetApplicationSequencesAsync(applicationId);
+            var sequencesTask = _roatpTaskListWorkflowService.GetApplicationSequences(applicationId);
 
             await Task.WhenAll(organisationDetailsTask, providerRouteTask, organisationVerificationStatusTask, refreshNotRequiredOverridesTask, sequencesTask);
 

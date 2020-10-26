@@ -51,7 +51,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Orchestrators
 
             _sequences = GenerateTestSequences();
 
-            _roatpTaskListWorkflowService.Setup(x => x.GetApplicationSequencesAsync(_applicationId)).ReturnsAsync(()=> _sequences.ToArray());
+            _roatpTaskListWorkflowService.Setup(x => x.GetApplicationSequences(_applicationId)).ReturnsAsync(()=> _sequences.ToArray());
 
             _roatpTaskListWorkflowService
                 .Setup(x => x.SectionStatus(_applicationId, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<List<ApplicationSequence>>(), It.IsAny<OrganisationVerificationStatus>()))

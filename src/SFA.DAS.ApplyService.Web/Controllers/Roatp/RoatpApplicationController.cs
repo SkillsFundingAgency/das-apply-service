@@ -1140,7 +1140,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var organisationVerificationStatus = await _organisationVerificationService.GetOrganisationVerificationStatus(model.ApplicationId);
 
             _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(model.ApplicationId);
-            var sequences = _roatpTaskListWorkflowService.GetApplicationSequences(model.ApplicationId);
+            var sequences = await _roatpTaskListWorkflowService.GetApplicationSequences(model.ApplicationId);
 
             foreach (var sequence in application.ApplyData.Sequences)
             {
