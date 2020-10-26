@@ -30,31 +30,11 @@ namespace SFA.DAS.ApplyService.Web.Services
             _sessionService = sessionService;
         }
 
-        public void RefreshNotRequiredOverrides(Guid applicationId)
-        {
-            RemoveConfigurationFromCache(applicationId);
-            var configuration = CalculateNotRequiredOverrides(applicationId);
-            SaveConfigurationToCache(applicationId, configuration);
-        }
-
         public async Task RefreshNotRequiredOverridesAsync(Guid applicationId)
         {
             RemoveConfigurationFromCache(applicationId);
             var configuration = await CalculateNotRequiredOverridesAsync(applicationId);
             SaveConfigurationToCache(applicationId, configuration);
-        }
-
-        public List<NotRequiredOverrideConfiguration> GetNotRequiredOverrides(Guid applicationId)
-        {
-            var configuration = RetrieveConfigurationFromCache(applicationId);
-
-            if (configuration == null)
-            {
-                RefreshNotRequiredOverrides(applicationId);
-                configuration = RetrieveConfigurationFromCache(applicationId);
-            }
-
-            return configuration;
         }
 
         public async Task<List<NotRequiredOverrideConfiguration>> GetNotRequiredOverridesAsync(Guid applicationId)
@@ -65,30 +45,6 @@ namespace SFA.DAS.ApplyService.Web.Services
             {
                 await RefreshNotRequiredOverridesAsync(applicationId);
                 configuration = RetrieveConfigurationFromCache(applicationId);
-            }
-
-            return configuration;
-        }
-
-
-        private List<NotRequiredOverrideConfiguration> CalculateNotRequiredOverrides(Guid applicationId)
-        {
-            List<NotRequiredOverrideConfiguration> configuration = null;
-
-            var applicationData = _qnaApiClient.GetApplicationData(applicationId).GetAwaiter().GetResult() as JObject;
-
-            if (applicationData != null)
-            {
-                configuration = new List<NotRequiredOverrideConfiguration>(_configuration);
-
-                foreach (var overrideConfig in configuration)
-                {
-                    foreach (var condition in overrideConfig.Conditions)
-                    {
-                        var applicationDataValue = applicationData[condition.ConditionalCheckField];
-                        condition.Value = applicationDataValue != null ? applicationDataValue.Value<string>() : string.Empty;
-                    }
-                }
             }
 
             return configuration;

@@ -33,7 +33,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             _applicationId = Guid.NewGuid();
             _qnaApiClient = new Mock<IQnaApiClient>();
             _notRequiredOverridesService = new Mock<INotRequiredOverridesService>();
-            _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverrides(It.IsAny<Guid>())).Returns(new List<NotRequiredOverrideConfiguration>());
+            _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverridesAsync(It.IsAny<Guid>())).ReturnsAsync(new List<NotRequiredOverrideConfiguration>());
             _configuration = new Mock<IOptions<List<TaskListConfiguration>>>();
             var config = new List<TaskListConfiguration>
             {
@@ -188,7 +188,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                     SectionId = sectionId
                 }
             };
-            _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverrides(_applicationId)).Returns(notRequiredOverrides);
+            _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverridesAsync(_applicationId)).ReturnsAsync(notRequiredOverrides);
 
             var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = sequenceId,
                     Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = sectionId,
@@ -231,7 +231,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                     SectionId = sectionId
                 }
             };
-            _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverrides(_applicationId)).Returns(notRequiredOverrides);
+            _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverridesAsync(_applicationId)).ReturnsAsync(notRequiredOverrides);
 
             var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = sequenceId,
                     Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = sectionId,
@@ -274,7 +274,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                     SectionId = sectionId
                 }
             };
-            _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverrides(_applicationId)).Returns(notRequiredOverrides);
+            _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverridesAsync(_applicationId)).ReturnsAsync(notRequiredOverrides);
 
             var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = sequenceId,
                     Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = sectionId,

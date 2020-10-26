@@ -53,7 +53,9 @@ namespace SFA.DAS.ApplyService.Web.Services
         public string SectionStatus(Guid applicationId, int sequenceId, int sectionId, 
                                     IEnumerable<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
         {
-            if (SectionNotRequired(applicationId, sequenceId, sectionId))
+            var sectionNotRequired = SectionNotRequired(applicationId, sequenceId, sectionId).GetAwaiter().GetResult();
+
+            if (sectionNotRequired)
             {
                 return TaskListSectionStatus.NotRequired;
             }
@@ -219,9 +221,9 @@ namespace SFA.DAS.ApplyService.Web.Services
             await _notRequiredOverridesService.RefreshNotRequiredOverridesAsync(applicationId);
         }
 
-        public bool SectionNotRequired(Guid applicationId, int sequenceId, int sectionId)
+        public async Task<bool> SectionNotRequired(Guid applicationId, int sequenceId, int sectionId)
         {
-            var notRequiredOverrides = _notRequiredOverridesService.GetNotRequiredOverrides(applicationId);
+            var notRequiredOverrides = await _notRequiredOverridesService.GetNotRequiredOverridesAsync(applicationId);
 
             var filteredSections = notRequiredOverrides.Where(condition => sequenceId == condition.SequenceId &&
                                                         sectionId == condition.SectionId).ToList();

@@ -84,7 +84,7 @@ namespace SFA.DAS.ApplyService.Web.Orchestrators
                     {
                         Id = section.SectionId,
                         Title = section.Title,
-                        IsNotRequired = _roatpTaskListWorkflowService.SectionNotRequired(applicationId,
+                        IsNotRequired = await _roatpTaskListWorkflowService.SectionNotRequired(applicationId,
                             sequence.SequenceId, section.SectionId),
                         Status = sequence.SequenceId == RoatpWorkflowSequenceIds.Finish
                                 ? await _roatpTaskListWorkflowService.FinishSectionStatus(applicationId, section.SectionId, sequences, applicationSequencesCompleted)
