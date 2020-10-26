@@ -43,7 +43,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("Clarification/Applications/{applicationId}/Sectors")]
         public async Task<List<AssessorSector>> GetSectors(Guid applicationId, [FromBody] GetSectorsRequest request)
         {
-            var sectors = await _sectorService.GetSectorsForModerator(applicationId, request.UserId);
+            var sectors = await _sectorService.GetSectorsForClarification(applicationId, request.UserId);
 
             return sectors.OrderBy(sec => sec.PageId).ToList();
         }
