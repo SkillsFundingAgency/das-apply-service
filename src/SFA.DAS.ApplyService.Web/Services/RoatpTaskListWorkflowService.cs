@@ -6,8 +6,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MoreLinq;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
-using SFA.DAS.ApplyService.Application.Organisations.GetOrganisation;
-using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Web.Configuration;
@@ -144,7 +142,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             return true;
         }
 
-        public string FinishSectionStatus(Guid applicationId, int sectionId, IEnumerable<ApplicationSequence> applicationSequences, bool applicationSequencesCompleted)
+        public async Task<string> FinishSectionStatus(Guid applicationId, int sectionId, IEnumerable<ApplicationSequence> applicationSequences, bool applicationSequencesCompleted)
         {
             if (!applicationSequencesCompleted)
             {
@@ -152,7 +150,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             }
             var finishSequence = applicationSequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.Finish);
 
-            var notRequiredOverrides = _notRequiredOverridesService.GetNotRequiredOverrides(applicationId);
+            var notRequiredOverrides = await _notRequiredOverridesService.GetNotRequiredOverridesAsync(applicationId);
 
             if (notRequiredOverrides != null && notRequiredOverrides.Any(condition =>
                                                             condition.AllConditionsMet &&
@@ -216,9 +214,9 @@ namespace SFA.DAS.ApplyService.Web.Services
             return filteredSequences.ToList();
         }
 
-        public void RefreshNotRequiredOverrides(Guid applicationId)
+        public async Task RefreshNotRequiredOverrides(Guid applicationId)
         {
-            _notRequiredOverridesService.RefreshNotRequiredOverrides(applicationId);
+            await _notRequiredOverridesService.RefreshNotRequiredOverridesAsync(applicationId);
         }
 
         public bool SectionNotRequired(Guid applicationId, int sequenceId, int sectionId)

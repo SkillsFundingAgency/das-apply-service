@@ -87,7 +87,7 @@ namespace SFA.DAS.ApplyService.Web.Orchestrators
                         IsNotRequired = _roatpTaskListWorkflowService.SectionNotRequired(applicationId,
                             sequence.SequenceId, section.SectionId),
                         Status = sequence.SequenceId == RoatpWorkflowSequenceIds.Finish
-                                ? _roatpTaskListWorkflowService.FinishSectionStatus(applicationId, section.SectionId, sequences, applicationSequencesCompleted)
+                                ? await _roatpTaskListWorkflowService.FinishSectionStatus(applicationId, section.SectionId, sequences, applicationSequencesCompleted)
                                 : _roatpTaskListWorkflowService.SectionStatus(applicationId, sequence.SequenceId, section.SectionId, sequences, organisationVerificationStatus),
                         IsLocked = GetIsLocked(sequence.SequenceId, section.SectionId, yourOrganisationSequenceCompleted, applicationId, sequences, organisationVerificationStatus, applicationSequencesCompleted)
                     });

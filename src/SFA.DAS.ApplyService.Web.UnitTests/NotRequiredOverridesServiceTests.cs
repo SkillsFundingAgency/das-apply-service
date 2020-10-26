@@ -9,6 +9,7 @@ using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Services;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using SFA.DAS.ApplyService.Application.UnitTests;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests
@@ -34,7 +35,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         }
 
         [Test]
-        public void Not_required_overrides_unchanged_if_no_matching_tags_in_application_data()
+        public async Task Not_required_overrides_unchanged_if_no_matching_tags_in_application_data()
         {
             var configuration = new List<NotRequiredOverrideConfiguration> 
             {
@@ -65,14 +66,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             _sessionService.Setup(x => x.Set(_sessionKey, configuration));
 
             _service = new NotRequiredOverridesService(_config.Object, _apiClient.Object, _sessionService.Object);
-            var overrides = _service.GetNotRequiredOverrides(_applicationId);
+            var overrides = await _service.GetNotRequiredOverridesAsync(_applicationId);
 
             overrides[0].Conditions[0].Value.Should().BeEmpty();
             overrides[0].AllConditionsMet.Should().BeFalse();
         }
 
         [Test]
-        public void Not_required_overrides_populated_with_answers_from_question_tags()
+        public async Task Not_required_overrides_populated_with_answers_from_question_tags()
         {
             var configuration = new List<NotRequiredOverrideConfiguration>
             {
@@ -103,14 +104,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             _sessionService.Setup(x => x.Set(_sessionKey, configuration));
 
             _service = new NotRequiredOverridesService(_config.Object, _apiClient.Object, _sessionService.Object);
-            var overrides = _service.GetNotRequiredOverrides(_applicationId);
+            var overrides = await _service.GetNotRequiredOverridesAsync(_applicationId);
 
             overrides[0].Conditions[0].Value.Should().Be("Test");
             overrides[0].AllConditionsMet.Should().BeTrue();
         }
 
         [Test]
-        public void Not_required_overrides_retrieved_from_session_cache_if_already_looked_up_previously()
+        public async Task Not_required_overrides_retrieved_from_session_cache_if_already_looked_up_previously()
         {
             var configuration = new List<NotRequiredOverrideConfiguration>
             {
@@ -142,14 +143,14 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             _sessionService.Setup(x => x.Set(_sessionKey, configuration));
 
             _service = new NotRequiredOverridesService(_config.Object, _apiClient.Object, _sessionService.Object);
-            var overrides = _service.GetNotRequiredOverrides(_applicationId);
+            var overrides = await _service.GetNotRequiredOverridesAsync(_applicationId);
 
             overrides[0].Conditions[0].Value.Should().Be("NotTest");
             overrides[0].AllConditionsMet.Should().BeFalse();
         }
 
         [Test]
-        public void RefreshNotRequiredOverrides_repopulates_the_session_cache_config()
+        public async Task RefreshNotRequiredOverrides_repopulates_the_session_cache_config()
         {
             var configuration = new List<NotRequiredOverrideConfiguration>
             {
@@ -178,7 +179,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             _apiClient.Setup(x => x.GetApplicationData(_applicationId)).ReturnsAsync(applicationData);
 
             _service = new NotRequiredOverridesService(_config.Object, _apiClient.Object, _sessionService.Object);
-            _service.RefreshNotRequiredOverrides(_applicationId);
+            await _service.RefreshNotRequiredOverridesAsync(_applicationId);
 
             _sessionService.Verify(x => x.Remove(_sessionKey), Times.Once);
             _sessionService.Verify(x => x.Set(_sessionKey, configuration), Times.Once);
