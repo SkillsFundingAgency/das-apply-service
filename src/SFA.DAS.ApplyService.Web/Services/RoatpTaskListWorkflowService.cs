@@ -169,7 +169,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 return TaskListSectionStatus.NotRequired;
             }
 
-            var finishSection = _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpWorkflowSequenceIds.Finish, sectionId).GetAwaiter().GetResult();
+            var finishSection = await _qnaApiClient.GetSectionBySectionNo(applicationId, RoatpWorkflowSequenceIds.Finish, sectionId);
 
             var sectionPages = finishSection.QnAData.Pages.Count();
             var completedCount = 0;
