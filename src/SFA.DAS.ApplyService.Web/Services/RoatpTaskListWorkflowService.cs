@@ -53,7 +53,14 @@ namespace SFA.DAS.ApplyService.Web.Services
         public string SectionStatus(Guid applicationId, int sequenceId, int sectionId, 
                                     IEnumerable<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
         {
-            var sectionNotRequired = SectionNotRequired(applicationId, sequenceId, sectionId).GetAwaiter().GetResult();
+            return SectionStatusAsync(applicationId, sequenceId, sectionId, applicationSequences, organisationVerificationStatus)
+                .GetAwaiter().GetResult();
+        }
+
+        public async Task<string> SectionStatusAsync(Guid applicationId, int sequenceId, int sectionId,
+            IEnumerable<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
+        {
+            var sectionNotRequired = await SectionNotRequired(applicationId, sequenceId, sectionId);
 
             if (sectionNotRequired)
             {
@@ -69,7 +76,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             var sequence = applicationSequences?.FirstOrDefault(x => (int)x.SequenceId == sequenceId);
 
             var section = sequence?.Sections?.FirstOrDefault(x => x.SectionId == sectionId);
-                                   
+
             if (section == null)
             {
                 return string.Empty;
@@ -81,9 +88,9 @@ namespace SFA.DAS.ApplyService.Web.Services
             }
 
             var questionsCompleted = SectionCompletedQuestionsCount(section);
-                        
+
             var sectionText = GetSectionText(questionsCompleted, section, sequence.Sequential);
-            
+
             return sectionText;
         }
 
@@ -224,9 +231,6 @@ namespace SFA.DAS.ApplyService.Web.Services
         public async Task<bool> SectionNotRequired(Guid applicationId, int sequenceId, int sectionId)
         {
             var notRequiredOverrides = await _notRequiredOverridesService.GetNotRequiredOverridesAsync(applicationId);
-
-            var filteredSections = notRequiredOverrides.Where(condition => sequenceId == condition.SequenceId &&
-                                                        sectionId == condition.SectionId).ToList();
 
             if (notRequiredOverrides.Any(condition =>
                                                         sequenceId == condition.SequenceId &&

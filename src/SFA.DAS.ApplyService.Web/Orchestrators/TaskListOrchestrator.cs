@@ -48,9 +48,8 @@ namespace SFA.DAS.ApplyService.Web.Orchestrators
             var sequences = (await sequencesTask).ToList();
 
             var yourOrganisationSequence = sequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
-            var yourOrganisationSequenceCompleted = CheckYourOrganisationSequenceComplete(applicationId, sequences, organisationVerificationStatus, yourOrganisationSequence);
-            var applicationSequencesCompleted = ApplicationSequencesCompleted(applicationId, sequences, organisationVerificationStatus);
-
+            var yourOrganisationSequenceCompleted = await CheckYourOrganisationSequenceComplete(applicationId, sequences, organisationVerificationStatus, yourOrganisationSequence);
+            var applicationSequencesCompleted = await ApplicationSequencesCompleted(applicationId, sequences, organisationVerificationStatus);
 
             var result = new TaskListViewModel
             {
@@ -88,7 +87,7 @@ namespace SFA.DAS.ApplyService.Web.Orchestrators
                             sequence.SequenceId, section.SectionId),
                         Status = sequence.SequenceId == RoatpWorkflowSequenceIds.Finish
                                 ? await _roatpTaskListWorkflowService.FinishSectionStatus(applicationId, section.SectionId, sequences, applicationSequencesCompleted)
-                                : _roatpTaskListWorkflowService.SectionStatus(applicationId, sequence.SequenceId, section.SectionId, sequences, organisationVerificationStatus),
+                                : await _roatpTaskListWorkflowService.SectionStatusAsync(applicationId, sequence.SequenceId, section.SectionId, sequences, organisationVerificationStatus),
                         IsLocked = GetIsLocked(sequence.SequenceId, section.SectionId, yourOrganisationSequenceCompleted, applicationId, sequences, organisationVerificationStatus, applicationSequencesCompleted)
                     });
                 }
@@ -141,12 +140,12 @@ namespace SFA.DAS.ApplyService.Web.Orchestrators
             return false;
         }
 
-        private bool CheckYourOrganisationSequenceComplete(Guid applicationId, IEnumerable<ApplicationSequence> sequences, OrganisationVerificationStatus organisationVerificationStatus, ApplicationSequence yourOrganisationSequence)
+        private async Task<bool> CheckYourOrganisationSequenceComplete(Guid applicationId, IEnumerable<ApplicationSequence> sequences, OrganisationVerificationStatus organisationVerificationStatus, ApplicationSequence yourOrganisationSequence)
         {
             var yourOrganisationSequenceComplete = true;
             foreach (var section in yourOrganisationSequence.Sections)
             {
-                var sectionStatus = _roatpTaskListWorkflowService.SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation,
+                var sectionStatus = await _roatpTaskListWorkflowService.SectionStatusAsync(applicationId, RoatpWorkflowSequenceIds.YourOrganisation,
                     section.SectionId, sequences.ToList(), organisationVerificationStatus);
                 if (sectionStatus != TaskListSectionStatus.Completed)
                 {
@@ -158,14 +157,14 @@ namespace SFA.DAS.ApplyService.Web.Orchestrators
             return yourOrganisationSequenceComplete;
         }
 
-        private bool ApplicationSequencesCompleted(Guid applicationId, IEnumerable<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
+        private async Task<bool> ApplicationSequencesCompleted(Guid applicationId, IEnumerable<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
         {
             var nonFinishSequences = applicationSequences.Where(seq => seq.SequenceId != RoatpWorkflowSequenceIds.Finish).ToList();
             foreach (var sequence in nonFinishSequences)
             {
                 foreach (var section in sequence.Sections)
                 {
-                    var sectionStatus = _roatpTaskListWorkflowService.SectionStatus(applicationId, sequence.SequenceId, section.SectionId, applicationSequences, organisationVerificationStatus);
+                    var sectionStatus = await _roatpTaskListWorkflowService.SectionStatusAsync(applicationId, sequence.SequenceId, section.SectionId, applicationSequences, organisationVerificationStatus);
                     if (sectionStatus != TaskListSectionStatus.NotRequired && sectionStatus != TaskListSectionStatus.Completed)
                     {
                         return false;
