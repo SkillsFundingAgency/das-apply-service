@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MoreLinq;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
+using SFA.DAS.ApplyService.Application.Organisations.GetOrganisation;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
@@ -324,8 +325,14 @@ namespace SFA.DAS.ApplyService.Web.Services
                     return TaskListSectionStatus.Blank;
                 }
 
-                var companiesHouseVerified = organisationVerificationStatus.CompaniesHouseDataConfirmed 
-                                         || organisationVerificationStatus.CompaniesHouseManualEntry;
+
+                if ((organisationVerificationStatus.CompaniesHouseManualEntry || organisationVerificationStatus.CharityCommissionManualEntry) 
+                    && !organisationVerificationStatus.CharityCommissionDataConfirmed
+                    && !organisationVerificationStatus.CompaniesHouseDataConfirmed
+                    && !organisationVerificationStatus.WhosInControlConfirmed)
+                    return TaskListSectionStatus.Next;
+
+                var companiesHouseVerified = organisationVerificationStatus.CompaniesHouseDataConfirmed || organisationVerificationStatus.CompaniesHouseManualEntry;
                 var charityCommissionVerified = organisationVerificationStatus.CharityCommissionDataConfirmed 
                                               || organisationVerificationStatus.CharityCommissionManualEntry;
 
