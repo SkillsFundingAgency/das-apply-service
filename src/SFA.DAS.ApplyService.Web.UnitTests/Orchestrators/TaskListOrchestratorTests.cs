@@ -54,8 +54,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Orchestrators
             _roatpTaskListWorkflowService.Setup(x => x.GetApplicationSequences(_applicationId)).ReturnsAsync(()=> _sequences.ToArray());
 
             _roatpTaskListWorkflowService
-                .Setup(x => x.SectionStatus(_applicationId, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<List<ApplicationSequence>>(), It.IsAny<OrganisationVerificationStatus>()))
-                .Returns(() => "Completed");
+                .Setup(x => x.SectionStatusAsync(_applicationId, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<List<ApplicationSequence>>(), It.IsAny<OrganisationVerificationStatus>()))
+                .ReturnsAsync(() => "Completed");
 
             _roatpTaskListWorkflowService
                 .Setup(x => x.PreviousSectionCompleted(_applicationId, It.IsAny<int>(), It.IsAny<int>(),
@@ -114,8 +114,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Orchestrators
         public async Task GetTaskListViewModel_other_sequences_are_locked_if_sequence_1_is_not_complete()
         {
             _roatpTaskListWorkflowService
-                .Setup(x => x.SectionStatus(_applicationId, 1, It.IsAny<int>(), It.IsAny<List<ApplicationSequence>>(), It.IsAny<OrganisationVerificationStatus>()))
-                .Returns(() => "");
+                .Setup(x => x.SectionStatusAsync(_applicationId, 1, It.IsAny<int>(), It.IsAny<List<ApplicationSequence>>(), It.IsAny<OrganisationVerificationStatus>()))
+                .ReturnsAsync(() => "");
 
             var result = await _orchestrator.GetTaskListViewModel(_applicationId, _userId);
 
