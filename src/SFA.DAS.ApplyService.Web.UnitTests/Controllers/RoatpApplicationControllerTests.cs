@@ -333,7 +333,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void Confirm_submit_application_updates_application_status_and_sends_confirmation_email_if_they_have_confirmed_details_are_correct()
+        public async Task Confirm_submit_application_updates_application_status_and_sends_confirmation_email_if_they_have_confirmed_details_are_correct()
         {
             var application = new Apply
             {
@@ -380,7 +380,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _submitApplicationEmailService.Setup(x => x.SendGetHelpWithQuestionEmail(It.IsAny<ApplicationSubmitConfirmation>())).Returns(Task.FromResult(true));
 
-            var result = _controller.ConfirmSubmitApplication(model).GetAwaiter().GetResult();
+            var result = await _controller.ConfirmSubmitApplication(model);
 
             var redirectResult = result as RedirectToActionResult;
             redirectResult.Should().NotBeNull();

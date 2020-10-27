@@ -1162,7 +1162,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 sequence.NotRequired = SequenceNotRequired(model.ApplicationId, applicationSequence, sequences,
                                                            organisationVerificationStatus);
             }
-            var providerRoutes = _roatpApiClient.GetApplicationRoutes().GetAwaiter().GetResult();
+            var providerRoutes = await _roatpApiClient.GetApplicationRoutes();
             var selectedProviderRoute = providerRoutes.FirstOrDefault(p => p.Id.ToString() == providerRoute.Value);
 
             var submitApplicationRequest = new Application.Apply.Submit.SubmitApplicationRequest
