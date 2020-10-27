@@ -34,7 +34,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         public string SectionQuestionsStatus(Guid applicationId, int sequenceId, int sectionId, IEnumerable<ApplicationSequence> applicationSequences)
         {
-            var sequence = applicationSequences?.FirstOrDefault(x => (int)x.SequenceId == sequenceId);
+            var sequence = applicationSequences?.FirstOrDefault(x => x.SequenceId == sequenceId);
 
             var section = sequence?.Sections?.FirstOrDefault(x => x.SectionId == sectionId);
 
@@ -70,10 +70,10 @@ namespace SFA.DAS.ApplyService.Web.Services
             if (sequenceId == RoatpWorkflowSequenceIds.YourOrganisation
                 && sectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl)
             {
-                return WhosInControlSectionStatus(applicationId, applicationSequences, organisationVerificationStatus);
+                return await WhosInControlSectionStatus(applicationId, applicationSequences, organisationVerificationStatus);
             }
 
-            var sequence = applicationSequences?.FirstOrDefault(x => (int)x.SequenceId == sequenceId);
+            var sequence = applicationSequences?.FirstOrDefault(x => x.SequenceId == sequenceId);
 
             var section = sequence?.Sections?.FirstOrDefault(x => x.SectionId == sectionId);
 
@@ -140,7 +140,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 if (previousSectionsCompletedCount == 0)
                     return false;                               
 
-                var previousSectionQuestionsCount = previousSection.QnAData.Pages.Where(p => p.NotRequired == false).SelectMany(x => x.Questions)
+                var previousSectionQuestionsCount = previousSection.QnAData.Pages.Where(p => !p.NotRequired).SelectMany(x => x.Questions)
                     .DistinctBy(q => q.QuestionId).Count();
                 if (previousSectionsCompletedCount < previousSectionQuestionsCount)
                 {
@@ -286,18 +286,13 @@ namespace SFA.DAS.ApplyService.Web.Services
                 return TaskListSectionStatus.Next;
             }
 
-            if (completedCount > 0)
-            {
-                return TaskListSectionStatus.InProgress;
-            }
-
-            return TaskListSectionStatus.Blank;
+            return completedCount > 0 ? TaskListSectionStatus.InProgress : TaskListSectionStatus.Blank;
         }
 
 
-        private string WhosInControlSectionStatus(Guid applicationId, IEnumerable<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
+        private async Task<string> WhosInControlSectionStatus(Guid applicationId, IEnumerable<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
         {
-            if (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails, applicationSequences, organisationVerificationStatus) == TaskListSectionStatus.Blank)
+            if (await SectionStatusAsync(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails, applicationSequences, organisationVerificationStatus) == TaskListSectionStatus.Blank)
             {
                 return TaskListSectionStatus.Blank;
             }
