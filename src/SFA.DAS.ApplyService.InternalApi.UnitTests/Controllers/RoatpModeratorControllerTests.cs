@@ -158,11 +158,11 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
             var request = new RoatpModeratorController.GetSectorsRequest { UserId = _userId };
 
             var expectedResult = new List<AssessorSector>();
-            _sectorService.Setup(x => x.GetSectorsForClarification(_applicationId, _userId)).ReturnsAsync(expectedResult);
+            _sectorService.Setup(x => x.GetSectorsForModerator(_applicationId, _userId)).ReturnsAsync(expectedResult);
 
             var actualResult = await _controller.GetSectors(_applicationId, request);
 
-            _sectorService.Verify(x => x.GetSectorsForClarification(_applicationId, _userId), Times.Once);
+            _sectorService.Verify(x => x.GetSectorsForModerator(_applicationId, _userId), Times.Once);
             CollectionAssert.AreEqual(actualResult, expectedResult);
         }
     }
