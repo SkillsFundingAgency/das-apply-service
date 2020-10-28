@@ -54,6 +54,7 @@ namespace SFA.DAS.ApplyService.Web.Orchestrators
             var result = new TaskListViewModel
             {
                 ApplicationId = applicationId,
+                ApplicationRouteId = providerRoute.Value,
                 ApplicationSummaryViewModel = new ApplicationSummaryViewModel
                 {
                     ApplicationId = applicationId,
