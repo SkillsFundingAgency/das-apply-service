@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.ApplyService.Application.Apply.Assessor;
+using SFA.DAS.ApplyService.Application.Apply.Clarification;
 using SFA.DAS.ApplyService.Application.Apply.Moderator;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Domain.Apply;
@@ -62,6 +63,32 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
             if (sectors != null)
             {
                 var sectionStatusesRequest = new GetModeratorPageReviewOutcomesForSectionRequest(applicationId, SectorsSequenceNumber, SectorsSectionNumber, userId);
+                var sectionStatuses = await _mediator.Send(sectionStatusesRequest);
+
+                if (sectionStatuses != null)
+                {
+                    foreach (var sector in sectors)
+                    {
+                        foreach (var sectorStatus in sectionStatuses.Where(sectorStatus => sector.PageId == sectorStatus.PageId))
+                        {
+                            sector.Status = sectorStatus.Status;
+                        }
+                    }
+                }
+            }
+
+            return sectors;
+        }
+
+        public async Task<List<AssessorSector>> GetSectorsForClarification(Guid applicationId, string userId)
+        {
+            var startingPages = await GetStartingPagesFromApplication(applicationId);
+
+            var sectors = startingPages?.Select(page => new AssessorSector { Title = page.LinkTitle, PageId = page.PageId }).ToList();
+
+            if (sectors != null)
+            {
+                var sectionStatusesRequest = new GetClarificationPageReviewOutcomesForSectionRequest(applicationId, SectorsSequenceNumber, SectorsSectionNumber, userId);
                 var sectionStatuses = await _mediator.Send(sectionStatusesRequest);
 
                 if (sectionStatuses != null)

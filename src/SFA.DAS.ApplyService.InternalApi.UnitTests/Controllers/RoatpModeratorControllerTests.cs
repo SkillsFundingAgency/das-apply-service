@@ -44,7 +44,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
         }
 
         [Test]
-        public async Task GetAssessorOverview_gets_expected_sequences()
+        public async Task GetModeratorOverview_gets_expected_sequences()
         {
             var expectedResult = new List<AssessorSequence>();
             _sequenceService.Setup(x => x.GetSequences(_applicationId)).ReturnsAsync(expectedResult);
