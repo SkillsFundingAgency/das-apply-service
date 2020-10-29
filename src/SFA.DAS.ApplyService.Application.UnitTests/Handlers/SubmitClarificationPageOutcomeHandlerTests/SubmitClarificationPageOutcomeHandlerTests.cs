@@ -30,14 +30,15 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.SubmitClarificatio
             var sectionNumber = 2;
             var pageId = "30";
             var userId = "4fs7f-userId-7gfhh";
+            var userName = "user-name";
             var status = "Fail";
             var comment = "Very bad";
             var clarificaitonReponse = "A good response";
             var clarificationFile = "file.pdf";
 
-            await _handler.Handle(new SubmitClarificationPageOutcomeRequest(applicationId, sequenceNumber, sectionNumber, pageId, userId, status, comment, clarificaitonReponse, clarificationFile), new CancellationToken());
+            await _handler.Handle(new SubmitClarificationPageOutcomeRequest(applicationId, sequenceNumber, sectionNumber, pageId, userId, userName, status, comment, clarificaitonReponse, clarificationFile), new CancellationToken());
 
-            _repository.Verify(x => x.SubmitClarificationPageOutcome(applicationId, sequenceNumber, sectionNumber, pageId, userId, status, comment, clarificaitonReponse, clarificationFile), Times.Once);
+            _repository.Verify(x => x.SubmitClarificationPageOutcome(applicationId, sequenceNumber, sectionNumber, pageId, userId, userName, status, comment, clarificaitonReponse, clarificationFile), Times.Once);
         }
     }
 }

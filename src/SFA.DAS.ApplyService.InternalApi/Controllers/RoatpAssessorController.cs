@@ -103,7 +103,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             if (string.IsNullOrWhiteSpace(application.Assessor1ReviewStatus) &&
                 string.IsNullOrWhiteSpace(application.Assessor2ReviewStatus))
             {
-                await _assessorReviewCreationService.CreateEmptyReview(applicationId, request.AssessorUserId, request.AssessorNumber);
+                await _assessorReviewCreationService.CreateEmptyReview(applicationId, request.AssessorUserId, request.AssessorName, request.AssessorNumber);
             }
         }
 
@@ -152,7 +152,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("Assessor/Applications/{applicationId}/SubmitPageReviewOutcome")]
         public async Task SubmitPageReviewOutcome(Guid applicationId, [FromBody] SubmitPageReviewOutcomeCommand request)
         {
-            await _mediator.Send(new SubmitAssessorPageOutcomeRequest(applicationId, request.SequenceNumber, request.SectionNumber, request.PageId, request.UserId, request.Status, request.Comment));
+            await _mediator.Send(new SubmitAssessorPageOutcomeRequest(applicationId, request.SequenceNumber, request.SectionNumber, request.PageId, request.UserId, request.UserName, request.Status, request.Comment));
         }
 
         [HttpPost("Assessor/Applications/{applicationId}/GetPageReviewOutcome")]
@@ -188,7 +188,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
             if(application.Assessor1ReviewStatus == AssessorReviewStatus.Approved && application.Assessor2ReviewStatus == AssessorReviewStatus.Approved)
             { 
-                await _moderatorReviewCreationService.CreateEmptyReview(applicationId, request.UserId);
+                await _moderatorReviewCreationService.CreateEmptyReview(applicationId, request.UserId, request.UserName);
             }
         }
 
@@ -206,6 +206,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             public int SectionNumber { get; set; }
             public string PageId { get; set; }
             public string UserId { get; set; }
+            public string UserName { get; set; }
             public string Status { get; set; }
             public string Comment { get; set; }
         }
@@ -233,6 +234,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public class UpdateAssessorReviewStatusCommand
         {
             public string UserId { get; set; }
+            public string UserName { get; set; }
             public string Status { get; set; }
         }
 

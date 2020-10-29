@@ -10,6 +10,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Clarification
                                                         int sectionNumber,
                                                         string pageId,
                                                         string userId,
+                                                        string userName,
                                                         string status,
                                                         string comment,
                                                         string clarificationResponse,
@@ -20,6 +21,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Clarification
             SectionNumber = sectionNumber;
             PageId = pageId;
             UserId = userId;
+            UserName = userName;
             Status = status;
             Comment = comment;
             ClarificationResponse = clarificationResponse;
@@ -31,6 +33,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Clarification
         public int SectionNumber { get; }
         public string PageId { get; }
         public string UserId { get; }
+        public string UserName { get; }
         public string Status { get; }
         public string Comment { get; }
         public string ClarificationResponse { get; }

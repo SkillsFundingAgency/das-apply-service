@@ -99,7 +99,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
                 }
             }
 
-            await _mediator.Send(new SubmitClarificationPageOutcomeRequest(applicationId, request.SequenceNumber, request.SectionNumber, request.PageId, request.UserId, request.Status, request.Comment, request.ClarificationResponse, clarificationFile));
+            await _mediator.Send(new SubmitClarificationPageOutcomeRequest(applicationId, request.SequenceNumber, request.SectionNumber, request.PageId, request.UserId, request.UserName, request.Status, request.Comment, request.ClarificationResponse, clarificationFile));
             return Ok();
         }
 
@@ -163,6 +163,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             public int SectionNumber { get; set; }
             public string PageId { get; set; }
             public string UserId { get; set; }
+            public string UserName { get; set; }
             public string Status { get; set; }
             public string Comment { get; set; }
             public string ClarificationResponse { get; set; }

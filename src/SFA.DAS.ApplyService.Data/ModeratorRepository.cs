@@ -124,7 +124,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task SubmitModeratorPageOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string userId, string status, string comment)
+        public async Task SubmitModeratorPageOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string userId, string userName, string status, string comment)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
@@ -133,6 +133,7 @@ namespace SFA.DAS.ApplyService.Data
                 await connection.ExecuteAsync(
                     @"UPDATE [ModeratorPageReviewOutcome]
 			            SET [ModeratorUserId] = @userId
+                            , [ModeratorUserName] = @userName
                             , [ModeratorReviewStatus] = @status
 				            , [ModeratorReviewComment] = @comment
 				            , [UpdatedAt] = GETUTCDATE()
@@ -141,7 +142,7 @@ namespace SFA.DAS.ApplyService.Data
 					          [SequenceNumber] = @sequenceNumber AND
 					          [SectionNumber] = @sectionNumber AND
 					          [PageId] = @pageId",
-                    new { applicationId, sequenceNumber, sectionNumber, pageId, userId, status, comment });
+                    new { applicationId, sequenceNumber, sectionNumber, pageId, userId, userName, status, comment });
 
                 // APR-1633 - Update Moderation Status from 'New' to 'In Moderation'
                 await connection.ExecuteAsync(
@@ -155,7 +156,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task CreateEmptyModeratorReview(Guid applicationId, string userId, List<ModeratorPageReviewOutcome> pageReviewOutcomes)
+        public async Task CreateEmptyModeratorReview(Guid applicationId, string userId, string userName, List<ModeratorPageReviewOutcome> pageReviewOutcomes)
         {
             var createdAtDateTime = DateTime.UtcNow;
 
@@ -165,6 +166,7 @@ namespace SFA.DAS.ApplyService.Data
             dataTable.Columns.Add("SectionNumber", typeof(int));
             dataTable.Columns.Add("PageId", typeof(string));
             dataTable.Columns.Add("ModeratorUserId", typeof(string));
+            dataTable.Columns.Add("ModeratorUserName", typeof(string));
             dataTable.Columns.Add("CreatedAt", typeof(DateTime));
             dataTable.Columns.Add("CreatedBy", typeof(string));
 
@@ -176,6 +178,7 @@ namespace SFA.DAS.ApplyService.Data
                     outcome.SectionNumber,
                     outcome.PageId,
                     userId,
+                    userName,
                     createdAtDateTime,
                     userId
                 );

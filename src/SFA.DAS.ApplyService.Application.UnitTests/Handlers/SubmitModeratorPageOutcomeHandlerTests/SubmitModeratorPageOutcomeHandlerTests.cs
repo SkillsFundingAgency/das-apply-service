@@ -30,12 +30,13 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.SubmitModeratorPag
             var sectionNumber = 2;
             var pageId = "30";
             var userId = "4fs7f-userId-7gfhh";
+            var userName = "user-name";
             var status = "Fail";
             var comment = "Very bad";
 
-            await _handler.Handle(new SubmitModeratorPageOutcomeRequest(applicationId, sequenceNumber, sectionNumber, pageId, userId, status, comment), new CancellationToken());
+            await _handler.Handle(new SubmitModeratorPageOutcomeRequest(applicationId, sequenceNumber, sectionNumber, pageId, userId, userName, status, comment), new CancellationToken());
 
-            _repository.Verify(x => x.SubmitModeratorPageOutcome(applicationId, sequenceNumber, sectionNumber, pageId, userId, status, comment), Times.Once);
+            _repository.Verify(x => x.SubmitModeratorPageOutcome(applicationId, sequenceNumber, sectionNumber, pageId, userId, userName, status, comment), Times.Once);
         }
     }
 }

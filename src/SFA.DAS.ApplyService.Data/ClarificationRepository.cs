@@ -32,7 +32,7 @@ namespace SFA.DAS.ApplyService.Data
                                                                         , CASE 
                                                                             WHEN outcome.[ModeratorUserId] = apply.[Assessor1UserId] THEN apply.[Assessor1Name]
                                                                             WHEN outcome.[ModeratorUserId] = apply.[Assessor2UserId] THEN apply.[Assessor2Name]
-                                                                            ELSE [ModeratorUserId]
+                                                                            ELSE [ModeratorUserName]
                                                                           END AS ModeratorName
 			                                                            , outcome.[ModeratorUserId]
 			                                                            , outcome.[ModeratorReviewStatus]
@@ -135,13 +135,14 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task SubmitClarificationPageOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string userId, string status, string comment, string clarificationResponse, string clarificationFile)
+        public async Task SubmitClarificationPageOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string userId, string userName, string status, string comment, string clarificationResponse, string clarificationFile)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
                 await connection.ExecuteAsync(
                     @"UPDATE [ModeratorPageReviewOutcome]
 			            SET [ClarificationUserId] = @userId
+                            , [ClarificationUserName] = @userName
                             , [ClarificationStatus] = @status
 				            , [ClarificationComment] = @comment
                             , [ClarificationResponse] = @clarificationResponse
@@ -153,7 +154,7 @@ namespace SFA.DAS.ApplyService.Data
 					          [SequenceNumber] = @sequenceNumber AND
 					          [SectionNumber] = @sectionNumber AND
 					          [PageId] = @pageId",
-                    new { applicationId, sequenceNumber, sectionNumber, pageId, userId, status, comment, clarificationResponse, clarificationFile });
+                    new { applicationId, sequenceNumber, sectionNumber, pageId, userId, userName, status, comment, clarificationResponse, clarificationFile });
 
                 /*
                 // Future Work - Update Moderation Status from 'Clarification Sent' to 'In Clarification'

@@ -10,6 +10,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
                                                         int sectionNumber,
                                                         string pageId,
                                                         string userId,
+                                                        string userName,
                                                         string status,
                                                         string comment)
         {
@@ -18,6 +19,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
             SectionNumber = sectionNumber;
             PageId = pageId;
             UserId = userId;
+            UserName = userName;
             Status = status;
             Comment = comment;
         }
@@ -27,6 +29,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
         public int SectionNumber { get; }
         public string PageId { get; }
         public string UserId { get; }
+        public string UserName { get; }
         public string Status { get; }
         public string Comment { get; }
     }

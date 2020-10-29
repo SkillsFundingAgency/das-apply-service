@@ -25,6 +25,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Clarification
                                                         request.SectionNumber, 
                                                         request.PageId,  
                                                         request.UserId,
+                                                        request.UserName,
                                                         request.Status, 
                                                         request.Comment,
                                                         request.ClarificationResponse,

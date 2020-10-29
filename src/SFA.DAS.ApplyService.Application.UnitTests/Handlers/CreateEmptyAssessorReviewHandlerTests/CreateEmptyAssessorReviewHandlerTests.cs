@@ -30,6 +30,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateEmptyAssesso
         {
             var applicationId = Guid.NewGuid();
             var userId = Guid.NewGuid().ToString();
+            var userName = Guid.NewGuid().ToString();
 
             var pageReviewOutcomes = new List<AssessorPageReviewOutcome>
                 {
@@ -53,11 +54,11 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateEmptyAssesso
                     }
                 };
 
-            var request = new CreateEmptyAssessorReviewRequest(applicationId, userId, pageReviewOutcomes);
+            var request = new CreateEmptyAssessorReviewRequest(applicationId, userId, userName, pageReviewOutcomes);
 
             await _handler.Handle(request, new CancellationToken());
 
-            _repository.Verify(x => x.CreateEmptyAssessorReview(request.ApplicationId, request.AssessorUserId, request.PageReviewOutcomes), Times.Once);
+            _repository.Verify(x => x.CreateEmptyAssessorReview(request.ApplicationId, request.AssessorUserId, request.AssessorUserName, request.PageReviewOutcomes), Times.Once);
         }
     }
 }

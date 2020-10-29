@@ -24,7 +24,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
                                                         request.SequenceNumber, 
                                                         request.SectionNumber, 
                                                         request.PageId,  
-                                                        request.UserId, 
+                                                        request.UserId,
+                                                        request.UserName,
                                                         request.Status, 
                                                         request.Comment);
 

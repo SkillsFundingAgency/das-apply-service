@@ -77,7 +77,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         [HttpPost("Moderator/Applications/{applicationId}/SubmitPageReviewOutcome")]
         public async Task SubmitPageReviewOutcome(Guid applicationId, [FromBody] SubmitPageReviewOutcomeCommand request)
         {
-            await _mediator.Send(new SubmitModeratorPageOutcomeRequest(applicationId, request.SequenceNumber, request.SectionNumber, request.PageId, request.UserId, request.Status, request.Comment));
+            await _mediator.Send(new SubmitModeratorPageOutcomeRequest(applicationId, request.SequenceNumber, request.SectionNumber, request.PageId, request.UserId, request.UserName, request.Status, request.Comment));
         }
 
         [HttpPost("Moderator/Applications/{applicationId}/GetPageReviewOutcome")]
@@ -118,6 +118,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             public int SectionNumber { get; set; }
             public string PageId { get; set; }
             public string UserId { get; set; }
+            public string UserName { get; set; }
             public string Status { get; set; }
             public string Comment { get; set; }
         }
