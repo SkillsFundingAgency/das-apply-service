@@ -28,14 +28,14 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Files
         private readonly string _pageId = $"{Guid.NewGuid()}";
         private readonly string _fileName = $"{Guid.NewGuid()}.txt";
 
-        private readonly ContainerType _containerType = ContainerType.Moderation;
+        private readonly ContainerType _containerType = ContainerType.Assessor;
 
         private FileStorageService _fileStorageService;
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            var config = new ApplyConfig { FileStorage = new FileStorageConfig { StorageConnectionString = _fileStorageConnectionString, ModerationContainerName = _fileStorageContainerName } };
+            var config = new ApplyConfig { FileStorage = new FileStorageConfig { StorageConnectionString = _fileStorageConnectionString, AssessorContainerName = _fileStorageContainerName } };
             var _configurationService = new Mock<IConfigurationService>();
             _configurationService.Setup(x => x.GetConfig()).ReturnsAsync(config);
 
