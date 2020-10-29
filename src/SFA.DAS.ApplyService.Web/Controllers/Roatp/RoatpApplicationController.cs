@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -15,6 +16,7 @@ using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using SFA.DAS.ApplyService.Web.Infrastructure.Interfaces;
+using SFA.DAS.ApplyService.Web.Orchestrators;
 using SFA.DAS.ApplyService.Web.ViewModels;
 
 namespace SFA.DAS.ApplyService.Web.Controllers
@@ -48,6 +50,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IPagesWithSectionsFlowService _pagesWithSectionsFlowService;
         private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
         private readonly IRoatpOrganisationVerificationService _organisationVerificationService;
+        private readonly ITaskListOrchestrator _taskListOrchestrator;
 
         private const string InputClassUpperCase = "app-uppercase";
         private const string NotApplicableAnswerText = "None of the above";
@@ -62,7 +65,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             ICustomValidatorFactory customValidatorFactory,  
             IRoatpApiClient roatpApiClient, ISubmitApplicationConfirmationEmailService submitApplicationEmailService,
             ITabularDataRepository tabularDataRepository, IRoatpTaskListWorkflowService roatpTaskListWorkflowService,
-            IRoatpOrganisationVerificationService organisationVerificationService)
+            IRoatpOrganisationVerificationService organisationVerificationService, ITaskListOrchestrator taskListOrchestrator)
             :base(sessionService)
         {
             _apiClient = apiClient;
@@ -83,6 +86,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _tabularDataRepository = tabularDataRepository;
             _roatpTaskListWorkflowService = roatpTaskListWorkflowService;
             _organisationVerificationService = organisationVerificationService;
+            _taskListOrchestrator = taskListOrchestrator;
         }
 
         [HttpGet]
@@ -160,17 +164,22 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             if (qnaResponse != null)
             {
-                var allQnaSequences = await _qnaApiClient.GetSequences(qnaResponse.ApplicationId);
-                var allQnaSections = await _qnaApiClient.GetSections(qnaResponse.ApplicationId);
+                var allQnaSequencesTask = _qnaApiClient.GetSequences(qnaResponse.ApplicationId);
+                var allQnaSectionsTask = _qnaApiClient.GetSections(qnaResponse.ApplicationId);
 
-                var startApplicationRequest = BuildStartApplicationRequest(qnaResponse.ApplicationId, user.Id, providerRoute, allQnaSequences, allQnaSections);
+                await Task.WhenAll(allQnaSequencesTask, allQnaSectionsTask);
+
+                var allQnaSequences = await allQnaSequencesTask;
+                var allQnaSections = await allQnaSectionsTask;
+
+                var startApplicationRequest = await BuildStartApplicationRequest(qnaResponse.ApplicationId, user.Id, providerRoute, allQnaSequences, allQnaSections);
 
                 var applicationId = await _apiClient.StartApplication(startApplicationRequest);
                 _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking response from StartApplication POST: applicationId: [{applicationId}]");
 
                 if (applicationId != Guid.Empty)
                 {
-                    await SavePreambleInformation(applicationId, applicationDetails);
+                   await SavePreambleInformation(applicationId, applicationDetails);
 
                     if (applicationDetails.UkrlpLookupDetails.VerifiedByCompaniesHouse)
                     {
@@ -187,9 +196,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return RedirectToAction("Applications", new { applicationType });
         }
 
-        private Application.Apply.Start.StartApplicationRequest BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
+        private async Task<Application.Apply.Start.StartApplicationRequest> BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
         {
-            var providerRoutes = _roatpApiClient.GetApplicationRoutes().GetAwaiter().GetResult();
+            var providerRoutes = await _roatpApiClient.GetApplicationRoutes();
             var selectedProviderRoute = providerRoutes.FirstOrDefault(p => p.Id == providerRoute);
 
             return new Application.Apply.Start.StartApplicationRequest
@@ -468,73 +477,18 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("Applications");
             }
 
-            _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId);
-            var sequences = _roatpTaskListWorkflowService.GetApplicationSequences(applicationId);
-
-            var organisationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
-            var providerRoute = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute);
-
-            var organisationVerificationStatus = await _organisationVerificationService.GetOrganisationVerificationStatus(applicationId);
-
-            var yourOrganisationSequence = sequences.FirstOrDefault(x => x.SequenceId == RoatpWorkflowSequenceIds.YourOrganisation);
-
-            bool yourOrganisationSequenceCompleted = CheckYourOrganisationSequenceComplete(applicationId, sequences, organisationVerificationStatus, yourOrganisationSequence);
-            bool applicationSequencesCompleted = ApplicationSequencesCompleted(applicationId, sequences, organisationVerificationStatus);
-
-            var model = new TaskListViewModel(_roatpTaskListWorkflowService, organisationVerificationStatus, applicationId)
-            {
-                UKPRN = organisationDetails.OrganisationUkprn?.ToString(),
-                OrganisationName = organisationDetails.Name,
-                TradingName = organisationDetails.OrganisationDetails?.TradingName,
-                ApplicationRouteId = providerRoute.Value,
-                YourOrganisationSequenceCompleted = yourOrganisationSequenceCompleted,
-                ApplicationSequencesCompleted = applicationSequencesCompleted
-            };
-
-            return View("~/Views/Roatp/TaskList.cshtml", model);
+            var viewModel = await _taskListOrchestrator.GetTaskListViewModel(applicationId, User.GetUserId());
+            return View("~/Views/Roatp/TaskList.cshtml", viewModel);
         }
 
-        private bool CheckYourOrganisationSequenceComplete(Guid applicationId, IEnumerable<ApplicationSequence> sequences, OrganisationVerificationStatus organisationVerificationStatus, ApplicationSequence yourOrganisationSequence)
-        {
-            var yourOrganisationSequenceComplete = true;
-            foreach (var section in yourOrganisationSequence.Sections)
-            {
-                var sectionStatus = _roatpTaskListWorkflowService.SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation,
-                                                                                section.SectionId, sequences.ToList(), organisationVerificationStatus);
-                if (sectionStatus != TaskListSectionStatus.Completed)
-                {
-                    yourOrganisationSequenceComplete = false;
-                    break;
-                }
-            }
-
-            return yourOrganisationSequenceComplete;
-        }
-
-        private bool ApplicationSequencesCompleted(Guid applicationId, IEnumerable<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
-        {
-            var nonFinishSequences = applicationSequences.Where(seq => seq.SequenceId != RoatpWorkflowSequenceIds.Finish).ToList();
-            foreach (var sequence in nonFinishSequences)
-            {
-                foreach (var section in sequence.Sections)
-                {
-                    var sectionStatus = _roatpTaskListWorkflowService.SectionStatus(applicationId, sequence.SequenceId, section.SectionId, applicationSequences, organisationVerificationStatus);
-                    if (sectionStatus != TaskListSectionStatus.NotRequired && sectionStatus != TaskListSectionStatus.Completed)
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
 
         //TODO: Move this method to the API rather than pulling all of the application back over the wire then checking.
         private async Task<bool> CanUpdateApplication(Guid applicationId, int? sequenceId = null, int? sectionId = null, string pageId = null)
         {
             bool canUpdate = false;
 
-            var application = await _apiClient.GetApplicationByUserId(applicationId, await _userService.GetSignInId());
+            var signInId = await _userService.GetSignInId();
+            var application = await _apiClient.GetApplicationByUserId(applicationId, signInId);
 
             var validApplicationStatuses = new string[] { ApplicationStatus.InProgress, ApplicationStatus.FeedbackAdded };
 
@@ -693,7 +647,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             if (validationPassed)
             {
                 // Any answer that is saved will affect the NotRequiredOverrides
-                _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId);
+                await _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(applicationId);
 
                 if (__formAction == "Add" && page.AllowMultipleAnswers)
                 {
@@ -1177,8 +1131,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var organisationVerificationStatus = await _organisationVerificationService.GetOrganisationVerificationStatus(model.ApplicationId);
 
-            _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(model.ApplicationId);
-            var sequences = _roatpTaskListWorkflowService.GetApplicationSequences(model.ApplicationId);
+            await _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(model.ApplicationId);
+            var sequences = await _roatpTaskListWorkflowService.GetApplicationSequences(model.ApplicationId);
 
             foreach (var sequence in application.ApplyData.Sequences)
             {
@@ -1200,7 +1154,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 sequence.NotRequired = SequenceNotRequired(model.ApplicationId, applicationSequence, sequences,
                                                            organisationVerificationStatus);
             }
-            var providerRoutes = _roatpApiClient.GetApplicationRoutes().GetAwaiter().GetResult();
+            var providerRoutes = await _roatpApiClient.GetApplicationRoutes();
             var selectedProviderRoute = providerRoutes.FirstOrDefault(p => p.Id.ToString() == providerRoute.Value);
 
             var submitApplicationRequest = new Application.Apply.Submit.SubmitApplicationRequest
