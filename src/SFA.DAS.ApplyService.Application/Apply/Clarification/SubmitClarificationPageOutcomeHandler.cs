@@ -27,7 +27,8 @@ namespace SFA.DAS.ApplyService.Application.Apply.Clarification
                                                         request.UserId,
                                                         request.Status, 
                                                         request.Comment,
-                                                        request.ClarificationResponse);
+                                                        request.ClarificationResponse,
+                                                        request.ClarificationFile);
 
             return Unit.Value;
         }

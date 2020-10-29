@@ -67,6 +67,7 @@ namespace SFA.DAS.ApplyService.Data
                                                                          END AS [Status]
 			                                                            ,[ClarificationComment] AS Comment
 			                                                            ,[ClarificationResponse]
+                                                                        ,[ClarificationFile]
 		                                                            FROM [dbo].[ModeratorPageReviewOutcome]
 		                                                            WHERE [ApplicationId] = @applicationId AND
 				                                                        [SequenceNumber] = @sequenceNumber AND
@@ -95,6 +96,7 @@ namespace SFA.DAS.ApplyService.Data
                                                                          END AS [Status]
 			                                                            ,[ClarificationComment] AS Comment
 			                                                            ,[ClarificationResponse]
+                                                                        ,[ClarificationFile]
 		                                                            FROM [dbo].[ModeratorPageReviewOutcome]
 		                                                            WHERE [ApplicationId] = @applicationId AND
 				                                                        [SequenceNumber] = @sequenceNumber AND
@@ -123,7 +125,8 @@ namespace SFA.DAS.ApplyService.Data
                                                                               ELSE [ClarificationStatus]
                                                                          END AS [Status]
 			                                                            ,[ClarificationComment] AS Comment
-			                                                            ,[ClarificationResponse] AS ClarificationResponse
+			                                                            ,[ClarificationResponse]
+                                                                        ,[ClarificationFile]
 		                                                            FROM [dbo].[ModeratorPageReviewOutcome]
 		                                                            WHERE [ApplicationId] = @applicationId",
                     new { applicationId, passModeratorStatus = ModerationStatus.Pass });
@@ -132,7 +135,7 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task SubmitClarificationPageOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string userId, string status, string comment, string clarificationResponse)
+        public async Task SubmitClarificationPageOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string userId, string status, string comment, string clarificationResponse, string clarificationFile)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
@@ -142,6 +145,7 @@ namespace SFA.DAS.ApplyService.Data
                             , [ClarificationStatus] = @status
 				            , [ClarificationComment] = @comment
                             , [ClarificationResponse] = @clarificationResponse
+                            , [ClarificationFile] = ISNULL(@clarificationFile, [ClarificationFile])
                             , [ClarificationUpdatedAt] = GETUTCDATE()
 				            , [UpdatedAt] = GETUTCDATE()
 				            , [UpdatedBy] = @userId
@@ -149,7 +153,7 @@ namespace SFA.DAS.ApplyService.Data
 					          [SequenceNumber] = @sequenceNumber AND
 					          [SectionNumber] = @sectionNumber AND
 					          [PageId] = @pageId",
-                    new { applicationId, sequenceNumber, sectionNumber, pageId, userId, status, comment, clarificationResponse });
+                    new { applicationId, sequenceNumber, sectionNumber, pageId, userId, status, comment, clarificationResponse, clarificationFile });
 
                 /*
                 // Future Work - Update Moderation Status from 'Clarification Sent' to 'In Clarification'
@@ -162,6 +166,22 @@ namespace SFA.DAS.ApplyService.Data
                               AND ModerationStatus = @clarificationSentStatus",
                     new { applicationId, userId, clarificationInProgressStatus = ModerationStatus.ClarificationInProgress, clarificationSentStatus = ModerationStatus.ClarificationSent });
                 */
+            }
+        }
+
+        public async Task DeleteClarificationFile(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string clarificationFile)
+        {
+            using (var connection = new SqlConnection(_config.SqlConnectionString))
+            {
+                await connection.ExecuteAsync(
+                    @"UPDATE [ModeratorPageReviewOutcome]
+			            SET [ClarificationFile] = NULL
+			            WHERE [ApplicationId] = @applicationId AND
+					          [SequenceNumber] = @sequenceNumber AND
+					          [SectionNumber] = @sectionNumber AND
+					          [PageId] = @pageId AND
+                              [ClarificationFile] = @clarificationFile",
+                    new { applicationId, sequenceNumber, sectionNumber, pageId, clarificationFile });
             }
         }
     }
