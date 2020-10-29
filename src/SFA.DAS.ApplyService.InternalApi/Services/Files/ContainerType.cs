@@ -3,6 +3,8 @@
     public enum ContainerType
     {
         Unknown = 0,
-        Moderation
+        Gateway,
+        Financial,
+        Assessor,        
     }
 }

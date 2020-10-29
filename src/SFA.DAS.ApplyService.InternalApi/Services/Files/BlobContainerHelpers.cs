@@ -64,8 +64,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Files
         {
             switch(containerType)
             {
-                case ContainerType.Moderation:
-                    return fileStorageConfig.ModerationContainerName;
+                case ContainerType.Gateway:
+                    return fileStorageConfig.GatewayContainerName;
+                case ContainerType.Financial:
+                    return fileStorageConfig.FinancialContainerName;
+                case ContainerType.Assessor:
+                    return fileStorageConfig.AssessorContainerName;
                 default:
                     return null;
             }
