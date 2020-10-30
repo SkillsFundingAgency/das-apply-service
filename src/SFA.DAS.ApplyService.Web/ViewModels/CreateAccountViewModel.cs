@@ -1,5 +1,3 @@
-using System;
-
 namespace SFA.DAS.ApplyService.Web.ViewModels
 {
     public class CreateAccountViewModel
