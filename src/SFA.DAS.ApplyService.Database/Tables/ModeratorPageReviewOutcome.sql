@@ -11,6 +11,7 @@
 	[ClarificationStatus] NVARCHAR(20) NULL, 
     [ClarificationComment] NVARCHAR(MAX) NULL,
 	[ClarificationResponse] NVARCHAR(MAX) NULL,
+	[ClarificationUpdatedAt] DATETIME2 NULL,
 	[CreatedAt] DATETIME2 NOT NULL DEFAULT GETUTCDATE(), 
     [CreatedBy] NVARCHAR(256) NOT NULL, 
     [UpdatedAt] DATETIME2 NULL, 
