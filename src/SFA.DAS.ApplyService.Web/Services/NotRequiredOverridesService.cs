@@ -5,6 +5,7 @@ using SFA.DAS.ApplyService.Web.Configuration;
 using SFA.DAS.ApplyService.Web.Infrastructure;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.Services
 {
@@ -29,31 +30,31 @@ namespace SFA.DAS.ApplyService.Web.Services
             _sessionService = sessionService;
         }
 
-        public void RefreshNotRequiredOverrides(Guid applicationId)
+        public async Task RefreshNotRequiredOverridesAsync(Guid applicationId)
         {
             RemoveConfigurationFromCache(applicationId);
-            var configuration = CalculateNotRequiredOverrides(applicationId);
+            var configuration = await CalculateNotRequiredOverridesAsync(applicationId);
             SaveConfigurationToCache(applicationId, configuration);
         }
 
-        public List<NotRequiredOverrideConfiguration> GetNotRequiredOverrides(Guid applicationId)
+        public async Task<List<NotRequiredOverrideConfiguration>> GetNotRequiredOverridesAsync(Guid applicationId)
         {
             var configuration = RetrieveConfigurationFromCache(applicationId);
 
             if (configuration == null)
             {
-                RefreshNotRequiredOverrides(applicationId);
+                await RefreshNotRequiredOverridesAsync(applicationId);
                 configuration = RetrieveConfigurationFromCache(applicationId);
             }
 
             return configuration;
         }
 
-        private List<NotRequiredOverrideConfiguration> CalculateNotRequiredOverrides(Guid applicationId)
+        private async Task<List<NotRequiredOverrideConfiguration>> CalculateNotRequiredOverridesAsync(Guid applicationId)
         {
             List<NotRequiredOverrideConfiguration> configuration = null;
 
-            var applicationData = _qnaApiClient.GetApplicationData(applicationId).GetAwaiter().GetResult() as JObject;
+            var applicationData = (await _qnaApiClient.GetApplicationData(applicationId)) as JObject;
 
             if (applicationData != null)
             {

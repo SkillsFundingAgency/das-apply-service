@@ -13,6 +13,7 @@ using SFA.DAS.ApplyService.Web.Services;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.UnitTests
 {
@@ -32,7 +33,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             _applicationId = Guid.NewGuid();
             _qnaApiClient = new Mock<IQnaApiClient>();
             _notRequiredOverridesService = new Mock<INotRequiredOverridesService>();
-            _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverrides(It.IsAny<Guid>())).Returns(new List<NotRequiredOverrideConfiguration>());
+            _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverridesAsync(It.IsAny<Guid>())).ReturnsAsync(new List<NotRequiredOverrideConfiguration>());
             _configuration = new Mock<IOptions<List<TaskListConfiguration>>>();
             var config = new List<TaskListConfiguration>
             {
@@ -187,7 +188,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                     SectionId = sectionId
                 }
             };
-            _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverrides(_applicationId)).Returns(notRequiredOverrides);
+            _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverridesAsync(_applicationId)).ReturnsAsync(notRequiredOverrides);
 
             var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = sequenceId,
                     Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = sectionId,
@@ -230,7 +231,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                     SectionId = sectionId
                 }
             };
-            _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverrides(_applicationId)).Returns(notRequiredOverrides);
+            _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverridesAsync(_applicationId)).ReturnsAsync(notRequiredOverrides);
 
             var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = sequenceId,
                     Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = sectionId,
@@ -273,7 +274,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
                     SectionId = sectionId
                 }
             };
-            _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverrides(_applicationId)).Returns(notRequiredOverrides);
+            _notRequiredOverridesService.Setup(x => x.GetNotRequiredOverridesAsync(_applicationId)).ReturnsAsync(notRequiredOverrides);
 
             var applicationSequences = new List<ApplicationSequence> { new ApplicationSequence { ApplicationId = new Guid(), SequenceId = sequenceId,
                     Sections = new List<ApplicationSection> { new ApplicationSection { SectionId = sectionId,
@@ -988,17 +989,17 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         }
         
         [Test]
-        public void Finish_application_checks_shows_blank_if_not_all_sequences_completed()
+        public async Task Finish_application_checks_shows_blank_if_not_all_sequences_completed()
         {
             var applicationSequences = new List<ApplicationSequence>();
 
-            var status = _service.FinishSectionStatus(Guid.NewGuid(), RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks, applicationSequences, false);
+            var status = await _service.FinishSectionStatus(Guid.NewGuid(), RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks, applicationSequences, false);
             
             status.Should().Be(TaskListSectionStatus.Blank);
         }
 
         [Test]
-        public void Finish_application_checks_shows_next_if_all_sequences_completed_and_section_not_started()
+        public async Task Finish_application_checks_shows_next_if_all_sequences_completed_and_section_not_started()
         {
             var applicationSequences = new List<ApplicationSequence>
             {
@@ -1032,13 +1033,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             _qnaApiClient.Setup(x => x.GetSectionBySectionNo(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>()))
                          .ReturnsAsync(applicationSequences[0].Sections[0]);
 
-            var status = _service.FinishSectionStatus(Guid.NewGuid(), RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks, applicationSequences, true);
+            var status = await _service.FinishSectionStatus(Guid.NewGuid(), RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks, applicationSequences, true);
 
             status.Should().Be(TaskListSectionStatus.Next);
         }
 
         [Test]
-        public void Finish_application_checks_shows_in_progress_if_all_not_questions_answered()
+        public async Task Finish_application_checks_shows_in_progress_if_all_not_questions_answered()
         {
             var applicationSequences = new List<ApplicationSequence>
             {
@@ -1093,7 +1094,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             _qnaApiClient.Setup(x => x.GetSectionBySectionNo(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>()))
                          .ReturnsAsync(applicationSequences[0].Sections[0]);
 
-            var status = _service.FinishSectionStatus(Guid.NewGuid(), RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks, applicationSequences, true);
+            var status = await _service.FinishSectionStatus(Guid.NewGuid(), RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks, applicationSequences, true);
 
             status.Should().Be(TaskListSectionStatus.InProgress);
         }
@@ -1104,7 +1105,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
         [TestCase("No", "Yes", "Yes")]
         [TestCase("Yes", "Yes", "No")]
         [TestCase("No", "Yes", "No")]
-        public void Finish_application_checks_shows_in_progress_if_questions_answered_and_shutter_page_shown_for_conditions_not_met(string answer1, string answer2, string answer3)
+        public async Task Finish_application_checks_shows_in_progress_if_questions_answered_and_shutter_page_shown_for_conditions_not_met(string answer1, string answer2, string answer3)
         {
             var applicationSequences = new List<ApplicationSequence>
             {
@@ -1194,13 +1195,13 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             _qnaApiClient.Setup(x => x.GetSectionBySectionNo(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>()))
                          .ReturnsAsync(applicationSequences[0].Sections[0]);
 
-            var status = _service.FinishSectionStatus(Guid.NewGuid(), RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks, applicationSequences, true);
+            var status = await _service.FinishSectionStatus(Guid.NewGuid(), RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks, applicationSequences, true);
 
             status.Should().Be(TaskListSectionStatus.InProgress);
         }
 
         [Test]
-        public void Finish_application_checks_shows_complete_if_all_conditions_agreed_to()
+        public async Task Finish_application_checks_shows_complete_if_all_conditions_agreed_to()
         {
             var applicationSequences = new List<ApplicationSequence>
             {
@@ -1290,7 +1291,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests
             _qnaApiClient.Setup(x => x.GetSectionBySectionNo(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>()))
                          .ReturnsAsync(applicationSequences[0].Sections[0]);
 
-            var status = _service.FinishSectionStatus(Guid.NewGuid(), RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks, applicationSequences, true);
+            var status = await _service.FinishSectionStatus(Guid.NewGuid(), RoatpWorkflowSectionIds.Finish.ApplicationPermissionsAndChecks, applicationSequences, true);
 
             status.Should().Be(TaskListSectionStatus.Completed);
         }
