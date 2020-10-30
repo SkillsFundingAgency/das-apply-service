@@ -34,7 +34,7 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         public string SectionQuestionsStatus(Guid applicationId, int sequenceId, int sectionId, IEnumerable<ApplicationSequence> applicationSequences)
         {
-            var sequence = applicationSequences?.FirstOrDefault(x => (int)x.SequenceId == sequenceId);
+            var sequence = applicationSequences?.FirstOrDefault(x => x.SequenceId == sequenceId);
 
             var section = sequence?.Sections?.FirstOrDefault(x => x.SectionId == sectionId);
 
@@ -70,10 +70,10 @@ namespace SFA.DAS.ApplyService.Web.Services
             if (sequenceId == RoatpWorkflowSequenceIds.YourOrganisation
                 && sectionId == RoatpWorkflowSectionIds.YourOrganisation.WhosInControl)
             {
-                return WhosInControlSectionStatus(applicationId, applicationSequences, organisationVerificationStatus);
+                return await WhosInControlSectionStatus(applicationId, applicationSequences, organisationVerificationStatus);
             }
 
-            var sequence = applicationSequences?.FirstOrDefault(x => (int)x.SequenceId == sequenceId);
+            var sequence = applicationSequences?.FirstOrDefault(x => x.SequenceId == sequenceId);
 
             var section = sequence?.Sections?.FirstOrDefault(x => x.SectionId == sectionId);
 
@@ -82,7 +82,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 return string.Empty;
             }
 
-            if (!PreviousSectionCompleted(applicationId, sequence.SequenceId, sectionId, applicationSequences, organisationVerificationStatus))
+            if (!await PreviousSectionCompleted(applicationId, sequence.SequenceId, sectionId, applicationSequences, organisationVerificationStatus))
             {
                 return string.Empty;
             }
@@ -94,7 +94,7 @@ namespace SFA.DAS.ApplyService.Web.Services
             return sectionText;
         }
 
-        public bool PreviousSectionCompleted(Guid applicationId, int sequenceId, int sectionId, IEnumerable<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
+        public async Task<bool> PreviousSectionCompleted(Guid applicationId, int sequenceId, int sectionId, IEnumerable<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
         {
             var sequence = applicationSequences.FirstOrDefault(x => x.SequenceId == sequenceId);
 
@@ -103,7 +103,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 var complete = true;
                 for(var index = 1; index < sectionId; index++)
                 {
-                    if (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, index, applicationSequences, organisationVerificationStatus) != TaskListSectionStatus.Completed)
+                    if (await SectionStatusAsync(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, index, applicationSequences, organisationVerificationStatus) != TaskListSectionStatus.Completed)
                     {
                         complete = false;
                         break;
@@ -118,7 +118,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 {
                     return true;
                 }
-                var previousSectionStatus = SectionStatus(applicationId, sequenceId, sectionId - 1, applicationSequences, organisationVerificationStatus); 
+                var previousSectionStatus = await SectionStatusAsync(applicationId, sequenceId, sectionId - 1, applicationSequences, organisationVerificationStatus); 
                 
                 return (previousSectionStatus == TaskListSectionStatus.Completed ||  previousSectionStatus == TaskListSectionStatus.NotRequired);
             }
@@ -140,7 +140,7 @@ namespace SFA.DAS.ApplyService.Web.Services
                 if (previousSectionsCompletedCount == 0)
                     return false;                               
 
-                var previousSectionQuestionsCount = previousSection.QnAData.Pages.Where(p => p.NotRequired == false).SelectMany(x => x.Questions)
+                var previousSectionQuestionsCount = previousSection.QnAData.Pages.Where(p => !p.NotRequired).SelectMany(x => x.Questions)
                     .DistinctBy(q => q.QuestionId).Count();
                 if (previousSectionsCompletedCount < previousSectionQuestionsCount)
                 {
@@ -232,15 +232,10 @@ namespace SFA.DAS.ApplyService.Web.Services
         {
             var notRequiredOverrides = await _notRequiredOverridesService.GetNotRequiredOverridesAsync(applicationId);
 
-            if (notRequiredOverrides.Any(condition =>
-                                                        sequenceId == condition.SequenceId &&
-                                                        sectionId == condition.SectionId &&
-                                                        condition.AllConditionsMet))
-            {
-                return true;
-            }
-
-            return false;
+            return notRequiredOverrides.Any(condition =>
+                sequenceId == condition.SequenceId &&
+                sectionId == condition.SectionId &&
+                condition.AllConditionsMet);
         }
 
         private void PopulateAdditionalSequenceFields(IEnumerable<ApplicationSequence> sequences)
@@ -283,9 +278,6 @@ namespace SFA.DAS.ApplyService.Web.Services
 
         private static string GetSectionText(int completedCount, ApplicationSection section,  bool sequential)
         {
-            var pagesCompleted = section.QnAData.Pages.Count(x => x.Complete);
-            var pagesActive = section.QnAData.Pages.Count(x => x.Active);
-
             if ((section.PagesComplete == section.PagesActive && section.PagesActive > 0))
                 return TaskListSectionStatus.Completed;
 
@@ -294,85 +286,73 @@ namespace SFA.DAS.ApplyService.Web.Services
                 return TaskListSectionStatus.Next;
             }
 
-            if (completedCount > 0)
+            return completedCount > 0 ? TaskListSectionStatus.InProgress : TaskListSectionStatus.Blank;
+        }
+
+
+        private async Task<string> WhosInControlSectionStatus(Guid applicationId, IEnumerable<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
+        {
+            if (await SectionStatusAsync(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails, applicationSequences, organisationVerificationStatus) == TaskListSectionStatus.Blank)
+            {
+                return TaskListSectionStatus.Blank;
+            }
+
+            if ((organisationVerificationStatus.CompaniesHouseManualEntry || organisationVerificationStatus.CharityCommissionManualEntry) 
+                && !organisationVerificationStatus.CharityCommissionDataConfirmed
+                && !organisationVerificationStatus.CompaniesHouseDataConfirmed
+                && !organisationVerificationStatus.WhosInControlConfirmed)
+                return TaskListSectionStatus.Next;
+
+            var companiesHouseVerified = organisationVerificationStatus.CompaniesHouseDataConfirmed || organisationVerificationStatus.CompaniesHouseManualEntry;
+            var charityCommissionVerified = organisationVerificationStatus.CharityCommissionDataConfirmed 
+                                          || organisationVerificationStatus.CharityCommissionManualEntry;
+
+            if (organisationVerificationStatus.VerifiedCompaniesHouse
+                && organisationVerificationStatus.VerifiedCharityCommission)
+            {
+                if ((companiesHouseVerified
+                    && !charityCommissionVerified)
+                    || (!companiesHouseVerified
+                    && charityCommissionVerified))
+                {
+                    return TaskListSectionStatus.InProgress;
+                }
+                if (companiesHouseVerified
+                    && charityCommissionVerified)
+                {
+                    return TaskListSectionStatus.Completed;
+                }
+            }
+
+            if (organisationVerificationStatus.VerifiedCompaniesHouse
+                && !organisationVerificationStatus.VerifiedCharityCommission)
+            {
+                if (companiesHouseVerified)
+                {
+                    return TaskListSectionStatus.Completed;
+                }
+            }
+
+            if (!organisationVerificationStatus.VerifiedCompaniesHouse
+                && organisationVerificationStatus.VerifiedCharityCommission)
+            {
+                if (charityCommissionVerified)
+                {
+                    return TaskListSectionStatus.Completed;
+                }
+            }
+
+            if (organisationVerificationStatus.WhosInControlConfirmed)
+            {
+                return TaskListSectionStatus.Completed;
+            }
+            
+            if (organisationVerificationStatus.WhosInControlStarted)
             {
                 return TaskListSectionStatus.InProgress;
             }
 
-            return TaskListSectionStatus.Blank;
-
+            return TaskListSectionStatus.Next;
         }
-
-
-        private string WhosInControlSectionStatus(Guid applicationId, IEnumerable<ApplicationSequence> applicationSequences, OrganisationVerificationStatus organisationVerificationStatus)
-        {
-            
-                if (SectionStatus(applicationId, RoatpWorkflowSequenceIds.YourOrganisation, RoatpWorkflowSectionIds.YourOrganisation.OrganisationDetails, applicationSequences, organisationVerificationStatus) == TaskListSectionStatus.Blank)
-                {
-                    return TaskListSectionStatus.Blank;
-                }
-
-
-                if ((organisationVerificationStatus.CompaniesHouseManualEntry || organisationVerificationStatus.CharityCommissionManualEntry) 
-                    && !organisationVerificationStatus.CharityCommissionDataConfirmed
-                    && !organisationVerificationStatus.CompaniesHouseDataConfirmed
-                    && !organisationVerificationStatus.WhosInControlConfirmed)
-                    return TaskListSectionStatus.Next;
-
-                var companiesHouseVerified = organisationVerificationStatus.CompaniesHouseDataConfirmed || organisationVerificationStatus.CompaniesHouseManualEntry;
-                var charityCommissionVerified = organisationVerificationStatus.CharityCommissionDataConfirmed 
-                                              || organisationVerificationStatus.CharityCommissionManualEntry;
-
-                if (organisationVerificationStatus.VerifiedCompaniesHouse
-                    && organisationVerificationStatus.VerifiedCharityCommission)
-                {
-                    if ((companiesHouseVerified
-                        && !charityCommissionVerified)
-                        || (!companiesHouseVerified
-                        && charityCommissionVerified))
-                    {
-                        return TaskListSectionStatus.InProgress;
-                    }
-                    if (companiesHouseVerified
-                        && charityCommissionVerified)
-                    {
-                        return TaskListSectionStatus.Completed;
-                    }
-                }
-
-                if (organisationVerificationStatus.VerifiedCompaniesHouse
-                    && !organisationVerificationStatus.VerifiedCharityCommission)
-                {
-                    if (companiesHouseVerified)
-                    {
-                        return TaskListSectionStatus.Completed;
-                    }
-                }
-
-                if (!organisationVerificationStatus.VerifiedCompaniesHouse
-                    && organisationVerificationStatus.VerifiedCharityCommission)
-                {
-                    if (charityCommissionVerified)
-                    {
-                        return TaskListSectionStatus.Completed;
-                    }
-                }
-
-                if (organisationVerificationStatus.WhosInControlConfirmed)
-                {
-                    return TaskListSectionStatus.Completed;
-                }
-                
-                if (organisationVerificationStatus.WhosInControlStarted)
-                {
-                    return TaskListSectionStatus.InProgress;
-                }
-
-                return TaskListSectionStatus.Next;
-            
-        }
-       
-        
-
     }
 }

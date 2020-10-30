@@ -60,7 +60,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Orchestrators
             _roatpTaskListWorkflowService
                 .Setup(x => x.PreviousSectionCompleted(_applicationId, It.IsAny<int>(), It.IsAny<int>(),
                     It.IsAny<List<ApplicationSequence>>(), It.IsAny<OrganisationVerificationStatus>()))
-                .Returns(() => true);
+                .ReturnsAsync(() => true);
 
             _orchestrator = new TaskListOrchestrator(_applicationApiClient.Object,
                 _qnaApiClient.Object,
