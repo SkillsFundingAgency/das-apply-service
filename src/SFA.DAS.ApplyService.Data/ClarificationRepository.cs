@@ -177,6 +177,7 @@ namespace SFA.DAS.ApplyService.Data
                 await connection.ExecuteAsync(
                     @"UPDATE [ModeratorPageReviewOutcome]
 			            SET [ClarificationFile] = NULL
+                            , [ClarificationUpdatedAt] = GETUTCDATE()
 			            WHERE [ApplicationId] = @applicationId AND
 					          [SequenceNumber] = @sequenceNumber AND
 					          [SectionNumber] = @sectionNumber AND
