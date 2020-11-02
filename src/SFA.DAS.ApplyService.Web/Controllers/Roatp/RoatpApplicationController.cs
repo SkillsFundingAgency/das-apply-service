@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
+using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -188,7 +188,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 var allQnaSequences = await allQnaSequencesTask;
                 var allQnaSections = await allQnaSectionsTask;
 
-                var startApplicationRequest = await BuildStartApplicationRequest(qnaResponse.ApplicationId, user.Id, providerRoute, allQnaSequences, allQnaSections);
+                var startApplicationRequest = BuildStartApplicationRequest(qnaResponse.ApplicationId, user.Id, providerRoute, allQnaSequences, allQnaSections);
 
                 var applicationId = await _apiClient.StartApplication(startApplicationRequest);
                 _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking response from StartApplication POST: applicationId: [{applicationId}]");
@@ -214,17 +214,26 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return Guid.Empty;
         }
 
-        private async Task<Application.Apply.Start.StartApplicationRequest> BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
+        private StartApplicationRequest BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
         {
-            var providerRoutes = await _roatpApiClient.GetApplicationRoutes();
-            var selectedProviderRoute = providerRoutes.FirstOrDefault(p => p.Id == providerRoute);
+            var selectedProviderRoute = "";
+            switch (providerRoute)
+            {
+                case 1: selectedProviderRoute = "Main provider";
+                    break;
+                case 2: selectedProviderRoute = "Employer provider";
+                    break;
+                case 3: selectedProviderRoute = "Supporting provider";
+                    break;
+                throw new ArgumentException(nameof(providerRoute));
+            }
 
-            return new Application.Apply.Start.StartApplicationRequest
+            return new StartApplicationRequest
             {
                 ApplicationId = qnaApplicationId,
                 CreatingContactId = creatingContactId,
                 ProviderRoute = providerRoute,
-                ProviderRouteName = selectedProviderRoute?.RouteName,
+                ProviderRouteName = selectedProviderRoute,
                 ApplySequences = qnaSequences.Select(sequence => new ApplySequence
                 {
                     SequenceId = sequence.Id,
