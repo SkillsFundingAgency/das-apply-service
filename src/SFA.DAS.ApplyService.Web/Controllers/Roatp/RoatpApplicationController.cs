@@ -103,21 +103,35 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var applications = await _apiClient.GetApplications(signinId, false);
             applications = applications.Where(app => app.ApplicationStatus != ApplicationStatus.Rejected).ToList();
 
-            if (!applications.Any())
+            var application = new Apply();
+            Guid applicationId;
+            string applicationStatus;
+
+            if (applications.Any())
             {
-                return await StartApplication(signinId);
+                if (applications.Count > 1)  return View(applications);
+                application = applications.Single();
+                applicationId = application.Id;
+                applicationStatus = application.ApplicationStatus;
             }
+            else
+            {
+                applicationId = await StartApplication(signinId);
+                applicationStatus = ApplicationStatus.InProgress;
 
-            if (applications.Count > 1)
-                return View(applications);
+                if (applicationId == Guid.Empty)
+                {
+                    return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
+                }
+            }
+            
+            _logger.LogInformation("Applications controller action completed");
 
-            var application = applications.First();
-
-            switch (application.ApplicationStatus)
+            switch (applicationStatus)
             {
                 case ApplicationStatus.New:
                 case ApplicationStatus.InProgress:
-                    return RedirectToAction("TaskList", new { applicationId = application.ApplicationId });
+                    return RedirectToAction("TaskList", new { applicationId });
                 case ApplicationStatus.Cancelled:
                     return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
                 case ApplicationStatus.Approved:
@@ -125,24 +139,26 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 case ApplicationStatus.Rejected:
                     return View("~/Views/Application/Rejected.cshtml", application);
                 case ApplicationStatus.FeedbackAdded:
-                    return View("~/Views/Application/FeedbackIntro.cshtml", application.ApplicationId);
+                    return View("~/Views/Application/FeedbackIntro.cshtml", applicationId);
                 case ApplicationStatus.Submitted:
                 case ApplicationStatus.GatewayAssessed:
                 case ApplicationStatus.Resubmitted:
-                    return RedirectToAction("ApplicationSubmitted", new { applicationId = application.ApplicationId });
+                    return RedirectToAction("ApplicationSubmitted", new { applicationId });
                 default:
-                    return RedirectToAction("TaskList", new { applicationId = application.ApplicationId });
+                    return RedirectToAction("TaskList", new { applicationId });
             }
         }
 
-        private async Task<IActionResult> StartApplication(Guid signinId)
+        private async Task<Guid> StartApplication(Guid signinId)
         {
+            _logger.LogInformation("StartApplication invoked");
+
             var applicationType = ApplicationTypes.RegisterTrainingProviders;
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
 
-            if(applicationDetails is null)
+            if (applicationDetails is null)
             {
-                return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
+                return Guid.Empty;
             }
 
             _logger.LogInformation($"Application Details:: Ukprn: [{applicationDetails?.UKPRN}], ProviderName: [{applicationDetails?.UkrlpLookupDetails?.ProviderName}], RouteId: [{applicationDetails?.ApplicationRoute?.Id}]");
@@ -191,9 +207,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                         await SaveCharityCommissionInformation(applicationId, applicationDetails);
                     }
                 }
+                
+                return applicationId;
             }
 
-            return RedirectToAction("Applications", new { applicationType });
+            return Guid.Empty;
         }
 
         private async Task<Application.Apply.Start.StartApplicationRequest> BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)

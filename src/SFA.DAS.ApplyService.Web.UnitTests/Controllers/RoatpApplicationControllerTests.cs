@@ -160,11 +160,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _apiClient.Setup(x => x.StartApplication(It.IsAny<StartApplicationRequest>())).ReturnsAsync(applicationId).Verifiable();
 
-            var result = _controller.Applications().GetAwaiter().GetResult();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("Applications");
+            _controller.Applications().GetAwaiter().GetResult();
 
             _qnaApiClient.VerifyAll();
             _apiClient.VerifyAll();

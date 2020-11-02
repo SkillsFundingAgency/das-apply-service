@@ -502,6 +502,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         private async Task<IActionResult> StartRoatpApplication(SelectApplicationRouteViewModel model)
         {
+            _logger.LogInformation("StartRoatpApplication invoked");
+
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
             applicationDetails.ApplicationRoute = new ApplicationRoute { Id = model.ApplicationRouteId };
 
@@ -511,7 +513,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
             var createOrganisationRequest = Mapper.Map<CreateOrganisationRequest>(applicationDetails);
 
-            var organisation = await _organisationApiClient.Create(createOrganisationRequest, user.Id);
+            await _organisationApiClient.Create(createOrganisationRequest, user.Id);
 
             _sessionService.Set(ApplicationDetailsKey, applicationDetails);
 
@@ -519,6 +521,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             {
                 await _usersApiClient.ApproveUser(user.Id);
             }
+
+            _logger.LogInformation("StartRoatpApplication completed");
 
             return RedirectToAction("Applications", "RoatpApplication", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
         }

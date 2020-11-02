@@ -129,8 +129,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
             }
 
-            var organisation = await _organisationApiClient.GetByUser(user.Id);
-
             var selectedApplicationType = ApplicationTypes.RegisterTrainingProviders;
             
             return RedirectToAction("Applications", "RoatpApplication", new { applicationType = selectedApplicationType });
