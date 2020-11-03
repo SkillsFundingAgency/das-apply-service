@@ -65,7 +65,7 @@ namespace SFA.DAS.ApplyService.Web.Orchestrators
                 },
                 ShowSubmission = yourOrganisationSequenceCompleted,
                 AllowSubmission = applicationSequencesCompleted &&
-                                  _roatpTaskListWorkflowService.PreviousSectionCompleted(applicationId, RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.SubmitApplication, sequences, organisationVerificationStatus)
+                                  await _roatpTaskListWorkflowService.PreviousSectionCompleted(applicationId, RoatpWorkflowSequenceIds.Finish, RoatpWorkflowSectionIds.Finish.SubmitApplication, sequences, organisationVerificationStatus)
             };
 
             foreach (var sequence in sequences)
@@ -89,7 +89,7 @@ namespace SFA.DAS.ApplyService.Web.Orchestrators
                         Status = sequence.SequenceId == RoatpWorkflowSequenceIds.Finish
                                 ? await _roatpTaskListWorkflowService.FinishSectionStatus(applicationId, section.SectionId, sequences, applicationSequencesCompleted)
                                 : await _roatpTaskListWorkflowService.SectionStatusAsync(applicationId, sequence.SequenceId, section.SectionId, sequences, organisationVerificationStatus),
-                        IsLocked = GetIsLocked(sequence.SequenceId, section.SectionId, yourOrganisationSequenceCompleted, applicationId, sequences, organisationVerificationStatus, applicationSequencesCompleted)
+                        IsLocked = await GetIsLocked(sequence.SequenceId, section.SectionId, yourOrganisationSequenceCompleted, applicationId, sequences, organisationVerificationStatus, applicationSequencesCompleted)
                     });
                 }
             }
@@ -97,7 +97,7 @@ namespace SFA.DAS.ApplyService.Web.Orchestrators
             return result;
         }
 
-        private bool GetIsLocked(int sequenceId, int sectionId, bool yourOrganisationSequenceCompleted, Guid applicationId, List<ApplicationSequence> sequences, OrganisationVerificationStatus organisationVerificationStatus, bool applicationSequencesCompleted)
+        private async Task<bool> GetIsLocked(int sequenceId, int sectionId, bool yourOrganisationSequenceCompleted, Guid applicationId, List<ApplicationSequence> sequences, OrganisationVerificationStatus organisationVerificationStatus, bool applicationSequencesCompleted)
         {
             // Disable the other sequences if YourOrganisation sequence isn't complete
             if (sequenceId != RoatpWorkflowSequenceIds.YourOrganisation && !yourOrganisationSequenceCompleted)
@@ -108,14 +108,14 @@ namespace SFA.DAS.ApplyService.Web.Orchestrators
             //Within Your Organisation, sections are locked until the previous one is completed
             if (sequenceId == RoatpWorkflowSequenceIds.YourOrganisation && sectionId != 1)
             {
-                return !_roatpTaskListWorkflowService.PreviousSectionCompleted(applicationId, sequenceId, sectionId,
+                return ! await _roatpTaskListWorkflowService.PreviousSectionCompleted(applicationId, sequenceId, sectionId,
                     sequences, organisationVerificationStatus);
             }
 
             //Entire Finish section is locked until all app sequences are completed, and sections are locked until previous one is completed
             if (sequenceId == RoatpWorkflowSequenceIds.Finish)
             {
-                return !applicationSequencesCompleted || !_roatpTaskListWorkflowService.PreviousSectionCompleted(
+                return !applicationSequencesCompleted || ! await _roatpTaskListWorkflowService.PreviousSectionCompleted(
                            applicationId, sequenceId, sectionId,
                            sequences, organisationVerificationStatus);
             }

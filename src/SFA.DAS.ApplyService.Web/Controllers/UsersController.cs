@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -43,7 +44,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAccount(CreateAccountViewModel vm)
         {
-            _createAccountValidator.Validate(vm);
+            _createAccountValidator.Validate(vm).AddToModelState(ModelState, null);
 
             if (!ModelState.IsValid)
             {
@@ -55,7 +56,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _sessionService.Set("NewAccount", vm);
 
             return inviteSuccess ? RedirectToAction("InviteSent") : RedirectToAction("Error", "Home");
-            
         }
 
         [HttpGet]
