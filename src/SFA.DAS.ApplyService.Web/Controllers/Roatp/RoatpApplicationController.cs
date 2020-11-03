@@ -107,9 +107,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             Guid applicationId;
             string applicationStatus;
 
-            if (applications.Any())
+            if (applications.Count > 1)
             {
-                if (applications.Count > 1)  return View(applications);
+                return View(applications);
+            }
+            if (applications.Count == 1)
+            {
                 application = applications.Single();
                 applicationId = application.Id;
                 applicationStatus = application.ApplicationStatus;
