@@ -111,7 +111,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void Applications_starts_a_new_application_if_no_applications_for_that_user()
+        public async Task Applications_starts_a_new_application_if_no_applications_for_that_user()
         {
             _apiClient.Setup(x => x.GetApplications(It.IsAny<Guid>(), It.IsAny<bool>())).ReturnsAsync(new List<Domain.Entities.Apply>());
 
@@ -160,11 +160,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
 
             _apiClient.Setup(x => x.StartApplication(It.IsAny<StartApplicationRequest>())).ReturnsAsync(applicationId).Verifiable();
 
-            var result = _controller.Applications().GetAwaiter().GetResult();
-
-            var redirectResult = result as RedirectToActionResult;
-            redirectResult.Should().NotBeNull();
-            redirectResult.ActionName.Should().Be("Applications");
+            await _controller.Applications();
 
             _qnaApiClient.VerifyAll();
             _apiClient.VerifyAll();

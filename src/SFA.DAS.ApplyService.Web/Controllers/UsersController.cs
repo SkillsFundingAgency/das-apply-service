@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.Infrastructure;
@@ -23,31 +21,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
     public class UsersController : Controller
     {
         private readonly IUsersApiClient _usersApiClient;
-        private readonly IApplicationApiClient _applicationApiClient;
         private readonly ISessionService _sessionService;
-        private readonly ILogger<UsersController> _logger;
-        private readonly IConfigurationService _config;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly CreateAccountValidator _createAccountValidator;
-        private readonly IOrganisationApiClient _organisationApiClient;
 
-        private const string TrainingProviderOrganisationType = "TrainingProvider";
-
-
-        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, ILogger<UsersController> logger, 
-                               IConfigurationService config, IHttpContextAccessor contextAccessor, 
-                               CreateAccountValidator createAccountValidator, IApplicationApiClient applicationApiClient,
-                               IOrganisationApiClient organisationApiClient)
+        public UsersController(IUsersApiClient usersApiClient, ISessionService sessionService, IHttpContextAccessor contextAccessor, 
+                               CreateAccountValidator createAccountValidator)
         { 
             _usersApiClient = usersApiClient;
-            _applicationApiClient = applicationApiClient;
             _sessionService = sessionService;
-            _logger = logger;
-            _config = config;
             _contextAccessor = contextAccessor;
             _createAccountValidator = createAccountValidator;
-            _applicationApiClient = applicationApiClient;
-            _organisationApiClient = organisationApiClient;
         }
         
         [HttpGet]
@@ -126,8 +110,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
             }
-
-            var organisation = await _organisationApiClient.GetByUser(user.Id);
 
             var selectedApplicationType = ApplicationTypes.RegisterTrainingProviders;
             
