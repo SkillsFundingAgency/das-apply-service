@@ -151,7 +151,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private async Task<Guid> StartApplication(Guid signinId)
         {
-            _logger.LogInformation("StartApplication invoked");
+            _logger.LogInformation("StartApplication method invoked");
 
             var applicationType = ApplicationTypes.RegisterTrainingProviders;
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
@@ -196,18 +196,23 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 if (applicationId != Guid.Empty)
                 {
                    await SavePreambleInformation(applicationId, applicationDetails);
+                   _logger.LogInformation("Preamble information saved");
 
                     if (applicationDetails.UkrlpLookupDetails.VerifiedByCompaniesHouse)
                     {
                         await SaveCompaniesHouseInformation(applicationId, applicationDetails);
+                        _logger.LogInformation("Companies House information saved");
                     }
 
                     if (applicationDetails.UkrlpLookupDetails.VerifiedbyCharityCommission)
                     {
                         await SaveCharityCommissionInformation(applicationId, applicationDetails);
+                        _logger.LogInformation("Save Charity Commission information saved");
                     }
                 }
                 
+                _logger.LogInformation("StartApplication method completed");
+
                 return applicationId;
             }
 
