@@ -97,7 +97,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             if (!await _userService.ValidateUser(user))
                 return RedirectToAction("PostSignIn", "Users");
 
-            _logger.LogInformation($"Got LoggedInUser from Session: {user}");
+            _logger.LogDebug($"Got LoggedInUser from Session: {user}");
 
             var signinId = await _userService.GetSignInId();
             var applications = await _apiClient.GetApplications(signinId, false);
@@ -128,7 +128,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 }
             }
             
-            _logger.LogInformation("Applications controller action completed");
+            _logger.LogDebug("Applications controller action completed");
 
             switch (applicationStatus)
             {
@@ -154,7 +154,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private async Task<Guid> StartApplication(Guid signinId)
         {
-            _logger.LogInformation("StartApplication method invoked");
+            _logger.LogDebug("StartApplication method invoked");
 
             var applicationType = ApplicationTypes.RegisterTrainingProviders;
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
@@ -164,7 +164,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return Guid.Empty;
             }
 
-            _logger.LogInformation($"Application Details:: Ukprn: [{applicationDetails?.UKPRN}], ProviderName: [{applicationDetails?.UkrlpLookupDetails?.ProviderName}], RouteId: [{applicationDetails?.ApplicationRoute?.Id}]");
+            _logger.LogDebug($"Application Details:: Ukprn: [{applicationDetails?.UKPRN}], ProviderName: [{applicationDetails?.UkrlpLookupDetails?.ProviderName}], RouteId: [{applicationDetails?.ApplicationRoute?.Id}]");
             var providerRoute = applicationDetails.ApplicationRoute.Id;
 
             var startApplicationData = new JObject
@@ -177,9 +177,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var user = await _usersApiClient.GetUserBySignInId(signinId.ToString());
 
             var startApplicationJson = JsonConvert.SerializeObject(startApplicationData);
-            _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse PRE: userid: [{user.Id.ToString()}], applicationType: [{applicationType}], startApplicationJson: [{startApplicationJson}]");
+            _logger.LogDebug($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse PRE: userid: [{user.Id.ToString()}], applicationType: [{applicationType}], startApplicationJson: [{startApplicationJson}]");
             var qnaResponse = await _qnaApiClient.StartApplication(user.Id.ToString(), applicationType, startApplicationJson);
-            _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse POST: applicationId: [{qnaResponse?.ApplicationId}]");
+            _logger.LogDebug($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse POST: applicationId: [{qnaResponse?.ApplicationId}]");
 
             if (qnaResponse != null)
             {
@@ -194,27 +194,27 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 var startApplicationRequest = BuildStartApplicationRequest(qnaResponse.ApplicationId, user.Id, providerRoute, allQnaSequences, allQnaSections);
 
                 var applicationId = await _apiClient.StartApplication(startApplicationRequest);
-                _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking response from StartApplication POST: applicationId: [{applicationId}]");
+                _logger.LogDebug($"RoatpApplicationController.StartApplication:: Checking response from StartApplication POST: applicationId: [{applicationId}]");
 
                 if (applicationId != Guid.Empty)
                 {
                    await SavePreambleInformation(applicationId, applicationDetails);
-                   _logger.LogInformation("Preamble information saved");
+                   _logger.LogDebug("Preamble information saved");
 
                     if (applicationDetails.UkrlpLookupDetails.VerifiedByCompaniesHouse)
                     {
                         await SaveCompaniesHouseInformation(applicationId, applicationDetails);
-                        _logger.LogInformation("Companies House information saved");
+                        _logger.LogDebug("Companies House information saved");
                     }
 
                     if (applicationDetails.UkrlpLookupDetails.VerifiedbyCharityCommission)
                     {
                         await SaveCharityCommissionInformation(applicationId, applicationDetails);
-                        _logger.LogInformation("Save Charity Commission information saved");
+                        _logger.LogDebug("Save Charity Commission information saved");
                     }
                 }
                 
-                _logger.LogInformation("StartApplication method completed");
+                _logger.LogDebug("StartApplication method completed");
 
                 return applicationId;
             }
@@ -224,7 +224,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         private StartApplicationRequest BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
         {
-            var selectedProviderRoute = "";
+            string selectedProviderRoute;
             switch (providerRoute)
             {
                 case 1: selectedProviderRoute = "Main provider";
@@ -233,7 +233,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     break;
                 case 3: selectedProviderRoute = "Supporting provider";
                     break;
-                throw new ArgumentException(nameof(providerRoute));
+                default:
+                    throw new ArgumentException(nameof(providerRoute));
             }
 
             return new StartApplicationRequest

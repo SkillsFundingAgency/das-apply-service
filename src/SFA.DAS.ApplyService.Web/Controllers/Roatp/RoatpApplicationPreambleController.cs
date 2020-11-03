@@ -502,7 +502,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 
         private async Task<IActionResult> StartRoatpApplication(SelectApplicationRouteViewModel model)
         {
-            _logger.LogInformation("StartRoatpApplication invoked");
+            _logger.LogDebug("StartRoatpApplication invoked");
 
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
             applicationDetails.ApplicationRoute = new ApplicationRoute { Id = model.ApplicationRouteId };
@@ -522,7 +522,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 await _usersApiClient.ApproveUser(user.Id);
             }
 
-            _logger.LogInformation("StartRoatpApplication completed");
+            _logger.LogDebug("StartRoatpApplication completed");
 
             return RedirectToAction("Applications", "RoatpApplication", new { applicationType = ApplicationTypes.RegisterTrainingProviders });
         }
