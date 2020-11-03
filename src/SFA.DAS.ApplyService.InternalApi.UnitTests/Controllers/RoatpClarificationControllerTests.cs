@@ -74,20 +74,6 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
         }
 
         [Test]
-        public async Task GetModerationOutcome_returns_expected_ModerationOutcome()
-        {
-            var expectedResult = new ModerationOutcome();
-            _mediator.Setup(x => x.Send(It.Is<GetModerationOutcomeRequest>(r => r.ApplicationId == _applicationId && r.SequenceNumber == _sequenceNumber && r.SectionNumber == _sectionNumber &&
-                   r.PageId == _pageId), It.IsAny<CancellationToken>())).ReturnsAsync(expectedResult);
-
-            var actualResult = await _controller.GetModerationOutcome(_applicationId, _sequenceNumber, _sectionNumber, _pageId);
-
-            _mediator.Verify(x => x.Send(It.Is<GetModerationOutcomeRequest>(r => r.ApplicationId == _applicationId && r.SequenceNumber == _sequenceNumber && r.SectionNumber == _sectionNumber &&
-                   r.PageId == _pageId), It.IsAny<CancellationToken>()), Times.Once);
-            Assert.AreSame(expectedResult, actualResult);
-        }
-
-        [Test]
         public async Task SubmitPageReviewOutcome_calls_mediator()
         {
             _controller.HttpContext.Request.Form = new FormCollection(new Dictionary<string, StringValues>());

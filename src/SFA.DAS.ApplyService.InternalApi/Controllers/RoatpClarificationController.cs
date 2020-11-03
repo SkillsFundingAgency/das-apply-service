@@ -74,14 +74,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _pageService.GetPage(applicationId, sequenceNumber, sectionNumber, pageId);
         }
 
-        [HttpGet("Clarification/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}/ModerationOutcome")]
-        public async Task<ModerationOutcome> GetModerationOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId)
-        {
-            var moderationOutcome = await _mediator.Send(new GetModerationOutcomeRequest(applicationId, sequenceNumber, sectionNumber, pageId));
-
-            return moderationOutcome;
-        }
-
         [HttpPost("Clarification/Applications/{applicationId}/SubmitPageReviewOutcome")]
         public async Task<IActionResult> SubmitPageReviewOutcome(Guid applicationId, [FromForm] SubmitPageReviewOutcomeCommand request)
         {

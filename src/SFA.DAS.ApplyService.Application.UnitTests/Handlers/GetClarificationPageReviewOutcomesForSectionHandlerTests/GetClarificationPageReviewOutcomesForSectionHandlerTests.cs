@@ -32,6 +32,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetClarificationPa
             var expectedSectionNumber = 2;
             var expectedPageId = "30";
             var expectedUserId = "4fs7f-userId-7gfhh";
+            var expectedUserName = "Joe Cool";
             var expectedStatus = "Fail";
             var expectedComment = "Very bad";
             var expectedResponse = "A good response";
@@ -45,6 +46,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.GetClarificationPa
                     SectionNumber = expectedSectionNumber,
                     PageId = expectedPageId,
                     UserId = expectedUserId,
+                    UserName = expectedUserName,
                     Status = expectedStatus,
                     Comment = expectedComment,
                     ClarificationResponse = expectedResponse

@@ -20,35 +20,6 @@ namespace SFA.DAS.ApplyService.Data
             _config = configurationService.GetConfig().GetAwaiter().GetResult();
         }
 
-        public async Task<ModerationOutcome> GetModerationOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId)
-        {
-            using (var connection = new SqlConnection(_config.SqlConnectionString))
-            {
-                var moderationOutcomeResults = await connection.QueryAsync<ModerationOutcome>(
-                                                                @"SELECT  outcome.[ApplicationId]
-			                                                            , outcome.[SequenceNumber]
-			                                                            , outcome.[SectionNumber]
-			                                                            , outcome.[PageId]
-                                                                        , CASE 
-                                                                            WHEN outcome.[ModeratorUserId] = apply.[Assessor1UserId] THEN apply.[Assessor1Name]
-                                                                            WHEN outcome.[ModeratorUserId] = apply.[Assessor2UserId] THEN apply.[Assessor2Name]
-                                                                            ELSE [ModeratorUserName]
-                                                                          END AS ModeratorName
-			                                                            , outcome.[ModeratorUserId]
-			                                                            , outcome.[ModeratorReviewStatus]
-			                                                            , outcome.[ModeratorReviewComment]
-		                                                            FROM  [dbo].[ModeratorPageReviewOutcome] outcome
-                                                                    INNER JOIN [dbo].[Apply] apply ON outcome.[ApplicationId] = apply.ApplicationId
-		                                                            WHERE outcome.[ApplicationId] = @applicationId AND
-				                                                          outcome.[SequenceNumber] = @sequenceNumber AND
-				                                                          outcome.[SectionNumber] = @sectionNumber AND
-				                                                          outcome.[PageId] = @pageId",
-                    new { applicationId, sequenceNumber, sectionNumber, pageId });
-
-                return moderationOutcomeResults.FirstOrDefault();
-            }
-        }
-
         public async Task<List<ClarificationPageReviewOutcome>> GetClarificationPageReviewOutcomesForSection(Guid applicationId, int sequenceNumber, int sectionNumber)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
@@ -59,9 +30,11 @@ namespace SFA.DAS.ApplyService.Data
 			                                                            ,[SectionNumber]
 			                                                            ,[PageId]
 			                                                            ,[ModeratorUserId]
+			                                                            ,[ModeratorUserName]
 			                                                            ,[ModeratorReviewStatus]
 			                                                            ,[ModeratorReviewComment]
 			                                                            ,[ClarificationUserId] AS UserId
+			                                                            ,[ClarificationUserName] AS UserName
                                                                         ,CASE WHEN ([ClarificationStatus] IS NULL AND [ModeratorReviewStatus] = @passModeratorStatus) THEN @passModeratorStatus
                                                                               ELSE [ClarificationStatus]
                                                                          END AS [Status]
@@ -88,9 +61,11 @@ namespace SFA.DAS.ApplyService.Data
 			                                                            ,[SectionNumber]
 			                                                            ,[PageId]
 			                                                            ,[ModeratorUserId]
+			                                                            ,[ModeratorUserName]
 			                                                            ,[ModeratorReviewStatus]
 			                                                            ,[ModeratorReviewComment]
 			                                                            ,[ClarificationUserId] AS UserId
+			                                                            ,[ClarificationUserName] AS UserName
                                                                         ,CASE WHEN ([ClarificationStatus] IS NULL AND [ModeratorReviewStatus] = @passModeratorStatus) THEN @passModeratorStatus
                                                                               ELSE [ClarificationStatus]
                                                                          END AS [Status]
@@ -118,9 +93,11 @@ namespace SFA.DAS.ApplyService.Data
 			                                                            ,[SectionNumber]
 			                                                            ,[PageId]
 			                                                            ,[ModeratorUserId]
+			                                                            ,[ModeratorUserName]
 			                                                            ,[ModeratorReviewStatus]
 			                                                            ,[ModeratorReviewComment]
 			                                                            ,[ClarificationUserId] AS UserId
+			                                                            ,[ClarificationUserName] AS UserName
                                                                         ,CASE WHEN ([ClarificationStatus] IS NULL AND [ModeratorReviewStatus] = @passModeratorStatus) THEN @passModeratorStatus
                                                                               ELSE [ClarificationStatus]
                                                                          END AS [Status]
