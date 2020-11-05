@@ -19,7 +19,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
         public async Task<Unit> Handle(CreateEmptyModeratorReviewRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"CreateEmptyModeratorReview for ApplicationId '{request.ApplicationId}'");
-            await _repository.CreateEmptyModeratorReview(request.ApplicationId, request.ModeratorUserId, request.PageReviewOutcomes);
+            await _repository.CreateEmptyModeratorReview(request.ApplicationId, request.ModeratorUserId, request.ModeratorUserName, request.PageReviewOutcomes);
             return Unit.Value;
         }
     }

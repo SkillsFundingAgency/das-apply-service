@@ -9,12 +9,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Moderator
     {
         public Guid ApplicationId { get; }
         public string ModeratorUserId { get; }
+        public string ModeratorUserName { get; }
         public List<ModeratorPageReviewOutcome> PageReviewOutcomes { get; }
 
-        public CreateEmptyModeratorReviewRequest(Guid applicationId, string moderatorUserId, List<ModeratorPageReviewOutcome> pageReviewOutcomes)
+        public CreateEmptyModeratorReviewRequest(Guid applicationId, string moderatorUserId, string moderatorUserName, List<ModeratorPageReviewOutcome> pageReviewOutcomes)
         {
             ApplicationId = applicationId;
             ModeratorUserId = moderatorUserId;
+            ModeratorUserName = moderatorUserName;
             PageReviewOutcomes = pageReviewOutcomes;
         }
     }
