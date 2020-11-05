@@ -28,6 +28,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
         private const int _sectionNumber = RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy;
         private const string _pageId = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy;
         private const string _userId = "userid";
+        private const string _userName = "username";
 
         private Mock<IMediator> _mediator;
         private Mock<IInternalQnaApiClient> _qnaApiClient;
@@ -161,6 +162,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
 
             _assessorReviewCreationService.Verify(x => x.CreateEmptyReview(It.Is<Guid>(r => r == applicationid),
                                                            It.Is<string>(u => u == request.AssessorUserId),
+                                                           It.Is<string>(u => u == request.AssessorName),
                                                            It.Is<int>(n => n == request.AssessorNumber)), Times.Once());
         }
 
@@ -174,7 +176,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
 
             await _controller.AssignApplication(applicationid, request);
 
-            _assessorReviewCreationService.Verify(x => x.CreateEmptyReview(It.IsAny<Guid>(),It.IsAny<string>(),
+            _assessorReviewCreationService.Verify(x => x.CreateEmptyReview(It.IsAny<Guid>(),It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<int>()), Times.Never());
         }
 
@@ -193,12 +195,12 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
         [Test]
         public async Task SubmitPageReviewOutcome_calls_mediator()
         {
-            var request = new RoatpAssessorController.SubmitPageReviewOutcomeCommand { SequenceNumber = _sequenceNumber, SectionNumber = _sectionNumber, PageId = _pageId, UserId = _userId, Status = "Fail", Comment = "Very bad" };
+            var request = new RoatpAssessorController.SubmitPageReviewOutcomeCommand { SequenceNumber = _sequenceNumber, SectionNumber = _sectionNumber, PageId = _pageId, UserId = _userId, UserName = _userName, Status = "Fail", Comment = "Very bad" };
 
             await _controller.SubmitPageReviewOutcome(_applicationId, request);
 
             _mediator.Verify(x => x.Send(It.Is<SubmitAssessorPageOutcomeRequest>(r => r.ApplicationId == _applicationId && r.SequenceNumber == request.SequenceNumber && r.SectionNumber == request.SectionNumber && 
-                   r.PageId == request.PageId && r.UserId == request.UserId && r.Status == request.Status && r.Comment == request.Comment), It.IsAny<CancellationToken>()), Times.Once);
+                   r.PageId == request.PageId && r.UserId == request.UserId && r.UserName == request.UserName && r.Status == request.Status && r.Comment == request.Comment), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Test]
@@ -343,11 +345,11 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
                     Assessor1ReviewStatus = assessor1ReviewStatus, Assessor2ReviewStatus = assessor2ReviewStatus
                 });
 
-            var request = new RoatpAssessorController.UpdateAssessorReviewStatusCommand { UserId = _userId, Status = AssessorReviewStatus.Approved };
+            var request = new RoatpAssessorController.UpdateAssessorReviewStatusCommand { UserId = _userId, UserName = _userName, Status = AssessorReviewStatus.Approved };
 
             await _controller.UpdateAssessorReviewStatus(_applicationId, request);
 
-            _moderatorReviewCreationService.Verify(x => x.CreateEmptyReview(_applicationId, _userId), Times.Exactly(expectModeratorReviewCreation ? 1 : 0));
+            _moderatorReviewCreationService.Verify(x => x.CreateEmptyReview(_applicationId, _userId, _userName), Times.Exactly(expectModeratorReviewCreation ? 1 : 0));
         }
     }
 }

@@ -9,12 +9,14 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
     {
         public Guid ApplicationId { get; }
         public string AssessorUserId { get; }
+        public string AssessorUserName { get; }
         public List<AssessorPageReviewOutcome> PageReviewOutcomes { get; }
 
-        public CreateEmptyAssessorReviewRequest(Guid applicationId, string assessorUserId, List<AssessorPageReviewOutcome> pageReviewOutcomes)
+        public CreateEmptyAssessorReviewRequest(Guid applicationId, string assessorUserId, string assessorUserName, List<AssessorPageReviewOutcome> pageReviewOutcomes)
         {
             ApplicationId = applicationId;
             AssessorUserId = assessorUserId;
+            AssessorUserName = assessorUserName;
             PageReviewOutcomes = pageReviewOutcomes;
         }
     }

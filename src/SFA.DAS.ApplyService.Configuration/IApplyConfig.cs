@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 
 namespace SFA.DAS.ApplyService.Configuration
@@ -12,7 +11,8 @@ namespace SFA.DAS.ApplyService.Configuration
         DfeSignInConfig DfeSignIn { get; set; }
         string SqlConnectionString { get; set; }
 
-        
+        FileStorageConfig FileStorage { get; set; }
+
         NotificationsApiClientConfiguration NotificationsApiClientConfiguration { get; set; }
 
         AssessorServiceApiAuthentication AssessorServiceApiAuthentication { get; set; }

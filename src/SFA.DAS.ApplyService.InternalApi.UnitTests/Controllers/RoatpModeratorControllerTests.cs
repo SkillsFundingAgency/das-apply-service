@@ -22,6 +22,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
         private const int _sectionNumber = RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.ManagementHierarchy;
         private const string _pageId = RoatpWorkflowPageIds.DeliveringApprenticeshipTraining.ManagementHierarchy;
         private const string _userId = "userid";
+        private const string _userName = "username";
 
         private Mock<IMediator> _mediator;
         private Mock<IAssessorSequenceService> _sequenceService;
@@ -72,12 +73,12 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Controllers
         [Test]
         public async Task SubmitPageReviewOutcome_calls_mediator()
         {
-            var request = new RoatpModeratorController.SubmitPageReviewOutcomeCommand { SequenceNumber = _sequenceNumber, SectionNumber = _sectionNumber, PageId = _pageId, UserId = _userId, Status = "Fail", Comment = "Very bad"};
+            var request = new RoatpModeratorController.SubmitPageReviewOutcomeCommand { SequenceNumber = _sequenceNumber, SectionNumber = _sectionNumber, PageId = _pageId, UserId = _userId, UserName = _userName, Status = "Fail", Comment = "Very bad"};
 
             await _controller.SubmitPageReviewOutcome(_applicationId, request);
 
             _mediator.Verify(x => x.Send(It.Is<SubmitModeratorPageOutcomeRequest>(r => r.ApplicationId == _applicationId && r.SequenceNumber == request.SequenceNumber && r.SectionNumber == request.SectionNumber &&
-                   r.PageId == request.PageId && r.UserId == request.UserId && r.Status == request.Status && r.Comment == request.Comment), It.IsAny<CancellationToken>()), Times.Once);
+                   r.PageId == request.PageId && r.UserId == request.UserId && r.UserName == request.UserName && r.Status == request.Status && r.Comment == request.Comment), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Test]

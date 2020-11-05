@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
+using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Configuration;
 using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Entities;
@@ -97,27 +97,44 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             if (!await _userService.ValidateUser(user))
                 return RedirectToAction("PostSignIn", "Users");
 
-            _logger.LogInformation($"Got LoggedInUser from Session: {user}");
+            _logger.LogDebug($"Got LoggedInUser from Session: {user}");
 
             var signinId = await _userService.GetSignInId();
             var applications = await _apiClient.GetApplications(signinId, false);
             applications = applications.Where(app => app.ApplicationStatus != ApplicationStatus.Rejected).ToList();
 
-            if (!applications.Any())
-            {
-                return await StartApplication(signinId);
-            }
+            var application = new Apply();
+            Guid applicationId;
+            string applicationStatus;
 
             if (applications.Count > 1)
+            {
                 return View(applications);
+            }
+            if (applications.Count == 1)
+            {
+                application = applications.Single();
+                applicationId = application.Id;
+                applicationStatus = application.ApplicationStatus;
+            }
+            else
+            {
+                applicationId = await StartApplication(signinId);
+                applicationStatus = ApplicationStatus.InProgress;
 
-            var application = applications.First();
+                if (applicationId == Guid.Empty)
+                {
+                    return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
+                }
+            }
+            
+            _logger.LogDebug("Applications controller action completed");
 
-            switch (application.ApplicationStatus)
+            switch (applicationStatus)
             {
                 case ApplicationStatus.New:
                 case ApplicationStatus.InProgress:
-                    return RedirectToAction("TaskList", new { applicationId = application.ApplicationId });
+                    return RedirectToAction("TaskList", new { applicationId });
                 case ApplicationStatus.Cancelled:
                     return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
                 case ApplicationStatus.Approved:
@@ -125,27 +142,29 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 case ApplicationStatus.Rejected:
                     return View("~/Views/Application/Rejected.cshtml", application);
                 case ApplicationStatus.FeedbackAdded:
-                    return View("~/Views/Application/FeedbackIntro.cshtml", application.ApplicationId);
+                    return View("~/Views/Application/FeedbackIntro.cshtml", applicationId);
                 case ApplicationStatus.Submitted:
                 case ApplicationStatus.GatewayAssessed:
                 case ApplicationStatus.Resubmitted:
-                    return RedirectToAction("ApplicationSubmitted", new { applicationId = application.ApplicationId });
+                    return RedirectToAction("ApplicationSubmitted", new { applicationId });
                 default:
-                    return RedirectToAction("TaskList", new { applicationId = application.ApplicationId });
+                    return RedirectToAction("TaskList", new { applicationId });
             }
         }
 
-        private async Task<IActionResult> StartApplication(Guid signinId)
+        private async Task<Guid> StartApplication(Guid signinId)
         {
+            _logger.LogDebug("StartApplication method invoked");
+
             var applicationType = ApplicationTypes.RegisterTrainingProviders;
             var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
 
-            if(applicationDetails is null)
+            if (applicationDetails is null)
             {
-                return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
+                return Guid.Empty;
             }
 
-            _logger.LogInformation($"Application Details:: Ukprn: [{applicationDetails?.UKPRN}], ProviderName: [{applicationDetails?.UkrlpLookupDetails?.ProviderName}], RouteId: [{applicationDetails?.ApplicationRoute?.Id}]");
+            _logger.LogDebug($"Application Details:: Ukprn: [{applicationDetails?.UKPRN}], ProviderName: [{applicationDetails?.UkrlpLookupDetails?.ProviderName}], RouteId: [{applicationDetails?.ApplicationRoute?.Id}]");
             var providerRoute = applicationDetails.ApplicationRoute.Id;
 
             var startApplicationData = new JObject
@@ -158,9 +177,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             var user = await _usersApiClient.GetUserBySignInId(signinId.ToString());
 
             var startApplicationJson = JsonConvert.SerializeObject(startApplicationData);
-            _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse PRE: userid: [{user.Id.ToString()}], applicationType: [{applicationType}], startApplicationJson: [{startApplicationJson}]");
+            _logger.LogDebug($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse PRE: userid: [{user.Id.ToString()}], applicationType: [{applicationType}], startApplicationJson: [{startApplicationJson}]");
             var qnaResponse = await _qnaApiClient.StartApplication(user.Id.ToString(), applicationType, startApplicationJson);
-            _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse POST: applicationId: [{qnaResponse?.ApplicationId}]");
+            _logger.LogDebug($"RoatpApplicationController.StartApplication:: Checking applicationStartResponse POST: applicationId: [{qnaResponse?.ApplicationId}]");
 
             if (qnaResponse != null)
             {
@@ -172,41 +191,58 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 var allQnaSequences = await allQnaSequencesTask;
                 var allQnaSections = await allQnaSectionsTask;
 
-                var startApplicationRequest = await BuildStartApplicationRequest(qnaResponse.ApplicationId, user.Id, providerRoute, allQnaSequences, allQnaSections);
+                var startApplicationRequest = BuildStartApplicationRequest(qnaResponse.ApplicationId, user.Id, providerRoute, allQnaSequences, allQnaSections);
 
                 var applicationId = await _apiClient.StartApplication(startApplicationRequest);
-                _logger.LogInformation($"RoatpApplicationController.StartApplication:: Checking response from StartApplication POST: applicationId: [{applicationId}]");
+                _logger.LogDebug($"RoatpApplicationController.StartApplication:: Checking response from StartApplication POST: applicationId: [{applicationId}]");
 
                 if (applicationId != Guid.Empty)
                 {
                    await SavePreambleInformation(applicationId, applicationDetails);
+                   _logger.LogDebug("Preamble information saved");
 
                     if (applicationDetails.UkrlpLookupDetails.VerifiedByCompaniesHouse)
                     {
                         await SaveCompaniesHouseInformation(applicationId, applicationDetails);
+                        _logger.LogDebug("Companies House information saved");
                     }
 
                     if (applicationDetails.UkrlpLookupDetails.VerifiedbyCharityCommission)
                     {
                         await SaveCharityCommissionInformation(applicationId, applicationDetails);
+                        _logger.LogDebug("Save Charity Commission information saved");
                     }
                 }
+                
+                _logger.LogDebug("StartApplication method completed");
+
+                return applicationId;
             }
 
-            return RedirectToAction("Applications", new { applicationType });
+            return Guid.Empty;
         }
 
-        private async Task<Application.Apply.Start.StartApplicationRequest> BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
+        private StartApplicationRequest BuildStartApplicationRequest(Guid qnaApplicationId, Guid creatingContactId, int providerRoute, IEnumerable<ApplicationSequence> qnaSequences, IEnumerable<ApplicationSection> qnaSections)
         {
-            var providerRoutes = await _roatpApiClient.GetApplicationRoutes();
-            var selectedProviderRoute = providerRoutes.FirstOrDefault(p => p.Id == providerRoute);
+            string selectedProviderRoute;
+            switch (providerRoute)
+            {
+                case 1: selectedProviderRoute = "Main provider";
+                    break;
+                case 2: selectedProviderRoute = "Employer provider";
+                    break;
+                case 3: selectedProviderRoute = "Supporting provider";
+                    break;
+                default:
+                    throw new ArgumentException(nameof(providerRoute));
+            }
 
-            return new Application.Apply.Start.StartApplicationRequest
+            return new StartApplicationRequest
             {
                 ApplicationId = qnaApplicationId,
                 CreatingContactId = creatingContactId,
                 ProviderRoute = providerRoute,
-                ProviderRouteName = selectedProviderRoute?.RouteName,
+                ProviderRouteName = selectedProviderRoute,
                 ApplySequences = qnaSequences.Select(sequence => new ApplySequence
                 {
                     SequenceId = sequence.Id,

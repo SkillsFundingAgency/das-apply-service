@@ -29,12 +29,14 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
 
         private Guid _applicationId;
         private string _userId;
+        private string _userName;
 
         [SetUp]
         public void Arrange()
         {
             _applicationId = Guid.NewGuid();
             _userId = "TestUser";
+            _userName = "TestUserName";
 
             _assessorSequenceService = new Mock<IAssessorSequenceService>();
             _mediator = new Mock<IMediator>();
@@ -93,7 +95,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
         [Test]
         public async Task CreateEmptyReview_creates_empty_review_outcomes()
         {
-            await _reviewCreationService.CreateEmptyReview(_applicationId, _userId);
+            await _reviewCreationService.CreateEmptyReview(_applicationId, _userId, _userName);
 
             var allSections = _sequences.SelectMany(seq => seq.Sections);
             var allSectionsExclusingSectors = allSections.Where(sec => sec.SequenceNumber != RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining || sec.SectionNumber != RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees);

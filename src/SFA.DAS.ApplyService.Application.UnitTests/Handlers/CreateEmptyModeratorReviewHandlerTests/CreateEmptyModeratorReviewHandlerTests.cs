@@ -29,6 +29,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateEmptyModerat
         {
             var applicationId = Guid.NewGuid();
             var userId = Guid.NewGuid().ToString();
+            var userName = Guid.NewGuid().ToString();
 
             var pageReviewOutcomes = new List<ModeratorPageReviewOutcome>
                 {
@@ -50,11 +51,11 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateEmptyModerat
                     }
                 };
 
-            var request = new CreateEmptyModeratorReviewRequest(applicationId, userId, pageReviewOutcomes);
+            var request = new CreateEmptyModeratorReviewRequest(applicationId, userId, userName, pageReviewOutcomes);
 
             await _handler.Handle(request, new CancellationToken());
 
-            _repository.Verify(x => x.CreateEmptyModeratorReview(request.ApplicationId, request.ModeratorUserId, request.PageReviewOutcomes), Times.Once);
+            _repository.Verify(x => x.CreateEmptyModeratorReview(request.ApplicationId, request.ModeratorUserId, request.ModeratorUserName, request.PageReviewOutcomes), Times.Once);
         }
     }
 }

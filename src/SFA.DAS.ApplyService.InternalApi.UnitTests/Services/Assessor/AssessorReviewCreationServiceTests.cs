@@ -28,6 +28,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
 
         private Guid _applicationId;
         private string _assessorUserId;
+        private string _assessorUserName;
         private int _assessorNumber;
 
         [SetUp]
@@ -35,6 +36,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
         {
             _applicationId = Guid.NewGuid();
             _assessorUserId = "TestUser";
+            _assessorUserName = "TestUserName";
             _assessorNumber = 1;
 
             _assessorSequenceService = new Mock<IAssessorSequenceService>();
@@ -94,7 +96,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests.Services.Assessor
         [Test]
         public async Task CreateEmptyReview_creates_empty_review_outcomes()
         {
-            await _assessorReviewCreationService.CreateEmptyReview(_applicationId, _assessorUserId, _assessorNumber);
+            await _assessorReviewCreationService.CreateEmptyReview(_applicationId, _assessorUserId, _assessorUserName, _assessorNumber);
 
             var allSections = _sequences.SelectMany(seq => seq.Sections);
             var allSectionsExclusingSectors = allSections.Where(sec => sec.SequenceNumber != RoatpWorkflowSequenceIds.DeliveringApprenticeshipTraining || sec.SectionNumber != RoatpWorkflowSectionIds.DeliveringApprenticeshipTraining.YourSectorsAndEmployees);

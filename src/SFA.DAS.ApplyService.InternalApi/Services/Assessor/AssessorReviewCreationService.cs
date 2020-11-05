@@ -24,7 +24,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
             _mediator = mediator;
         }
 
-        public async Task CreateEmptyReview(Guid applicationId, string assessorUserId, int assessorNumber)
+        public async Task CreateEmptyReview(Guid applicationId, string assessorUserId, string assessorUserName, int assessorNumber)
         {
             var reviewOutcomes = new List<AssessorPageReviewOutcome>();
 
@@ -48,7 +48,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
                 }
             }
 
-            await _mediator.Send(new CreateEmptyAssessorReviewRequest(applicationId, assessorUserId, reviewOutcomes));
+            await _mediator.Send(new CreateEmptyAssessorReviewRequest(applicationId, assessorUserId, assessorUserName, reviewOutcomes));
         }
 
         private List<AssessorPageReviewOutcome> GenerateSectionReviewOutcomes(Guid applicationId, AssessorSection section, string assessorUserId, int assessorNumber)

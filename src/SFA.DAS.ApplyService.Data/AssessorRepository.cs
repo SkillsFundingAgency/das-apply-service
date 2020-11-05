@@ -359,7 +359,7 @@ namespace SFA.DAS.ApplyService.Data
         }
 
         public async Task SubmitAssessorPageOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId,
-                                                    string userId, string status, string comment)
+                                                    string userId, string userName, string status, string comment)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
@@ -565,7 +565,7 @@ namespace SFA.DAS.ApplyService.Data
             }
 		}
 
-        public async Task CreateEmptyAssessorReview(Guid applicationId, string userId, List<AssessorPageReviewOutcome> pageReviewOutcomes)
+        public async Task CreateEmptyAssessorReview(Guid applicationId, string userId, string userName, List<AssessorPageReviewOutcome> pageReviewOutcomes)
         {
             var assessorNumber = await GetAssessorNumber(applicationId, userId);
             var createdAtDateTime = DateTime.UtcNow;

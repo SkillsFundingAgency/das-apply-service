@@ -19,7 +19,7 @@ namespace SFA.DAS.ApplyService.Application.Apply.Assessor
         public async Task<Unit> Handle(CreateEmptyAssessorReviewRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"CreateEmptyAssessorReview for ApplicationId '{request.ApplicationId}'");
-            await _repository.CreateEmptyAssessorReview(request.ApplicationId, request.AssessorUserId, request.PageReviewOutcomes);
+            await _repository.CreateEmptyAssessorReview(request.ApplicationId, request.AssessorUserId, request.AssessorUserName, request.PageReviewOutcomes);
             return Unit.Value;
         }
     }

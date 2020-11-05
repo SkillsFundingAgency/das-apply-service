@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply.Clarification;
 using SFA.DAS.ApplyService.Domain.Apply.Clarification;
 using SFA.DAS.ApplyService.InternalApi.Services.Assessor;
+using SFA.DAS.ApplyService.InternalApi.Services.Files;
 using SFA.DAS.ApplyService.InternalApi.Types.Assessor;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
@@ -15,21 +18,26 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     [Authorize]
     public class RoatpClarificationController : Controller
     {
+        private readonly ILogger<RoatpClarificationController> _logger;
         private readonly IMediator _mediator;
         private readonly IAssessorSequenceService _sequenceService;
         private readonly IAssessorPageService _pageService;
         private readonly IAssessorSectorService _sectorService;
         private readonly IAssessorSectorDetailsService _sectorDetailsService;
+        private readonly IFileStorageService _fileStorageService;
 
-        public RoatpClarificationController(IMediator mediator,
+        public RoatpClarificationController(ILogger<RoatpClarificationController> logger, IMediator mediator,
             IAssessorSequenceService assessorSequenceService, IAssessorPageService assessorPageService,
-            IAssessorSectorService assessorSectorService, IAssessorSectorDetailsService assessorSectorDetailsService)
+            IAssessorSectorService assessorSectorService, IAssessorSectorDetailsService assessorSectorDetailsService,
+            IFileStorageService fileStorageService)
         {
+            _logger = logger;
             _mediator = mediator;
             _sequenceService = assessorSequenceService;
             _pageService = assessorPageService;
             _sectorService = assessorSectorService;
             _sectorDetailsService = assessorSectorDetailsService;
+            _fileStorageService = fileStorageService;
         }
 
         [HttpGet("Clarification/Applications/{applicationId}/Overview")]
@@ -66,18 +74,25 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return await _pageService.GetPage(applicationId, sequenceNumber, sectionNumber, pageId);
         }
 
-        [HttpGet("Clarification/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}/ModerationOutcome")]
-        public async Task<ModerationOutcome> GetModerationOutcome(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId)
-        {
-            var moderationOutcome = await _mediator.Send(new GetModerationOutcomeRequest(applicationId, sequenceNumber, sectionNumber, pageId));
-
-            return moderationOutcome;
-        }
-
         [HttpPost("Clarification/Applications/{applicationId}/SubmitPageReviewOutcome")]
-        public async Task SubmitPageReviewOutcome(Guid applicationId, [FromBody] SubmitPageReviewOutcomeCommand request)
+        public async Task<IActionResult> SubmitPageReviewOutcome(Guid applicationId, [FromForm] SubmitPageReviewOutcomeCommand request)
         {
-            await _mediator.Send(new SubmitClarificationPageOutcomeRequest(applicationId, request.SequenceNumber, request.SectionNumber, request.PageId, request.UserId, request.Status, request.Comment, request.ClarificationResponse));
+            string clarificationFile = null;
+
+            if (Request.Form.Files != null && Request.Form.Files.Any())
+            {
+                clarificationFile = Request.Form.Files.First().FileName;
+                var uploadedSuccessfully = await _fileStorageService.UploadFiles(applicationId, request.SequenceNumber, request.SectionNumber, request.PageId, Request.Form.Files, ContainerType.Assessor, new CancellationToken());
+
+                if (!uploadedSuccessfully)
+                {
+                    _logger.LogError($"Unable to upload files for application: {applicationId} || pageId {request.PageId}");
+                    return BadRequest();
+                }
+            }
+
+            await _mediator.Send(new SubmitClarificationPageOutcomeRequest(applicationId, request.SequenceNumber, request.SectionNumber, request.PageId, request.UserId, request.UserName, request.Status, request.Comment, request.ClarificationResponse, clarificationFile));
+            return Ok();
         }
 
         [HttpPost("Clarification/Applications/{applicationId}/GetPageReviewOutcome")]
@@ -105,12 +120,42 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         }
 
 
+        [HttpGet("Clarification/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}/Download/{fileName}")]
+        public async Task<IActionResult> DownloadClarificationFile(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string fileName)
+        {
+            var file = await _fileStorageService.DownloadFile(applicationId, sequenceNumber, sectionNumber, pageId, fileName, ContainerType.Assessor, new CancellationToken());
+
+            if (file is null)
+            {
+                _logger.LogError($"Unable to download file for application: {applicationId} || pageId {pageId} || filename {fileName}");
+                return NotFound();
+            }
+
+            return File(file.Stream, file.ContentType, file.FileName);
+        }
+
+        [HttpDelete("Clarification/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}/Delete/{fileName}")]
+        public async Task<bool> DeleteClarificationFile(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string fileName)
+        {
+            await _mediator.Send(new DeleteClarificationFileRequest(applicationId, sequenceNumber, sectionNumber, pageId, fileName));
+
+            var deletedSuccessfully = await _fileStorageService.DeleteFile(applicationId, sequenceNumber, sectionNumber, pageId, fileName, ContainerType.Assessor, new CancellationToken());
+
+            if (!deletedSuccessfully)
+            {
+                _logger.LogError($"Unable to delete file for application: {applicationId} || pageId {pageId} || filename {fileName}");
+            }
+
+            return deletedSuccessfully;
+        }
+
         public class SubmitPageReviewOutcomeCommand
         {
             public int SequenceNumber { get; set; }
             public int SectionNumber { get; set; }
             public string PageId { get; set; }
             public string UserId { get; set; }
+            public string UserName { get; set; }
             public string Status { get; set; }
             public string Comment { get; set; }
             public string ClarificationResponse { get; set; }
