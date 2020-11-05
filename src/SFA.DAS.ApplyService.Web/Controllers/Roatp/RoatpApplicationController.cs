@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NPOI.HSSF.Record.Chart;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Configuration;
@@ -1158,14 +1160,21 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             // TODO: Validate all sections are completed (i.e all questions answered)
             // FUTURE WORK: Validate all sections have had requested feedback answered
 
+            var providerRouteTask = _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.ProviderRoute);
+            var applicationTask = _apiClient.GetApplication(model.ApplicationId);
+            var allSectionsTask = _qnaApiClient.GetSections(model.ApplicationId);
+            var roatpSequencesTask = _apiClient.GetRoatpSequences();
+            var organisationVerificationStatusTask = _organisationVerificationService.GetOrganisationVerificationStatus(model.ApplicationId);
+            var providerRoutesTask = _roatpApiClient.GetApplicationRoutes();
 
-            var providerRoute = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.ProviderRoute);
+            await Task.WhenAll(providerRouteTask, applicationTask, allSectionsTask, roatpSequencesTask, organisationVerificationStatusTask, providerRoutesTask);
 
-            var application = await _apiClient.GetApplication(model.ApplicationId);
-
-            var roatpSequences = await _apiClient.GetRoatpSequences();
-
-            var organisationVerificationStatus = await _organisationVerificationService.GetOrganisationVerificationStatus(model.ApplicationId);
+            var providerRoute = await providerRouteTask;
+            var application = await applicationTask;
+            var allSections = await allSectionsTask;
+            var roatpSequences = await roatpSequencesTask;
+            var organisationVerificationStatus = await organisationVerificationStatusTask;
+            var providerRoutes = await providerRoutesTask;
 
             await _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(model.ApplicationId);
             var sequences = await _roatpTaskListWorkflowService.GetApplicationSequences(model.ApplicationId);
@@ -1174,8 +1183,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 var applicationSequence = await _qnaApiClient.GetSequenceBySequenceNo(model.ApplicationId, sequence.SequenceNo);
 
-                var sections = await _qnaApiClient.GetSections(model.ApplicationId, applicationSequence.Id);
-                applicationSequence.Sections = sections.ToList();
+                var sections = allSections.Where(x => x.SequenceId == sequence.SequenceNo).ToList();
+
+                applicationSequence.Sections = sections;
                 foreach (var section in sections)
                 {
                     var applySection = sequence.Sections.FirstOrDefault(x => x.SectionNo == section.SectionId);
@@ -1190,7 +1200,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 sequence.NotRequired = SequenceNotRequired(model.ApplicationId, applicationSequence, sequences,
                                                            organisationVerificationStatus);
             }
-            var providerRoutes = await _roatpApiClient.GetApplicationRoutes();
+            
             var selectedProviderRoute = providerRoutes.FirstOrDefault(p => p.Id.ToString() == providerRoute.Value);
 
             var submitApplicationRequest = new Application.Apply.Submit.SubmitApplicationRequest
