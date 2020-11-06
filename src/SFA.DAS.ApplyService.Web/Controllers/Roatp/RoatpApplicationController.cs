@@ -1121,6 +1121,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var organisationName = await _qnaApiClient.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.UkrlpLegalName);
             model.OrganisationName = organisationName.Value;
+            model.EmailAddress = User.GetEmail();
 
             return View("~/Views/Roatp/SubmitApplication.cshtml", model);
         }
