@@ -1,11 +1,11 @@
 ﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.SubmitApplicationViewModel
 
 @{
-        var title = $"Submit application on behalf of {Model.OrganisationName}";
-        ViewBag.Title = title;
-        Layout = "_Layout";
+    var title = $"Submit application on behalf of {Model.OrganisationName}";
+    ViewBag.Title = title;
+    Layout = "_Layout";
 
-        bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
+    bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
 }
 
 <partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
