@@ -114,7 +114,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             if (applications.Count == 1)
             {
                 application = applications.Single();
-                applicationId = application.Id;
+                applicationId = application.ApplicationId;
                 applicationStatus = application.ApplicationStatus;
             }
             else
