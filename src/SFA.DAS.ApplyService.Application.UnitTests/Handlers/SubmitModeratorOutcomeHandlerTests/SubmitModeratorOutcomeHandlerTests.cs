@@ -13,40 +13,46 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.SubmitModeratorOut
     [TestFixture]
     public class SubmitModeratorOutcomeHandlerTests
     {
+        private Guid _applicationId;
+        private string _userId;
+        private string _userName;
+        private string _status;
+        private string _comment;
+
         private Mock<IApplyRepository> _applyRepository;
         private Mock<IModeratorRepository> _moderatorRepository;
         private SubmitModeratorOutcomeHandler _handler;
-        private Guid _applicationId;
-        private ApplyData _applyData;
-        private SubmitModeratorOutcomeRequest _request;
-        private string UserId => "user_id_1";
-        private string UserName => "user name";
-        private string Status => "status to store";
-        private string Comment => "comment goes here";
 
         [SetUp]
         public void Setup()
         {
             _applicationId = Guid.NewGuid();
-            _applyRepository = new Mock<IApplyRepository>();
-            _request = new SubmitModeratorOutcomeRequest(_applicationId, UserId, UserName, Status, Comment);
-            _applyData = new ApplyData {ModeratorReviewDetails = new ModeratorReviewDetails()};
+            _userId = "user_id_1";
+            _userName = "user name";
+            _status = "Approved";
+            _comment = "comment goes here";
 
+            var logger = Mock.Of<ILogger<SubmitModeratorOutcomeHandler>>();
+            _applyRepository = new Mock<IApplyRepository>();
             _moderatorRepository = new Mock<IModeratorRepository>();
-            _handler = new SubmitModeratorOutcomeHandler(_applyRepository.Object, _moderatorRepository.Object, Mock.Of<ILogger<SubmitModeratorOutcomeHandler>>());
+
+            _handler = new SubmitModeratorOutcomeHandler(logger, _applyRepository.Object, _moderatorRepository.Object);
         }
 
         [Test]
-        public async Task Submit_Moderator_Outcome_is_stored()
+        public async Task SubmitModeratorOutcome_is_stored()
         {
-            _applyRepository.Setup(x => x.GetApplyData(_applicationId)).ReturnsAsync(_applyData);
-            
-            _moderatorRepository.Setup(x => x.SubmitModeratorOutcome(_applicationId, It.IsAny<ApplyData>(), UserId, Status))
-                .ReturnsAsync(true);
-            var successfulSave = await _handler.Handle(_request, new CancellationToken());
+            var applyData = new ApplyData { ModeratorReviewDetails = new ModeratorReviewDetails() };
+            _applyRepository.Setup(x => x.GetApplyData(_applicationId)).ReturnsAsync(applyData);
 
-             Assert.IsTrue(successfulSave);
-            _moderatorRepository.Verify(x => x.SubmitModeratorOutcome(_applicationId, It.IsAny<ApplyData>(), UserId, Status), Times.Once);
+            _moderatorRepository.Setup(x => x.UpdateModerationStatus(_applicationId, It.IsAny<ApplyData>(), _status, _userId))
+                .ReturnsAsync(true);
+
+            var request = new SubmitModeratorOutcomeRequest(_applicationId, _userId, _userName, _status, _comment);
+            var successfulSave = await _handler.Handle(request, new CancellationToken());
+
+            Assert.IsTrue(successfulSave);
+            _moderatorRepository.Verify(x => x.UpdateModerationStatus(_applicationId, It.IsAny<ApplyData>(), _status, _userId), Times.Once);
         }
     }
 }

@@ -3,6 +3,8 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Moderator;
+using SFA.DAS.ApplyService.Domain.Apply;
+using SFA.DAS.ApplyService.Domain.Entities;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,31 +14,57 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.SubmitModeratorPag
     [TestFixture]
     public class SubmitModeratorPageOutcomeHandlerTests
     {
-        private Mock<IModeratorRepository> _repository;
+        private Guid _applicationId;
+        private int _sequenceNumber;
+        private int _sectionNumber;
+        private string _pageId;
+        private string _userId;
+        private string _userName;
+        private string _status;
+        private string _comment;
+
+        private Mock<IApplyRepository> _applyRepository;
+        private Mock<IModeratorRepository> _moderatorRepository;
         private SubmitModeratorPageOutcomeHandler _handler;
 
         [SetUp]
-        public void TestSetup()
+        public void Setup()
         {
-            _repository = new Mock<IModeratorRepository>();
-            _handler = new SubmitModeratorPageOutcomeHandler(_repository.Object, Mock.Of<ILogger<SubmitModeratorPageOutcomeHandler>>());
+            _applicationId = Guid.NewGuid();
+            _sequenceNumber = 1;
+            _sectionNumber = 2;
+            _pageId = "30";
+            _userId = "4fs7f-userId-7gfhh";
+            _userName = "user-name";
+            _status = "Fail";
+            _comment = "Very bad";
+
+            var logger = Mock.Of<ILogger<SubmitModeratorPageOutcomeHandler>>();
+            _applyRepository = new Mock<IApplyRepository>();
+            _moderatorRepository = new Mock<IModeratorRepository>();
+
+            var applyData = new ApplyData { ModeratorReviewDetails = new ModeratorReviewDetails() };
+            _applyRepository.Setup(x => x.GetApplyData(_applicationId)).ReturnsAsync(applyData);
+
+            _handler = new SubmitModeratorPageOutcomeHandler(logger, _applyRepository.Object, _moderatorRepository.Object);
         }
 
         [Test]
         public async Task SubmitModeratorPageOutcome_is_stored()
         {
-            var applicationId = Guid.NewGuid();
-            var sequenceNumber = 1;
-            var sectionNumber = 2;
-            var pageId = "30";
-            var userId = "4fs7f-userId-7gfhh";
-            var userName = "user-name";
-            var status = "Fail";
-            var comment = "Very bad";
+            var request = new SubmitModeratorPageOutcomeRequest(_applicationId, _sequenceNumber, _sectionNumber, _pageId, _userId, _userName, _status, _comment);
+            await _handler.Handle(request, new CancellationToken());
 
-            await _handler.Handle(new SubmitModeratorPageOutcomeRequest(applicationId, sequenceNumber, sectionNumber, pageId, userId, userName, status, comment), new CancellationToken());
+            _moderatorRepository.Verify(x => x.SubmitModeratorPageOutcome(_applicationId, _sequenceNumber, _sectionNumber, _pageId, _userId, _userName, _status, _comment), Times.Once);
+        }
 
-            _repository.Verify(x => x.SubmitModeratorPageOutcome(applicationId, sequenceNumber, sectionNumber, pageId, userId, userName, status, comment), Times.Once);
+        [Test]
+        public async Task SubmitModeratorPageOutcome_ModeratorReviewDetails_are_updated()
+        {
+            var request = new SubmitModeratorPageOutcomeRequest(_applicationId, _sequenceNumber, _sectionNumber, _pageId, _userId, _userName, _status, _comment);
+            await _handler.Handle(request, new CancellationToken());
+
+            _moderatorRepository.Verify(x => x.UpdateModerationStatus(request.ApplicationId, It.IsAny<ApplyData>(), ModerationStatus.InProgress, request.UserId), Times.Once);
         }
     }
 }
