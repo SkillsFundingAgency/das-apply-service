@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Roatp;
 using SFA.DAS.ApplyService.Application.Apply.Start;
 using SFA.DAS.ApplyService.Configuration;
@@ -114,7 +115,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             if (applications.Count == 1)
             {
                 application = applications.Single();
-                applicationId = application.Id;
+                applicationId = application.ApplicationId;
                 applicationStatus = application.ApplicationStatus;
             }
             else
@@ -198,22 +199,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
                 if (applicationId != Guid.Empty)
                 {
-                   await SavePreambleInformation(applicationId, applicationDetails);
-                   _logger.LogDebug("Preamble information saved");
-
-                    if (applicationDetails.UkrlpLookupDetails.VerifiedByCompaniesHouse)
-                    {
-                        await SaveCompaniesHouseInformation(applicationId, applicationDetails);
-                        _logger.LogDebug("Companies House information saved");
-                    }
-
-                    if (applicationDetails.UkrlpLookupDetails.VerifiedbyCharityCommission)
-                    {
-                        await SaveCharityCommissionInformation(applicationId, applicationDetails);
-                        _logger.LogDebug("Save Charity Commission information saved");
-                    }
+                    await StorePreambleInformation(applicationId, applicationDetails);
                 }
-                
+
                 _logger.LogDebug("StartApplication method completed");
 
                 return applicationId;
@@ -1094,6 +1082,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         {
             if (questions != null)
             {
+                _logger.LogDebug("UpdateQuestionsWithinQnA invoked...");
+
+                var sequenceSections = new List<Tuple<int, int>>();
+                var parallelTasks = new List<Task>();
+                var sequentialTasks = new List<Task>();
+
                 // Many answers for a particular page could have been added, so we need to group them up
                 var pageAnswersDictionary = questions.GroupBy(q => q.PageId).ToDictionary(g => g.Key, g => g.ToList());
 
@@ -1106,9 +1100,35 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                     if (answers != null && answers.Any())
                     {
                         var pageId = answers[0].PageId;
+                        var sequenceId = answers[0].SequenceId;
+                        var sectionId = answers[0].SectionId;
 
-                        await _qnaApiClient.UpdatePageAnswers(applicationId, answers[0].SequenceId, answers[0].SectionId, pageId, answers.ToList<Answer>());
+                        if (sequenceSections.Exists(x => x.Item1 == sequenceId && x.Item2 == sectionId))
+                        {
+                            sequentialTasks.Add(new Task(async () =>
+                            {
+                                _logger.LogDebug($"UpdatePageAnswers (sequential): Sequence {sequenceId}, Section {sectionId}, Page {pageId}");
+                                await _qnaApiClient.UpdatePageAnswers(applicationId, sequenceId, sectionId, pageId, answers.ToList<Answer>());
+                            }));
+
+                        }
+                        else
+                        {
+                            _logger.LogDebug($"UpdatePageAnswers (parallel): Sequence {sequenceId}, Section {sectionId}, Page {pageId}");
+                            parallelTasks.Add(_qnaApiClient.UpdatePageAnswers(applicationId, sequenceId, sectionId, pageId, answers.ToList<Answer>()));
+                            sequenceSections.Add(new Tuple<int, int>(sequenceId, sectionId));
+                        }
                     }
+                }
+
+                _logger.LogDebug($"Awaiting {parallelTasks.Count} parallel tasks");
+                await Task.WhenAll(parallelTasks);
+
+                _logger.LogDebug($"Awaiting {sequentialTasks.Count} sequential tasks");
+                foreach (var t in sequentialTasks)
+                {
+                    t.Start();
+                    await t;
                 }
             }
         }
@@ -1248,6 +1268,23 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             };
 
             return View("~/Views/Roatp/ApplicationSubmitted.cshtml", model);
+        }
+
+        private async Task StorePreambleInformation(Guid applicationId, ApplicationDetails applicationDetails)
+        {
+            var answers = RoatpPreambleQuestionBuilder.CreatePreambleQuestions(applicationDetails);
+
+            if (applicationDetails.UkrlpLookupDetails.VerifiedByCompaniesHouse)
+            {
+                answers.AddRange(RoatpPreambleQuestionBuilder.CreateCompaniesHouseWhosInControlQuestions(applicationDetails));
+            }
+
+            if (applicationDetails.UkrlpLookupDetails.VerifiedbyCharityCommission)
+            {
+                answers.AddRange(RoatpPreambleQuestionBuilder.CreateCharityCommissionWhosInControlQuestions(applicationDetails));
+            }
+
+            await UpdateQuestionsWithinQnA(applicationId, answers);
         }
 
         private async Task SavePreambleInformation(Guid applicationId, ApplicationDetails applicationDetails)
