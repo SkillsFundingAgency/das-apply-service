@@ -224,6 +224,7 @@ namespace SFA.DAS.ApplyService.Data
                         $@"SELECT 
                             {ApplicationSummaryFields}
                             , ModerationStatus
+                            , JSON_VALUE(apply.ApplyData, '$.ModeratorReviewDetails.ModeratorName') AS ModeratorName
 	                        FROM Apply apply
 	                        INNER JOIN Organisations org ON org.Id = apply.OrganisationId
                             WHERE {InModerationApplicationsWhereClause}
