@@ -10,15 +10,7 @@
 
 <partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
 
-@*
-<form asp-controller="RoatpApplication" asp-action="TaskList" method="get" name="backForm">
-    <input type="hidden" asp-for="ApplicationId" />
-    <a href="JavaScript:document.backForm.submit();" class="govuk-back-link">Back</a>
-</form>
-*@
-
 <main class="govuk-main-wrapper " id="main-content" role="main">
-
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             @if (showErrors)
@@ -36,8 +28,10 @@
                     </div>
                 </div>
             }
+
             <span class="govuk-caption-l">Submit application</span>
             <h1 class="govuk-heading-xl">@title</h1>
+
             <p class="govuk-body">
                 Before you submit your application, you must check that all of your answers and file uploads are correct.
             </p>
@@ -51,23 +45,24 @@
                 If your answers or file uploads are unclear, we may ask for clarification. If they are misleading or inaccurate, we may fail your application.
             </p>
             <p class="govuk-body">
-                We will send all communication about this application to @Model.EmailAddress.
+                We will send all communication about this application to <span class="govuk-!-font-weight-bold">@Model.EmailAddress</span>.
             </p>
             <p class="govuk-body">
                 This includes:
             </p>
-            <ul class="govuk-list govuk-list--bullet">
+            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-7">
                 <li>clarification requests on answers or file uploads</li>
                 <li>overall outcome of the application</li>
                 <li>general and post application queries</li>
             </ul>
+
             <form class="js-disable-on-submit" method="post" asp-action="ConfirmSubmitApplication" asp-controller="RoatpApplication">
                 <input type="hidden" asp-for="ApplicationId" />
                 <input type="hidden" asp-for="OrganisationName" />
                 <input type="hidden" asp-for="EmailAddress" />
                 <div class="govuk-form-group" sfa-validation-for="ConfirmSubmitApplication" sfa-validationerror-class="govuk-form-group--error">
                     <span class="govuk-error-message" asp-validation-for="ConfirmSubmitApplication"></span>
-                    <div class="govuk-checkboxes govuk-!-margin-bottom-5">
+                    <div class="govuk-checkboxes">
                         <div class="govuk-checkboxes__item">
                             <input class="govuk-checkboxes__input" type="checkbox" asp-for="ConfirmSubmitApplication" />
                             <label class="govuk-label govuk-checkboxes__label" asp-for="ConfirmSubmitApplication">
@@ -78,7 +73,7 @@
                 </div>
                 <div class="govuk-form-group" sfa-validation-for="ConfirmFurtherInfoSubmitApplication" sfa-validationerror-class="govuk-form-group--error">
                     <span class="govuk-error-message" asp-validation-for="ConfirmFurtherInfoSubmitApplication"></span>
-                    <div class="govuk-checkboxes govuk-!-margin-bottom-5">
+                    <div class="govuk-checkboxes">
                         <div class="govuk-checkboxes__item">
                             <input class="govuk-checkboxes__input" type="checkbox" asp-for="ConfirmFurtherInfoSubmitApplication" />
                             <label class="govuk-label govuk-checkboxes__label" asp-for="ConfirmFurtherInfoSubmitApplication">
@@ -89,21 +84,21 @@
                 </div>
                 <div class="govuk-form-group" sfa-validation-for="ConfirmFurtherCommunicationSubmitApplication" sfa-validationerror-class="govuk-form-group--error">
                     <span class="govuk-error-message" asp-validation-for="ConfirmFurtherCommunicationSubmitApplication"></span>
-                    <div class="govuk-checkboxes govuk-!-margin-bottom-5">
+                    <div class="govuk-checkboxes">
                         <div class="govuk-checkboxes__item">
                             <input class="govuk-checkboxes__input" type="checkbox" asp-for="ConfirmFurtherCommunicationSubmitApplication" />
                             <label class="govuk-label govuk-checkboxes__label" asp-for="ConfirmFurtherCommunicationSubmitApplication">
-                                I understand that all communication about this application will be sent to @Model.EmailAddress.
+                                I understand that all communication about this application will be sent to <span class="govuk-!-font-weight-bold">@Model.EmailAddress</span>.
                             </label>
                         </div>
                     </div>
                 </div>
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-two-thirds">
-                        <input type="submit" class="govuk-button" value="Submit application" />
-                    </div>
-                </div>
+
+                <button class="govuk-button" data-module="govuk-button" data-prevent-double-click="true">
+                    Submit application
+                </button>
             </form>
+
         </div>
     </div>
 </main>
