@@ -1135,7 +1135,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 return RedirectToAction("TaskList", new { applicationId = model.ApplicationId });
             }
 
-
             if (!ModelState.IsValid)
             {
                 model.ErrorMessages = new List<ValidationErrorDetail>();
@@ -1159,14 +1158,21 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             // TODO: Validate all sections are completed (i.e all questions answered)
             // FUTURE WORK: Validate all sections have had requested feedback answered
 
+            var providerRouteTask = _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.ProviderRoute);
+            var applicationTask = _apiClient.GetApplication(model.ApplicationId);
+            var allSectionsTask = _qnaApiClient.GetSections(model.ApplicationId);
+            var roatpSequencesTask = _apiClient.GetRoatpSequences();
+            var organisationVerificationStatusTask = _organisationVerificationService.GetOrganisationVerificationStatus(model.ApplicationId);
+            var applicationRoutesTask = _roatpApiClient.GetApplicationRoutes();
 
-            var providerRoute = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.ProviderRoute);
+            await Task.WhenAll(providerRouteTask, applicationTask, allSectionsTask, roatpSequencesTask, organisationVerificationStatusTask, applicationRoutesTask);
 
-            var application = await _apiClient.GetApplication(model.ApplicationId);
-
-            var roatpSequences = await _apiClient.GetRoatpSequences();
-
-            var organisationVerificationStatus = await _organisationVerificationService.GetOrganisationVerificationStatus(model.ApplicationId);
+            var providerRoute = await providerRouteTask;
+            var application = await applicationTask;
+            var allSections = await allSectionsTask;
+            var roatpSequences = await roatpSequencesTask;
+            var organisationVerificationStatus = await organisationVerificationStatusTask;
+            var applicationRoutes = await applicationRoutesTask;
 
             await _roatpTaskListWorkflowService.RefreshNotRequiredOverrides(model.ApplicationId);
             var sequences = await _roatpTaskListWorkflowService.GetApplicationSequences(model.ApplicationId);
@@ -1175,14 +1181,15 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             {
                 var applicationSequence = await _qnaApiClient.GetSequenceBySequenceNo(model.ApplicationId, sequence.SequenceNo);
 
-                var sections = await _qnaApiClient.GetSections(model.ApplicationId, applicationSequence.Id);
-                applicationSequence.Sections = sections.ToList();
+                var sections = allSections.Where(x => x.SequenceId == sequence.SequenceNo).ToList();
+
+                applicationSequence.Sections = sections;
                 foreach (var section in sections)
                 {
                     var applySection = sequence.Sections.FirstOrDefault(x => x.SectionNo == section.SectionId);
                     if (applySection != null)
                     {
-                        applySection.NotRequired = SectionNotRequired(model.ApplicationId, applicationSequence, section.SectionId, 
+                        applySection.NotRequired = SectionNotRequired(model.ApplicationId, applicationSequence, section.SectionId,
                                                                             roatpSequences, organisationVerificationStatus);
                     }
                 }
@@ -1191,8 +1198,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 sequence.NotRequired = SequenceNotRequired(model.ApplicationId, applicationSequence, sequences,
                                                            organisationVerificationStatus);
             }
-            var providerRoutes = await _roatpApiClient.GetApplicationRoutes();
-            var selectedProviderRoute = providerRoutes.FirstOrDefault(p => p.Id.ToString() == providerRoute.Value);
+
+            var selectedProviderRoute = applicationRoutes.FirstOrDefault(p => p.Id.ToString() == providerRoute.Value);
 
             var submitApplicationRequest = new Application.Apply.Submit.SubmitApplicationRequest
             {

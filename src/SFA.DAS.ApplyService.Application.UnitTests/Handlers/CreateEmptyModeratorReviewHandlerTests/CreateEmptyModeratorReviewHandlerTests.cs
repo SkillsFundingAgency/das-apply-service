@@ -7,31 +7,31 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApplyService.Application.Apply;
 using SFA.DAS.ApplyService.Application.Apply.Moderator;
+using SFA.DAS.ApplyService.Domain.Apply;
 using SFA.DAS.ApplyService.Domain.Apply.Moderator;
+using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateEmptyModeratorReviewHandlerTests
 {
     [TestFixture]
     public class CreateEmptyModeratorReviewHandlerTests
     {
-        private Mock<IModeratorRepository> _repository;
+        private Guid _applicationId;
+        private string _userId;
+        private string _userName;
+        private List<ModeratorPageReviewOutcome> _pageReviewOutcomes;
+
+        private Mock<IApplyRepository> _applyRepository;
+        private Mock<IModeratorRepository> _moderatorRepository;
         private CreateEmptyModeratorReviewHandler _handler;
 
         [SetUp]
         public void Setup()
         {
-            _repository = new Mock<IModeratorRepository>();
-            _handler = new CreateEmptyModeratorReviewHandler(_repository.Object, Mock.Of<ILogger<CreateEmptyModeratorReviewHandler>>());
-        }
-
-        [Test]
-        public async Task When_creating_empty_review_ModeratorPageOutcomes_are_stored()
-        {
-            var applicationId = Guid.NewGuid();
-            var userId = Guid.NewGuid().ToString();
-            var userName = Guid.NewGuid().ToString();
-
-            var pageReviewOutcomes = new List<ModeratorPageReviewOutcome>
+            _applicationId = Guid.NewGuid();
+            _userId = Guid.NewGuid().ToString();
+            _userName = Guid.NewGuid().ToString();
+            _pageReviewOutcomes = new List<ModeratorPageReviewOutcome>
                 {
                     new ModeratorPageReviewOutcome
                     {
@@ -51,11 +51,32 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.CreateEmptyModerat
                     }
                 };
 
-            var request = new CreateEmptyModeratorReviewRequest(applicationId, userId, userName, pageReviewOutcomes);
+            var logger = Mock.Of<ILogger<CreateEmptyModeratorReviewHandler>>();
+            _applyRepository = new Mock<IApplyRepository>();
+            _moderatorRepository = new Mock<IModeratorRepository>();
 
+            var applyData = new ApplyData { ModeratorReviewDetails = new ModeratorReviewDetails() };
+            _applyRepository.Setup(x => x.GetApplyData(_applicationId)).ReturnsAsync(applyData);
+
+            _handler = new CreateEmptyModeratorReviewHandler(logger, _applyRepository.Object, _moderatorRepository.Object);
+        }
+
+        [Test]
+        public async Task When_creating_empty_review_ModeratorPageOutcomes_are_stored()
+        {
+            var request = new CreateEmptyModeratorReviewRequest(_applicationId, _userId, _userName, _pageReviewOutcomes);
             await _handler.Handle(request, new CancellationToken());
 
-            _repository.Verify(x => x.CreateEmptyModeratorReview(request.ApplicationId, request.ModeratorUserId, request.ModeratorUserName, request.PageReviewOutcomes), Times.Once);
+            _moderatorRepository.Verify(x => x.CreateEmptyModeratorReview(request.ApplicationId, request.ModeratorUserId, request.ModeratorUserName, request.PageReviewOutcomes), Times.Once);
+        }
+
+        [Test]
+        public async Task When_creating_empty_review_ModeratorReviewDetails_are_updated()
+        {
+            var request = new CreateEmptyModeratorReviewRequest(_applicationId, _userId, _userName, _pageReviewOutcomes);
+            await _handler.Handle(request, new CancellationToken());
+
+            _moderatorRepository.Verify(x => x.UpdateModerationStatus(request.ApplicationId, It.IsAny<ApplyData>(), ModerationStatus.New, request.ModeratorUserId), Times.Once);
         }
     }
 }
