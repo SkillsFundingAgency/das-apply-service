@@ -51,6 +51,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         private readonly IRoatpTaskListWorkflowService _roatpTaskListWorkflowService;
         private readonly IRoatpOrganisationVerificationService _organisationVerificationService;
         private readonly ITaskListOrchestrator _taskListOrchestrator;
+        private readonly IUkrlpApiClient _ukrlpApiClient;
+        private readonly IApplicationApiClient _applicationApiClient;
 
         private const string InputClassUpperCase = "app-uppercase";
         private const string NotApplicableAnswerText = "None of the above";
@@ -65,7 +67,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             ICustomValidatorFactory customValidatorFactory,  
             IRoatpApiClient roatpApiClient, ISubmitApplicationConfirmationEmailService submitApplicationEmailService,
             ITabularDataRepository tabularDataRepository, IRoatpTaskListWorkflowService roatpTaskListWorkflowService,
-            IRoatpOrganisationVerificationService organisationVerificationService, ITaskListOrchestrator taskListOrchestrator)
+            IRoatpOrganisationVerificationService organisationVerificationService, ITaskListOrchestrator taskListOrchestrator, IUkrlpApiClient ukrlpApiClient, IApplicationApiClient applicationApiClient)
             :base(sessionService)
         {
             _apiClient = apiClient;
@@ -87,6 +89,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             _roatpTaskListWorkflowService = roatpTaskListWorkflowService;
             _organisationVerificationService = organisationVerificationService;
             _taskListOrchestrator = taskListOrchestrator;
+            _ukrlpApiClient = ukrlpApiClient;
+            _applicationApiClient = applicationApiClient;
         }
 
         [HttpGet]
@@ -101,7 +105,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
             var signinId = await _userService.GetSignInId();
             var applications = await _apiClient.GetApplications(signinId, false);
-            applications = applications.Where(app => app.ApplicationStatus != ApplicationStatus.Rejected).ToList();
+            applications = applications.Where(app => app.ApplicationStatus != ApplicationStatus.Rejected && app.ApplicationStatus != ApplicationStatus.Cancelled).ToList();
 
             var application = new Apply();
             Guid applicationId;
@@ -135,8 +139,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 case ApplicationStatus.New:
                 case ApplicationStatus.InProgress:
                     return RedirectToAction("TaskList", new { applicationId });
-                case ApplicationStatus.Cancelled:
-                    return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
                 case ApplicationStatus.Approved:
                     return View("~/Views/Application/Approved.cshtml", application);
                 case ApplicationStatus.Rejected:
@@ -535,9 +537,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers
                 _logger.LogInformation($"Cancelling RoATP application for UKPRN {ukprnAnswer.Value}");
             }
 
-            //await _applicationApiClient.UpdateApplicationStatus(model.ApplicationId, ApplicationStatus.Cancelled);
-            //_sessionService.Remove(ApplicationDetailsKey);
-
             return RedirectToAction("EnterNewUkprn", new {model.ApplicationId});
         }
 
@@ -551,15 +550,46 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [HttpPost]
         [Route("change-ukprn/enter-new-ukprn")]
-        public IActionResult EnterNewUkprn(EnterNewUkprnViewModel model)
+        public async Task<IActionResult> EnterNewUkprn(EnterNewUkprnViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View("~/Views/Roatp/EnterNewUkprn.cshtml", model);
             }
 
-            //todo: valid, proceed
-            throw new NotImplementedException();
+            var ukprn = long.Parse(model.Ukprn);
+            var ukrlpLookupResults = await _ukrlpApiClient.GetTrainingProviderByUkprn(ukprn);
+
+            if (ukrlpLookupResults?.Results is null || !ukrlpLookupResults.Success)
+            {
+                return RedirectToAction("UkrlpNotAvailable", "RoatpShutterPages");
+            }
+
+            if (ukrlpLookupResults.Results.Any())
+            {
+                var applicationDetails = new ApplicationDetails
+                {
+                    UKPRN = ukprn,
+                    UkrlpLookupDetails = ukrlpLookupResults.Results.FirstOrDefault()
+                };
+
+                await _applicationApiClient.UpdateApplicationStatus(model.ApplicationId, ApplicationStatus.Cancelled);
+                _sessionService.Remove(ApplicationDetailsKey);
+
+                _sessionService.Set(ApplicationDetailsKey, applicationDetails);
+
+                return RedirectToAction("ConfirmOrganisation", "RoatpApplicationPreamble");
+            }
+            else
+            {
+                var applicationDetails = new ApplicationDetails
+                {
+                    UKPRN = ukprn
+                };
+
+                _sessionService.Set(ApplicationDetailsKey, applicationDetails);
+                return RedirectToAction("UkprnNotFound", "RoatpShutterPages");
+            }
         }
 
 
