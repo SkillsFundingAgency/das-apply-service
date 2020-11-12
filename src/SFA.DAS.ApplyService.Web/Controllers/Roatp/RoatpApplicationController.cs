@@ -550,8 +550,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpPost]
+        [Route("change-ukprn/enter-new-ukprn")]
         public IActionResult EnterNewUkprn(EnterNewUkprnViewModel model)
         {
+            if (ModelState.IsValid)
+            {
+                
+            }
 
             throw new NotImplementedException();
         }

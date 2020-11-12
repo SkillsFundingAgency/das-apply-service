@@ -44,7 +44,7 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form method="post" asp-action="SearchByUkprn" asp-controller="RoatpApplicationPreamble">
+            <form method="post" asp-action="EnterNewUkprn" asp-controller="RoatpApplication">
                 <input type="hidden" asp-for="ApplicationId" />
                 @*<input type="hidden" asp-for="SequenceId" />
                 <input type="hidden" asp-for="SectionId" />
@@ -61,7 +61,7 @@
                 <div>
                     <label for="UKPRN" class="govuk-label">UKPRN</label>
 
-                    <input id="UKPRN" name="UKPRN" type="text" class="govuk-input govuk-!-width-one-third" asp-for="Ukprn"
+                    <input type="text" class="govuk-input govuk-!-width-one-third" asp-for="Ukprn"
                            sfa-validation-for="UKPRN" sfa-validationerror-class="form-control-error" />
                 </div>
 
