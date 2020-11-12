@@ -529,12 +529,17 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ConfirmChangeUkprn(ChangeUkprnViewModel model)
+        [Route("change-ukprn")]
+        public async Task<IActionResult> ChangeUkprn(ChangeUkprnViewModel model)
         {
-            var ukprnAnswer = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.UKPRN);
-            if (ukprnAnswer != null && ukprnAnswer.Value != null)
+            if (!ModelState.IsValid)
             {
-                _logger.LogInformation($"Cancelling RoATP application for UKPRN {ukprnAnswer.Value}");
+                return View("~/Views/Roatp/ChangeUkprn.cshtml", model);
+            }
+
+            if (!model.Confirmed.Value)
+            {
+                return RedirectToAction("TaskList", new {model.ApplicationId});
             }
 
             return RedirectToAction("EnterNewUkprn", new {model.ApplicationId});
