@@ -624,6 +624,25 @@ namespace SFA.DAS.ApplyService.Data
             return true;
         }
 
+        public async Task<bool> UpdateFinancialReviewDetails(Guid applicationId, FinancialReviewDetails financialReviewDetails)
+        {
+            
+                using (var connection = new SqlConnection(_config.SqlConnectionString))
+                {
+                    await connection.ExecuteAsync(@"UPDATE Apply 
+                                                         SET FinancialGrade = @financialReviewDetails
+                                                         WHERE ApplicationId = @applicationId",
+                        new
+                        {
+                            applicationId,
+                            financialReviewDetails
+                        });
+                }
+
+                return true;
+            
+        }
+
         public async Task<bool> IsUkprnWhitelisted(int ukprn)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))

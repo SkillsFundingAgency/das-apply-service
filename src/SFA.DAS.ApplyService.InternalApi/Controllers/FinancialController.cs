@@ -1,14 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Application.Apply.Financial;
 using SFA.DAS.ApplyService.Application.Apply.Financial.Applications;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.InternalApi.Infrastructure;
+using SFA.DAS.ApplyService.InternalApi.Services.Files;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -17,11 +20,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     {
         private readonly IMediator _mediator;
         private readonly IInternalQnaApiClient _qnaApiClient;
-
-        public FinancialController(IMediator mediator, IInternalQnaApiClient qnaApiClient)
+        private readonly IFileStorageService _fileStorageService;
+        private readonly ILogger<FinancialController> _logger;
+        public FinancialController(IMediator mediator, IInternalQnaApiClient qnaApiClient, IFileStorageService fileStorageService, ILogger<FinancialController> logger)
         {
             _mediator = mediator;
             _qnaApiClient = qnaApiClient;
+            _fileStorageService = fileStorageService;
+            _logger = logger;
         }
 
         [HttpGet("/Financial/OpenApplications")]
@@ -62,6 +68,26 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             }
 
             await _mediator.Send(new RecordGradeRequest(applicationId, financialReviewDetails));
+            return Ok();
+        }
+
+
+        [HttpPost("Clarification/Applications/{applicationId}/Upload")]
+        public async Task<IActionResult> UploadClarificationFile(Guid applicationId, [FromForm] UploadClarificationFileCommand command)
+        {
+            if (Request.Form.Files != null && Request.Form.Files.Any())
+            {
+                var clarificationFileName = Request.Form.Files.First().FileName;
+                var uploadedSuccessfully = await _fileStorageService.UploadFiles(applicationId, 0, 0, "0", Request.Form.Files, ContainerType.Financial, new CancellationToken());
+
+                if (!uploadedSuccessfully)
+                {
+                    _logger.LogError($"Unable to upload files for application: {applicationId} || File name {clarificationFileName}");
+                    return BadRequest();
+                }
+                await _mediator.Send(new ClarificationFileUploadRequest(applicationId, clarificationFileName));
+            }
+
             return Ok();
         }
 
@@ -109,5 +135,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
     public class StartFinancialReviewApplicationRequest
     {
         public string Reviewer { get; set; }
+    }
+
+
+
+
+    public class UploadClarificationFileCommand
+    {
+        public string UserId { get; set; }
     }
 }
