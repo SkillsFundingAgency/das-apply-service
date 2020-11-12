@@ -517,6 +517,30 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             return View("~/Views/Roatp/TaskList.cshtml", viewModel);
         }
 
+        [Route("change-ukprn")]
+        [HttpGet]
+        public IActionResult ChangeUkprn(Guid applicationId)
+        {
+            var model = new ChangeUkprnViewModel { ApplicationId = applicationId };
+
+            return View("~/Views/Roatp/ChangeUkprn.cshtml", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmChangeUkprn(ChangeUkprnViewModel model)
+        {
+            var ukprnAnswer = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.UKPRN);
+            if (ukprnAnswer != null && ukprnAnswer.Value != null)
+            {
+                _logger.LogInformation($"Cancelling RoATP application for UKPRN {ukprnAnswer.Value}");
+            }
+
+            //await _applicationApiClient.UpdateApplicationStatus(model.ApplicationId, ApplicationStatus.Cancelled);
+            //_sessionService.Remove(ApplicationDetailsKey);
+
+            return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
+        }
+
 
         //TODO: Move this method to the API rather than pulling all of the application back over the wire then checking.
         private async Task<bool> CanUpdateApplication(Guid applicationId, int? sequenceId = null, int? sectionId = null, string pageId = null)
