@@ -11,7 +11,7 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string OrganisationName { get; set; }
         public string EmailAddress { get; set; }
 
-        [Range(typeof(bool), "true", "true", ErrorMessage = "Tell us if you confirm that all the answers and file uploads in this application are true and accurate to the best of your knowledge")]
+        [Range(typeof(bool), "true", "true", ErrorMessage = "Tell us if you confirm that all your answers and file uploads are true and accurate to the best of your knowledge")]
         public bool ConfirmSubmitApplication { get; set; }
         [Range(typeof(bool), "true", "true", ErrorMessage = "Tell us if you agree to give further information on any application answers within 5 working days when requested by ESFA")]
         public bool ConfirmFurtherInfoSubmitApplication { get; set; }
