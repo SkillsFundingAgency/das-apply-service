@@ -553,11 +553,12 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [Route("change-ukprn/enter-new-ukprn")]
         public IActionResult EnterNewUkprn(EnterNewUkprnViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                
+                return View("~/Views/Roatp/EnterNewUkprn.cshtml", model);
             }
 
+            //todo: valid, proceed
             throw new NotImplementedException();
         }
 

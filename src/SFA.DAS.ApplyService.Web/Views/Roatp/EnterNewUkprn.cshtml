@@ -1,12 +1,8 @@
 ﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.EnterNewUkprnViewModel
 
-
 @{
     ViewBag.Title = "What is your organisation's UK provider reference number (UKPRN)?";
     Layout = "_Layout";
-
-    //bool showErrors = Model.ErrorMessages != null && Model.ErrorMessages.Count > 0;
-
 }
 
 <partial name="~/Views/Roatp/ApplicationHeader.cshtml" />
@@ -21,22 +17,9 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            @*@if (!ViewData.ModelState.IsValid || showErrors)
-            {
-                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-                    <h2 class="govuk-error-summary__title" id="error-summary-title">
-                        There is a problem
-                    </h2>
-                    <div class="govuk-error-summary__body">
-                        <ul class="govuk-list govuk-error-summary__list">
-                            @foreach (var error in Model.ErrorMessages)
-                            {
-                                <li><a href="#@error.Field">@error.ErrorMessage</a></li>
-                            }
-                        </ul>
-                    </div>
-                </div>
-            }*@
+            
+            <partial name="_ValidationSummaryPartial" />
+
             <h1 class="govuk-heading-xl">What is your organisation's UK provider reference number (UKPRN)?</h1>
             <p class="govuk-body">This is an 8-digit number from the UK Register of Learning Providers (UKRLP).</p>
         </div>
@@ -49,16 +32,12 @@
                 @*<input type="hidden" asp-for="SequenceId" />
                 <input type="hidden" asp-for="SectionId" />
                 <input type="hidden" asp-for="PageId" />*@
-                
-                @*<div class="govuk-form-group @(showErrors ? "govuk-form-group--error" : "")" sfa-validation-for="UKPRN" sfa-validationerror-class="form-group-error">
-                    @if (showErrors)
-                    {
-                        <span class="govuk-error-message">
-                            @Html.Raw(Model.ErrorMessages.FirstOrDefault(x => x.Field == "UKPRN")?.ErrorMessage)
-                        </span>
-                    }*@
-                
-                <div>
+
+                <div class="govuk-form-group @(!ViewContext.ModelState.IsValid ? "govuk-form-group--error" : "")" sfa-validation-for="UKPRN" sfa-validationerror-class="form-group-error">
+                    <span class="govuk-error-message">
+                        @Html.ValidationMessageFor(m => m.Ukprn, null, new { @class = "govuk-error-message error", id = "error-message-" + Html.IdFor(m => m.Ukprn) })
+                    </span>
+
                     <label for="UKPRN" class="govuk-label">UKPRN</label>
 
                     <input type="text" class="govuk-input govuk-!-width-one-third" asp-for="Ukprn"
