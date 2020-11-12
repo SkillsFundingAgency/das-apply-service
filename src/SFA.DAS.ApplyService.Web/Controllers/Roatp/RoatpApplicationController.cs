@@ -545,6 +545,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         public IActionResult EnterNewUkprn(Guid applicationId)
         {
             var model = new EnterNewUkprnViewModel();
+            PopulateGetHelpWithQuestion(model, "UKPRN");
             return View("~/Views/Roatp/EnterNewUkprn.cshtml", model);
         }
 
