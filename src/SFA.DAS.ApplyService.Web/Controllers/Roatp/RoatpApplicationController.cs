@@ -538,7 +538,22 @@ namespace SFA.DAS.ApplyService.Web.Controllers
             //await _applicationApiClient.UpdateApplicationStatus(model.ApplicationId, ApplicationStatus.Cancelled);
             //_sessionService.Remove(ApplicationDetailsKey);
 
-            return RedirectToAction("EnterApplicationUkprn", "RoatpApplicationPreamble");
+            return RedirectToAction("EnterNewUkprn", new {model.ApplicationId});
+        }
+
+        [Route("change-ukprn/enter-new-ukprn")]
+        [HttpGet]
+        public IActionResult EnterNewUkprn(Guid applicationId)
+        {
+            var model = new EnterNewUkprnViewModel();
+            return View("~/Views/Roatp/EnterNewUkprn.cshtml", model);
+        }
+
+        [HttpPost]
+        public IActionResult EnterNewUkprn(EnterNewUkprnViewModel model)
+        {
+
+            throw new NotImplementedException();
         }
 
 
