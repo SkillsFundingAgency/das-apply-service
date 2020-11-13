@@ -79,6 +79,15 @@ namespace SFA.DAS.ApplyService.Web.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Same as existing UKPRN.
+        /// </summary>
+        public static string NewUkprnMustNotBeSame {
+            get {
+                return ResourceManager.GetString("NewUkprnMustNotBeSame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You need to contact roatp.support@education.gov.uk.
         /// </summary>
         public static string NotWhitelistedUkprn {

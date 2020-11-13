@@ -549,7 +549,8 @@ namespace SFA.DAS.ApplyService.Web.Controllers
         [HttpGet]
         public IActionResult EnterNewUkprn(Guid applicationId)
         {
-            var model = new EnterNewUkprnViewModel();
+            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
+            var model = new EnterNewUkprnViewModel{CurrentUkprn = applicationDetails.UKPRN};
             PopulateGetHelpWithQuestion(model, "UKPRN");
             return View("~/Views/Roatp/EnterNewUkprn.cshtml", model);
         }

@@ -53,6 +53,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         private Mock<IRoatpTaskListWorkflowService> _roatpTaskListWorkflowService;
         private Mock<IRoatpOrganisationVerificationService> _roatpOrganisationVerificationService;
         private Mock<ITaskListOrchestrator> _taskListOrchestrator;
+        private Mock<IUkrlpApiClient> _ukrlpApiClient;
+        private Mock<IApplicationApiClient> _applicationApiClient;
 
         [SetUp]
         public void Before_each_test()
@@ -84,6 +86,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             _roatpTaskListWorkflowService = new Mock<IRoatpTaskListWorkflowService>();
             _roatpOrganisationVerificationService = new Mock<IRoatpOrganisationVerificationService>();
             _taskListOrchestrator = new Mock<ITaskListOrchestrator>();
+            _ukrlpApiClient = new Mock<IUkrlpApiClient>();
+            _applicationApiClient = new Mock<IApplicationApiClient>();
 
             _controller = new RoatpApplicationController(_apiClient.Object, _logger.Object, _sessionService.Object, _configService.Object,
                                                          _userService.Object, _usersApiClient.Object, _qnaApiClient.Object, 
@@ -92,7 +96,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
                                                          _pageNavigationTrackingService.Object, _qnaLinks.Object, _customValidatorFactory.Object,
                                                          _roatpApiClient.Object,
                                                          _submitApplicationEmailService.Object, _tabularDataRepository.Object,
-                                                         _roatpTaskListWorkflowService.Object, _roatpOrganisationVerificationService.Object, _taskListOrchestrator.Object)
+                                                         _roatpTaskListWorkflowService.Object, _roatpOrganisationVerificationService.Object, _taskListOrchestrator.Object,
+                                                         _ukrlpApiClient.Object, _applicationApiClient.Object)
             {
                 ControllerContext = new ControllerContext()
                 {

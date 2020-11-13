@@ -72,5 +72,23 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
             Assert.AreEqual(nameof(viewModel.Ukprn), result.Errors[0].PropertyName);
             Assert.AreEqual(UkprnValidationMessages.NotWhitelistedUkprn, result.Errors[0].ErrorMessage);
         }
+
+        [Test]
+        public void Validate_Returns_Error_When_Ukprn_Is_Same_As_Current()
+        {
+            var viewModel = new EnterNewUkprnViewModel
+            {
+                ApplicationId = Guid.NewGuid(),
+                Ukprn = "10037482",
+                CurrentUkprn = 10037482
+            };
+
+            var result = _validator.Validate(viewModel);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.AreEqual(nameof(viewModel.Ukprn), result.Errors[0].PropertyName);
+            Assert.AreEqual(UkprnValidationMessages.NewUkprnMustNotBeSame, result.Errors[0].ErrorMessage);
+        }
     }
 }

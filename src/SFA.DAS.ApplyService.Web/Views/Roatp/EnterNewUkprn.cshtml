@@ -29,9 +29,7 @@
         <div class="govuk-grid-column-two-thirds">
             <form method="post" asp-action="EnterNewUkprn" asp-controller="RoatpApplication">
                 <input type="hidden" asp-for="ApplicationId" />
-                @*<input type="hidden" asp-for="SequenceId" />
-                <input type="hidden" asp-for="SectionId" />
-                <input type="hidden" asp-for="PageId" />*@
+                <input type="hidden" asp-for="CurrentUkprn" />
 
                 <div class="govuk-form-group @(!ViewContext.ModelState.IsValid ? "govuk-form-group--error" : "")" sfa-validation-for="UKPRN" sfa-validationerror-class="form-group-error">
                     <span class="govuk-error-message">
