@@ -137,9 +137,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         public string Reviewer { get; set; }
     }
 
-
-
-
     public class UploadClarificationFileCommand
     {
         public string UserId { get; set; }

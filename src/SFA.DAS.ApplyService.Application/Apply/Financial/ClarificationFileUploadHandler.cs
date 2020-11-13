@@ -24,10 +24,6 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
 
         public async Task<bool> Handle(ClarificationFileUploadRequest request, CancellationToken cancellationToken)
         {
-
-            // go get the current details
-            // update the financialGrade stuff
-            // update the apply record
             _logger.LogInformation($"Adding clarification file [{request.FileName}] for application ID {request.ApplicationId}");
             var application = await _applyRepository.GetApplication(request.ApplicationId);
 
