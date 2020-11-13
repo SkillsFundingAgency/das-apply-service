@@ -97,6 +97,7 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public string Comments { get; set; }
         public List<FinancialEvidence> FinancialEvidences { get; set; }
         public DateTime? ClarificationRequestedOn { get; set; }
+        public string ClarificationResponse { get; set; }
     }
 
     public class FinancialEvidence

@@ -1,8 +1,8 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApplyService.Domain.Entities;
 using SFA.DAS.ApplyService.Domain.Roatp;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,14 +19,17 @@ namespace SFA.DAS.ApplyService.Application.Apply.Financial
             _applyRepository = applyRepository;
             _logger = logger;
         }
-
+         
         public async Task<bool> Handle(RecordGradeRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Recording financial grade {request.FinancialReviewDetails.SelectedGrade} for application ID {request.ApplicationId}");
 
             var financialReviewStatus = GetApplicableFinancialReviewStatus(request.FinancialReviewDetails.SelectedGrade);
+            var financialReviewDetails = request.FinancialReviewDetails;
+            if (financialReviewDetails.SelectedGrade == FinancialApplicationSelectedGrade.Clarification)
+                financialReviewDetails.ClarificationRequestedOn = financialReviewDetails.GradedDateTime;
 
-            return await _applyRepository.RecordFinancialGrade(request.ApplicationId, request.FinancialReviewDetails, financialReviewStatus);
+            return await _applyRepository.RecordFinancialGrade(request.ApplicationId, financialReviewDetails, financialReviewStatus);
         }
 
         private static string GetApplicableFinancialReviewStatus(string financialGrade)
