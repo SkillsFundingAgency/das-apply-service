@@ -38,11 +38,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _service.ResetRouteQuestions(_applicationId, routeId).GetAwaiter().GetResult();
 
             _qnaApiClient.Verify(x=>x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.EmployerStartPage));
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteTypeEmployer));
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyTypeEmployer));
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.SchoolEmployer));
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.RegisteredESFAEmployer));
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.FundedESFAEmployer));
+            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteType));
+            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyType));
+            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.SchoolType));
+            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.RegisteredESFA));
+            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.FundedESFA));
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,6,2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Employer));
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,6,2,  RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Supporting));
 
@@ -51,11 +51,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,6,2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.OnlyDeliveringApprenticeshipFrameworks_Supporting));
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,6,2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Main), Times.Never);
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.MainSupportingStartPage), Times.Never);
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteTypeMainSupporting), Times.Never);
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyTypeMainSupporting), Times.Never);
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.SchoolMainSupporting), Times.Never);
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.RegisteredESFAMainSupporting),Times.Never);
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.FundedESFAMainSupporting), Times.Never);
         }
 
 
@@ -68,11 +63,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _service.ResetRouteQuestions(_applicationId, routeId).GetAwaiter().GetResult();
 
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.EmployerStartPage));
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteTypeEmployer));
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyTypeEmployer));
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.SchoolEmployer));
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.RegisteredESFAEmployer));
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.FundedESFAEmployer));
+            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteType));
+            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyType));
+            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.SchoolType));
+            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.RegisteredESFA));
+            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.FundedESFA));
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,6,2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Employer));
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,6,2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Main));
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,6,2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_MainEmployer));
@@ -81,11 +76,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,6,2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Supporting),Times.Never);
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.MainSupportingStartPage), Times.Never);
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteTypeMainSupporting), Times.Never);
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyTypeMainSupporting), Times.Never);
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.SchoolMainSupporting), Times.Never);
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.RegisteredESFAMainSupporting), Times.Never);
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.FundedESFAMainSupporting), Times.Never);
         }
 
         [Test]
@@ -97,11 +87,11 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
             _service.ResetRouteQuestions(_applicationId, routeId).GetAwaiter().GetResult();
 
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.MainSupportingStartPage));
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteTypeMainSupporting));
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyTypeMainSupporting));
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.SchoolMainSupporting));
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.RegisteredESFAMainSupporting));
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.FundedESFAMainSupporting));
+            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteType));
+            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyType));
+            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.SchoolType));
+            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.RegisteredESFA));
+            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.FundedESFA));
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,6,2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Main));
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,6,2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Supporting));
 
@@ -111,11 +101,6 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Services
 
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,6,2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Employer),Times.Never);
             _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.EmployerStartPage), Times.Never);
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteTypeEmployer), Times.Never);
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyTypeEmployer), Times.Never);
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.SchoolEmployer), Times.Never);
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.RegisteredESFAEmployer), Times.Never);
-            _qnaApiClient.Verify(x => x.ResetPageAnswersBySequenceAndSectionNumber(_applicationId,1,4, RoatpWorkflowPageIds.DescribeYourOrganisation.FundedESFAEmployer), Times.Never);
         }
     }
 }
