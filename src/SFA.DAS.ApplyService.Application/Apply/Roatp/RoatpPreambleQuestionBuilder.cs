@@ -62,16 +62,12 @@
         public static string AddPeopleInControl = "YO-130";
         public static string OrganisationTypeMainSupporting = "YO-140";
         public static string OrganisationTypeEmployer = "YO-150";
-        public static string EducationalInstituteTypeMainSupporting = "YO-160";
-        public static string EducationalInstituteTypeEmployer = "YO-161";
-        public static string PublicBodyTypeMainSupporting = "YO-170";
-        public static string PublicBodyTypeEmployer = "YO-171";
-        public static string SchoolMainSupporting = "YO-180";
-        public static string SchoolEmployer = "YO-181";
-        public static string RegisteredESFAMainSupporting = "YO-200";
-        public static string RegisteredESFAEmployer = "YO-201";
-        public static string FundedESFAMainSupporting = "YO-210";
-        public static string FundedESFAEmployer = "YO-211";
+        public static string EducationalInstituteType = "YO-160";
+        public static string PublicBodyType = "YO-170";
+        public static string SchoolType = "YO-180";
+        public static string RegisteredESFA = "YO-200";
+        public static string FundedESFA = "YO-210";
+        public static string OrganisationDescription = "YO-230";
         public static string OfficeForStudents = "YO-235";
         public static string InitialTeacherTraining = "YO-240";
         public static string HasHadFullInspection = "YO-260";
@@ -227,16 +223,12 @@
         {
             public static string MainSupportingStartPage = "140";
             public static string EmployerStartPage = "150";
-            public static string PublicBodyTypeMainSupporting = "170";
-            public static string PublicBodyTypeEmployer = "171";
-            public static string EducationalInstituteTypeMainSupporting = "160";
-            public static string EducationalInstituteTypeEmployer = "161";
-            public static string SchoolMainSupporting = "180";
-            public static string SchoolEmployer = "181";
-            public static string RegisteredESFAMainSupporting = "200";
-            public static string RegisteredESFAEmployer = "201";
-            public static string FundedESFAMainSupporting = "210";
-            public static string FundedESFAEmployer = "211";
+            public static string EducationalInstituteType = "160";
+            public static string PublicBodyType = "170";
+            public static string SchoolType = "180";
+            public static string RegisteredESFA = "200";
+            public static string FundedESFA = "210";
+            public static string OrganisationDescription = "230";
         }
 
         public static class ExperienceAndAccreditations

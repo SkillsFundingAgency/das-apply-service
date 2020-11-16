@@ -39,11 +39,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
                     break;
                 case ApplicationRoute.EmployerProviderApplicationRoute:
                     await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.MainSupportingStartPage);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteTypeMainSupporting);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyTypeMainSupporting);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.SchoolMainSupporting);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.RegisteredESFAMainSupporting);
-                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.FundedESFAMainSupporting);
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteType);
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyType);
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.SchoolType);
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.RegisteredESFA);
+                    await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.FundedESFA);
                     await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Main);
                     await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Supporting);
                     await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 6, 2, RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_Supporting);
@@ -57,11 +57,11 @@ namespace SFA.DAS.ApplyService.Web.Infrastructure.Services
         private async Task ResetSection14TasksForEmployerTags(Guid applicationId)
         {
             await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.EmployerStartPage);
-            await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteTypeEmployer);
-            await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyTypeEmployer);
-            await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.SchoolEmployer);
-            await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.RegisteredESFAEmployer);
-            await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.FundedESFAEmployer);
+            await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteType);
+            await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyType);
+            await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.SchoolType);
+            await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.RegisteredESFA);
+            await _qnaApiClient.ResetPageAnswersBySequenceAndSectionNumber(applicationId, 1, 4, RoatpWorkflowPageIds.DescribeYourOrganisation.FundedESFA);
         }
     }
 }
