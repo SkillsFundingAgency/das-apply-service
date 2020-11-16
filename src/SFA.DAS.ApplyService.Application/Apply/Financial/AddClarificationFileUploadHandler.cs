@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -10,19 +7,19 @@ using SFA.DAS.ApplyService.Domain.Entities;
 
 namespace SFA.DAS.ApplyService.Application.Apply.Financial
 {
-    public class ClarificationFileUploadHandler : IRequestHandler<ClarificationFileUploadRequest, bool>
+    public class AddClarificationFileUploadHandler : IRequestHandler<AddClarificationFileUploadRequest, bool>
     {
         private readonly IApplyRepository _applyRepository;
 
-        private readonly ILogger<ClarificationFileUploadHandler> _logger;
+        private readonly ILogger<AddClarificationFileUploadHandler> _logger;
 
-        public ClarificationFileUploadHandler(IApplyRepository applyRepository, ILogger<ClarificationFileUploadHandler> logger)
+        public AddClarificationFileUploadHandler(IApplyRepository applyRepository, ILogger<AddClarificationFileUploadHandler> logger)
         {
             _applyRepository = applyRepository;
             _logger = logger;
         }
 
-        public async Task<bool> Handle(ClarificationFileUploadRequest request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(AddClarificationFileUploadRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Adding clarification file [{request.FileName}] for application ID {request.ApplicationId}");
             var application = await _applyRepository.GetApplication(request.ApplicationId);

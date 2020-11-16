@@ -161,7 +161,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             public string ClarificationResponse { get; set; }
         }
 
-
         public class GetPageReviewOutcomeRequest
         {
             public int SequenceNumber { get; set; }

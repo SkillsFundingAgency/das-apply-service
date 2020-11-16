@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SFA.DAS.ApplyService.Application.Apply.Roatp;
 
 namespace SFA.DAS.ApplyService.InternalApi.Controllers
 {
@@ -22,6 +23,8 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
         private readonly IInternalQnaApiClient _qnaApiClient;
         private readonly IFileStorageService _fileStorageService;
         private readonly ILogger<FinancialController> _logger;
+
+
         public FinancialController(IMediator mediator, IInternalQnaApiClient qnaApiClient, IFileStorageService fileStorageService, ILogger<FinancialController> logger)
         {
             _mediator = mediator;
@@ -78,14 +81,14 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             if (Request.Form.Files != null && Request.Form.Files.Any())
             {
                 var clarificationFileName = Request.Form.Files.First().FileName;
-                var uploadedSuccessfully = await _fileStorageService.UploadFiles(applicationId, 0, 0, "0", Request.Form.Files, ContainerType.Financial, new CancellationToken());
+                var uploadedSuccessfully = await _fileStorageService.UploadFiles(applicationId, RoatpWorkflowSequenceIds.FinancialEvidence, 0, RoatpClarificationUpload.ClarificationFile, Request.Form.Files, ContainerType.Financial, new CancellationToken());
 
                 if (!uploadedSuccessfully)
                 {
                     _logger.LogError($"Unable to upload files for application: {applicationId} || File name {clarificationFileName}");
                     return BadRequest();
                 }
-                await _mediator.Send(new ClarificationFileUploadRequest(applicationId, clarificationFileName));
+                await _mediator.Send(new AddClarificationFileUploadRequest(applicationId, clarificationFileName));
             }
 
             return Ok();

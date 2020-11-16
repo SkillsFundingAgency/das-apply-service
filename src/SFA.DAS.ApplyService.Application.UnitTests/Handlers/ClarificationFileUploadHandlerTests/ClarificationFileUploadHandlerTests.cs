@@ -15,16 +15,16 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.ClarificationFileU
     public class ClarificationFileUploadHandlerTests
     {
         private Mock<IApplyRepository> _repository;
-        private ClarificationFileUploadHandler _handler;
+        private AddClarificationFileUploadHandler _handler;
         private readonly Guid _applicationId = Guid.NewGuid();
-        private ClarificationFileUploadRequest _request;
-        private string _fileName = "file.pdf";
+        private AddClarificationFileUploadRequest _request;
+        private const string FileName = "file.pdf";
         [SetUp]
         public void TestSetup()
         {
-            _request = new ClarificationFileUploadRequest(_applicationId,_fileName);
+            _request = new AddClarificationFileUploadRequest(_applicationId,FileName);
             _repository = new Mock<IApplyRepository>();
-            _handler = new ClarificationFileUploadHandler(_repository.Object, Mock.Of<ILogger<ClarificationFileUploadHandler>>());
+            _handler = new AddClarificationFileUploadHandler(_repository.Object, Mock.Of<ILogger<AddClarificationFileUploadHandler>>());
         }
 
 
@@ -33,7 +33,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests.Handlers.ClarificationFileU
         {
             var application = new Domain.Entities.Apply {FinancialGrade = new FinancialReviewDetails()};
             _repository.Setup(x => x.GetApplication(_applicationId)).ReturnsAsync(application);
-            _repository.Setup(x => x.UpdateFinancialReviewDetails(_applicationId, It.Is<FinancialReviewDetails>(g=>g.ClarificationFiles.First().Filename==_fileName))).ReturnsAsync(true);
+            _repository.Setup(x => x.UpdateFinancialReviewDetails(_applicationId, It.Is<FinancialReviewDetails>(g=>g.ClarificationFiles.First().Filename==FileName))).ReturnsAsync(true);
             var result = _handler.Handle(_request, new CancellationToken()).GetAwaiter().GetResult();
             Assert.IsTrue(result);
         }

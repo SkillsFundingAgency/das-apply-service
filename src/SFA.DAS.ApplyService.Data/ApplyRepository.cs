@@ -630,7 +630,8 @@ namespace SFA.DAS.ApplyService.Data
                 {
                     await connection.ExecuteAsync(@"UPDATE Apply 
                                                          SET FinancialGrade = @financialReviewDetails
-                                                         WHERE ApplicationId = @applicationId",
+                                                         WHERE ApplicationId = @applicationId
+                                                            AND apply.DeletedAt IS NULL",
                         new
                         {
                             applicationId,
