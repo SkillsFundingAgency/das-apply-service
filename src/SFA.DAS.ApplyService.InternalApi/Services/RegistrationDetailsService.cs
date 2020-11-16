@@ -114,19 +114,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
 
         private async Task<int> MapPublicBodyOrganisationType(Guid applicationId, int providerTypeId, IEnumerable<OrganisationType> organisationTypes)
         {
-            var publicBodyOrganisationTypePageId = RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyTypeMainSupporting;
+            var publicBodyOrganisationTypePageId = RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyType;
 
-            if (providerTypeId == EmployerProviderTypeId)
-            {
-                publicBodyOrganisationTypePageId = RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyTypeEmployer;
-            }
-
-            var publicBodyOrganisationTypeQuestionId = RoatpYourOrganisationQuestionIdConstants.PublicBodyTypeMainSupporting;
-
-            if (providerTypeId == EmployerProviderTypeId)
-            {
-                publicBodyOrganisationTypeQuestionId = RoatpYourOrganisationQuestionIdConstants.PublicBodyTypeEmployer;
-            }
+            var publicBodyOrganisationTypeQuestionId = RoatpYourOrganisationQuestionIdConstants.PublicBodyType;
 
             var publicBodyOrganisationTypePage = await _qnaApiClient.GetPageBySectionNo(applicationId, RoatpWorkflowSequenceIds.YourOrganisation,
                                                  RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation, publicBodyOrganisationTypePageId);
@@ -147,17 +137,9 @@ namespace SFA.DAS.ApplyService.InternalApi.Services
         private async Task<int> MapEducationalInstituteOrganisationType(Guid applicationId, int providerTypeId, 
                                                                         IEnumerable<OrganisationType> organisationTypes)
         {
-            var educationOrganisationTypePageId = RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteTypeMainSupporting;
-            if (providerTypeId == EmployerProviderTypeId)
-            {
-                educationOrganisationTypePageId = RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteTypeEmployer;
-            }
+            var educationOrganisationTypePageId = RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteType;
 
-            var educationOrganisationTypeQuestionId = RoatpYourOrganisationQuestionIdConstants.EducationalInstituteTypeMainSupporting;
-            if (providerTypeId == EmployerProviderTypeId)
-            {
-                educationOrganisationTypeQuestionId = RoatpYourOrganisationQuestionIdConstants.EducationalInstituteTypeEmployer;
-            }
+            var educationOrganisationTypeQuestionId = RoatpYourOrganisationQuestionIdConstants.EducationalInstituteType;
 
             var educationOrganisationTypePage = await _qnaApiClient.GetPageBySectionNo(applicationId, RoatpWorkflowSequenceIds.YourOrganisation,
                                                  RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation, educationOrganisationTypePageId);
