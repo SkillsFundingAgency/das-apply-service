@@ -94,6 +94,24 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return Ok();
         }
 
+
+
+        [HttpPost("Clarification/Applications/{applicationId}/Remove")]
+        public async Task<IActionResult> UploadClarificationFile(Guid applicationId,  [FromBody] RemoveClarificationFileCommand command)
+        {
+          
+            var removedSuccessfully = await _fileStorageService.DeleteFile(applicationId, RoatpWorkflowSequenceIds.FinancialEvidence, 0, RoatpClarificationUpload.ClarificationFile, command.FileName, ContainerType.Financial, new CancellationToken());
+
+            if (!removedSuccessfully)
+            {
+                _logger.LogError($"Unable to remove uploaded file for application: {applicationId} || File name {command.FileName}");
+                return BadRequest();
+            }
+            await _mediator.Send(new RemoveClarificationFileUploadRequest(applicationId, command.FileName));
+                
+            return Ok();
+        }
+
         [HttpPost("/Financial/{applicationId}/StartReview")]
         public async Task<ActionResult> StartReview(Guid applicationId, [FromBody] StartFinancialReviewApplicationRequest request)
         {
@@ -142,6 +160,12 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
     public class UploadClarificationFileCommand
     {
+        public string UserId { get; set; }
+    }
+
+    public class RemoveClarificationFileCommand
+    {
+        public string FileName { get; set; }
         public string UserId { get; set; }
     }
 }
