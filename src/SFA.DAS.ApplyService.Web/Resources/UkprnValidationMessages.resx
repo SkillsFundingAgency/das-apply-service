@@ -124,7 +124,7 @@
     <value>Enter a UKPRN</value>
   </data>
   <data name="NewUkprnMustNotBeSame" xml:space="preserve">
-    <value>Same as existing UKPRN</value>
+    <value>Enter a new UKPRN</value>
   </data>
   <data name="NotWhitelistedUkprn" xml:space="preserve">
     <value>You need to contact roatp.support@education.gov.uk</value>

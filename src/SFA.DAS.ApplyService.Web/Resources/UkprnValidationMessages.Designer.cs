@@ -79,7 +79,7 @@ namespace SFA.DAS.ApplyService.Web.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Same as existing UKPRN.
+        ///   Looks up a localized string similar to Enter a new UKPRN.
         /// </summary>
         public static string NewUkprnMustNotBeSame {
             get {
