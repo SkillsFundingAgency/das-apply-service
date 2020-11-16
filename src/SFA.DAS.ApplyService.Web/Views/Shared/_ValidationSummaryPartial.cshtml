@@ -7,24 +7,11 @@
         <div class="govuk-error-summary__body">
             <ul class="govuk-list govuk-error-summary__list">
 
-                @{
-                    var explorer = ViewData.ModelExplorer;
-                    foreach (var property in explorer.Properties)
+                @foreach (var item in ViewData.ModelState)
+                {
+                    foreach (var error in item.Value.Errors)
                     {
-                        var propertyName = property.Metadata.PropertyName;
-                        var state = ViewData.ModelState[propertyName];
-                        var errors = state?.Errors ?? null;
-                        if (errors != null)
-                        {
-                            foreach (var error in errors)
-                            {
-                                <li>
-                                    <a href="#@propertyName">
-                                        <span class="govuk-visually-hidden">Error: </span>@error.ErrorMessage
-                                    </a>
-                                </li>
-                            }
-                        }
+                        <li><a href="#@item.Key"><span class="govuk-visually-hidden">Error: </span>@error.ErrorMessage</a></li>
                     }
                 }
             </ul>
