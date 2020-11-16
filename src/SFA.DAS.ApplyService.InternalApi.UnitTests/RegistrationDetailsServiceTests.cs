@@ -564,7 +564,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             var educationalInstituteTypePage = new Page
             {
-                PageId = RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteTypeMainSupporting,
+                PageId = RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteType,
                 PageOfAnswers = new List<PageOfAnswers>
                 {
                     new PageOfAnswers
@@ -574,7 +574,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                         {
                             new Answer
                             {
-                                QuestionId = RoatpYourOrganisationQuestionIdConstants.EducationalInstituteTypeMainSupporting,
+                                QuestionId = RoatpYourOrganisationQuestionIdConstants.EducationalInstituteType,
                                 Value = organisationType
                             }
                         }
@@ -584,7 +584,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             _qnaApiClient.Setup(x => x.GetPageBySectionNo(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.YourOrganisation,
                                                           RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation,
-                                                          RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteTypeMainSupporting))
+                                                          RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteType))
                                                          .ReturnsAsync(educationalInstituteTypePage);
 
             _qnaApiClient.Setup(x => x.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute, It.IsAny<string>()))
@@ -635,7 +635,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             var educationalInstituteTypePage = new Page
             {
-                PageId = RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteTypeEmployer,
+                PageId = RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteType,
                 PageOfAnswers = new List<PageOfAnswers>
                 {
                     new PageOfAnswers
@@ -645,7 +645,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                         {
                             new Answer
                             {
-                                QuestionId = RoatpYourOrganisationQuestionIdConstants.EducationalInstituteTypeEmployer,
+                                QuestionId = RoatpYourOrganisationQuestionIdConstants.EducationalInstituteType,
                                 Value = organisationType
                             }
                         }
@@ -655,7 +655,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             _qnaApiClient.Setup(x => x.GetPageBySectionNo(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.YourOrganisation,
                                                           RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation,
-                                                          RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteTypeEmployer))
+                                                          RoatpWorkflowPageIds.DescribeYourOrganisation.EducationalInstituteType))
                                                          .ReturnsAsync(educationalInstituteTypePage);
 
             _qnaApiClient.Setup(x => x.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute, It.IsAny<string>()))
@@ -712,7 +712,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             var publicBodyTypePage = new Page
             {
-                PageId = RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyTypeMainSupporting,
+                PageId = RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyType,
                 PageOfAnswers = new List<PageOfAnswers>
                 {
                     new PageOfAnswers
@@ -722,7 +722,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                         {
                             new Answer
                             {
-                                QuestionId = RoatpYourOrganisationQuestionIdConstants.PublicBodyTypeMainSupporting,
+                                QuestionId = RoatpYourOrganisationQuestionIdConstants.PublicBodyType,
                                 Value = organisationType
                             }
                         }
@@ -732,7 +732,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             _qnaApiClient.Setup(x => x.GetPageBySectionNo(applicationId, RoatpWorkflowSequenceIds.YourOrganisation,
                                                           RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation,
-                                                          RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyTypeMainSupporting))
+                                                          RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyType))
                                                          .ReturnsAsync(publicBodyTypePage);
 
             _qnaApiClient.Setup(x => x.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute, It.IsAny<string>()))
@@ -782,7 +782,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             var publicBodyTypePage = new Page
             {
-                PageId = RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyTypeEmployer,
+                PageId = RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyType,
                 PageOfAnswers = new List<PageOfAnswers>
                 {
                     new PageOfAnswers
@@ -792,7 +792,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
                         {
                             new Answer
                             {
-                                QuestionId = RoatpYourOrganisationQuestionIdConstants.PublicBodyTypeEmployer,
+                                QuestionId = RoatpYourOrganisationQuestionIdConstants.PublicBodyType,
                                 Value = organisationType
                             }
                         }
@@ -802,7 +802,7 @@ namespace SFA.DAS.ApplyService.InternalApi.UnitTests
 
             _qnaApiClient.Setup(x => x.GetPageBySectionNo(It.IsAny<Guid>(), RoatpWorkflowSequenceIds.YourOrganisation,
                                                           RoatpWorkflowSectionIds.YourOrganisation.DescribeYourOrganisation, 
-                                                          RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyTypeEmployer))
+                                                          RoatpWorkflowPageIds.DescribeYourOrganisation.PublicBodyType))
                                                          .ReturnsAsync(publicBodyTypePage);
 
             _qnaApiClient.Setup(x => x.GetAnswerByTag(applicationId, RoatpWorkflowQuestionTags.ProviderRoute, It.IsAny<string>()))
