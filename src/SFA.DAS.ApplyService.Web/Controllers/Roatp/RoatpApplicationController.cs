@@ -530,7 +530,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [HttpPost]
         [Route("change-ukprn")]
-        public async Task<IActionResult> ChangeUkprn(ChangeUkprnViewModel model)
+        public IActionResult ChangeUkprn(ChangeUkprnViewModel model)
         {
             if (!ModelState.IsValid)
             {
