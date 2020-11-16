@@ -547,10 +547,10 @@ namespace SFA.DAS.ApplyService.Web.Controllers
 
         [Route("change-ukprn/enter-new-ukprn")]
         [HttpGet]
-        public IActionResult EnterNewUkprn(Guid applicationId)
+        public async Task<IActionResult> EnterNewUkprn(Guid applicationId)
         {
-            var applicationDetails = _sessionService.Get<ApplicationDetails>(ApplicationDetailsKey);
-            var model = new EnterNewUkprnViewModel{CurrentUkprn = applicationDetails.UKPRN};
+            var applicationDetails = await _apiClient.GetOrganisationByUserId(User.GetUserId());
+            var model = new EnterNewUkprnViewModel{CurrentUkprn = applicationDetails.OrganisationDetails.UKRLPDetails.UKPRN};
             PopulateGetHelpWithQuestion(model, "UKPRN");
             return View("~/Views/Roatp/EnterNewUkprn.cshtml", model);
         }

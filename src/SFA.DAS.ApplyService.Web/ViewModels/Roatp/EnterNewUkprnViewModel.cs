@@ -14,6 +14,6 @@ namespace SFA.DAS.ApplyService.Web.ViewModels.Roatp
         public string GetHelpErrorMessage { get; set; }
         public string GetHelpAction { get; set; }
         public string Ukprn { get; set; }
-        public long CurrentUkprn { get; set; }
+        public string CurrentUkprn { get; set; }
     }
 }

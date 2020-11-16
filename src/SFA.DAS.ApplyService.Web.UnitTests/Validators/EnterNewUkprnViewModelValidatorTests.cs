@@ -80,7 +80,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Validators
             {
                 ApplicationId = Guid.NewGuid(),
                 Ukprn = "10037482",
-                CurrentUkprn = 10037482
+                CurrentUkprn = "10037482"
             };
 
             var result = _validator.Validate(viewModel);
