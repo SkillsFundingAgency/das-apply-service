@@ -555,14 +555,13 @@ namespace SFA.DAS.ApplyService.Data
                         ) s
                         WHERE s.SequenceNo = @financialHealthSequence
                         AND apply.DeletedAt IS NULL
-                        AND apply.FinancialReviewStatus IN ( @financialStatusApproved, @financialStatusDeclined, @financialStatusExempt, @financialStatusClarification )",
+                        AND apply.FinancialReviewStatus IN ( @financialStatusApproved, @financialStatusDeclined, @financialStatusExempt )",
                        new
                        {
                            financialHealthSequence = 2,
                            financialStatusApproved = FinancialReviewStatus.Pass,
                            financialStatusDeclined = FinancialReviewStatus.Fail,
-                           financialStatusExempt = FinancialReviewStatus.Exempt,
-                           financialStatusClarification = FinancialReviewStatus.ClarificationSent // Place in here till we're happy with a Clarification tab in Admin Services
+                           financialStatusExempt = FinancialReviewStatus.Exempt
                        })).ToList();
             }
         }

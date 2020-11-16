@@ -63,6 +63,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             {
                 new Claim(ClaimTypes.Name, "example name"),
                 new Claim(ClaimTypes.NameIdentifier, "1"),
+                new Claim("Email", "test@test.com"),
                 new Claim("custom-claim", "example claim value"),
             }, "mock"));
 
@@ -314,7 +315,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
         }
 
         [Test]
-        public void Submit_application_presents_confirmation_page_with_legal_name()
+        public void Submit_application_presents_confirmation_page_with_legal_name_and_emailaddress()
         {
             var organisationNameAnswer = new Answer
             {
@@ -331,6 +332,7 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             var model = viewResult.Model as SubmitApplicationViewModel;
             model.Should().NotBeNull();
             model.OrganisationName.Should().Be(organisationNameAnswer.Value);
+            model.EmailAddress.Should().NotBeNull();
         }
 
         [Test]
@@ -351,6 +353,8 @@ namespace SFA.DAS.ApplyService.Web.UnitTests.Controllers
             {
                 ApplicationId = application.ApplicationId,
                 ConfirmSubmitApplication = true,
+                ConfirmFurtherInfoSubmitApplication = true,
+                ConfirmFurtherCommunicationSubmitApplication = true,
                 ErrorMessages = new List<ValidationErrorDetail>()
             };
 
