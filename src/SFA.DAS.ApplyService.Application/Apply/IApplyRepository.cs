@@ -47,6 +47,7 @@ namespace SFA.DAS.ApplyService.Application.Apply
         Task<bool> StartFinancialReview(Guid applicationId, string reviewer);
         Task<bool> RecordFinancialGrade(Guid applicationId, FinancialReviewDetails financialReviewDetails, string financialReviewStatus);
 
+        Task<bool> UpdateFinancialReviewDetails(Guid applicationId, FinancialReviewDetails financialReviewDetails);
 
         Task<IEnumerable<RoatpApplicationStatus>> GetExistingApplicationStatusByUkprn(string ukprn);
 

@@ -367,6 +367,10 @@
         public static string UKRLPVerificationCharityRegNumber = "UKRLPVerificationCharityRegNumber";
     }
 
+    public static class RoatpClarificationUpload
+    {
+        public static string ClarificationFile = "ClarificationFile";
+    }
     public static class RoatpPreambleQuestionBuilder
     {
 
