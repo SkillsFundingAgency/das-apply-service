@@ -289,30 +289,29 @@
 
         public static class PlanningApprenticeshipTraining
         {
-            public const string TypeOfApprenticeshipTraining_Main = "6020";
-            public const string TypeOfApprenticeshipTraining_Employer = "6022";
-            public const string TypeOfApprenticeshipTraining_Supporting = "6023";
-            public const string ApplicationStandards = "6030";
-            public const string ApplicationFrameworks_MainEmployer = "6050";
-            public const string ApplicationFrameworks_Supporting = "6060";
-            public const string OrganisationTransition_MainEmployer = "6052";
-            public const string OrganisationTransition_Supporting = "6062";
-            public const string OnlyDeliveringApprenticeshipFrameworks_MainEmployer = "6054";
-            public const string OnlyDeliveringApprenticeshipFrameworks_Supporting = "6064";
-            public const string ReadyToDeliverTraining = "6200";
-            public const string ReadyToDeliverTrainingResponsible = "6700";
-            public const string EngagingWithAwardingBodies = "6800";
-            public const string EngagingWithAssessmentOrganisations = "6900";
-            public const string EnsureApprenticesAreSupported = "6300";
-            public const string EnsureApprenticesAreSupportedHow = "6310";
-            public const string EnsureApprenticesAreSupportedOtherWays = "6320";
-            public const string ForecastingStarts = "6400";
-            public const string ReadyToDeliverAgainstStarts = "6410";
-            public const string RecruitNewStaff = "6420";
-            public const string RatioOfStaffToApprentices = "6430";
-            public const string OnTheJobTrainingTeachingMethods = "6500";
-            public const string OnTheJobTrainingTeachingRelevance = "6510";
-            public const string AddressWhereApprenticesWillBeTrained = "6600";
+            public const string TypeOfApprenticeshipTraining_Main = "6203";
+            public const string TypeOfApprenticeshipTraining_Employer = "6202";
+            public const string TypeOfApprenticeshipTraining_Supporting = "6203";
+            public const string ApplicationStandards = "6230";
+            public const string ApplicationFrameworks_MainEmployer = "6250";
+            public const string ApplicationFrameworks_Supporting = "6260";
+            public const string OrganisationTransition_MainEmployer = "6252";
+            public const string OrganisationTransition_Supporting = "6262";
+            public const string OnlyDeliveringApprenticeshipFrameworks_MainEmployer = "6254";
+            public const string OnlyDeliveringApprenticeshipFrameworks_Supporting = "6264";
+            public const string EngagingWithAssessmentOrganisations = "6270";
+            public const string EngagingWithAwardingBodies = "6280";
+            public const string TrainingApprentices = "6300";
+            public const string EnsureApprenticesAreSupported = "6400";
+            public const string EnsureApprenticesAreSupportedHow = "6410";
+            public const string EnsureApprenticesAreSupportedOtherWays = "6420";
+            public const string ForecastingStarts = "6500";
+            public const string ReadyToDeliverAgainstStarts = "6510";
+            public const string RecruitNewStaff = "6520";
+            public const string RatioOfStaffToApprentices = "6530";
+            public const string OnTheJobTrainingTeachingMethods = "6600";
+            public const string OnTheJobTrainingTeachingRelevance = "6610";
+            public const string AddressWhereApprenticesWillBeTrained = "6700";
         }
 
         public static class EvaluatingApprenticeshipTraining
