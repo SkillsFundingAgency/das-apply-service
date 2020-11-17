@@ -97,7 +97,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
 
 
         [HttpPost("Clarification/Applications/{applicationId}/Remove")]
-        public async Task<IActionResult> UploadClarificationFile(Guid applicationId,  [FromBody] RemoveClarificationFileCommand command)
+        public async Task<IActionResult> RemoveClarificationFile(Guid applicationId,  [FromBody] RemoveClarificationFileCommand command)
         {
           
             var removedSuccessfully = await _fileStorageService.DeleteFile(applicationId, RoatpWorkflowSequenceIds.FinancialEvidence, 0, RoatpClarificationUpload.ClarificationFile, command.FileName, ContainerType.Financial, new CancellationToken());
