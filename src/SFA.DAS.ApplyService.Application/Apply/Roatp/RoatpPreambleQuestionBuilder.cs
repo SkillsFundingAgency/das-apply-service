@@ -289,10 +289,10 @@
 
         public static class PlanningApprenticeshipTraining
         {
-            public const string TypeOfApprenticeshipTraining_Main = "6203";
+            public const string TypeOfApprenticeshipTraining_Main = "6201";
             public const string TypeOfApprenticeshipTraining_Employer = "6202";
             public const string TypeOfApprenticeshipTraining_Supporting = "6203";
-            public const string ApplicationStandards = "6230";
+            public const string ApprenticeshipStandards = "6230";
             public const string ApplicationFrameworks_MainEmployer = "6250";
             public const string ApplicationFrameworks_Supporting = "6260";
             public const string OrganisationTransition_MainEmployer = "6252";

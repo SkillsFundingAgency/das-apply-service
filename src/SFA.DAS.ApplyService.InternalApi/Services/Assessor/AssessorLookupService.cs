@@ -78,7 +78,7 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
                     return "Type of apprenticeship training";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.TypeOfApprenticeshipTraining_Supporting:
                     return "Type of apprenticeship training";
-                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationStandards:
+                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApprenticeshipStandards:
                     return "Delivering training in apprenticeship standards";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ApplicationFrameworks_MainEmployer:
                     return "Offering apprenticeship frameworks";
@@ -93,10 +93,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Services.Assessor
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining
                     .OnlyDeliveringApprenticeshipFrameworks_Supporting:
                     return "Delivering apprenticeship frameworks only";
-                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ReadyToDeliverTraining:
-                    return "Delivering training in apprenticeship standards";
-                case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.ReadyToDeliverTrainingResponsible:
-                    return "Course directory";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.EngagingWithAwardingBodies:
                     return "Engaging and work with awarding bodies";
                 case RoatpWorkflowPageIds.PlanningApprenticeshipTraining.EngagingWithAssessmentOrganisations:
