@@ -96,11 +96,18 @@ namespace SFA.DAS.ApplyService.Domain.Entities
         public DateTime? GradedDateTime { get; set; }
         public string Comments { get; set; }
         public List<FinancialEvidence> FinancialEvidences { get; set; }
+        public List<ClarificationFile> ClarificationFiles { get; set; }
         public DateTime? ClarificationRequestedOn { get; set; }
         public string ClarificationResponse { get; set; }
     }
 
     public class FinancialEvidence
+    {
+        public string Filename { get; set; }
+    }
+
+
+    public class ClarificationFile
     {
         public string Filename { get; set; }
     }
