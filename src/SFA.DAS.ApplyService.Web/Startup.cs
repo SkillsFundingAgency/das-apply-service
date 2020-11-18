@@ -79,6 +79,7 @@ namespace SFA.DAS.ApplyService.Web
             });
             
             services.AddMvc(options => { options.Filters.Add<PerformValidationFilter>(); })
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateAccountValidator>())
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddOptions();
