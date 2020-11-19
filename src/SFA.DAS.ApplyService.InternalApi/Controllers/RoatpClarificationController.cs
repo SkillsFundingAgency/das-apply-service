@@ -119,21 +119,6 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return reviewOutcomes;
         }
 
-
-        [HttpGet("Clarification/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}/Download/{fileName}")]
-        public async Task<IActionResult> DownloadClarificationFile(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string fileName)
-        {
-            var file = await _fileStorageService.DownloadFile(applicationId, sequenceNumber, sectionNumber, pageId, fileName, ContainerType.Assessor, new CancellationToken());
-
-            if (file is null)
-            {
-                _logger.LogError($"Unable to download file for application: {applicationId} || pageId {pageId} || filename {fileName}");
-                return NotFound();
-            }
-
-            return File(file.Stream, file.ContentType, file.FileName);
-        }
-
         [HttpDelete("Clarification/Applications/{applicationId}/Sequences/{sequenceNumber}/Sections/{sectionNumber}/Page/{pageId}/Delete/{fileName}")]
         public async Task<bool> DeleteClarificationFile(Guid applicationId, int sequenceNumber, int sectionNumber, string pageId, string fileName)
         {
