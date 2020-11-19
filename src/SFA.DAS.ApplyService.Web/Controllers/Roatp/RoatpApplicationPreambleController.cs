@@ -698,31 +698,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return View("~/Views/Roatp/ChosenToRemainOnRegister.cshtml", model);
         }
 
-        [Route("change-ukprn")]
-        [HttpGet]
-        public IActionResult ChangeUkprn(Guid applicationId)
-        {
-            var model = new ChangeUkprnViewModel { ApplicationId = applicationId };
-
-            return View("~/Views/Roatp/ChangeUkprn.cshtml", model);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ConfirmChangeUkprn(ChangeUkprnViewModel model)
-        {
-            var ukprnAnswer = await _qnaApiClient.GetAnswerByTag(model.ApplicationId, RoatpWorkflowQuestionTags.UKPRN);
-            if (ukprnAnswer != null && ukprnAnswer.Value != null)
-            {
-                _logger.LogInformation($"Cancelling RoATP application for UKPRN {ukprnAnswer.Value}");
-            }
-
-            await _applicationApiClient.UpdateApplicationStatus(model.ApplicationId, ApplicationStatus.Cancelled);
-
-            _sessionService.Remove(ApplicationDetailsKey);
-
-            return RedirectToAction("EnterApplicationUkprn");
-        }
-
         private bool ProviderEligibleToChangeRoute(OrganisationRegisterStatus roatpRegisterStatus)
         {
             if (roatpRegisterStatus.UkprnOnRegister
