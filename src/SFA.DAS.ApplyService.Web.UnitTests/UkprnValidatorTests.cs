@@ -1,4 +1,6 @@
 ﻿
+using SFA.DAS.ApplyService.Web.Validators;
+
 namespace SFA.DAS.ApplyService.Web.UnitTests
 {
     using FluentAssertions;
