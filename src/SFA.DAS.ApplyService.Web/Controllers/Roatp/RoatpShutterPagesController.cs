@@ -18,13 +18,13 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             _sessionService = sessionService;
         }
 
-        [Route("two-applications-within-twelve-months")]
+        [Route("two-unsuccessful-applications-within-twelve-months")]
         public IActionResult TwoApplicationsWithinTwelveMonths()
         {
             return View("~/Views/Roatp/ShutterPages/TwoApplicationsWithinTwelveMonths.cshtml");
         }
 
-        [Route("not-accept-terms-conditions")]
+        [Route("not-accepted-terms-and-conditions")]
         public IActionResult TermsAndConditionsNotAgreed(ConditionsOfAcceptanceViewModel model)
         {
             return View("~/Views/Roatp/ShutterPages/TermsAndConditionsNotAgreed.cshtml", model);
