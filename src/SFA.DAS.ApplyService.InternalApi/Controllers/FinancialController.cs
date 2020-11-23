@@ -94,7 +94,19 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             return Ok();
         }
 
+        [HttpGet("Clarification/Applications/{applicationId}/Download/{fileName}")]
+        public async Task<IActionResult> DownloadClarificationFile(Guid applicationId, string fileName)
+        {
+            var file = await _fileStorageService.DownloadFile(applicationId, RoatpWorkflowSequenceIds.FinancialEvidence, 0, RoatpClarificationUpload.ClarificationFile, fileName, ContainerType.Financial, new CancellationToken());
 
+            if (file is null)
+            {
+                _logger.LogError($"Unable to download file for application: {applicationId} || ClarificationId {RoatpClarificationUpload.ClarificationFile} || filename {fileName}");
+                return NotFound();
+            }
+
+            return File(file.Stream, file.ContentType, file.FileName);
+        }
 
         [HttpPost("Clarification/Applications/{applicationId}/Remove")]
         public async Task<IActionResult> RemoveClarificationFile(Guid applicationId,  [FromBody] RemoveClarificationFileCommand command)
