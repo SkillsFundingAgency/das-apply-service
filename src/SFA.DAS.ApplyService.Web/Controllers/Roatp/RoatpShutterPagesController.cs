@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApplyService.Domain.Roatp;
 using SFA.DAS.ApplyService.Session;
 using SFA.DAS.ApplyService.Web.ViewModels.Roatp;
-using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
 {
@@ -18,11 +17,11 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
         {
             _sessionService = sessionService;
         }
-        
+
         [Route("not-accept-terms-conditions")]
         public IActionResult TermsAndConditionsNotAgreed(ConditionsOfAcceptanceViewModel model)
         {
-            return View("~/Views/Roatp/TermsAndConditionsNotAgreed.cshtml", model);
+            return View("~/Views/Roatp/ShutterPages/TermsAndConditionsNotAgreed.cshtml", model);
         }
 
         [Route("uk-provider-reference-number-not-found")]
@@ -35,7 +34,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 UKPRN = applicationDetails.UKPRN.ToString()
             };
 
-            return View("~/Views/Roatp/UkprnNotFound.cshtml", viewModel);
+            return View("~/Views/Roatp/ShutterPages/UkprnNotFound.cshtml", viewModel);
         }
 
         [Route("company-not-found")]
@@ -49,7 +48,7 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 ProviderDetails = applicationDetails.UkrlpLookupDetails
             };
 
-            return View("~/Views/Roatp/CompanyNotFound.cshtml", viewModel);
+            return View("~/Views/Roatp/ShutterPages/CompanyNotFound.cshtml", viewModel);
         }
 
         [Route("charity-not-found")]
@@ -63,43 +62,43 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
                 ProviderDetails = applicationDetails.UkrlpLookupDetails
             };
 
-            return View("~/Views/Roatp/CharityNotFound.cshtml", viewModel);
+            return View("~/Views/Roatp/ShutterPages/CharityNotFound.cshtml", viewModel);
         }
 
         [Route("chosen-not-apply-roatp")]
         public IActionResult NonLevyAbandonedApplication()
         {
-            return View("~/Views/Roatp/NonLevyAbandonedApplication.cshtml");
+            return View("~/Views/Roatp/ShutterPages/NonLevyAbandonedApplication.cshtml");
         }
 
         [Route("ukrlp-unavailable")]
         public IActionResult UkrlpNotAvailable()
         {
-            return View("~/Views/Roatp/UkrlpNotAvailable.cshtml");
+            return View("~/Views/Roatp/ShutterPages/UkrlpNotAvailable.cshtml");
         }
 
         [Route("companies-house-unavailable")]
         public IActionResult CompaniesHouseNotAvailable()
         {
-            return View("~/Views/Roatp/CompaniesHouseNotAvailable.cshtml");
+            return View("~/Views/Roatp/ShutterPages/CompaniesHouseNotAvailable.cshtml");
         }
 
         [Route("charity-commission-unavailable")]
         public IActionResult CharityCommissionNotAvailable()
         {
-            return View("~/Views/Roatp/CharityCommissionNotAvailable.cshtml");
+            return View("~/Views/Roatp/ShutterPages/CharityCommissionNotAvailable.cshtml");
         }
 
         [Route("application-in-progress")]
         public IActionResult ApplicationInProgress(ExistingApplicationViewModel model)
         {
-            return View("~/Views/Roatp/ApplicationInProgress.cshtml", model);
+            return View("~/Views/Roatp/ShutterPages/ApplicationInProgress.cshtml", model);
         }
 
         [Route("application-submitted")]
         public IActionResult ApplicationPreviouslySubmitted(ExistingApplicationViewModel model)
         {
-            return View("~/Views/Roatp/ApplicationPreviouslySubmitted.cshtml", model);
+            return View("~/Views/Roatp/ShutterPages/ApplicationPreviouslySubmitted.cshtml", model);
         }
     }
 }
