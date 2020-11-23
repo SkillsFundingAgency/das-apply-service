@@ -1,0 +1,66 @@
+﻿@model SFA.DAS.ApplyService.Web.ViewModels.Roatp.TwoInTwelveMonthsViewModel
+
+@{
+    ViewBag.Title = "Have you had 2 unsuccessful applications in the last 12 months?";
+    Layout = "_Layout";
+}
+
+<partial name="~/Views/Roatp/PreambleHeader.cshtml" />
+
+<main class="govuk-main-wrapper " id="main-content" role="main">
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <partial name="_ValidationSummaryPartial" />
+            <h1 class="govuk-heading-xl">Have you had 2 unsuccessful applications in the last 12 months?</h1>
+            <p class="govuk-body">This means that in the last 12 months, you've made other applications to join the register of apprenticeship training providers and 2 were unsuccessful. </p>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form method="post" asp-action="TwoInTwelveMonths" asp-controller="RoatpApplicationPreamble">
+                <input type="hidden" asp-for="ApplicationId" />
+                <input type="hidden" asp-for="SequenceId" />
+                <input type="hidden" asp-for="SectionId" />
+                <input type="hidden" asp-for="PageId" />
+
+                <div class="govuk-form-group @(!ViewContext.ModelState.IsValid ? "govuk-form-group--error" : "")" sfa-anyvalidationerror-class="form-group-error">
+                    <span class="govuk-error-message">
+                        @Html.ValidationMessageFor(m => m.HasTwoInTwelveMonths, null, new { @class = "govuk-error-message error", id = "error-message-" + Html.IdFor(m => m.HasTwoInTwelveMonths) })
+                    </span>
+
+                    <fieldset class="govuk-fieldset">
+                        <div class="govuk-radios">
+                            <div class="govuk-radios__item">
+                                <input asp-for="HasTwoInTwelveMonths"
+                                       class="govuk-radios__input"
+                                       type="radio"
+                                       value="true"
+                                       sfa-validation-for="HasTwoInTwelveMonths"
+                                       sfa-validationerror-class="form-control-error">
+                                <label asp-for="HasTwoInTwelveMonths" class="govuk-label govuk-radios__label">
+                                    Yes
+                                </label>
+                            </div>
+                            <div class="govuk-radios__item">
+                                <input asp-for="HasTwoInTwelveMonths"
+                                       class="govuk-radios__input"
+                                       id="HasTwoInTwelveMonths-No"
+                                       type="radio"
+                                       value="false"
+                                       sfa-validation-for="HasTwoInTwelveMonths"
+                                       sfa-validationerror-class="form-control-error">
+                                <label class="govuk-label govuk-radios__label" for="HasTwoInTwelveMonths-No">
+                                    No
+                                </label>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                <input type="submit" class="govuk-button" value="Save and continue" />
+            </form>
+            <partial name="~/Views/Roatp/GetHelpWithThisQuestion.cshtml" />
+        </div>
+    </div>
+</main>

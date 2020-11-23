@@ -132,6 +132,33 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return RedirectToAction("TaskList", "RoatpApplication", new { applicationId = model.ApplicationId });
         }
 
+        [HttpGet("two-in-twelve-months")]
+        public IActionResult TwoInTwelveMonths()
+        {
+            var model = new TwoInTwelveMonthsViewModel();
+            PopulateGetHelpWithQuestion(model, "TwoApplicationsWithinTwelveMonths");
+
+            return View("~/Views/Roatp/TwoInTwelveMonths.cshtml", model);
+        }
+
+        [HttpPost("two-in-twelve-months")]
+        public IActionResult TwoInTwelveMonths(TwoInTwelveMonthsViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("~/Views/Roatp/TwoInTwelveMonths.cshtml", model);
+            }
+
+            if (model.HasTwoInTwelveMonths is true)
+            {
+                return RedirectToAction("TwoApplicationsWithinTwelveMonths", "RoatpShutterPages");
+            }
+            else
+            {
+                return RedirectToAction("EnterApplicationUkprn");
+            }
+        }
+
         [Route("enter-uk-provider-reference-number")]
         public IActionResult EnterApplicationUkprn(string ukprn)
         {
