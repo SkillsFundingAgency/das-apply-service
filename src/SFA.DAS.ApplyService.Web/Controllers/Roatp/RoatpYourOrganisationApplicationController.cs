@@ -6,8 +6,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     using System;
     using System.Threading.Tasks;
     using Application.Apply.Roatp;
-    using Domain.Roatp;
-    using Infrastructure;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -17,7 +15,6 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
     {
         private readonly ILogger<RoatpYourOrganisationApplicationController> _logger;
         private readonly IProcessPageFlowService _processPageFlowService;
-        private const int Sequence1Id = 1;
 
         public RoatpYourOrganisationApplicationController(ILogger<RoatpYourOrganisationApplicationController> logger,
              IProcessPageFlowService processPageFlowService)
@@ -33,21 +30,40 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             return RedirectToAction("Page", "RoatpApplication",
                 new
                 {
-                    applicationId = applicationId, sequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
-                    sectionId = RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed, pageId = pageId,
+                    applicationId = applicationId,
+                    sequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
+                    sectionId = RoatpWorkflowSectionIds.YourOrganisation.WhatYouWillNeed,
+                    pageId = pageId,
                     redirectAction = "TaskList"
                 });
         }
 
-        public IActionResult ExperienceAccreditation(Guid applicationId)
+        public async Task<IActionResult> ExperienceAccreditation(Guid applicationId)
         {
+            // TECH DEBT: This should be driven from QnA Config and not be hard coded like this.
+            var providerTypeId = await _processPageFlowService.GetApplicationProviderTypeId(applicationId);
+
+            string startingPage;
+            switch (providerTypeId) 
+            {
+                case 3:
+                    startingPage = RoatpWorkflowPageIds.ExperienceAndAccreditations.SubcontractorDeclaration;
+                    break;
+                case 2:
+                    startingPage = RoatpWorkflowPageIds.ExperienceAndAccreditations.InitialTeacherTraining;
+                    break;
+                default:
+                    startingPage = RoatpWorkflowPageIds.ExperienceAndAccreditations.OfficeForStudents;
+                    break;
+            }
+            
             return RedirectToAction("Page", "RoatpApplication",
                 new
                 {
                     applicationId = applicationId,
                     sequenceId = RoatpWorkflowSequenceIds.YourOrganisation,
                     sectionId = RoatpWorkflowSectionIds.YourOrganisation.ExperienceAndAccreditations,
-                    pageId = RoatpWorkflowPageIds.ExperienceAndAccreditations.OfficeForStudents,
+                    pageId = startingPage,
                     redirectAction = "TaskList"
                 });
         }
@@ -57,13 +73,9 @@ namespace SFA.DAS.ApplyService.Web.Controllers.Roatp
             var providerTypeId = await _processPageFlowService.GetApplicationProviderTypeId(applicationId);
 
             var introductionPageId = await
-                _processPageFlowService.GetIntroductionPageIdForSequence(Sequence1Id, providerTypeId);
-            if (introductionPageId != null)
-                return await Task.FromResult(introductionPageId);
+                _processPageFlowService.GetIntroductionPageIdForSequence(RoatpWorkflowSequenceIds.YourOrganisation, providerTypeId);
 
-            return await Task.FromResult(RoatpWorkflowPageIds.YourOrganisationIntroductionMain);
-
+            return introductionPageId ?? RoatpWorkflowPageIds.YourOrganisationIntroductionMain;
         }
-        
     }
 }
