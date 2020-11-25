@@ -18,6 +18,13 @@ namespace SFA.DAS.ApplyService.InternalApi.Controllers
             _mediator = mediator;
         }
 
+        [HttpGet("GatewayReview/Counts")]
+        public async Task<GetGatewayApplicationCountsResponse> GetApplicationCounts()
+        {
+            var applicationCounts = await _mediator.Send(new GetGatewayApplicationCountsRequest());
+            return applicationCounts;
+        }
+
         [HttpGet("GatewayReview/NewApplications")]
         public async Task<ActionResult> NewApplications()
         {
