@@ -381,7 +381,7 @@
             questions.Add(new PreambleAnswer
             {
                 QuestionId = RoatpPreambleQuestionIdConstants.TwoInTwelveMonths,
-                Value = "NO"
+                Value = "No"
             });
 
             questions.Add(new PreambleAnswer

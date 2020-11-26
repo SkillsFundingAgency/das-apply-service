@@ -61,7 +61,7 @@ namespace SFA.DAS.ApplyService.Application.UnitTests
 
             var question = questions.FirstOrDefault(x => x.QuestionId == RoatpPreambleQuestionIdConstants.TwoInTwelveMonths);
             question.Should().NotBeNull();
-            question.Value.Should().Be("NO");
+            question.Value.Should().Be("No");
         }
 
         [Test]
