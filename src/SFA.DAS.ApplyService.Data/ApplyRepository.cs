@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApplyService.Data
@@ -127,21 +128,26 @@ namespace SFA.DAS.ApplyService.Data
             }
         }
 
-        public async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string userName, string status, string comments)
+        public async Task SubmitGatewayPageAnswer(Guid applicationId, string pageId, string userId, string userName, string status, string comments)
         {
             using (var connection = new SqlConnection(_config.SqlConnectionString))
             {
+                await connection.OpenAsync(default);
+                await connection.ExecuteAsync(
+                    @"IF NOT EXISTS (select * from GatewayAnswer where applicationId = @applicationId and pageId = @pageId)
+	                                                    INSERT INTO GatewayAnswer ([ApplicationId],[PageId],[Status],[comments],[CreatedAt],[CreatedBy])
+														     values (@applicationId, @pageId,@status,@comments,GetUTCDATE(),@userName)
+                                                    ELSE
+                                                     UPDATE GatewayAnswer
+                                                                SET  Status = @status, Comments =@comments, UpdatedBy = @userName, UpdatedAt = GETUTCDATE()
+                                                                WHERE  ApplicationId = @applicationId and pageId = @pageId",
+                    new { applicationId, pageId, status, comments, userName });
 
-                    await connection.ExecuteAsync(
-                        @"IF NOT EXISTS (select * from GatewayAnswer where applicationId = @applicationId and pageId = @pageId)
-	                                                        INSERT INTO GatewayAnswer ([ApplicationId],[PageId],[Status],[comments],[CreatedAt],[CreatedBy])
-														         values (@applicationId, @pageId,@status,@comments,GetUTCDATE(),@userName)
-                                                        ELSE
-                                                         UPDATE GatewayAnswer
-                                                                    SET  Status = @status, Comments =@comments, UpdatedBy = @userName, UpdatedAt = GETUTCDATE() 
-                                                                    WHERE  ApplicationId = @applicationId and pageId = @pageId",
-                        new { applicationId, pageId, status, comments, userName });
-                
+                await connection.ExecuteAsync(
+                    "update [Apply] set [GatewayUserId]=@userId, [GatewayUserName]=@userName WHERE [ApplicationId] = @applicationId",
+                    new { applicationId, userId, userName });
+
+                connection.Close();
             }
         }
 

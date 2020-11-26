@@ -6,7 +6,7 @@
 	Comments NVARCHAR(MAX) NULL,
 	[GatewayPageData] nvarchar(max) NULL,
 	[CreatedAt] DATETIME2 NOT NULL, 
-    [CreatedBy] NVARCHAR(256) NOT NULL, 
+    [CreatedBy] NVARCHAR(256) NULL, 
     [UpdatedAt] DATETIME2 NULL, 
     [UpdatedBy] NVARCHAR(256) NULL, 
  CONSTRAINT [PK_GatewayStatus] PRIMARY KEY CLUSTERED 
